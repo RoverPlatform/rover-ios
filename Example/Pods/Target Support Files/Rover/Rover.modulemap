@@ -1,0 +1,6 @@
+framework module Rover {
+  umbrella header "Rover-umbrella.h"
+
+  export *
+  module * { export * }
+}

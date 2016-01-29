@@ -1,0 +1,14 @@
+PODS:
+  - Rover (0.1.0)
+
+DEPENDENCIES:
+  - Rover (from `../`)
+
+EXTERNAL SOURCES:
+  Rover:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  Rover: 76bafd0c95bde72e2c4054015e203c5b629e0590
+
+COCOAPODS: 0.39.0

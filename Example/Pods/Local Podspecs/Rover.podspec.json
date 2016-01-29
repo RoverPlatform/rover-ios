@@ -1,0 +1,29 @@
+{
+  "name": "Rover",
+  "version": "0.1.0",
+  "summary": "A short description of Rover.",
+  "description": "",
+  "homepage": "https://github.com/<GITHUB_USERNAME>/Rover",
+  "license": "MIT",
+  "authors": {
+    "ata_n": "ata.namvari@gmail.com"
+  },
+  "source": {
+    "git": "https://github.com/<GITHUB_USERNAME>/Rover.git",
+    "tag": "0.1.0"
+  },
+  "platforms": {
+    "ios": "8.0"
+  },
+  "requires_arc": true,
+  "source_files": "Pod/Classes/**/*",
+  "resource_bundles": {
+    "Rover": [
+      "Pod/Assets/*.png"
+    ]
+  },
+  "frameworks": [
+    "UIKit",
+    "CoreLocation"
+  ]
+}

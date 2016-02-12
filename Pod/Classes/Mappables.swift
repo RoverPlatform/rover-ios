@@ -78,3 +78,9 @@ extension Event : Mappable {
         }
     }
 }
+
+extension Device : Mappable {
+    static func instance(JSON: [String : AnyObject], included: [Any]?) -> Device? {
+        return nil
+    }
+}

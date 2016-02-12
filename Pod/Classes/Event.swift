@@ -10,9 +10,19 @@ import Foundation
 import CoreLocation
 
 public enum Event {
+    
+    case ApplicationOpen(NSDate)
+    case DeviceUpdate(NSDate)
+    
     case DidEnterBeaconRegion(CLBeaconRegion, BeaconConfiguration?)
     case DidExitBeaconRegion(CLBeaconRegion, BeaconConfiguration?)
     
+
+}
+
+
+
+extension Event {
     func call(observer: RoverObserver) {
         switch self {
         case .DidEnterBeaconRegion(let region, let config):
@@ -21,53 +31,11 @@ public enum Event {
         case .DidExitBeaconRegion(let region, let config):
             guard let config = config else { return }
             observer.roverDidExitBeaconRegion?(region, config: config)
-        }
-    }
-    
-}
-
-
-extension Event : Serializable {
-    public func serialize() -> [String : AnyObject]? {
-        switch self {
-        case .DidEnterBeaconRegion(let region, _):
-            return [
-                "data": [
-                    "type": "events",
-                    "attributes": [
-                        "action": "enter-beacon-region",
-                        "protocol": "iBeacon",
-                        "uuid": region.proximityUUID.UUIDString,
-                        "major-number": region.major!,
-                        "minor-number": region.minor!
-                    ]
-                ]
-            ]
         default:
-            return nil
+            break
         }
     }
 }
-
-//extension Event : Mappable {
-//    
-//    func map(JSON: [String: Any]) {
-////        switch self {
-////        case .DidEnterBeaconRegion(let region):
-////            region.someValue = ""
-////        }
-//    }
-//    
-//    init(JSON: [String : AnyObject]) {
-//        self = .DidEnterBeaconRegion(CLBeaconRegion(), nil)
-//    }
-//    
-//    
-//    static func munc() -> Event {
-//        return .DidEnterBeaconRegion(CLBeaconRegion(), nil)
-//    }
-//}
-
 
 public class BeaconConfiguration : NSObject {
     let identifier: String
@@ -89,4 +57,5 @@ extension BeaconConfiguration : Mappable {
         return nil
     }
 }
+
 

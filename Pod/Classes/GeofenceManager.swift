@@ -118,7 +118,7 @@ extension GeofenceManager : CLLocationManagerDelegate {
     }
     
     func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
-        guard manager == locationManager && status == .AuthorizedAlways && monitoring else {
+        guard manager === locationManager && status == .AuthorizedAlways && monitoring else {
             // LOG DEBUG "Location manager always authorization revoked"
             return
         }

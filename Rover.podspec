@@ -30,13 +30,13 @@ Pod::Spec.new do |s|
   s.requires_arc = true
 
   s.source_files = 'Pod/Classes/**/*'
+  s.resources = ['Pod/Resources/**/*.xcdatamodeld']
   s.resource_bundles = {
     'Rover' => ['Pod/Assets/*.png']
   }
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
   
-  s.frameworks = 'UIKit', 'CoreLocation'
+  s.frameworks = 'UIKit', 'CoreLocation', 'CoreData'
   
-  # s.dependency 'AFNetworking', '~> 2.3'
 end

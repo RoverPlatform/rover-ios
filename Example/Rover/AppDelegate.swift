@@ -23,30 +23,36 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Rover.startMonitoring() // asks for location permissions
         Rover.registerForNotifications() // asks for notification permissions
         
+        //Rover.identify("my@email.address")
+        //Rover.user.setAttribute(key: "myKey", value: "myValue")
+        
+        
         //Rover.addObserver(SomeObjectConformingToRoverInterface)
         
         // Override point for customization after application launch.
         return true
     }
 
-//    func application(application: UIApplication, didReceiveLocalNotification notification: UILocalNotification) {
+    func application(application: UIApplication, didReceiveLocalNotification notification: UILocalNotification) {
 //        if Rover.didReceiveLocalNotification(notification) {
 //            return;
 //        }
-//    }
-//    
-//    func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]) {
+    }
+    
+    func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]) {
 //        if Rover.didReceiveRemoteNotification(userInfo: userInfo) {
 //            return;
 //        }
-//    }
-//    
-//    func application(application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData) {
-//        Rover.didRegisterForRemoteNotification(deviceToken: deviceToken)
-//        
-//        // Follow through
-//    }
-//
+    }
+    
+    func application(application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData) {
+        Rover.didRegisterForRemoteNotification(deviceToken: deviceToken)
+    }
+    
+    func application(application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: NSError) {
+
+    }
+
 
 }
 

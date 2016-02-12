@@ -13,7 +13,7 @@ class NetworkOperation: NSOperation {
     var urlRequest: NSMutableURLRequest
     var urlSessionTask: NSURLSessionDataTask?
     var payload: [String: AnyObject]?
-    var completion: JSONCompletionBlock
+    var completion: JSONCompletionBlock?
     
     private var payloadAsQuery: String {
         guard let payload = payload else { return "" }
@@ -29,17 +29,17 @@ class NetworkOperation: NSOperation {
     
     typealias JSONCompletionBlock = ([String: AnyObject]?, NSError?) -> Void
     
-    required init(mutableUrlRequest: NSMutableURLRequest, completion: JSONCompletionBlock) {
+    required init(mutableUrlRequest: NSMutableURLRequest, completion: JSONCompletionBlock?) {
         self.urlRequest = mutableUrlRequest
         self.completion = completion
         super.init()
     }
     
-    convenience init(urlRequest: NSURLRequest, completion: JSONCompletionBlock) {
+    convenience init(urlRequest: NSURLRequest, completion: JSONCompletionBlock?) {
         self.init(mutableUrlRequest: urlRequest.mutableCopy() as! NSMutableURLRequest, completion: completion)
     }
     
-    convenience init(url: NSURL, method: String, completion: JSONCompletionBlock) {
+    convenience init(url: NSURL, method: String, completion: JSONCompletionBlock?) {
         let urlRequest = NSMutableURLRequest(URL: url)
         urlRequest.HTTPMethod = method
         
@@ -86,14 +86,14 @@ class NetworkOperation: NSOperation {
                 switch response.statusCode {
                 case 200:
                     if let JSON = try? NSJSONSerialization.JSONObjectWithData(data!, options: .AllowFragments) {
-                        self.completion(JSON as? [String : AnyObject], nil)
+                        self.completion?(JSON as? [String : AnyObject], nil)
                     } else {
-                        self.completion(nil, NSError(domain: "io.rover.unexpectedjson", code: 13, userInfo: nil))
+                        self.completion?(nil, NSError(domain: "io.rover.unexpectedjson", code: 13, userInfo: nil))
                     }
                     
-                case 404: self.completion(nil, NSError(domain: "io.rover.notfound", code: 10, userInfo: nil))
-                case 400...499: self.completion(nil, NSError(domain: "io.rover.clienterror", code: 11, userInfo: nil))
-                case 500...599: self.completion(nil, NSError(domain: "io.rover.servererror", code: 12, userInfo: nil))
+                case 404: self.completion?(nil, NSError(domain: "io.rover.notfound", code: 10, userInfo: nil))
+                case 400...499: self.completion?(nil, NSError(domain: "io.rover.clienterror", code: 11, userInfo: nil))
+                case 500...599: self.completion?(nil, NSError(domain: "io.rover.servererror", code: 12, userInfo: nil))
                 default:
                     print("Received HTTP \(response.statusCode), which was not handled")
                 }

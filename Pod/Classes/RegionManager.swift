@@ -80,7 +80,7 @@ public class RegionManager : NSObject {
         
         monitoring = true
         
-        // LOG DEBUG "Beacon monitoring/ranging started for regions: \(beaconRegions)"
+        rvLog("Beacon monitoring/ranging started for regions: \(beaconRegions)")
     }
     
     public func stopMonitoring() {
@@ -91,7 +91,7 @@ public class RegionManager : NSObject {
         
         monitoring = false
         
-        // LOG DEBUG "Beacon monitoring/ranging stopped for regions: \(regions)"
+        rvLog("Beacon monitoring/ranging stopped")
     }
     
     public func startMonitoring(regions: Array<CLBeaconRegion>) {
@@ -100,6 +100,7 @@ public class RegionManager : NSObject {
             locationManager.startMonitoringForRegion(region)
         }
         
+        rvLog("Beacon monitoring started for regions: \(regions)")
         // LOG DEBUG "Beacon monitoring started for regions: \(regions)"
     }
 

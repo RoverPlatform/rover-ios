@@ -30,5 +30,6 @@ class SerializingOperation : NSOperation {
 }
 
 protocol Serializable {
+    // TODO: remove the optional from the whole dic
     func serialize() -> [String: AnyObject]?
 }

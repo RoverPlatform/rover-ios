@@ -9,7 +9,10 @@
 import Foundation
 import CoreLocation
 
-@objc public protocol RoverObserver {
-    optional func roverDidEnterBeaconRegion(region: CLBeaconRegion, config: BeaconConfiguration)
-    optional func roverDidExitBeaconRegion(region: CLBeaconRegion, config: BeaconConfiguration)
+@objc
+public protocol RoverObserver {
+    optional func didEnterBeaconRegion(config config: BeaconConfiguration)//, location: Location?)
+    optional func didExitBeaconRegion(config config: BeaconConfiguration)
+    optional func didEnterGeofence(location location: Location)
+    optional func didExitGeofence(location location: Location)
 }

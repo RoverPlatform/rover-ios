@@ -19,49 +19,65 @@ extension Event : Serializable {
             return nil
         }
         
+        var timestamp: NSDate
+        var serializedAttributes: [String : AnyObject]
+        
         switch self {
         case .ApplicationOpen(let date):
-            return [
-                "data": [
-                    "type": "events",
-                    "attributes": [
-                        "object": "app",
-                        "action": "open",
-                        "time": date.timeIntervalSince1970,
-                        "user": serializedUser,
-                        "device": serializedDevice
-                    ]
-                ]
+            timestamp = date
+            serializedAttributes = [
+                "object": "app",
+                "action": "open"
             ]
         case .DeviceUpdate(let date):
-            return [
-                "data": [
-                    "type": "events",
-                    "attributes": [
-                        "object": "device",
-                        "action": "update",
-                        "time": date.timeIntervalSince1970,
-                        "user": serializedUser,
-                        "device": serializedDevice
-                    ]
-                ]
+            timestamp = date
+            serializedAttributes = [
+                "object": "device",
+                "action": "update"
             ]
-        case .DidEnterBeaconRegion(let region, _):
-            return [
-                "data": [
-                    "type": "events",
-                    "attributes": [
-                        "action": "enter-beacon-region",
-                        "identifier": region.identifier,
-                        "uuid": region.proximityUUID.UUIDString,
-                        "major-number": region.major!,
-                        "minor-number": region.minor!
-                    ]
-                ]
+        case .DidUpdateLocation(let location, let date):
+            timestamp = date
+            serializedAttributes = [
+                "object": "location",
+                "action": "update",
+                "latitude": location.coordinate.latitude,
+                "longitude": location.coordinate.longitude
+            ]
+        case .DidEnterBeaconRegion(let region, _, let date):
+            timestamp = date
+            serializedAttributes = [
+                "object": "beacon-region",
+                "action": "enter",
+                "identifier": region.identifier,
+                "uuid": region.proximityUUID.UUIDString,
+                "major-number": region.major!,
+                "minor-number": region.minor!
+            ]
+        case .DidExitBeaconRegion(let region, _, let date):
+            timestamp = date
+            serializedAttributes = [
+                "object": "beacon-region",
+                "action": "exit",
+                "identifier": region.identifier,
+                "uuid": region.proximityUUID.UUIDString,
+                "major-number": region.major!,
+                "minor-number": region.minor!
             ]
         default:
-            return nil
+            timestamp = NSDate()
+            serializedAttributes = [String : AnyObject]()
         }
+        
+        serializedAttributes["time"] = timestamp.timeIntervalSince1970
+        serializedAttributes["user"] = serializedUser
+        serializedAttributes["device"] = serializedDevice
+        
+        return [
+            "data": [
+                "type": "events",
+                "attributes": serializedAttributes
+            ]
+        ]
     }
 }
 

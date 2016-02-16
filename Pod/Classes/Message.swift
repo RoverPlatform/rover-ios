@@ -12,7 +12,7 @@ import CoreData
 class Message : NSManagedObject {
     
 }
-
-extension Message : Mappable {
-    
-}
+//
+//extension Message : Mappable {
+//    
+//}

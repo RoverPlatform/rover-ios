@@ -16,7 +16,7 @@ class MappingOperation<T where T : Mappable> : NSOperation {
     var json: [String: AnyObject]?
     var resourceCompletion: ResourceCallback?
     var collectionCompletion: CollectionCallback?
-    var included: [Any]?
+    var included: [String: Any]?
     
     init(resourceCompletion: ResourceCallback?) {
         self.resourceCompletion = resourceCompletion
@@ -37,10 +37,13 @@ class MappingOperation<T where T : Mappable> : NSOperation {
         switch data {
         case is Array<JSON>:
             let dataArray = data as! [JSON]
-            let itemsArray = dataArray.map({ (data) -> T in
-                let resource = T.instance(data, included: included)
-                return resource as! T
-            })
+            
+            var itemsArray = [T]()
+            for data in dataArray {
+                guard let resource = T.instance(data, included: included) as? T else { continue }
+                itemsArray.append(resource)
+            }
+            
             //guard let typedCollection = itemsArray as? [T] else {
             // error couldnt map collection to type [T]
             //    return
@@ -64,5 +67,5 @@ class MappingOperation<T where T : Mappable> : NSOperation {
 
 protocol Mappable {
     typealias MappableType
-    static func instance(JSON: [String: AnyObject], included: [Any]?) -> MappableType?
+    static func instance(JSON: [String: AnyObject], included: [String: Any]?) -> MappableType?
 }

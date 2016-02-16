@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Rover
 
 class ViewController: UIViewController {
 
@@ -20,5 +21,8 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
+    @IBAction func simulateClicked(sender: UIButton) {
+        Rover.simulateBeaconEnter(UUID: NSUUID(UUIDString: "3595AA03-1767-4483-8A1B-A5BE6BEE9D35")!, majorNumber: 1, minorNumber: 1)
+    }
 }
 

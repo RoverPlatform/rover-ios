@@ -11,51 +11,53 @@ import CoreLocation
 
 public enum Event {
     
-    case ApplicationOpen(NSDate)
-    case DeviceUpdate(NSDate)
+    case ApplicationOpen(date: NSDate)
+    case DeviceUpdate(date: NSDate)
     
-    case DidEnterBeaconRegion(CLBeaconRegion, BeaconConfiguration?)
-    case DidExitBeaconRegion(CLBeaconRegion, BeaconConfiguration?)
+    case DidUpdateLocation(CLLocation, date: NSDate)
     
+    case DidEnterBeaconRegion(CLBeaconRegion, config: BeaconConfiguration?, date: NSDate)
+    case DidExitBeaconRegion(CLBeaconRegion, config: BeaconConfiguration?, date: NSDate)
 
+    case DidEnterCircularRegion(CLCircularRegion, location: Location?, date: NSDate)
+    case DidExitCircularRegion(CLCircularRegion, location: Location?, date: NSDate)
 }
 
-
-
 extension Event {
+    
     func call(observer: RoverObserver) {
         switch self {
-        case .DidEnterBeaconRegion(let region, let config):
-            guard let config = config else { return }
-            observer.roverDidEnterBeaconRegion?(region, config: config)
-        case .DidExitBeaconRegion(let region, let config):
-            guard let config = config else { return }
-            observer.roverDidExitBeaconRegion?(region, config: config)
+        case .DidEnterBeaconRegion(_, let config?, _):
+            observer.didEnterBeaconRegion?(config: config)
+        case .DidExitBeaconRegion(_, let config?, _):
+            observer.didExitBeaconRegion?(config: config)
+        case .DidEnterCircularRegion(_, let location?, _):
+            observer.didEnterGeofence?(location: location)
+        case .DidExitCircularRegion(_, let location?, _):
+            observer.didExitGeofence?(location: location)
         default:
             break
         }
     }
-}
-
-public class BeaconConfiguration : NSObject {
-    let identifier: String
     
-    let UUID: NSUUID
-    let majorNumber: Int16
-    let minorNumber: Int16
-    
-    init(UUID: NSUUID, majorNumber: Int16, minorNumber: Int16, identifier: String) {
-        self.identifier = identifier
-        self.UUID = UUID
-        self.majorNumber = majorNumber
-        self.minorNumber = minorNumber
+    var properties: [String: Any] {
+        switch self {
+        case .DidUpdateLocation(let location, let date):
+            return ["location": location, "date": date]
+        case .DidEnterBeaconRegion(let region, let config, let date):
+            return ["region": region, "config": config, "date": date]
+        case .DidExitBeaconRegion(let region, let config, let date):
+            return ["region": region, "config": config, "date": date]
+        case .DidEnterCircularRegion(let region, let location, let date):
+            return ["region": region, "location": location, "date": date]
+        case .DidExitCircularRegion(let region, let location, let date):
+            return ["region": region, "location": location, "date": date]
+        default:
+            return [String: Any]()
+        }
     }
 }
 
-extension BeaconConfiguration : Mappable {
-    static func instance(JSON: [String : AnyObject], included: [Any]?) -> BeaconConfiguration? {
-        return nil
-    }
-}
+
 
 

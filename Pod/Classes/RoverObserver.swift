@@ -7,12 +7,18 @@
 //
 
 import Foundation
-import CoreLocation
+//import CoreLocation
 
 @objc
 public protocol RoverObserver {
+    
     optional func didEnterBeaconRegion(config config: BeaconConfiguration)//, location: Location?)
     optional func didExitBeaconRegion(config config: BeaconConfiguration)
+    
     optional func didEnterGeofence(location location: Location)
     optional func didExitGeofence(location location: Location)
+
+    optional func shouldDeliverMessage(message: Message) -> Bool
+    optional func willDeliverMessage(message: Message)
+    optional func didDeliverMessage(message: Message)
 }

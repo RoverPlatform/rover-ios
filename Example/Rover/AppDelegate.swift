@@ -17,11 +17,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
-        
         Rover.setup(applicationToken: "0628d761f3cebf6a586aa02cc4648bd2") // has to happen on app startup
+        Rover.addObserver(self)
     
-        Rover.startMonitoring() // asks for location permissions
-        Rover.registerForNotifications() // asks for notification permissions
+        //Rover.startMonitoring() // asks for location permissions
+        //Rover.registerForNotifications() // asks for notification permissions
         
         //Rover.identify("my@email.address")
         //Rover.user.setAttribute(key: "myKey", value: "myValue")
@@ -56,3 +56,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 }
 
+extension AppDelegate : RoverObserver {
+    
+    func didDeliverMessage(message: Message) {
+        if UIApplication.sharedApplication().applicationState == .Active {
+            let alert = UIAlertView(title: message.title, message: message.text, delegate: nil, cancelButtonTitle: "OK")
+            alert.show()
+        }
+    }
+    
+}

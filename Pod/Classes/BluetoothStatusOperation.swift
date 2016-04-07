@@ -8,32 +8,7 @@
 
 import CoreBluetooth
 
-class BluetoothStatusOperation: NSOperation, CBCentralManagerDelegate {
-    private var _finished = false
-    private var _executing = false
-    override private(set) var finished: Bool {
-        get {
-            return _finished
-        }
-        set {
-            willChangeValueForKey("isFinished")
-            _finished = newValue
-            didChangeValueForKey("isFinished")
-        }
-    }
-    override private(set) var executing: Bool {
-        get {
-            return _executing
-        }
-        set {
-            willChangeValueForKey("isExecuting")
-            _executing = newValue
-            didChangeValueForKey("isExecuting")
-        }
-    }
-    override var concurrent: Bool {
-        return true
-    }
+class BluetoothStatusOperation: ConcurrentOperation, CBCentralManagerDelegate {
     
     private var centralManager: CBCentralManager?
     private var completion: (Bool) -> Void
@@ -44,20 +19,13 @@ class BluetoothStatusOperation: NSOperation, CBCentralManagerDelegate {
         super.init()
     }
     
-    
-    override func start() {
-        guard !cancelled else {
-            finished = true
-            return
-        }
-        
+    override func execute() {
         if let status = BluetoothStatusOperation.foundStatus {
             completion(status == .PoweredOn)
-            finished = true
+            finish()
             return
         }
         
-        executing = true
         centralManager = CBCentralManager(delegate: self, queue: nil)
     }
     
@@ -66,7 +34,6 @@ class BluetoothStatusOperation: NSOperation, CBCentralManagerDelegate {
     func centralManagerDidUpdateState(central: CBCentralManager) {
         BluetoothStatusOperation.foundStatus = central.state
         self.completion(central.state == .PoweredOn)
-        executing = false
-        finished = true
+        finish()
     }
 }

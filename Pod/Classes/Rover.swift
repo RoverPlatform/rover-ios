@@ -22,24 +22,38 @@ public class Rover : NSObject {
     
     private var applicationToken: String?
     
-    private let locationManager = CLLocationManager()
-    private var regions: [CLRegion] = [CLBeaconRegion(proximityUUID: NSUUID(UUIDString: "7931D3AA-299B-4A12-9FCC-D66F2C5D2462")!, identifier: "7931D3AA-299B-4A12-9FCC-D66F2C5D2462")]
+    //private let locationManager = CLLocationManager()
+    private let locationManager = LocatioManager()
+    private var regions: [CLRegion] = []
     
     private let operationQueue = NSOperationQueue()
+    private let eventOperationQueue = NSOperationQueue()
     
-    override init () {
+    private override init () {
         super.init()
+        
+        eventOperationQueue.maxConcurrentOperationCount = 1
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationDidOpen", name: UIApplicationDidFinishLaunchingNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationDidOpen", name: UIApplicationWillEnterForegroundNotification, object: nil)
         
-        locationManager.requestAlwaysAuthorization()
         locationManager.delegate = self
+        
+        // TEMP BEGIN
+        
+        let userNotificationSettings = UIUserNotificationSettings(forTypes: [.Alert, .Sound, .Badge], categories: nil)
+        UIApplication.sharedApplication().registerUserNotificationSettings(userNotificationSettings)
+        
+        // TEMP END
     }
     
     // MARK: Class Methods
     
-    public static let sharedUser = User.sharedUser
+    public static let customer = User.sharedUser
+    
+    public static var isMonitoring: Bool {
+        return sharedInstance?.locationManager.isMonitoring ?? false
+    }
     
     public class func setup(applicationToken applicationToken: String) {
         _sharedInstance.applicationToken = applicationToken
@@ -47,8 +61,16 @@ public class Rover : NSObject {
     }
     
     public class func startMonitoring() {
-        sharedInstance?.startRegionMonitoring()
-        sharedInstance?.locationManager.startMonitoringSignificantLocationChanges()
+        let locationAuthorizationOperation = LocationAuthorizationOperation()
+        locationAuthorizationOperation.completionBlock = {
+            if CLLocationManager.authorizationStatus() == .AuthorizedAlways {
+                sharedInstance?.startRegionMonitoring()
+                sharedInstance?.locationManager.startMonitoringSignificantLocationChanges()
+            } else {
+                rvLog("Location permissions not granted")
+            }
+        }
+        sharedInstance?.operationQueue.addOperation(locationAuthorizationOperation)
     }
     
     public class func stopMonitoring() {
@@ -71,14 +93,55 @@ public class Rover : NSObject {
 //        sharedInstance?.observers.removeAtIndex((sharedInstance.observers.indexOf({$0 === observer})!))
     }
     
-    public class func simulateBeaconEnter(UUID UUID: NSUUID, major: CLBeaconMajorValue, minor: CLBeaconMinorValue) {
-        let region = CLBeaconRegion(proximityUUID: UUID, major: major, minor: minor, identifier: "SIMULATE")
-        sharedInstance?.didEnterBeaconRegion(region)
+//    public class func simulateBeaconEnter(UUID UUID: NSUUID, major: CLBeaconMajorValue, minor: CLBeaconMinorValue) {
+//        let region = CLBeaconRegion(proximityUUID: UUID, major: major, minor: minor, identifier: "SIMULATE")
+//        sharedInstance?.didEnterBeaconRegion(region)
+//    }
+//    
+//    public class func simulateBeaconExit(UUID UUID: NSUUID, major: CLBeaconMajorValue, minor: CLBeaconMinorValue) {
+//        let region = CLBeaconRegion(proximityUUID: UUID, major: major, minor: minor, identifier: "SIMULATE")
+//        sharedInstance?.didExitBeaconRegion(region)
+//    }
+    
+    public class func simulateEvent(event: Event) {
+        sharedInstance?.sendEvent(event)
     }
     
-    public class func simulateBeaconExit(UUID UUID: NSUUID, major: CLBeaconMajorValue, minor: CLBeaconMinorValue) {
-        let region = CLBeaconRegion(proximityUUID: UUID, major: major, minor: minor, identifier: "SIMULATE")
-        sharedInstance?.didExitBeaconRegion(region)
+    public class func reloadInbox(completion: ([Message] -> Void)?) {
+        let mappingOperation = MappingOperation { (messages: [Message]) in
+            dispatch_async(dispatch_get_main_queue()) {
+                completion?(messages)
+            }
+        }
+        let networkOperation = NetworkOperation(mutableUrlRequest: Router.Inbox.urlRequest) { JSON, error in
+            mappingOperation.json = JSON
+        }
+        
+        mappingOperation.addDependency(networkOperation)
+        
+        sharedInstance?.operationQueue.addOperation(networkOperation)
+        sharedInstance?.operationQueue.addOperation(mappingOperation)
+    }
+    
+    public class func deleteMessage(message: Message) {
+        let networkOperation = NetworkOperation(urlRequest: Router.DeleteMessage(message).urlRequest, completion: nil)
+        sharedInstance?.operationQueue.addOperation(networkOperation)
+    }
+    
+    public class func patchMessage(message: Message) {
+        let networkOperation = NetworkOperation(urlRequest: Router.PatchMessage(message).urlRequest, completion: nil)
+        let serializingOperation = SerializingOperation(model: message) { JSON in
+            networkOperation.payload = JSON
+        }
+        
+        networkOperation.addDependency(serializingOperation)
+        
+        sharedInstance?.operationQueue.addOperation(serializingOperation)
+        sharedInstance?.operationQueue.addOperation(networkOperation)
+    }
+    
+    public class func updateLocation(location: CLLocation) {
+        sharedInstance?.sendEvent(.DidUpdateLocation(location, date: NSDate()))
     }
     
     // MARK: Application Hooks
@@ -114,6 +177,23 @@ public class Rover : NSObject {
         }
     }
     
+    func deliverMessages(messages: [Message]) {
+        messages.forEach { message in
+            
+            for observer in observers {
+                observer.willDeliverMessage?(message)
+            }
+            
+            let notification = UILocalNotification()
+            notification.alertBody = message.text
+            UIApplication.sharedApplication().presentLocalNotificationNow(notification)
+        
+            for observer in observers {
+                observer.didDeliverMessage?(message)
+            }
+        }
+    }
+    
     // MARK: UIApplicationNotifications
     
     func applicationDidOpen() {
@@ -121,107 +201,89 @@ public class Rover : NSObject {
     }
     
     func sendEvent(event: Event) {
+        let eventOperation = EventOperation(event: event)
+        eventOperation.delegate = self
         
-        let regionMappingOperation = MappingOperation<CLRegion> { (regions: [CLRegion]) in
-            guard regions.count > 0 else { return }
-            
-            self.regions = regions
-            dispatch_async(dispatch_get_main_queue()) {
-                //if locationManager.monitoredRegions.count > 0 { // isMonitoring
-                self.stopRegionMonitoring()
-                self.startRegionMonitoring()
-            }
-        }
-        let mappingOperation = MappingOperation<Event> { (event: Event) in
-            self.notifyObservers(event: event)
-        }
-        let networkOperation = NetworkOperation(mutableUrlRequest: Router.Events.urlRequest) { JSON, error in
-            if let included = JSON?["included"] as? [[String: AnyObject]] { regionMappingOperation.json = ["data": included] }
-            mappingOperation.json = JSON
-        }
-        let serializingOperation = SerializingOperation(model: event) { JSON in
-            networkOperation.payload = JSON
-        }
-        let bluetoothStatusOperation = BluetoothStatusOperation { isOn in
-            Device.bluetoothOn = isOn
-        }
-        
-        mappingOperation.included = event.properties
-        
-        mappingOperation.addDependency(networkOperation)
-        regionMappingOperation.addDependency(networkOperation)
-        networkOperation.addDependency(serializingOperation)
-        serializingOperation.addDependency(bluetoothStatusOperation)
-        
-        operationQueue.addOperation(bluetoothStatusOperation)
-        operationQueue.addOperation(serializingOperation)
-        operationQueue.addOperation(networkOperation)
-        operationQueue.addOperation(mappingOperation)
-        operationQueue.addOperation(regionMappingOperation)
+        eventOperationQueue.addOperation(eventOperation)
     }
-    
 }
 
-extension Rover : CLLocationManagerDelegate {
-    public func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
-        rvLog("Location manager auth status changed = \(status)")
-    }
+extension Rover : LocationManagerDelegate {
     
-    public func locationManager(manager: CLLocationManager, didEnterRegion region: CLRegion) {
+    func locationManager(manager: LocatioManager, didEnterRegion region: CLRegion) {
         if region is CLBeaconRegion {
-            didEnterBeaconRegion(region as! CLBeaconRegion)
+            sendEvent(.DidEnterBeaconRegion(region as! CLBeaconRegion, config: nil, date: NSDate()))
         } else {
-            didEnterCircularRegion(region as! CLCircularRegion)
+            sendEvent(.DidEnterCircularRegion(region as! CLCircularRegion, location: nil, date: NSDate()))
         }
     }
     
-    public func locationManager(manager: CLLocationManager, didExitRegion region: CLRegion) {
+    func locationManager(manager: LocatioManager, didExitRegion region: CLRegion) {
         if region is CLBeaconRegion {
-            didExitBeaconRegion(region as! CLBeaconRegion)
+            sendEvent(.DidExitBeaconRegion(region as! CLBeaconRegion, config: nil, date: NSDate()))
         } else {
-            didExitCircularRegion(region as! CLCircularRegion)
+            sendEvent(.DidExitCircularRegion(region as! CLCircularRegion, location: nil, date: NSDate()))
         }
     }
     
-    func didEnterBeaconRegion(region: CLBeaconRegion) {
-        sendEvent(.DidEnterBeaconRegion(region, config: nil, date: NSDate()))
-    }
-    
-    func didEnterCircularRegion(region: CLCircularRegion) {
-        sendEvent(.DidEnterCircularRegion(region, location: nil, date: NSDate()))
-    }
-    
-    func didExitBeaconRegion(region: CLBeaconRegion) {
-        sendEvent(.DidExitBeaconRegion(region, config: nil, date: NSDate()))
-    }
-    
-    func didExitCircularRegion(region: CLCircularRegion) {
-        sendEvent(.DidExitCircularRegion(region, location: nil, date: NSDate()))
-    }
-    
-    public func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+    func locationManager(manager: LocatioManager, didUpdateLocations locations: [CLLocation]) {
         let location = locations[0]
         let date = NSDate()
         sendEvent(.DidUpdateLocation(location, date: date))
     }
 }
 
+extension Rover: EventOperationDelegate {
+    
+    func eventOperation(operation: EventOperation, didPostEvent event: Event) {
+        self.notifyObservers(event: event)
+    }
+    
+    func eventOperation(operation: EventOperation, didReceiveRegions regions: [CLRegion]) {
+        self.regions = regions
+        //if locationManager.monitoredRegions.count > 0 { // isMonitoring
+        self.stopRegionMonitoring()
+        self.startRegionMonitoring()
+    }
+    
+    func eventOperation(operation: EventOperation, didReceiveMessages messages: [Message]) {
+        self.deliverMessages(messages)
+    }
+}
+
 enum Router {
     case Events
+    case Inbox
+    case DeleteMessage(Message)
+    case PatchMessage(Message)
     
     var method: String {
         switch self {
         case .Events:
             return "POST"
+        case .DeleteMessage(_):
+            return "DELETE"
+        case .PatchMessage(_):
+            return "PATCH"
         default:
             return "GET"
         }
     }
     
+    var baseURLString: String {
+        return "https://api.staging.rover.io/v1"
+    }
+    
     var url: NSURL {
         switch self {
         case .Events:
-            return NSURL(string: "https://rover-content-api-staging-pr-7.herokuapp.com/v1/events")!
+            return NSURL(string: "\(baseURLString)/events")!
+        case .Inbox:
+            return NSURL(string: "\(baseURLString)/inbox")!
+        case .DeleteMessage(let message):
+            return NSURL(string: "\(baseURLString)/inbox/messages/\(message.identifier)")!
+        case .PatchMessage(let message):
+            return NSURL(string: "\(baseURLString)/inbox/messages/\(message.identifier)")!
         }
     }
     
@@ -229,9 +291,7 @@ enum Router {
         let urlRequest = NSMutableURLRequest(URL: self.url)
         urlRequest.HTTPMethod = self.method
         urlRequest.setValue(Rover.sharedInstance?.applicationToken, forHTTPHeaderField: "X-Rover-Api-Key")
+        urlRequest.setValue(UIDevice.currentDevice().identifierForVendor?.UUIDString ?? "[UNKNOWN]", forHTTPHeaderField: "X-Rover-Device-Id")
         return urlRequest
     }
 }
-
-
-

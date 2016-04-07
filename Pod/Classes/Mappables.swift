@@ -43,7 +43,7 @@ extension CLRegion : Mappable {
 extension Event : Mappable {
     static func instance(JSON: [String : AnyObject], included: [String: Any]?) -> Event? {
         guard let type = JSON["type"] as? String,
-            attributes = JSON["attributes"],
+            attributes = JSON["attributes"] as? [String: AnyObject],
             object = attributes["object"] as? String,
             action = attributes["action"] as? String,
             date = included?["date"] as? NSDate
@@ -117,5 +117,39 @@ extension Location : Mappable {
             tags = JSON["tags"] as? [String] else { return nil }
         
         return Location(coordinates: CLLocationCoordinate2D(latitude: latitude, longitude: longitude), radius: radius, name: name, tags: tags)
+    }
+}
+
+extension Message : Mappable {
+    static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> Message? {
+        
+        let dateFormatter = NSDateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        
+        guard let type = JSON["type"] as? String,
+            identifier = JSON["id"] as? String,
+            attributes = JSON["attributes"] as? [String: AnyObject],
+            title = attributes["title"] as? String,
+            timestampString = attributes["timestamp"] as? String,
+            timestamp = dateFormatter.dateFromString(timestampString),
+            text = attributes["notification-text"] as? String
+            where type == "messages" else { return nil }
+        
+        let message = Message(title: title, text: text, timestamp: timestamp, identifier: identifier)
+
+        message.read = attributes["read"] as? Bool ?? false
+        
+        if let action = attributes["action"] as? String {
+            switch action {
+            case "link":
+                message.action = .Link
+                message.url = NSURL(string: attributes["action-url"] as? String ?? "")
+            default:
+                message.action = .None
+            }
+        }
+
+        
+        return message
     }
 }

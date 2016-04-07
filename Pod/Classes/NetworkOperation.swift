@@ -8,7 +8,7 @@
 
 import Foundation
 
-class NetworkOperation: NSOperation {
+class NetworkOperation: ConcurrentOperation {
     
     var urlRequest: NSMutableURLRequest
     var urlSessionTask: NSURLSessionDataTask?
@@ -45,13 +45,8 @@ class NetworkOperation: NSOperation {
         
         self.init(mutableUrlRequest: urlRequest, completion: completion)
     }
-    
-    override func start() {
-        guard !cancelled else {
-            finished = true
-            return
-        }
-        
+
+    override func execute() {
         do {
             if let payload = payload {
                 switch self.urlRequest.HTTPMethod {
@@ -78,8 +73,7 @@ class NetworkOperation: NSOperation {
                 //self.completion(nil, e)
             } else {
                 defer {
-                    self.executing = false
-                    self.finished = true
+                    self.finish()
                 }
                 
                 let response = response as! NSHTTPURLResponse
@@ -100,34 +94,7 @@ class NetworkOperation: NSOperation {
             }
         }
         
-        executing = true
         urlSessionTask.resume()
-    }
-    
-    override private(set) var finished: Bool {
-        get {
-            return _finished
-        }
-        set {
-            willChangeValueForKey("isFinished")
-            _finished = newValue
-            didChangeValueForKey("isFinished")
-        }
-    }
-    
-    override private(set) var executing: Bool {
-        get {
-            return _executing
-        }
-        set {
-            willChangeValueForKey("isExecuting")
-            _executing = newValue
-            didChangeValueForKey("isExecuting")
-        }
-    }
-    
-    override var concurrent: Bool {
-        return true
     }
     
     

@@ -9,6 +9,6 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  Rover: 968449227ef814c58b379caaf4d46774c2f90d1d
+  Rover: 36061aa1d2b7acf7641e5c3a41ac120eb02ccfd2
 
 COCOAPODS: 0.39.0

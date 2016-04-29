@@ -17,15 +17,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
-        Rover.setup(applicationToken: "0628d761f3cebf6a586aa02cc4648bd2") // has to happen on app startup
+        Rover.setup(applicationToken: "6c546189dc45df1293bddc18c0b54786")
+        //Rover.setup(applicationToken: "0628d761f3cebf6a586aa02cc4648bd2") // has to happen on app startup
         Rover.addObserver(self)
     
         //Rover.startMonitoring() // asks for location permissions
-        //Rover.registerForNotifications() // asks for notification permissions
+        Rover.registerForNotifications() // asks for notification permissions
         
         //Rover.identify("my@email.address")
         //Rover.user.setAttribute(key: "myKey", value: "myValue")
-        
+
         
         //Rover.addObserver(SomeObjectConformingToRoverInterface)
         
@@ -37,12 +38,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //        if Rover.didReceiveLocalNotification(notification) {
 //            return;
 //        }
+        
+        Rover.didReceiveLocalNotification(notification)
     }
     
-    func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]) {
-//        if Rover.didReceiveRemoteNotification(userInfo: userInfo) {
-//            return;
-//        }
+    
+    func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject], fetchCompletionHandler completionHandler: (UIBackgroundFetchResult) -> Void) {
+        Rover.didReceiveRemoteNotification(userInfo, fetchCompletionHandler: completionHandler)
     }
     
     func application(application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData) {
@@ -53,6 +55,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     }
 
+    
+    func applicationWillTerminate(application: UIApplication) {
+        print("Terminator")
+    }
 
 }
 

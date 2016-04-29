@@ -17,6 +17,10 @@
     [Rover registerForNotifications];
     [Rover stopMonitoring];
     
+    Message *message = [[Message alloc] init];
+    message.action == ActionLink;
+    
+    
 }
 
 @end

@@ -12,10 +12,10 @@ import Foundation
 @objc
 public protocol RoverObserver {
     
-    optional func didEnterBeaconRegion(config config: BeaconConfiguration)//, location: Location?)
-    optional func didExitBeaconRegion(config config: BeaconConfiguration)
+    optional func didEnterBeaconRegion(config config: BeaconConfiguration, location: Location?)
+    optional func didExitBeaconRegion(config config: BeaconConfiguration, location: Location?)
     
-    optional func didEnterGeofence(location location: Location)
+    optional func didEnterGeofence(location location: Location) // 3 rules of real estate!!! :)
     optional func didExitGeofence(location location: Location)
 
     optional func shouldDeliverMessage(message: Message) -> Bool

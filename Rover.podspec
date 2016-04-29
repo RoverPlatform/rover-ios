@@ -17,6 +17,7 @@ Pod::Spec.new do |s|
 #   * Write the description between the DESC delimiters below.
 #   * Finally, don't worry about the indent, CocoaPods strips it!  
   s.description      = <<-DESC
+                        Rover SDK
                        DESC
 
   s.homepage         = "https://github.com/<GITHUB_USERNAME>/Rover"
@@ -37,6 +38,22 @@ Pod::Spec.new do |s|
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
   
-  s.frameworks = 'UIKit', 'CoreLocation', 'CoreData'
-  
+  s.frameworks = 'UIKit', 'CoreLocation'
+
+#  s.subspec 'Network' do |ss|
+#    ss.source_files = 'Pod/Classes/Network/**/*'
+#  end
+
+#  s.subspec 'Model' do |ss|
+#    ss.source_files = 'Pod/Classes/Model/**/*'
+#  end
+
+#  s.subspec 'Common' do |ss|
+#    ss.source_files = 'Pod/Classes/Common/**/*'
+#  end
+
+#  s.subspec 'UI' do |ss|
+#   ss.source_files = 'Pod/Classes/UI/**/*'
+#  end
+
 end

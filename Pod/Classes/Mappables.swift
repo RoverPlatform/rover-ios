@@ -50,6 +50,8 @@ extension Event : Mappable {
             where type == "events" else { return nil }
         
         switch (object, action) {
+        case ("app", "open"):
+            return nil
         case ("location", "update"):
             guard let
                 location = included?["location"] as? CLLocation else { return nil }
@@ -61,11 +63,16 @@ extension Event : Mappable {
                 beaconConfig = BeaconConfiguration.instance(config, included: nil),
                 beaconRegion = included?["region"] as? CLBeaconRegion else { return nil }
             
+            var location: Location?
+            if let locationAttributes = attributes["location"] as? [String: AnyObject] {
+                location = Location.instance(locationAttributes, included: nil)
+            }
+            
             switch action {
             case "enter":
-                return Event.DidEnterBeaconRegion(beaconRegion, config: beaconConfig, date: date)
+                return Event.DidEnterBeaconRegion(beaconRegion, config: beaconConfig, location: location, date: date)
             case "exit":
-                return Event.DidExitBeaconRegion(beaconRegion, config: beaconConfig, date: date)
+                return Event.DidExitBeaconRegion(beaconRegion, config: beaconConfig, location: location, date: date)
             default:
                 return nil
             }
@@ -122,28 +129,26 @@ extension Location : Mappable {
 
 extension Message : Mappable {
     static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> Message? {
-        
-        let dateFormatter = NSDateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-        
         guard let type = JSON["type"] as? String,
             identifier = JSON["id"] as? String,
             attributes = JSON["attributes"] as? [String: AnyObject],
-            title = attributes["title"] as? String,
+            title = attributes["ios-title"] as? String?,
             timestampString = attributes["timestamp"] as? String,
-            timestamp = dateFormatter.dateFromString(timestampString),
+            timestamp = rvDateFormatter.dateFromString(timestampString),
             text = attributes["notification-text"] as? String
             where type == "messages" else { return nil }
+        
+        
         
         let message = Message(title: title, text: text, timestamp: timestamp, identifier: identifier)
 
         message.read = attributes["read"] as? Bool ?? false
         
-        if let action = attributes["action"] as? String {
+        if let action = attributes["content-type"] as? String {
             switch action {
-            case "link":
+            case "website":
                 message.action = .Link
-                message.url = NSURL(string: attributes["action-url"] as? String ?? "")
+                message.url = NSURL(string: attributes["website-url"] as? String ?? "")
             default:
                 message.action = .None
             }

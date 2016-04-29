@@ -2,7 +2,7 @@
   "name": "Rover",
   "version": "0.1.0",
   "summary": "A short description of Rover.",
-  "description": "",
+  "description": "Rover SDK",
   "homepage": "https://github.com/<GITHUB_USERNAME>/Rover",
   "license": "MIT",
   "authors": {
@@ -27,7 +27,6 @@
   },
   "frameworks": [
     "UIKit",
-    "CoreLocation",
-    "CoreData"
+    "CoreLocation"
   ]
 }

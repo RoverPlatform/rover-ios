@@ -31,6 +31,10 @@ class ConcurrentOperation: NSOperation {
         return true
     }
     
+    override var asynchronous: Bool {
+        return true
+    }
+    
     
     override final func start() {
         guard !cancelled else {

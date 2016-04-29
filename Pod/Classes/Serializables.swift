@@ -13,11 +13,9 @@ import CoreBluetooth
 import CoreTelephony
 
 extension Event : Serializable {
-    func serialize() -> [String : AnyObject]? {
-        guard let serializedUser = User.sharedUser.serialize(), let serializedDevice = Device.CurrentDevice.serialize() else {
-            // ERROR
-            return nil
-        }
+    func serialize() -> [String : AnyObject] {
+        let serializedUser = User.sharedUser.serialize()
+        let serializedDevice = Device.CurrentDevice.serialize()
         
         var timestamp: NSDate
         var serializedAttributes: [String : AnyObject]
@@ -43,7 +41,7 @@ extension Event : Serializable {
                 "latitude": location.coordinate.latitude,
                 "longitude": location.coordinate.longitude
             ]
-        case .DidEnterBeaconRegion(let region, _, let date):
+        case .DidEnterBeaconRegion(let region, _, _, let date):
             timestamp = date
             serializedAttributes = [
                 "object": "beacon-region",
@@ -53,7 +51,7 @@ extension Event : Serializable {
                 "major-number": region.major!,
                 "minor-number": region.minor!
             ]
-        case .DidExitBeaconRegion(let region, _, let date):
+        case .DidExitBeaconRegion(let region, _, _, let date):
             timestamp = date
             serializedAttributes = [
                 "object": "beacon-region",
@@ -63,6 +61,27 @@ extension Event : Serializable {
                 "major-number": region.major!,
                 "minor-number": region.minor!
             ]
+        default:
+            timestamp = NSDate()
+            serializedAttributes = [String : AnyObject]()
+        }
+        
+        _swiftBugWorkaround(serializedAttributes: &serializedAttributes , timestamp: &timestamp)
+        
+        serializedAttributes["time"] = rvDateFormatter.stringFromDate(timestamp)
+        serializedAttributes["user"] = serializedUser
+        serializedAttributes["device"] = serializedDevice
+        
+        return [
+            "data": [
+                "type": "events",
+                "attributes": serializedAttributes
+            ]
+        ]
+    }
+    
+    func _swiftBugWorkaround(inout serializedAttributes serializedAttributes: [String: AnyObject], inout timestamp timestamp: NSDate) {
+        switch self {
         case .DidEnterCircularRegion(let region, _, let date):
             timestamp = date
             serializedAttributes = [
@@ -85,25 +104,8 @@ extension Event : Serializable {
                 "radius": region.radius
             ]
         default:
-            timestamp = NSDate()
-            serializedAttributes = [String : AnyObject]()
+            break
         }
-        
-        let dateFormatter = NSDateFormatter()
-        let enUSPOSIXLocale = NSLocale(localeIdentifier: "en_US_POSIX")
-        dateFormatter.locale = enUSPOSIXLocale
-        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.000ZZZZZ"
-        
-        serializedAttributes["time"] = dateFormatter.stringFromDate(timestamp)
-        serializedAttributes["user"] = serializedUser
-        serializedAttributes["device"] = serializedDevice
-        
-        return [
-            "data": [
-                "type": "events",
-                "attributes": serializedAttributes
-            ]
-        ]
     }
 }
 
@@ -119,19 +121,24 @@ extension Device : Serializable {
         return identifier
     }
     
-    func serialize() -> [String : AnyObject]? {
+    func serialize() -> [String : AnyObject] {
         let carrierName = CTTelephonyNetworkInfo().subscriberCellularProvider?.carrierName ?? NSNull()
         let osVersion = NSProcessInfo.processInfo().operatingSystemVersion
+        let localeComponents = NSLocale.componentsFromLocaleIdentifier(NSLocale.currentLocale().localeIdentifier)
+        let localeLanguage = localeComponents[NSLocaleLanguageCode]
+        let localeRegion = localeComponents[NSLocaleCountryCode]
+        let localNotificationsEnabled = UIApplication.sharedApplication().currentUserNotificationSettings()?.types.contains(.Alert) ?? false
         
         return [
             "app-identifier": NSBundle.mainBundle().bundleIdentifier ?? "",
             "udid": UIDevice.currentDevice().identifierForVendor!.UUIDString,
             "aid": ASIdentifierManager.sharedManager().advertisingIdentifier.UUIDString,
+            "ad-tracking": ASIdentifierManager.sharedManager().advertisingTrackingEnabled ,
             "token": Device.pushToken ?? NSNull(),
-            "locale-lang": NSLocale.preferredLanguages()[0],
-            "locale-region": NSLocale.currentLocale().localeIdentifier,
+            "locale-lang": localeLanguage ?? "",
+            "locale-region": localeRegion ?? "",
             "time-zone": NSTimeZone.localTimeZone().name,
-            "local-notifications-enabled": UIApplication.sharedApplication().currentUserNotificationSettings()?.types.contains(.Alert) ?? false,
+            "local-notifications-enabled": localNotificationsEnabled,
             "remote-notifications-enabled": UIApplication.sharedApplication().isRegisteredForRemoteNotifications(),
             "background-enabled": UIApplication.sharedApplication().backgroundRefreshStatus == .Available,
             "location-monitoring-enabled": CLLocationManager.authorizationStatus() == .AuthorizedAlways,
@@ -149,7 +156,7 @@ extension Device : Serializable {
 }
 
 extension User : Serializable {
-    func serialize() -> [String : AnyObject]? {
+    func serialize() -> [String : AnyObject] {
         return [
             "name": name ?? NSNull(),
             "email": email ?? NSNull(),
@@ -163,7 +170,7 @@ extension User : Serializable {
 }
 
 extension Message : Serializable {
-    func serialize() -> [String : AnyObject]? {
+    func serialize() -> [String : AnyObject] {
         return [
             "data": [
                 "type": "messages",

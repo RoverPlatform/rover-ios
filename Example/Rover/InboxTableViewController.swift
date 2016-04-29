@@ -19,9 +19,11 @@ class InboxTableViewController: UITableViewController {
         self.navigationItem.rightBarButtonItem = self.editButtonItem()
         
         self.refreshControl = UIRefreshControl()
-        self.refreshControl?.addTarget(self, action: "reloadMessages", forControlEvents: .ValueChanged)
+        self.refreshControl?.addTarget(self, action: #selector(InboxTableViewController.reloadMessages), forControlEvents: .ValueChanged)
         
         reloadMessages()
+        
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -86,19 +88,13 @@ class InboxTableViewController: UITableViewController {
 //            self.tableView.deselectRowAtIndexPath(indexPath, animated: true)
 //        }
         let message = messages[indexPath.row]
-        switch message.action {
-        case .Link:
-            if let url = message.url {
-                UIApplication.sharedApplication().openURL(url)
-            }
-        default:
-            break
+        Rover.followMessageAction(message)
 //        case .LandingPage:
 //            let screenViewController = RVScreenViewController()
 //            presentViewController(screenViewController, animated: true, completion: nil)
             
         //case .Experience:
-        }
+        
     }
 
 }

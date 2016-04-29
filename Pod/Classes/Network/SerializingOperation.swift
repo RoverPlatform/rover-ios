@@ -21,15 +21,17 @@ class SerializingOperation : NSOperation {
     }
     
     override func main() {
-        if let JSON = model.serialize() {
-            completion(JSON: JSON)
-        } else {
-            //fail
-        }
+        let JSON = model.serialize()
+        completion(JSON: JSON)
+//        if let JSON = model.serialize() {
+//            //completion(JSON: JSON)
+//        } else {
+//            rvLog("Serialization failed", data: self.model.dynamicType, level: .Error)
+//        }
     }
 }
 
 protocol Serializable {
     // TODO: remove the optional from the whole dic
-    func serialize() -> [String: AnyObject]?
+    func serialize() -> [String: AnyObject]
 }

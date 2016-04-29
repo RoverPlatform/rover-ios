@@ -29,6 +29,7 @@ class MappingOperation<T where T : Mappable> : NSOperation {
     }
     
     override func main() {
+        // TODO: each return statement should fire completion
         guard let json = json, let data = json["data"] else {
             cancel()
             return
@@ -44,10 +45,7 @@ class MappingOperation<T where T : Mappable> : NSOperation {
                 itemsArray.append(resource)
             }
             
-            //guard let typedCollection = itemsArray as? [T] else {
-            // error couldnt map collection to type [T]
-            //    return
-            //}
+            rvLog("Mapped collection of type \(T.self.dynamicType)", data: "\(itemsArray.count) items", level: .Trace)
             collectionCompletion?(itemsArray)
         case is [String: AnyObject]:
             let resource = T.instance(data as! [String : AnyObject], included: included)
@@ -55,9 +53,10 @@ class MappingOperation<T where T : Mappable> : NSOperation {
                 // error couldnt map to type T
                 return
             }
+            rvLog("Mapped resource of type \(T.self.dynamicType)", data: nil, level: .Trace)
             resourceCompletion?(typedResource)
         default:
-            // error invalid data hash
+            rvLog("Invalid data.", data: data, level: .Error)
             break
         }
     }
@@ -66,6 +65,6 @@ class MappingOperation<T where T : Mappable> : NSOperation {
 }
 
 protocol Mappable {
-    typealias MappableType
+    associatedtype MappableType
     static func instance(JSON: [String: AnyObject], included: [String: Any]?) -> MappableType?
 }

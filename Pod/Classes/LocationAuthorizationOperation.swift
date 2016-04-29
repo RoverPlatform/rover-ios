@@ -14,10 +14,12 @@ class LocationAuthorizationOperation: ConcurrentOperation, CLLocationManagerDele
     var locationManager: CLLocationManager?
     
     override func execute() {
-        guard CLLocationManager.authorizationStatus() == .NotDetermined else {
+        guard CLLocationManager.authorizationStatus() == .NotDetermined && !cancelled else {
             finish()
             return
         }
+        
+        rvLog("Requesting location permissions", level: .Trace)
         
         // TODO: Do a check for NSLocationAlwaysUsageDescription in the application .plist
         
@@ -33,8 +35,6 @@ class LocationAuthorizationOperation: ConcurrentOperation, CLLocationManagerDele
     // MARK: CLLocationManagerDelegate
     
     func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
-        if status != .NotDetermined {
-            finish()
-        }
+        finish()
     }
 }

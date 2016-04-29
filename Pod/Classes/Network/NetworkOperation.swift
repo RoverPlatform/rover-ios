@@ -27,7 +27,7 @@ class NetworkOperation: ConcurrentOperation {
     private var _finished = false
     private var _executing = false
     
-    typealias JSONCompletionBlock = ([String: AnyObject]?, NSError?) -> Void
+    typealias JSONCompletionBlock = ([String: AnyObject]?, ErrorType?) -> Void
     
     required init(mutableUrlRequest: NSMutableURLRequest, completion: JSONCompletionBlock?) {
         self.urlRequest = mutableUrlRequest
@@ -60,21 +60,28 @@ class NetworkOperation: ConcurrentOperation {
             urlRequest.setValue("application/vnd.api+json", forHTTPHeaderField: "Accept")
             urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
             
-            // TODO:
-            urlRequest.setValue("0628d761f3cebf6a586aa02cc4648bd2", forHTTPHeaderField: "X-Rover-Api-Key")
         } catch {
-            // RVLOGERROR "Error with payload"
-            cancel()
+            self.completion?(nil, error)
+            rvLog("Error creating network request", data: error, level: .Error)
+            finish()
+            return
         }
         
+        // TODO: maybe use KVO on URLSession like they do in AdvancedNSOperations example project
+        
         let urlSessionTask = NSURLSession.sharedSession().dataTaskWithRequest(urlRequest) { (data, response, error) -> Void in
+            defer {
+                self.finish()
+            }
+            
+            if self.cancelled {
+                return
+            }
+            
             if let e = error {
-                self.cancel()
-                //self.completion(nil, e)
+                self.completion?(nil, e)
+                
             } else {
-                defer {
-                    self.finish()
-                }
                 
                 let response = response as! NSHTTPURLResponse
                 switch response.statusCode {
@@ -82,14 +89,23 @@ class NetworkOperation: ConcurrentOperation {
                     if let JSON = try? NSJSONSerialization.JSONObjectWithData(data!, options: .AllowFragments) {
                         self.completion?(JSON as? [String : AnyObject], nil)
                     } else {
+                        rvLog("Unexpected JSON", data: nil, level: .Error)
                         self.completion?(nil, NSError(domain: "io.rover.unexpectedjson", code: 13, userInfo: nil))
                     }
-                    
-                case 404: self.completion?(nil, NSError(domain: "io.rover.notfound", code: 10, userInfo: nil))
-                case 400...499: self.completion?(nil, NSError(domain: "io.rover.clienterror", code: 11, userInfo: nil))
-                case 500...599: self.completion?(nil, NSError(domain: "io.rover.servererror", code: 12, userInfo: nil))
+                case 204:
+                    rvLog("No content", data: nil, level: .Trace)
+                    self.completion?(nil, nil)
+                case 404:
+                    self.completion?(nil, NSError(domain: "io.rover.notfound", code: 10, userInfo: nil))
+                case 400...499:
+                    rvLog("Client error", data: nil, level: .Error)
+                    self.completion?(nil, NSError(domain: "io.rover.clienterror", code: 11, userInfo: nil))
+                case 500...599:
+                    rvLog("Server error", data: response.statusCode, level: .Error)
+                    self.completion?(nil, NSError(domain: "io.rover.servererror", code: 12, userInfo: nil))
                 default:
-                    print("Received HTTP \(response.statusCode), which was not handled")
+                    rvLog("Invalid HTTP response", data: response.statusCode, level: .Error)
+                    self.completion?(nil, NSError(domain: "io.rover.invalidresponse", code: 13, userInfo: nil))
                 }
             }
         }

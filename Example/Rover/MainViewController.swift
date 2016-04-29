@@ -28,7 +28,7 @@ class BeaconRegion {
     }
 }
 
-class ViewController: UITableViewController {
+class MainViewController: UITableViewController {
     
     let locationManager = CLLocationManager()
     
@@ -38,7 +38,7 @@ class ViewController: UITableViewController {
     var beaconEditing = false {
         didSet {
             if beaconEditing {
-                self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Done", style: .Done, target: self, action: "endBeaconEditing")
+                self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Done", style: .Done, target: self, action: #selector(MainViewController.endBeaconEditing))
             } else {
                 self.navigationItem.leftBarButtonItem = updateBarButtonItem
             }
@@ -187,24 +187,24 @@ class ViewController: UITableViewController {
 
 }
 
-extension ViewController : BeaconTableViewCellDelegate {
+extension MainViewController : BeaconTableViewCellDelegate {
     
     func beaconTableViewCellDidPressEnter(cell: BeaconTableViewCell) {
         guard let indexPath = tableView.indexPathForCell(cell) else { return }
         let region = beaconRegions[indexPath.row]
         let simulatedRegion = CLBeaconRegion(proximityUUID: region.UUID, major: region.major, minor: region.minor, identifier: region.identifier)
-        Rover.simulateEvent(Event.DidEnterBeaconRegion(simulatedRegion, config: nil, date: NSDate()))
+        Rover.simulateEvent(Event.DidEnterBeaconRegion(simulatedRegion, config: nil, location: nil, date: NSDate()))
     }
     
     func beaconTableViewCellDidPressExit(cell: BeaconTableViewCell) {
         guard let indexPath = tableView.indexPathForCell(cell) else { return }
         let region = beaconRegions[indexPath.row]
         let simulatedRegion = CLBeaconRegion(proximityUUID: region.UUID, major: region.major, minor: region.minor, identifier: region.identifier)
-        Rover.simulateEvent(Event.DidExitBeaconRegion(simulatedRegion, config: nil, date: NSDate()))
+        Rover.simulateEvent(Event.DidExitBeaconRegion(simulatedRegion, config: nil, location: nil, date: NSDate()))
     }
 }
 
-extension ViewController : GeofenceTableViewCellDelegate {
+extension MainViewController : GeofenceTableViewCellDelegate {
     
     func geofenceTableViewCellDidPressEnter(cell: GeofenceTableViewCell) {
         guard let indexPath = tableView.indexPathForCell(cell) else { return }
@@ -220,7 +220,7 @@ extension ViewController : GeofenceTableViewCellDelegate {
     }
 }
 
-extension ViewController : CLLocationManagerDelegate {
+extension MainViewController : CLLocationManagerDelegate {
     
     func locationManager(manager: CLLocationManager, didStartMonitoringForRegion region: CLRegion) {
         reloadDataSource()

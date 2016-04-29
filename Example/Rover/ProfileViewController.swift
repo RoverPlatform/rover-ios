@@ -38,7 +38,7 @@ class ProfileViewController: UIViewController {
         ageField.text = String(customer.age)
         tagsField.text = customer.tags?.joinWithSeparator(",")
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didShowKeyboard:", name: UIKeyboardDidShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ProfileViewController.didShowKeyboard(_:)), name: UIKeyboardDidShowNotification, object: nil)
     }
 
     override func didReceiveMemoryWarning() {
@@ -52,7 +52,7 @@ class ProfileViewController: UIViewController {
     
     func didShowKeyboard(note: NSNotification) {
         navigationItem.leftBarButtonItem = nil
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Done", style: .Done, target: self, action: "didFinishEditing")
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Done", style: .Done, target: self, action: #selector(ProfileViewController.didFinishEditing))
     }
     
     func didFinishEditing() {

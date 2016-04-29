@@ -35,9 +35,13 @@ class EventOperation: ConcurrentOperation {
     private let bluetoothOperationQueue = NSOperationQueue()
     private let internalQueue = NSOperationQueue()
     
+    private var event: Event
+    
     weak var delegate: EventOperationDelegate?
     
     required init(event: Event) {
+        self.event = event
+        
         super.init()
         
         bluetoothOperationQueue.maxConcurrentOperationCount = 1
@@ -53,6 +57,8 @@ class EventOperation: ConcurrentOperation {
         let messageMappingOperation = MappingOperation { (messages: [Message]) in
             guard messages.count > 0 else { return }
             
+            //rvLog("Received new messages", data: messages, level: .Trace)
+            
             dispatch_async(dispatch_get_main_queue()) {
                 self.delegate?.eventOperation(self, didReceiveMessages: messages)
             }
@@ -60,25 +66,28 @@ class EventOperation: ConcurrentOperation {
         let regionMappingOperation = MappingOperation { (regions: [CLRegion]) in
             guard regions.count > 0 else { return }
             
+            //rvLog("Received new regions", data: regions, level: .Trace)
+            
             dispatch_async(dispatch_get_main_queue()) {
                 self.delegate?.eventOperation(self, didReceiveRegions: regions)
             }
         }
         let eventMappingOperation = MappingOperation { (event: Event) in
             // TODO: dispatch_async?
+            //rvLog("Event submitted: \(event)", data: event, level: .Trace)
             self.delegate?.eventOperation(self, didPostEvent: event)
         }
-        let networkOperation = NetworkOperation(mutableUrlRequest: Router.Events.urlRequest) { JSON, error in
-            //
-            //
-            //
+        let networkOperation = NetworkOperation(mutableUrlRequest: Router.Events.urlRequest) {
+            [unowned regionMappingOperation, unowned messageMappingOperation, unowned eventMappingOperation]
+            JSON, error in
+
             if let included = JSON?["included"] as? [[String: AnyObject]] {
                 regionMappingOperation.json = ["data": included]
                 messageMappingOperation.json = ["data": included]
             }
             eventMappingOperation.json = JSON
         }
-        let serializingOperation = SerializingOperation(model: event) { JSON in
+        let serializingOperation = SerializingOperation(model: event) { [unowned networkOperation] JSON in
             networkOperation.payload = JSON
         }
         let bluetoothStatusOperation = BluetoothStatusOperation { isOn in
@@ -112,9 +121,13 @@ class EventOperation: ConcurrentOperation {
         internalQueue.cancelAllOperations()
         
         super.cancel()
+        
+        finish()
     }
     
     override func execute() {
+        //rvLog("Submitting event", data: self.event, level: .Trace)
+        
         bluetoothOperationQueue.suspended = false
         internalQueue.suspended = false
     }

@@ -1,11 +1,11 @@
 source 'https://github.com/CocoaPods/Specs.git'
 use_frameworks!
 
-target 'Rover_Example', :exclusive => true do
+target 'Rover_Example' do
   pod "Rover", :path => "../"
 end
 
-target 'Rover_Tests', :exclusive => true do
+target 'Rover_Tests' do
   pod "Rover", :path => "../"
 
   

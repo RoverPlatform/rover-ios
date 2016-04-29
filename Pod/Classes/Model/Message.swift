@@ -19,7 +19,7 @@ public enum Action : Int {
 public class Message : NSObject {
     
     public let identifier: String
-    public let title: String
+    public let title: String?
     public let text: String
     public let timestamp: NSDate
     public var read: Bool = false
@@ -28,7 +28,7 @@ public class Message : NSObject {
     public internal(set) var url: NSURL?
     
     
-    init(title: String, text: String, timestamp: NSDate, identifier: String) {
+    init(title: String?, text: String, timestamp: NSDate, identifier: String) {
         self.title = title
         self.text = text
         self.timestamp = timestamp

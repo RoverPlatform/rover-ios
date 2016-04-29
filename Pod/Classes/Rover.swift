@@ -8,11 +8,12 @@
 
 import Foundation
 import CoreLocation
+import SafariServices
 
 public class Rover : NSObject {
     
     private static let _sharedInstance = Rover()
-    private static var sharedInstance: Rover? {
+    static var sharedInstance: Rover? {
         guard _sharedInstance.applicationToken != nil else {
             rvLog("Rover accessed before setup", level: .Error)
             return nil
@@ -20,22 +21,23 @@ public class Rover : NSObject {
         return _sharedInstance
     }
     
-    private var applicationToken: String?
+    var applicationToken: String?
     
-    //private let locationManager = CLLocationManager()
     private let locationManager = LocatioManager()
-    private var regions: [CLRegion] = []
     
     private let operationQueue = NSOperationQueue()
     private let eventOperationQueue = NSOperationQueue()
+    
+    private var window: UIWindow?
     
     private override init () {
         super.init()
         
         eventOperationQueue.maxConcurrentOperationCount = 1
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationDidOpen", name: UIApplicationDidFinishLaunchingNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationDidOpen", name: UIApplicationWillEnterForegroundNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(Rover.applicationDidfinishLaunching(_:)), name: UIApplicationDidFinishLaunchingNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(Rover.applicationDidOpen), name: UIApplicationDidFinishLaunchingNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(Rover.applicationDidOpen), name: UIApplicationWillEnterForegroundNotification, object: nil)
         
         locationManager.delegate = self
         
@@ -45,6 +47,7 @@ public class Rover : NSObject {
         UIApplication.sharedApplication().registerUserNotificationSettings(userNotificationSettings)
         
         // TEMP END
+    
     }
     
     // MARK: Class Methods
@@ -64,24 +67,24 @@ public class Rover : NSObject {
         let locationAuthorizationOperation = LocationAuthorizationOperation()
         locationAuthorizationOperation.completionBlock = {
             if CLLocationManager.authorizationStatus() == .AuthorizedAlways {
-                sharedInstance?.startRegionMonitoring()
-                sharedInstance?.locationManager.startMonitoringSignificantLocationChanges()
+                sharedInstance?.locationManager.startMonitoring()
             } else {
-                rvLog("Location permissions not granted")
+                rvLog("Location permissions not granted", level: .Warn)
             }
         }
         sharedInstance?.operationQueue.addOperation(locationAuthorizationOperation)
     }
     
     public class func stopMonitoring() {
-        sharedInstance?.stopRegionMonitoring()
-        sharedInstance?.locationManager.stopMonitoringSignificantLocationChanges()
+        sharedInstance?.locationManager.stopMonitoring()
     }
     
     public class func registerForNotifications() {
         UIApplication.sharedApplication().registerUserNotificationSettings(UIUserNotificationSettings(forTypes: [.Alert, .Badge, .Sound], categories: nil))
         UIApplication.sharedApplication().registerForRemoteNotifications()
     }
+    
+
     
     private(set) var observers = [RoverObserver]()
     
@@ -144,6 +147,21 @@ public class Rover : NSObject {
         sharedInstance?.sendEvent(.DidUpdateLocation(location, date: NSDate()))
     }
     
+    public class func followMessageAction(message: Message) {
+        followAction(message.action, url: message.url)
+    }
+    
+    public class func followAction(action: Action, url: NSURL?) {
+        switch action {
+        case .Link:
+            if let url = url {
+                sharedInstance?.presentSafariViewController(url: url)
+            }
+        default:
+            break
+        }
+    }
+    
     // MARK: Application Hooks
     
     public class func didRegisterForRemoteNotification(deviceToken deviceToken: NSData) {
@@ -157,19 +175,33 @@ public class Rover : NSObject {
         sharedInstance?.sendEvent(Event.DeviceUpdate(date: NSDate()))
     }
     
+    
+    
+    public class func didReceiveRemoteNotification(userInfo: [NSObject: AnyObject], fetchCompletionHandler completionHandler: (UIBackgroundFetchResult) -> Void) {
+        guard UIApplication.sharedApplication().applicationState != .Active,
+            let data = userInfo["data"] as? [String: AnyObject] else { return }
+        
+        let mappingOperation = MappingOperation { (message: Message) in
+            Rover.followMessageAction(message)
+        }
+        mappingOperation.completionBlock = { completionHandler(.NoData) }
+        mappingOperation.json = ["data" : data]
+        mappingOperation.start()
+    }
+    
+    public class func didReceiveLocalNotification(notification: UILocalNotification) {
+        guard UIApplication.sharedApplication().applicationState != .Active,
+            let messageId = notification.userInfo?["message-id"] as? String,
+            let messageActionInt = notification.userInfo?["action"] as? Int,
+            let messageAction = Action(rawValue: messageActionInt),
+            let messageUrlString = notification.userInfo?["url"] as? String? else { return }
+        
+        if let urlString = messageUrlString {
+            followAction(messageAction, url: NSURL(string: urlString))
+        }
+    }
+    
     // MARK: Instance Methods
-    
-    func startRegionMonitoring() {
-        regions.forEach { region in
-            locationManager.startMonitoringForRegion(region)
-        }
-    }
-    
-    func stopRegionMonitoring() {
-        locationManager.monitoredRegions.forEach { region in
-            locationManager.stopMonitoringForRegion(region)
-        }
-    }
     
     func notifyObservers(event event: Event) {
         for observer in observers {
@@ -177,20 +209,47 @@ public class Rover : NSObject {
         }
     }
     
-    func deliverMessages(messages: [Message]) {
-        messages.forEach { message in
-            
-            for observer in observers {
-                observer.willDeliverMessage?(message)
-            }
-            
+    func deliverMessage(message: Message) {
+        for observer in observers {
+            observer.willDeliverMessage?(message)
+        }
+        
+        if UIApplication.sharedApplication().applicationState == .Background {
             let notification = UILocalNotification()
             notification.alertBody = message.text
-            UIApplication.sharedApplication().presentLocalNotificationNow(notification)
-        
-            for observer in observers {
-                observer.didDeliverMessage?(message)
+            notification.alertTitle = message.title
+            notification.userInfo = [
+                "message-id" : message.identifier,
+                "action": message.action.rawValue
+            ]
+            if let url = message.url {
+                notification.userInfo?["url"] = url.absoluteString
             }
+            UIApplication.sharedApplication().presentLocalNotificationNow(notification)
+        }
+    
+        for observer in observers {
+            observer.didDeliverMessage?(message)
+        }
+    }
+    
+    func presentSafariViewController(url url: NSURL) {
+        if #available(iOS 9.0, *) {
+            let viewController = SFSafariViewController(URL: url)
+            viewController.delegate = self
+            
+            var frame = UIScreen.mainScreen().bounds
+            if UIDeviceOrientationIsLandscape(UIDevice.currentDevice().orientation) {
+                frame = CGRect(x: 0, y: 0, width: frame.height, height: frame.width)
+            }
+            
+            window = UIWindow(frame: frame)
+            window?.hidden = false
+            window?.rootViewController = UIViewController()
+            window?.rootViewController?.presentViewController(viewController, animated: true, completion: nil)
+        } else {
+            // Fallback on earlier versions
+            UIApplication.sharedApplication().openURL(url)
         }
     }
     
@@ -198,6 +257,12 @@ public class Rover : NSObject {
     
     func applicationDidOpen() {
         sendEvent(.ApplicationOpen(date: NSDate()))
+    }
+    
+    func applicationDidfinishLaunching(note: NSNotification) {
+        if let localNotificaiton = note.userInfo?[UIApplicationLaunchOptionsLocalNotificationKey] as? UILocalNotification {
+            Rover.didReceiveLocalNotification(localNotificaiton)
+        }
     }
     
     func sendEvent(event: Event) {
@@ -212,7 +277,7 @@ extension Rover : LocationManagerDelegate {
     
     func locationManager(manager: LocatioManager, didEnterRegion region: CLRegion) {
         if region is CLBeaconRegion {
-            sendEvent(.DidEnterBeaconRegion(region as! CLBeaconRegion, config: nil, date: NSDate()))
+            sendEvent(.DidEnterBeaconRegion(region as! CLBeaconRegion, config: nil, location: nil, date: NSDate()))
         } else {
             sendEvent(.DidEnterCircularRegion(region as! CLCircularRegion, location: nil, date: NSDate()))
         }
@@ -220,7 +285,7 @@ extension Rover : LocationManagerDelegate {
     
     func locationManager(manager: LocatioManager, didExitRegion region: CLRegion) {
         if region is CLBeaconRegion {
-            sendEvent(.DidExitBeaconRegion(region as! CLBeaconRegion, config: nil, date: NSDate()))
+            sendEvent(.DidExitBeaconRegion(region as! CLBeaconRegion, config: nil, location: nil, date: NSDate()))
         } else {
             sendEvent(.DidExitCircularRegion(region as! CLCircularRegion, location: nil, date: NSDate()))
         }
@@ -240,58 +305,20 @@ extension Rover: EventOperationDelegate {
     }
     
     func eventOperation(operation: EventOperation, didReceiveRegions regions: [CLRegion]) {
-        self.regions = regions
-        //if locationManager.monitoredRegions.count > 0 { // isMonitoring
-        self.stopRegionMonitoring()
-        self.startRegionMonitoring()
+        self.locationManager.monitoredRegions = Set(regions)
     }
     
     func eventOperation(operation: EventOperation, didReceiveMessages messages: [Message]) {
-        self.deliverMessages(messages)
+        for message in messages {
+            deliverMessage(message)
+        }
     }
 }
 
-enum Router {
-    case Events
-    case Inbox
-    case DeleteMessage(Message)
-    case PatchMessage(Message)
-    
-    var method: String {
-        switch self {
-        case .Events:
-            return "POST"
-        case .DeleteMessage(_):
-            return "DELETE"
-        case .PatchMessage(_):
-            return "PATCH"
-        default:
-            return "GET"
-        }
-    }
-    
-    var baseURLString: String {
-        return "https://api.staging.rover.io/v1"
-    }
-    
-    var url: NSURL {
-        switch self {
-        case .Events:
-            return NSURL(string: "\(baseURLString)/events")!
-        case .Inbox:
-            return NSURL(string: "\(baseURLString)/inbox")!
-        case .DeleteMessage(let message):
-            return NSURL(string: "\(baseURLString)/inbox/messages/\(message.identifier)")!
-        case .PatchMessage(let message):
-            return NSURL(string: "\(baseURLString)/inbox/messages/\(message.identifier)")!
-        }
-    }
-    
-    var urlRequest: NSMutableURLRequest {
-        let urlRequest = NSMutableURLRequest(URL: self.url)
-        urlRequest.HTTPMethod = self.method
-        urlRequest.setValue(Rover.sharedInstance?.applicationToken, forHTTPHeaderField: "X-Rover-Api-Key")
-        urlRequest.setValue(UIDevice.currentDevice().identifierForVendor?.UUIDString ?? "[UNKNOWN]", forHTTPHeaderField: "X-Rover-Device-Id")
-        return urlRequest
+extension Rover : SFSafariViewControllerDelegate {
+    @available(iOS 9.0, *)
+    public func safariViewControllerDidFinish(controller: SFSafariViewController) {
+        window?.rootViewController = nil
+        window = nil
     }
 }

@@ -61,6 +61,14 @@ extension Event : Serializable {
                 "major-number": region.major!,
                 "minor-number": region.minor!
             ]
+        case .DidOpenMessage(let identifier, let source, let date):
+            timestamp = date
+            serializedAttributes = [
+                "object": "message",
+                "action": "open",
+                "source": source ?? NSNull(),
+                "message-id": identifier
+            ]
         default:
             timestamp = NSDate()
             serializedAttributes = [String : AnyObject]()

@@ -35,6 +35,8 @@ class LocationAuthorizationOperation: ConcurrentOperation, CLLocationManagerDele
     // MARK: CLLocationManagerDelegate
     
     func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
-        finish()
+        if status != .NotDetermined {
+            finish()
+        }
     }
 }

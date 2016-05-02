@@ -55,20 +55,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     }
 
-    
-    func applicationWillTerminate(application: UIApplication) {
-        print("Terminator")
-    }
 
 }
 
 extension AppDelegate : RoverObserver {
     
     func didDeliverMessage(message: Message) {
-        if UIApplication.sharedApplication().applicationState == .Active {
-            let alert = UIAlertView(title: message.title, message: message.text, delegate: nil, cancelButtonTitle: "OK")
-            alert.show()
-        }
+//        if UIApplication.sharedApplication().applicationState == .Active {
+//            let alert = UIAlertView(title: message.title, message: message.text, delegate: nil, cancelButtonTitle: "OK")
+//            alert.show()
+//        }
     }
     
 }

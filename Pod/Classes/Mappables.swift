@@ -148,7 +148,10 @@ extension Message : Mappable {
             switch action {
             case "website":
                 message.action = .Link
-                message.url = NSURL(string: attributes["website-url"] as? String ?? "")
+                // TODO: this can throw, needs to be safer
+                if let url = attributes["website-url"] as? String {
+                    message.url = NSURL(string: url)
+                }
             default:
                 message.action = .None
             }

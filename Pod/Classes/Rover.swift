@@ -149,6 +149,7 @@ public class Rover : NSObject {
     
     public class func followMessageAction(message: Message) {
         followAction(message.action, url: message.url)
+        sharedInstance?.sendEvent(.DidOpenMessage(identifier: message.identifier, source: "inbox", date: NSDate()))
     }
     
     public class func followAction(action: Action, url: NSURL?) {
@@ -182,7 +183,8 @@ public class Rover : NSObject {
             let data = userInfo["data"] as? [String: AnyObject] else { return }
         
         let mappingOperation = MappingOperation { (message: Message) in
-            Rover.followMessageAction(message)
+            Rover.followAction(message.action, url: message.url)
+            sharedInstance?.sendEvent(.DidOpenMessage(identifier: message.identifier, source: "notification", date: NSDate()))
         }
         mappingOperation.completionBlock = { completionHandler(.NoData) }
         mappingOperation.json = ["data" : data]
@@ -199,6 +201,8 @@ public class Rover : NSObject {
         if let urlString = messageUrlString {
             followAction(messageAction, url: NSURL(string: urlString))
         }
+        
+        sharedInstance?.sendEvent(.DidOpenMessage(identifier: messageId, source: "notification", date: NSDate()))
     }
     
     // MARK: Instance Methods

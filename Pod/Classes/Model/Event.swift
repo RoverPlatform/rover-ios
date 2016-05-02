@@ -22,7 +22,7 @@ public enum Event {
     case DidEnterCircularRegion(CLCircularRegion, location: Location?, date: NSDate)
     case DidExitCircularRegion(CLCircularRegion, location: Location?, date: NSDate)
     
-    
+    case DidOpenMessage(identifier: String, source: String, date: NSDate)
     
     var properties: [String: Any] {
         switch self {
@@ -36,6 +36,8 @@ public enum Event {
             return ["region": region, "location": location, "date": date]
         case .DidExitCircularRegion(let region, let location, let date):
             return ["region": region, "location": location, "date": date]
+        case .DidOpenMessage(let identifier, let source, let date):
+            return ["identifier": identifier, "source": source, "date": date]
         default:
             return [String: Any]()
         }

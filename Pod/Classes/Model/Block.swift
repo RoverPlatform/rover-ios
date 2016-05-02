@@ -53,15 +53,3 @@ class Block: NSObject {
     
 }
 
-
-class Row: NSObject {
-    
-    var blocks: [Block]?
-    
-    var height: Unit?
-    
-    override init() {
-        super.init()
-    }
-    
-}

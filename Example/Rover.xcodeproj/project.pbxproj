@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		3D0BEB891CCE76D500A66351 /* LogsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D0BEB881CCE76D500A66351 /* LogsViewController.swift */; };
+		3D51C4471CD3B180002F6C24 /* MonitoringViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D51C4461CD3B180002F6C24 /* MonitoringViewController.swift */; };
 		3D54BC451C80CCE900A75F41 /* BeaconTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D54BC441C80CCE900A75F41 /* BeaconTableViewCell.swift */; };
 		3D54BC471C80CCF300A75F41 /* GeofenceTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D54BC461C80CCF300A75F41 /* GeofenceTableViewCell.swift */; };
 		3D5C24E31C56E91E00C2F78D /* Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D5C24E21C56E91E00C2F78D /* Test.m */; };
@@ -24,25 +25,14 @@
 		607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
-		607FACEC1AFB9204008FA782 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* Tests.swift */; };
-		98FB69190E7661BCBBD2FE6E /* Pods_Rover_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C14CAB641086EBADFEC6434 /* Pods_Rover_Tests.framework */; };
 		B1A4CAC89111E7225B426590 /* Pods_Rover_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C883BA082F65D40E43AFCACB /* Pods_Rover_Example.framework */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		607FACE61AFB9204008FA782 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 607FACC81AFB9204008FA782 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 607FACCF1AFB9204008FA782;
-			remoteInfo = Rover;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		0C14CAB641086EBADFEC6434 /* Pods_Rover_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Rover_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		179657B3A2CD8F99BF4955D5 /* Pods-Rover_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Rover_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Rover_Tests/Pods-Rover_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		3D0BEB881CCE76D500A66351 /* LogsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogsViewController.swift; sourceTree = "<group>"; };
+		3D51C4461CD3B180002F6C24 /* MonitoringViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MonitoringViewController.swift; sourceTree = "<group>"; };
 		3D54BC441C80CCE900A75F41 /* BeaconTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BeaconTableViewCell.swift; sourceTree = "<group>"; };
 		3D54BC461C80CCF300A75F41 /* GeofenceTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeofenceTableViewCell.swift; sourceTree = "<group>"; };
 		3D5C24E01C56E91D00C2F78D /* Rover_Example-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Rover_Example-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -64,7 +54,6 @@
 		607FACDA1AFB9204008FA782 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		607FACDC1AFB9204008FA782 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		607FACDF1AFB9204008FA782 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
-		607FACE51AFB9204008FA782 /* Rover_Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Rover_Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACEA1AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACEB1AFB9204008FA782 /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
 		73A9491889E14B137EE97547 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
@@ -83,14 +72,6 @@
 			files = (
 				3D5C55391C935820005F4602 /* MapKit.framework in Frameworks */,
 				B1A4CAC89111E7225B426590 /* Pods_Rover_Example.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		607FACE21AFB9204008FA782 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				98FB69190E7661BCBBD2FE6E /* Pods_Rover_Tests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -136,7 +117,6 @@
 			isa = PBXGroup;
 			children = (
 				607FACD01AFB9204008FA782 /* Rover_Example.app */,
-				607FACE51AFB9204008FA782 /* Rover_Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -159,6 +139,7 @@
 				3D5C24E11C56E91E00C2F78D /* Test.h */,
 				3D5C24E21C56E91E00C2F78D /* Test.m */,
 				3D5C24E01C56E91D00C2F78D /* Rover_Example-Bridging-Header.h */,
+				3D51C4461CD3B180002F6C24 /* MonitoringViewController.swift */,
 			);
 			name = "Example for Rover";
 			path = Rover;
@@ -234,28 +215,6 @@
 			productReference = 607FACD01AFB9204008FA782 /* Rover_Example.app */;
 			productType = "com.apple.product-type.application";
 		};
-		607FACE41AFB9204008FA782 /* Rover_Tests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 607FACF21AFB9204008FA782 /* Build configuration list for PBXNativeTarget "Rover_Tests" */;
-			buildPhases = (
-				A99FBE35AAABA1D8BBF4DE5F /* 📦 Check Pods Manifest.lock */,
-				607FACE11AFB9204008FA782 /* Sources */,
-				607FACE21AFB9204008FA782 /* Frameworks */,
-				607FACE31AFB9204008FA782 /* Resources */,
-				511C9E9C3F23534AA379A216 /* 📦 Embed Pods Frameworks */,
-				C30AAFC3B50E827923C5667B /* 📦 Copy Pods Resources */,
-				1B0C474490230BB5426040CA /* Embed Pods Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				607FACE71AFB9204008FA782 /* PBXTargetDependency */,
-			);
-			name = Rover_Tests;
-			productName = Tests;
-			productReference = 607FACE51AFB9204008FA782 /* Rover_Tests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -275,10 +234,6 @@
 							};
 						};
 					};
-					607FACE41AFB9204008FA782 = {
-						CreatedOnToolsVersion = 6.3.1;
-						TestTargetID = 607FACCF1AFB9204008FA782;
-					};
 				};
 			};
 			buildConfigurationList = 607FACCB1AFB9204008FA782 /* Build configuration list for PBXProject "Rover" */;
@@ -295,7 +250,6 @@
 			projectRoot = "";
 			targets = (
 				607FACCF1AFB9204008FA782 /* Rover_Example */,
-				607FACE41AFB9204008FA782 /* Rover_Tests */,
 			);
 		};
 /* End PBXProject section */
@@ -312,46 +266,9 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		607FACE31AFB9204008FA782 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		1B0C474490230BB5426040CA /* Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Rover_Tests/Pods-Rover_Tests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		511C9E9C3F23534AA379A216 /* 📦 Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "📦 Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Rover_Tests/Pods-Rover_Tests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		63973066848EBE925CBB5EA7 /* 📦 Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -397,21 +314,6 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Rover_Example/Pods-Rover_Example-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		A99FBE35AAABA1D8BBF4DE5F /* 📦 Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "📦 Check Pods Manifest.lock";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
 		B2203F56AB6CC8FA3A3BF2EE /* 📦 Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -427,21 +329,6 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Rover_Example/Pods-Rover_Example-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		C30AAFC3B50E827923C5667B /* 📦 Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "📦 Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Rover_Tests/Pods-Rover_Tests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -450,6 +337,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3D5C55331C91E0E9005F4602 /* InboxTableViewController.swift in Sources */,
+				3D51C4471CD3B180002F6C24 /* MonitoringViewController.swift in Sources */,
 				3D5C552D1C8A009F005F4602 /* ProfileViewController.swift in Sources */,
 				3D54BC471C80CCF300A75F41 /* GeofenceTableViewCell.swift in Sources */,
 				3D5C55371C920FE6005F4602 /* MessageTableViewCell.swift in Sources */,
@@ -464,23 +352,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		607FACE11AFB9204008FA782 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				607FACEC1AFB9204008FA782 /* Tests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		607FACE71AFB9204008FA782 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 607FACCF1AFB9204008FA782 /* Rover_Example */;
-			targetProxy = 607FACE61AFB9204008FA782 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		3DE41E781CCE7DA800EC69F6 /* Logs.storyboard */ = {
@@ -631,44 +503,6 @@
 			};
 			name = Release;
 		};
-		607FACF31AFB9204008FA782 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 179657B3A2CD8F99BF4955D5 /* Pods-Rover_Tests.debug.xcconfig */;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-				);
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = Tests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Rover_Example.app/Rover_Example";
-			};
-			name = Debug;
-		};
-		607FACF41AFB9204008FA782 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7C370410C06333439626FBFA /* Pods-Rover_Tests.release.xcconfig */;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = Tests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Rover_Example.app/Rover_Example";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -686,15 +520,6 @@
 			buildConfigurations = (
 				607FACF01AFB9204008FA782 /* Debug */,
 				607FACF11AFB9204008FA782 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		607FACF21AFB9204008FA782 /* Build configuration list for PBXNativeTarget "Rover_Tests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				607FACF31AFB9204008FA782 /* Debug */,
-				607FACF41AFB9204008FA782 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

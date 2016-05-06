@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Rover
 
 class LogsViewController: UIViewController {
 
@@ -42,6 +43,21 @@ class LogsViewController: UIViewController {
         guard let log = note.object as? String else { return }
         liveLogs = liveLogs + "\n" + log
         textView.text = liveLogs
+    }
+    
+    @IBAction func didPressChangeServer(sender: UIBarButtonItem) {
+        let alertController = UIAlertController(title: "Change Server", message: nil, preferredStyle: .Alert)
+        let action = UIAlertAction(title: "Change", style: .Default) { (action) in
+            NSUserDefaults.standardUserDefaults().setObject(alertController.textFields![0].text, forKey: "ROVER_SERVER_URL")
+            Router.baseURLString = alertController.textFields![0].text!
+        }
+        alertController.addTextFieldWithConfigurationHandler { (textField) in
+            textField.text = Router.baseURLString
+        }
+        alertController.addAction(action)
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: nil))
+        
+        presentViewController(alertController, animated: true, completion: nil)
     }
     
     /*

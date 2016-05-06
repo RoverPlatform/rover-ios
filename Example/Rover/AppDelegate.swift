@@ -17,8 +17,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
-        Rover.setup(applicationToken: "6c546189dc45df1293bddc18c0b54786")
-        //Rover.setup(applicationToken: "0628d761f3cebf6a586aa02cc4648bd2") // has to happen on app startup
+        Router.baseURLString = {
+            if let url = NSUserDefaults.standardUserDefaults().stringForKey("ROVER_SERVER_URL") {
+                return url
+            }
+            return "https://rover-content-api-development.herokuapp.com/v1"
+        }()
+        
+        //Rover.setup(applicationToken: "6c546189dc45df1293bddc18c0b54786")
+        Rover.setup(applicationToken: "0628d761f3cebf6a586aa02cc4648bd2") // has to happen on app startup
         Rover.addObserver(self)
     
         //Rover.startMonitoring() // asks for location permissions

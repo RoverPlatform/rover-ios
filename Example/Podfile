@@ -5,8 +5,8 @@ target 'Rover_Example' do
   pod "Rover", :path => "../"
 end
 
-target 'Rover_Tests' do
-  pod "Rover", :path => "../"
+#target 'Rover_Tests' do
+#  pod "Rover", :path => "../"
 
   
-end
+#end

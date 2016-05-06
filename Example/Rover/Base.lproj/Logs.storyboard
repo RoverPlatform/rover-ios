@@ -4,7 +4,7 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
     </dependencies>
     <scenes>
-        <!--Logs View Controller-->
+        <!--Logs-->
         <scene sceneID="EFz-gx-dgN">
             <objects>
                 <viewController id="pTP-9z-UBK" customClass="LogsViewController" customModule="Rover_Example" customModuleProvider="target" sceneMemberID="viewController">
@@ -31,24 +31,17 @@
                             <constraint firstItem="fUD-lW-JDm" firstAttribute="top" secondItem="umH-La-cpg" secondAttribute="bottom" id="Xwn-EF-mHj"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="7xp-YJ-D0Q">
-                        <nil key="title"/>
+                    <navigationItem key="navigationItem" title="Logs" id="7xp-YJ-D0Q">
                         <barButtonItem key="leftBarButtonItem" title="Clear" id="P1j-wn-sXg">
                             <connections>
                                 <action selector="didPressClear:" destination="pTP-9z-UBK" id="mKV-VY-tB0"/>
                             </connections>
                         </barButtonItem>
-                        <segmentedControl key="titleView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" id="Vcz-FK-tHz">
-                            <rect key="frame" x="112.5" y="7" width="150" height="30"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            <segments>
-                                <segment title="Live"/>
-                                <segment title="History"/>
-                            </segments>
+                        <barButtonItem key="rightBarButtonItem" title="Change Server" id="q2x-2l-SZ8">
                             <connections>
-                                <action selector="segmentChanged:" destination="pTP-9z-UBK" eventType="valueChanged" id="l97-rY-ZY4"/>
+                                <action selector="didPressChangeServer:" destination="pTP-9z-UBK" id="8Lg-tQ-YgW"/>
                             </connections>
-                        </segmentedControl>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="textView" destination="umH-La-cpg" id="DOa-nD-Kqp"/>

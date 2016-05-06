@@ -88,7 +88,18 @@ class InboxTableViewController: UITableViewController {
 //            self.tableView.deselectRowAtIndexPath(indexPath, animated: true)
 //        }
         let message = messages[indexPath.row]
-        Rover.followMessageAction(message)
+        //Rover.followMessageAction(message)
+        
+        switch message.action {
+        case .Link:
+            break
+        case .LandingPage:
+            guard let screen = message.landingPage else { break }
+            let screenViewController = RVScreenViewController(screen: screen)
+            navigationController?.pushViewController(screenViewController, animated: true)
+        default:
+            break
+        }
 //        case .LandingPage:
 //            let screenViewController = RVScreenViewController()
 //            presentViewController(screenViewController, animated: true, completion: nil)

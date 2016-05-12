@@ -12,6 +12,7 @@ it, simply add the following line to your Podfile:
 ```ruby
 pod "Rover", :git => "https://github.com/RoverPlatform/rover-ios-beta.git"
 ```
+While Rover 4 is in Beta you **MUST** provide the git url in your Podfile.
 
 ## Usage
 
@@ -33,7 +34,7 @@ The first time this method is called, iOS presents the user with an alert asking
 
 ### Notifications
 
-Rover's messaging system uses notifications to alert the user when their device is asleep or when your app isn't running. To enable this feature your app must register for notifications, which can be done via Rover's `registerForNotifications` method.
+Rover's messaging system uses notifications to alert the user when their device is asleep or when your app isn't running. To enable this feature your app must register for notifications, which can be done via the following mehod call:
 
 ```swift
 Rover.registerForNotifications()
@@ -57,7 +58,7 @@ This method also triggers an alert asking for permission the first time it is ca
 
 ### Observers
 
-Rover uses the observer pattern to notify the developer of proximity and messaging events. Just call the `Rover.addObserver()` method and pass in any class of your choice that conforms to the `RoverObserver` protocol.
+Rover uses the observer pattern to notify the developer of proximity and messaging events. Just call the `Rover.addObserver(_:)` method and pass in any class of your choice that conforms to the [`RoverObserver`](https://github.com/RoverPlatform/rover-ios-beta/blob/master/Pod/Classes/RoverObserver.swift) protocol.
 
 Here's an example of a `UIViewController` listening for proximity callbacks.
 
@@ -81,7 +82,7 @@ class ViewController: UIViewController, RoverObserver {
 }
 ```
 
-Note that you **MUST** balance it with a call to `Rover.removeObserver()` in `deinit` or any other unloading method of your choice.
+Note that you **MUST** balance it with a call to `Rover.removeObserver(_:)` in `deinit` or any other unloading method of your choice.
 
 You may choose to do all of this in your AppDelegate for more centralized control.
 

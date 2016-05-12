@@ -13,6 +13,7 @@ import CoreData
 public enum Action : Int {
     case None
     case Link
+    case LandingPage
 }
 
 @objc
@@ -26,6 +27,7 @@ public class Message : NSObject {
     
     public internal(set) var action: Action = .None
     public internal(set) var url: NSURL?
+    public internal(set) var landingPage: Screen?
     
     
     init(title: String?, text: String, timestamp: NSDate, identifier: String) {

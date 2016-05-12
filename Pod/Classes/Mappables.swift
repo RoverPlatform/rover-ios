@@ -152,6 +152,12 @@ extension Message : Mappable {
                 if let url = attributes["website-url"] as? String {
                     message.url = NSURL(string: url)
                 }
+            case "landing-page":
+                message.action = .LandingPage
+                
+                if let landingPageAttributes = attributes["landing-page"] as? [String: AnyObject] {
+                    message.landingPage = Screen.instance(landingPageAttributes, included: nil)
+                }
             default:
                 message.action = .None
             }
@@ -161,3 +167,117 @@ extension Message : Mappable {
         return message
     }
 }
+
+extension Screen : Mappable {
+    static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> Screen? {
+        guard let rowsAttributes = JSON["rows"] as? [[String : AnyObject]],
+            rows = rowsAttributes.map({ Row.instance($0, included: nil) }) as? [Row] else { return nil }
+        
+        let screen = Screen(rows: rows)
+        screen.title = JSON["title"] as? String
+        
+        return screen
+    }
+}
+
+extension Row : Mappable {
+    static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> Row? {
+        guard let blocksAttributes = JSON["blocks"] as? [[String : AnyObject]],
+            blocks = blocksAttributes.map({ Block.instance($0, included: nil) }) as? [Block] else { return nil }
+        
+        let row = Row(blocks: blocks)
+        row.height = Unit.instance(JSON["height"] as? [String: AnyObject] ?? [:], included: nil)
+        
+        return row
+    }
+}
+
+extension Block : Mappable {
+    static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> Block? {
+        guard let type = JSON["type"] as? String else { return nil }
+        
+        var block: Block
+        
+        switch type {
+        case "image-block":
+            block = ImageBock()
+        case "text-block":
+            block = TextBlock()
+            
+            let textBlock = block as! TextBlock
+            textBlock.text = JSON["text"] as? String
+        case "button-block":
+            block = ButtonBlock()
+            
+            let buttonBlock = block as! ButtonBlock
+            buttonBlock.title = JSON["title-text"] as? String
+            buttonBlock.titleColor = UIColor.instance(JSON["title-color"] as? [String: AnyObject] ?? [:], included: nil)
+            buttonBlock.titleOffset = Offset.instance(JSON["title-offset"] as? [String: AnyObject] ?? [:], included: nil)
+            buttonBlock.titleAlignment = Alignment.instance(JSON["title-alignment"] as? [String: AnyObject] ?? [:], included: nil)
+        default:
+            return nil
+        }
+        
+        block.width = Unit.instance(JSON["width"] as? [String: AnyObject] ?? [:], included: nil)
+        block.height = Unit.instance(JSON["height"] as? [String: AnyObject] ?? [:], included: nil)
+        block.position = Block.Position(rawValue: JSON["layout"] as? String ?? "stacked")
+        block.alignment = Alignment.instance(JSON["alignment"] as? [String: AnyObject] ?? [:], included: nil)
+        block.offset = Offset.instance(JSON["offset"] as? [String: AnyObject] ?? [:], included: nil)
+        block.backgroundColor = UIColor.instance(JSON["background-color"] as? [String: AnyObject] ?? [:], included: nil)
+        block.borderColor = UIColor.instance(JSON["border-color"] as? [String: AnyObject] ?? [:], included: nil)
+        block.borderRadius = JSON["border-radius"] as? CGFloat
+        block.borderWidth = JSON["border-width"] as? CGFloat
+        
+        return block
+    }
+}
+
+extension Offset : Mappable {
+    static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> Offset? {
+        let top = Unit.instance(JSON["top"] as? [String: AnyObject] ?? [:], included: nil)
+        let right = Unit.instance(JSON["right"] as? [String: AnyObject] ?? [:], included: nil)
+        let bottom = Unit.instance(JSON["bottom"] as? [String: AnyObject] ?? [:], included: nil)
+        let left = Unit.instance(JSON["left"] as? [String: AnyObject] ?? [:], included: nil)
+        let center = Unit.instance(JSON["center"] as? [String: AnyObject] ?? [:], included: nil)
+        let middle = Unit.instance(JSON["middle"] as? [String: AnyObject] ?? [:], included: nil)
+
+        return Offset(left: left, right: right, top: top, bottom: bottom, center: center, middle: middle)
+    }
+}
+
+extension Alignment : Mappable {
+    static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> Alignment? {
+        let horizontal = Alignment.HorizontalAlignment(rawValue: JSON["horizonal"] as? String ?? "left")
+        let vertical = Alignment.VerticalAlignment(rawValue: JSON["vertical"] as? String ?? "top")
+        
+        return Alignment(horizontal: horizontal, vertical: vertical)
+    }
+}
+
+extension Unit : Mappable {
+    static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> Unit? {
+        guard let value = JSON["value"] as? CGFloat,
+            type = JSON["type"] as? String else { return nil }
+        
+        switch type {
+        case "points":
+            return Unit.Points(value)
+        case "percentage":
+            return Unit.Percentage(value)
+        default:
+            return nil
+        }
+    }
+}
+
+extension UIColor : Mappable {
+    static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> UIColor? {
+        guard let red = JSON["red"] as? CGFloat,
+            blue = JSON["blue"] as? CGFloat,
+            green = JSON["green"] as? CGFloat,
+            alpha = JSON["alpha"] as? CGFloat else { return nil }
+        
+        return UIColor(red: red/255.0, green: green/255.0, blue: blue/255.0, alpha: alpha)
+    }
+}
+

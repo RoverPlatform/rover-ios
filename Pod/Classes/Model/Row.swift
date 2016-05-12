@@ -6,14 +6,17 @@
 //
 //
 
-import Cocoa
+import Foundation
 
-class Row: NSObject {
-    var blocks: [Block]?
+@objc
+public class Row: NSObject {
+    let blocks: [Block]
     
     var height: Unit?
     
-    override init() {
+    init(blocks: [Block]) {
+        self.blocks = blocks
+        
         super.init()
     }
     

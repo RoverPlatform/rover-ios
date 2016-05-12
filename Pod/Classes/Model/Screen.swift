@@ -6,12 +6,19 @@
 //
 //
 
-import Cocoa
+import Foundation
 
-class Screen: NSObject {
+@objc
+public class Screen: NSObject {
 
     var title: String?
     var headerRows: [Row]?
-    var rows:[Row]?
+    var rows:[Row]
     var footerRows: [Row]?
+    
+    init(rows: [Row]) {
+        self.rows = rows
+        
+        super.init()
+    }
 }

@@ -6,7 +6,7 @@
 //
 //
 
-import Cocoa
+import UIKit
 
 class ImageBlockViewCell: UICollectionViewCell {
 

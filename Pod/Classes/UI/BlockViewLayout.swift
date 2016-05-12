@@ -86,26 +86,28 @@ class BlockViewLayout: UICollectionViewLayout {
         if let fixedWidth = block.width?.forWidth(self.collectionView!.frame.width) {
             width = fixedWidth
             
-            guard let horizontalAlignment = block.horizontalAlignment else { return CGRectZero }
+            guard let horizontalAlignment = block.alignment?.horizontal else { return CGRectZero }
             
             switch horizontalAlignment {
             case .Left:
-                guard let leftOffset = block.leftOffset?.forWidth(collectionViewWidth) else { return CGRectZero }
+                guard let leftOffset = block.offset?.left?.forWidth(collectionViewWidth) else { return CGRectZero }
                 
                 x = leftOffset
             case .Right:
-                guard let rightOffset = block.rightOffset?.forWidth(collectionViewWidth) else { return CGRectZero }
+                guard let rightOffset = block.offset?.right?.forWidth(collectionViewWidth) else { return CGRectZero }
                 
                 x = collectionViewWidth - width - rightOffset
             case .Center:
-                guard let centerOffset = block.centerOffset?.forWidth(collectionViewWidth) else { return CGRectZero }
+                guard let centerOffset = block.offset?.center?.forWidth(collectionViewWidth) else { return CGRectZero }
                 
                 x = ((collectionViewWidth - width) / 2) + centerOffset
+            default: // This will never be
+                x = 0
             }
         } else {
             
-            guard let leftOffset = block.leftOffset?.forWidth(collectionViewWidth),
-                let rightOffset = block.rightOffset?.forWidth(collectionViewWidth) else { return CGRectZero }
+            guard let leftOffset = block.offset?.left?.forWidth(collectionViewWidth),
+                let rightOffset = block.offset?.right?.forWidth(collectionViewWidth) else { return CGRectZero }
             
             x = leftOffset
             width = collectionViewWidth - leftOffset - rightOffset
@@ -116,24 +118,24 @@ class BlockViewLayout: UICollectionViewLayout {
         if let fixedHeight = block.height?.forWidth(collectionViewWidth) {
             height = fixedHeight
             
-            switch block.verticalAlignment {
+            switch block.alignment?.vertical {
             case .Bottom?:
-                guard let bottomOffset = block.bottomOffset?.forWidth(collectionViewWidth) else { return CGRectZero }
+                guard let bottomOffset = block.offset?.bottom?.forWidth(collectionViewWidth) else { return CGRectZero }
                 
                 y = yOffset + sectionHeight - height - bottomOffset
             case .Middle?:
-                guard let middleOffset = block.middleOffset?.forWidth(collectionViewWidth) else { return CGRectZero }
+                guard let middleOffset = block.offset?.middle?.forWidth(collectionViewWidth) else { return CGRectZero }
                 
                 y = yOffset + ((sectionHeight - height) / 2) + middleOffset
             default:
-                guard let topOffset = block.topOffset?.forWidth(collectionViewWidth) else { return CGRectZero }
+                guard let topOffset = block.offset?.top?.forWidth(collectionViewWidth) else { return CGRectZero }
                 
                 y = yOffset + topOffset
             }
         } else {
             
-            guard let topOffset = block.topOffset?.forWidth(collectionViewWidth),
-                let bottomOffset = block.bottomOffset?.forWidth(collectionViewWidth) else { return CGRectZero }
+            guard let topOffset = block.offset?.top?.forWidth(collectionViewWidth),
+                let bottomOffset = block.offset?.bottom?.forWidth(collectionViewWidth) else { return CGRectZero }
             
             y = yOffset + topOffset
             height = sectionHeight - topOffset - bottomOffset
@@ -149,9 +151,9 @@ class BlockViewLayout: UICollectionViewLayout {
         case .Floating:
             return 0
         case .Stacked:
-            guard let top = block.topOffset?.forWidth(collectionViewWidth),
+            guard let top = block.offset?.top?.forWidth(collectionViewWidth),
                 let height = block.height?.forWidth(collectionViewWidth),
-                let bottom = block.bottomOffset?.forWidth(collectionViewWidth) else { return 0 }
+                let bottom = block.offset?.bottom?.forWidth(collectionViewWidth) else { return 0 }
             
             return top + height + bottom
         }

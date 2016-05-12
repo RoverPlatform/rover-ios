@@ -6,8 +6,8 @@
 //
 //
 
-import Cocoa
+import UIKit
 
 class TextBlockViewCell: UICollectionViewCell {
-
+    let textLabel = UILabel()
 }

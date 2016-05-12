@@ -8,79 +8,45 @@
 
 import UIKit
 
-private let reuseIdentifier = "BlockCell"
+private let textBlockCellIdentifier = "textBlockCellIdentifier"
+private let imageBlockCellIdentifier = "imageBlockCellIdentifier"
+private let buttonBlockCellIdentifier = "buttonBlockCellIdentifier"
 
-class RVScreenViewController: UICollectionViewController {
-
-    var rows = [Row]()
+public class RVScreenViewController: UICollectionViewController {
     
-    override func viewDidLoad() {
+    let screen: Screen
+    
+    required public init(screen: Screen) {
+        self.screen = screen
+        
+        let layout = BlockViewLayout()
+        
+        super.init(collectionViewLayout: layout)
+        
+        layout.dataSource = self
+        self.title = screen.title
+    }
+    
+    required public init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented. You must use init(screen:).")
+    }
+    
+    override public func viewDidLoad() {
         super.viewDidLoad()
 
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
         // Register cell classes
-        self.collectionView!.registerClass(UICollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
+        self.collectionView!.registerClass(TextBlockViewCell.self, forCellWithReuseIdentifier: textBlockCellIdentifier)
+        self.collectionView!.registerClass(ImageBlockViewCell.self, forCellWithReuseIdentifier: imageBlockCellIdentifier)
+        self.collectionView!.registerClass(ButtonBlockViewCell.self, forCellWithReuseIdentifier: buttonBlockCellIdentifier)
 
         // Do any additional setup after loading the view.
-        
-        let viewLayout = BlockViewLayout()
-        viewLayout.dataSource = self
-
-        self.collectionView!.collectionViewLayout = viewLayout
-        
-        // TEMP BEGIN
-        
-        let autoWidthBlock = Block()
-        autoWidthBlock.position = .Stacked
-        autoWidthBlock.height = .Points(100)
-        autoWidthBlock.leftOffset = .Points(40)
-        autoWidthBlock.rightOffset = .Points(40)
-        autoWidthBlock.bottomOffset = .Points(20)
-        autoWidthBlock.topOffset = .Points(20)
-        
-        let leftAlignedBlock = Block()
-        leftAlignedBlock.position = .Stacked
-        leftAlignedBlock.height = .Points(60)
-        leftAlignedBlock.width = .Points(100)
-        leftAlignedBlock.horizontalAlignment = .Left
-        leftAlignedBlock.topOffset = .Points(10)
-        leftAlignedBlock.bottomOffset = .Points(10)
-        leftAlignedBlock.leftOffset = .Points(10)
-        leftAlignedBlock.rightOffset = .Points(10)
-        
-        let rightAlignedBlock = Block()
-        rightAlignedBlock.position = .Stacked
-        rightAlignedBlock.height = .Points(60)
-        rightAlignedBlock.width = .Points(100)
-        rightAlignedBlock.horizontalAlignment = .Right
-        rightAlignedBlock.topOffset = .Points(10)
-        rightAlignedBlock.bottomOffset = .Points(10)
-        rightAlignedBlock.leftOffset = .Points(10)
-        rightAlignedBlock.rightOffset = .Points(10)
-        
-        let floatingBlock = Block()
-        floatingBlock.position = .Floating
-        floatingBlock.height = .Points(50)
-        floatingBlock.width = .Points(50)
-        floatingBlock.horizontalAlignment = .Left
-        floatingBlock.bottomOffset = .Points(10)
-        floatingBlock.verticalAlignment = .Bottom
-        floatingBlock.leftOffset = .Points(10)
-        floatingBlock.rightOffset = .Points(10)
-        
-        let row = Row()
-        row.blocks = [autoWidthBlock, leftAlignedBlock, rightAlignedBlock, floatingBlock]
-        
-        rows = [row]
-        
-        collectionView?.reloadData()
-        
-        // TEMP END
+        self.collectionView!.backgroundColor = UIColor.whiteColor()
     }
 
-    override func didReceiveMemoryWarning() {
+    override public func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
@@ -97,19 +63,45 @@ class RVScreenViewController: UICollectionViewController {
 
     // MARK: UICollectionViewDataSource
 
-    override func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
-        return rows.count
+    override public func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
+        return screen.rows.count
     }
 
 
-    override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return rows[section].blocks?.count ?? 0
+    override public func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return screen.rows[section].blocks.count
     }
 
-    override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier, forIndexPath: indexPath)
-    
-        cell.backgroundColor = UIColor.grayColor()
+    override public func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+        var cell: UICollectionViewCell
+        let block = screen.rows[indexPath.section].blocks[indexPath.row]
+        
+        switch block {
+        case let textBlock as TextBlock:
+            let textCell = collectionView.dequeueReusableCellWithReuseIdentifier(textBlockCellIdentifier, forIndexPath: indexPath) as! TextBlockViewCell
+        
+            textCell.textLabel.text = textBlock.text
+
+            cell = textCell
+        case let imageBlock as ImageBock:
+            let imageCell = collectionView.dequeueReusableCellWithReuseIdentifier(imageBlockCellIdentifier, forIndexPath: indexPath) as! ImageBlockViewCell
+            
+            cell = imageCell
+        case let buttonBlock as ButtonBlock:
+            let buttonCell = collectionView.dequeueReusableCellWithReuseIdentifier(buttonBlockCellIdentifier, forIndexPath: indexPath) as! ButtonBlockViewCell
+            
+            buttonCell.titleLabel.text = buttonBlock.title
+            buttonCell.titleLabel.textColor = buttonBlock.titleColor
+            
+            cell = buttonCell
+        default:
+            fatalError("Unknown block type")
+        }
+        
+        cell.backgroundColor = block.backgroundColor
+        cell.layer.borderColor = block.borderColor?.CGColor
+        cell.layer.borderWidth = block.borderWidth ?? 0
+        cell.layer.cornerRadius = block.borderRadius ?? 0
     
         return cell
     }
@@ -118,7 +110,7 @@ class RVScreenViewController: UICollectionViewController {
 
     /*
     // Uncomment this method to specify if the specified item should be highlighted during tracking
-    override func collectionView(collectionView: UICollectionView, shouldHighlightItemAtIndexPath indexPath: NSIndexPath) -> Bool {
+    override public func collectionView(collectionView: UICollectionView, shouldHighlightItemAtIndexPath indexPath: NSIndexPath) -> Bool {
         return true
     }
     */
@@ -148,20 +140,18 @@ class RVScreenViewController: UICollectionViewController {
 }
 
 extension RVScreenViewController : BlockViewLayoutDataSource {
-    
     func blockViewLayout(blockViewLayout: BlockViewLayout, heightForSection section: Int) -> CGFloat {
-        return rows[section].instrinsicHeight(width: collectionView!.frame.width)
+        return screen.rows[section].instrinsicHeight(width: collectionView!.frame.width)
     }
     
     func blockViewLayout(blockViewLayout: BlockViewLayout, layoutForItemAtIndexPath indexPath: NSIndexPath) -> Block {
-        return rows[indexPath.section].blocks![indexPath.row]
+        return screen.rows[indexPath.section].blocks[indexPath.row]
     }
-    
 }
 
 extension Row {
     func instrinsicHeight(width width: CGFloat) -> CGFloat {
-        return height?.forWidth(width) ?? blocks!.reduce(0) { (height, block) -> CGFloat in
+        return height?.forWidth(width) ?? blocks.reduce(0) { (height, block) -> CGFloat in
             return height + block.instrinsicHeight(width: width)
         }
     }
@@ -170,9 +160,9 @@ extension Row {
 extension Block {
     func instrinsicHeight(width width: CGFloat) -> CGFloat {
         if position == .Stacked {
-            guard let top = self.topOffset?.forWidth(width),
+            guard let top = self.offset?.top?.forWidth(width),
                 let blockHeight = self.height?.forWidth(width),
-                let bottom = self.bottomOffset?.forWidth(width) else { return 0 }
+                let bottom = self.offset?.bottom?.forWidth(width) else { return 0 }
             
             return top + blockHeight + bottom
         } else {
@@ -182,7 +172,6 @@ extension Block {
 }
 
 extension Unit {
-    
     func forWidth(width: CGFloat) -> CGFloat {
         switch self {
         case .Percentage(let value):

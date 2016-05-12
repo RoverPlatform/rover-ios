@@ -6,8 +6,8 @@
 //
 //
 
-import Cocoa
+import UIKit
 
 class ButtonBlockViewCell: UICollectionViewCell {
-
+    let titleLabel = UILabel()
 }

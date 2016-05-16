@@ -10,6 +10,7 @@ Rover is available through [CocoaPods](http://cocoapods.org). To install
 it, simply add the following line to your Podfile:
 
 ```ruby
+use_frameworks!
 pod "Rover", :git => "https://github.com/RoverPlatform/rover-ios-beta.git"
 ```
 While Rover 4 is in Beta you **MUST** provide the git url in your Podfile.
@@ -85,6 +86,34 @@ class ViewController: UIViewController, RoverObserver {
 Note that you **MUST** balance it with a call to `Rover.removeObserver(_:)` in `deinit` or any other unloading method of your choice.
 
 You may choose to do all of this in your AppDelegate for more centralized control.
+
+### Customer Identity
+
+By default the Rover platform will assign a unique identifier to each customer who installs your application. However you may choose to assign your own identifiers. This is particularly useful for mapping data from the Rover Analytics app or if a customer is using your application on multiple platforms. To accomodate this Rover saves customer info to device storage so that it persists across sessions. The following snippet demonstrates assigning your own customer identifier:
+
+```swift
+let customer = Rover.customer
+customer.identifier = "1234abcdef"
+customer.save()
+```
+
+In addition to identifiers, you may provide other user attributes for more personlized and segmented messaging via the Rover Messages app. For a full list attributes check here.
+
+### Inbox
+
+Most applications provide means for users to recall messages. You can use the `didDeliverMessage(_:)` callback on a `RoverObserver` to map and add Rover messages to your applications inbox as they are delivered. You may also rely solely on Rover for a simple implementation of such inbox if your application doesn't already have one:
+
+```swift
+Rover.reloadInbox { messages in
+  // store messages array in memory
+  // reload tableview
+}
+```
+
+Note that the `reloadInbox` method will only return messages that have been marked to be saved in the Rover Messages app.
+
+See the (InboxViewController)[] for a quick implementation of both methods
+
 
 ## License
 

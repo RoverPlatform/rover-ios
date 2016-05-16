@@ -31,7 +31,7 @@ class ProfileViewController: UIViewController {
         let customer = Rover.customer
         
         identifierField.text = customer.identifier
-        nameField.text = customer.name
+        //nameField.text = customer.name
         emailField.text = customer.email
         phoneField.text = customer.phone
         genderField.text = customer.gender
@@ -77,7 +77,7 @@ class ProfileViewController: UIViewController {
     @IBAction func textFieldDidFinishEditing(sender: UITextField) {
         let customer = Rover.customer
         customer.identifier = self.identifierField.text
-        customer.name = self.nameField.text
+        //customer.name = self.nameField.text
         customer.email = self.emailField.text
         customer.phone = self.phoneField.text
         customer.gender = self.genderField.text

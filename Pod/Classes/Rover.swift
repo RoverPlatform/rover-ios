@@ -52,7 +52,7 @@ public class Rover : NSObject {
     
     // MARK: Class Methods
     
-    public static let customer = User.sharedUser
+    public static let customer = Customer.sharedCustomer
     
     public static var isMonitoring: Bool {
         return sharedInstance?.locationManager.isMonitoring ?? false

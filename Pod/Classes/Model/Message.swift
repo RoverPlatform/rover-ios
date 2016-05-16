@@ -25,6 +25,7 @@ public class Message : NSObject {
     public let timestamp: NSDate
     public var read: Bool = false
     
+    public internal(set) var savedToInbox: Bool = false
     public internal(set) var action: Action = .None
     public internal(set) var url: NSURL?
     public internal(set) var landingPage: Screen?

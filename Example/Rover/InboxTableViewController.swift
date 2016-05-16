@@ -8,6 +8,7 @@
 
 import UIKit
 import Rover
+import SafariServices
 
 class InboxTableViewController: UITableViewController {
 
@@ -23,12 +24,11 @@ class InboxTableViewController: UITableViewController {
         
         reloadMessages()
         
-        
+        Rover.addObserver(self)
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    deinit {
+        Rover.removeObserver(self)
     }
     
     func reloadMessages() {
@@ -72,26 +72,13 @@ class InboxTableViewController: UITableViewController {
     }
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-//        let message = messages[indexPath.row]
-//        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .ActionSheet)
-//        let markAction = UIAlertAction(title: message.read ? "Mark as unread" : "Mark as read", style: .Default) { action in
-//            message.read = !message.read
-//            Rover.patchMessage(message)
-//            self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
-//        }
-//        let cancelAction = UIAlertAction(title: "Cancel", style: .Cancel, handler: nil)
-//        
-//        alert.addAction(markAction)
-//        alert.addAction(cancelAction)
-//        
-//        presentViewController(alert, animated: true) {
-//            self.tableView.deselectRowAtIndexPath(indexPath, animated: true)
-//        }
         let message = messages[indexPath.row]
-        //Rover.followMessageAction(message)
         
         switch message.action {
         case .Link:
+            guard let url = message.url else { break }
+            let safariViewController = SFSafariViewController(URL: url)
+            navigationController?.pushViewController(safariViewController, animated: true)
             break
         case .LandingPage:
             guard let screen = message.landingPage else { break }
@@ -100,12 +87,16 @@ class InboxTableViewController: UITableViewController {
         default:
             break
         }
-//        case .LandingPage:
-//            let screenViewController = RVScreenViewController()
-//            presentViewController(screenViewController, animated: true, completion: nil)
-            
-        //case .Experience:
-        
     }
 
+}
+
+extension InboxTableViewController : RoverObserver {
+    func didDeliverMessage(message: Message) {
+        // Only add messages that have been marked to be saved
+        guard message.savedToInbox else { return }
+        // You may choose to add them to your CoreData model instead
+        messages.insert(message, atIndex: 0)
+        tableView.insertRowsAtIndexPaths([NSIndexPath(forRow: 0, inSection: 0)], withRowAnimation: .Automatic)
+    }
 }

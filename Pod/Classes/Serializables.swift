@@ -14,7 +14,7 @@ import CoreTelephony
 
 extension Event : Serializable {
     func serialize() -> [String : AnyObject] {
-        let serializedUser = User.sharedUser.serialize()
+        let serializedCustomer = Customer.sharedCustomer.serialize()
         let serializedDevice = Device.CurrentDevice.serialize()
         
         var timestamp: NSDate
@@ -77,7 +77,7 @@ extension Event : Serializable {
         _swiftBugWorkaround(serializedAttributes: &serializedAttributes , timestamp: &timestamp)
         
         serializedAttributes["time"] = rvDateFormatter.stringFromDate(timestamp)
-        serializedAttributes["user"] = serializedUser
+        serializedAttributes["user"] = serializedCustomer
         serializedAttributes["device"] = serializedDevice
         
         return [
@@ -88,7 +88,7 @@ extension Event : Serializable {
         ]
     }
     
-    func _swiftBugWorkaround(inout serializedAttributes serializedAttributes: [String: AnyObject], inout timestamp timestamp: NSDate) {
+    func _swiftBugWorkaround(inout serializedAttributes serializedAttributes: [String: AnyObject], inout timestamp: NSDate) {
         switch self {
         case .DidEnterCircularRegion(let region, _, let date):
             timestamp = date
@@ -163,10 +163,11 @@ extension Device : Serializable {
     }
 }
 
-extension User : Serializable {
+extension Customer : Serializable {
     func serialize() -> [String : AnyObject] {
         return [
-            "name": name ?? NSNull(),
+            "first-name": firstName ?? NSNull(),
+            "last-name": lastName ?? NSNull(),
             "email": email ?? NSNull(),
             "phone-number": phone ?? NSNull(),
             "identifier": identifier ?? NSNull(),

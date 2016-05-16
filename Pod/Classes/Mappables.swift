@@ -143,6 +143,7 @@ extension Message : Mappable {
         let message = Message(title: title, text: text, timestamp: timestamp, identifier: identifier)
 
         message.read = attributes["read"] as? Bool ?? false
+        message.savedToInbox = attributes["saved-to-inbox"] as? Bool ?? false
         
         if let action = attributes["content-type"] as? String {
             switch action {

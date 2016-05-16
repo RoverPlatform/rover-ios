@@ -97,11 +97,11 @@ customer.identifier = "1234abcdef"
 customer.save()
 ```
 
-In addition to identifiers, you may provide other user attributes for more personlized and segmented messaging via the Rover Messages app. For a full list attributes check here.
+In addition to identifiers, you may provide other user attributes for more personlized and segmented messaging via the Rover Messages app. For a full list attributes check (here)[https://github.com/RoverPlatform/rover-ios-beta/blob/master/Pod/Classes/Model/Customer.swift].
 
 ### Inbox
 
-Most applications provide means for users to recall messages. You can use the `didDeliverMessage(_:)` callback on a `RoverObserver` to map and add Rover messages to your applications inbox as they are delivered. You may also rely solely on Rover for a simple implementation of such inbox if your application doesn't already have one:
+Most applications provide means for users to recall messages. You can use the `didDeliverMessage(_:)` callback on a `RoverObserver` to map and add Rover messages to your application's inbox as they are delivered. You may also rely solely on Rover for a simple implementation of such inbox if your application doesn't already have one:
 
 ```swift
 Rover.reloadInbox { messages in
@@ -112,7 +112,7 @@ Rover.reloadInbox { messages in
 
 Note that the `reloadInbox` method will only return messages that have been marked to be saved in the Rover Messages app.
 
-See the (InboxViewController)[] for a quick implementation of both methods
+See the (InboxViewController)[https://github.com/RoverPlatform/rover-ios-beta/blob/master/Example/Rover/InboxTableViewController.swift] for a quick implementation of both strategies.
 
 
 ## License

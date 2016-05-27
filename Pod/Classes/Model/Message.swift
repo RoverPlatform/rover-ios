@@ -23,6 +23,7 @@ public class Message : NSObject {
     public let title: String?
     public let text: String
     public let timestamp: NSDate
+    public let properties: [String: String]
     public var read: Bool = false
     
     public internal(set) var savedToInbox: Bool = false
@@ -31,11 +32,12 @@ public class Message : NSObject {
     public internal(set) var landingPage: Screen?
     
     
-    init(title: String?, text: String, timestamp: NSDate, identifier: String) {
+    init(title: String?, text: String, timestamp: NSDate, identifier: String, properties: [String: String]) {
         self.title = title
         self.text = text
         self.timestamp = timestamp
         self.identifier = identifier
+        self.properties = properties
         
         super.init()
     }

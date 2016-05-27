@@ -281,17 +281,17 @@ extension Rover : LocationManagerDelegate {
     
     func locationManager(manager: LocatioManager, didEnterRegion region: CLRegion) {
         if region is CLBeaconRegion {
-            sendEvent(.DidEnterBeaconRegion(region as! CLBeaconRegion, config: nil, location: nil, date: NSDate()))
+            sendEvent(.DidEnterBeaconRegion(region as! CLBeaconRegion, config: nil, place: nil, date: NSDate()))
         } else {
-            sendEvent(.DidEnterCircularRegion(region as! CLCircularRegion, location: nil, date: NSDate()))
+            sendEvent(.DidEnterCircularRegion(region as! CLCircularRegion, place: nil, date: NSDate()))
         }
     }
     
     func locationManager(manager: LocatioManager, didExitRegion region: CLRegion) {
         if region is CLBeaconRegion {
-            sendEvent(.DidExitBeaconRegion(region as! CLBeaconRegion, config: nil, location: nil, date: NSDate()))
+            sendEvent(.DidExitBeaconRegion(region as! CLBeaconRegion, config: nil, place: nil, date: NSDate()))
         } else {
-            sendEvent(.DidExitCircularRegion(region as! CLCircularRegion, location: nil, date: NSDate()))
+            sendEvent(.DidExitCircularRegion(region as! CLCircularRegion, place: nil, date: NSDate()))
         }
     }
     

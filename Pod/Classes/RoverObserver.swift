@@ -21,35 +21,35 @@ public protocol RoverObserver {
      
      - parameters:
         - config: The configuration of the beacon as it was set in the Rover Proximity App.
-        - location: The location of the beacon if had been assigned.
+        - place: The place of the beacon if had been assigned.
      */
-    optional func didEnterBeaconRegion(config config: BeaconConfiguration, location: Location?)
+    optional func didEnterBeaconRegion(config config: BeaconConfiguration, place: Place?)
     
     /*
      Called when user exits a beacon region.
      
      - parameters:
         - config: The configuration of the beacon as it was set in the Rover Proximity App.
-        - location: The location of the beacon if had been assigned.
+        - place: The place of the beacon if had been assigned.
      */
-    optional func didExitBeaconRegion(config config: BeaconConfiguration, location: Location?)
+    optional func didExitBeaconRegion(config config: BeaconConfiguration, place: Place?)
     
     
     /*
      Called when user enters a geofence.
      
      - paramters: 
-        - location: The location that was entered.
+        - place: The place that was entered.
     */
-    optional func didEnterGeofence(location location: Location) // 3 rules of real estate!!! :)
+    optional func didEnterGeofence(place place: Place) // 3 rules of real estate!!! :)
     
     /*
      Called when user exits a geofence.
      
      - parameters:
-        - location: The location that was exited.
+        - place: The place that was exited.
      */
-    optional func didExitGeofence(location location: Location)
+    optional func didExitGeofence(place place: Place)
 
     /*
      Called before a `Message` is about to be delivered.

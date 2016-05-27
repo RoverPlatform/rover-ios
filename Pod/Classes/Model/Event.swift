@@ -16,11 +16,11 @@ public enum Event {
     
     case DidUpdateLocation(CLLocation, date: NSDate)
     
-    case DidEnterBeaconRegion(CLBeaconRegion, config: BeaconConfiguration?, location: Location?, date: NSDate)
-    case DidExitBeaconRegion(CLBeaconRegion, config: BeaconConfiguration?, location: Location?,  date: NSDate)
+    case DidEnterBeaconRegion(CLBeaconRegion, config: BeaconConfiguration?, place: Place?, date: NSDate)
+    case DidExitBeaconRegion(CLBeaconRegion, config: BeaconConfiguration?, place: Place?,  date: NSDate)
 
-    case DidEnterCircularRegion(CLCircularRegion, location: Location?, date: NSDate)
-    case DidExitCircularRegion(CLCircularRegion, location: Location?, date: NSDate)
+    case DidEnterCircularRegion(CLCircularRegion, place: Place?, date: NSDate)
+    case DidExitCircularRegion(CLCircularRegion, place: Place?, date: NSDate)
     
     case DidOpenMessage(identifier: String, source: String, date: NSDate)
     
@@ -49,14 +49,14 @@ extension Event {
     
     func call(observer: RoverObserver) {
         switch self {
-        case .DidEnterBeaconRegion(_, let config?, let location?, _):
-            observer.didEnterBeaconRegion?(config: config, location: location)
-        case .DidExitBeaconRegion(_, let config?, let location?, _):
-            observer.didExitBeaconRegion?(config: config, location: location)
-        case .DidEnterCircularRegion(_, let location?, _):
-            observer.didEnterGeofence?(location: location)
-        case .DidExitCircularRegion(_, let location?, _):
-            observer.didExitGeofence?(location: location)
+        case .DidEnterBeaconRegion(_, let config?, let place?, _):
+            observer.didEnterBeaconRegion?(config: config, place: place)
+        case .DidExitBeaconRegion(_, let config?, let place?, _):
+            observer.didExitBeaconRegion?(config: config, place: place)
+        case .DidEnterCircularRegion(_, let place?, _):
+            observer.didEnterGeofence?(place: place)
+        case .DidExitCircularRegion(_, let place?, _):
+            observer.didExitGeofence?(place: place)
         default:
             break
         }

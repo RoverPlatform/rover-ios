@@ -9,7 +9,7 @@
 import Foundation
 import CoreLocation
 
-public class Location : NSObject {
+public class Place : NSObject {
     
     let coordinates: CLLocationCoordinate2D
     let radius: CLLocationDistance

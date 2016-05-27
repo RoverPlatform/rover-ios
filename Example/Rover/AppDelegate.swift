@@ -24,7 +24,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return "https://rover-content-api-development.herokuapp.com/v1"
         }()
         
-        Rover.setup(applicationToken: "6c546189dc45df1293bddc18c0b54786")
+        Rover.setup(applicationToken: "da485394bad60399c3614af79db0fb7a")
         //Rover.setup(applicationToken: "0628d761f3cebf6a586aa02cc4648bd2") // has to happen on app startup
     
         //Rover.startMonitoring() // asks for location permissions

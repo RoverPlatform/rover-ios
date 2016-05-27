@@ -61,12 +61,12 @@ class MonitoringViewController: UIViewController {
     
     func enterGeofence(sender: UIButton) {
         let region = geofenceRegions[sender.tag]
-        Rover.simulateEvent(Event.DidEnterCircularRegion(region, location: nil, date: NSDate()))
+        Rover.simulateEvent(Event.DidEnterCircularRegion(region, place: nil, date: NSDate()))
     }
     
     func exitGeofence(sender: UIButton) {
         let region = geofenceRegions[sender.tag]
-        Rover.simulateEvent(Event.DidExitCircularRegion(region, location: nil, date: NSDate()))
+        Rover.simulateEvent(Event.DidExitCircularRegion(region, place: nil, date: NSDate()))
     }
     
     // MARK: Actions
@@ -180,11 +180,11 @@ extension MonitoringViewController : UITableViewDelegate {
         }
         let enterAction = UIAlertAction(title: "Enter", style: .Default) { (action) in
             let r = CLBeaconRegion(proximityUUID: region.proximityUUID, major: UInt16(alertController.textFields![0].text ?? "1")!, minor: UInt16(alertController.textFields![1].text ?? "1")!, identifier: "")
-            Rover.simulateEvent(.DidEnterBeaconRegion(r, config: nil, location: nil, date: NSDate()))
+            Rover.simulateEvent(.DidEnterBeaconRegion(r, config: nil, place: nil, date: NSDate()))
         }
         let exitAction = UIAlertAction(title: "Exit", style: .Default) { (action) in
             let r = CLBeaconRegion(proximityUUID: region.proximityUUID, major: UInt16(alertController.textFields![0].text ?? "1")!, minor: UInt16(alertController.textFields![1].text ?? "1")!, identifier: "")
-            Rover.simulateEvent(.DidExitBeaconRegion(r, config: nil, location: nil, date: NSDate()))
+            Rover.simulateEvent(.DidExitBeaconRegion(r, config: nil, place: nil, date: NSDate()))
         }
         alertController.addAction(enterAction)
         alertController.addAction(exitAction)

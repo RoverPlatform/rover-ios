@@ -193,14 +193,14 @@ extension MainViewController : BeaconTableViewCellDelegate {
         guard let indexPath = tableView.indexPathForCell(cell) else { return }
         let region = beaconRegions[indexPath.row]
         let simulatedRegion = CLBeaconRegion(proximityUUID: region.UUID, major: region.major, minor: region.minor, identifier: region.identifier)
-        Rover.simulateEvent(Event.DidEnterBeaconRegion(simulatedRegion, config: nil, location: nil, date: NSDate()))
+        Rover.simulateEvent(Event.DidEnterBeaconRegion(simulatedRegion, config: nil, place: nil, date: NSDate()))
     }
     
     func beaconTableViewCellDidPressExit(cell: BeaconTableViewCell) {
         guard let indexPath = tableView.indexPathForCell(cell) else { return }
         let region = beaconRegions[indexPath.row]
         let simulatedRegion = CLBeaconRegion(proximityUUID: region.UUID, major: region.major, minor: region.minor, identifier: region.identifier)
-        Rover.simulateEvent(Event.DidExitBeaconRegion(simulatedRegion, config: nil, location: nil, date: NSDate()))
+        Rover.simulateEvent(Event.DidExitBeaconRegion(simulatedRegion, config: nil, place: nil, date: NSDate()))
     }
 }
 
@@ -209,14 +209,14 @@ extension MainViewController : GeofenceTableViewCellDelegate {
     func geofenceTableViewCellDidPressEnter(cell: GeofenceTableViewCell) {
         guard let indexPath = tableView.indexPathForCell(cell) else { return }
         let region = geofenceRegions[indexPath.row]
-        Rover.simulateEvent(Event.DidEnterCircularRegion(region, location: nil, date: NSDate()))
+        Rover.simulateEvent(Event.DidEnterCircularRegion(region, place: nil, date: NSDate()))
         //Rover.simulateEnterEvent(region: region)
     }
     
     func geofenceTableViewCellDidPressExit(cell: GeofenceTableViewCell) {
         guard let indexPath = tableView.indexPathForCell(cell) else { return }
         let region = geofenceRegions[indexPath.row]
-        Rover.simulateEvent(Event.DidExitCircularRegion(region, location: nil, date: NSDate()))
+        Rover.simulateEvent(Event.DidExitCircularRegion(region, place: nil, date: NSDate()))
     }
 }
 

@@ -63,30 +63,30 @@ extension Event : Mappable {
                 beaconConfig = BeaconConfiguration.instance(config, included: nil),
                 beaconRegion = included?["region"] as? CLBeaconRegion else { return nil }
             
-            var location: Location?
-            if let locationAttributes = attributes["location"] as? [String: AnyObject] {
-                location = Location.instance(locationAttributes, included: nil)
+            var place: Place?
+            if let placeAttributes = attributes["place"] as? [String: AnyObject] {
+                place = Place.instance(placeAttributes, included: nil)
             }
             
             switch action {
             case "enter":
-                return Event.DidEnterBeaconRegion(beaconRegion, config: beaconConfig, location: location, date: date)
+                return Event.DidEnterBeaconRegion(beaconRegion, config: beaconConfig, place: place, date: date)
             case "exit":
-                return Event.DidExitBeaconRegion(beaconRegion, config: beaconConfig, location: location, date: date)
+                return Event.DidExitBeaconRegion(beaconRegion, config: beaconConfig, place: place, date: date)
             default:
                 return nil
             }
         case ("geofence-region", let action):
             guard let
-                locationJSON = attributes["location"] as? [String: AnyObject],
-                location = Location.instance(locationJSON, included: nil),
+                placeJSON = attributes["place"] as? [String: AnyObject],
+                place = Place.instance(placeJSON, included: nil),
                 circularRegion = included?["region"] as? CLCircularRegion else { return nil }
             
             switch action {
             case "enter":
-                return Event.DidEnterCircularRegion(circularRegion, location: location, date: date)
+                return Event.DidEnterCircularRegion(circularRegion, place: place, date: date)
             case "exit":
-                return Event.DidExitCircularRegion(circularRegion, location: location, date: date)
+                return Event.DidExitCircularRegion(circularRegion, place: place, date: date)
             default:
                 return nil
             }
@@ -114,8 +114,8 @@ extension BeaconConfiguration : Mappable {
     }
 }
 
-extension Location : Mappable {
-    static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> Location? {
+extension Place : Mappable {
+    static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> Place? {
         guard let
             latitude = JSON["latitude"] as? CLLocationDegrees,
             longitude = JSON["longitude"] as? CLLocationDegrees,
@@ -123,7 +123,7 @@ extension Location : Mappable {
             name = JSON["name"] as? String,
             tags = JSON["tags"] as? [String] else { return nil }
         
-        return Location(coordinates: CLLocationCoordinate2D(latitude: latitude, longitude: longitude), radius: radius, name: name, tags: tags)
+        return Place(coordinates: CLLocationCoordinate2D(latitude: latitude, longitude: longitude), radius: radius, name: name, tags: tags)
     }
 }
 
@@ -135,12 +135,13 @@ extension Message : Mappable {
             title = attributes["ios-title"] as? String?,
             timestampString = attributes["timestamp"] as? String,
             timestamp = rvDateFormatter.dateFromString(timestampString),
-            text = attributes["notification-text"] as? String
+            text = attributes["notification-text"] as? String,
+            properties = attributes["properties"] as? [String: String]
             where type == "messages" else { return nil }
         
         
         
-        let message = Message(title: title, text: text, timestamp: timestamp, identifier: identifier)
+        let message = Message(title: title, text: text, timestamp: timestamp, identifier: identifier, properties: properties)
 
         message.read = attributes["read"] as? Bool ?? false
         message.savedToInbox = attributes["saved-to-inbox"] as? Bool ?? false

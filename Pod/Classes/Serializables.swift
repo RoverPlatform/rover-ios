@@ -136,13 +136,14 @@ extension Device : Serializable {
         let localeLanguage = localeComponents[NSLocaleLanguageCode]
         let localeRegion = localeComponents[NSLocaleCountryCode]
         let localNotificationsEnabled = UIApplication.sharedApplication().currentUserNotificationSettings()?.types.contains(.Alert) ?? false
+        let deviceToken: AnyObject = Device.pushToken ?? NSNull()
         
         return [
             "app-identifier": NSBundle.mainBundle().bundleIdentifier ?? "",
             "udid": UIDevice.currentDevice().identifierForVendor!.UUIDString,
             "aid": ASIdentifierManager.sharedManager().advertisingIdentifier.UUIDString,
             "ad-tracking": ASIdentifierManager.sharedManager().advertisingTrackingEnabled ,
-            "token": Device.pushToken ?? NSNull(),
+            "token": deviceToken,
             "locale-lang": localeLanguage ?? "",
             "locale-region": localeRegion ?? "",
             "time-zone": NSTimeZone.localTimeZone().name,
@@ -165,15 +166,24 @@ extension Device : Serializable {
 
 extension Customer : Serializable {
     func serialize() -> [String : AnyObject] {
+        let firstName: AnyObject = self.firstName ?? NSNull()
+        let lastName: AnyObject = self.lastName ?? NSNull()
+        let phoneNumber: AnyObject = self.phone ?? NSNull()
+        let identifier: AnyObject = self.identifier ?? NSNull()
+        let gender: AnyObject = self.gender ?? NSNull()
+        let age: AnyObject = self.age ?? NSNull()
+        let tags: AnyObject = self.tags ?? NSNull()
+        let email: AnyObject = self.email ?? NSNull()
+        
         return [
-            "first-name": firstName ?? NSNull(),
-            "last-name": lastName ?? NSNull(),
-            "email": email ?? NSNull(),
-            "phone-number": phone ?? NSNull(),
-            "identifier": identifier ?? NSNull(),
-            "gender": gender ?? NSNull(),
-            "age": age ?? NSNull(),
-            "tags": tags ?? NSNull()
+            "first-name": firstName,
+            "last-name": lastName,
+            "email": email,
+            "phone-number": phoneNumber,
+            "identifier": identifier,
+            "gender": gender,
+            "age": age,
+            "tags": tags
         ]
     }
 }

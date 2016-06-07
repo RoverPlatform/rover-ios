@@ -77,8 +77,8 @@ class ViewController: UIViewController, RoverObserver {
   
   // MARK: RoverObserver
   
-  func didEnterGeofence(location: Location) {
-    print("User has entered \(location.name)")
+  func didDeliverMessage(message: Message) {
+    print("User has received message: \(message.text)")
   }
 }
 ```
@@ -114,6 +114,20 @@ Note that the `reloadInbox` method will only return messages that have been mark
 
 See the [InboxViewController](https://github.com/RoverPlatform/rover-ios-beta/blob/master/Example/Rover/InboxTableViewController.swift) for a quick implementation of both strategies.
 
+### Landing Pages
+
+Some messages can carry with them rich content in the form of landing pages. A landing page is a [Screen](https://github.com/RoverPlatform/rover-ios-beta/blob/master/Pod/Classes/Model/Screen.swift) that is an optional property of a [Message](https://github.com/RoverPlatform/rover-ios-beta/blob/master/Pod/Classes/Model/Message.swift). The Rover SDK provides means to render this screen natively as a UIViewController, which you can present modally or push onto a stack of view controllers inside a UINavigationController.
+
+```swift
+if let screen = message.screen {
+  let viewController = RVScreenViewController(screen: screen)
+  viewController.delegate = self
+  
+  self.presentViewController(viewController, animated: true, completion: nil)
+}
+```
+
+If you are to implement in this manner it is crucial to define a [RVScreenViewControllerDelegate](https://github.com/RoverPlatform/rover-ios-beta/blob/master/Pod/Classes/UI/RVScreenViewController.swift) to handle cases where the landing page links off to a website or a deeplink within the app. This usecase is also demonstrated in the [InboxViewController](https://github.com/RoverPlatform/rover-ios-beta/blob/master/Example/Rover/InboxTableViewController.swift).
 
 ## License
 

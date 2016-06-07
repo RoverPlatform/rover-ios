@@ -103,6 +103,7 @@ In addition to identifiers, you may provide other user attributes for more perso
 
 Using the Rover Messages App, one can author rich messages to be delivered on proximity events. A [Message](https://github.com/RoverPlatform/rover-ios-beta/blob/master/Pod/Classes/Model/Message.swift) can have different types of content:
  - A link to a website
+ - Deeplink within your app or another app
  - A landing page
  - Custom data defined at the time of message creation (```message.properties```)
 

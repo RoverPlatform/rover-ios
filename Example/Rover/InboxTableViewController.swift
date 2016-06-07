@@ -83,12 +83,21 @@ class InboxTableViewController: UITableViewController {
         case .LandingPage:
             guard let screen = message.landingPage else { break }
             let screenViewController = RVScreenViewController(screen: screen)
+            screenViewController.delegate = self
             navigationController?.pushViewController(screenViewController, animated: true)
+            presentViewController(<#T##viewControllerToPresent: UIViewController##UIViewController#>, animated: <#T##Bool#>, completion: <#T##(() -> Void)?##(() -> Void)?##() -> Void#>)
         default:
             break
         }
     }
 
+}
+
+extension InboxTableViewController : RVScreenViewControllerDelegate {
+    func screenViewController(viewController: RVScreenViewController, handleOpenURL url: NSURL) {
+        let safariViewController = SFSafariViewController(URL: url)
+        viewController.navigationController?.pushViewController(safariViewController, animated: true)
+    }
 }
 
 extension InboxTableViewController : RoverObserver {

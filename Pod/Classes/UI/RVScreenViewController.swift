@@ -8,6 +8,10 @@
 
 import UIKit
 
+@objc public protocol RVScreenViewControllerDelegate: class {
+    optional func screenViewController(viewController: RVScreenViewController, handleOpenURL url: NSURL)
+}
+
 private let textBlockCellIdentifier = "textBlockCellIdentifier"
 private let imageBlockCellIdentifier = "imageBlockCellIdentifier"
 private let buttonBlockCellIdentifier = "buttonBlockCellIdentifier"
@@ -15,6 +19,8 @@ private let buttonBlockCellIdentifier = "buttonBlockCellIdentifier"
 public class RVScreenViewController: UICollectionViewController {
     
     let screen: Screen
+    
+    public weak var delegate: RVScreenViewControllerDelegate?
     
     required public init(screen: Screen) {
         self.screen = screen
@@ -42,24 +48,21 @@ public class RVScreenViewController: UICollectionViewController {
         self.collectionView!.registerClass(ImageBlockViewCell.self, forCellWithReuseIdentifier: imageBlockCellIdentifier)
         self.collectionView!.registerClass(ButtonBlockViewCell.self, forCellWithReuseIdentifier: buttonBlockCellIdentifier)
 
-        // Do any additional setup after loading the view.
         self.collectionView!.backgroundColor = UIColor.whiteColor()
+        
+        if (navigationController is ModalViewController) {
+            self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Close", style: .Plain, target: self, action: #selector(self.dismissNavigationController))
+        }
+    }
+    
+    func dismissNavigationController() {
+        self.navigationController?.dismissViewControllerAnimated(true, completion: nil)
     }
 
     override public func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using [segue destinationViewController].
-        // Pass the selected object to the new view controller.
-    }
-    */
 
     // MARK: UICollectionViewDataSource
 
@@ -80,29 +83,47 @@ public class RVScreenViewController: UICollectionViewController {
         case let textBlock as TextBlock:
             let textCell = collectionView.dequeueReusableCellWithReuseIdentifier(textBlockCellIdentifier, forIndexPath: indexPath) as! TextBlockViewCell
         
-            textCell.textLabel.text = textBlock.text
+            textCell.text = textBlock.text
+            textCell.textAlignment = textBlock.textAlignment
+            textCell.textColor = textBlock.textColor
+            textCell.font = textBlock.font
 
             cell = textCell
         case let imageBlock as ImageBock:
             let imageCell = collectionView.dequeueReusableCellWithReuseIdentifier(imageBlockCellIdentifier, forIndexPath: indexPath) as! ImageBlockViewCell
             
+            imageCell.imageView.rv_setImage(url: imageBlock.image?.url, activityIndicatorStyle: .Gray)
+            
             cell = imageCell
         case let buttonBlock as ButtonBlock:
             let buttonCell = collectionView.dequeueReusableCellWithReuseIdentifier(buttonBlockCellIdentifier, forIndexPath: indexPath) as! ButtonBlockViewCell
             
-            buttonCell.titleLabel.text = buttonBlock.title
-            buttonCell.titleLabel.textColor = buttonBlock.titleColor
+            buttonBlock.appearences.forEach { (state, appearance) in
+                buttonCell.setTitle(appearance.title, forState: state.controlState)
+                buttonCell.setTitleColor(appearance.titleColor, forState: state.controlState)
+                buttonCell.setTitleAlignment(appearance.titleAlignment, forState: state.controlState)
+                buttonCell.setTitleOffset(appearance.titleOffset, forState: state.controlState)
+                buttonCell.setTitleFont(appearance.titleFont, forState: state.controlState)
+                buttonCell.setBackgroundColor(appearance.backgroundColor, forState: state.controlState)
+                buttonCell.setBorderColor(appearance.borderColor, forState: state.controlState)
+                buttonCell.setBorderWidth(appearance.borderWidth, forState: state.controlState)
+                buttonCell.setCornerRadius(appearance.borderRadius, forState: state.controlState)
+            }
+            
+            buttonCell.delegate = self
             
             cell = buttonCell
         default:
             fatalError("Unknown block type")
         }
         
-        cell.backgroundColor = block.backgroundColor
-        cell.layer.borderColor = block.borderColor?.CGColor
-        cell.layer.borderWidth = block.borderWidth ?? 0
-        cell.layer.cornerRadius = block.borderRadius ?? 0
-    
+        if !(cell is ButtonBlockViewCell) {
+        	cell.backgroundColor = block.backgroundColor
+        	cell.layer.borderColor = block.borderColor.CGColor
+            cell.layer.borderWidth = block.borderWidth
+            cell.layer.cornerRadius = block.borderRadius
+        }
+        
         return cell
     }
 
@@ -139,6 +160,21 @@ public class RVScreenViewController: UICollectionViewController {
 
 }
 
+extension RVScreenViewController : ButtonBlockViewCellDelegate {
+    func buttonBlockViewCellDidPressButton(cell: ButtonBlockViewCell) {
+        guard let indexPath = collectionView!.indexPathForCell(cell),
+            buttonBlock = screen.rows[indexPath.section].blocks[indexPath.row] as? ButtonBlock,
+            action = buttonBlock.action else { return }
+        
+        switch action {
+        case .Deeplink(let url):
+            delegate?.screenViewController?(self, handleOpenURL: url)
+        case .Website(let url):
+            delegate?.screenViewController?(self, handleOpenURL: url)
+        }
+    }
+}
+
 extension RVScreenViewController : BlockViewLayoutDataSource {
     func blockViewLayout(blockViewLayout: BlockViewLayout, heightForSection section: Int) -> CGFloat {
         return screen.rows[section].instrinsicHeight(width: collectionView!.frame.width)
@@ -160,25 +196,27 @@ extension Row {
 extension Block {
     func instrinsicHeight(width width: CGFloat) -> CGFloat {
         if position == .Stacked {
-            guard let top = self.offset?.top?.forWidth(width),
-                let blockHeight = self.height?.forWidth(width),
-                let bottom = self.offset?.bottom?.forWidth(width) else { return 0 }
-            
-            return top + blockHeight + bottom
+            let height = heightInCollectionView(width: width)
+            return offset.top.forWidth(width) + height + offset.bottom.forWidth(width)
         } else {
             return 0
         }
     }
 }
 
-extension Unit {
-    func forWidth(width: CGFloat) -> CGFloat {
+extension ButtonBlock.State {
+    var controlState: UIControlState {
         switch self {
-        case .Percentage(let value):
-            return CGFloat(value) * width
-        case .Points(let value):
-            return CGFloat(value)
+        case .Disabled:
+            return .Disabled
+        case .Highlighted:
+            return .Highlighted
+        case .Selected:
+            return .Selected
+        default:
+            return .Normal
         }
     }
 }
+
 

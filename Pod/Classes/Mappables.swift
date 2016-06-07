@@ -30,7 +30,10 @@ extension CLRegion : Mappable {
                 return CLBeaconRegion(proximityUUID: uuid, identifier: identifier)
             }
         case "geofence-regions":
-            guard let latitude = attributes["latitude"] as? CLLocationDegrees, longitude = attributes["longitude"] as? CLLocationDegrees, radius = attributes["radius"] as? CLLocationDistance else { return nil }
+            guard let latitude = attributes["latitude"] as? CLLocationDegrees,
+                longitude = attributes["longitude"] as? CLLocationDegrees,
+                radius = attributes["radius"] as? CLLocationDistance else { return nil }
+            
             return CLCircularRegion(center: CLLocationCoordinate2D(latitude: latitude, longitude: longitude), radius: radius, identifier: identifier)
         default:
             // invalid type
@@ -202,46 +205,111 @@ extension Block : Mappable {
         
         switch type {
         case "image-block":
-            block = ImageBock()
+            let image = Image.instance(JSON["image"] as? [String: AnyObject] ?? [:], included: nil)
+            
+            block = ImageBock(image: image)
         case "text-block":
             block = TextBlock()
             
             let textBlock = block as! TextBlock
             textBlock.text = JSON["text"] as? String
+            textBlock.textAlignment = Alignment.instance(JSON["text-alignment"] as? [String: AnyObject] ?? [:], included: nil) ?? textBlock.textAlignment
+            textBlock.textOffset = Offset.instance(JSON["text-offset"] as? [String: AnyObject] ?? [:], included: nil) ?? textBlock.textOffset
+            textBlock.textColor = UIColor.instance(JSON["text-color"] as? [String: AnyObject] ?? [:], included: nil) ?? textBlock.textColor
+            
+            let fontSize = JSON["text-font-size"] as? CGFloat
+            let fontWeight = JSON["text-font-weight"] as? CGFloat
+            
+            textBlock.font = UIFont.instance(JSON["text-font"] as? [String: AnyObject] ?? [:], included: nil) ?? textBlock.font
+            
         case "button-block":
             block = ButtonBlock()
             
             let buttonBlock = block as! ButtonBlock
-            buttonBlock.title = JSON["title-text"] as? String
-            buttonBlock.titleColor = UIColor.instance(JSON["title-color"] as? [String: AnyObject] ?? [:], included: nil)
-            buttonBlock.titleOffset = Offset.instance(JSON["title-offset"] as? [String: AnyObject] ?? [:], included: nil)
-            buttonBlock.titleAlignment = Alignment.instance(JSON["title-alignment"] as? [String: AnyObject] ?? [:], included: nil)
+            
+            buttonBlock.action = ButtonBlock.Action.instance(JSON["action"] as? [String: AnyObject] ?? [:], included: nil)
+            if let states = JSON["states"] as? [String: AnyObject] {
+                buttonBlock.appearences[.Normal] = ButtonBlock.Appearance.instance(states["normal"] as? [String: AnyObject] ?? [:], included: nil)
+                buttonBlock.appearences[.Highlighted] = ButtonBlock.Appearance.instance(states["highlighted"] as? [String: AnyObject] ?? [:], included: nil)
+                buttonBlock.appearences[.Selected] = ButtonBlock.Appearance.instance(states["selected"] as? [String: AnyObject] ?? [:], included: nil)
+                buttonBlock.appearences[.Disabled] = ButtonBlock.Appearance.instance(states["disabled"] as? [String: AnyObject] ?? [:], included: nil)
+            }
+            
         default:
             return nil
         }
         
+        // Layout
+        
         block.width = Unit.instance(JSON["width"] as? [String: AnyObject] ?? [:], included: nil)
         block.height = Unit.instance(JSON["height"] as? [String: AnyObject] ?? [:], included: nil)
-        block.position = Block.Position(rawValue: JSON["layout"] as? String ?? "stacked")
-        block.alignment = Alignment.instance(JSON["alignment"] as? [String: AnyObject] ?? [:], included: nil)
-        block.offset = Offset.instance(JSON["offset"] as? [String: AnyObject] ?? [:], included: nil)
-        block.backgroundColor = UIColor.instance(JSON["background-color"] as? [String: AnyObject] ?? [:], included: nil)
-        block.borderColor = UIColor.instance(JSON["border-color"] as? [String: AnyObject] ?? [:], included: nil)
-        block.borderRadius = JSON["border-radius"] as? CGFloat
-        block.borderWidth = JSON["border-width"] as? CGFloat
+        block.position = Block.Position(rawValue: JSON["position"] as? String ?? "") ?? block.position
+        block.alignment = Alignment.instance(JSON["alignment"] as? [String: AnyObject] ?? [:], included: nil) ?? block.alignment
+        block.offset = Offset.instance(JSON["offset"] as? [String: AnyObject] ?? [:], included: nil) ?? block.offset
+        
+        // Appearance
+
+        block.backgroundColor = UIColor.instance(JSON["background-color"] as? [String: AnyObject] ?? [:], included: nil) ?? block.backgroundColor
+        block.borderColor = UIColor.instance(JSON["border-color"] as? [String: AnyObject] ?? [:], included: nil) ?? block.borderColor
+        block.borderRadius = JSON["border-radius"] as? CGFloat ?? block.borderRadius
+        block.borderWidth = JSON["border-width"] as? CGFloat ?? block.borderWidth
         
         return block
     }
 }
 
+extension ButtonBlock.Action : Mappable {
+    static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> ButtonBlock.Action? {
+        guard let type = JSON["type"] as? String,
+            urlString = JSON["url"] as? String,
+            url = NSURL(string: urlString) else { return nil }
+        
+        switch type {
+        case "website-action":
+            return .Website(url)
+        case "deep-link-action":
+            return .Deeplink(url)
+        default:
+            return nil
+        }
+    }
+}
+
+extension ButtonBlock.Appearance : Mappable {
+    static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> ButtonBlock.Appearance? {
+        var appearance = ButtonBlock.Appearance()
+        appearance.title = JSON["text"] as? String
+        appearance.titleAlignment = Alignment.instance(JSON["text-alignment"] as? [String: AnyObject] ?? [:], included: nil)
+        appearance.titleOffset = Offset.instance(JSON["text-offset"] as? [String: AnyObject] ?? [:], included: nil)
+        appearance.titleColor = UIColor.instance(JSON["text-color"] as? [String: AnyObject] ?? [:], included: nil)
+        appearance.titleFont = UIFont.instance(JSON["text-font"] as? [String: AnyObject] ?? [:], included: nil)
+        appearance.backgroundColor = UIColor.instance(JSON["background-color"] as? [String: AnyObject] ?? [:], included: nil)
+        appearance.borderColor = UIColor.instance(JSON["border-color"] as? [String: AnyObject] ?? [:], included: nil)
+        appearance.borderRadius = JSON["border-radius"] as? CGFloat
+        appearance.borderWidth = JSON["border-width"] as? CGFloat
+        return appearance
+    }
+}
+
+extension Image: Mappable {
+    static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> Image? {
+        guard let width = JSON["width"] as? CGFloat,
+            height = JSON["height"] as? CGFloat,
+            urlString = JSON["url"] as? String,
+            url = NSURL(string: urlString) else { return nil }
+        
+        return Image(size: CGSize(width: width, height: height), url: url)
+    }
+}
+
 extension Offset : Mappable {
     static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> Offset? {
-        let top = Unit.instance(JSON["top"] as? [String: AnyObject] ?? [:], included: nil)
-        let right = Unit.instance(JSON["right"] as? [String: AnyObject] ?? [:], included: nil)
-        let bottom = Unit.instance(JSON["bottom"] as? [String: AnyObject] ?? [:], included: nil)
-        let left = Unit.instance(JSON["left"] as? [String: AnyObject] ?? [:], included: nil)
-        let center = Unit.instance(JSON["center"] as? [String: AnyObject] ?? [:], included: nil)
-        let middle = Unit.instance(JSON["middle"] as? [String: AnyObject] ?? [:], included: nil)
+        let top = Unit.instance(JSON["top"] as? [String: AnyObject] ?? [:], included: nil) ?? .Points(0)
+        let right = Unit.instance(JSON["right"] as? [String: AnyObject] ?? [:], included: nil) ?? .Points(0)
+        let bottom = Unit.instance(JSON["bottom"] as? [String: AnyObject] ?? [:], included: nil) ?? .Points(0)
+        let left = Unit.instance(JSON["left"] as? [String: AnyObject] ?? [:], included: nil) ?? .Points(0)
+        let center = Unit.instance(JSON["center"] as? [String: AnyObject] ?? [:], included: nil) ?? .Points(0)
+        let middle = Unit.instance(JSON["middle"] as? [String: AnyObject] ?? [:], included: nil) ?? .Points(0)
 
         return Offset(left: left, right: right, top: top, bottom: bottom, center: center, middle: middle)
     }
@@ -249,10 +317,10 @@ extension Offset : Mappable {
 
 extension Alignment : Mappable {
     static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> Alignment? {
-        let horizontal = Alignment.HorizontalAlignment(rawValue: JSON["horizonal"] as? String ?? "left")
+        let horizontal = Alignment.HorizontalAlignment(rawValue: JSON["horizontal"] as? String ?? "left")
         let vertical = Alignment.VerticalAlignment(rawValue: JSON["vertical"] as? String ?? "top")
         
-        return Alignment(horizontal: horizontal, vertical: vertical)
+        return Alignment(horizontal: horizontal!, vertical: vertical!)
     }
 }
 
@@ -283,3 +351,23 @@ extension UIColor : Mappable {
     }
 }
 
+extension UIFont : Mappable {
+    static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> UIFont? {
+        guard let fontSize = JSON["size"] as? CGFloat,
+            fontWeight = JSON["weight"] as? Int else { return UIFont.systemFontOfSize(12) }
+        
+        let weights = [
+            100: UIFontWeightUltraLight,
+            200: UIFontWeightThin,
+            300: UIFontWeightLight,
+            400: UIFontWeightRegular,
+            500: UIFontWeightMedium,
+            600: UIFontWeightSemibold,
+            700: UIFontWeightBold,
+            800: UIFontWeightHeavy,
+            900: UIFontWeightBlack
+        ]
+        
+        return UIFont.systemFontOfSize(fontSize, weight: weights[fontWeight] ?? UIFontWeightRegular)
+    }
+}

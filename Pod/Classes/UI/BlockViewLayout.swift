@@ -45,7 +45,9 @@ class BlockViewLayout: UICollectionViewLayout {
                 
                 cellAttributes[indexPath] = attributes
                 
+                // if stacked {
                 yOffset = yOffset + heightForItem(layout: block)
+                // }
             }
          
             height = height + sectionHeight
@@ -83,62 +85,54 @@ class BlockViewLayout: UICollectionViewLayout {
         
         // Horizontal Layout
         
-        if let fixedWidth = block.width?.forWidth(self.collectionView!.frame.width) {
-            width = fixedWidth
+        switch block.alignment.horizontal {
+        case .Fill:
+            let leftOffset = block.offset.left.forWidth(collectionViewWidth)
+            let rightOffset = block.offset.right.forWidth(collectionViewWidth)
             
-            guard let horizontalAlignment = block.alignment?.horizontal else { return CGRectZero }
-            
-            switch horizontalAlignment {
-            case .Left:
-                guard let leftOffset = block.offset?.left?.forWidth(collectionViewWidth) else { return CGRectZero }
-                
-                x = leftOffset
-            case .Right:
-                guard let rightOffset = block.offset?.right?.forWidth(collectionViewWidth) else { return CGRectZero }
-                
-                x = collectionViewWidth - width - rightOffset
-            case .Center:
-                guard let centerOffset = block.offset?.center?.forWidth(collectionViewWidth) else { return CGRectZero }
-                
-                x = ((collectionViewWidth - width) / 2) + centerOffset
-            default: // This will never be
-                x = 0
-            }
-        } else {
-            
-            guard let leftOffset = block.offset?.left?.forWidth(collectionViewWidth),
-                let rightOffset = block.offset?.right?.forWidth(collectionViewWidth) else { return CGRectZero }
-            
-            x = leftOffset
             width = collectionViewWidth - leftOffset - rightOffset
+            x = leftOffset
+        case .Left:
+            let leftOffset = block.offset.left.forWidth(collectionViewWidth)
+            
+            width = block.widthInCollectionView(width: collectionViewWidth)
+            x = leftOffset
+        case .Right:
+            let rightOffset = block.offset.right.forWidth(collectionViewWidth)
+            
+            width = block.widthInCollectionView(width: collectionViewWidth)
+            x = collectionViewWidth - width - rightOffset
+        case .Center:
+            let centerOffset = block.offset.center.forWidth(collectionViewWidth)
+            
+            width = block.widthInCollectionView(width: collectionViewWidth)
+            x = ((collectionViewWidth - width) / 2) + centerOffset
         }
         
         // Vertical Layout
         
-        if let fixedHeight = block.height?.forWidth(collectionViewWidth) {
-            height = fixedHeight
+        switch block.alignment.vertical {
+        case .Fill:
+            let topOffset = block.offset.top.forWidth(collectionViewWidth)
+            let bottomOffset = block.offset.bottom.forWidth(collectionViewWidth)
             
-            switch block.alignment?.vertical {
-            case .Bottom?:
-                guard let bottomOffset = block.offset?.bottom?.forWidth(collectionViewWidth) else { return CGRectZero }
-                
-                y = yOffset + sectionHeight - height - bottomOffset
-            case .Middle?:
-                guard let middleOffset = block.offset?.middle?.forWidth(collectionViewWidth) else { return CGRectZero }
-                
-                y = yOffset + ((sectionHeight - height) / 2) + middleOffset
-            default:
-                guard let topOffset = block.offset?.top?.forWidth(collectionViewWidth) else { return CGRectZero }
-                
-                y = yOffset + topOffset
-            }
-        } else {
-            
-            guard let topOffset = block.offset?.top?.forWidth(collectionViewWidth),
-                let bottomOffset = block.offset?.bottom?.forWidth(collectionViewWidth) else { return CGRectZero }
+            height = sectionHeight - topOffset - bottomOffset
+            y = yOffset + topOffset
+        case .Top:
+            let topOffset = block.offset.top.forWidth(collectionViewWidth)
             
             y = yOffset + topOffset
-            height = sectionHeight - topOffset - bottomOffset
+            height = block.heightInCollectionView(width: collectionViewWidth)
+        case .Bottom:
+            let bottomOffset = block.offset.bottom.forWidth(collectionViewWidth)
+            
+            height = block.heightInCollectionView(width: collectionViewWidth)
+            y = yOffset + sectionHeight - height - bottomOffset
+        case .Middle:
+            let middleOffset = block.offset.middle.forWidth(collectionViewWidth)
+            
+            height = block.heightInCollectionView(width: collectionViewWidth)
+            y = yOffset + ((sectionHeight - height) / 2) + middleOffset
         }
         
         return CGRect(x: x, y: y, width: width, height: height)
@@ -147,18 +141,47 @@ class BlockViewLayout: UICollectionViewLayout {
     func heightForItem(layout block: Block) -> CGFloat {
         let collectionViewWidth = self.collectionView!.frame.width
         
-        switch block.position! {
+        switch block.position {
         case .Floating:
             return 0
         case .Stacked:
-            guard let top = block.offset?.top?.forWidth(collectionViewWidth),
-                let height = block.height?.forWidth(collectionViewWidth),
-                let bottom = block.offset?.bottom?.forWidth(collectionViewWidth) else { return 0 }
+            let top = block.offset.top.forWidth(collectionViewWidth)
+            let height = block.heightInCollectionView(width: collectionViewWidth)
+            let bottom = block.offset.bottom.forWidth(collectionViewWidth)
             
             return top + height + bottom
         }
     }
+}
+
+extension Unit {
+    func forWidth(width: CGFloat) -> CGFloat {
+        switch self {
+        case .Percentage(let value):
+            return CGFloat(value) * width
+        case .Points(let value):
+            return CGFloat(value)
+        }
+    }
+}
+
+// MARK: Block Size
+
+extension Block {
+    func heightInCollectionView(width width: CGFloat) -> CGFloat {
+        
+        if let height = height?.forWidth(width) {
+            return height
+        } else if let imageBock = self as? ImageBock, aspectRatio = imageBock.image?.aspectRatio {
+            return width / aspectRatio
+        } else if let textBlock = self as? TextBlock, string = textBlock.text as? NSString {
+            return string.boundingRectWithSize(CGSize(width: width, height: CGFloat.max), options: [.UsesLineFragmentOrigin, .UsesFontLeading], attributes: [NSFontAttributeName: textBlock.font], context: nil).height
+        }
+        
+        return 0
+    }
     
-    
-    
+    func widthInCollectionView(width width: CGFloat) -> CGFloat {
+        return self.width?.forWidth(width) ?? 0
+    }
 }

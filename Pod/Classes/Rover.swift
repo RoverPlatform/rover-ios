@@ -40,14 +40,6 @@ public class Rover : NSObject {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(Rover.applicationDidOpen), name: UIApplicationWillEnterForegroundNotification, object: nil)
         
         locationManager.delegate = self
-        
-        // TEMP BEGIN
-        
-        let userNotificationSettings = UIUserNotificationSettings(forTypes: [.Alert, .Sound, .Badge], categories: nil)
-        UIApplication.sharedApplication().registerUserNotificationSettings(userNotificationSettings)
-        
-        // TEMP END
-    
     }
     
     // MARK: Class Methods
@@ -148,19 +140,24 @@ public class Rover : NSObject {
     }
     
     public class func followMessageAction(message: Message) {
-        followAction(message.action, url: message.url)
-        sharedInstance?.sendEvent(.DidOpenMessage(identifier: message.identifier, source: "inbox", date: NSDate()))
-    }
-    
-    public class func followAction(action: Action, url: NSURL?) {
-        switch action {
+        switch message.action {
         case .Link:
-            if let url = url {
+            if let url = message.url {
                 sharedInstance?.presentSafariViewController(url: url)
+            }
+        case .LandingPage:
+            if let screen = message.landingPage {
+                let viewController = RVScreenViewController(screen: screen)
+                Rover.presentViewController(viewController)
             }
         default:
             break
         }
+        sharedInstance?.sendEvent(.DidOpenMessage(identifier: message.identifier, source: "inbox", date: NSDate()))
+    }
+    
+    public class func followAction(action: Action, url: NSURL?) {
+
     }
     
     // MARK: Application Hooks
@@ -195,8 +192,9 @@ public class Rover : NSObject {
         guard UIApplication.sharedApplication().applicationState != .Active,
             let messageId = notification.userInfo?["message-id"] as? String,
             let messageActionInt = notification.userInfo?["action"] as? Int,
-            let messageAction = Action(rawValue: messageActionInt),
-            let messageUrlString = notification.userInfo?["url"] as? String? else { return }
+            let messageAction = Action(rawValue: messageActionInt) else { return }
+        
+        let messageUrlString = notification.userInfo?["url"] as? String
         
         if let urlString = messageUrlString {
             followAction(messageAction, url: NSURL(string: urlString))
@@ -223,6 +221,7 @@ public class Rover : NSObject {
             notification.alertBody = message.text
             notification.alertTitle = message.title
             notification.userInfo = [
+                "rover": true,
                 "message-id" : message.identifier,
                 "action": message.action.rawValue
             ]
@@ -240,21 +239,27 @@ public class Rover : NSObject {
     func presentSafariViewController(url url: NSURL) {
         if #available(iOS 9.0, *) {
             let viewController = SFSafariViewController(URL: url)
-            viewController.delegate = self
-            
-            var frame = UIScreen.mainScreen().bounds
-            if UIDeviceOrientationIsLandscape(UIDevice.currentDevice().orientation) {
-                frame = CGRect(x: 0, y: 0, width: frame.height, height: frame.width)
-            }
-            
-            window = UIWindow(frame: frame)
-            window?.hidden = false
-            window?.rootViewController = UIViewController()
-            window?.rootViewController?.presentViewController(viewController, animated: true, completion: nil)
+        
+            Rover.presentViewController(viewController)
         } else {
             // Fallback on earlier versions
             UIApplication.sharedApplication().openURL(url)
         }
+    }
+    
+    public class func presentViewController(viewController: UIViewController) {
+        var frame = UIScreen.mainScreen().bounds
+        if UIDeviceOrientationIsLandscape(UIDevice.currentDevice().orientation) {
+            frame = CGRect(x: 0, y: 0, width: frame.height, height: frame.width)
+        }
+        
+        let navController = ModalViewController(rootViewController: viewController)
+        navController.modalDelegate = sharedInstance
+        
+        sharedInstance?.window = UIWindow(frame: frame)
+        sharedInstance?.window?.hidden = false
+        sharedInstance?.window?.rootViewController = UIViewController()
+        sharedInstance?.window?.rootViewController?.presentViewController(navController, animated: true, completion: nil)
     }
     
     // MARK: UIApplicationNotifications
@@ -274,6 +279,13 @@ public class Rover : NSObject {
         eventOperation.delegate = self
         
         eventOperationQueue.addOperation(eventOperation)
+    }
+}
+
+extension Rover : ModalViewControllerDelegate {
+    func didDismissModalViewController(viewController: ModalViewController) {
+        window?.rootViewController = nil
+        window = nil
     }
 }
 
@@ -316,13 +328,5 @@ extension Rover: EventOperationDelegate {
         for message in messages {
             deliverMessage(message)
         }
-    }
-}
-
-extension Rover : SFSafariViewControllerDelegate {
-    @available(iOS 9.0, *)
-    public func safariViewControllerDidFinish(controller: SFSafariViewController) {
-        window?.rootViewController = nil
-        window = nil
     }
 }

@@ -99,6 +99,13 @@ customer.save()
 
 In addition to identifiers, you may provide other user attributes for more personlized and segmented messaging via the Rover Messages app. For a full list attributes check [here](https://github.com/RoverPlatform/rover-ios-beta/blob/master/Pod/Classes/Model/Customer.swift).
 
+### Messages
+
+Using the Rover Messages App, one can author rich messages to be delivered on proximity events. A [Message](https://github.com/RoverPlatform/rover-ios-beta/blob/master/Pod/Classes/Model/Message.swift) can have different types of content:
+ - A link to a website
+ - A landing page
+ - Custom data defined at the time of message creation (```message.properties```)
+
 ### Inbox
 
 Most applications provide means for users to recall messages. You can use the `didDeliverMessage(_:)` callback on a [`RoverObserver`](https://github.com/RoverPlatform/rover-ios-beta/blob/master/Pod/Classes/RoverObserver.swift) to map and add Rover messages to your application's inbox as they are delivered. You may also rely solely on Rover for a simple implementation of such inbox if your application doesn't already have one:

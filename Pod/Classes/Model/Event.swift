@@ -22,7 +22,8 @@ public enum Event {
     case DidEnterCircularRegion(CLCircularRegion, place: Place?, date: NSDate)
     case DidExitCircularRegion(CLCircularRegion, place: Place?, date: NSDate)
     
-    case DidOpenMessage(identifier: String, source: String, date: NSDate)
+    case DidReceiveMessage(Message)
+    case DidOpenMessage(Message, source: String, date: NSDate)
     
     var properties: [String: Any] {
         switch self {
@@ -36,10 +37,10 @@ public enum Event {
             return ["region": region, "location": location, "date": date]
         case .DidExitCircularRegion(let region, let location, let date):
             return ["region": region, "location": location, "date": date]
-        case .DidOpenMessage(let identifier, let source, let date):
-            return ["identifier": identifier, "source": source, "date": date]
+        case .DidOpenMessage(let message, let source, let date):
+            return ["message": message, "source": source, "date": date]
         default:
-            return [String: Any]()
+            return [:]
         }
     }
     
@@ -57,6 +58,8 @@ extension Event {
             observer.didEnterGeofence?(place: place)
         case .DidExitCircularRegion(_, let place?, _):
             observer.didExitGeofence?(place: place)
+        case .DidReceiveMessage(let message):
+            observer.didDeliverMessage?(message)
         default:
             break
         }

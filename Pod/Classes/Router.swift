@@ -14,6 +14,7 @@ public enum Router {
     case Inbox
     case DeleteMessage(Message)
     case PatchMessage(Message)
+    case GetMessage(String)
     
     public static var baseURLString = "https://api.rover.io/v1"
     
@@ -40,6 +41,8 @@ public enum Router {
             return NSURL(string: "\(Router.baseURLString)/inbox/messages/\(message.identifier)")!
         case .PatchMessage(let message):
             return NSURL(string: "\(Router.baseURLString)/inbox/messages/\(message.identifier)")!
+        case .GetMessage(let id):
+            return NSURL(string: "\(Router.baseURLString)/inbox/messages/\(id)")!
         }
     }
     

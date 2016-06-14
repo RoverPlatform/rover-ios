@@ -25,7 +25,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }()
         
         //Rover.setup(applicationToken: "da485394bad60399c3614af79db0fb7a")
-        Rover.setup(applicationToken: "0628d761f3cebf6a586aa02cc4648bd2") // has to happen on app startup
+        Rover.setup(applicationToken: "b43963962ea03fc2f4b456a5cbe49b40") // has to happen on app startup
     
         //Rover.startMonitoring() // asks for location permissions
         Rover.registerForNotifications() // asks for notification permissions
@@ -38,10 +38,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Override point for customization after application launch.
         return true
-    }
-
-    func application(application: UIApplication, didReceiveLocalNotification notification: UILocalNotification) {
-        Rover.didReceiveLocalNotification(notification)
     }
     
     func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject], fetchCompletionHandler completionHandler: (UIBackgroundFetchResult) -> Void) {

@@ -85,7 +85,6 @@ class InboxTableViewController: UITableViewController {
             let screenViewController = RVScreenViewController(screen: screen)
             screenViewController.delegate = self
             navigationController?.pushViewController(screenViewController, animated: true)
-            presentViewController(<#T##viewControllerToPresent: UIViewController##UIViewController#>, animated: <#T##Bool#>, completion: <#T##(() -> Void)?##(() -> Void)?##() -> Void#>)
         default:
             break
         }

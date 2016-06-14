@@ -11,7 +11,7 @@ it, simply add the following line to your Podfile:
 
 ```ruby
 use_frameworks!
-pod "Rover", :git => "https://github.com/RoverPlatform/rover-ios-beta.git"
+pod "Rover", :git => "https://github.com/RoverPlatform/rover-ios.git"
 ```
 While Rover 4 is in Beta you **MUST** provide the git url in your Podfile.
 

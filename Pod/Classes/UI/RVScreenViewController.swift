@@ -18,18 +18,26 @@ private let buttonBlockCellIdentifier = "buttonBlockCellIdentifier"
 
 public class RVScreenViewController: UICollectionViewController {
     
-    let screen: Screen
+    var screen: Screen? {
+        didSet {
+            self.title = screen?.title
+            collectionView?.reloadData()
+        }
+    }
+    
+    var activityIndicatorView: UIActivityIndicatorView?
     
     public weak var delegate: RVScreenViewControllerDelegate?
     
-    required public init(screen: Screen) {
-        self.screen = screen
-        
+    public init() {
         let layout = BlockViewLayout()
-        
         super.init(collectionViewLayout: layout)
-        
         layout.dataSource = self
+    }
+    
+    public convenience init(screen: Screen) {
+        self.init()
+        self.screen = screen
         self.title = screen.title
     }
     
@@ -50,13 +58,6 @@ public class RVScreenViewController: UICollectionViewController {
 
         self.collectionView!.backgroundColor = UIColor.whiteColor()
         
-        if (navigationController is ModalViewController) {
-            self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Close", style: .Plain, target: self, action: #selector(self.dismissNavigationController))
-        }
-    }
-    
-    func dismissNavigationController() {
-        self.navigationController?.dismissViewControllerAnimated(true, completion: nil)
     }
 
     override public func didReceiveMemoryWarning() {
@@ -67,17 +68,17 @@ public class RVScreenViewController: UICollectionViewController {
     // MARK: UICollectionViewDataSource
 
     override public func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
-        return screen.rows.count
+        return screen?.rows.count ?? 0
     }
 
 
     override public func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return screen.rows[section].blocks.count
+        return screen?.rows[section].blocks.count ?? 0
     }
 
     override public func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         var cell: UICollectionViewCell
-        let block = screen.rows[indexPath.section].blocks[indexPath.row]
+        let block = screen?.rows[indexPath.section].blocks[indexPath.row]
         
         switch block {
         case let textBlock as TextBlock:
@@ -118,10 +119,10 @@ public class RVScreenViewController: UICollectionViewController {
         }
         
         if !(cell is ButtonBlockViewCell) {
-        	cell.backgroundColor = block.backgroundColor
-        	cell.layer.borderColor = block.borderColor.CGColor
-            cell.layer.borderWidth = block.borderWidth
-            cell.layer.cornerRadius = block.borderRadius
+        	cell.backgroundColor = block?.backgroundColor
+        	cell.layer.borderColor = block?.borderColor.CGColor
+            cell.layer.borderWidth = block?.borderWidth ?? cell.layer.borderWidth
+            cell.layer.cornerRadius = block?.borderRadius ?? cell.layer.cornerRadius
         }
         
         return cell
@@ -157,31 +158,51 @@ public class RVScreenViewController: UICollectionViewController {
     
     }
     */
+    
+    public func showActivityIndicator() {
+        let activityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: .Gray)
+        view.addSubview(activityIndicatorView)
+        view.addConstraints([
+            NSLayoutConstraint(item: activityIndicatorView, attribute: .CenterX, relatedBy: .Equal, toItem: view, attribute: .CenterX, multiplier: 1, constant: 0),
+            NSLayoutConstraint(item: activityIndicatorView, attribute: .CenterY, relatedBy: .Equal, toItem: view, attribute: .CenterY, multiplier: 1, constant: 0)
+            ])
+        activityIndicatorView.startAnimating()
+        self.activityIndicatorView = activityIndicatorView
+    }
+    
+    public func hideActivityIndicator() {
+        activityIndicatorView?.stopAnimating()
+        activityIndicatorView?.removeFromSuperview()
+    }
 
 }
 
 extension RVScreenViewController : ButtonBlockViewCellDelegate {
     func buttonBlockViewCellDidPressButton(cell: ButtonBlockViewCell) {
         guard let indexPath = collectionView!.indexPathForCell(cell),
-            buttonBlock = screen.rows[indexPath.section].blocks[indexPath.row] as? ButtonBlock,
+            buttonBlock = screen?.rows[indexPath.section].blocks[indexPath.row] as? ButtonBlock,
             action = buttonBlock.action else { return }
         
         switch action {
         case .Deeplink(let url):
-            delegate?.screenViewController?(self, handleOpenURL: url)
+            UIApplication.sharedApplication().openURL(url)
         case .Website(let url):
-            delegate?.screenViewController?(self, handleOpenURL: url)
+            if let urlDelegate = delegate?.screenViewController {
+                urlDelegate(self, handleOpenURL: url)
+            } else {
+                UIApplication.sharedApplication().openURL(url)
+            }
         }
     }
 }
 
 extension RVScreenViewController : BlockViewLayoutDataSource {
     func blockViewLayout(blockViewLayout: BlockViewLayout, heightForSection section: Int) -> CGFloat {
-        return screen.rows[section].instrinsicHeight(width: collectionView!.frame.width)
+        return screen!.rows[section].instrinsicHeight(width: collectionView!.frame.width)
     }
     
     func blockViewLayout(blockViewLayout: BlockViewLayout, layoutForItemAtIndexPath indexPath: NSIndexPath) -> Block {
-        return screen.rows[indexPath.section].blocks[indexPath.row]
+        return screen!.rows[indexPath.section].blocks[indexPath.row]
     }
 }
 

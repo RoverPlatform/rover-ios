@@ -101,13 +101,18 @@ public class Rover : NSObject {
         sharedInstance?.sendEvent(event)
     }
     
-    public class func reloadInbox(completion: ([Message] -> Void)?) {
+    public class func reloadInbox(completion: (([Message], Int) -> Void)?) {
+        var unreadMessagesCount: Int = 0
+        
         let mappingOperation = MappingOperation { (messages: [Message]) in
             dispatch_async(dispatch_get_main_queue()) {
-                completion?(messages)
+                completion?(messages, unreadMessagesCount)
             }
         }
         let networkOperation = NetworkOperation(mutableUrlRequest: Router.Inbox.urlRequest) { JSON, error in
+            if let meta = JSON?["meta"] as? [String: AnyObject] {
+                unreadMessagesCount = meta["unread-messages-count"] as? Int ?? 0
+            }
             mappingOperation.json = JSON
         }
         
@@ -138,25 +143,24 @@ public class Rover : NSObject {
         sharedInstance?.sendEvent(.DidUpdateLocation(location, date: NSDate()))
     }
     
-    public class func followMessageAction(message: Message) {
+    public class func followAction(message message: Message) {
         switch message.action {
-        case .Link:
+        case .Website:
+            if let url = message.url where url.scheme == "http" || url.scheme == "https" {
+                let viewController = SFSafariViewController(URL: url)
+                presentViewController(viewController)
+            }
+        case .DeepLink:
             if let url = message.url {
-                sharedInstance?.presentSafariViewController(url: url)
+                UIApplication.sharedApplication().openURL(url)
             }
         case .LandingPage:
-            if let screen = message.landingPage {
-                let viewController = RVScreenViewController(screen: screen)
-                Rover.presentViewController(viewController)
+            if let viewController = viewController(message: message) {
+                presentViewController(viewController)
             }
         default:
             break
         }
-        sharedInstance?.sendEvent(.DidOpenMessage(message, source: "inbox", date: NSDate()))
-    }
-    
-    public class func followAction(action: Action, url: NSURL?) {
-
     }
     
     // MARK: Application Hooks
@@ -173,8 +177,7 @@ public class Rover : NSObject {
     }
     
     public class func didReceiveRemoteNotification(userInfo: [NSObject: AnyObject], fetchCompletionHandler completionHandler: (UIBackgroundFetchResult) -> Void) {
-        guard let data = userInfo["data"] as? [String: AnyObject],
-            let messageId = data["message-id"] as? String else { return }
+        guard let data = userInfo["data"] as? [String: AnyObject] else { return }
         
         let mappingOperation = MappingOperation { (message: Message) in
             dispatch_async(dispatch_get_main_queue()) {
@@ -182,30 +185,17 @@ public class Rover : NSObject {
                 
                 if UIApplication.sharedApplication().applicationState != .Active {
                     // Swiped
-                    followAction(message.action, url: message.url)
+                    followAction(message: message)
                     sharedInstance?.sendEvent(.DidOpenMessage(message, source: "notification", date: NSDate()))
-                } else {
-                    
                 }
             }
         }
         
+        mappingOperation.json = ["data": data]
         mappingOperation.completionBlock = {
             completionHandler(.NoData)
         }
         
-        let networkOperation = NetworkOperation(urlRequest: Router.GetMessage(messageId).urlRequest) {
-            [unowned mappingOperation]
-            (JSON, error) in
-            
-            if let JSON = JSON {
-                mappingOperation.json = JSON
-            }
-        }
-        
-        mappingOperation.addDependency(networkOperation)
-        
-        sharedInstance?.operationQueue.addOperation(networkOperation)
         sharedInstance?.operationQueue.addOperation(mappingOperation)
     }
     
@@ -241,6 +231,47 @@ public class Rover : NSObject {
         sharedInstance?.window?.hidden = false
         sharedInstance?.window?.rootViewController = UIViewController()
         sharedInstance?.window?.rootViewController?.presentViewController(navController, animated: true, completion: nil)
+    }
+    
+    public class func viewController(message message: Message) -> UIViewController? {
+        switch message.action {
+        case .LandingPage:
+            let viewController = RVScreenViewController()
+            
+            if let screen = message.landingPage {
+                viewController.screen = screen
+            } else {
+                //viewController.showActivityIndicator()
+                
+                let mappingOperation = MappingOperation() { (screen: Screen) in
+                    message.landingPage = screen
+                    
+                    dispatch_async(dispatch_get_main_queue()) {
+                        viewController.screen = screen
+                    }
+                }
+                
+                mappingOperation.completionBlock = {
+                    //viewController.hideActivityIndicator()
+                }
+                
+                let networkOperation = NetworkOperation(urlRequest: Router.GetLandingPage(message).urlRequest) {
+                    [unowned mappingOperation]
+                    (JSON, error) in
+                    
+                    if let JSON = JSON { mappingOperation.json = ["data": JSON] }
+                }
+                
+                mappingOperation.addDependency(networkOperation)
+                
+                sharedInstance?.operationQueue.addOperation(networkOperation)
+                sharedInstance?.operationQueue.addOperation(mappingOperation)
+            }
+            
+            return viewController
+        default:
+            return nil
+        }
     }
     
     // MARK: UIApplicationNotifications

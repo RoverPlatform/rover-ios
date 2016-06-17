@@ -151,8 +151,13 @@ extension Message : Mappable {
         
         if let action = attributes["content-type"] as? String {
             switch action {
+            case "deep-link":
+                message.action = .DeepLink
+                if let url = attributes["deep-link-url"] as? String {
+                    message.url = NSURL(string: url)
+                }
             case "website":
-                message.action = .Link
+                message.action = .Website
                 // TODO: this can throw, needs to be safer
                 if let url = attributes["website-url"] as? String {
                     message.url = NSURL(string: url)
@@ -177,6 +182,8 @@ extension Screen : Mappable {
     static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> Screen? {
         guard let rowsAttributes = JSON["rows"] as? [[String : AnyObject]],
             rows = rowsAttributes.map({ Row.instance($0, included: nil) }) as? [Row] else { return nil }
+        
+        // TODO: header rows and footer rows
         
         let screen = Screen(rows: rows)
         screen.title = JSON["title"] as? String

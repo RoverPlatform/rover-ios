@@ -18,7 +18,7 @@
     [Rover stopMonitoring];
     
     Message *message = [[Message alloc] init];
-    message.action == ActionLink;
+    message.action == ActionWebsite;
     
     
 }

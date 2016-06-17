@@ -12,8 +12,9 @@ import CoreData
 @objc
 public enum Action : Int {
     case None
-    case Link
+    case Website
     case LandingPage
+    case DeepLink
 }
 
 @objc

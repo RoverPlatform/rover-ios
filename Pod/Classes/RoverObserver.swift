@@ -50,18 +50,6 @@ public protocol RoverObserver {
         - place: The place that was exited.
      */
     optional func didExitGeofence(place place: Place)
-
-    /*
-     Called before a `Message` is about to be delivered.
-     
-     - returns:
-     A Bool indicating whether the `Message` should be delivered. All observers must return `true`
-     for a `Message` to get delivered.
-     
-     - paramters:
-        - message: The `Message` that is to be delivered.
-     */
-    optional func willDeliverMessage(message: Message) -> Bool
     
     /*
      Called after a `Message` has been delivered.

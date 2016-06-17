@@ -13,6 +13,27 @@ import SafariServices
 class InboxTableViewController: UITableViewController {
 
     var messages = [Message]()
+    var unreadMessagesCount: Int = 0 {
+        didSet {
+            if unreadMessagesCount > 0 {
+                self.navigationController?.tabBarItem.badgeValue = "\(unreadMessagesCount)"
+            } else {
+                self.navigationController?.tabBarItem.badgeValue = nil
+            }
+        }
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(applicationDidOpen), name: UIApplicationDidFinishLaunchingNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(applicationDidOpen), name: UIApplicationWillEnterForegroundNotification, object: nil)
+    }
+    
+    override func loadView() {
+        super.loadView()
+        print("loady")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,20 +43,21 @@ class InboxTableViewController: UITableViewController {
         self.refreshControl = UIRefreshControl()
         self.refreshControl?.addTarget(self, action: #selector(InboxTableViewController.reloadMessages), forControlEvents: .ValueChanged)
         
-        reloadMessages()
-        
         Rover.addObserver(self)
     }
 
     deinit {
+        NSNotificationCenter.defaultCenter().removeObserver(self)
         Rover.removeObserver(self)
     }
     
     func reloadMessages() {
-        Rover.reloadInbox { messages in
+        Rover.reloadInbox { messages, unread in
             self.refreshControl?.endRefreshing()
             self.messages = messages
             self.tableView.reloadData()
+            
+            self.unreadMessagesCount = unread
         }
     }
 
@@ -75,20 +97,38 @@ class InboxTableViewController: UITableViewController {
         let message = messages[indexPath.row]
         
         switch message.action {
-        case .Link:
-            guard let url = message.url else { break }
+        case .Website:
+            guard let url = message.url where url.scheme == "http" || url.scheme == "https" else { break }
             let safariViewController = SFSafariViewController(URL: url)
             navigationController?.pushViewController(safariViewController, animated: true)
             break
+        case .DeepLink:
+            guard let url = message.url else { break }
+            UIApplication.sharedApplication().openURL(url)
         case .LandingPage:
-            guard let screen = message.landingPage else { break }
-            let screenViewController = RVScreenViewController(screen: screen)
-            screenViewController.delegate = self
-            navigationController?.pushViewController(screenViewController, animated: true)
-            presentViewController(<#T##viewControllerToPresent: UIViewController##UIViewController#>, animated: <#T##Bool#>, completion: <#T##(() -> Void)?##(() -> Void)?##() -> Void#>)
+            if let screenViewController = Rover.viewController(message: message) as? RVScreenViewController {
+                screenViewController.delegate = self
+                navigationController?.pushViewController(screenViewController, animated: true)
+            }
+            break
         default:
             break
         }
+        
+        if (!message.read) {
+            message.read = true
+            self.unreadMessagesCount -= 1
+            Rover.patchMessage(message)
+            
+            let cell = tableView.cellForRowAtIndexPath(indexPath) as! MessageTableViewCell
+            cell.unreadIndicatorView.hidden = true
+        }
+    }
+    
+    // MARK: Application Observer
+    
+    func applicationDidOpen() {
+        reloadMessages()
     }
 
 }
@@ -104,6 +144,7 @@ extension InboxTableViewController : RoverObserver {
     func didDeliverMessage(message: Message) {
         // Only add messages that have been marked to be saved
         guard message.savedToInbox else { return }
+        unreadMessagesCount += 1
         // You may choose to add them to your CoreData model instead
         messages.insert(message, atIndex: 0)
         tableView.insertRowsAtIndexPaths([NSIndexPath(forRow: 0, inSection: 0)], withRowAnimation: .Automatic)

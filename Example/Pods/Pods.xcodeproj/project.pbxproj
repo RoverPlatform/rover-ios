@@ -1,2111 +1,784 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-	<key>archiveVersion</key>
-	<string>1</string>
-	<key>classes</key>
-	<dict/>
-	<key>objectVersion</key>
-	<string>46</string>
-	<key>objects</key>
-	<dict>
-		<key>004EA1F6DEA639E715BF0D33AEF86AA5</key>
-		<dict>
-			<key>baseConfigurationReference</key>
-			<string>74AB793574963654EAE295DFCF3F4714</string>
-			<key>buildSettings</key>
-			<dict>
-				<key>CODE_SIGN_IDENTITY[sdk=iphoneos*]</key>
-				<string>iPhone Developer</string>
-				<key>CURRENT_PROJECT_VERSION</key>
-				<string>1</string>
-				<key>DEFINES_MODULE</key>
-				<string>YES</string>
-				<key>DYLIB_COMPATIBILITY_VERSION</key>
-				<string>1</string>
-				<key>DYLIB_CURRENT_VERSION</key>
-				<string>1</string>
-				<key>DYLIB_INSTALL_NAME_BASE</key>
-				<string>@rpath</string>
-				<key>ENABLE_STRICT_OBJC_MSGSEND</key>
-				<string>YES</string>
-				<key>INFOPLIST_FILE</key>
-				<string>Target Support Files/Pods-Rover_Example/Info.plist</string>
-				<key>INSTALL_PATH</key>
-				<string>$(LOCAL_LIBRARY_DIR)/Frameworks</string>
-				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
-				<string>9.0</string>
-				<key>LD_RUNPATH_SEARCH_PATHS</key>
-				<array>
-					<string>$(inherited)</string>
-					<string>@executable_path/Frameworks</string>
-					<string>@loader_path/Frameworks</string>
-				</array>
-				<key>MACH_O_TYPE</key>
-				<string>staticlib</string>
-				<key>MODULEMAP_FILE</key>
-				<string>Target Support Files/Pods-Rover_Example/Pods-Rover_Example.modulemap</string>
-				<key>MTL_ENABLE_DEBUG_INFO</key>
-				<string>YES</string>
-				<key>OTHER_LDFLAGS</key>
-				<string></string>
-				<key>OTHER_LIBTOOLFLAGS</key>
-				<string></string>
-				<key>PODS_ROOT</key>
-				<string>$(SRCROOT)</string>
-				<key>PRODUCT_NAME</key>
-				<string>Pods_Rover_Example</string>
-				<key>SDKROOT</key>
-				<string>iphoneos</string>
-				<key>SKIP_INSTALL</key>
-				<string>YES</string>
-				<key>SWIFT_OPTIMIZATION_LEVEL</key>
-				<string>-Onone</string>
-				<key>TARGETED_DEVICE_FAMILY</key>
-				<string>1,2</string>
-				<key>VERSIONING_SYSTEM</key>
-				<string>apple-generic</string>
-				<key>VERSION_INFO_PREFIX</key>
-				<string></string>
-			</dict>
-			<key>isa</key>
-			<string>XCBuildConfiguration</string>
-			<key>name</key>
-			<string>Debug</string>
-		</dict>
-		<key>02DFB995D67720927CDFC08AD91FBB33</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>path</key>
-			<string>Rover.modulemap</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>062E9984704DCD284BB8FC8C4D69355A</key>
-		<dict>
-			<key>fileRef</key>
-			<string>F020E973E576C9AF27B783BC2E8B9D54</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>0674F284D94718FE7EEB047A57877CC9</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>text.xcconfig</string>
-			<key>path</key>
-			<string>Rover.xcconfig</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>0C778A7FC69D8A58EB2FD6262380B252</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>SerializingOperation.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>0CE030C927BCE5D8C656BA9108B9C41D</key>
-		<dict>
-			<key>fileRef</key>
-			<string>66E958B71F1FA4AF49D8AF31B082D527</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>122DA2E5084A4393C29BE363C764795C</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>704829A3910E153298C482537DDBE0E2</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>Frameworks</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>1375CD3426D492047DFBA3C6B00511E4</key>
-		<dict>
-			<key>fileRef</key>
-			<string>FD8C68DE4C1462B37C4084C579410001</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>138DA09943BF37BFD158F5FFB6A5844D</key>
-		<dict>
-			<key>buildConfigurationList</key>
-			<string>1677D5665579E0F6ACF2903AFC5F6373</string>
-			<key>buildPhases</key>
-			<array>
-				<string>B5B4DBAAB40A891151F87E35C20EE213</string>
-				<string>A8559F03DA31262CC6F591A452634C4C</string>
-				<string>28E715A22445BF763F5B12F5F64FE932</string>
-				<string>F4F2D1A8135F0EB7BD5162438E664E94</string>
-			</array>
-			<key>buildRules</key>
-			<array/>
-			<key>dependencies</key>
-			<array>
-				<string>4B715E43491493B7A9344D1EB3C14167</string>
-			</array>
-			<key>isa</key>
-			<string>PBXNativeTarget</string>
-			<key>name</key>
-			<string>Rover</string>
-			<key>productName</key>
-			<string>Rover</string>
-			<key>productReference</key>
-			<string>4C33CDC58377909A54D880F4A57034CB</string>
-			<key>productType</key>
-			<string>com.apple.product-type.framework</string>
-		</dict>
-		<key>144F41BD6AD4CC660DDCE89BF7793E2D</key>
-		<dict>
-			<key>fileRef</key>
-			<string>7DA0158D632234043D64070ECD69BD2C</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>15105F73CE228984FA0F011D52E71B9E</key>
-		<dict>
-			<key>fileRef</key>
-			<string>C91672263C7A46BDA5CD7C8DC5E9E8AE</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>165548863928AEFD9F3907D2C2AFFB70</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>RoverObserver.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>1677D5665579E0F6ACF2903AFC5F6373</key>
-		<dict>
-			<key>buildConfigurations</key>
-			<array>
-				<string>D9B79947CB7D34B8803B1672F3A1D036</string>
-				<string>196C2B4CC370FC49FFD31718AB0A6FC4</string>
-			</array>
-			<key>defaultConfigurationIsVisible</key>
-			<string>0</string>
-			<key>defaultConfigurationName</key>
-			<string>Release</string>
-			<key>isa</key>
-			<string>XCConfigurationList</string>
-		</dict>
-		<key>196C2B4CC370FC49FFD31718AB0A6FC4</key>
-		<dict>
-			<key>baseConfigurationReference</key>
-			<string>0674F284D94718FE7EEB047A57877CC9</string>
-			<key>buildSettings</key>
-			<dict>
-				<key>CODE_SIGN_IDENTITY[sdk=iphoneos*]</key>
-				<string>iPhone Developer</string>
-				<key>CURRENT_PROJECT_VERSION</key>
-				<string>1</string>
-				<key>DEFINES_MODULE</key>
-				<string>YES</string>
-				<key>DYLIB_COMPATIBILITY_VERSION</key>
-				<string>1</string>
-				<key>DYLIB_CURRENT_VERSION</key>
-				<string>1</string>
-				<key>DYLIB_INSTALL_NAME_BASE</key>
-				<string>@rpath</string>
-				<key>ENABLE_STRICT_OBJC_MSGSEND</key>
-				<string>YES</string>
-				<key>GCC_PREFIX_HEADER</key>
-				<string>Target Support Files/Rover/Rover-prefix.pch</string>
-				<key>INFOPLIST_FILE</key>
-				<string>Target Support Files/Rover/Info.plist</string>
-				<key>INSTALL_PATH</key>
-				<string>$(LOCAL_LIBRARY_DIR)/Frameworks</string>
-				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
-				<string>9.0</string>
-				<key>LD_RUNPATH_SEARCH_PATHS</key>
-				<array>
-					<string>$(inherited)</string>
-					<string>@executable_path/Frameworks</string>
-					<string>@loader_path/Frameworks</string>
-				</array>
-				<key>MODULEMAP_FILE</key>
-				<string>Target Support Files/Rover/Rover.modulemap</string>
-				<key>MTL_ENABLE_DEBUG_INFO</key>
-				<string>NO</string>
-				<key>PRODUCT_NAME</key>
-				<string>Rover</string>
-				<key>SDKROOT</key>
-				<string>iphoneos</string>
-				<key>SKIP_INSTALL</key>
-				<string>YES</string>
-				<key>TARGETED_DEVICE_FAMILY</key>
-				<string>1,2</string>
-				<key>VERSIONING_SYSTEM</key>
-				<string>apple-generic</string>
-				<key>VERSION_INFO_PREFIX</key>
-				<string></string>
-			</dict>
-			<key>isa</key>
-			<string>XCBuildConfiguration</string>
-			<key>name</key>
-			<string>Release</string>
-		</dict>
-		<key>1A1A76D8488756BAF16A0CB3BF4A0A32</key>
-		<dict>
-			<key>containerPortal</key>
-			<string>D41D8CD98F00B204E9800998ECF8427E</string>
-			<key>isa</key>
-			<string>PBXContainerItemProxy</string>
-			<key>proxyType</key>
-			<string>1</string>
-			<key>remoteGlobalIDString</key>
-			<string>138DA09943BF37BFD158F5FFB6A5844D</string>
-			<key>remoteInfo</key>
-			<string>Rover</string>
-		</dict>
-		<key>1E8B253119F83F2EEDEE8D79449D1703</key>
-		<dict>
-			<key>buildConfigurations</key>
-			<array>
-				<string>4FD8A713633360F3E6F33522C9419B5C</string>
-				<string>75091F0397A2D293843DBA5E7E4C08D6</string>
-			</array>
-			<key>defaultConfigurationIsVisible</key>
-			<string>0</string>
-			<key>defaultConfigurationName</key>
-			<string>Release</string>
-			<key>isa</key>
-			<string>XCConfigurationList</string>
-		</dict>
-		<key>1EAD01C064ED57C9F20251C8C059A9CA</key>
-		<dict>
-			<key>buildActionMask</key>
-			<string>2147483647</string>
-			<key>files</key>
-			<array/>
-			<key>isa</key>
-			<string>PBXFrameworksBuildPhase</string>
-			<key>runOnlyForDeploymentPostprocessing</key>
-			<string>0</string>
-		</dict>
-		<key>1F5A6B011D9E90296ACFA6E402A66CF5</key>
-		<dict>
-			<key>fileRef</key>
-			<string>C5BA18F5D82593CC84BFAF56A5FB954D</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>1FD0B473F7AFA615CF6D8487869B3BBB</key>
-		<dict>
-			<key>fileRef</key>
-			<string>C93CD24ABF28C257FD16701246378576</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>241A79BC67CD109BF70D08B89A3D81BF</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>path</key>
-			<string>Pods-Rover_Example-umbrella.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>24FD1444CD8E557F313F7B97DACDDC64</key>
-		<dict>
-			<key>buildConfigurationList</key>
-			<string>6F7A4B17D456D0DA66EA88328A1229AA</string>
-			<key>buildPhases</key>
-			<array>
-				<string>EAD6E6EB4F797DFB694339959FB08B3B</string>
-				<string>E07F27F20DF708454214ECDD2A352FCC</string>
-				<string>F12CFBA28EB0C3D384C2A02AA1122113</string>
-			</array>
-			<key>buildRules</key>
-			<array/>
-			<key>dependencies</key>
-			<array>
-				<string>D8AD276BF54E29DDA4EFD817D1CB7FB6</string>
-			</array>
-			<key>isa</key>
-			<string>PBXNativeTarget</string>
-			<key>name</key>
-			<string>Pods-Rover_Example</string>
-			<key>productName</key>
-			<string>Pods-Rover_Example</string>
-			<key>productReference</key>
-			<string>FBC7FBDAAFEABF9DEE4D735B875B4DFB</string>
-			<key>productType</key>
-			<string>com.apple.product-type.framework</string>
-		</dict>
-		<key>28E715A22445BF763F5B12F5F64FE932</key>
-		<dict>
-			<key>buildActionMask</key>
-			<string>2147483647</string>
-			<key>files</key>
-			<array>
-				<string>B61094F3C02E33021132EF25398AE386</string>
-			</array>
-			<key>isa</key>
-			<string>PBXResourcesBuildPhase</string>
-			<key>runOnlyForDeploymentPostprocessing</key>
-			<string>0</string>
-		</dict>
-		<key>2D8E8EC45A3A1A1D94AE762CB5028504</key>
-		<dict>
-			<key>buildConfigurations</key>
-			<array>
-				<string>5CE5176205D06FF3FFE3DDDA9291E44B</string>
-				<string>74857149DC1E0D599B8A01A78349A926</string>
-			</array>
-			<key>defaultConfigurationIsVisible</key>
-			<string>0</string>
-			<key>defaultConfigurationName</key>
-			<string>Release</string>
-			<key>isa</key>
-			<string>XCConfigurationList</string>
-		</dict>
-		<key>30767740929363580C0FA99ACE4AFFD6</key>
-		<dict>
-			<key>fileRef</key>
-			<string>FE2FEF2AB3C12363C66B37D67E448EEB</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>30FD3BA6784B70B094D964C67D38AD18</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>path</key>
-			<string>Rover-prefix.pch</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>3222A842F8C6030ED74272C453A62D2D</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>ConcurrentOperation.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>32BD4651FA3ADF0DA1DD1DD8D1B8EFA9</key>
-		<dict>
-			<key>fileRef</key>
-			<string>165548863928AEFD9F3907D2C2AFFB70</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>37D26ABF3E3D55C659D13254611E23D8</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>text.xcconfig</string>
-			<key>path</key>
-			<string>Pods-Rover_Example.release.xcconfig</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>3A2F5F2BB8D22799EFF0463AD689785A</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>text</string>
-			<key>path</key>
-			<string>Pods-Rover_Example-acknowledgements.markdown</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>3D84E594E8418CC0A45F85BCE3227C47</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>BB4BD8177EE85E6066B3543A211CA8E4</string>
-				<string>E1165F1707D484D7D33F6026CE13FFC0</string>
-				<string>3A2F5F2BB8D22799EFF0463AD689785A</string>
-				<string>9B6862A8EFAFF3B20E5F29FB6623456E</string>
-				<string>B9E3759E3449146D1C9795415FAE1D15</string>
-				<string>A9D1643BBAF0BC670D6C7814C507EF29</string>
-				<string>D56FB7133A3A11C3364AFC4B9C4579E1</string>
-				<string>241A79BC67CD109BF70D08B89A3D81BF</string>
-				<string>74AB793574963654EAE295DFCF3F4714</string>
-				<string>37D26ABF3E3D55C659D13254611E23D8</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>Pods-Rover_Example</string>
-			<key>path</key>
-			<string>Target Support Files/Pods-Rover_Example</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>3F4C29B02448D955B14B2DFA8CE64193</key>
-		<dict>
-			<key>fileRef</key>
-			<string>241A79BC67CD109BF70D08B89A3D81BF</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-			<key>settings</key>
-			<dict>
-				<key>ATTRIBUTES</key>
-				<array>
-					<string>Public</string>
-				</array>
-			</dict>
-		</dict>
-		<key>417CB6CCCE7E619DD97D6B412416AFBA</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>Serializables.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>430AE66A726AE77185259114903677AA</key>
-		<dict>
-			<key>fileRef</key>
-			<string>524DE4ACFB607B209FC2C5C16FF19694</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>4359722F9F728AE26564CDB99DDE9EBD</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>LocationAuthorizationOperation.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>447B001AF1C0F3C9653B89D5BE017EA8</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>Rover.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>48089B68EE50FD04756B063EA62C1B29</key>
-		<dict>
-			<key>fileRef</key>
-			<string>7555FD55C12E4D911C6432D6AED0972D</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>49BE9D7B7D2DC70F1743717411293AD8</key>
-		<dict>
-			<key>fileRef</key>
-			<string>50BFD9CF912ED0335E1E992280C85C72</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>4B715E43491493B7A9344D1EB3C14167</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXTargetDependency</string>
-			<key>name</key>
-			<string>Rover-Rover</string>
-			<key>target</key>
-			<string>915913DEDB4071CED9FDC276B32CA6C5</string>
-			<key>targetProxy</key>
-			<string>E2E6BD7E035AF971ABA518DFCFDEC1F3</string>
-		</dict>
-		<key>4C33CDC58377909A54D880F4A57034CB</key>
-		<dict>
-			<key>explicitFileType</key>
-			<string>wrapper.framework</string>
-			<key>includeInIndex</key>
-			<string>0</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>name</key>
-			<string>Rover.framework</string>
-			<key>path</key>
-			<string>Rover.framework</string>
-			<key>sourceTree</key>
-			<string>BUILT_PRODUCTS_DIR</string>
-		</dict>
-		<key>4E6F8C8A80BC99360DAD514B5AF54A3D</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>AssetCache.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>4F2264057D4F27DA99A3C53B0DF61103</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>Message.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>4FD8A713633360F3E6F33522C9419B5C</key>
-		<dict>
-			<key>baseConfigurationReference</key>
-			<string>0674F284D94718FE7EEB047A57877CC9</string>
-			<key>buildSettings</key>
-			<dict>
-				<key>ENABLE_STRICT_OBJC_MSGSEND</key>
-				<string>YES</string>
-				<key>PRODUCT_NAME</key>
-				<string>Rover</string>
-				<key>SDKROOT</key>
-				<string>iphoneos</string>
-				<key>SKIP_INSTALL</key>
-				<string>YES</string>
-				<key>WRAPPER_EXTENSION</key>
-				<string>bundle</string>
-			</dict>
-			<key>isa</key>
-			<string>XCBuildConfiguration</string>
-			<key>name</key>
-			<string>Debug</string>
-		</dict>
-		<key>50BFD9CF912ED0335E1E992280C85C72</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>Screen.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>51FECF5F67C8D6B188216F3418B862CD</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>95A1B185F89519CA1D3973C9CE454DC0</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>Development Pods</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>524DE4ACFB607B209FC2C5C16FF19694</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>wrapper.framework</string>
-			<key>name</key>
-			<string>Foundation.framework</string>
-			<key>path</key>
-			<string>Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.0.sdk/System/Library/Frameworks/Foundation.framework</string>
-			<key>sourceTree</key>
-			<string>DEVELOPER_DIR</string>
-		</dict>
-		<key>57EA585BAD4672ECE0AF6B8EB487B8BA</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>LocationManager.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>5904153A5A20E90B62039D47AEC3A94B</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>Event.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>5A6EAA5CC31AA9A06F12DF26473BD9A0</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>8F4B62F1503113EFE96EA1C30D12CA96</string>
-				<string>C5BA18F5D82593CC84BFAF56A5FB954D</string>
-				<string>4359722F9F728AE26564CDB99DDE9EBD</string>
-				<string>57EA585BAD4672ECE0AF6B8EB487B8BA</string>
-				<string>FD8C68DE4C1462B37C4084C579410001</string>
-				<string>9C146B31774A3EB8C3F7086EC8724C91</string>
-				<string>447B001AF1C0F3C9653B89D5BE017EA8</string>
-				<string>165548863928AEFD9F3907D2C2AFFB70</string>
-				<string>417CB6CCCE7E619DD97D6B412416AFBA</string>
-				<string>615E1A2ED8CE84664BA02DEDF33E5A79</string>
-				<string>C83B2D1BCE1CA19605B3B2EC7C1A8D15</string>
-				<string>825F6A709F0B6CC713A93FEDA7D63CB3</string>
-				<string>6A02E8727DF51D6163E2ABD13C555FB3</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>Classes</string>
-			<key>path</key>
-			<string>Classes</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>5CDC3EA94EAFDCE3D4149BC33DE02169</key>
-		<dict>
-			<key>fileRef</key>
-			<string>DE0327B3D7A4DA3E0BE7FC341322D9C0</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-			<key>settings</key>
-			<dict>
-				<key>ATTRIBUTES</key>
-				<array>
-					<string>Public</string>
-				</array>
-			</dict>
-		</dict>
-		<key>5CE5176205D06FF3FFE3DDDA9291E44B</key>
-		<dict>
-			<key>buildSettings</key>
-			<dict>
-				<key>ALWAYS_SEARCH_USER_PATHS</key>
-				<string>NO</string>
-				<key>CLANG_CXX_LANGUAGE_STANDARD</key>
-				<string>gnu++0x</string>
-				<key>CLANG_CXX_LIBRARY</key>
-				<string>libc++</string>
-				<key>CLANG_ENABLE_MODULES</key>
-				<string>YES</string>
-				<key>CLANG_ENABLE_OBJC_ARC</key>
-				<string>YES</string>
-				<key>CLANG_WARN_BOOL_CONVERSION</key>
-				<string>YES</string>
-				<key>CLANG_WARN_CONSTANT_CONVERSION</key>
-				<string>YES</string>
-				<key>CLANG_WARN_DIRECT_OBJC_ISA_USAGE</key>
-				<string>YES</string>
-				<key>CLANG_WARN_EMPTY_BODY</key>
-				<string>YES</string>
-				<key>CLANG_WARN_ENUM_CONVERSION</key>
-				<string>YES</string>
-				<key>CLANG_WARN_INT_CONVERSION</key>
-				<string>YES</string>
-				<key>CLANG_WARN_OBJC_ROOT_CLASS</key>
-				<string>YES</string>
-				<key>CLANG_WARN_UNREACHABLE_CODE</key>
-				<string>YES</string>
-				<key>CLANG_WARN__DUPLICATE_METHOD_MATCH</key>
-				<string>YES</string>
-				<key>COPY_PHASE_STRIP</key>
-				<string>NO</string>
-				<key>GCC_C_LANGUAGE_STANDARD</key>
-				<string>gnu99</string>
-				<key>GCC_DYNAMIC_NO_PIC</key>
-				<string>NO</string>
-				<key>GCC_OPTIMIZATION_LEVEL</key>
-				<string>0</string>
-				<key>GCC_PREPROCESSOR_DEFINITIONS</key>
-				<array>
-					<string>DEBUG=1</string>
-					<string>$(inherited)</string>
-				</array>
-				<key>GCC_SYMBOLS_PRIVATE_EXTERN</key>
-				<string>NO</string>
-				<key>GCC_WARN_64_TO_32_BIT_CONVERSION</key>
-				<string>YES</string>
-				<key>GCC_WARN_ABOUT_RETURN_TYPE</key>
-				<string>YES</string>
-				<key>GCC_WARN_UNDECLARED_SELECTOR</key>
-				<string>YES</string>
-				<key>GCC_WARN_UNINITIALIZED_AUTOS</key>
-				<string>YES</string>
-				<key>GCC_WARN_UNUSED_FUNCTION</key>
-				<string>YES</string>
-				<key>GCC_WARN_UNUSED_VARIABLE</key>
-				<string>YES</string>
-				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
-				<string>9.0</string>
-				<key>ONLY_ACTIVE_ARCH</key>
-				<string>YES</string>
-				<key>STRIP_INSTALLED_PRODUCT</key>
-				<string>NO</string>
-				<key>SYMROOT</key>
-				<string>${SRCROOT}/../build</string>
-			</dict>
-			<key>isa</key>
-			<string>XCBuildConfiguration</string>
-			<key>name</key>
-			<string>Debug</string>
-		</dict>
-		<key>5D2791BC80AB8572B44ADDC2D59F0CDD</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>RVScreenViewController.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>60ADA8FAF821FC46D1ED65CE7F061994</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>3D84E594E8418CC0A45F85BCE3227C47</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>Targets Support Files</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>615E1A2ED8CE84664BA02DEDF33E5A79</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>FAC5C453E8CA1CE473D6DE5DBAD2BFC7</string>
-				<string>3222A842F8C6030ED74272C453A62D2D</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>Common</string>
-			<key>path</key>
-			<string>Common</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>66E958B71F1FA4AF49D8AF31B082D527</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>Block.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>6A02E8727DF51D6163E2ABD13C555FB3</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>4E6F8C8A80BC99360DAD514B5AF54A3D</string>
-				<string>F87E8CE4FC75E51D9B214BEFD896B335</string>
-				<string>C8BC3276C7842B496D043E3BBDCA839D</string>
-				<string>798EA297FF5A3D543B3DF828F28D042F</string>
-				<string>D0064B63F60D70DB72847164243CC04D</string>
-				<string>7DA0158D632234043D64070ECD69BD2C</string>
-				<string>5D2791BC80AB8572B44ADDC2D59F0CDD</string>
-				<string>D1C9AA5438DE3B4CB4E5909C315E4377</string>
-				<string>FE2FEF2AB3C12363C66B37D67E448EEB</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>UI</string>
-			<key>path</key>
-			<string>UI</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>6B4D35CCF9175CFF19C1B611B7B05426</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>Device.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>6F5386E836E19B111B0EB49CE4A220FE</key>
-		<dict>
-			<key>buildActionMask</key>
-			<string>2147483647</string>
-			<key>files</key>
-			<array/>
-			<key>isa</key>
-			<string>PBXSourcesBuildPhase</string>
-			<key>runOnlyForDeploymentPostprocessing</key>
-			<string>0</string>
-		</dict>
-		<key>6F7A4B17D456D0DA66EA88328A1229AA</key>
-		<dict>
-			<key>buildConfigurations</key>
-			<array>
-				<string>004EA1F6DEA639E715BF0D33AEF86AA5</string>
-				<string>C1B41C81BDFC5C6B98793B1C6E7A0458</string>
-			</array>
-			<key>defaultConfigurationIsVisible</key>
-			<string>0</string>
-			<key>defaultConfigurationName</key>
-			<string>Release</string>
-			<key>isa</key>
-			<string>XCConfigurationList</string>
-		</dict>
-		<key>704829A3910E153298C482537DDBE0E2</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>B026A22E0E118AE17E6F907E54C9DAC4</string>
-				<string>524DE4ACFB607B209FC2C5C16FF19694</string>
-				<string>A48B62CC8A6EFC33D04AAC25D8FC2B45</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>iOS</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>74857149DC1E0D599B8A01A78349A926</key>
-		<dict>
-			<key>buildSettings</key>
-			<dict>
-				<key>ALWAYS_SEARCH_USER_PATHS</key>
-				<string>NO</string>
-				<key>CLANG_CXX_LANGUAGE_STANDARD</key>
-				<string>gnu++0x</string>
-				<key>CLANG_CXX_LIBRARY</key>
-				<string>libc++</string>
-				<key>CLANG_ENABLE_MODULES</key>
-				<string>YES</string>
-				<key>CLANG_ENABLE_OBJC_ARC</key>
-				<string>YES</string>
-				<key>CLANG_WARN_BOOL_CONVERSION</key>
-				<string>YES</string>
-				<key>CLANG_WARN_CONSTANT_CONVERSION</key>
-				<string>YES</string>
-				<key>CLANG_WARN_DIRECT_OBJC_ISA_USAGE</key>
-				<string>YES</string>
-				<key>CLANG_WARN_EMPTY_BODY</key>
-				<string>YES</string>
-				<key>CLANG_WARN_ENUM_CONVERSION</key>
-				<string>YES</string>
-				<key>CLANG_WARN_INT_CONVERSION</key>
-				<string>YES</string>
-				<key>CLANG_WARN_OBJC_ROOT_CLASS</key>
-				<string>YES</string>
-				<key>CLANG_WARN_UNREACHABLE_CODE</key>
-				<string>YES</string>
-				<key>CLANG_WARN__DUPLICATE_METHOD_MATCH</key>
-				<string>YES</string>
-				<key>COPY_PHASE_STRIP</key>
-				<string>YES</string>
-				<key>ENABLE_NS_ASSERTIONS</key>
-				<string>NO</string>
-				<key>GCC_C_LANGUAGE_STANDARD</key>
-				<string>gnu99</string>
-				<key>GCC_PREPROCESSOR_DEFINITIONS</key>
-				<array>
-					<string>RELEASE=1</string>
-				</array>
-				<key>GCC_WARN_64_TO_32_BIT_CONVERSION</key>
-				<string>YES</string>
-				<key>GCC_WARN_ABOUT_RETURN_TYPE</key>
-				<string>YES</string>
-				<key>GCC_WARN_UNDECLARED_SELECTOR</key>
-				<string>YES</string>
-				<key>GCC_WARN_UNINITIALIZED_AUTOS</key>
-				<string>YES</string>
-				<key>GCC_WARN_UNUSED_FUNCTION</key>
-				<string>YES</string>
-				<key>GCC_WARN_UNUSED_VARIABLE</key>
-				<string>YES</string>
-				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
-				<string>9.0</string>
-				<key>STRIP_INSTALLED_PRODUCT</key>
-				<string>NO</string>
-				<key>SYMROOT</key>
-				<string>${SRCROOT}/../build</string>
-				<key>VALIDATE_PRODUCT</key>
-				<string>YES</string>
-			</dict>
-			<key>isa</key>
-			<string>XCBuildConfiguration</string>
-			<key>name</key>
-			<string>Release</string>
-		</dict>
-		<key>74AB793574963654EAE295DFCF3F4714</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>text.xcconfig</string>
-			<key>path</key>
-			<string>Pods-Rover_Example.debug.xcconfig</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>75091F0397A2D293843DBA5E7E4C08D6</key>
-		<dict>
-			<key>baseConfigurationReference</key>
-			<string>0674F284D94718FE7EEB047A57877CC9</string>
-			<key>buildSettings</key>
-			<dict>
-				<key>ENABLE_STRICT_OBJC_MSGSEND</key>
-				<string>YES</string>
-				<key>PRODUCT_NAME</key>
-				<string>Rover</string>
-				<key>SDKROOT</key>
-				<string>iphoneos</string>
-				<key>SKIP_INSTALL</key>
-				<string>YES</string>
-				<key>WRAPPER_EXTENSION</key>
-				<string>bundle</string>
-			</dict>
-			<key>isa</key>
-			<string>XCBuildConfiguration</string>
-			<key>name</key>
-			<string>Release</string>
-		</dict>
-		<key>7555FD55C12E4D911C6432D6AED0972D</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>Row.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>798EA297FF5A3D543B3DF828F28D042F</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>ButtonBlockViewCell.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>798F87609293BCD2D48765486D1EEBD7</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>NetworkOperation.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>7DA0158D632234043D64070ECD69BD2C</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>NavigationController.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>7DB346D0F39D3F0E887471402A8071AB</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>BA6428E9F66FD5A23C0A2E06ED26CD2F</string>
-				<string>51FECF5F67C8D6B188216F3418B862CD</string>
-				<string>122DA2E5084A4393C29BE363C764795C</string>
-				<string>9871B27027DF0121495A8C9797AAB18D</string>
-				<string>60ADA8FAF821FC46D1ED65CE7F061994</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>825F6A709F0B6CC713A93FEDA7D63CB3</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>E583664FAF7F7BF1B3B23AF09917000B</string>
-				<string>798F87609293BCD2D48765486D1EEBD7</string>
-				<string>0C778A7FC69D8A58EB2FD6262380B252</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>Network</string>
-			<key>path</key>
-			<string>Network</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>837AC5A1E144EDA814A296FAFDA768E0</key>
-		<dict>
-			<key>fileRef</key>
-			<string>A48B62CC8A6EFC33D04AAC25D8FC2B45</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>8589F41D56C101DB830745746F1A986F</key>
-		<dict>
-			<key>fileRef</key>
-			<string>4359722F9F728AE26564CDB99DDE9EBD</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>86B71C6EB1237F7B0B2B97FA882CE292</key>
-		<dict>
-			<key>fileRef</key>
-			<string>F87E8CE4FC75E51D9B214BEFD896B335</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>8B3820118B9A2E557D381B10DB6761A9</key>
-		<dict>
-			<key>fileRef</key>
-			<string>C8BC3276C7842B496D043E3BBDCA839D</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>8BDC34280D8AD1F616664AE18301606F</key>
-		<dict>
-			<key>fileRef</key>
-			<string>6B4D35CCF9175CFF19C1B611B7B05426</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>8E68ED338699677D9B7380C03BB86A77</key>
-		<dict>
-			<key>fileRef</key>
-			<string>524DE4ACFB607B209FC2C5C16FF19694</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>8F4B62F1503113EFE96EA1C30D12CA96</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>BluetoothStatusOperation.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>915913DEDB4071CED9FDC276B32CA6C5</key>
-		<dict>
-			<key>buildConfigurationList</key>
-			<string>1E8B253119F83F2EEDEE8D79449D1703</string>
-			<key>buildPhases</key>
-			<array>
-				<string>6F5386E836E19B111B0EB49CE4A220FE</string>
-				<string>1EAD01C064ED57C9F20251C8C059A9CA</string>
-				<string>BCB4BFB4E1696C748E41BF67A1DD2C09</string>
-			</array>
-			<key>buildRules</key>
-			<array/>
-			<key>dependencies</key>
-			<array/>
-			<key>isa</key>
-			<string>PBXNativeTarget</string>
-			<key>name</key>
-			<string>Rover-Rover</string>
-			<key>productName</key>
-			<string>Rover-Rover</string>
-			<key>productReference</key>
-			<string>A57B1B1D9C90BB398014A4C379EFACFC</string>
-			<key>productType</key>
-			<string>com.apple.product-type.bundle</string>
-		</dict>
-		<key>91D0BABC294B20EF3356DF0333F73D88</key>
-		<dict>
-			<key>fileRef</key>
-			<string>417CB6CCCE7E619DD97D6B412416AFBA</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>95A1B185F89519CA1D3973C9CE454DC0</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>DC48EFD6EFBDEFB1B5D9C45D518856EE</string>
-				<string>FDA87AFA2B8E267460A3C36B7E580065</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>Rover</string>
-			<key>path</key>
-			<string>../..</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>9871B27027DF0121495A8C9797AAB18D</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>FBC7FBDAAFEABF9DEE4D735B875B4DFB</string>
-				<string>A57B1B1D9C90BB398014A4C379EFACFC</string>
-				<string>4C33CDC58377909A54D880F4A57034CB</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>Products</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>9B6862A8EFAFF3B20E5F29FB6623456E</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>text.plist.xml</string>
-			<key>path</key>
-			<string>Pods-Rover_Example-acknowledgements.plist</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>9C146B31774A3EB8C3F7086EC8724C91</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>Router.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>A48B62CC8A6EFC33D04AAC25D8FC2B45</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>wrapper.framework</string>
-			<key>name</key>
-			<string>UIKit.framework</string>
-			<key>path</key>
-			<string>Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.0.sdk/System/Library/Frameworks/UIKit.framework</string>
-			<key>sourceTree</key>
-			<string>DEVELOPER_DIR</string>
-		</dict>
-		<key>A57B1B1D9C90BB398014A4C379EFACFC</key>
-		<dict>
-			<key>explicitFileType</key>
-			<string>wrapper.cfbundle</string>
-			<key>includeInIndex</key>
-			<string>0</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>name</key>
-			<string>Rover.bundle</string>
-			<key>path</key>
-			<string>Rover.bundle</string>
-			<key>sourceTree</key>
-			<string>BUILT_PRODUCTS_DIR</string>
-		</dict>
-		<key>A5EEF3274458B84A17FD7F04B8CAE498</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>text.plist.xml</string>
-			<key>path</key>
-			<string>Info.plist</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>A8559F03DA31262CC6F591A452634C4C</key>
-		<dict>
-			<key>buildActionMask</key>
-			<string>2147483647</string>
-			<key>files</key>
-			<array>
-				<string>AAB1111D4512A036EE96FB5715C57BC7</string>
-				<string>8E68ED338699677D9B7380C03BB86A77</string>
-				<string>837AC5A1E144EDA814A296FAFDA768E0</string>
-			</array>
-			<key>isa</key>
-			<string>PBXFrameworksBuildPhase</string>
-			<key>runOnlyForDeploymentPostprocessing</key>
-			<string>0</string>
-		</dict>
-		<key>A9D1643BBAF0BC670D6C7814C507EF29</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>text.script.sh</string>
-			<key>path</key>
-			<string>Pods-Rover_Example-frameworks.sh</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>AAB1111D4512A036EE96FB5715C57BC7</key>
-		<dict>
-			<key>fileRef</key>
-			<string>B026A22E0E118AE17E6F907E54C9DAC4</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>ADA164A02694C58D2F39BC4BE2FEC684</key>
-		<dict>
-			<key>fileRef</key>
-			<string>EA7CF933E16A88E283C6259A03994E04</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>AF5BC284F2FC65AC04B3BBA32E62B1AE</key>
-		<dict>
-			<key>fileRef</key>
-			<string>4E6F8C8A80BC99360DAD514B5AF54A3D</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>B026A22E0E118AE17E6F907E54C9DAC4</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>wrapper.framework</string>
-			<key>name</key>
-			<string>CoreLocation.framework</string>
-			<key>path</key>
-			<string>Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.0.sdk/System/Library/Frameworks/CoreLocation.framework</string>
-			<key>sourceTree</key>
-			<string>DEVELOPER_DIR</string>
-		</dict>
-		<key>B48BCBBDF8E97E2C16B24139366ED4ED</key>
-		<dict>
-			<key>fileRef</key>
-			<string>4F2264057D4F27DA99A3C53B0DF61103</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>B5B4DBAAB40A891151F87E35C20EE213</key>
-		<dict>
-			<key>buildActionMask</key>
-			<string>2147483647</string>
-			<key>files</key>
-			<array>
-				<string>AF5BC284F2FC65AC04B3BBA32E62B1AE</string>
-				<string>86B71C6EB1237F7B0B2B97FA882CE292</string>
-				<string>1FD0B473F7AFA615CF6D8487869B3BBB</string>
-				<string>0CE030C927BCE5D8C656BA9108B9C41D</string>
-				<string>8B3820118B9A2E557D381B10DB6761A9</string>
-				<string>E2216AA3BDBA1670EB9C6F696C62EC6E</string>
-				<string>C6C51DF45BAFCA095DAE3F31AB267312</string>
-				<string>D77C2C76FE68EBA5075BD3A0981D0AFD</string>
-				<string>E1F802800DCD6F17FA178B36CD0C1A82</string>
-				<string>062E9984704DCD284BB8FC8C4D69355A</string>
-				<string>8BDC34280D8AD1F616664AE18301606F</string>
-				<string>B6DF88306AF4AEE6910EAB64F311E0CC</string>
-				<string>1F5A6B011D9E90296ACFA6E402A66CF5</string>
-				<string>EAFBC195DDCAD643A68C9529FE72E530</string>
-				<string>15105F73CE228984FA0F011D52E71B9E</string>
-				<string>8589F41D56C101DB830745746F1A986F</string>
-				<string>D449E46A8AD2C85DF93EEB182196846A</string>
-				<string>1375CD3426D492047DFBA3C6B00511E4</string>
-				<string>BC50976EDBB2BEDB371AC198B24DF88F</string>
-				<string>B48BCBBDF8E97E2C16B24139366ED4ED</string>
-				<string>144F41BD6AD4CC660DDCE89BF7793E2D</string>
-				<string>C97030038450753F3E43F1C8396E4D39</string>
-				<string>F3DF4CE136BB6D141FCCEE03B037C8FC</string>
-				<string>ADA164A02694C58D2F39BC4BE2FEC684</string>
-				<string>C59D08DFB8722E63280BBFD53E21F46F</string>
-				<string>32BD4651FA3ADF0DA1DD1DD8D1B8EFA9</string>
-				<string>48089B68EE50FD04756B063EA62C1B29</string>
-				<string>BAE80D271DC0175A41B768746E9418D9</string>
-				<string>49BE9D7B7D2DC70F1743717411293AD8</string>
-				<string>91D0BABC294B20EF3356DF0333F73D88</string>
-				<string>FD40E71FFA12CAC7FA662F39D860A07C</string>
-				<string>EF8C9286A965DE6A9DA47BC55785789B</string>
-				<string>30767740929363580C0FA99ACE4AFFD6</string>
-			</array>
-			<key>isa</key>
-			<string>PBXSourcesBuildPhase</string>
-			<key>runOnlyForDeploymentPostprocessing</key>
-			<string>0</string>
-		</dict>
-		<key>B61094F3C02E33021132EF25398AE386</key>
-		<dict>
-			<key>fileRef</key>
-			<string>A57B1B1D9C90BB398014A4C379EFACFC</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>B6DF88306AF4AEE6910EAB64F311E0CC</key>
-		<dict>
-			<key>fileRef</key>
-			<string>5904153A5A20E90B62039D47AEC3A94B</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>B86B5E168F130358BB519F3F00561D6F</key>
-		<dict>
-			<key>fileRef</key>
-			<string>B9E3759E3449146D1C9795415FAE1D15</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>B9E3759E3449146D1C9795415FAE1D15</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.objc</string>
-			<key>path</key>
-			<string>Pods-Rover_Example-dummy.m</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>BA6428E9F66FD5A23C0A2E06ED26CD2F</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>text</string>
-			<key>name</key>
-			<string>Podfile</string>
-			<key>path</key>
-			<string>../Podfile</string>
-			<key>sourceTree</key>
-			<string>SOURCE_ROOT</string>
-			<key>xcLanguageSpecificationIdentifier</key>
-			<string>xcode.lang.ruby</string>
-		</dict>
-		<key>BAE80D271DC0175A41B768746E9418D9</key>
-		<dict>
-			<key>fileRef</key>
-			<string>5D2791BC80AB8572B44ADDC2D59F0CDD</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>BB4BD8177EE85E6066B3543A211CA8E4</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>text.plist.xml</string>
-			<key>path</key>
-			<string>Info.plist</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>BC50976EDBB2BEDB371AC198B24DF88F</key>
-		<dict>
-			<key>fileRef</key>
-			<string>E583664FAF7F7BF1B3B23AF09917000B</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>BCB4BFB4E1696C748E41BF67A1DD2C09</key>
-		<dict>
-			<key>buildActionMask</key>
-			<string>2147483647</string>
-			<key>files</key>
-			<array/>
-			<key>isa</key>
-			<string>PBXResourcesBuildPhase</string>
-			<key>runOnlyForDeploymentPostprocessing</key>
-			<string>0</string>
-		</dict>
-		<key>C1B41C81BDFC5C6B98793B1C6E7A0458</key>
-		<dict>
-			<key>baseConfigurationReference</key>
-			<string>37D26ABF3E3D55C659D13254611E23D8</string>
-			<key>buildSettings</key>
-			<dict>
-				<key>CODE_SIGN_IDENTITY[sdk=iphoneos*]</key>
-				<string>iPhone Developer</string>
-				<key>CURRENT_PROJECT_VERSION</key>
-				<string>1</string>
-				<key>DEFINES_MODULE</key>
-				<string>YES</string>
-				<key>DYLIB_COMPATIBILITY_VERSION</key>
-				<string>1</string>
-				<key>DYLIB_CURRENT_VERSION</key>
-				<string>1</string>
-				<key>DYLIB_INSTALL_NAME_BASE</key>
-				<string>@rpath</string>
-				<key>ENABLE_STRICT_OBJC_MSGSEND</key>
-				<string>YES</string>
-				<key>INFOPLIST_FILE</key>
-				<string>Target Support Files/Pods-Rover_Example/Info.plist</string>
-				<key>INSTALL_PATH</key>
-				<string>$(LOCAL_LIBRARY_DIR)/Frameworks</string>
-				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
-				<string>9.0</string>
-				<key>LD_RUNPATH_SEARCH_PATHS</key>
-				<array>
-					<string>$(inherited)</string>
-					<string>@executable_path/Frameworks</string>
-					<string>@loader_path/Frameworks</string>
-				</array>
-				<key>MACH_O_TYPE</key>
-				<string>staticlib</string>
-				<key>MODULEMAP_FILE</key>
-				<string>Target Support Files/Pods-Rover_Example/Pods-Rover_Example.modulemap</string>
-				<key>MTL_ENABLE_DEBUG_INFO</key>
-				<string>NO</string>
-				<key>OTHER_LDFLAGS</key>
-				<string></string>
-				<key>OTHER_LIBTOOLFLAGS</key>
-				<string></string>
-				<key>PODS_ROOT</key>
-				<string>$(SRCROOT)</string>
-				<key>PRODUCT_NAME</key>
-				<string>Pods_Rover_Example</string>
-				<key>SDKROOT</key>
-				<string>iphoneos</string>
-				<key>SKIP_INSTALL</key>
-				<string>YES</string>
-				<key>TARGETED_DEVICE_FAMILY</key>
-				<string>1,2</string>
-				<key>VERSIONING_SYSTEM</key>
-				<string>apple-generic</string>
-				<key>VERSION_INFO_PREFIX</key>
-				<string></string>
-			</dict>
-			<key>isa</key>
-			<string>XCBuildConfiguration</string>
-			<key>name</key>
-			<string>Release</string>
-		</dict>
-		<key>C59D08DFB8722E63280BBFD53E21F46F</key>
-		<dict>
-			<key>fileRef</key>
-			<string>447B001AF1C0F3C9653B89D5BE017EA8</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>C5BA18F5D82593CC84BFAF56A5FB954D</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>EventOperation.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>C6C51DF45BAFCA095DAE3F31AB267312</key>
-		<dict>
-			<key>fileRef</key>
-			<string>798EA297FF5A3D543B3DF828F28D042F</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>C83B2D1BCE1CA19605B3B2EC7C1A8D15</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>C93CD24ABF28C257FD16701246378576</string>
-				<string>66E958B71F1FA4AF49D8AF31B082D527</string>
-				<string>F020E973E576C9AF27B783BC2E8B9D54</string>
-				<string>6B4D35CCF9175CFF19C1B611B7B05426</string>
-				<string>5904153A5A20E90B62039D47AEC3A94B</string>
-				<string>C91672263C7A46BDA5CD7C8DC5E9E8AE</string>
-				<string>4F2264057D4F27DA99A3C53B0DF61103</string>
-				<string>7555FD55C12E4D911C6432D6AED0972D</string>
-				<string>50BFD9CF912ED0335E1E992280C85C72</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>Model</string>
-			<key>path</key>
-			<string>Model</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>C8BC3276C7842B496D043E3BBDCA839D</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>BlockViewLayout.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>C91672263C7A46BDA5CD7C8DC5E9E8AE</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>Location.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>C93CD24ABF28C257FD16701246378576</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>BeaconConfiguration.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>C97030038450753F3E43F1C8396E4D39</key>
-		<dict>
-			<key>fileRef</key>
-			<string>798F87609293BCD2D48765486D1EEBD7</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>D0064B63F60D70DB72847164243CC04D</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>ImageBlockViewCell.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>D1C9AA5438DE3B4CB4E5909C315E4377</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>TextBlockViewCell.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>D41D8CD98F00B204E9800998ECF8427E</key>
-		<dict>
-			<key>attributes</key>
-			<dict>
-				<key>LastSwiftUpdateCheck</key>
-				<string>0700</string>
-				<key>LastUpgradeCheck</key>
-				<string>0700</string>
-			</dict>
-			<key>buildConfigurationList</key>
-			<string>2D8E8EC45A3A1A1D94AE762CB5028504</string>
-			<key>compatibilityVersion</key>
-			<string>Xcode 3.2</string>
-			<key>developmentRegion</key>
-			<string>English</string>
-			<key>hasScannedForEncodings</key>
-			<string>0</string>
-			<key>isa</key>
-			<string>PBXProject</string>
-			<key>knownRegions</key>
-			<array>
-				<string>en</string>
-			</array>
-			<key>mainGroup</key>
-			<string>7DB346D0F39D3F0E887471402A8071AB</string>
-			<key>productRefGroup</key>
-			<string>9871B27027DF0121495A8C9797AAB18D</string>
-			<key>projectDirPath</key>
-			<string></string>
-			<key>projectReferences</key>
-			<array/>
-			<key>projectRoot</key>
-			<string></string>
-			<key>targets</key>
-			<array>
-				<string>24FD1444CD8E557F313F7B97DACDDC64</string>
-				<string>138DA09943BF37BFD158F5FFB6A5844D</string>
-				<string>915913DEDB4071CED9FDC276B32CA6C5</string>
-			</array>
-		</dict>
-		<key>D449E46A8AD2C85DF93EEB182196846A</key>
-		<dict>
-			<key>fileRef</key>
-			<string>57EA585BAD4672ECE0AF6B8EB487B8BA</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>D56FB7133A3A11C3364AFC4B9C4579E1</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>text.script.sh</string>
-			<key>path</key>
-			<string>Pods-Rover_Example-resources.sh</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>D77C2C76FE68EBA5075BD3A0981D0AFD</key>
-		<dict>
-			<key>fileRef</key>
-			<string>FAC5C453E8CA1CE473D6DE5DBAD2BFC7</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>D8AD276BF54E29DDA4EFD817D1CB7FB6</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXTargetDependency</string>
-			<key>name</key>
-			<string>Rover</string>
-			<key>target</key>
-			<string>138DA09943BF37BFD158F5FFB6A5844D</string>
-			<key>targetProxy</key>
-			<string>1A1A76D8488756BAF16A0CB3BF4A0A32</string>
-		</dict>
-		<key>D9B79947CB7D34B8803B1672F3A1D036</key>
-		<dict>
-			<key>baseConfigurationReference</key>
-			<string>0674F284D94718FE7EEB047A57877CC9</string>
-			<key>buildSettings</key>
-			<dict>
-				<key>CODE_SIGN_IDENTITY[sdk=iphoneos*]</key>
-				<string>iPhone Developer</string>
-				<key>CURRENT_PROJECT_VERSION</key>
-				<string>1</string>
-				<key>DEFINES_MODULE</key>
-				<string>YES</string>
-				<key>DYLIB_COMPATIBILITY_VERSION</key>
-				<string>1</string>
-				<key>DYLIB_CURRENT_VERSION</key>
-				<string>1</string>
-				<key>DYLIB_INSTALL_NAME_BASE</key>
-				<string>@rpath</string>
-				<key>ENABLE_STRICT_OBJC_MSGSEND</key>
-				<string>YES</string>
-				<key>GCC_PREFIX_HEADER</key>
-				<string>Target Support Files/Rover/Rover-prefix.pch</string>
-				<key>INFOPLIST_FILE</key>
-				<string>Target Support Files/Rover/Info.plist</string>
-				<key>INSTALL_PATH</key>
-				<string>$(LOCAL_LIBRARY_DIR)/Frameworks</string>
-				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
-				<string>9.0</string>
-				<key>LD_RUNPATH_SEARCH_PATHS</key>
-				<array>
-					<string>$(inherited)</string>
-					<string>@executable_path/Frameworks</string>
-					<string>@loader_path/Frameworks</string>
-				</array>
-				<key>MODULEMAP_FILE</key>
-				<string>Target Support Files/Rover/Rover.modulemap</string>
-				<key>MTL_ENABLE_DEBUG_INFO</key>
-				<string>YES</string>
-				<key>PRODUCT_NAME</key>
-				<string>Rover</string>
-				<key>SDKROOT</key>
-				<string>iphoneos</string>
-				<key>SKIP_INSTALL</key>
-				<string>YES</string>
-				<key>SWIFT_OPTIMIZATION_LEVEL</key>
-				<string>-Onone</string>
-				<key>TARGETED_DEVICE_FAMILY</key>
-				<string>1,2</string>
-				<key>VERSIONING_SYSTEM</key>
-				<string>apple-generic</string>
-				<key>VERSION_INFO_PREFIX</key>
-				<string></string>
-			</dict>
-			<key>isa</key>
-			<string>XCBuildConfiguration</string>
-			<key>name</key>
-			<string>Debug</string>
-		</dict>
-		<key>DC48EFD6EFBDEFB1B5D9C45D518856EE</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>5A6EAA5CC31AA9A06F12DF26473BD9A0</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>Pod</string>
-			<key>path</key>
-			<string>Pod</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>DE0327B3D7A4DA3E0BE7FC341322D9C0</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>path</key>
-			<string>Rover-umbrella.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>E07F27F20DF708454214ECDD2A352FCC</key>
-		<dict>
-			<key>buildActionMask</key>
-			<string>2147483647</string>
-			<key>files</key>
-			<array>
-				<string>430AE66A726AE77185259114903677AA</string>
-			</array>
-			<key>isa</key>
-			<string>PBXFrameworksBuildPhase</string>
-			<key>runOnlyForDeploymentPostprocessing</key>
-			<string>0</string>
-		</dict>
-		<key>E1165F1707D484D7D33F6026CE13FFC0</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>path</key>
-			<string>Pods-Rover_Example.modulemap</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>E1F802800DCD6F17FA178B36CD0C1A82</key>
-		<dict>
-			<key>fileRef</key>
-			<string>3222A842F8C6030ED74272C453A62D2D</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>E2216AA3BDBA1670EB9C6F696C62EC6E</key>
-		<dict>
-			<key>fileRef</key>
-			<string>8F4B62F1503113EFE96EA1C30D12CA96</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>E2E6BD7E035AF971ABA518DFCFDEC1F3</key>
-		<dict>
-			<key>containerPortal</key>
-			<string>D41D8CD98F00B204E9800998ECF8427E</string>
-			<key>isa</key>
-			<string>PBXContainerItemProxy</string>
-			<key>proxyType</key>
-			<string>1</string>
-			<key>remoteGlobalIDString</key>
-			<string>915913DEDB4071CED9FDC276B32CA6C5</string>
-			<key>remoteInfo</key>
-			<string>Rover-Rover</string>
-		</dict>
-		<key>E583664FAF7F7BF1B3B23AF09917000B</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>MappingOperation.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>EA7CF933E16A88E283C6259A03994E04</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.objc</string>
-			<key>path</key>
-			<string>Rover-dummy.m</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>EAD6E6EB4F797DFB694339959FB08B3B</key>
-		<dict>
-			<key>buildActionMask</key>
-			<string>2147483647</string>
-			<key>files</key>
-			<array>
-				<string>B86B5E168F130358BB519F3F00561D6F</string>
-			</array>
-			<key>isa</key>
-			<string>PBXSourcesBuildPhase</string>
-			<key>runOnlyForDeploymentPostprocessing</key>
-			<string>0</string>
-		</dict>
-		<key>EAFBC195DDCAD643A68C9529FE72E530</key>
-		<dict>
-			<key>fileRef</key>
-			<string>D0064B63F60D70DB72847164243CC04D</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>EF8C9286A965DE6A9DA47BC55785789B</key>
-		<dict>
-			<key>fileRef</key>
-			<string>D1C9AA5438DE3B4CB4E5909C315E4377</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>F020E973E576C9AF27B783BC2E8B9D54</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>Customer.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>F12CFBA28EB0C3D384C2A02AA1122113</key>
-		<dict>
-			<key>buildActionMask</key>
-			<string>2147483647</string>
-			<key>files</key>
-			<array>
-				<string>3F4C29B02448D955B14B2DFA8CE64193</string>
-			</array>
-			<key>isa</key>
-			<string>PBXHeadersBuildPhase</string>
-			<key>runOnlyForDeploymentPostprocessing</key>
-			<string>0</string>
-		</dict>
-		<key>F3DF4CE136BB6D141FCCEE03B037C8FC</key>
-		<dict>
-			<key>fileRef</key>
-			<string>9C146B31774A3EB8C3F7086EC8724C91</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>F4F2D1A8135F0EB7BD5162438E664E94</key>
-		<dict>
-			<key>buildActionMask</key>
-			<string>2147483647</string>
-			<key>files</key>
-			<array>
-				<string>5CDC3EA94EAFDCE3D4149BC33DE02169</string>
-			</array>
-			<key>isa</key>
-			<string>PBXHeadersBuildPhase</string>
-			<key>runOnlyForDeploymentPostprocessing</key>
-			<string>0</string>
-		</dict>
-		<key>F87E8CE4FC75E51D9B214BEFD896B335</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>AssetManager.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>FAC5C453E8CA1CE473D6DE5DBAD2BFC7</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>Common.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>FBC7FBDAAFEABF9DEE4D735B875B4DFB</key>
-		<dict>
-			<key>explicitFileType</key>
-			<string>wrapper.framework</string>
-			<key>includeInIndex</key>
-			<string>0</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>name</key>
-			<string>Pods_Rover_Example.framework</string>
-			<key>path</key>
-			<string>Pods_Rover_Example.framework</string>
-			<key>sourceTree</key>
-			<string>BUILT_PRODUCTS_DIR</string>
-		</dict>
-		<key>FD40E71FFA12CAC7FA662F39D860A07C</key>
-		<dict>
-			<key>fileRef</key>
-			<string>0C778A7FC69D8A58EB2FD6262380B252</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>FD8C68DE4C1462B37C4084C579410001</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>Mappables.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>FDA87AFA2B8E267460A3C36B7E580065</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>A5EEF3274458B84A17FD7F04B8CAE498</string>
-				<string>02DFB995D67720927CDFC08AD91FBB33</string>
-				<string>0674F284D94718FE7EEB047A57877CC9</string>
-				<string>EA7CF933E16A88E283C6259A03994E04</string>
-				<string>30FD3BA6784B70B094D964C67D38AD18</string>
-				<string>DE0327B3D7A4DA3E0BE7FC341322D9C0</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>Support Files</string>
-			<key>path</key>
-			<string>Example/Pods/Target Support Files/Rover</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>FE2FEF2AB3C12363C66B37D67E448EEB</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>UIImageView+RVAsset.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-	</dict>
-	<key>rootObject</key>
-	<string>D41D8CD98F00B204E9800998ECF8427E</string>
-</dict>
-</plist>
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		062E9984704DCD284BB8FC8C4D69355A /* Customer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F020E973E576C9AF27B783BC2E8B9D54 /* Customer.swift */; };
+		0CE030C927BCE5D8C656BA9108B9C41D /* Block.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66E958B71F1FA4AF49D8AF31B082D527 /* Block.swift */; };
+		1375CD3426D492047DFBA3C6B00511E4 /* Mappables.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD8C68DE4C1462B37C4084C579410001 /* Mappables.swift */; };
+		144F41BD6AD4CC660DDCE89BF7793E2D /* NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DA0158D632234043D64070ECD69BD2C /* NavigationController.swift */; };
+		15105F73CE228984FA0F011D52E71B9E /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91672263C7A46BDA5CD7C8DC5E9E8AE /* Location.swift */; };
+		1F5A6B011D9E90296ACFA6E402A66CF5 /* EventOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5BA18F5D82593CC84BFAF56A5FB954D /* EventOperation.swift */; };
+		1FD0B473F7AFA615CF6D8487869B3BBB /* BeaconConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93CD24ABF28C257FD16701246378576 /* BeaconConfiguration.swift */; };
+		30767740929363580C0FA99ACE4AFFD6 /* UIImageView+RVAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE2FEF2AB3C12363C66B37D67E448EEB /* UIImageView+RVAsset.swift */; };
+		32BD4651FA3ADF0DA1DD1DD8D1B8EFA9 /* RoverObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165548863928AEFD9F3907D2C2AFFB70 /* RoverObserver.swift */; };
+		3F4C29B02448D955B14B2DFA8CE64193 /* Pods-Rover_Example-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 241A79BC67CD109BF70D08B89A3D81BF /* Pods-Rover_Example-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		430AE66A726AE77185259114903677AA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 524DE4ACFB607B209FC2C5C16FF19694 /* Foundation.framework */; };
+		48089B68EE50FD04756B063EA62C1B29 /* Row.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555FD55C12E4D911C6432D6AED0972D /* Row.swift */; };
+		49BE9D7B7D2DC70F1743717411293AD8 /* Screen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50BFD9CF912ED0335E1E992280C85C72 /* Screen.swift */; };
+		5CDC3EA94EAFDCE3D4149BC33DE02169 /* Rover-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = DE0327B3D7A4DA3E0BE7FC341322D9C0 /* Rover-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		837AC5A1E144EDA814A296FAFDA768E0 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A48B62CC8A6EFC33D04AAC25D8FC2B45 /* UIKit.framework */; };
+		8589F41D56C101DB830745746F1A986F /* LocationAuthorizationOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4359722F9F728AE26564CDB99DDE9EBD /* LocationAuthorizationOperation.swift */; };
+		86B71C6EB1237F7B0B2B97FA882CE292 /* AssetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87E8CE4FC75E51D9B214BEFD896B335 /* AssetManager.swift */; };
+		8B3820118B9A2E557D381B10DB6761A9 /* BlockViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BC3276C7842B496D043E3BBDCA839D /* BlockViewLayout.swift */; };
+		8BDC34280D8AD1F616664AE18301606F /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B4D35CCF9175CFF19C1B611B7B05426 /* Device.swift */; };
+		8E68ED338699677D9B7380C03BB86A77 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 524DE4ACFB607B209FC2C5C16FF19694 /* Foundation.framework */; };
+		91D0BABC294B20EF3356DF0333F73D88 /* Serializables.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417CB6CCCE7E619DD97D6B412416AFBA /* Serializables.swift */; };
+		AAB1111D4512A036EE96FB5715C57BC7 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B026A22E0E118AE17E6F907E54C9DAC4 /* CoreLocation.framework */; };
+		ADA164A02694C58D2F39BC4BE2FEC684 /* Rover-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = EA7CF933E16A88E283C6259A03994E04 /* Rover-dummy.m */; };
+		AF5BC284F2FC65AC04B3BBA32E62B1AE /* AssetCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E6F8C8A80BC99360DAD514B5AF54A3D /* AssetCache.swift */; };
+		B48BCBBDF8E97E2C16B24139366ED4ED /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F2264057D4F27DA99A3C53B0DF61103 /* Message.swift */; };
+		B61094F3C02E33021132EF25398AE386 /* Rover.bundle in Resources */ = {isa = PBXBuildFile; fileRef = A57B1B1D9C90BB398014A4C379EFACFC /* Rover.bundle */; };
+		B6DF88306AF4AEE6910EAB64F311E0CC /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5904153A5A20E90B62039D47AEC3A94B /* Event.swift */; };
+		B86B5E168F130358BB519F3F00561D6F /* Pods-Rover_Example-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = B9E3759E3449146D1C9795415FAE1D15 /* Pods-Rover_Example-dummy.m */; };
+		BAE80D271DC0175A41B768746E9418D9 /* RVScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D2791BC80AB8572B44ADDC2D59F0CDD /* RVScreenViewController.swift */; };
+		BC50976EDBB2BEDB371AC198B24DF88F /* MappingOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E583664FAF7F7BF1B3B23AF09917000B /* MappingOperation.swift */; };
+		C59D08DFB8722E63280BBFD53E21F46F /* Rover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 447B001AF1C0F3C9653B89D5BE017EA8 /* Rover.swift */; };
+		C6C51DF45BAFCA095DAE3F31AB267312 /* ButtonBlockViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798EA297FF5A3D543B3DF828F28D042F /* ButtonBlockViewCell.swift */; };
+		C97030038450753F3E43F1C8396E4D39 /* NetworkOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798F87609293BCD2D48765486D1EEBD7 /* NetworkOperation.swift */; };
+		D449E46A8AD2C85DF93EEB182196846A /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57EA585BAD4672ECE0AF6B8EB487B8BA /* LocationManager.swift */; };
+		D77C2C76FE68EBA5075BD3A0981D0AFD /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC5C453E8CA1CE473D6DE5DBAD2BFC7 /* Common.swift */; };
+		E1F802800DCD6F17FA178B36CD0C1A82 /* ConcurrentOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3222A842F8C6030ED74272C453A62D2D /* ConcurrentOperation.swift */; };
+		E2216AA3BDBA1670EB9C6F696C62EC6E /* BluetoothStatusOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4B62F1503113EFE96EA1C30D12CA96 /* BluetoothStatusOperation.swift */; };
+		EAFBC195DDCAD643A68C9529FE72E530 /* ImageBlockViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0064B63F60D70DB72847164243CC04D /* ImageBlockViewCell.swift */; };
+		EF8C9286A965DE6A9DA47BC55785789B /* TextBlockViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1C9AA5438DE3B4CB4E5909C315E4377 /* TextBlockViewCell.swift */; };
+		F3DF4CE136BB6D141FCCEE03B037C8FC /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C146B31774A3EB8C3F7086EC8724C91 /* Router.swift */; };
+		FD40E71FFA12CAC7FA662F39D860A07C /* SerializingOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C778A7FC69D8A58EB2FD6262380B252 /* SerializingOperation.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		1A1A76D8488756BAF16A0CB3BF4A0A32 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 138DA09943BF37BFD158F5FFB6A5844D;
+			remoteInfo = Rover;
+		};
+		E2E6BD7E035AF971ABA518DFCFDEC1F3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 915913DEDB4071CED9FDC276B32CA6C5;
+			remoteInfo = "Rover-Rover";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		02DFB995D67720927CDFC08AD91FBB33 /* Rover.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = Rover.modulemap; sourceTree = "<group>"; };
+		0674F284D94718FE7EEB047A57877CC9 /* Rover.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Rover.xcconfig; sourceTree = "<group>"; };
+		0C778A7FC69D8A58EB2FD6262380B252 /* SerializingOperation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SerializingOperation.swift; sourceTree = "<group>"; };
+		165548863928AEFD9F3907D2C2AFFB70 /* RoverObserver.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RoverObserver.swift; sourceTree = "<group>"; };
+		241A79BC67CD109BF70D08B89A3D81BF /* Pods-Rover_Example-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-Rover_Example-umbrella.h"; sourceTree = "<group>"; };
+		30FD3BA6784B70B094D964C67D38AD18 /* Rover-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Rover-prefix.pch"; sourceTree = "<group>"; };
+		3222A842F8C6030ED74272C453A62D2D /* ConcurrentOperation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConcurrentOperation.swift; sourceTree = "<group>"; };
+		37D26ABF3E3D55C659D13254611E23D8 /* Pods-Rover_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-Rover_Example.release.xcconfig"; sourceTree = "<group>"; };
+		3A2F5F2BB8D22799EFF0463AD689785A /* Pods-Rover_Example-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-Rover_Example-acknowledgements.markdown"; sourceTree = "<group>"; };
+		417CB6CCCE7E619DD97D6B412416AFBA /* Serializables.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Serializables.swift; sourceTree = "<group>"; };
+		4359722F9F728AE26564CDB99DDE9EBD /* LocationAuthorizationOperation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LocationAuthorizationOperation.swift; sourceTree = "<group>"; };
+		447B001AF1C0F3C9653B89D5BE017EA8 /* Rover.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Rover.swift; sourceTree = "<group>"; };
+		4C33CDC58377909A54D880F4A57034CB /* Rover.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Rover.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4E6F8C8A80BC99360DAD514B5AF54A3D /* AssetCache.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AssetCache.swift; sourceTree = "<group>"; };
+		4F2264057D4F27DA99A3C53B0DF61103 /* Message.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
+		50BFD9CF912ED0335E1E992280C85C72 /* Screen.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Screen.swift; sourceTree = "<group>"; };
+		524DE4ACFB607B209FC2C5C16FF19694 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		57EA585BAD4672ECE0AF6B8EB487B8BA /* LocationManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
+		5904153A5A20E90B62039D47AEC3A94B /* Event.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
+		5D2791BC80AB8572B44ADDC2D59F0CDD /* RVScreenViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RVScreenViewController.swift; sourceTree = "<group>"; };
+		66E958B71F1FA4AF49D8AF31B082D527 /* Block.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Block.swift; sourceTree = "<group>"; };
+		6B4D35CCF9175CFF19C1B611B7B05426 /* Device.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
+		74AB793574963654EAE295DFCF3F4714 /* Pods-Rover_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-Rover_Example.debug.xcconfig"; sourceTree = "<group>"; };
+		7555FD55C12E4D911C6432D6AED0972D /* Row.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Row.swift; sourceTree = "<group>"; };
+		798EA297FF5A3D543B3DF828F28D042F /* ButtonBlockViewCell.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ButtonBlockViewCell.swift; sourceTree = "<group>"; };
+		798F87609293BCD2D48765486D1EEBD7 /* NetworkOperation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NetworkOperation.swift; sourceTree = "<group>"; };
+		7DA0158D632234043D64070ECD69BD2C /* NavigationController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NavigationController.swift; sourceTree = "<group>"; };
+		8F4B62F1503113EFE96EA1C30D12CA96 /* BluetoothStatusOperation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BluetoothStatusOperation.swift; sourceTree = "<group>"; };
+		9B6862A8EFAFF3B20E5F29FB6623456E /* Pods-Rover_Example-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-Rover_Example-acknowledgements.plist"; sourceTree = "<group>"; };
+		9C146B31774A3EB8C3F7086EC8724C91 /* Router.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
+		A48B62CC8A6EFC33D04AAC25D8FC2B45 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		A57B1B1D9C90BB398014A4C379EFACFC /* Rover.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Rover.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		A5EEF3274458B84A17FD7F04B8CAE498 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A9D1643BBAF0BC670D6C7814C507EF29 /* Pods-Rover_Example-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-Rover_Example-frameworks.sh"; sourceTree = "<group>"; };
+		B026A22E0E118AE17E6F907E54C9DAC4 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.0.sdk/System/Library/Frameworks/CoreLocation.framework; sourceTree = DEVELOPER_DIR; };
+		B9E3759E3449146D1C9795415FAE1D15 /* Pods-Rover_Example-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-Rover_Example-dummy.m"; sourceTree = "<group>"; };
+		BA6428E9F66FD5A23C0A2E06ED26CD2F /* Podfile */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		BB4BD8177EE85E6066B3543A211CA8E4 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C5BA18F5D82593CC84BFAF56A5FB954D /* EventOperation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = EventOperation.swift; sourceTree = "<group>"; };
+		C8BC3276C7842B496D043E3BBDCA839D /* BlockViewLayout.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BlockViewLayout.swift; sourceTree = "<group>"; };
+		C91672263C7A46BDA5CD7C8DC5E9E8AE /* Location.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
+		C93CD24ABF28C257FD16701246378576 /* BeaconConfiguration.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BeaconConfiguration.swift; sourceTree = "<group>"; };
+		D0064B63F60D70DB72847164243CC04D /* ImageBlockViewCell.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ImageBlockViewCell.swift; sourceTree = "<group>"; };
+		D1C9AA5438DE3B4CB4E5909C315E4377 /* TextBlockViewCell.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TextBlockViewCell.swift; sourceTree = "<group>"; };
+		D56FB7133A3A11C3364AFC4B9C4579E1 /* Pods-Rover_Example-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-Rover_Example-resources.sh"; sourceTree = "<group>"; };
+		DE0327B3D7A4DA3E0BE7FC341322D9C0 /* Rover-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Rover-umbrella.h"; sourceTree = "<group>"; };
+		E1165F1707D484D7D33F6026CE13FFC0 /* Pods-Rover_Example.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = "Pods-Rover_Example.modulemap"; sourceTree = "<group>"; };
+		E583664FAF7F7BF1B3B23AF09917000B /* MappingOperation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MappingOperation.swift; sourceTree = "<group>"; };
+		EA7CF933E16A88E283C6259A03994E04 /* Rover-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Rover-dummy.m"; sourceTree = "<group>"; };
+		F020E973E576C9AF27B783BC2E8B9D54 /* Customer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Customer.swift; sourceTree = "<group>"; };
+		F87E8CE4FC75E51D9B214BEFD896B335 /* AssetManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AssetManager.swift; sourceTree = "<group>"; };
+		FAC5C453E8CA1CE473D6DE5DBAD2BFC7 /* Common.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Common.swift; sourceTree = "<group>"; };
+		FBC7FBDAAFEABF9DEE4D735B875B4DFB /* Pods_Rover_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Rover_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		FD8C68DE4C1462B37C4084C579410001 /* Mappables.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Mappables.swift; sourceTree = "<group>"; };
+		FE2FEF2AB3C12363C66B37D67E448EEB /* UIImageView+RVAsset.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "UIImageView+RVAsset.swift"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		1EAD01C064ED57C9F20251C8C059A9CA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A8559F03DA31262CC6F591A452634C4C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AAB1111D4512A036EE96FB5715C57BC7 /* CoreLocation.framework in Frameworks */,
+				8E68ED338699677D9B7380C03BB86A77 /* Foundation.framework in Frameworks */,
+				837AC5A1E144EDA814A296FAFDA768E0 /* UIKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E07F27F20DF708454214ECDD2A352FCC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				430AE66A726AE77185259114903677AA /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		122DA2E5084A4393C29BE363C764795C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				704829A3910E153298C482537DDBE0E2 /* iOS */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		3D84E594E8418CC0A45F85BCE3227C47 /* Pods-Rover_Example */ = {
+			isa = PBXGroup;
+			children = (
+				BB4BD8177EE85E6066B3543A211CA8E4 /* Info.plist */,
+				E1165F1707D484D7D33F6026CE13FFC0 /* Pods-Rover_Example.modulemap */,
+				3A2F5F2BB8D22799EFF0463AD689785A /* Pods-Rover_Example-acknowledgements.markdown */,
+				9B6862A8EFAFF3B20E5F29FB6623456E /* Pods-Rover_Example-acknowledgements.plist */,
+				B9E3759E3449146D1C9795415FAE1D15 /* Pods-Rover_Example-dummy.m */,
+				A9D1643BBAF0BC670D6C7814C507EF29 /* Pods-Rover_Example-frameworks.sh */,
+				D56FB7133A3A11C3364AFC4B9C4579E1 /* Pods-Rover_Example-resources.sh */,
+				241A79BC67CD109BF70D08B89A3D81BF /* Pods-Rover_Example-umbrella.h */,
+				74AB793574963654EAE295DFCF3F4714 /* Pods-Rover_Example.debug.xcconfig */,
+				37D26ABF3E3D55C659D13254611E23D8 /* Pods-Rover_Example.release.xcconfig */,
+			);
+			name = "Pods-Rover_Example";
+			path = "Target Support Files/Pods-Rover_Example";
+			sourceTree = "<group>";
+		};
+		51FECF5F67C8D6B188216F3418B862CD /* Development Pods */ = {
+			isa = PBXGroup;
+			children = (
+				95A1B185F89519CA1D3973C9CE454DC0 /* Rover */,
+			);
+			name = "Development Pods";
+			sourceTree = "<group>";
+		};
+		5A6EAA5CC31AA9A06F12DF26473BD9A0 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				8F4B62F1503113EFE96EA1C30D12CA96 /* BluetoothStatusOperation.swift */,
+				C5BA18F5D82593CC84BFAF56A5FB954D /* EventOperation.swift */,
+				4359722F9F728AE26564CDB99DDE9EBD /* LocationAuthorizationOperation.swift */,
+				57EA585BAD4672ECE0AF6B8EB487B8BA /* LocationManager.swift */,
+				FD8C68DE4C1462B37C4084C579410001 /* Mappables.swift */,
+				9C146B31774A3EB8C3F7086EC8724C91 /* Router.swift */,
+				447B001AF1C0F3C9653B89D5BE017EA8 /* Rover.swift */,
+				165548863928AEFD9F3907D2C2AFFB70 /* RoverObserver.swift */,
+				417CB6CCCE7E619DD97D6B412416AFBA /* Serializables.swift */,
+				615E1A2ED8CE84664BA02DEDF33E5A79 /* Common */,
+				C83B2D1BCE1CA19605B3B2EC7C1A8D15 /* Model */,
+				825F6A709F0B6CC713A93FEDA7D63CB3 /* Network */,
+				6A02E8727DF51D6163E2ABD13C555FB3 /* UI */,
+			);
+			path = Classes;
+			sourceTree = "<group>";
+		};
+		60ADA8FAF821FC46D1ED65CE7F061994 /* Targets Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				3D84E594E8418CC0A45F85BCE3227C47 /* Pods-Rover_Example */,
+			);
+			name = "Targets Support Files";
+			sourceTree = "<group>";
+		};
+		615E1A2ED8CE84664BA02DEDF33E5A79 /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				FAC5C453E8CA1CE473D6DE5DBAD2BFC7 /* Common.swift */,
+				3222A842F8C6030ED74272C453A62D2D /* ConcurrentOperation.swift */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
+		6A02E8727DF51D6163E2ABD13C555FB3 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				4E6F8C8A80BC99360DAD514B5AF54A3D /* AssetCache.swift */,
+				F87E8CE4FC75E51D9B214BEFD896B335 /* AssetManager.swift */,
+				C8BC3276C7842B496D043E3BBDCA839D /* BlockViewLayout.swift */,
+				798EA297FF5A3D543B3DF828F28D042F /* ButtonBlockViewCell.swift */,
+				D0064B63F60D70DB72847164243CC04D /* ImageBlockViewCell.swift */,
+				7DA0158D632234043D64070ECD69BD2C /* NavigationController.swift */,
+				5D2791BC80AB8572B44ADDC2D59F0CDD /* RVScreenViewController.swift */,
+				D1C9AA5438DE3B4CB4E5909C315E4377 /* TextBlockViewCell.swift */,
+				FE2FEF2AB3C12363C66B37D67E448EEB /* UIImageView+RVAsset.swift */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		704829A3910E153298C482537DDBE0E2 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				B026A22E0E118AE17E6F907E54C9DAC4 /* CoreLocation.framework */,
+				524DE4ACFB607B209FC2C5C16FF19694 /* Foundation.framework */,
+				A48B62CC8A6EFC33D04AAC25D8FC2B45 /* UIKit.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		7DB346D0F39D3F0E887471402A8071AB = {
+			isa = PBXGroup;
+			children = (
+				BA6428E9F66FD5A23C0A2E06ED26CD2F /* Podfile */,
+				51FECF5F67C8D6B188216F3418B862CD /* Development Pods */,
+				122DA2E5084A4393C29BE363C764795C /* Frameworks */,
+				9871B27027DF0121495A8C9797AAB18D /* Products */,
+				60ADA8FAF821FC46D1ED65CE7F061994 /* Targets Support Files */,
+			);
+			sourceTree = "<group>";
+		};
+		825F6A709F0B6CC713A93FEDA7D63CB3 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				E583664FAF7F7BF1B3B23AF09917000B /* MappingOperation.swift */,
+				798F87609293BCD2D48765486D1EEBD7 /* NetworkOperation.swift */,
+				0C778A7FC69D8A58EB2FD6262380B252 /* SerializingOperation.swift */,
+			);
+			path = Network;
+			sourceTree = "<group>";
+		};
+		95A1B185F89519CA1D3973C9CE454DC0 /* Rover */ = {
+			isa = PBXGroup;
+			children = (
+				DC48EFD6EFBDEFB1B5D9C45D518856EE /* Pod */,
+				FDA87AFA2B8E267460A3C36B7E580065 /* Support Files */,
+			);
+			name = Rover;
+			path = ../..;
+			sourceTree = "<group>";
+		};
+		9871B27027DF0121495A8C9797AAB18D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				FBC7FBDAAFEABF9DEE4D735B875B4DFB /* Pods_Rover_Example.framework */,
+				A57B1B1D9C90BB398014A4C379EFACFC /* Rover.bundle */,
+				4C33CDC58377909A54D880F4A57034CB /* Rover.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C83B2D1BCE1CA19605B3B2EC7C1A8D15 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				C93CD24ABF28C257FD16701246378576 /* BeaconConfiguration.swift */,
+				66E958B71F1FA4AF49D8AF31B082D527 /* Block.swift */,
+				F020E973E576C9AF27B783BC2E8B9D54 /* Customer.swift */,
+				6B4D35CCF9175CFF19C1B611B7B05426 /* Device.swift */,
+				5904153A5A20E90B62039D47AEC3A94B /* Event.swift */,
+				C91672263C7A46BDA5CD7C8DC5E9E8AE /* Location.swift */,
+				4F2264057D4F27DA99A3C53B0DF61103 /* Message.swift */,
+				7555FD55C12E4D911C6432D6AED0972D /* Row.swift */,
+				50BFD9CF912ED0335E1E992280C85C72 /* Screen.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		DC48EFD6EFBDEFB1B5D9C45D518856EE /* Pod */ = {
+			isa = PBXGroup;
+			children = (
+				5A6EAA5CC31AA9A06F12DF26473BD9A0 /* Classes */,
+			);
+			path = Pod;
+			sourceTree = "<group>";
+		};
+		FDA87AFA2B8E267460A3C36B7E580065 /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				A5EEF3274458B84A17FD7F04B8CAE498 /* Info.plist */,
+				02DFB995D67720927CDFC08AD91FBB33 /* Rover.modulemap */,
+				0674F284D94718FE7EEB047A57877CC9 /* Rover.xcconfig */,
+				EA7CF933E16A88E283C6259A03994E04 /* Rover-dummy.m */,
+				30FD3BA6784B70B094D964C67D38AD18 /* Rover-prefix.pch */,
+				DE0327B3D7A4DA3E0BE7FC341322D9C0 /* Rover-umbrella.h */,
+			);
+			name = "Support Files";
+			path = "Example/Pods/Target Support Files/Rover";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		F12CFBA28EB0C3D384C2A02AA1122113 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3F4C29B02448D955B14B2DFA8CE64193 /* Pods-Rover_Example-umbrella.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F4F2D1A8135F0EB7BD5162438E664E94 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5CDC3EA94EAFDCE3D4149BC33DE02169 /* Rover-umbrella.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		138DA09943BF37BFD158F5FFB6A5844D /* Rover */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1677D5665579E0F6ACF2903AFC5F6373 /* Build configuration list for PBXNativeTarget "Rover" */;
+			buildPhases = (
+				B5B4DBAAB40A891151F87E35C20EE213 /* Sources */,
+				A8559F03DA31262CC6F591A452634C4C /* Frameworks */,
+				28E715A22445BF763F5B12F5F64FE932 /* Resources */,
+				F4F2D1A8135F0EB7BD5162438E664E94 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4B715E43491493B7A9344D1EB3C14167 /* PBXTargetDependency */,
+			);
+			name = Rover;
+			productName = Rover;
+			productReference = 4C33CDC58377909A54D880F4A57034CB /* Rover.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		24FD1444CD8E557F313F7B97DACDDC64 /* Pods-Rover_Example */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6F7A4B17D456D0DA66EA88328A1229AA /* Build configuration list for PBXNativeTarget "Pods-Rover_Example" */;
+			buildPhases = (
+				EAD6E6EB4F797DFB694339959FB08B3B /* Sources */,
+				E07F27F20DF708454214ECDD2A352FCC /* Frameworks */,
+				F12CFBA28EB0C3D384C2A02AA1122113 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D8AD276BF54E29DDA4EFD817D1CB7FB6 /* PBXTargetDependency */,
+			);
+			name = "Pods-Rover_Example";
+			productName = "Pods-Rover_Example";
+			productReference = FBC7FBDAAFEABF9DEE4D735B875B4DFB /* Pods_Rover_Example.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		915913DEDB4071CED9FDC276B32CA6C5 /* Rover-Rover */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1E8B253119F83F2EEDEE8D79449D1703 /* Build configuration list for PBXNativeTarget "Rover-Rover" */;
+			buildPhases = (
+				6F5386E836E19B111B0EB49CE4A220FE /* Sources */,
+				1EAD01C064ED57C9F20251C8C059A9CA /* Frameworks */,
+				BCB4BFB4E1696C748E41BF67A1DD2C09 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Rover-Rover";
+			productName = "Rover-Rover";
+			productReference = A57B1B1D9C90BB398014A4C379EFACFC /* Rover.bundle */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D41D8CD98F00B204E9800998ECF8427E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0700;
+				LastUpgradeCheck = 0700;
+			};
+			buildConfigurationList = 2D8E8EC45A3A1A1D94AE762CB5028504 /* Build configuration list for PBXProject "Pods" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 7DB346D0F39D3F0E887471402A8071AB;
+			productRefGroup = 9871B27027DF0121495A8C9797AAB18D /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				24FD1444CD8E557F313F7B97DACDDC64 /* Pods-Rover_Example */,
+				138DA09943BF37BFD158F5FFB6A5844D /* Rover */,
+				915913DEDB4071CED9FDC276B32CA6C5 /* Rover-Rover */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		28E715A22445BF763F5B12F5F64FE932 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B61094F3C02E33021132EF25398AE386 /* Rover.bundle in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BCB4BFB4E1696C748E41BF67A1DD2C09 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		6F5386E836E19B111B0EB49CE4A220FE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B5B4DBAAB40A891151F87E35C20EE213 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AF5BC284F2FC65AC04B3BBA32E62B1AE /* AssetCache.swift in Sources */,
+				86B71C6EB1237F7B0B2B97FA882CE292 /* AssetManager.swift in Sources */,
+				1FD0B473F7AFA615CF6D8487869B3BBB /* BeaconConfiguration.swift in Sources */,
+				0CE030C927BCE5D8C656BA9108B9C41D /* Block.swift in Sources */,
+				8B3820118B9A2E557D381B10DB6761A9 /* BlockViewLayout.swift in Sources */,
+				E2216AA3BDBA1670EB9C6F696C62EC6E /* BluetoothStatusOperation.swift in Sources */,
+				C6C51DF45BAFCA095DAE3F31AB267312 /* ButtonBlockViewCell.swift in Sources */,
+				D77C2C76FE68EBA5075BD3A0981D0AFD /* Common.swift in Sources */,
+				E1F802800DCD6F17FA178B36CD0C1A82 /* ConcurrentOperation.swift in Sources */,
+				062E9984704DCD284BB8FC8C4D69355A /* Customer.swift in Sources */,
+				8BDC34280D8AD1F616664AE18301606F /* Device.swift in Sources */,
+				B6DF88306AF4AEE6910EAB64F311E0CC /* Event.swift in Sources */,
+				1F5A6B011D9E90296ACFA6E402A66CF5 /* EventOperation.swift in Sources */,
+				EAFBC195DDCAD643A68C9529FE72E530 /* ImageBlockViewCell.swift in Sources */,
+				15105F73CE228984FA0F011D52E71B9E /* Location.swift in Sources */,
+				8589F41D56C101DB830745746F1A986F /* LocationAuthorizationOperation.swift in Sources */,
+				D449E46A8AD2C85DF93EEB182196846A /* LocationManager.swift in Sources */,
+				1375CD3426D492047DFBA3C6B00511E4 /* Mappables.swift in Sources */,
+				BC50976EDBB2BEDB371AC198B24DF88F /* MappingOperation.swift in Sources */,
+				B48BCBBDF8E97E2C16B24139366ED4ED /* Message.swift in Sources */,
+				144F41BD6AD4CC660DDCE89BF7793E2D /* NavigationController.swift in Sources */,
+				C97030038450753F3E43F1C8396E4D39 /* NetworkOperation.swift in Sources */,
+				F3DF4CE136BB6D141FCCEE03B037C8FC /* Router.swift in Sources */,
+				ADA164A02694C58D2F39BC4BE2FEC684 /* Rover-dummy.m in Sources */,
+				C59D08DFB8722E63280BBFD53E21F46F /* Rover.swift in Sources */,
+				32BD4651FA3ADF0DA1DD1DD8D1B8EFA9 /* RoverObserver.swift in Sources */,
+				48089B68EE50FD04756B063EA62C1B29 /* Row.swift in Sources */,
+				BAE80D271DC0175A41B768746E9418D9 /* RVScreenViewController.swift in Sources */,
+				49BE9D7B7D2DC70F1743717411293AD8 /* Screen.swift in Sources */,
+				91D0BABC294B20EF3356DF0333F73D88 /* Serializables.swift in Sources */,
+				FD40E71FFA12CAC7FA662F39D860A07C /* SerializingOperation.swift in Sources */,
+				EF8C9286A965DE6A9DA47BC55785789B /* TextBlockViewCell.swift in Sources */,
+				30767740929363580C0FA99ACE4AFFD6 /* UIImageView+RVAsset.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EAD6E6EB4F797DFB694339959FB08B3B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B86B5E168F130358BB519F3F00561D6F /* Pods-Rover_Example-dummy.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		4B715E43491493B7A9344D1EB3C14167 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "Rover-Rover";
+			target = 915913DEDB4071CED9FDC276B32CA6C5 /* Rover-Rover */;
+			targetProxy = E2E6BD7E035AF971ABA518DFCFDEC1F3 /* PBXContainerItemProxy */;
+		};
+		D8AD276BF54E29DDA4EFD817D1CB7FB6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Rover;
+			target = 138DA09943BF37BFD158F5FFB6A5844D /* Rover */;
+			targetProxy = 1A1A76D8488756BAF16A0CB3BF4A0A32 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		004EA1F6DEA639E715BF0D33AEF86AA5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 74AB793574963654EAE295DFCF3F4714 /* Pods-Rover_Example.debug.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				INFOPLIST_FILE = "Target Support Files/Pods-Rover_Example/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-Rover_Example/Pods-Rover_Example.modulemap";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_NAME = Pods_Rover_Example;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		196C2B4CC370FC49FFD31718AB0A6FC4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0674F284D94718FE7EEB047A57877CC9 /* Rover.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_PREFIX_HEADER = "Target Support Files/Rover/Rover-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/Rover/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = "Target Support Files/Rover/Rover.modulemap";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = Rover;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		4FD8A713633360F3E6F33522C9419B5C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0674F284D94718FE7EEB047A57877CC9 /* Rover.xcconfig */;
+			buildSettings = {
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				PRODUCT_NAME = Rover;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Debug;
+		};
+		5CE5176205D06FF3FFE3DDDA9291E44B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				ONLY_ACTIVE_ARCH = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SYMROOT = "${SRCROOT}/../build";
+			};
+			name = Debug;
+		};
+		74857149DC1E0D599B8A01A78349A926 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PREPROCESSOR_DEFINITIONS = "RELEASE=1";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SYMROOT = "${SRCROOT}/../build";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		75091F0397A2D293843DBA5E7E4C08D6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0674F284D94718FE7EEB047A57877CC9 /* Rover.xcconfig */;
+			buildSettings = {
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				PRODUCT_NAME = Rover;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Release;
+		};
+		C1B41C81BDFC5C6B98793B1C6E7A0458 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 37D26ABF3E3D55C659D13254611E23D8 /* Pods-Rover_Example.release.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				INFOPLIST_FILE = "Target Support Files/Pods-Rover_Example/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-Rover_Example/Pods-Rover_Example.modulemap";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_NAME = Pods_Rover_Example;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		D9B79947CB7D34B8803B1672F3A1D036 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0674F284D94718FE7EEB047A57877CC9 /* Rover.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_PREFIX_HEADER = "Target Support Files/Rover/Rover-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/Rover/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = "Target Support Files/Rover/Rover.modulemap";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = Rover;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1677D5665579E0F6ACF2903AFC5F6373 /* Build configuration list for PBXNativeTarget "Rover" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D9B79947CB7D34B8803B1672F3A1D036 /* Debug */,
+				196C2B4CC370FC49FFD31718AB0A6FC4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1E8B253119F83F2EEDEE8D79449D1703 /* Build configuration list for PBXNativeTarget "Rover-Rover" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4FD8A713633360F3E6F33522C9419B5C /* Debug */,
+				75091F0397A2D293843DBA5E7E4C08D6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2D8E8EC45A3A1A1D94AE762CB5028504 /* Build configuration list for PBXProject "Pods" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5CE5176205D06FF3FFE3DDDA9291E44B /* Debug */,
+				74857149DC1E0D599B8A01A78349A926 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6F7A4B17D456D0DA66EA88328A1229AA /* Build configuration list for PBXNativeTarget "Pods-Rover_Example" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				004EA1F6DEA639E715BF0D33AEF86AA5 /* Debug */,
+				C1B41C81BDFC5C6B98793B1C6E7A0458 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
+}

@@ -45,7 +45,7 @@ class MonitoringViewController: UIViewController {
         segmentedControl.setTitle("Geofences (\(geofenceRegions.count))", forSegmentAtIndex: 0)
         segmentedControl.setTitle("Beacons (\(beaconRegions.count))", forSegmentAtIndex: 1)
         
-        reloadMapOverlays()
+        //reloadMapOverlays()
     }
     
     func reloadMapOverlays() {
@@ -197,7 +197,7 @@ extension MonitoringViewController : UITableViewDelegate {
 
 extension MonitoringViewController : CLLocationManagerDelegate {
     func locationManager(manager: CLLocationManager, didStartMonitoringForRegion region: CLRegion) {
-        reloadData()
+        //reloadData()
     }
     
     func locationManager(manager: CLLocationManager, didDetermineState state: CLRegionState, forRegion region: CLRegion) {

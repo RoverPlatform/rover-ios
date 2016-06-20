@@ -1,29 +1,54 @@
+# iOS SDK Integration
 
 ## Requirements
   - XCode 7 or higher
   - iOS 8.0 or higher
   - iPhone 4S or higher
 
-## Installation
+## Installing the library
 
-Rover is available through [CocoaPods](http://cocoapods.org). To install
-it, simply add the following line to your Podfile:
+### CocoaPods
 
-```ruby
-use_frameworks!
-pod "Rover", :git => "https://github.com/RoverPlatform/rover-ios.git"
-```
-While Rover 4 is in Beta you **MUST** provide the git url in your Podfile.
+The easiest way to get Rover into your iOS project is to use [CocoaPods](http://cocoapods.org/). If you've never used CocoaPods before you can follow their [Getting Started](https://guides.cocoapods.org/using/getting-started.html) guide to get it setup on your machine. After you've installed CocoaPods the following steps will add the Rover SDK to your project.
 
-## Usage
+1. Run `pod init` from your Xcode project directory to create a Podfile.
+2. The Rover SDK is a dynamic framework written in Swift. Add `use_frameworks!` to the top of your Podfile to enable [framework and Swift support](https://blog.cocoapods.org/CocoaPods-0.36/).
+3. Add the Rover pod within the main target of your Podfile:
+   
+   ```ruby
+   target 'My App' do
+       pod 'Rover', :git => 'https://github.com/RoverPlatform/rover-ios.git'
+   end
+   ```
+   
+   Note: The path to the GitHub repository is required while the Rover SDK is in beta. 
+4. Run `pod install` from your Xcode project directory. CocoaPods should download and install the Rover library, and create a new Xcode workspace. Open up this workspace in Xcode.
 
-### Getting Started
+### Carthage
 
-In your AppDelegate's `application(_:didFinishLaunchingWithOptions:)` setup Rover using your application token.
+Coming soon...
+
+### Manual Installation
+
+You can also get the library by downloading the [latest version from Github](https://github.com/RoverPlatform/rover-ios/tree/0.2.0) and copying it into your project.
+
+### Initializing the SDK
+
+_The following instructions assume your app is written in Swift. The steps required are the same if your app is written in Objective-C. We will be providing an Objective-C translation in the future. In the meantime if you are having trouble translating the Swift instructions or run into an issue please submit a GitHub issue for support._
+
+To connect your app to the Rover cloud, you must first initialize it with your account token. You can find your account token on the main page of the [Rover Settings App](https://app.rover.io/settings/).
+
+To initialize the Rover SDK, `import Rover` and call `setup(applicationToken:)` with your account token as its argument. 
 
 ```swift
-Rover.setup(applicationToken: "<YOUR APPLICATION TOKEN>")
+import Rover
+
+Rover.setup(applicationToken: 'YOUR_ACCOUNT_TOKEN');
 ```
+
+In most cases, it makes sense to do this in your AppDelegate's `application(_:didFinishLaunchingWithOptions:)` method.
+
+### Monitoring for beacons and geofences
 
 To start Rover you must call the `startMonitoring` method at some point. You can do this in the same AppDelegate method as above or you may choose to do this after the user has logged in. Note that this method only needs to be called once from your app. Subsequent app launches do not need to call this method, however doing so would not be a problem.
 

@@ -158,7 +158,9 @@ Messages are delivered from the Rover server to your app. A message is received 
 
 In both of these cases the `didReceiveMessage` callback will be invoked on your Rover observers.
 
+```swift
 didReceiveMessage(message: Message)
+```
 
 #### Opening Messages
 

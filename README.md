@@ -98,15 +98,15 @@ class ViewController: UIViewController, RoverObserver {
   
   // MARK: RoverObserver
   
-  optional func didEnterBeaconRegion(config config: BeaconConfiguration, place: Place?) {
+  func didEnterBeaconRegion(config config: BeaconConfiguration, place: Place?) {
     
   }
     
-  optional func didExitBeaconRegion(config config: BeaconConfiguration, place: Place?) {
+  func didExitBeaconRegion(config config: BeaconConfiguration, place: Place?) {
   
   }
     
-  optional func didEnterGeofence(place place: Place) {
+  func didEnterGeofence(place place: Place) {
   
   }
     
@@ -130,24 +130,15 @@ Using the [Rover Messages App](https://app.rover.io/messages/) you can create me
 
 ### Notifications
 
-Call the `Rover.registerForNotifications` method to enable your app to deliver notifications. Similar to the `Rover.startMonitoring` method you can call this as part of your initialization logic or you may wish to call this at a later time.
+Call the `Rover.registerForNotifications` method to enable your app to deliver notifications. Similar to the `Rover.startMonitoring` method this will also trigger an alert asking for permission the first time it is called. You can call this as part of your initialization logic or you may wish to call this at a later time.
 
 ```swift
 Rover.registerForNotifications()
 ```
-In order for Rover to deliver notifications your app to deliver notifications the user must accept a permission dialog similar to location monitoring.
 
-Rover's messaging system uses notifications to alert the user when their device is asleep or when your app isn't running. To enable this feature your app must register for notifications, which can be done via the following mehod call:
-
-
-
-This method also triggers an alert asking for permission the first time it is called. Again you can do this right after your setup code in AppDelegate or you may choose to do it at a later point. The Rover SDK needs a few more hooks in your AppDelegate to fully enable notifications, so make sure the following delegate methods are passed onto Rover.
+The Rover SDK needs a few more hooks in your AppDelegate to fully enable notifications, so make sure the following delegate methods are passed onto Rover.
 
 ```swift
-  func application(application: UIApplication, didReceiveLocalNotification notification: UILocalNotification) {
-      Rover.didReceiveLocalNotification(notification)
-  }
-  
   func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject], fetchCompletionHandler completionHandler: (UIBackgroundFetchResult) -> Void) {
       Rover.didReceiveRemoteNotification(userInfo, fetchCompletionHandler: completionHandler)
   }
@@ -156,6 +147,106 @@ This method also triggers an alert asking for permission the first time it is ca
       Rover.didRegisterForRemoteNotification(deviceToken: deviceToken)
   }
 ```
+
+## Message Observers
+
+Rover implements callbacks you can implement in your RoverObservers to handle the receiving and opening of messages.
+
+### Receiving Messages
+
+Messages are delivered from the Rover server to your app. A message is received by your app if it is delivered while your app is in the foreground or if your app opens as a result of the user swiping a message's notification. This functionality mirrors the behaviour of the `UIApplicationDidReceiveRemoteNotification` method.
+
+In both of these cases the `didReceiveMessage` callback will be invoked on your Rover observers.
+
+didReceiveMessage(message: Message)
+
+### Opening Messages
+
+After a message is received the Rover SDK can automatically open the message. The behaviour for opening a message depends on the content type of the message. Landing pages and websites will be presented modally in a special view controller that includes a close button to automatically dismiss itself. Messages with a content type of deep link will call the UIApplication.openURL method. Messages with a content type of custom will not trigger any behaviour. For all messages, regardless of content type, the act of opening the message will track a event on the Rover cloud.
+
+Before Rover opens the message it will call the `shouldOpenMessage` callback on your observers. If all of your observers return `true`, Rover will open the message. If one or more of your observers return `false`, Rover will _not_ open the message. If none of your observers implement this method Rover will determine whether the message should be opened. The default behaviour is to open the message _only_ if the message was received from a notification swipe and not if the message was recieved while your app is in the foreground.
+
+shouldOpenMessage(message: Message) -> Bool
+
+### Customizing the Default Behaviour
+
+In some cases you may want to handle opening messages yourself. To do this you should implement the `shouldOpenMessage` method in one of your observers and return false. You should also implement the `didReceiveMessage` method and implement your custom behaviour.
+
+```swift
+showOpenMessage(message: Message) {
+  return false
+}
+
+didReceiveMessage(message: Message) {
+  // Implement custom behaviour
+}
+```
+
+#### Checking for Swipes
+
+Your custom implementation will likely differ depending on whether the message was received while your app is in the foreground or as a result of the user swiping the message's notification. The following example shows how you can make this distinction.
+
+```swift
+didReceiveMessage(message: Message) {
+  if UIApplication.sharedApplication().applicationState == .Active {
+    // Message received will app is in the foreground
+  } else {
+    // Message received as a result of swiping the notification
+  }
+}
+```
+
+#### Using Rover View Controllers
+
+If the message contains a landing page you probably want to instantiate a view controller for it. The `landingPage` property of a [`Message`](https://github.com/RoverPlatform/rover-ios/blob/0.2.0/Pod/Classes/Model/Message.swift) object is of type [`Screen`](https://github.com/RoverPlatform/rover-ios/blob/0.2.0/Pod/Classes/Model/Screen.swift). You can use the `Rover.viewController` method which takes a [`Screen`](https://github.com/RoverPlatform/rover-ios/blob/0.2.0/Pod/Classes/Model/Screen.swift) object and returns a [`ScreenViewController`](https://github.com/RoverPlatform/rover-ios/blob/0.2.0/Pod/Classes/UI/RVScreenViewController.swift).
+
+```swift
+didReceiveMessage(message: Message) {
+  if message.action == .LandingPage {
+    let screenViewController = Rover.viewController(message: message) as? RVScreenViewController
+  }
+}
+```
+
+Rover provides another view controller called [`ModalViewController`](https://github.com/RoverPlatform/rover-ios/blob/7173352fb18d79f8f440b00eb00b7af95f5cb72f/Pod/Classes/UI/NavigationController.swift) which is useful for opening messages. The [`ModalViewController`](https://github.com/RoverPlatform/rover-ios/blob/7173352fb18d79f8f440b00eb00b7af95f5cb72f/Pod/Classes/UI/NavigationController.swift) _wraps_ another view controller, adding a titlebar with a close button that will automatically dismiss itself. This can be useful when presenting a landing page or website after the user swipes a message's notification.
+
+```swift
+didReceiveMessage(message: Message) {
+  if message.action == .Website {
+    let url = message.url
+    let safariViewController = SFSafariViewController(URL: url)
+    let modalViewController = ModalViewController(safariViewController)
+    this.presentViewController(modalViewController, true)
+  }
+}
+```
+
+#### Accessing Custom Properties
+
+Messages authored in the [Rover Messages App](https://app.rover.io/messages/) can have custom properties attached to them. You can access those properties on the message object in the `didReceiveMessage` method.
+
+```swift
+didReceiveMessage(message: Message) {
+  // message.proprties
+}
+```
+
+#### Tracking Message Open Events
+
+// TODO
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ### Inbox
 

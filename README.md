@@ -32,9 +32,9 @@ Coming soon...
 
 You can also get the library by downloading the [latest version from Github](https://github.com/RoverPlatform/rover-ios/tree/0.2.0) and copying it into your project.
 
-### Initializing the SDK
+## Initializing the SDK
 
-_The following instructions assume your app is written in Swift. The steps required are the same if your app is written in Objective-C. We will be providing an Objective-C translation in the future. In the meantime if you are having trouble translating the Swift instructions or run into an issue please submit a GitHub issue for support._
+_The following instructions assume your app is written in Swift. The steps required are the same if your app is written in Objective-C. We will be providing an Objective-C version in the future. In the meantime if you are having trouble translating the Swift instructions or run into an issue please submit a GitHub issue for support._
 
 To connect your app to the Rover cloud, you must first initialize it with your account token. You can find your account token on the main page of the [Rover Settings App](https://app.rover.io/settings/).
 
@@ -48,15 +48,35 @@ Rover.setup(applicationToken: 'YOUR_ACCOUNT_TOKEN');
 
 In most cases, it makes sense to do this in your AppDelegate's `application(_:didFinishLaunchingWithOptions:)` method.
 
-### Monitoring for beacons and geofences
+## Monitoring for beacons and geofences
 
-To start Rover you must call the `startMonitoring` method at some point. You can do this in the same AppDelegate method as above or you may choose to do this after the user has logged in. Note that this method only needs to be called once from your app. Subsequent app launches do not need to call this method, however doing so would not be a problem.
+Call the `startMonitoring` method to begin monitoring for beacons and geofences. You can do this immediately after initializing the Rover SDK or you may choose to do this at a later time. 
 
 ```swift
 Rover.startMonitoring()
 ```
 
-The first time this method is called, iOS presents the user with an alert asking them for permission to use their location in the background. This is required by Apple to monitor for geofences and iBeacons. Make sure to create an entry of type String in your app's `.plist` file with the key `NSLocationAlwaysUsageDescription`. It's value can be used to customize the body of the alert.
+When this method is called Rover will invoke the [` requestAlwaysAuthorization`](https://developer.apple.com/library/ios/documentation/CoreLocation/Reference/CLLocationManager_Class/#//apple_ref/occ/instm/CLLocationManager/requestAlwaysAuthorization) method of CoreLocation. The first time this method is called the operating system will prompt the user to give your app access to their location. This is required in order to detect beacons and geofences. 
+
+![](https://images-rover-io.imgix.net/wiki/iso-location-prompt.png)
+
+__IMPORTANT__
+The user prompt contains the text from the `NSLocationAlwaysUsageDescription` key in your app’s `Info.plist` file, and the presence of that key is required when calling this method. If you don't set this key, the prompt will not be displayed and your app will not be granted access to your users' location. 
+
+```xml
+<key>NSLocationAlwaysUsageDescription</key>
+<string>Your Description Goes Here</string>
+```
+
+### Controlling The Prompt
+
+Often you will want more control over when your users receive location permission prompt. For exmaple, you may wish to display a screen first explaining to your user all the benefits of allowing your app to track their location. In this case you can delay the `startMonitoring` call until you are ready for the prompt to be displayed. 
+
+You can also call the `requestAlwaysAuthorization` method yourself. If the user has given permission prior to the `Rover.startMonitoring` call the prompt will not be displayed again.
+
+### requestAlwaysAuthorization vs requestWhenInUseAuthorization
+
+Detecting beacons and geofences while your app is in the background requires `requestAlwaysAuthorization`. If your app has previously been granted `requestWhenInUseAuthorization` you will need to.... <INSERT STEPS TO FIX HERE>.
 
 ### Notifications
 

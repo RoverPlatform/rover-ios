@@ -48,7 +48,7 @@ Rover.setup(applicationToken: 'YOUR_ACCOUNT_TOKEN');
 
 In most cases, it makes sense to do this in your AppDelegate's `application(_:didFinishLaunchingWithOptions:)` method.
 
-## Monitoring for beacons and geofences
+## Monitoring for Beacons and Geofences
 
 Call the `startMonitoring` method to begin monitoring for beacons and geofences. You can do this immediately after initializing the Rover SDK or you may choose to do this at a later time. 
 
@@ -70,7 +70,7 @@ The user prompt contains the text from the `NSLocationAlwaysUsageDescription` ke
 
 ### Controlling The Prompt
 
-Often you will want more control over when your users receive location permission prompt. For exmaple, you may wish to display a screen first explaining to your user all the benefits of allowing your app to track their location. In this case you can delay the `startMonitoring` call until you are ready for the prompt to be displayed. 
+Often you will want more control over when your users are presented with the location permission prompt. For example, you may wish to display a screen explaining all the benefits of allowing your app to track their location. In this case you can delay the `startMonitoring` call until you are ready for the prompt to be displayed. 
 
 You can also call the `requestAlwaysAuthorization` method yourself. If the user has given permission prior to the `Rover.startMonitoring` call the prompt will not be displayed again.
 
@@ -78,7 +78,53 @@ You can also call the `requestAlwaysAuthorization` method yourself. If the user 
 
 Detecting beacons and geofences while your app is in the background requires `requestAlwaysAuthorization`. If your app has previously been granted `requestWhenInUseAuthorization` you will need to.... <INSERT STEPS TO FIX HERE>.
 
-### Notifications
+### Proximity Events
+
+Rover uses the observer pattern to notify the developer of proximity events. The `Rover.addObserver(_:)` method accepts a object that conforms to the [`RoverObserver`](https://github.com/RoverPlatform/rover-ios/blob/0.2.0/Pod/Classes/RoverObserver.swift) protocol as its argument. Any object in your application that conforms to this protocal can observe proximity events.
+
+Here's an example of a `UIViewController` that adds itself as an observer and implements proximity callbacks.
+
+```swift
+class ViewController: UIViewController, RoverObserver {
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    
+    Rover.addObserver(self)
+  }
+  
+  deinit {
+    Rover.removeObserver(self)
+  }
+  
+  // MARK: RoverObserver
+  
+  optional func didEnterBeaconRegion(config config: BeaconConfiguration, place: Place?) {
+    
+  }
+    
+  optional func didExitBeaconRegion(config config: BeaconConfiguration, place: Place?) {
+  
+  }
+    
+  optional func didEnterGeofence(place place: Place) {
+  
+  }
+    
+  func didExitGeofence(place place: Place) {
+  
+  }
+}
+```
+
+__IMPORTANT__ Notice that the example removes itself as an observer in the `deinit` method. This is required in order for the class to properly deallocate itself. Any call to `Rover.addObserver(_:)` _must_ be balanced with a corresponding call to `Rover.removeObserver(_:)`.
+
+### Beacons and Places
+
+Using the [Rover Proximity App](https://app.rover.io/proximity/) you can add beacons and places you would like the Rover SDK to monitor for. When Rover detects that the user has entered or exited a beacon or place the appropriate observer method will be called with the corresponding [`BeaconConfiguration`](https://github.com/RoverPlatform/rover-ios/blob/0.2.0/Pod/Classes/Model/BeaconConfiguration.swift) and/or [`Place`](https://github.com/RoverPlatform/rover-ios/blob/0.2.0/Pod/Classes/Model/Location.swift) objects.
+
+You can use these observer callbacks in your app to (for example) adapt your app's user interface when the user is in a specific place.
+
+## Notifications
 
 Rover's messaging system uses notifications to alert the user when their device is asleep or when your app isn't running. To enable this feature your app must register for notifications, which can be done via the following mehod call:
 
@@ -101,36 +147,6 @@ This method also triggers an alert asking for permission the first time it is ca
       Rover.didRegisterForRemoteNotification(deviceToken: deviceToken)
   }
 ```
-
-### Observers
-
-Rover uses the observer pattern to notify the developer of proximity and messaging events. Just call the `Rover.addObserver(_:)` method and pass in any class of your choice that conforms to the [`RoverObserver`](https://github.com/RoverPlatform/rover-ios-beta/blob/master/Pod/Classes/RoverObserver.swift) protocol.
-
-Here's an example of a `UIViewController` listening for proximity callbacks.
-
-```swift
-class ViewController: UIViewController, RoverObserver {
-  override func viewDidLoad() {
-    super.viewDidLoad()
-    
-    Rover.addObserver(self)
-  }
-  
-  deinit {
-    Rover.removeObserver(self)
-  }
-  
-  // MARK: RoverObserver
-  
-  func didDeliverMessage(message: Message) {
-    print("User has received message: \(message.text)")
-  }
-}
-```
-
-Note that you **MUST** balance it with a call to `Rover.removeObserver(_:)` in `deinit` or any other unloading method of your choice.
-
-You may choose to do all of this in your AppDelegate for more centralized control.
 
 ### Customer Identity
 

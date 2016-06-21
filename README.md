@@ -43,7 +43,7 @@ To initialize the Rover SDK, `import Rover` and call `setup(applicationToken:)` 
 ```swift
 import Rover
 
-Rover.setup(applicationToken: 'YOUR_ACCOUNT_TOKEN');
+Rover.setup(applicationToken: "YOUR_ACCOUNT_TOKEN");
 ```
 
 In most cases, it makes sense to do this in your AppDelegate's `application(_:didFinishLaunchingWithOptions:)` method.
@@ -124,13 +124,22 @@ Using the [Rover Proximity App](https://app.rover.io/proximity/) you can add bea
 
 You can use these observer callbacks in your app to (for example) adapt your app's user interface when the user is in a specific place.
 
-## Notifications
+## Messages
 
-Rover's messaging system uses notifications to alert the user when their device is asleep or when your app isn't running. To enable this feature your app must register for notifications, which can be done via the following mehod call:
+Using the [Rover Messages App](https://app.rover.io/messages/) you can create messages that are delivered to your users when a proximity event is triggered or on a specific date and time. You can attach push notifications to your messages that will be delivered along with your messages. Additionally you can attach content to your messages. The content can be a landing page authored in the [Rover Messages App](https://app.rover.io/messages/) or it can simply link to a website. A message can also trigger functionality within your app through a deep link and can have custom data attached.
+
+### Notifications
+
+Call the `Rover.registerForNotifications` method to enable your app to deliver notifications. Similar to the `Rover.startMonitoring` method you can call this as part of your initialization logic or you may wish to call this at a later time.
 
 ```swift
 Rover.registerForNotifications()
 ```
+In order for Rover to deliver notifications your app to deliver notifications the user must accept a permission dialog similar to location monitoring.
+
+Rover's messaging system uses notifications to alert the user when their device is asleep or when your app isn't running. To enable this feature your app must register for notifications, which can be done via the following mehod call:
+
+
 
 This method also triggers an alert asking for permission the first time it is called. Again you can do this right after your setup code in AppDelegate or you may choose to do it at a later point. The Rover SDK needs a few more hooks in your AppDelegate to fully enable notifications, so make sure the following delegate methods are passed onto Rover.
 
@@ -147,26 +156,6 @@ This method also triggers an alert asking for permission the first time it is ca
       Rover.didRegisterForRemoteNotification(deviceToken: deviceToken)
   }
 ```
-
-### Customer Identity
-
-By default the Rover platform will assign a unique identifier to each customer who installs your application. However you may choose to assign your own identifiers. This is particularly useful for mapping data from the Rover Analytics app or if a customer is using your application on multiple platforms. To accomodate this Rover saves customer info to device storage so that it persists across sessions. The following snippet demonstrates assigning your own customer identifier:
-
-```swift
-let customer = Rover.customer
-customer.identifier = "1234abcdef"
-customer.save()
-```
-
-In addition to identifiers, you may provide other user attributes for more personlized and segmented messaging via the Rover Messages app. For a full list attributes check [here](https://github.com/RoverPlatform/rover-ios-beta/blob/master/Pod/Classes/Model/Customer.swift).
-
-### Messages
-
-Using the Rover Messages App, one can author rich messages to be delivered on proximity events. A [Message](https://github.com/RoverPlatform/rover-ios-beta/blob/master/Pod/Classes/Model/Message.swift) can have different types of content:
- - A link to a website
- - Deeplink within your app or another app
- - A landing page
- - Custom data defined at the time of message creation (```message.properties```)
 
 ### Inbox
 
@@ -197,6 +186,18 @@ if let screen = message.screen {
 ```
 
 If you are to implement in this manner it is crucial to define a [RVScreenViewControllerDelegate](https://github.com/RoverPlatform/rover-ios-beta/blob/master/Pod/Classes/UI/RVScreenViewController.swift) to handle cases where the landing page links off to a website or a deeplink within the app. This usecase is also demonstrated in the [InboxViewController](https://github.com/RoverPlatform/rover-ios-beta/blob/master/Example/Rover/InboxTableViewController.swift).
+
+### Customer Identity
+
+By default the Rover platform will assign a unique identifier to each customer who installs your application. However you may choose to assign your own identifiers. This is particularly useful for mapping data from the Rover Analytics app or if a customer is using your application on multiple platforms. To accomodate this Rover saves customer info to device storage so that it persists across sessions. The following snippet demonstrates assigning your own customer identifier:
+
+```swift
+let customer = Rover.customer
+customer.identifier = "1234abcdef"
+customer.save()
+```
+
+In addition to identifiers, you may provide other user attributes for more personlized and segmented messaging via the Rover Messages app. For a full list attributes check [here](https://github.com/RoverPlatform/rover-ios-beta/blob/master/Pod/Classes/Model/Customer.swift).
 
 ## License
 

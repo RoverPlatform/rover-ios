@@ -164,18 +164,20 @@ didReceiveMessage(message: Message)
 
 #### Opening Messages
 
-After a message is received the Rover SDK can automatically open the message. The behaviour for opening a message depends on the content type of the message. Landing pages and websites will be presented modally in a special view controller that includes a close button to automatically dismiss itself. Messages with a content type of deep link will call the UIApplication.openURL method. Messages with a content type of custom will not trigger any behaviour. For all messages, regardless of content type, the act of opening the message will track a event on the Rover cloud.
+After a message is received the Rover SDK can automatically open the message. The behaviour for opening a message depends on the content type of the message. Landing pages and websites will be presented modally in a special view controller that includes a close button to automatically dismiss itself. Messages with a content type of deep link will call the `UIApplication.openURL` method. Messages with a content type of custom will not trigger any behaviour. For all messages, regardless of content type, the act of opening the message will track a event on the Rover cloud.
 
 Before Rover opens the message it will call the `shouldOpenMessage` callback on your observers. If all of your observers return `true`, Rover will open the message. If one or more of your observers return `false`, Rover will _not_ open the message. If none of your observers implement this method Rover will determine whether the message should be opened. The default behaviour is to open the message _only_ if the message was received from a notification swipe and not if the message was recieved while your app is in the foreground.
 
+```swift
 shouldOpenMessage(message: Message) -> Bool
+```
 
 #### Customizing the Default Behaviour
 
 In some cases you may want to handle opening messages yourself. To do this you should implement the `shouldOpenMessage` method in one of your observers and return false. You should also implement the `didReceiveMessage` method and implement your custom behaviour.
 
 ```swift
-showOpenMessage(message: Message) {
+shouldOpenMessage(message: Message) {
   return false
 }
 
@@ -198,9 +200,9 @@ didReceiveMessage(message: Message) {
 }
 ```
 
-##### Using Rover View Controllers
+##### The Screen View Controller
 
-If the message contains a landing page you probably want to instantiate a view controller for it. The `landingPage` property of a [`Message`](https://github.com/RoverPlatform/rover-ios/blob/0.2.0/Pod/Classes/Model/Message.swift) object is of type [`Screen`](https://github.com/RoverPlatform/rover-ios/blob/0.2.0/Pod/Classes/Model/Screen.swift). You can use the `Rover.viewController` method which takes a [`Screen`](https://github.com/RoverPlatform/rover-ios/blob/0.2.0/Pod/Classes/Model/Screen.swift) object and returns a [`ScreenViewController`](https://github.com/RoverPlatform/rover-ios/blob/0.2.0/Pod/Classes/UI/RVScreenViewController.swift).
+If the message contains a landing page you probably want to instantiate a view controller for it. The `landingPage` property of a [`Message`](https://github.com/RoverPlatform/rover-ios/blob/0.2.0/Pod/Classes/Model/Message.swift) object is of type [`Screen`](https://github.com/RoverPlatform/rover-ios/blob/0.2.0/Pod/Classes/Model/Screen.swift). You can use the `Rover.viewController` method which takes a [`Message`](https://github.com/RoverPlatform/rover-ios/blob/0.2.0/Pod/Classes/Model/Message.swift) object and returns a [`ScreenViewController`](https://github.com/RoverPlatform/rover-ios/blob/0.2.0/Pod/Classes/UI/RVScreenViewController.swift).
 
 ```swift
 didReceiveMessage(message: Message) {
@@ -209,6 +211,14 @@ didReceiveMessage(message: Message) {
   }
 }
 ```
+
+There is a little magic happening behind the scenes that makes this method especially valuable. 
+
+Often you will have a [`Message`](https://github.com/RoverPlatform/rover-ios/blob/0.2.0/Pod/Classes/Model/Message.swift) object with its content type set to `.LandingPage` but the `message.landingPage` property is null. This is because the SDK has received the message but has not yet loaded the landing page. A typical landing page amounts for 5-6 Kb and is loaded on demand to optimize bandwidth effeciency. 
+
+The `Rover.viewController` method accepts a [`Message`](https://github.com/RoverPlatform/rover-ios/blob/0.2.0/Pod/Classes/Model/Message.swift) object and returns a [`ScreenViewController`](https://github.com/RoverPlatform/rover-ios/blob/0.2.0/Pod/Classes/UI/RVScreenViewController.swift) that knows how to load its contents.
+
+##### The Modal View Controller
 
 Rover provides another view controller called [`ModalViewController`](https://github.com/RoverPlatform/rover-ios/blob/7173352fb18d79f8f440b00eb00b7af95f5cb72f/Pod/Classes/UI/NavigationController.swift) which is useful for opening messages. The [`ModalViewController`](https://github.com/RoverPlatform/rover-ios/blob/7173352fb18d79f8f440b00eb00b7af95f5cb72f/Pod/Classes/UI/NavigationController.swift) _wraps_ another view controller, adding a titlebar with a close button that will automatically dismiss itself. This can be useful when presenting a landing page or website after the user swipes a message's notification.
 
@@ -237,19 +247,6 @@ didReceiveMessage(message: Message) {
 
 // TODO
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 ### Inbox
 
 Most applications provide means for users to recall messages. You can use the `didDeliverMessage(_:)` callback on a [`RoverObserver`](https://github.com/RoverPlatform/rover-ios-beta/blob/master/Pod/Classes/RoverObserver.swift) to map and add Rover messages to your application's inbox as they are delivered. You may also rely solely on Rover for a simple implementation of such inbox if your application doesn't already have one:
@@ -264,21 +261,6 @@ Rover.reloadInbox { messages in
 Note that the `reloadInbox` method will only return messages that have been marked to be saved in the Rover Messages app.
 
 See the [InboxViewController](https://github.com/RoverPlatform/rover-ios-beta/blob/master/Example/Rover/InboxTableViewController.swift) for a quick implementation of both strategies.
-
-### Landing Pages
-
-Some messages can carry with them rich content in the form of landing pages. A landing page is a [Screen](https://github.com/RoverPlatform/rover-ios-beta/blob/master/Pod/Classes/Model/Screen.swift) that is an optional property of a [Message](https://github.com/RoverPlatform/rover-ios-beta/blob/master/Pod/Classes/Model/Message.swift). The Rover SDK provides means to render this screen natively as a UIViewController, which you can present modally or push onto a stack of view controllers inside a UINavigationController.
-
-```swift
-if let screen = message.screen {
-  let viewController = RVScreenViewController(screen: screen)
-  viewController.delegate = self
-  
-  self.presentViewController(viewController, animated: true, completion: nil)
-}
-```
-
-If you are to implement in this manner it is crucial to define a [RVScreenViewControllerDelegate](https://github.com/RoverPlatform/rover-ios-beta/blob/master/Pod/Classes/UI/RVScreenViewController.swift) to handle cases where the landing page links off to a website or a deeplink within the app. This usecase is also demonstrated in the [InboxViewController](https://github.com/RoverPlatform/rover-ios-beta/blob/master/Example/Rover/InboxTableViewController.swift).
 
 ### Customer Identity
 

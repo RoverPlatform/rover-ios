@@ -139,6 +139,10 @@ public class Rover : NSObject {
         sharedInstance?.operationQueue.addOperation(networkOperation)
     }
     
+    public class func trackMessageOpenEvent(message: Message) {
+        sharedInstance?.sendEvent(.DidOpenMessage(message, source: "inbox", date: NSDate()))
+    }
+    
     public class func updateLocation(location: CLLocation) {
         sharedInstance?.sendEvent(.DidUpdateLocation(location, date: NSDate()))
     }
@@ -183,10 +187,22 @@ public class Rover : NSObject {
             dispatch_async(dispatch_get_main_queue()) {
                 sharedInstance?.notifyObservers(event: .DidReceiveMessage(message))
                 
-                if UIApplication.sharedApplication().applicationState != .Active {
+                guard let sharedInstance = sharedInstance else { return }
+                
+                var shouldMethodImplemented = false
+                var shouldOpen: Bool = true
+                
+                for observer in sharedInstance.observers {
+                    if let shouldMethod = observer.shouldOpenMessage {
+                        shouldMethodImplemented = true
+                        shouldOpen = shouldOpen && shouldMethod(message)
+                    }
+                }
+                
+                if (UIApplication.sharedApplication().applicationState != .Active && shouldOpen) || (shouldMethodImplemented && shouldOpen) {
                     // Swiped
                     followAction(message: message)
-                    sharedInstance?.sendEvent(.DidOpenMessage(message, source: "notification", date: NSDate()))
+                    sharedInstance.sendEvent(.DidOpenMessage(message, source: "notification", date: NSDate()))
                 }
             }
         }
@@ -236,7 +252,7 @@ public class Rover : NSObject {
     public class func viewController(message message: Message) -> UIViewController? {
         switch message.action {
         case .LandingPage:
-            let viewController = RVScreenViewController()
+            let viewController = ScreenViewController()
             
             if let screen = message.landingPage {
                 viewController.screen = screen

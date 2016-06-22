@@ -11,7 +11,7 @@
 		0CE030C927BCE5D8C656BA9108B9C41D /* Block.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66E958B71F1FA4AF49D8AF31B082D527 /* Block.swift */; };
 		1375CD3426D492047DFBA3C6B00511E4 /* Mappables.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD8C68DE4C1462B37C4084C579410001 /* Mappables.swift */; };
 		144F41BD6AD4CC660DDCE89BF7793E2D /* NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DA0158D632234043D64070ECD69BD2C /* NavigationController.swift */; };
-		15105F73CE228984FA0F011D52E71B9E /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91672263C7A46BDA5CD7C8DC5E9E8AE /* Location.swift */; };
+		15105F73CE228984FA0F011D52E71B9E /* Place.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91672263C7A46BDA5CD7C8DC5E9E8AE /* Place.swift */; };
 		1F5A6B011D9E90296ACFA6E402A66CF5 /* EventOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5BA18F5D82593CC84BFAF56A5FB954D /* EventOperation.swift */; };
 		1FD0B473F7AFA615CF6D8487869B3BBB /* BeaconConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93CD24ABF28C257FD16701246378576 /* BeaconConfiguration.swift */; };
 		30767740929363580C0FA99ACE4AFFD6 /* UIImageView+RVAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE2FEF2AB3C12363C66B37D67E448EEB /* UIImageView+RVAsset.swift */; };
@@ -35,7 +35,7 @@
 		B61094F3C02E33021132EF25398AE386 /* Rover.bundle in Resources */ = {isa = PBXBuildFile; fileRef = A57B1B1D9C90BB398014A4C379EFACFC /* Rover.bundle */; };
 		B6DF88306AF4AEE6910EAB64F311E0CC /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5904153A5A20E90B62039D47AEC3A94B /* Event.swift */; };
 		B86B5E168F130358BB519F3F00561D6F /* Pods-Rover_Example-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = B9E3759E3449146D1C9795415FAE1D15 /* Pods-Rover_Example-dummy.m */; };
-		BAE80D271DC0175A41B768746E9418D9 /* RVScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D2791BC80AB8572B44ADDC2D59F0CDD /* RVScreenViewController.swift */; };
+		BAE80D271DC0175A41B768746E9418D9 /* ScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D2791BC80AB8572B44ADDC2D59F0CDD /* ScreenViewController.swift */; };
 		BC50976EDBB2BEDB371AC198B24DF88F /* MappingOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E583664FAF7F7BF1B3B23AF09917000B /* MappingOperation.swift */; };
 		C59D08DFB8722E63280BBFD53E21F46F /* Rover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 447B001AF1C0F3C9653B89D5BE017EA8 /* Rover.swift */; };
 		C6C51DF45BAFCA095DAE3F31AB267312 /* ButtonBlockViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798EA297FF5A3D543B3DF828F28D042F /* ButtonBlockViewCell.swift */; };
@@ -87,7 +87,7 @@
 		524DE4ACFB607B209FC2C5C16FF19694 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		57EA585BAD4672ECE0AF6B8EB487B8BA /* LocationManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		5904153A5A20E90B62039D47AEC3A94B /* Event.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
-		5D2791BC80AB8572B44ADDC2D59F0CDD /* RVScreenViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RVScreenViewController.swift; sourceTree = "<group>"; };
+		5D2791BC80AB8572B44ADDC2D59F0CDD /* ScreenViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ScreenViewController.swift; sourceTree = "<group>"; };
 		66E958B71F1FA4AF49D8AF31B082D527 /* Block.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Block.swift; sourceTree = "<group>"; };
 		6B4D35CCF9175CFF19C1B611B7B05426 /* Device.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
 		74AB793574963654EAE295DFCF3F4714 /* Pods-Rover_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-Rover_Example.debug.xcconfig"; sourceTree = "<group>"; };
@@ -108,7 +108,7 @@
 		BB4BD8177EE85E6066B3543A211CA8E4 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C5BA18F5D82593CC84BFAF56A5FB954D /* EventOperation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = EventOperation.swift; sourceTree = "<group>"; };
 		C8BC3276C7842B496D043E3BBDCA839D /* BlockViewLayout.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BlockViewLayout.swift; sourceTree = "<group>"; };
-		C91672263C7A46BDA5CD7C8DC5E9E8AE /* Location.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
+		C91672263C7A46BDA5CD7C8DC5E9E8AE /* Place.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Place.swift; sourceTree = "<group>"; };
 		C93CD24ABF28C257FD16701246378576 /* BeaconConfiguration.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BeaconConfiguration.swift; sourceTree = "<group>"; };
 		D0064B63F60D70DB72847164243CC04D /* ImageBlockViewCell.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ImageBlockViewCell.swift; sourceTree = "<group>"; };
 		D1C9AA5438DE3B4CB4E5909C315E4377 /* TextBlockViewCell.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TextBlockViewCell.swift; sourceTree = "<group>"; };
@@ -234,7 +234,7 @@
 				798EA297FF5A3D543B3DF828F28D042F /* ButtonBlockViewCell.swift */,
 				D0064B63F60D70DB72847164243CC04D /* ImageBlockViewCell.swift */,
 				7DA0158D632234043D64070ECD69BD2C /* NavigationController.swift */,
-				5D2791BC80AB8572B44ADDC2D59F0CDD /* RVScreenViewController.swift */,
+				5D2791BC80AB8572B44ADDC2D59F0CDD /* ScreenViewController.swift */,
 				D1C9AA5438DE3B4CB4E5909C315E4377 /* TextBlockViewCell.swift */,
 				FE2FEF2AB3C12363C66B37D67E448EEB /* UIImageView+RVAsset.swift */,
 			);
@@ -300,7 +300,7 @@
 				F020E973E576C9AF27B783BC2E8B9D54 /* Customer.swift */,
 				6B4D35CCF9175CFF19C1B611B7B05426 /* Device.swift */,
 				5904153A5A20E90B62039D47AEC3A94B /* Event.swift */,
-				C91672263C7A46BDA5CD7C8DC5E9E8AE /* Location.swift */,
+				C91672263C7A46BDA5CD7C8DC5E9E8AE /* Place.swift */,
 				4F2264057D4F27DA99A3C53B0DF61103 /* Message.swift */,
 				7555FD55C12E4D911C6432D6AED0972D /* Row.swift */,
 				50BFD9CF912ED0335E1E992280C85C72 /* Screen.swift */,
@@ -478,7 +478,7 @@
 				B6DF88306AF4AEE6910EAB64F311E0CC /* Event.swift in Sources */,
 				1F5A6B011D9E90296ACFA6E402A66CF5 /* EventOperation.swift in Sources */,
 				EAFBC195DDCAD643A68C9529FE72E530 /* ImageBlockViewCell.swift in Sources */,
-				15105F73CE228984FA0F011D52E71B9E /* Location.swift in Sources */,
+				15105F73CE228984FA0F011D52E71B9E /* Place.swift in Sources */,
 				8589F41D56C101DB830745746F1A986F /* LocationAuthorizationOperation.swift in Sources */,
 				D449E46A8AD2C85DF93EEB182196846A /* LocationManager.swift in Sources */,
 				1375CD3426D492047DFBA3C6B00511E4 /* Mappables.swift in Sources */,
@@ -491,7 +491,7 @@
 				C59D08DFB8722E63280BBFD53E21F46F /* Rover.swift in Sources */,
 				32BD4651FA3ADF0DA1DD1DD8D1B8EFA9 /* RoverObserver.swift in Sources */,
 				48089B68EE50FD04756B063EA62C1B29 /* Row.swift in Sources */,
-				BAE80D271DC0175A41B768746E9418D9 /* RVScreenViewController.swift in Sources */,
+				BAE80D271DC0175A41B768746E9418D9 /* ScreenViewController.swift in Sources */,
 				49BE9D7B7D2DC70F1743717411293AD8 /* Screen.swift in Sources */,
 				91D0BABC294B20EF3356DF0333F73D88 /* Serializables.swift in Sources */,
 				FD40E71FFA12CAC7FA662F39D860A07C /* SerializingOperation.swift in Sources */,

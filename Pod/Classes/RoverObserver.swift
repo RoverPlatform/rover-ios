@@ -52,10 +52,19 @@ public protocol RoverObserver {
     optional func didExitGeofence(place place: Place)
     
     /*
-     Called after a `Message` has been delivered.
+     Called after a `Message` has been received.
      
      - parameters:
-        - message: The `Message` that was delivered.
+        - message: The `Message` that was received.
      */
-    optional func didDeliverMessage(message: Message)
+    optional func didReceiveMessage(message: Message)
+    
+    /*
+     Called to after a message has been received. Returning true will open the message content
+     even if app is in the foreground. For default behaviour do not implement this method.
+     
+     - parameters:
+        - message: The `Message` to be openned.
+     */
+    optional func shouldOpenMessage(message: Message) -> Bool
 }

@@ -59,7 +59,7 @@ extension Event {
         case .DidExitCircularRegion(_, let place?, _):
             observer.didExitGeofence?(place: place)
         case .DidReceiveMessage(let message):
-            observer.didDeliverMessage?(message)
+            observer.didReceiveMessage?(message)
         default:
             break
         }

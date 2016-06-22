@@ -106,7 +106,7 @@ class InboxTableViewController: UITableViewController {
             guard let url = message.url else { break }
             UIApplication.sharedApplication().openURL(url)
         case .LandingPage:
-            if let screenViewController = Rover.viewController(message: message) as? RVScreenViewController {
+            if let screenViewController = Rover.viewController(message: message) as? ScreenViewController {
                 screenViewController.delegate = self
                 navigationController?.pushViewController(screenViewController, animated: true)
             }
@@ -114,6 +114,8 @@ class InboxTableViewController: UITableViewController {
         default:
             break
         }
+        
+        Rover.trackMessageOpenEvent(message)
         
         if (!message.read) {
             message.read = true
@@ -133,8 +135,8 @@ class InboxTableViewController: UITableViewController {
 
 }
 
-extension InboxTableViewController : RVScreenViewControllerDelegate {
-    func screenViewController(viewController: RVScreenViewController, handleOpenURL url: NSURL) {
+extension InboxTableViewController : ScreenViewControllerDelegate {
+    func screenViewController(viewController: ScreenViewController, handleOpenURL url: NSURL) {
         let safariViewController = SFSafariViewController(URL: url)
         viewController.navigationController?.pushViewController(safariViewController, animated: true)
     }

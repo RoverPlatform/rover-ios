@@ -8,15 +8,15 @@
 
 import UIKit
 
-@objc public protocol RVScreenViewControllerDelegate: class {
-    optional func screenViewController(viewController: RVScreenViewController, handleOpenURL url: NSURL)
+@objc public protocol ScreenViewControllerDelegate: class {
+    optional func screenViewController(viewController: ScreenViewController, handleOpenURL url: NSURL)
 }
 
 private let textBlockCellIdentifier = "textBlockCellIdentifier"
 private let imageBlockCellIdentifier = "imageBlockCellIdentifier"
 private let buttonBlockCellIdentifier = "buttonBlockCellIdentifier"
 
-public class RVScreenViewController: UICollectionViewController {
+public class ScreenViewController: UICollectionViewController {
     
     var screen: Screen? {
         didSet {
@@ -27,7 +27,7 @@ public class RVScreenViewController: UICollectionViewController {
     
     var activityIndicatorView: UIActivityIndicatorView?
     
-    public weak var delegate: RVScreenViewControllerDelegate?
+    public weak var delegate: ScreenViewControllerDelegate?
     
     public init() {
         let layout = BlockViewLayout()
@@ -177,7 +177,7 @@ public class RVScreenViewController: UICollectionViewController {
 
 }
 
-extension RVScreenViewController : ButtonBlockViewCellDelegate {
+extension ScreenViewController : ButtonBlockViewCellDelegate {
     func buttonBlockViewCellDidPressButton(cell: ButtonBlockViewCell) {
         guard let indexPath = collectionView!.indexPathForCell(cell),
             buttonBlock = screen?.rows[indexPath.section].blocks[indexPath.row] as? ButtonBlock,
@@ -196,7 +196,7 @@ extension RVScreenViewController : ButtonBlockViewCellDelegate {
     }
 }
 
-extension RVScreenViewController : BlockViewLayoutDataSource {
+extension ScreenViewController : BlockViewLayoutDataSource {
     func blockViewLayout(blockViewLayout: BlockViewLayout, heightForSection section: Int) -> CGFloat {
         return screen!.rows[section].instrinsicHeight(width: collectionView!.frame.width)
     }

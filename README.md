@@ -76,7 +76,7 @@ You can also call the `requestAlwaysAuthorization` method yourself. If the user 
 
 ### requestAlwaysAuthorization vs requestWhenInUseAuthorization
 
-Detecting beacons and geofences while your app is in the background requires `requestAlwaysAuthorization`. If your app has previously been granted `requestWhenInUseAuthorization` you will need to.... <INSERT STEPS TO FIX HERE>.
+Detecting beacons and geofences while your app is in the background requires `requestAlwaysAuthorization`. If your app has previously been granted `requestWhenInUseAuthorization` you will need to guide your users to your apps settings page where they can select the `Always` permission under location access.
 
 ### Proximity Events
 
@@ -245,7 +245,11 @@ didReceiveMessage(message: Message) {
 
 ##### Tracking Message Open Events
 
-// TODO
+The Rover SDK will automatically track message open events on notificaiton swipes. However if you have implemented an Inbox style view controller where users can relaunch message content, you will need to user the following method to accurately track message open events.
+
+```swift
+Rover.trackMessageOpenEvent(message: Message)
+```
 
 ### Inbox
 

@@ -1,3 +1,14 @@
+# Support
+
+We use GitHub issues for developer support. If you're stuck for any reason, we encourage you to [review the outstanding issues](https://github.com/RoverPlatform/rover-ios/issues) and submit a new issue if you can't find your answer. The following are all valid reasons to submit an issue:
+
+- You found a bug in the SDK code
+- You want to propose a new feature
+- You have a general question about the SDK
+- You are having trouble getting the SDK setup
+
+We monitor these issues regularly and usually respond within an hour.
+
 # iOS SDK Integration
 
 ## Requirements

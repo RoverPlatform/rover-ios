@@ -13,7 +13,7 @@ import CoreBluetooth
 import CoreTelephony
 
 extension Event : Serializable {
-    func serialize() -> [String : AnyObject] {
+    public func serialize() -> [String : AnyObject] {
         let serializedCustomer = Customer.sharedCustomer.serialize()
         let serializedDevice = Device.CurrentDevice.serialize()
         
@@ -165,7 +165,7 @@ extension Device : Serializable {
 }
 
 extension Customer : Serializable {
-    func serialize() -> [String : AnyObject] {
+    public func serialize() -> [String : AnyObject] {
         let firstName: AnyObject = self.firstName ?? NSNull()
         let lastName: AnyObject = self.lastName ?? NSNull()
         let phoneNumber: AnyObject = self.phone ?? NSNull()
@@ -189,7 +189,7 @@ extension Customer : Serializable {
 }
 
 extension Message : Serializable {
-    func serialize() -> [String : AnyObject] {
+    public func serialize() -> [String : AnyObject] {
         return [
             "data": [
                 "type": "messages",

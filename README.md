@@ -30,7 +30,7 @@ Coming soon...
 
 ### Manual Installation
 
-You can also get the library by downloading the [latest version from Github](https://github.com/RoverPlatform/rover-ios/tree/0.2.0) and copying it into your project.
+You can also get the library by downloading the [latest version from Github](https://github.com/RoverPlatform/rover-ios/tree/0.2.0) and copying it into your project. Just copy all files from [this directory](https://github.com/RoverPlatform/rover-ios/tree/master/Pod/Classes)
 
 ## Initializing the SDK
 
@@ -129,6 +129,8 @@ You can use these observer callbacks in your app to (for example) adapt your app
 Using the [Rover Messages App](https://app.rover.io/messages/) you can create messages that are delivered to your users when a proximity event is triggered or on a specific date and time. You can attach push notifications to your messages that will be delivered along with your messages. Additionally you can attach content to your messages. The content can be a landing page authored in the [Rover Messages App](https://app.rover.io/messages/) or it can simply link to a website. A message can also trigger functionality within your app through a deep link and can have custom data attached.
 
 ### Notifications
+
+In order to have notification working, Rover needs your apps APNS certificates. Use [this guide](https://github.com/RoverPlatform/rover-ios/wiki/APNS-Setup) to upload your certificate to Rover.
 
 Call the `Rover.registerForNotifications` method to enable your app to deliver notifications. Similar to the `Rover.startMonitoring` method this will also trigger an alert asking for permission the first time it is called. You can call this as part of your initialization logic or you may wish to call this at a later time.
 

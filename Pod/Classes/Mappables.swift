@@ -10,7 +10,7 @@ import Foundation
 import CoreLocation
 
 extension CLRegion : Mappable {
-    static func instance(JSON: [String: AnyObject], included: [String: Any]?) -> CLRegion? {
+    public static func instance(JSON: [String: AnyObject], included: [String: Any]?) -> CLRegion? {
         guard let type = JSON["type"] as? String,
             identifier = JSON["id"] as? String,
             attributes = JSON["attributes"] as? [String: AnyObject] else { return nil }
@@ -44,7 +44,7 @@ extension CLRegion : Mappable {
 }
 
 extension Event : Mappable {
-    static func instance(JSON: [String : AnyObject], included: [String: Any]?) -> Event? {
+    public static func instance(JSON: [String : AnyObject], included: [String: Any]?) -> Event? {
         guard let type = JSON["type"] as? String,
             attributes = JSON["attributes"] as? [String: AnyObject],
             object = attributes["object"] as? String,
@@ -100,7 +100,7 @@ extension Event : Mappable {
 }
 
 extension BeaconConfiguration : Mappable {
-    static func instance(JSON: [String : AnyObject], included: [String: Any]?) -> BeaconConfiguration? {
+    public static func instance(JSON: [String : AnyObject], included: [String: Any]?) -> BeaconConfiguration? {
         guard let
             uuidString = JSON["uuid"] as? String,
             uuid = NSUUID(UUIDString: uuidString),
@@ -118,7 +118,7 @@ extension BeaconConfiguration : Mappable {
 }
 
 extension Place : Mappable {
-    static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> Place? {
+    public static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> Place? {
         guard let
             latitude = JSON["latitude"] as? CLLocationDegrees,
             longitude = JSON["longitude"] as? CLLocationDegrees,
@@ -131,7 +131,7 @@ extension Place : Mappable {
 }
 
 extension Message : Mappable {
-    static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> Message? {
+    public static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> Message? {
         guard let type = JSON["type"] as? String,
             identifier = JSON["id"] as? String,
             attributes = JSON["attributes"] as? [String: AnyObject],
@@ -179,7 +179,7 @@ extension Message : Mappable {
 }
 
 extension Screen : Mappable {
-    static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> Screen? {
+    public static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> Screen? {
         guard let rowsAttributes = JSON["rows"] as? [[String : AnyObject]],
             rows = rowsAttributes.map({ Row.instance($0, included: nil) }) as? [Row] else { return nil }
         
@@ -193,7 +193,7 @@ extension Screen : Mappable {
 }
 
 extension Row : Mappable {
-    static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> Row? {
+    public static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> Row? {
         guard let blocksAttributes = JSON["blocks"] as? [[String : AnyObject]],
             blocks = blocksAttributes.map({ Block.instance($0, included: nil) }) as? [Block] else { return nil }
         
@@ -348,7 +348,7 @@ extension Unit : Mappable {
 }
 
 extension UIColor : Mappable {
-    static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> UIColor? {
+    public static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> UIColor? {
         guard let red = JSON["red"] as? CGFloat,
             blue = JSON["blue"] as? CGFloat,
             green = JSON["green"] as? CGFloat,
@@ -359,7 +359,7 @@ extension UIColor : Mappable {
 }
 
 extension UIFont : Mappable {
-    static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> UIFont? {
+    public static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> UIFont? {
         guard let fontSize = JSON["size"] as? CGFloat,
             fontWeight = JSON["weight"] as? Int else { return UIFont.systemFontOfSize(12) }
         

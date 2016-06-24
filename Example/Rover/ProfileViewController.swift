@@ -9,6 +9,8 @@
 import UIKit
 import Rover
 
+let UserDidSignOutNotification = "UserDidSignOutNotification"
+
 class ProfileViewController: UIViewController {
     
     @IBOutlet weak var identifierField: UITextField!
@@ -51,7 +53,7 @@ class ProfileViewController: UIViewController {
     }
     
     func didShowKeyboard(note: NSNotification) {
-        navigationItem.leftBarButtonItem = nil
+        //navigationItem.leftBarButtonItem = nil
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Done", style: .Done, target: self, action: #selector(ProfileViewController.didFinishEditing))
     }
     
@@ -77,13 +79,37 @@ class ProfileViewController: UIViewController {
     @IBAction func textFieldDidFinishEditing(sender: UITextField) {
         let customer = Rover.customer
         customer.identifier = self.identifierField.text
-        //customer.name = self.nameField.text
+        
+        let name = self.nameField.text?.componentsSeparatedByString(" ")
+        if name?.count > 0 {
+            customer.firstName = name?[0]
+        }
+        if name?.count > 1 {
+            customer.lastName = name?[1]
+        }
+        
         customer.email = self.emailField.text
         customer.phone = self.phoneField.text
         customer.gender = self.genderField.text
         customer.age = Int(self.ageField.text ?? "0")
         customer.tags = self.tagsField.text?.componentsSeparatedByString(",")
         customer.save()
+    }
+    
+    
+    @IBAction func didPressSignOutButton(sender: UIBarButtonItem) {
+        let alert = UIAlertController(title: "Sign Out", message: "Are you sure you want to sign out?", preferredStyle: .Alert)
+        let yesAction = UIAlertAction(title: "Yes", style: .Default) { _ in
+            Rover.stopMonitoring()
+            AccountManager.clearCurrentAccount()
+            SessionManager.clearCurrentSession()
+            NSNotificationCenter.defaultCenter().postNotificationName(UserDidSignOutNotification, object: nil)
+        }
+        let noAction = UIAlertAction(title: "No", style: .Cancel, handler: nil)
+        alert.addAction(yesAction)
+        alert.addAction(noAction)
+        
+        presentViewController(alert, animated: true, completion: nil)
     }
     
     // MARK: Helper

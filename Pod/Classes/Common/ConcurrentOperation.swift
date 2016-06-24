@@ -8,10 +8,10 @@
 
 import UIKit
 
-class ConcurrentOperation: NSOperation {
+public class ConcurrentOperation: NSOperation {
     private var _finished = false
     private var _executing = false
-    override private(set) var finished: Bool {
+    override private(set) public var finished: Bool {
         get { return _finished }
         set {
             willChangeValueForKey("isFinished")
@@ -19,7 +19,7 @@ class ConcurrentOperation: NSOperation {
             didChangeValueForKey("isFinished")
         }
     }
-    override private(set) var executing: Bool {
+    override private(set) public var executing: Bool {
         get { return _executing }
         set {
             willChangeValueForKey("isExecuting")
@@ -27,16 +27,16 @@ class ConcurrentOperation: NSOperation {
             didChangeValueForKey("isExecuting")
         }
     }
-    override final var concurrent: Bool {
+    override final public var concurrent: Bool {
         return true
     }
     
-    override var asynchronous: Bool {
+    override public var asynchronous: Bool {
         return true
     }
     
     
-    override final func start() {
+    override final public func start() {
         guard !cancelled else {
             finish()
             return

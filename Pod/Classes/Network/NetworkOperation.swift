@@ -8,11 +8,11 @@
 
 import Foundation
 
-class NetworkOperation: ConcurrentOperation {
+public class NetworkOperation: ConcurrentOperation {
     
     var urlRequest: NSMutableURLRequest
     var urlSessionTask: NSURLSessionDataTask?
-    var payload: [String: AnyObject]?
+    public var payload: [String: AnyObject]?
     var completion: JSONCompletionBlock?
     
     private var payloadAsQuery: String {
@@ -27,9 +27,9 @@ class NetworkOperation: ConcurrentOperation {
     private var _finished = false
     private var _executing = false
     
-    typealias JSONCompletionBlock = ([String: AnyObject]?, ErrorType?) -> Void
+    public typealias JSONCompletionBlock = ([String: AnyObject]?, ErrorType?) -> Void
     
-    required init(mutableUrlRequest: NSMutableURLRequest, completion: JSONCompletionBlock?) {
+    required public init(mutableUrlRequest: NSMutableURLRequest, completion: JSONCompletionBlock?) {
         self.urlRequest = mutableUrlRequest
         self.completion = completion
         super.init()

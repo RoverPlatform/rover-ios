@@ -8,27 +8,27 @@
 
 import Foundation
 
-class MappingOperation<T where T : Mappable> : NSOperation {
+public class MappingOperation<T where T : Mappable> : NSOperation {
     typealias JSON = [String: AnyObject]
-    typealias ResourceCallback = T -> Void
-    typealias CollectionCallback = [T] -> Void
+    public typealias ResourceCallback = T -> Void
+    public typealias CollectionCallback = [T] -> Void
     
-    var json: [String: AnyObject]?
+    public var json: [String: AnyObject]?
     var resourceCompletion: ResourceCallback?
     var collectionCompletion: CollectionCallback?
-    var included: [String: Any]?
+    public var included: [String: Any]?
     
-    init(resourceCompletion: ResourceCallback?) {
+    public init(resourceCompletion: ResourceCallback?) {
         self.resourceCompletion = resourceCompletion
         super.init()
     }
     
-    init(collectionCompletion: CollectionCallback?) {
+    public init(collectionCompletion: CollectionCallback?) {
         self.collectionCompletion = collectionCompletion
         super.init()
     }
     
-    override func main() {
+    override public func main() {
         // TODO: each return statement should fire completion
         guard let json = json, let data = json["data"] else {
             cancel()
@@ -64,7 +64,7 @@ class MappingOperation<T where T : Mappable> : NSOperation {
 
 }
 
-protocol Mappable {
+public protocol Mappable {
     associatedtype MappableType
     static func instance(JSON: [String: AnyObject], included: [String: Any]?) -> MappableType?
 }

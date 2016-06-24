@@ -17,27 +17,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
-        Router.baseURLString = {
-            if let url = NSUserDefaults.standardUserDefaults().stringForKey("ROVER_SERVER_URL") {
-                return url
-            }
-            return "https://rover-content-api-development.herokuapp.com/v1"
-        }()
-        
-        //Rover.setup(applicationToken: "da485394bad60399c3614af79db0fb7a")
-        Rover.setup(applicationToken: "b43963962ea03fc2f4b456a5cbe49b40") // has to happen on app startup
+        setupRover()
     
-        //Rover.startMonitoring() // asks for location permissions
-        Rover.registerForNotifications() // asks for notification permissions
-        
-        //Rover.identify("my@email.address")
-        //Rover.user.setAttribute(key: "myKey", value: "myValue")
-
-        
-        //Rover.addObserver(SomeObjectConformingToRoverInterface)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(didUpdateAccount), name: RoverAccountUpdatedNotification, object: nil)
         
         // Override point for customization after application launch.
         return true
+    }
+    
+    deinit {
+        NSNotificationCenter.defaultCenter().removeObserver(self)
     }
     
     func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject], fetchCompletionHandler completionHandler: (UIBackgroundFetchResult) -> Void) {
@@ -50,6 +39,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: NSError) {
 
+    }
+    
+    func setupRover() {
+        AccountManager.sharedManager
+        if let account = AccountManager.currentAccount {
+            Rover.setup(applicationToken: account.applicationToken)
+            Rover.registerForNotifications()
+        }
+    }
+    
+    func didUpdateAccount(note: NSNotification) {
+        setupRover()
     }
 
 }

@@ -36,6 +36,12 @@ class MonitoringViewController: UIViewController {
         reloadData()
         
         monitoringSwitch.setOn(Rover.isMonitoring, animated: false)
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(userDidSignOut), name: UserDidSignOutNotification, object: nil)
+    }
+    
+    deinit {
+        NSNotificationCenter.defaultCenter().removeObserver(self)
     }
     
     func reloadData() {
@@ -45,7 +51,7 @@ class MonitoringViewController: UIViewController {
         segmentedControl.setTitle("Geofences (\(geofenceRegions.count))", forSegmentAtIndex: 0)
         segmentedControl.setTitle("Beacons (\(beaconRegions.count))", forSegmentAtIndex: 1)
         
-        //reloadMapOverlays()
+        reloadMapOverlays()
     }
     
     func reloadMapOverlays() {
@@ -69,6 +75,18 @@ class MonitoringViewController: UIViewController {
         Rover.simulateEvent(Event.DidExitCircularRegion(region, place: nil, date: NSDate()))
     }
     
+    func userDidSignOut(note: NSNotification) {
+        monitoringSwitch.on = false
+        stopMonitoring()
+    }
+    
+    func stopMonitoring() {
+        Rover.stopMonitoring()
+        geofenceRegions = []
+        beaconRegions = []
+        reloadData()
+    }
+    
     // MARK: Actions
     
     @IBAction func segmentChanged(sender: UISegmentedControl) {
@@ -79,11 +97,11 @@ class MonitoringViewController: UIViewController {
     @IBAction func monitoringSwitched(sender: UISwitch) {
         if sender.on {
             Rover.startMonitoring()
+            if let location = CLLocationManager().location {
+                Rover.updateLocation(location)
+            }
         } else {
-            Rover.stopMonitoring()
-            geofenceRegions = []
-            beaconRegions = []
-            reloadData()
+            stopMonitoring()
         }
     }
 }
@@ -103,7 +121,9 @@ extension MonitoringViewController : MKMapViewDelegate {
     }
     
     func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
-        guard let annotation = annotation as? MyAnnotation else { return nil }
+        guard let annotation = annotation as? MyAnnotation,
+            region = annotation.region,
+            geofenceRegion = geofenceRegions.indexOf(region) else { return nil }
         
         var pin = mapView.dequeueReusableAnnotationViewWithIdentifier("annotationView") as? MKPinAnnotationView
         if (pin == nil) {
@@ -124,13 +144,13 @@ extension MonitoringViewController : MKMapViewDelegate {
         enterButton.setTitle("Enter", forState: .Normal)
         enterButton.setTitleColor(UIColor(red: 0, green: 122.0/255.0, blue: 255, alpha: 1), forState: .Normal)
         enterButton.addTarget(self, action: #selector(MonitoringViewController.enterGeofence(_:)), forControlEvents: .TouchUpInside)
-        enterButton.tag = geofenceRegions.indexOf(annotation.region!)!
+        enterButton.tag = geofenceRegion
         
         let exitButton = UIButton(frame: CGRect(x: 100, y: 0, width: 100, height: 44))
         exitButton.setTitle("Exit", forState: .Normal)
         exitButton.setTitleColor(UIColor(red: 0, green: 122.0/255.0, blue: 255, alpha: 1), forState: .Normal)
         exitButton.addTarget(self, action: #selector(MonitoringViewController.exitGeofence(_:)), forControlEvents: .TouchUpInside)
-        exitButton.tag = geofenceRegions.indexOf(annotation.region!)!
+        exitButton.tag = geofenceRegion
         
         calloutView.addSubview(enterButton)
         calloutView.addSubview(exitButton)
@@ -197,7 +217,7 @@ extension MonitoringViewController : UITableViewDelegate {
 
 extension MonitoringViewController : CLLocationManagerDelegate {
     func locationManager(manager: CLLocationManager, didStartMonitoringForRegion region: CLRegion) {
-        //reloadData()
+        reloadData()
     }
     
     func locationManager(manager: CLLocationManager, didDetermineState state: CLRegionState, forRegion region: CLRegion) {

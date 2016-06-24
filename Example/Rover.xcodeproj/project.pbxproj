@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		3D0BEB891CCE76D500A66351 /* LogsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D0BEB881CCE76D500A66351 /* LogsViewController.swift */; };
+		3D2F85601D1C4B82003543C1 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2F855F1D1C4B82003543C1 /* Session.swift */; };
+		3D2F85621D1C680C003543C1 /* AccountManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2F85611D1C680C003543C1 /* AccountManager.swift */; };
+		3D2F85641D1C76C6003543C1 /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2F85631D1C76C6003543C1 /* SessionManager.swift */; };
 		3D51C4471CD3B180002F6C24 /* MonitoringViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D51C4461CD3B180002F6C24 /* MonitoringViewController.swift */; };
 		3D54BC451C80CCE900A75F41 /* BeaconTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D54BC441C80CCE900A75F41 /* BeaconTableViewCell.swift */; };
 		3D54BC471C80CCF300A75F41 /* GeofenceTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D54BC461C80CCF300A75F41 /* GeofenceTableViewCell.swift */; };
@@ -20,8 +23,11 @@
 		3D5C55391C935820005F4602 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5C55381C935820005F4602 /* MapKit.framework */; };
 		3D5C553B1C935994005F4602 /* LocationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5C553A1C935994005F4602 /* LocationViewController.swift */; };
 		3DE41E7A1CCE7DA800EC69F6 /* Logs.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3DE41E781CCE7DA800EC69F6 /* Logs.storyboard */; };
+		3DF01FF11D1C3C13000BFF3B /* Account.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DF01FF01D1C3C13000BFF3B /* Account.swift */; };
+		3DF01FF31D1C3E87000BFF3B /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DF01FF21D1C3E87000BFF3B /* TabBarController.swift */; };
+		3DF01FF51D1C43AA000BFF3B /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DF01FF41D1C43AA000BFF3B /* LoginViewController.swift */; };
+		3DF01FF81D1C4536000BFF3B /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DF01FF71D1C4536000BFF3B /* Router.swift */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
-		607FACD81AFB9204008FA782 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* MainViewController.swift */; };
 		607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
@@ -31,26 +37,32 @@
 /* Begin PBXFileReference section */
 		0C14CAB641086EBADFEC6434 /* Pods_Rover_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Rover_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		179657B3A2CD8F99BF4955D5 /* Pods-Rover_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Rover_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Rover_Tests/Pods-Rover_Tests.debug.xcconfig"; sourceTree = "<group>"; };
-		3D0BEB881CCE76D500A66351 /* LogsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogsViewController.swift; sourceTree = "<group>"; };
-		3D51C4461CD3B180002F6C24 /* MonitoringViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MonitoringViewController.swift; sourceTree = "<group>"; };
+		3D0BEB881CCE76D500A66351 /* LogsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LogsViewController.swift; path = ../LogsViewController.swift; sourceTree = "<group>"; };
+		3D2F855F1D1C4B82003543C1 /* Session.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
+		3D2F85611D1C680C003543C1 /* AccountManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountManager.swift; sourceTree = "<group>"; };
+		3D2F85631D1C76C6003543C1 /* SessionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionManager.swift; sourceTree = "<group>"; };
+		3D51C4461CD3B180002F6C24 /* MonitoringViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MonitoringViewController.swift; path = ../MonitoringViewController.swift; sourceTree = "<group>"; };
 		3D54BC441C80CCE900A75F41 /* BeaconTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BeaconTableViewCell.swift; sourceTree = "<group>"; };
 		3D54BC461C80CCF300A75F41 /* GeofenceTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeofenceTableViewCell.swift; sourceTree = "<group>"; };
 		3D5C24E01C56E91D00C2F78D /* Rover_Example-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Rover_Example-Bridging-Header.h"; sourceTree = "<group>"; };
 		3D5C24E11C56E91E00C2F78D /* Test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Test.h; sourceTree = "<group>"; };
 		3D5C24E21C56E91E00C2F78D /* Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Test.m; sourceTree = "<group>"; };
-		3D5C552C1C8A009F005F4602 /* ProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
+		3D5C552C1C8A009F005F4602 /* ProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProfileViewController.swift; path = ../ProfileViewController.swift; sourceTree = "<group>"; };
 		3D5C55301C8A19A4005F4602 /* TraitTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TraitTableViewCell.swift; sourceTree = "<group>"; };
-		3D5C55321C91E0E9005F4602 /* InboxTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InboxTableViewController.swift; sourceTree = "<group>"; };
+		3D5C55321C91E0E9005F4602 /* InboxTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InboxTableViewController.swift; path = ../InboxTableViewController.swift; sourceTree = "<group>"; };
 		3D5C55341C91F331005F4602 /* TopAlignedLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TopAlignedLabel.swift; sourceTree = "<group>"; };
 		3D5C55361C920FE6005F4602 /* MessageTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageTableViewCell.swift; sourceTree = "<group>"; };
 		3D5C55381C935820005F4602 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
-		3D5C553A1C935994005F4602 /* LocationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationViewController.swift; sourceTree = "<group>"; };
+		3D5C553A1C935994005F4602 /* LocationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LocationViewController.swift; path = ../LocationViewController.swift; sourceTree = "<group>"; };
 		3DE41E791CCE7DA800EC69F6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Logs.storyboard; sourceTree = "<group>"; };
+		3DF01FF01D1C3C13000BFF3B /* Account.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Account.swift; sourceTree = "<group>"; };
+		3DF01FF21D1C3E87000BFF3B /* TabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
+		3DF01FF41D1C43AA000BFF3B /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		3DF01FF71D1C4536000BFF3B /* Router.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 		3DFCDB111C595D9000F48998 /* MyPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = MyPlayground.playground; sourceTree = "<group>"; };
 		607FACD01AFB9204008FA782 /* Rover_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Rover_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACD51AFB9204008FA782 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		607FACD71AFB9204008FA782 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		607FACDA1AFB9204008FA782 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		607FACDC1AFB9204008FA782 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		607FACDF1AFB9204008FA782 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
@@ -90,6 +102,39 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		3DF01FEE1D1C392B000BFF3B /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				3D5C552C1C8A009F005F4602 /* ProfileViewController.swift */,
+				3D5C55321C91E0E9005F4602 /* InboxTableViewController.swift */,
+				3D5C553A1C935994005F4602 /* LocationViewController.swift */,
+				3D0BEB881CCE76D500A66351 /* LogsViewController.swift */,
+				3D51C4461CD3B180002F6C24 /* MonitoringViewController.swift */,
+				3DF01FF21D1C3E87000BFF3B /* TabBarController.swift */,
+				3DF01FF41D1C43AA000BFF3B /* LoginViewController.swift */,
+			);
+			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+		3DF01FEF1D1C3BEE000BFF3B /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				3DF01FF01D1C3C13000BFF3B /* Account.swift */,
+				3D2F855F1D1C4B82003543C1 /* Session.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		3DF01FF61D1C450B000BFF3B /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				3DF01FF71D1C4536000BFF3B /* Router.swift */,
+				3D2F85611D1C680C003543C1 /* AccountManager.swift */,
+				3D2F85631D1C76C6003543C1 /* SessionManager.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
 		53CE10A2232C5C5EF7455904 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -124,13 +169,11 @@
 		607FACD21AFB9204008FA782 /* Example for Rover */ = {
 			isa = PBXGroup;
 			children = (
+				3DF01FF61D1C450B000BFF3B /* Utilities */,
+				3DF01FEF1D1C3BEE000BFF3B /* Models */,
+				3DF01FEE1D1C392B000BFF3B /* ViewControllers */,
 				3D54BC431C80CCC100A75F41 /* Views */,
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
-				607FACD71AFB9204008FA782 /* MainViewController.swift */,
-				3D5C552C1C8A009F005F4602 /* ProfileViewController.swift */,
-				3D5C55321C91E0E9005F4602 /* InboxTableViewController.swift */,
-				3D5C553A1C935994005F4602 /* LocationViewController.swift */,
-				3D0BEB881CCE76D500A66351 /* LogsViewController.swift */,
 				607FACD91AFB9204008FA782 /* Main.storyboard */,
 				3DE41E781CCE7DA800EC69F6 /* Logs.storyboard */,
 				607FACDC1AFB9204008FA782 /* Images.xcassets */,
@@ -139,7 +182,6 @@
 				3D5C24E11C56E91E00C2F78D /* Test.h */,
 				3D5C24E21C56E91E00C2F78D /* Test.m */,
 				3D5C24E01C56E91D00C2F78D /* Rover_Example-Bridging-Header.h */,
-				3D51C4461CD3B180002F6C24 /* MonitoringViewController.swift */,
 			);
 			name = "Example for Rover";
 			path = Rover;
@@ -337,16 +379,22 @@
 			buildActionMask = 2147483647;
 			files = (
 				3D5C55331C91E0E9005F4602 /* InboxTableViewController.swift in Sources */,
+				3D2F85601D1C4B82003543C1 /* Session.swift in Sources */,
+				3DF01FF11D1C3C13000BFF3B /* Account.swift in Sources */,
+				3D2F85641D1C76C6003543C1 /* SessionManager.swift in Sources */,
 				3D51C4471CD3B180002F6C24 /* MonitoringViewController.swift in Sources */,
+				3DF01FF51D1C43AA000BFF3B /* LoginViewController.swift in Sources */,
+				3D2F85621D1C680C003543C1 /* AccountManager.swift in Sources */,
 				3D5C552D1C8A009F005F4602 /* ProfileViewController.swift in Sources */,
 				3D54BC471C80CCF300A75F41 /* GeofenceTableViewCell.swift in Sources */,
 				3D5C55371C920FE6005F4602 /* MessageTableViewCell.swift in Sources */,
 				3D5C55311C8A19A4005F4602 /* TraitTableViewCell.swift in Sources */,
+				3DF01FF81D1C4536000BFF3B /* Router.swift in Sources */,
 				3D5C553B1C935994005F4602 /* LocationViewController.swift in Sources */,
 				3D5C24E31C56E91E00C2F78D /* Test.m in Sources */,
-				607FACD81AFB9204008FA782 /* MainViewController.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
 				3D5C55351C91F331005F4602 /* TopAlignedLabel.swift in Sources */,
+				3DF01FF31D1C3E87000BFF3B /* TabBarController.swift in Sources */,
 				3D54BC451C80CCE900A75F41 /* BeaconTableViewCell.swift in Sources */,
 				3D0BEB891CCE76D500A66351 /* LogsViewController.swift in Sources */,
 			);

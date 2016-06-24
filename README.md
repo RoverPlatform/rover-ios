@@ -130,6 +130,8 @@ Using the [Rover Messages App](https://app.rover.io/messages/) you can create me
 
 ### Notifications
 
+In order to have notification working, Rover needs your apps APNS certificates. Use [this guide](https://github.com/RoverPlatform/rover-ios/wiki/APNS-Setup) to upload your certificate to Rover.
+
 Call the `Rover.registerForNotifications` method to enable your app to deliver notifications. Similar to the `Rover.startMonitoring` method this will also trigger an alert asking for permission the first time it is called. You can call this as part of your initialization logic or you may wish to call this at a later time.
 
 ```swift

@@ -16,6 +16,8 @@ The easiest way to get Rover into your iOS project is to use [CocoaPods](http://
 3. Add the Rover pod within the main target of your Podfile:
    
    ```ruby
+   use_frameworks!
+   
    target 'My App' do
        pod 'Rover', :git => 'https://github.com/RoverPlatform/rover-ios.git'
    end

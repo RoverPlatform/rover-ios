@@ -30,7 +30,7 @@ Coming soon...
 
 ### Manual Installation
 
-You can also get the library by downloading the [latest version from Github](https://github.com/RoverPlatform/rover-ios/tree/0.2.0) and copying it into your project.
+You can also get the library by downloading the [latest version from Github](https://github.com/RoverPlatform/rover-ios/tree/0.2.0) and copying it into your project. Just copy all files from [this directory](https://github.com/RoverPlatform/rover-ios/tree/master/Pod/Classes)
 
 ## Initializing the SDK
 

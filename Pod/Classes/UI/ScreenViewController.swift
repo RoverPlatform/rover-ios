@@ -20,7 +20,7 @@ public class ScreenViewController: UICollectionViewController {
     
     var screen: Screen? {
         didSet {
-            self.title = screen?.title
+            reloadScreen()
             collectionView?.reloadData()
         }
     }
@@ -38,7 +38,7 @@ public class ScreenViewController: UICollectionViewController {
     public convenience init(screen: Screen) {
         self.init()
         self.screen = screen
-        self.title = screen.title
+        //reloadScreen()
     }
     
     required public init?(coder aDecoder: NSCoder) {
@@ -55,14 +55,71 @@ public class ScreenViewController: UICollectionViewController {
         self.collectionView!.registerClass(TextBlockViewCell.self, forCellWithReuseIdentifier: textBlockCellIdentifier)
         self.collectionView!.registerClass(ImageBlockViewCell.self, forCellWithReuseIdentifier: imageBlockCellIdentifier)
         self.collectionView!.registerClass(ButtonBlockViewCell.self, forCellWithReuseIdentifier: buttonBlockCellIdentifier)
-
-        self.collectionView!.backgroundColor = UIColor.whiteColor()
         
+        //if let navBarColor = screen?.navBarColor {
+
+        //}
+    }
+    
+    public override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        reloadScreen()
+    }
+    
+    public override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        revertNavigationBarStyles()
     }
 
     override public func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    func reloadScreen() {
+        self.title = screen?.title
+        self.collectionView!.backgroundColor = screen?.backgroundColor
+        
+        if !(screen?.useDefaultNavBarStyle ?? true) {
+            applyNavigationBarStyle()
+        }
+    }
+    
+    var navBarStyle: UIBarStyle?
+    var navBarTintColor: UIColor?
+    var navTintColor: UIColor?
+    var navTitleColor: UIColor?
+    
+    func applyNavigationBarStyle() {
+        if let navBarColor = screen?.navBarColor {
+            navBarTintColor = self.navigationController?.navigationBar.barTintColor
+            self.navigationController?.navigationBar.barTintColor = navBarColor
+        }
+        if let navItemColor = screen?.navItemColor {
+            navTintColor = self.navigationController?.navigationBar.tintColor
+            self.navigationController?.navigationBar.tintColor = navItemColor
+        }
+        if let titleColor = screen?.titleColor {
+            if self.navigationController?.navigationBar.titleTextAttributes != nil {
+                navTitleColor = self.navigationController?.navigationBar.titleTextAttributes![NSForegroundColorAttributeName] as? UIColor
+                self.navigationController?.navigationBar.titleTextAttributes![NSForegroundColorAttributeName] = titleColor
+            } else {
+                self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: titleColor]
+            }
+        }
+        if let statusBarStyle = screen?.statusBarStyle {
+            navBarStyle = self.navigationController?.navigationBar.barStyle
+            self.navigationController?.navigationBar.barStyle = statusBarStyle == .LightContent ? .Black : .Default
+        }
+    }
+    
+    func revertNavigationBarStyles() {
+        if let navBarStyle = navBarStyle {
+            self.navigationController?.navigationBar.barStyle = navBarStyle
+        }
+        self.navigationController?.navigationBar.barTintColor = navBarTintColor
+        self.navigationController?.navigationBar.tintColor = navTintColor
+        self.navigationController?.navigationBar.titleTextAttributes = [:]
     }
 
     // MARK: UICollectionViewDataSource
@@ -198,7 +255,7 @@ extension ScreenViewController : ButtonBlockViewCellDelegate {
 
 extension ScreenViewController : BlockViewLayoutDataSource {
     func blockViewLayout(blockViewLayout: BlockViewLayout, heightForSection section: Int) -> CGFloat {
-        return screen!.rows[section].instrinsicHeight(width: collectionView!.frame.width)
+        return screen!.rows[section].instrinsicHeight(collectionView: collectionView!)
     }
     
     func blockViewLayout(blockViewLayout: BlockViewLayout, layoutForItemAtIndexPath indexPath: NSIndexPath) -> Block {
@@ -207,18 +264,18 @@ extension ScreenViewController : BlockViewLayoutDataSource {
 }
 
 extension Row {
-    func instrinsicHeight(width width: CGFloat) -> CGFloat {
-        return height?.forWidth(width) ?? blocks.reduce(0) { (height, block) -> CGFloat in
-            return height + block.instrinsicHeight(width: width)
+    func instrinsicHeight(collectionView collectionView: UICollectionView) -> CGFloat {
+        return height?.forParentValue(collectionView.frame.height) ?? blocks.reduce(0) { (height, block) -> CGFloat in
+            return height + block.instrinsicHeight(collectionView: collectionView)
         }
     }
 }
 
 extension Block {
-    func instrinsicHeight(width width: CGFloat) -> CGFloat {
+    func instrinsicHeight(collectionView collectionView: UICollectionView) -> CGFloat {
         if position == .Stacked {
-            let height = heightInCollectionView(width: width)
-            return offset.top.forWidth(width) + height + offset.bottom.forWidth(width)
+            let height = heightInCollectionView(collectionView, sectionHeight: 0)
+            return offset.top.forParentValue(0) + height + offset.bottom.forParentValue(0)
         } else {
             return 0
         }

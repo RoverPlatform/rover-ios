@@ -49,8 +49,6 @@ class SessionManager {
             [unowned mappingOperation]
             (JSON, error) in
             
-            print("JSON: \(JSON)")
-            
             mappingOperation.json = JSON
             
             if error != nil {

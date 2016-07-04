@@ -187,6 +187,12 @@ extension Screen : Mappable {
         
         let screen = Screen(rows: rows)
         screen.title = JSON["title"] as? String
+        screen.backgroundColor = UIColor.instance(JSON["background-color"] as? [String: AnyObject] ?? [:], included: nil) ?? screen.backgroundColor
+        screen.titleColor = UIColor.instance(JSON["title-bar-text-color"] as? [String: AnyObject] ?? [:], included: nil)
+        screen.navBarColor = UIColor.instance(JSON["title-bar-background-color"] as? [String: AnyObject] ?? [:], included: nil)
+        screen.navItemColor = UIColor.instance(JSON["title-bar-button-color"] as? [String: AnyObject] ?? [:], included: nil)
+        screen.statusBarStyle = UIStatusBarStyle.instance(JSON["status-bar-style"] as? String)
+        screen.useDefaultNavBarStyle = JSON["use-default-title-bar-style"] as? Bool ?? true
         
         return screen
     }
@@ -376,5 +382,16 @@ extension UIFont : Mappable {
         ]
         
         return UIFont.systemFontOfSize(fontSize, weight: weights[fontWeight] ?? UIFontWeightRegular)
+    }
+}
+
+extension UIStatusBarStyle {
+    public static func instance(string: String?) -> UIStatusBarStyle? {
+        switch string {
+        case "light"?:
+            return .LightContent
+        default:
+            return .Default
+        }
     }
 }

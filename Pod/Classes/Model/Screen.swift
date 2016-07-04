@@ -15,6 +15,12 @@ public class Screen: NSObject {
     var headerRows: [Row]?
     var rows:[Row]
     var footerRows: [Row]?
+    var backgroundColor = UIColor.whiteColor()
+    var titleColor: UIColor?
+    var navBarColor: UIColor?
+    var navItemColor: UIColor?
+    var statusBarStyle: UIStatusBarStyle?
+    var useDefaultNavBarStyle = true
     
     init(rows: [Row]) {
         self.rows = rows

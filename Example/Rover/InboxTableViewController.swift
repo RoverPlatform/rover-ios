@@ -30,11 +30,6 @@ class InboxTableViewController: UITableViewController {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(applicationDidOpen), name: UIApplicationWillEnterForegroundNotification, object: nil)
     }
     
-    override func loadView() {
-        super.loadView()
-        print("loady")
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -143,7 +138,7 @@ extension InboxTableViewController : ScreenViewControllerDelegate {
 }
 
 extension InboxTableViewController : RoverObserver {
-    func didDeliverMessage(message: Message) {
+    func didReceiveMessage(message: Message) {
         // Only add messages that have been marked to be saved
         guard message.savedToInbox else { return }
         unreadMessagesCount += 1

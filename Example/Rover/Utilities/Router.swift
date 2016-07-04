@@ -7,13 +7,14 @@
 //
 
 import Foundation
+import Rover
 
 enum APIRouter {
     case SessionSignIn
     case Accounts
     
     var baseURL: NSURL {
-        return NSURL(string: "https://api.rover.io/v1")!
+        return NSURL(string: Router.baseURLString)!
     }
     
     var method: String {

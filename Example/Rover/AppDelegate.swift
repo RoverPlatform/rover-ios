@@ -17,10 +17,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
-        Router.baseURLString = {
-            return "https://rover-content-api-development.herokuapp.com/v1"
-        }()
-        
         setupRover()
     
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(didUpdateAccount), name: RoverAccountUpdatedNotification, object: nil)

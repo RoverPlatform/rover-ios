@@ -68,6 +68,8 @@ extension Alignment.HorizontalAlignment {
             return .Left
         case .Right:
             return .Right
+        case .Fill:
+            return .Justified
         default:
             return .Natural
         }

@@ -180,8 +180,8 @@ public class Rover : NSObject {
         sharedInstance?.sendEvent(Event.DeviceUpdate(date: NSDate()))
     }
     
-    public class func didReceiveRemoteNotification(userInfo: [NSObject: AnyObject], fetchCompletionHandler completionHandler: (UIBackgroundFetchResult) -> Void) {
-        guard let data = userInfo["data"] as? [String: AnyObject] else { return }
+    public class func didReceiveRemoteNotification(userInfo: [NSObject: AnyObject], fetchCompletionHandler completionHandler: (UIBackgroundFetchResult) -> Void) -> Bool {
+        guard let data = userInfo["data"] as? [String: AnyObject], isRover = userInfo["_rover"] as? Bool where isRover else { return false }
         
         let mappingOperation = MappingOperation { (message: Message) in
             dispatch_async(dispatch_get_main_queue()) {
@@ -213,6 +213,8 @@ public class Rover : NSObject {
         }
         
         sharedInstance?.operationQueue.addOperation(mappingOperation)
+        
+        return true
     }
     
     // MARK: Instance Methods

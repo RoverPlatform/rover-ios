@@ -181,6 +181,7 @@ extension Block {
         
         return 0
     }
+    // TODO: MORE BUGS HERE
     
     func widthInCollectionView(collectionView: UICollectionView) -> CGFloat {
         if alignment.horizontal == .Fill {

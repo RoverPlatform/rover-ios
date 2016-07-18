@@ -20,7 +20,7 @@ class ButtonBlockViewCell: TextBlockViewCell {
     
     private var titles: [State: String] = [.Normal: ""]
     private var titleColors: [State: UIColor] = [.Normal: UIColor.blackColor()]
-    private var titleAlignments: [State: Alignment] = [.Normal: Alignment()]
+    private var titleAlignments: [State: Alignment] = [.Normal: Alignment()] // default should be center middle
     private var titleOffsets: [State: Offset] = [.Normal: Offset()]
     private var titleFonts: [State: UIFont] = [.Normal: UIFont.systemFontOfSize(12)]
     private var backgroundColors: [State: UIColor] = [.Normal: UIColor.clearColor()]

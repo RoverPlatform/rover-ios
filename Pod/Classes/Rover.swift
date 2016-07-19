@@ -298,11 +298,7 @@ public class Rover : NSObject {
     // MARK: UIApplicationNotifications
     
     func applicationDidOpen(note: NSNotification) {
-        let alert = UIAlertView(title: "title", message: "open", delegate: nil, cancelButtonTitle: "ok")
-        alert.show()
         if let userInfo = note.userInfo?[UIApplicationLaunchOptionsRemoteNotificationKey] {
-            let alert = UIAlertView(title: "title", message: "open \(userInfo)", delegate: nil, cancelButtonTitle: "ok")
-            alert.show()
             Rover.didReceiveRemoteNotification(userInfo as! [NSObject : AnyObject], fetchCompletionHandler: nil)
         }
         sendEvent(.ApplicationOpen(date: NSDate()))

@@ -35,8 +35,8 @@ public class Rover : NSObject {
         
         eventOperationQueue.maxConcurrentOperationCount = 1
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(Rover.applicationDidOpen), name: UIApplicationDidFinishLaunchingNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(Rover.applicationDidOpen), name: UIApplicationWillEnterForegroundNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(Rover.applicationDidOpen(_:)), name: UIApplicationDidFinishLaunchingNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(Rover.applicationDidOpen(_:)), name: UIApplicationWillEnterForegroundNotification, object: nil)
         
         locationManager.delegate = self
     }
@@ -180,10 +180,11 @@ public class Rover : NSObject {
         sharedInstance?.sendEvent(Event.DeviceUpdate(date: NSDate()))
     }
     
-    public class func didReceiveRemoteNotification(userInfo: [NSObject: AnyObject], fetchCompletionHandler completionHandler: (UIBackgroundFetchResult) -> Void) -> Bool {
+    public class func didReceiveRemoteNotification(userInfo: [NSObject: AnyObject], fetchCompletionHandler completionHandler: ((UIBackgroundFetchResult) -> Void)?) -> Bool {
         guard let data = userInfo["data"] as? [String: AnyObject], isRover = userInfo["_rover"] as? Bool where isRover else { return false }
         
         let mappingOperation = MappingOperation { (message: Message) in
+            
             dispatch_async(dispatch_get_main_queue()) {
                 sharedInstance?.notifyObservers(event: .DidReceiveMessage(message))
                 
@@ -201,6 +202,8 @@ public class Rover : NSObject {
                 
                 if (UIApplication.sharedApplication().applicationState != .Active && shouldOpen) || (shouldMethodImplemented && shouldOpen) {
                     // Swiped
+                    message.read = true
+                    patchMessage(message)
                     followAction(message: message)
                     sharedInstance.sendEvent(.DidOpenMessage(message, source: "notification", date: NSDate()))
                 }
@@ -209,7 +212,7 @@ public class Rover : NSObject {
         
         mappingOperation.json = ["data": data]
         mappingOperation.completionBlock = {
-            completionHandler(.NoData)
+            completionHandler?(.NoData)
         }
         
         sharedInstance?.operationQueue.addOperation(mappingOperation)
@@ -294,7 +297,14 @@ public class Rover : NSObject {
     
     // MARK: UIApplicationNotifications
     
-    func applicationDidOpen() {
+    func applicationDidOpen(note: NSNotification) {
+        let alert = UIAlertView(title: "title", message: "open", delegate: nil, cancelButtonTitle: "ok")
+        alert.show()
+        if let userInfo = note.userInfo?[UIApplicationLaunchOptionsRemoteNotificationKey] {
+            let alert = UIAlertView(title: "title", message: "open \(userInfo)", delegate: nil, cancelButtonTitle: "ok")
+            alert.show()
+            Rover.didReceiveRemoteNotification(userInfo as! [NSObject : AnyObject], fetchCompletionHandler: nil)
+        }
         sendEvent(.ApplicationOpen(date: NSDate()))
     }
     

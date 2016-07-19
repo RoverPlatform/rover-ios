@@ -39,7 +39,8 @@ extension Event : Serializable {
                 "object": "location",
                 "action": "update",
                 "latitude": location.coordinate.latitude,
-                "longitude": location.coordinate.longitude
+                "longitude": location.coordinate.longitude,
+                "accuracy": location.horizontalAccuracy
             ]
         case .DidEnterBeaconRegion(let region, _, _, let date):
             timestamp = date
@@ -158,7 +159,7 @@ extension Device : Serializable {
             "manufacturer": "Apple",
             "os-version": "\(osVersion.majorVersion).\(osVersion.minorVersion).\(osVersion.patchVersion)",
             "model": self.platform(),
-            "sdk-version": "4.0.0",
+            "sdk-version": "0.3.2",
             "development": true
         ]
     }

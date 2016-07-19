@@ -43,6 +43,6 @@ var rvDateFormatter: NSDateFormatter {
     let dateFormatter = NSDateFormatter()
     let enUSPOSIXLocale = NSLocale(localeIdentifier: "en_US_POSIX")
     dateFormatter.locale = enUSPOSIXLocale
-    dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+    dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZ"
     return dateFormatter
 }

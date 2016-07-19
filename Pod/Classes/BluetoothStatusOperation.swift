@@ -12,7 +12,7 @@ class BluetoothStatusOperation: ConcurrentOperation, CBCentralManagerDelegate {
     
     private var centralManager: CBCentralManager?
     private var completion: (Bool) -> Void
-    private static var foundStatus: CBCentralManagerState?
+    //private static var foundStatus: CBCentralManagerState?
     
     required init(completion: (isOn: Bool) -> Void) {
         self.completion = completion
@@ -20,8 +20,13 @@ class BluetoothStatusOperation: ConcurrentOperation, CBCentralManagerDelegate {
     }
     
     override func execute() {
-        if let status = BluetoothStatusOperation.foundStatus {
-            completion(status == .PoweredOn)
+//        if let status = BluetoothStatusOperation.foundStatus {
+//            completion(status == .PoweredOn)
+//            finish()
+//            return
+//        }
+
+        if cancelled {
             finish()
             return
         }
@@ -39,7 +44,7 @@ class BluetoothStatusOperation: ConcurrentOperation, CBCentralManagerDelegate {
             return
         }
         
-        BluetoothStatusOperation.foundStatus = central.state
+        //BluetoothStatusOperation.foundStatus = central.state
         rvLog("Determined Bluetooth status", data: central.state == .PoweredOn, level: .Trace)
         self.completion(central.state == .PoweredOn)
         finish()

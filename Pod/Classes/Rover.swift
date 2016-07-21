@@ -37,6 +37,8 @@ public class Rover : NSObject {
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(Rover.applicationDidOpen(_:)), name: UIApplicationDidFinishLaunchingNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(Rover.applicationDidOpen(_:)), name: UIApplicationWillEnterForegroundNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(Rover.applicationDidBecomeActive(_:)), name: UIApplicationDidBecomeActiveNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(Rover.applicationDidEnterBackground(_:)), name: UIApplicationDidEnterBackgroundNotification, object: nil)
         
         locationManager.delegate = self
     }
@@ -74,8 +76,6 @@ public class Rover : NSObject {
         UIApplication.sharedApplication().registerUserNotificationSettings(UIUserNotificationSettings(forTypes: [.Alert, .Badge, .Sound], categories: nil))
         UIApplication.sharedApplication().registerForRemoteNotifications()
     }
-    
-
     
     private(set) var observers = [RoverObserver]()
     
@@ -181,12 +181,19 @@ public class Rover : NSObject {
     }
     
     public class func didReceiveRemoteNotification(userInfo: [NSObject: AnyObject], fetchCompletionHandler completionHandler: ((UIBackgroundFetchResult) -> Void)?) -> Bool {
+        return didReceiveRemoteNotification(userInfo, fetchCompletionHandler: completionHandler, fromLaunch: false)
+    }
+    
+    private class func didReceiveRemoteNotification(userInfo: [NSObject: AnyObject], fetchCompletionHandler completionHandler: ((UIBackgroundFetchResult) -> Void)?, fromLaunch fromLaunch: Bool) -> Bool {
         guard let data = userInfo["data"] as? [String: AnyObject], isRover = userInfo["_rover"] as? Bool where isRover else { return false }
         
         let mappingOperation = MappingOperation { (message: Message) in
             
             dispatch_async(dispatch_get_main_queue()) {
-                sharedInstance?.notifyObservers(event: .DidReceiveMessage(message))
+                
+                if (!fromLaunch) {
+                    sharedInstance?.notifyObservers(event: .DidReceiveMessage(message))
+                }
                 
                 guard let sharedInstance = sharedInstance else { return }
                 
@@ -200,8 +207,7 @@ public class Rover : NSObject {
                     }
                 }
                 
-                if (UIApplication.sharedApplication().applicationState != .Active && shouldOpen) || (shouldMethodImplemented && shouldOpen) {
-                    // Swiped
+                if ((!sharedInstance.applicationIsActive || fromLaunch) && shouldOpen) || (shouldMethodImplemented && shouldOpen) {
                     message.read = true
                     patchMessage(message)
                     followAction(message: message)
@@ -298,10 +304,22 @@ public class Rover : NSObject {
     // MARK: UIApplicationNotifications
     
     func applicationDidOpen(note: NSNotification) {
-        if let userInfo = note.userInfo?[UIApplicationLaunchOptionsRemoteNotificationKey] {
-            Rover.didReceiveRemoteNotification(userInfo as! [NSObject : AnyObject], fetchCompletionHandler: nil)
-        }
-        sendEvent(.ApplicationOpen(date: NSDate()))
+        //dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(1 * NSEC_PER_SEC)), dispatch_get_main_queue()) {
+            if let userInfo = note.userInfo?[UIApplicationLaunchOptionsRemoteNotificationKey] as? [NSObject: AnyObject] {
+                Rover.didReceiveRemoteNotification(userInfo, fetchCompletionHandler: nil, fromLaunch: true)
+            }
+            self.sendEvent(.ApplicationOpen(date: NSDate()))
+        //}
+    }
+    
+    var applicationIsActive = false
+    
+    func applicationDidEnterBackground(note: NSNotification) {
+        applicationIsActive = false
+    }
+    
+    func applicationDidBecomeActive(note: NSNotification) {
+        applicationIsActive = true
     }
     
     func sendEvent(event: Event) {

@@ -17,7 +17,7 @@ public enum Router {
     case GetMessage(String)
     case GetLandingPage(Message)
     
-    public static var baseURLString = "https://api.rover.io/v1"
+    public static var baseURLString = "https://rover-content-api-development.herokuapp.com/v1"
     
     var method: String {
         switch self {

@@ -159,7 +159,7 @@ extension Device : Serializable {
             "manufacturer": "Apple",
             "os-version": "\(osVersion.majorVersion).\(osVersion.minorVersion).\(osVersion.patchVersion)",
             "model": self.platform(),
-            "sdk-version": "0.3.3",
+            "sdk-version": "0.3.4",
             "development": true
         ]
     }

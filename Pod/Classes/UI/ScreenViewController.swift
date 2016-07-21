@@ -78,7 +78,7 @@ public class ScreenViewController: UICollectionViewController {
     
     func reloadScreen() {
         self.title = screen?.title
-        self.collectionView!.backgroundColor = screen?.backgroundColor
+        self.collectionView!.backgroundColor = screen?.backgroundColor ?? UIColor.whiteColor()
         
         if !(screen?.useDefaultNavBarStyle ?? true) {
             applyNavigationBarStyle()

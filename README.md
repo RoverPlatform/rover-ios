@@ -254,7 +254,7 @@ Messages authored in the [Rover Messages App](https://app.rover.io/messages/) ca
 
 ```swift
 didReceiveMessage(message: Message) {
-  // message.proprties
+  // message.properties
 }
 ```
 

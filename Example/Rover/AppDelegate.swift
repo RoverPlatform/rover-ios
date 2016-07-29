@@ -14,11 +14,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
         setupRover()
-    
+        
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(didUpdateAccount), name: RoverAccountUpdatedNotification, object: nil)
         
         // Override point for customization after application launch.

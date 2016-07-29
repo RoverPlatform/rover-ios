@@ -10,6 +10,7 @@ import Foundation
 import CoreLocation
 import SafariServices
 
+@objc
 public class Rover : NSObject {
     
     private static let _sharedInstance = Rover()
@@ -22,8 +23,10 @@ public class Rover : NSObject {
     }
     
     var applicationToken: String?
+    var gimbalMode = false
     
-    private let locationManager = LocatioManager()
+    private var locationManager: LocatioManager?
+    private var gimbalPlaceManager: RVRGimbalPlaceManager?
     
     private let operationQueue = NSOperationQueue()
     private let eventOperationQueue = NSOperationQueue()
@@ -40,7 +43,7 @@ public class Rover : NSObject {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(Rover.applicationDidBecomeActive(_:)), name: UIApplicationDidBecomeActiveNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(Rover.applicationDidEnterBackground(_:)), name: UIApplicationDidEnterBackgroundNotification, object: nil)
         
-        locationManager.delegate = self
+        
     }
     
     // MARK: Class Methods
@@ -48,19 +51,36 @@ public class Rover : NSObject {
     public static let customer = Customer.sharedCustomer
     
     public static var isMonitoring: Bool {
-        return sharedInstance?.locationManager.isMonitoring ?? false
+        return sharedInstance?.locationManager?.isMonitoring ?? false
     }
     
     public class func setup(applicationToken applicationToken: String) {
+        let gimbalClass = NSClassFromString("GMBLPlaceManager")
+        setup(applicationToken: applicationToken, gimbalMode: gimbalClass != nil)
+    }
+    
+    private class func setup(applicationToken applicationToken: String, gimbalMode: Bool) {
         _sharedInstance.applicationToken = applicationToken
+        _sharedInstance.gimbalMode = gimbalMode
         
+        if gimbalMode {
+            _sharedInstance.gimbalPlaceManager = RVRGimbalPlaceManager()
+            _sharedInstance.gimbalPlaceManager?.delegate = _sharedInstance
+        } else {
+            _sharedInstance.locationManager?.delegate = _sharedInstance
+        }
     }
     
     public class func startMonitoring() {
+        guard !_sharedInstance.gimbalMode else {
+            rvLog("Use GMBLPlaceManager.startMonitoring() when in Gimbal mode.", data: nil, level: .Error)
+            return
+        }
+        
         let locationAuthorizationOperation = LocationAuthorizationOperation()
         locationAuthorizationOperation.completionBlock = {
             if CLLocationManager.authorizationStatus() == .AuthorizedAlways {
-                sharedInstance?.locationManager.startMonitoring()
+                sharedInstance?.locationManager?.startMonitoring()
             } else {
                 rvLog("Location permissions not granted", level: .Warn)
             }
@@ -69,7 +89,12 @@ public class Rover : NSObject {
     }
     
     public class func stopMonitoring() {
-        sharedInstance?.locationManager.stopMonitoring()
+        guard !_sharedInstance.gimbalMode else {
+            rvLog("Use GMBLPlaceManager.stopMonitoring() when in Gimbal mode", data: nil, level: .Error)
+            return
+        }
+        
+        sharedInstance?.locationManager?.stopMonitoring()
     }
     
     public class func registerForNotifications() {
@@ -151,8 +176,12 @@ public class Rover : NSObject {
         switch message.action {
         case .Website:
             if let url = message.url where url.scheme == "http" || url.scheme == "https" {
-                let viewController = SFSafariViewController(URL: url)
-                presentViewController(viewController)
+                if #available(iOS 9.0, *) {
+                    let viewController = SFSafariViewController(URL: url)
+                    presentViewController(viewController)
+                } else {
+                    // Fallback on earlier versions
+                }
             }
         case .DeepLink:
             if let url = message.url {
@@ -304,12 +333,10 @@ public class Rover : NSObject {
     // MARK: UIApplicationNotifications
     
     func applicationDidOpen(note: NSNotification) {
-        //dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(1 * NSEC_PER_SEC)), dispatch_get_main_queue()) {
-            if let userInfo = note.userInfo?[UIApplicationLaunchOptionsRemoteNotificationKey] as? [NSObject: AnyObject] {
-                Rover.didReceiveRemoteNotification(userInfo, fetchCompletionHandler: nil, fromLaunch: true)
-            }
-            self.sendEvent(.ApplicationOpen(date: NSDate()))
-        //}
+        if let userInfo = note.userInfo?[UIApplicationLaunchOptionsRemoteNotificationKey] as? [NSObject: AnyObject] {
+            Rover.didReceiveRemoteNotification(userInfo, fetchCompletionHandler: nil, fromLaunch: true)
+        }
+        self.sendEvent(.ApplicationOpen(date: NSDate()))
     }
     
     var applicationIsActive = false
@@ -362,13 +389,28 @@ extension Rover : LocationManagerDelegate {
     }
 }
 
-extension Rover: EventOperationDelegate {
+extension Rover : EventOperationDelegate {
     
     func eventOperation(operation: EventOperation, didPostEvent event: Event) {
         self.notifyObservers(event: event)
     }
     
     func eventOperation(operation: EventOperation, didReceiveRegions regions: [CLRegion]) {
-        self.locationManager.monitoredRegions = Set(regions)
+        self.locationManager?.monitoredRegions = Set(regions)
+    }
+}
+
+extension Rover /*: RVRGimbalPlaceManagerDelegate*/ {
+    
+    public func placeManager(manager: RVRGimbalPlaceManager!, didUpdateLocation location: CLLocation!) {
+        sendEvent(.DidUpdateLocation(location, date: NSDate()))
+    }
+    
+    public func placeManager(manager: RVRGimbalPlaceManager!, didEnterGimbalPlaceWithIdentifier identifier: String!) {
+        sendEvent(.DidEnterGimbalPlace(id: identifier, date: NSDate()))
+    }
+    
+    public func placeManager(manager: RVRGimbalPlaceManager!, didExitGimbalPlaceWithIdentifier identifier: String!) {
+        sendEvent(.DidExitGimbalPlace(id: identifier, date: NSDate()))
     }
 }

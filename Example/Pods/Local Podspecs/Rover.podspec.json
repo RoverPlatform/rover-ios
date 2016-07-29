@@ -1,16 +1,16 @@
 {
   "name": "Rover",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "summary": "Rover iOS SDK for using the Rover platform.",
   "description": "The Rover iOS SDK enables proximity, location based and scheduled messaging via the Rover platform.\nRequires an account with [www.rover.io](http://www.rover.io)",
-  "homepage": "https://github.com/RoverPlatform/rover-ios-beta",
+  "homepage": "https://github.com/RoverPlatform/rover-ios",
   "license": "MIT",
   "authors": {
     "Ata N": "ata@rover.io"
   },
   "source": {
-    "git": "https://github.com/RoverPlatform/rover-ios-beta.git",
-    "tag": "0.1.0"
+    "git": "https://github.com/RoverPlatform/rover-ios.git",
+    "tag": "0.0.1"
   },
   "platforms": {
     "ios": "8.0"

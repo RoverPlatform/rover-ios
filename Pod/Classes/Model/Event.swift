@@ -25,6 +25,9 @@ public enum Event {
     case DidReceiveMessage(Message)
     case DidOpenMessage(Message, source: String, date: NSDate)
     
+    case DidEnterGimbalPlace(id: String, date: NSDate)
+    case DidExitGimbalPlace(id: String, date: NSDate)
+    
     var properties: [String: Any] {
         switch self {
         case .DidUpdateLocation(let location, let date):
@@ -39,6 +42,10 @@ public enum Event {
             return ["region": region, "location": location, "date": date]
         case .DidOpenMessage(let message, let source, let date):
             return ["message": message, "source": source, "date": date]
+        case .DidEnterGimbalPlace(let placeId, let date):
+            return ["gimbalPlaceId": placeId, "date": date]
+        case .DidEnterGimbalPlace(let placeId, let date):
+            return ["gimbalPlaceId": placeId, "date": date]
         default:
             return [:]
         }

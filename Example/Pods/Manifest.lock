@@ -1,5 +1,5 @@
 PODS:
-  - Rover (0.1.0)
+  - Rover (0.0.1)
 
 DEPENDENCIES:
   - Rover (from `../`)
@@ -9,6 +9,8 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  Rover: 534a591383d777cbca85a54db623889216591912
+  Rover: 02c03ec6d12b0203c584e378c7d67aa123c9e9fd
 
-COCOAPODS: 0.39.0
+PODFILE CHECKSUM: 4ff4502bc6c91d000e06a422b2df74bdb4d3badc
+
+COCOAPODS: 1.0.1

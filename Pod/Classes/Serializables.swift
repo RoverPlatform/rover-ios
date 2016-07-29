@@ -112,6 +112,20 @@ extension Event : Serializable {
                 "longitude": region.center.longitude,
                 "radius": region.radius
             ]
+        case .DidEnterGimbalPlace(let gimbalPlaceId, let date):
+            timestamp = date
+            serializedAttributes = [
+                "object": "gimbal-place",
+                "action": "enter",
+                "gimbal-place-id": gimbalPlaceId
+            ]
+        case .DidExitGimbalPlace(let gimbalPlaceId, let date):
+            timestamp = date
+            serializedAttributes = [
+                "object": "gimbal-place",
+                "action": "exit",
+                "gimbal-place-id": gimbalPlaceId
+            ]
         default:
             break
         }
@@ -159,7 +173,8 @@ extension Device : Serializable {
             "manufacturer": "Apple",
             "os-version": "\(osVersion.majorVersion).\(osVersion.minorVersion).\(osVersion.patchVersion)",
             "model": self.platform(),
-            "sdk-version": "0.3.4",
+            "sdk-version": "0.4.0",
+            "gimbal-mode": Rover.sharedInstance?.gimbalMode ?? false,
             "development": true
         ]
     }

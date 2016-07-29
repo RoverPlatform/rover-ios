@@ -173,7 +173,7 @@ extension Device : Serializable {
             "manufacturer": "Apple",
             "os-version": "\(osVersion.majorVersion).\(osVersion.minorVersion).\(osVersion.patchVersion)",
             "model": self.platform(),
-            "sdk-version": "0.3.4",
+            "sdk-version": "0.4.0",
             "gimbal-mode": Rover.sharedInstance?.gimbalMode ?? false,
             "development": true
         ]

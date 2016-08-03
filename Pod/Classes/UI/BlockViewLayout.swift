@@ -132,7 +132,7 @@ class BlockViewLayout: UICollectionViewLayout {
             let middleOffset = block.offset.middle.forParentValue(sectionHeight)
             
             height = block.heightInCollectionView(collectionView!, sectionHeight: sectionHeight)
-            y = yOffset + ((sectionHeight - height) / 2) + middleOffset
+            y = yOffset + ((sectionHeight - height) / 2.0) + middleOffset
         }
         
         return CGRect(x: x, y: y, width: width, height: height)
@@ -153,7 +153,6 @@ class BlockViewLayout: UICollectionViewLayout {
 }
 
 extension Unit {
-    // BUG: what about height percentages?
     func forParentValue(parentValue: CGFloat) -> CGFloat {
         switch self {
         case .Percentage(let value):
@@ -171,7 +170,7 @@ extension Block {
         
         if let height = height?.forParentValue(sectionHeight) {
             return height
-        } else if let imageBock = self as? ImageBock, aspectRatio = imageBock.image?.aspectRatio {
+        } else if let imageBock = self as? ImageBock, aspectRatio = imageBock.image?.aspectRatio where aspectRatio != 0 {
             let width = widthInCollectionView(collectionView)
             return width / aspectRatio
         } else if let textBlock = self as? TextBlock, string = textBlock.text as? NSString {

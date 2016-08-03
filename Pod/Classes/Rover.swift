@@ -67,6 +67,7 @@ public class Rover : NSObject {
             _sharedInstance.gimbalPlaceManager = RVRGimbalPlaceManager()
             _sharedInstance.gimbalPlaceManager?.delegate = _sharedInstance
         } else {
+            _sharedInstance.locationManager = LocatioManager()
             _sharedInstance.locationManager?.delegate = _sharedInstance
         }
     }

@@ -10,7 +10,11 @@ import UIKit
 
 class TextBlockViewCell: UICollectionViewCell {
     
-    var text: String?
+    var text: String? {
+        didSet {
+            setNeedsDisplay()
+        }
+    }
     var font = UIFont.systemFontOfSize(12)
 
     var textAlignment = Alignment()

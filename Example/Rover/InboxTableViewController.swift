@@ -8,7 +8,6 @@
 
 import UIKit
 import Rover
-import SafariServices
 
 class InboxTableViewController: UITableViewController {
 
@@ -93,10 +92,7 @@ class InboxTableViewController: UITableViewController {
         
         switch message.action {
         case .Website:
-            guard let url = message.url where url.scheme == "http" || url.scheme == "https" else { break }
-            let safariViewController = SFSafariViewController(URL: url)
-            navigationController?.pushViewController(safariViewController, animated: true)
-            break
+            fallthrough
         case .DeepLink:
             guard let url = message.url else { break }
             UIApplication.sharedApplication().openURL(url)
@@ -132,8 +128,7 @@ class InboxTableViewController: UITableViewController {
 
 extension InboxTableViewController : ScreenViewControllerDelegate {
     func screenViewController(viewController: ScreenViewController, handleOpenURL url: NSURL) {
-        let safariViewController = SFSafariViewController(URL: url)
-        viewController.navigationController?.pushViewController(safariViewController, animated: true)
+        UIApplication.sharedApplication().openURL(url)
     }
 }
 

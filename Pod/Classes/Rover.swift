@@ -8,7 +8,6 @@
 
 import Foundation
 import CoreLocation
-import SafariServices
 
 @objc
 public class Rover : NSObject {
@@ -176,14 +175,7 @@ public class Rover : NSObject {
     public class func followAction(message message: Message) {
         switch message.action {
         case .Website:
-            if let url = message.url where url.scheme == "http" || url.scheme == "https" {
-                if #available(iOS 9.0, *) {
-                    let viewController = SFSafariViewController(URL: url)
-                    presentViewController(viewController)
-                } else {
-                    // Fallback on earlier versions
-                }
-            }
+            fallthrough
         case .DeepLink:
             if let url = message.url {
                 UIApplication.sharedApplication().openURL(url)
@@ -261,17 +253,6 @@ public class Rover : NSObject {
     func notifyObservers(event event: Event) {
         for observer in observers {
             event.call(observer)
-        }
-    }
-    
-    func presentSafariViewController(url url: NSURL) {
-        if #available(iOS 9.0, *) {
-            let viewController = SFSafariViewController(URL: url)
-        
-            Rover.presentViewController(viewController)
-        } else {
-            // Fallback on earlier versions
-            UIApplication.sharedApplication().openURL(url)
         }
     }
     

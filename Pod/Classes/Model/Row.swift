@@ -14,8 +14,13 @@ public class Row: NSObject {
     
     var height: Unit?
     
+    let backgroundBlock = Block()
+    
     init(blocks: [Block]) {
-        self.blocks = blocks
+        backgroundBlock.position = .Floating
+        backgroundBlock.alignment = Alignment(horizontal: .Fill, vertical: .Fill)
+        
+        self.blocks = blocks + [backgroundBlock]
         
         super.init()
     }

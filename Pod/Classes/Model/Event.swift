@@ -28,6 +28,11 @@ public enum Event {
     case DidEnterGimbalPlace(id: String, date: NSDate)
     case DidExitGimbalPlace(id: String, date: NSDate)
     
+    case DidLaunchExperience(Experience, date: NSDate)
+    case DidDismissExperience(Experience, date: NSDate)
+    case DidViewScreen(Screen, experience: Experience, date: NSDate)
+    case DidPressBlock(Block, screen: Screen, experience: Experience, date: NSDate)
+    
     var properties: [String: Any] {
         switch self {
         case .DidUpdateLocation(let location, let date):

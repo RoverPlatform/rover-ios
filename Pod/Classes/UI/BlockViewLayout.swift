@@ -41,7 +41,7 @@ class BlockViewLayout: UICollectionViewLayout {
                 let attributes = UICollectionViewLayoutAttributes(forCellWithIndexPath: indexPath)
                 
                 attributes.frame = frameForItem(layout: block, yOffset: stacked ? yOffset : height, sectionHeight: sectionHeight)
-                attributes.zIndex = (section + 1) * (item + 1)
+                attributes.zIndex = (numItems - item)
                 
                 cellAttributes[indexPath] = attributes
                 
@@ -174,7 +174,7 @@ extension Block {
             let width = widthInCollectionView(collectionView)
             return width / aspectRatio
         } else if let textBlock = self as? TextBlock, string = textBlock.text as? NSString {
-            let width = widthInCollectionView(collectionView)
+            let width = widthInCollectionView(collectionView) - self.inset.left - self.inset.right
             return string.boundingRectWithSize(CGSize(width: width, height: CGFloat.max), options: [.UsesLineFragmentOrigin, .UsesFontLeading], attributes: [NSFontAttributeName: textBlock.font], context: nil).height
         }
         

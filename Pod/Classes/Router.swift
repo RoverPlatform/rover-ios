@@ -16,8 +16,9 @@ public enum Router {
     case PatchMessage(Message)
     case GetMessage(String)
     case GetLandingPage(Message)
+    case GetExperience(String)
     
-    public static var baseURLString = "https://api.rover.io/v1"
+    public static var baseURLString = "http://api.rover.io/v1" //"https://rover-content-api-development.herokuapp.com/v1"
     
     var method: String {
         switch self {
@@ -46,6 +47,8 @@ public enum Router {
             return NSURL(string: "\(Router.baseURLString)/inbox/\(id)")!
         case .GetLandingPage(let message):
             return NSURL(string: "\(Router.baseURLString)/inbox/\(message.identifier)/landing-page")!
+        case .GetExperience(let identifier):
+            return NSURL(string: "\(Router.baseURLString)/experiences/\(identifier)")!
         }
     }
     

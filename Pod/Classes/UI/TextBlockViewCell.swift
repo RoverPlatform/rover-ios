@@ -8,9 +8,9 @@
 
 import UIKit
 
-class TextBlockViewCell: UICollectionViewCell {
+class TextBlockViewCell: BlockViewCell {
     
-    var text: String? {
+    var text: NSAttributedString? {
         didSet {
             setNeedsDisplay()
         }
@@ -19,10 +19,12 @@ class TextBlockViewCell: UICollectionViewCell {
 
     var textAlignment = Alignment()
     var textColor = UIColor.blackColor()
-    var textOffset = Offset.ZeroOffset
+    var textOffset = Offset.ZeroOffset // offsets were never used
     
     override func drawRect(rect: CGRect) {
-        let string = text as? NSString
+        guard let text = text else { return }
+        
+        let string = NSMutableAttributedString(attributedString: text)
         
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = textAlignment.horizontal.asNSTextAlignment
@@ -33,7 +35,11 @@ class TextBlockViewCell: UICollectionViewCell {
             NSParagraphStyleAttributeName: paragraphStyle
         ]
         
-        let textRect = string?.boundingRectWithSize(CGSize(width: rect.width, height: CGFloat.max), options: .UsesLineFragmentOrigin, attributes: attributes, context: nil)
+        let insettedWidth = rect.width - inset.left - inset.right
+        
+        string.addAttributes(attributes, range: NSMakeRange(0, string.length))
+        
+        let textRect = string.boundingRectWithSize(CGSize(width: insettedWidth, height: CGFloat.max), options: .UsesLineFragmentOrigin, context: nil)
         
         var x: CGFloat, y: CGFloat, width: CGFloat, height: CGFloat
         
@@ -42,24 +48,28 @@ class TextBlockViewCell: UICollectionViewCell {
         switch textAlignment.vertical {
         case .Middle:
             x = rect.origin.x
-            y = rect.origin.y + ((rect.height - (textRect?.height ?? 0)) / 2)
-            width = rect.width
-            height = textRect?.height ?? 0
+            y = rect.origin.y + ((rect.height - (textRect.height ?? 0)) / 2)
+            width = insettedWidth
+            height = textRect.height ?? 0
         case .Bottom:
             x = rect.origin.x
-            y = rect.origin.y + (rect.height - (textRect?.height ?? 0))
-            width = rect.width
-            height = textRect?.height ?? 0
+            y = rect.origin.y + (rect.height - (textRect.height ?? 0))
+            width = insettedWidth
+            height = textRect.height ?? 0
         default:
             x = rect.origin.x
             y = rect.origin.y
-            width = rect.width
+            width = insettedWidth
             height = rect.height
         }
         
+        x += inset.left
+        y += inset.top
+        //height += inset.top + inset.bottom
+        
         let drawableRect = CGRect(x: x, y: y, width: width, height: height)
         
-        string?.drawInRect(drawableRect, withAttributes: attributes)
+        string.drawInRect(drawableRect )
     }
 }
 

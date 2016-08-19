@@ -41,6 +41,7 @@ class ProfileViewController: UIViewController {
         tagsField.text = customer.tags?.joinWithSeparator(",")
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ProfileViewController.didShowKeyboard(_:)), name: UIKeyboardDidShowNotification, object: nil)
+        
     }
 
     override func didReceiveMemoryWarning() {

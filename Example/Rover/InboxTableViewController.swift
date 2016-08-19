@@ -102,6 +102,11 @@ class InboxTableViewController: UITableViewController {
                 navigationController?.pushViewController(screenViewController, animated: true)
             }
             break
+        case .Experience:
+            if let experienceId = message.experienceId {
+                let experienceViewController = ExperienceViewController(identifier: experienceId)
+                presentViewController(experienceViewController, animated: true, completion: nil)
+            }
         default:
             break
         }

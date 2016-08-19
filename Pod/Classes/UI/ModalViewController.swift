@@ -12,7 +12,7 @@ protocol ModalViewControllerDelegate: class {
     func didDismissModalViewController(viewController: ModalViewController)
 }
 
-class ModalViewController: UINavigationController {
+public class ModalViewController: UINavigationController {
     
     weak var modalDelegate: ModalViewControllerDelegate?
     
@@ -22,7 +22,7 @@ class ModalViewController: UINavigationController {
         addCloseButtonToViewController(rootViewController)
     }
     
-    required init?(coder aDecoder: NSCoder) {
+    required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
     
@@ -30,12 +30,12 @@ class ModalViewController: UINavigationController {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
     }
     
-    override func pushViewController(viewController: UIViewController, animated: Bool) {
+    override public func pushViewController(viewController: UIViewController, animated: Bool) {
         addCloseButtonToViewController(viewController)
         super.pushViewController(viewController, animated: animated)
     }
     
-    override func dismissViewControllerAnimated(flag: Bool, completion: (() -> Void)?) {
+    override public func dismissViewControllerAnimated(flag: Bool, completion: (() -> Void)?) {
         super.dismissViewControllerAnimated(flag, completion: completion)
         modalDelegate?.didDismissModalViewController(self)
     }
@@ -45,6 +45,6 @@ class ModalViewController: UINavigationController {
     }
     
     func addCloseButtonToViewController(viewController: UIViewController) {
-        self.topViewController?.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Close", style: .Plain, target: self, action: #selector(dismissViewController))
+        viewController.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Close", style: .Plain, target: self, action: #selector(dismissViewController))
     }
 }

@@ -46,7 +46,17 @@ struct Alignment {
     var vertical = VerticalAlignment.Top
 }
 
-class Block: NSObject {
+protocol BackgroundImage {
+    
+}
+
+public class Block: NSObject {
+    
+    enum Action {
+        case Deeplink(NSURL)
+        case Website(NSURL)
+        case Screen(String)
+    }
     
     // Layout
     
@@ -54,6 +64,8 @@ class Block: NSObject {
         case Stacked = "stacked"
         case Floating = "floating"
     }
+    
+    var identifier: String? = nil
     
     var position = Position.Stacked
     
@@ -69,16 +81,37 @@ class Block: NSObject {
     var borderColor = UIColor.clearColor()
     var borderRadius: CGFloat = 0
     var borderWidth: CGFloat = 0
+    var opacity: Float = 1
+    var inset = UIEdgeInsetsZero
 
+    // BackgroundImage
     
+    var backgroundImage: Image?
+    var backgroundContentMode: ImageContentMode = .Original
+    var backgroundScale: CGFloat = 1
+    
+    var action: Action?
 }
 
 class TextBlock: Block {
     var text: String?
     var textAlignment = Alignment(horizontal: .Left, vertical: .Top)
     var textColor = UIColor.blackColor()
-    var textOffset = Offset.ZeroOffset
+    var textOffset = Offset.ZeroOffset // TextOffset was never used
     var font = UIFont.systemFontOfSize(12)
+    
+    var attributedText: NSAttributedString? {
+        if let data = text?.dataUsingEncoding(NSUnicodeStringEncoding) {
+            do {
+                return try? NSAttributedString(data: data, options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
+            } catch {
+                rvLog("Bad HTML String", data: text, level: .Error)
+                return nil
+            }
+        } else {
+            return nil
+        }
+    }
 }
 
 class ImageBock: Block {
@@ -86,6 +119,16 @@ class ImageBock: Block {
     
     required init(image: Image?) {
         self.image = image
+        super.init()
+    }
+}
+
+class WebBlock: Block {
+    let url: NSURL?
+    var scrollable = false
+    
+    required init(url: NSURL?) {
+        self.url = url
         super.init()
     }
 }
@@ -99,11 +142,6 @@ class ButtonBlock: Block {
         case Disabled
     }
     
-    enum Action {
-        case Deeplink(NSURL)
-        case Website(NSURL)
-    }
-    
     struct Appearance {
         var titleColor: UIColor?
         var title: String?
@@ -115,11 +153,22 @@ class ButtonBlock: Block {
         var borderColor: UIColor?
         var borderRadius: CGFloat?
         var borderWidth: CGFloat?
+        
+        var attributedTitle: NSAttributedString? {
+            if let data = title?.dataUsingEncoding(NSUnicodeStringEncoding) {
+                do {
+                    return try? NSAttributedString(data: data, options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
+                } catch {
+                    rvLog("Bad HTML String", data: title, level: .Error)
+                    return nil
+                }
+            } else {
+                return nil
+            }
+        }
     }
     
     var appearences: [State: Appearance] = [:]
-    
-    var action: Action?
 }
 
 class Image {
@@ -134,4 +183,12 @@ class Image {
         self.size = size
         self.url = url
     }
+}
+
+enum ImageContentMode : String {
+    case Original = "original"
+    case Stretch = "stretch"
+    case Tile = "tile"
+    case Fill = "fill"
+    case Fit = "fit"
 }

@@ -8,9 +8,7 @@
 
 import UIKit
 
-@objc protocol ButtonBlockViewCellDelegate: class {
-    optional func buttonBlockViewCellDidPressButton(cell: ButtonBlockViewCell)
-}
+
 
 class ButtonBlockViewCell: TextBlockViewCell {
     
@@ -18,7 +16,7 @@ class ButtonBlockViewCell: TextBlockViewCell {
         case Normal, Highlighted, Selected, Disabled
     }
     
-    private var titles: [State: String] = [.Normal: ""]
+    private var titles: [State: NSAttributedString] = [.Normal: NSAttributedString(string: "")]
     private var titleColors: [State: UIColor] = [.Normal: UIColor.blackColor()]
     private var titleAlignments: [State: Alignment] = [.Normal: Alignment()] // default should be center middle
     private var titleOffsets: [State: Offset] = [.Normal: Offset()]
@@ -42,8 +40,6 @@ class ButtonBlockViewCell: TextBlockViewCell {
         }
     }
     
-    weak var delegate: ButtonBlockViewCellDelegate?
-    
     var enabled: Bool = true {
         didSet {
             if enabled {
@@ -58,24 +54,9 @@ class ButtonBlockViewCell: TextBlockViewCell {
         }
     }
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        commonInit()
-    }
+
     
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-        commonInit()
-    }
-    
-    func commonInit() {
-        let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(self.gestureRecognized(_:)))
-        longPressRecognizer.minimumPressDuration = 0
-        longPressRecognizer.delegate = self
-        self.contentView.addGestureRecognizer(longPressRecognizer)
-    }
-    
-    func setTitle(title: String?, forState state: UIControlState) {
+    func setTitle(title: NSAttributedString?, forState state: UIControlState) {
         titles[state.buttonBlockViewCellState] = title
         updateTitle()
     }
@@ -156,42 +137,19 @@ class ButtonBlockViewCell: TextBlockViewCell {
         layer.cornerRadius = cornerRadii[currentState] ?? cornerRadii[.Normal] ?? layer.cornerRadius
     }
     
-    func gestureRecognized(recognizer: UILongPressGestureRecognizer) {
-        
-        struct Static {
-            static var touchCancelled = false
-            static var location = CGPointZero
-        }
-        
-        switch recognizer.state {
-        case .Began:
-            Static.touchCancelled = false
-            Static.location = recognizer.locationInView(self.window)
-            currentState = .Highlighted
-        case .Ended:
-            if !Static.touchCancelled {
-                delegate?.buttonBlockViewCellDidPressButton?(self)
-            }
-            currentState = .Normal
-        default:
-            // iPhone 6S sensitivity
-            let newLocation = recognizer.locationInView(self.window)
-            let dx = newLocation.x - Static.location.x
-            let dy = newLocation.y - Static.location.y
-            let distance = dx*dx + dy*dy
-            
-            if distance > 20 {
-                Static.touchCancelled = true
-                currentState = .Normal
-            }
-        }
+    
+    override func didTouchDown() {
+        currentState = .Highlighted
     }
-}
-
-extension ButtonBlockViewCell : UIGestureRecognizerDelegate {
-    func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return true
+    
+    override func didEndTouch() {
+        currentState = .Normal
     }
+    
+    override func didCancelTouch() {
+        currentState = .Normal
+    }
+    
 }
 
 private extension UIControlState {

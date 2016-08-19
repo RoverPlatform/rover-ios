@@ -4,6 +4,8 @@ import UIKit
 import Foundation
 
 
-let string = "tracklyst://soundcloud/connect"
+var arr = ["ata", "steve", "sean"]
 
-let pring = string.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLHostAllowedCharacterSet())
+arr += ["john"]
+
+print(arr)

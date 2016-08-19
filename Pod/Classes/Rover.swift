@@ -42,7 +42,7 @@ public class Rover : NSObject {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(Rover.applicationDidBecomeActive(_:)), name: UIApplicationDidBecomeActiveNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(Rover.applicationDidEnterBackground(_:)), name: UIApplicationDidEnterBackgroundNotification, object: nil)
         
-        
+        ExperienceViewController.superDelegate = self
     }
     
     // MARK: Class Methods
@@ -184,6 +184,11 @@ public class Rover : NSObject {
             if let viewController = viewController(message: message) {
                 presentViewController(viewController)
             }
+        case .Experience:
+            if let viewController = viewController(message: message) as? ExperienceViewController {
+                viewController.modalDelegate = sharedInstance
+                presentViewController(viewController, includeNavigation: false)
+            }
         default:
             break
         }
@@ -257,18 +262,26 @@ public class Rover : NSObject {
     }
     
     public class func presentViewController(viewController: UIViewController) {
+        presentViewController(viewController, includeNavigation: true)
+    }
+    
+    private class func presentViewController(viewController: UIViewController, includeNavigation includeNav: Bool) {
         var frame = UIScreen.mainScreen().bounds
         if UIDeviceOrientationIsLandscape(UIDevice.currentDevice().orientation) {
             frame = CGRect(x: 0, y: 0, width: frame.height, height: frame.width)
         }
         
-        let navController = ModalViewController(rootViewController: viewController)
-        navController.modalDelegate = sharedInstance
-        
         sharedInstance?.window = UIWindow(frame: frame)
         sharedInstance?.window?.hidden = false
         sharedInstance?.window?.rootViewController = UIViewController()
-        sharedInstance?.window?.rootViewController?.presentViewController(navController, animated: true, completion: nil)
+        
+        if includeNav {
+            let navController = ModalViewController(rootViewController: viewController)
+            navController.modalDelegate = sharedInstance
+            sharedInstance?.window?.rootViewController?.presentViewController(navController, animated: true, completion: nil)
+        } else {
+            sharedInstance?.window?.rootViewController?.presentViewController(viewController, animated: true, completion: nil)
+        }
     }
     
     public class func viewController(message message: Message) -> UIViewController? {
@@ -307,6 +320,9 @@ public class Rover : NSObject {
             }
             
             return viewController
+        case .Experience:
+            guard let experienceId = message.experienceId else { return nil }
+            return ExperienceViewController(identifier: experienceId)
         default:
             return nil
         }
@@ -394,5 +410,22 @@ extension Rover /*: RVRGimbalPlaceManagerDelegate*/ {
     
     public func placeManager(manager: RVRGimbalPlaceManager!, didExitGimbalPlaceWithIdentifier identifier: String!) {
         sendEvent(.DidExitGimbalPlace(id: identifier, date: NSDate()))
+    }
+}
+
+extension Rover: ExperienceViewControllerDelegate {
+    func experienceViewControllerDidLaunch(viewController: ExperienceViewController) {
+        guard let experience = viewController.experience else { return }
+        sendEvent(.DidLaunchExperience(experience, date: NSDate()))
+    }
+    
+    func experienceViewController(viewController: ExperienceViewController, didViewScreen screen: Screen) {
+        guard let experience = viewController.experience else { return }
+        sendEvent(.DidViewScreen(screen, experience: experience, date: NSDate()))
+    }
+    
+    func experienceViewController(viewController: ExperienceViewController, didPressBlock block: Block, screen: Screen) {
+        guard let experience = viewController.experience else { return }
+        sendEvent(.DidPressBlock(block, screen: screen, experience: experience, date: NSDate()))
     }
 }

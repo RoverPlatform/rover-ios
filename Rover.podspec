@@ -13,7 +13,7 @@ Pod::Spec.new do |s|
   s.author           = { "Ata N" => "ata@rover.io" }
   s.source           = { :git => "https://github.com/RoverPlatform/rover-ios.git", :tag => s.version.to_s }
 
-  s.platform     = :ios, '8.0'
+  s.platform     = :ios, '8.4'
   s.requires_arc = true
 
   s.source_files = 'Pod/Classes/**/*'

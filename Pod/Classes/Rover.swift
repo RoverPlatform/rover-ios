@@ -419,9 +419,14 @@ extension Rover: ExperienceViewControllerDelegate {
         sendEvent(.DidLaunchExperience(experience, date: NSDate()))
     }
     
-    func experienceViewController(viewController: ExperienceViewController, didViewScreen screen: Screen) {
+    func experienceViewControllerDidDismiss(viewController: ExperienceViewController) {
         guard let experience = viewController.experience else { return }
-        sendEvent(.DidViewScreen(screen, experience: experience, date: NSDate()))
+        sendEvent(.DidDismissExperience(experience, date: NSDate()))
+    }
+    
+    func experienceViewController(viewController: ExperienceViewController, didViewScreen screen: Screen, referrerScreen: Screen?, referrerBlock: Block?) {
+        guard let experience = viewController.experience else { return }
+        sendEvent(.DidViewScreen(screen, experience: experience, fromScreen: referrerScreen, fromBlock: referrerBlock, date: NSDate()))
     }
     
     func experienceViewController(viewController: ExperienceViewController, didPressBlock block: Block, screen: Screen) {

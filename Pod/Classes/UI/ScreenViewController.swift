@@ -97,16 +97,20 @@ public class ScreenViewController: UICollectionViewController {
         switch screen?.navBarButtons {
         case .Close?:
             navigationItem.leftBarButtonItem = nil
+            navigationItem.setHidesBackButton(true, animated: true)
             navigationItem.rightBarButtonItem = rightNavBarItem
         case .Back?:
             navigationItem.rightBarButtonItem = nil
             navigationItem.leftBarButtonItem = leftNavBarItem
+            navigationItem.setHidesBackButton(false, animated: true)
         case .None?:
             navigationItem.leftBarButtonItem = nil
             navigationItem.rightBarButtonItem = nil
+            navigationItem.setHidesBackButton(true, animated: true)
         default:
             navigationItem.leftBarButtonItem = leftNavBarItem
             navigationItem.rightBarButtonItem = rightNavBarItem
+            navigationItem.setHidesBackButton(false, animated: true)
         }
         
         if let backgroundImage = screen?.backgroundImage {

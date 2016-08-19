@@ -64,6 +64,6 @@ class AssetManager {
     // MARK: Helpers
     
     func cacheKey(url url: NSURL) -> String {
-        return url.lastPathComponent ?? url.absoluteString
+        return url.absoluteString
     }
 }

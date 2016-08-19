@@ -140,13 +140,15 @@ extension Event : Serializable {
                 "action": "dismissed",
                 "experience-id": experience.identifier
             ]
-        case .DidViewScreen(let screen, let experience, let date):
+        case .DidViewScreen(let screen, let experience, let fromScreen, let fromBlock, let date):
             timestamp = date
             serializedAttributes = [
                 "object": "experience",
                 "action": "screen-viewed",
                 "experience-id": experience.identifier,
-                "screen-id": screen.identifier ?? ""
+                "screen-id": screen.identifier ?? NSNull(),
+                "from-screen-id": fromScreen?.identifier ?? NSNull(),
+                "from-block-id": fromBlock?.identifier ?? NSNull()
             ]
         case .DidPressBlock(let block, let screen, let experience, let date):
             timestamp = date

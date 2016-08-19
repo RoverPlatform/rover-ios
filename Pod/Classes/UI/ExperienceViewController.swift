@@ -10,7 +10,8 @@ import Foundation
 
 protocol ExperienceViewControllerDelegate: class {
     func experienceViewControllerDidLaunch(viewController: ExperienceViewController)
-    func experienceViewController(viewController: ExperienceViewController, didViewScreen screen: Screen)
+    func experienceViewControllerDidDismiss(viewController: ExperienceViewController)
+    func experienceViewController(viewController: ExperienceViewController, didViewScreen screen: Screen, referrerScreen referrerScreen: Screen?, referrerBlock referrerBlock: Block?)
     func experienceViewController(viewController: ExperienceViewController, didPressBlock block: Block, screen: Screen)
 }
 
@@ -69,7 +70,7 @@ public class ExperienceViewController: ModalViewController {
         viewControllers = [viewController]
         
         // Track HomeScreen
-        ExperienceViewController.superDelegate?.experienceViewController(self, didViewScreen: homeScreen)
+        ExperienceViewController.superDelegate?.experienceViewController(self, didViewScreen: homeScreen, referrerScreen: nil, referrerBlock: nil)
     }
     
     func viewController(screen screen: Screen) -> ScreenViewController {
@@ -81,20 +82,24 @@ public class ExperienceViewController: ModalViewController {
     public override func pushViewController(viewController: UIViewController, animated: Bool) {
         super.pushViewController(viewController, animated: animated)
         
-        // Track Screen
-        guard let vc = viewController as? ScreenViewController, screen = vc.screen else { return }
-        ExperienceViewController.superDelegate?.experienceViewController(self, didViewScreen: screen)
     }
     
     public override func popViewControllerAnimated(animated: Bool) -> UIViewController? {
         let vc = super.popViewControllerAnimated(animated)
         
         // Track Screen
-        if let viewController = vc as? ScreenViewController, screen = viewController.screen {
-            ExperienceViewController.superDelegate?.experienceViewController(self, didViewScreen: screen)
+        if let viewController = topViewController as? ScreenViewController, screen = viewController.screen {
+            let svc = vc as? ScreenViewController
+            let referrerScreen = svc?.screen
+            ExperienceViewController.superDelegate?.experienceViewController(self, didViewScreen: screen, referrerScreen: referrerScreen, referrerBlock: nil)
         }
         
         return vc
+    }
+    
+    override func dismissViewController() {
+        super.dismissViewController()
+        ExperienceViewController.superDelegate?.experienceViewControllerDidDismiss(self)
     }
 }
 
@@ -108,6 +113,16 @@ extension ExperienceViewController : ScreenViewControllerDelegate {
     public func screenViewController(viewController: ScreenViewController, didPressBlock block: Block) {
         guard let screen = viewController.screen else { return }
         ExperienceViewController.superDelegate?.experienceViewController(self, didPressBlock: block, screen: screen)
+        
+        
+        // Track Screen
+        switch block.action {
+        case .Screen(let identifier)?:
+            guard let toScreen = experience?.screens.filter({ $0.identifier == identifier}).first else { break }
+            ExperienceViewController.superDelegate?.experienceViewController(self, didViewScreen: toScreen, referrerScreen: screen, referrerBlock: block)
+        default:
+            break
+        }
     }
 }
 

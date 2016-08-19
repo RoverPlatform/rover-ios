@@ -42,6 +42,8 @@ class ProfileViewController: UIViewController {
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ProfileViewController.didShowKeyboard(_:)), name: UIKeyboardDidShowNotification, object: nil)
         
+        let exp = ExperienceViewController(identifier: "57b32c299514ac00271a7425")
+        presentViewController(exp, animated: true, completion: nil)
     }
 
     override func didReceiveMemoryWarning() {

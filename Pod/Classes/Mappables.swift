@@ -239,6 +239,10 @@ extension Row : Mappable {
         row.backgroundBlock.backgroundScale = JSON["background-scale"] as? CGFloat ?? row.backgroundBlock.backgroundScale
         row.backgroundBlock.backgroundContentMode = ImageContentMode(rawValue: JSON["background-content-mode"] as? String ?? "") ?? row.backgroundBlock.backgroundContentMode
         
+        if let isAutoHeight = JSON["auto-height"] as? Bool where isAutoHeight {
+            row.height = nil
+        }
+        
         return row
     }
 }
@@ -263,6 +267,7 @@ extension Block : Mappable {
             
             let textBlock = block as! TextBlock
             textBlock.text = JSON["text"] as? String
+            textBlock.text = textBlock.text?.stringByReplacingOccurrencesOfString("<br>", withString: "")
             
             if let alignment = Alignment.instance(JSON["text-alignment"] as? [String: AnyObject] ?? [:], included: nil) {
                 textBlock.textAlignment = alignment
@@ -372,8 +377,8 @@ extension ButtonBlock.Appearance : Mappable {
         }
 
         appearance.titleOffset = Offset.instance(JSON["text-offset"] as? [String: AnyObject] ?? [:], included: nil)
-        appearance.titleColor = UIColor.instance(JSON["text-color"] as? [String: AnyObject] ?? [:], included: nil)
-        appearance.titleFont = UIFont.instance(JSON["text-font"] as? [String: AnyObject] ?? [:], included: nil)
+        appearance.titleColor = UIColor.instance(JSON["text-color"] as? [String: AnyObject] ?? [:], included: nil) ?? appearance.titleColor
+        appearance.titleFont = UIFont.instance(JSON["text-font"] as? [String: AnyObject] ?? [:], included: nil) ?? appearance.titleFont
         appearance.backgroundColor = UIColor.instance(JSON["background-color"] as? [String: AnyObject] ?? [:], included: nil)
         appearance.borderColor = UIColor.instance(JSON["border-color"] as? [String: AnyObject] ?? [:], included: nil)
         appearance.borderRadius = JSON["border-radius"] as? CGFloat

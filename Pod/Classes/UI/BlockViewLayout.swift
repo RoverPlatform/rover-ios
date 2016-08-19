@@ -173,9 +173,9 @@ extension Block {
         } else if let imageBock = self as? ImageBock, aspectRatio = imageBock.image?.aspectRatio where aspectRatio != 0 {
             let width = widthInCollectionView(collectionView)
             return width / aspectRatio
-        } else if let textBlock = self as? TextBlock, string = textBlock.text as? NSString {
+        } else if let textBlock = self as? TextBlock, attributedString = textBlock.attributedText {
             let width = widthInCollectionView(collectionView) - self.inset.left - self.inset.right
-            return string.boundingRectWithSize(CGSize(width: width, height: CGFloat.max), options: [.UsesLineFragmentOrigin, .UsesFontLeading], attributes: [NSFontAttributeName: textBlock.font], context: nil).height
+            return attributedString.boundingRectWithSize(CGSize(width: width, height: CGFloat.max), options: [.UsesLineFragmentOrigin, .UsesFontLeading], context: nil).height + inset.top + inset.bottom
         }
         
         return 0

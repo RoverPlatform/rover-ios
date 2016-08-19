@@ -103,7 +103,34 @@ class TextBlock: Block {
     var attributedText: NSAttributedString? {
         if let data = text?.dataUsingEncoding(NSUnicodeStringEncoding) {
             do {
-                return try? NSAttributedString(data: data, options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
+                guard let attributedString = try? NSMutableAttributedString(data: data, options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil) else { return nil }
+                attributedString.enumerateAttribute(NSFontAttributeName, inRange: NSMakeRange(0, attributedString.length), options: []) { (value, range, stop) in
+                    guard let fontValue = value as? UIFont else {
+                        return
+                    }
+                    let traits = fontValue.fontDescriptor().symbolicTraits
+                    let descriptor = self.font.fontDescriptor().fontDescriptorWithSymbolicTraits(traits)
+                    let newFont = UIFont(descriptor: descriptor, size: self.font.pointSize)
+                    attributedString.removeAttribute(NSFontAttributeName, range: range)
+                    attributedString.addAttribute(NSFontAttributeName, value: newFont, range: range)
+                    
+                }
+                
+                let paragraphStyle = NSMutableParagraphStyle()
+                paragraphStyle.alignment = textAlignment.horizontal.asNSTextAlignment
+                
+                let attributes = [
+                    NSForegroundColorAttributeName: textColor,
+                    NSParagraphStyleAttributeName: paragraphStyle
+                ]
+                
+                attributedString.addAttributes(attributes, range: NSMakeRange(0, attributedString.length))
+                
+                if attributedString.length > 0 {
+                    attributedString.replaceCharactersInRange(NSMakeRange(attributedString.length - 1, 1), withString: "")
+                }
+                
+                return attributedString
             } catch {
                 rvLog("Bad HTML String", data: text, level: .Error)
                 return nil
@@ -143,11 +170,11 @@ class ButtonBlock: Block {
     }
     
     struct Appearance {
-        var titleColor: UIColor?
+        var titleColor: UIColor = UIColor.blackColor()
         var title: String?
-        var titleAlignment: Alignment?
+        var titleAlignment: Alignment = Alignment(horizontal: .Center, vertical: .Middle)
         var titleOffset: Offset?
-        var titleFont: UIFont?
+        var titleFont: UIFont = UIFont.systemFontOfSize(12)
         
         var backgroundColor: UIColor?
         var borderColor: UIColor?
@@ -156,12 +183,18 @@ class ButtonBlock: Block {
         
         var attributedTitle: NSAttributedString? {
             if let data = title?.dataUsingEncoding(NSUnicodeStringEncoding) {
-                do {
-                    return try? NSAttributedString(data: data, options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
-                } catch {
-                    rvLog("Bad HTML String", data: title, level: .Error)
-                    return nil
-                }
+                guard let title = title else { return nil }
+                let attributedString = NSMutableAttributedString(string: title)
+                
+                let paragraphStyle = NSMutableParagraphStyle()
+                paragraphStyle.alignment = titleAlignment.horizontal.asNSTextAlignment
+                
+                attributedString.addAttributes([
+                    NSFontAttributeName: titleFont,
+                    NSForegroundColorAttributeName: titleColor,
+                    NSParagraphStyleAttributeName: paragraphStyle
+                    ], range: NSMakeRange(0, attributedString.length))
+                return attributedString
             } else {
                 return nil
             }

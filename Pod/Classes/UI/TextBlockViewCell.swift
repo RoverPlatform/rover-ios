@@ -24,22 +24,27 @@ class TextBlockViewCell: BlockViewCell {
     override func drawRect(rect: CGRect) {
         guard let text = text else { return }
         
+        /*
         let string = NSMutableAttributedString(attributedString: text)
         
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = textAlignment.horizontal.asNSTextAlignment
+        paragraphStyle.paragraphSpacing = 0
         
         let attributes = [
-            NSFontAttributeName: font,
+            //NSFontAttributeName: font,
             NSForegroundColorAttributeName: textColor,
             NSParagraphStyleAttributeName: paragraphStyle
         ]
         
-        let insettedWidth = rect.width - inset.left - inset.right
+        
         
         string.addAttributes(attributes, range: NSMakeRange(0, string.length))
+         */
         
-        let textRect = string.boundingRectWithSize(CGSize(width: insettedWidth, height: CGFloat.max), options: .UsesLineFragmentOrigin, context: nil)
+        let insettedWidth = rect.width - inset.left - inset.right
+        
+        let textRect = text.boundingRectWithSize(CGSize(width: insettedWidth, height: CGFloat.max), options: .UsesLineFragmentOrigin, context: nil)
         
         var x: CGFloat, y: CGFloat, width: CGFloat, height: CGFloat
         
@@ -69,7 +74,7 @@ class TextBlockViewCell: BlockViewCell {
         
         let drawableRect = CGRect(x: x, y: y, width: width, height: height)
         
-        string.drawInRect(drawableRect )
+        text.drawInRect(drawableRect )
     }
 }
 

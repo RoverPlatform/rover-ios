@@ -30,7 +30,7 @@ public enum Event {
     
     case DidLaunchExperience(Experience, date: NSDate)
     case DidDismissExperience(Experience, date: NSDate)
-    case DidViewScreen(Screen, experience: Experience, date: NSDate)
+    case DidViewScreen(Screen, experience: Experience, fromScreen: Screen?, fromBlock: Block?, date: NSDate)
     case DidPressBlock(Block, screen: Screen, experience: Experience, date: NSDate)
     
     var properties: [String: Any] {

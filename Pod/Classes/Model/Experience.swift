@@ -8,10 +8,10 @@
 
 import Foundation
 
-public class Experience {
-    let identifier: String
-    let screens: [Screen]
-    let homeScreenIdentifier: String
+public class Experience : NSObject {
+    public let identifier: String
+    public let screens: [Screen]
+    public let homeScreenIdentifier: String
     
     var homeScreen: Screen? {
         return screens.filter { $0.identifier == self.homeScreenIdentifier }.first

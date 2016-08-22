@@ -13,6 +13,7 @@ protocol ExperienceViewControllerDelegate: class {
     func experienceViewControllerDidDismiss(viewController: ExperienceViewController)
     func experienceViewController(viewController: ExperienceViewController, didViewScreen screen: Screen, referrerScreen referrerScreen: Screen?, referrerBlock referrerBlock: Block?)
     func experienceViewController(viewController: ExperienceViewController, didPressBlock block: Block, screen: Screen)
+    func experienceViewController(viewController: ExperienceViewController, willLoadExperience experience: Experience)
 }
 
 public class ExperienceViewController: ModalViewController {
@@ -60,7 +61,11 @@ public class ExperienceViewController: ModalViewController {
     }
     
     func reloadExperience() {
-        guard let homeScreen = experience?.homeScreen else { return }
+        guard let experience = experience else { return }
+        
+        ExperienceViewController.superDelegate?.experienceViewController(self, willLoadExperience: experience)
+        
+        guard let homeScreen = experience.homeScreen else { return }
         
         // Track Experience
         ExperienceViewController.superDelegate?.experienceViewControllerDidLaunch(self)

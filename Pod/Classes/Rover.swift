@@ -433,4 +433,10 @@ extension Rover: ExperienceViewControllerDelegate {
         guard let experience = viewController.experience else { return }
         sendEvent(.DidPressBlock(block, screen: screen, experience: experience, date: NSDate()))
     }
+    
+    func experienceViewController(viewController: ExperienceViewController, willLoadExperience experience: Experience) {
+        for observer in observers {
+            observer.experienceViewController?(viewController, willLoadExperience: experience)
+        }
+    }
 }

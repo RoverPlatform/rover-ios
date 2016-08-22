@@ -12,35 +12,75 @@ class TextBlockViewCell: BlockViewCell {
     
     var text: NSAttributedString? {
         didSet {
+            textView.text = text
             setNeedsDisplay()
         }
     }
     var font = UIFont.systemFontOfSize(12)
 
-    var textAlignment = Alignment()
+    var textAlignment = Alignment() {
+        didSet {
+            textView.textAlignment = textAlignment
+        }
+    }
+    
+    override var inset: UIEdgeInsets {
+        didSet {
+            textView.inset = inset
+        }
+    }
+    
     var textColor = UIColor.blackColor()
     var textOffset = Offset.ZeroOffset // offsets were never used
     
+    private let textView = TextView()
+    
+    override func commonInit() {
+        super.commonInit()
+        
+        textView.translatesAutoresizingMaskIntoConstraints = false
+        textView.backgroundColor = UIColor.clearColor()
+        textView.userInteractionEnabled = false
+        
+        addSubview(textView)
+        addConstraints([
+            NSLayoutConstraint(item: textView, attribute: .Top, relatedBy: .Equal, toItem: self, attribute: .Top, multiplier: 1, constant: 0),
+            NSLayoutConstraint(item: textView, attribute: .Leading, relatedBy: .Equal, toItem: self, attribute: .Leading, multiplier: 1, constant: 0),
+            NSLayoutConstraint(item: textView, attribute: .Bottom, relatedBy: .Equal, toItem: self, attribute: .Bottom, multiplier: 1, constant: 0),
+            NSLayoutConstraint(item: textView, attribute: .Trailing, relatedBy: .Equal, toItem: self, attribute: .Trailing, multiplier: 1, constant: 0)
+            ])
+    }
+}
+
+extension Alignment.HorizontalAlignment {
+    var asNSTextAlignment: NSTextAlignment {
+        switch self {
+        case .Center:
+            return .Center
+        case .Left:
+            return .Left
+        case .Right:
+            return .Right
+        case .Fill:
+            return .Justified
+        default:
+            return .Natural
+        }
+    }
+}
+
+class TextView : UIView {
+    
+    var text: NSAttributedString?
+    var textAlignment = Alignment()
+    var inset = UIEdgeInsetsZero
+    
+//    convenience init() {
+//        self.init(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
+//    }
+    
     override func drawRect(rect: CGRect) {
         guard let text = text else { return }
-        
-        /*
-        let string = NSMutableAttributedString(attributedString: text)
-        
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.alignment = textAlignment.horizontal.asNSTextAlignment
-        paragraphStyle.paragraphSpacing = 0
-        
-        let attributes = [
-            //NSFontAttributeName: font,
-            NSForegroundColorAttributeName: textColor,
-            NSParagraphStyleAttributeName: paragraphStyle
-        ]
-        
-        
-        
-        string.addAttributes(attributes, range: NSMakeRange(0, string.length))
-         */
         
         let insettedWidth = rect.width - inset.left - inset.right
         
@@ -75,22 +115,5 @@ class TextBlockViewCell: BlockViewCell {
         let drawableRect = CGRect(x: x, y: y, width: width, height: height)
         
         text.drawInRect(drawableRect )
-    }
-}
-
-extension Alignment.HorizontalAlignment {
-    var asNSTextAlignment: NSTextAlignment {
-        switch self {
-        case .Center:
-            return .Center
-        case .Left:
-            return .Left
-        case .Right:
-            return .Right
-        case .Fill:
-            return .Justified
-        default:
-            return .Natural
-        }
     }
 }

@@ -253,7 +253,7 @@ extension Message : Serializable {
 }
 
 extension Block.Action : Serializable {
-    func serialize() -> [String : AnyObject] {
+    public func serialize() -> [String : AnyObject] {
         var type: String?
         
         switch self {

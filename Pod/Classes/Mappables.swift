@@ -340,7 +340,7 @@ extension Block : Mappable {
 }
 
 extension Block.Action : Mappable {
-    static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> ButtonBlock.Action? {
+    public static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> ButtonBlock.Action? {
         guard let type = JSON["type"] as? String else { return nil }
         
         let urlString = JSON["url"] as? String ?? ""
@@ -366,7 +366,7 @@ extension Block.Action : Mappable {
 }
 
 extension ButtonBlock.Appearance : Mappable {
-    static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> ButtonBlock.Appearance? {
+    public static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> ButtonBlock.Appearance? {
         var appearance = ButtonBlock.Appearance()
         appearance.title = JSON["text"] as? String
         
@@ -388,7 +388,7 @@ extension ButtonBlock.Appearance : Mappable {
 }
 
 extension Image: Mappable {
-    static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> Image? {
+    public static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> Image? {
         guard let width = JSON["width"] as? CGFloat,
             height = JSON["height"] as? CGFloat,
             urlString = JSON["url"] as? String,
@@ -399,7 +399,7 @@ extension Image: Mappable {
 }
 
 extension Offset : Mappable {
-    static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> Offset? {
+    public static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> Offset? {
         let top = Unit.instance(JSON["top"] as? [String: AnyObject] ?? [:], included: nil) ?? .Points(0)
         let right = Unit.instance(JSON["right"] as? [String: AnyObject] ?? [:], included: nil) ?? .Points(0)
         let bottom = Unit.instance(JSON["bottom"] as? [String: AnyObject] ?? [:], included: nil) ?? .Points(0)
@@ -412,7 +412,7 @@ extension Offset : Mappable {
 }
 
 extension Alignment : Mappable {
-    static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> Alignment? {
+    public static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> Alignment? {
         guard let horizontal = Alignment.HorizontalAlignment(rawValue: JSON["horizontal"] as? String ?? ""),
             vertical = Alignment.VerticalAlignment(rawValue: JSON["vertical"] as? String ?? "") else { return nil }
         
@@ -421,7 +421,7 @@ extension Alignment : Mappable {
 }
 
 extension Unit : Mappable {
-    static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> Unit? {
+    public static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> Unit? {
         guard let value = JSON["value"] as? CGFloat,
             type = JSON["type"] as? String else { return nil }
         

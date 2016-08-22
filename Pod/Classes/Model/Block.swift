@@ -8,51 +8,47 @@
 
 import UIKit
 
-enum Unit {
+public enum Unit {
     case Points(CGFloat)
     case Percentage(CGFloat)
 }
 
-struct Offset {
-    var left = Unit.Points(0)
-    var right = Unit.Points(0)
-    var top = Unit.Points(0)
-    var bottom = Unit.Points(0)
-    var center = Unit.Points(0)
-    var middle = Unit.Points(0)
+public struct Offset {
+    public var left = Unit.Points(0)
+    public var right = Unit.Points(0)
+    public var top = Unit.Points(0)
+    public var bottom = Unit.Points(0)
+    public var center = Unit.Points(0)
+    public var middle = Unit.Points(0)
     
     static var ZeroOffset: Offset {
         return Offset()
     }
 }
 
-struct Alignment {
+public struct Alignment {
     
-    enum HorizontalAlignment : String {
+    public enum HorizontalAlignment : String {
         case Left = "left"
         case Center = "center"
         case Right = "right"
         case Fill = "fill"
     }
     
-    enum VerticalAlignment : String {
+    public enum VerticalAlignment : String {
         case Top = "top"
         case Middle = "middle"
         case Bottom = "bottom"
         case Fill = "fill"
     }
     
-    var horizontal = HorizontalAlignment.Left
-    var vertical = VerticalAlignment.Top
-}
-
-protocol BackgroundImage {
-    
+    public var horizontal = HorizontalAlignment.Left
+    public var vertical = VerticalAlignment.Top
 }
 
 public class Block: NSObject {
     
-    enum Action {
+    public enum Action {
         case Deeplink(NSURL)
         case Website(NSURL)
         case Screen(String)
@@ -60,45 +56,45 @@ public class Block: NSObject {
     
     // Layout
     
-    enum Position : String {
+    public enum Position : String {
         case Stacked = "stacked"
         case Floating = "floating"
     }
     
-    var identifier: String? = nil
+    public var identifier: String? = nil
     
-    var position = Position.Stacked
+    public var position = Position.Stacked
     
-    var height: Unit?
-    var width: Unit?
+    public var height: Unit?
+    public var width: Unit?
     
-    var alignment = Alignment()
-    var offset = Offset.ZeroOffset
+    public var alignment = Alignment()
+    public var offset = Offset.ZeroOffset
 
     // Appearance
     
-    var backgroundColor = UIColor.clearColor()
-    var borderColor = UIColor.clearColor()
-    var borderRadius: CGFloat = 0
-    var borderWidth: CGFloat = 0
-    var opacity: Float = 1
-    var inset = UIEdgeInsetsZero
+    public var backgroundColor = UIColor.clearColor()
+    public var borderColor = UIColor.clearColor()
+    public var borderRadius: CGFloat = 0
+    public var borderWidth: CGFloat = 0
+    public var opacity: Float = 1
+    public var inset = UIEdgeInsetsZero
 
     // BackgroundImage
     
-    var backgroundImage: Image?
-    var backgroundContentMode: ImageContentMode = .Original
-    var backgroundScale: CGFloat = 1
+    public var backgroundImage: Image?
+    public var backgroundContentMode: ImageContentMode = .Original
+    public var backgroundScale: CGFloat = 1
     
-    var action: Action?
+    public var action: Action?
 }
 
 class TextBlock: Block {
-    var text: String?
-    var textAlignment = Alignment(horizontal: .Left, vertical: .Top)
-    var textColor = UIColor.blackColor()
-    var textOffset = Offset.ZeroOffset // TextOffset was never used
-    var font = UIFont.systemFontOfSize(12)
+    public var text: String?
+    public var textAlignment = Alignment(horizontal: .Left, vertical: .Top)
+    public var textColor = UIColor.blackColor()
+    public var textOffset = Offset.ZeroOffset // TextOffset was never used
+    public var font = UIFont.systemFontOfSize(12)
     
     var attributedText: NSAttributedString? {
         if let data = text?.dataUsingEncoding(NSUnicodeStringEncoding) {
@@ -141,45 +137,45 @@ class TextBlock: Block {
     }
 }
 
-class ImageBock: Block {
-    let image: Image?
+public class ImageBock: Block {
+    public var image: Image?
     
-    required init(image: Image?) {
+    public required init(image: Image?) {
         self.image = image
         super.init()
     }
 }
 
 class WebBlock: Block {
-    let url: NSURL?
-    var scrollable = false
+    public var url: NSURL?
+    public var scrollable = false
     
-    required init(url: NSURL?) {
+    public required init(url: NSURL?) {
         self.url = url
         super.init()
     }
 }
 
-class ButtonBlock: Block {
+public class ButtonBlock: Block {
 
-    enum State {
+    public enum State {
         case Normal
         case Highlighted
         case Selected
         case Disabled
     }
     
-    struct Appearance {
-        var titleColor: UIColor = UIColor.blackColor()
-        var title: String?
-        var titleAlignment: Alignment = Alignment(horizontal: .Center, vertical: .Middle)
-        var titleOffset: Offset?
-        var titleFont: UIFont = UIFont.systemFontOfSize(12)
+    public struct Appearance {
+        public var titleColor: UIColor = UIColor.blackColor()
+        public var title: String?
+        public var titleAlignment: Alignment = Alignment(horizontal: .Center, vertical: .Middle)
+        public var titleOffset: Offset?
+        public var titleFont: UIFont = UIFont.systemFontOfSize(12)
         
-        var backgroundColor: UIColor?
-        var borderColor: UIColor?
-        var borderRadius: CGFloat?
-        var borderWidth: CGFloat?
+        public var backgroundColor: UIColor?
+        public var borderColor: UIColor?
+        public var borderRadius: CGFloat?
+        public var borderWidth: CGFloat?
         
         var attributedTitle: NSAttributedString? {
             if let data = title?.dataUsingEncoding(NSUnicodeStringEncoding) {
@@ -201,24 +197,24 @@ class ButtonBlock: Block {
         }
     }
     
-    var appearences: [State: Appearance] = [:]
+    public var appearences: [State: Appearance] = [:]
 }
 
-class Image {
-    let size: CGSize
-    let url: NSURL
+public class Image {
+    public let size: CGSize
+    public let url: NSURL
     
     var aspectRatio: CGFloat {
         return size.width / size.height
     }
     
-    init(size: CGSize, url: NSURL) {
+    public init(size: CGSize, url: NSURL) {
         self.size = size
         self.url = url
     }
 }
 
-enum ImageContentMode : String {
+public enum ImageContentMode : String {
     case Original = "original"
     case Stretch = "stretch"
     case Tile = "tile"

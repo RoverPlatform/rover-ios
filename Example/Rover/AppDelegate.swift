@@ -56,5 +56,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func didUpdateAccount(note: NSNotification) {
         setupRover()
     }
+    
+    func application(application: UIApplication, handleOpenURL url: NSURL) -> Bool {
+        print("url: \(url)")
+        return true
+    }
 
 }

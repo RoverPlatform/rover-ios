@@ -94,19 +94,36 @@ class TextBlock: Block {
     public var textAlignment = Alignment(horizontal: .Left, vertical: .Top)
     public var textColor = UIColor.blackColor()
     public var textOffset = Offset.ZeroOffset // TextOffset was never used
-    public var font = UIFont.systemFontOfSize(12)
+    public var font = Font(size: 12, weight: 400) //= UIFont.systemFontOfSize(12)
     
+    private var _attributedText: NSAttributedString?
     var attributedText: NSAttributedString? {
         if let data = text?.dataUsingEncoding(NSUnicodeStringEncoding) {
             do {
+                if let attrText = _attributedText { return attrText }
+                
                 guard let attributedString = try? NSMutableAttributedString(data: data, options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil) else { return nil }
+                
                 attributedString.enumerateAttribute(NSFontAttributeName, inRange: NSMakeRange(0, attributedString.length), options: []) { (value, range, stop) in
                     guard let fontValue = value as? UIFont else {
                         return
                     }
                     let traits = fontValue.fontDescriptor().symbolicTraits
-                    let descriptor = self.font.fontDescriptor().fontDescriptorWithSymbolicTraits(traits)
-                    let newFont = UIFont(descriptor: descriptor, size: self.font.pointSize)
+                    var font: UIFont
+                    
+                    if traits.contains(.TraitBold) {
+                        font = Font(size: self.font.size, weight: min(self.font.weight + 300, 900)).systemFont
+                    } else {
+                        font = self.font.systemFont
+                    }
+                    
+                    var descriptor = font.fontDescriptor()
+                    
+                    if traits.contains(.TraitItalic) {
+                        descriptor = descriptor.fontDescriptorWithSymbolicTraits(.TraitItalic)
+                    }
+                    
+                    let newFont = UIFont(descriptor: descriptor, size: font.pointSize)
                     attributedString.removeAttribute(NSFontAttributeName, range: range)
                     attributedString.addAttribute(NSFontAttributeName, value: newFont, range: range)
                     
@@ -125,6 +142,8 @@ class TextBlock: Block {
                 if attributedString.length > 0 {
                     attributedString.replaceCharactersInRange(NSMakeRange(attributedString.length - 1, 1), withString: "")
                 }
+                
+                _attributedText = attributedString
                 
                 return attributedString
             } catch {

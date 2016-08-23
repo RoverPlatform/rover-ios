@@ -13,7 +13,7 @@ class TextBlockViewCell: BlockViewCell {
     var text: NSAttributedString? {
         didSet {
             textView.text = text
-            setNeedsDisplay()
+            textView.setNeedsDisplay()
         }
     }
     var font = UIFont.systemFontOfSize(12)

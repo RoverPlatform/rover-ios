@@ -19,11 +19,13 @@ class BlockViewLayout: UICollectionViewLayout {
 
     private var cellAttributes = [NSIndexPath : UICollectionViewLayoutAttributes]()
     private var height: CGFloat = 0
+    private var cellClipPaths = [NSIndexPath: CGPath]()
     
     override func prepareLayout() {
         
         cellAttributes = [:]
         height = 0
+        cellClipPaths = [:]
         
         let numSections = self.collectionView!.numberOfSections()
         
@@ -44,6 +46,13 @@ class BlockViewLayout: UICollectionViewLayout {
                 attributes.zIndex = (numItems - item)
                 
                 cellAttributes[indexPath] = attributes
+                
+                if attributes.frame.origin.y + attributes.frame.size.height > height + sectionHeight ||
+                    attributes.frame.origin.y < height {
+                    let clippedY = max(0, height - attributes.frame.origin.y)
+                    let clippedHeight = min(height + sectionHeight - attributes.frame.origin.y, attributes.frame.height) - clippedY
+                    cellClipPaths[indexPath] = CGPathCreateWithRect(CGRect(origin: CGPoint(x: 0, y:clippedY), size: CGSize(width: attributes.frame.width, height: clippedHeight)), nil)
+                }
                 
                 if stacked {
                     yOffset = yOffset + fullHeightForItem(layout: block, sectionHeight: sectionHeight)
@@ -73,6 +82,10 @@ class BlockViewLayout: UICollectionViewLayout {
     
     override func layoutAttributesForItemAtIndexPath(indexPath: NSIndexPath) -> UICollectionViewLayoutAttributes? {
         return cellAttributes[indexPath]
+    }
+    
+    func clipPathForItemAtIndexPath(indexPath: NSIndexPath) -> CGPath? {
+        return cellClipPaths[indexPath]
     }
     
     // MARK: Helpers

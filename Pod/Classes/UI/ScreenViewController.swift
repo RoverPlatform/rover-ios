@@ -33,8 +33,9 @@ public class ScreenViewController: UICollectionViewController {
     
     public weak var delegate: ScreenViewControllerDelegate?
     
+    let layout = BlockViewLayout()
+    
     public init() {
-        let layout = BlockViewLayout()
         super.init(collectionViewLayout: layout)
         layout.dataSource = self
     }
@@ -179,12 +180,13 @@ public class ScreenViewController: UICollectionViewController {
             textCell.text = textBlock.attributedText
             textCell.textAlignment = textBlock.textAlignment
             textCell.textColor = textBlock.textColor
-            textCell.font = textBlock.font
+            //textCell.font = textBlock.font
 
             cell = textCell
         case let imageBlock as ImageBock:
             let imageCell = collectionView.dequeueReusableCellWithReuseIdentifier(imageBlockCellIdentifier, forIndexPath: indexPath) as! ImageBlockViewCell
             
+            // TODO: cancel any requests or images from the reused cell
             imageCell.imageView.rv_setImage(url: imageBlock.image?.url, activityIndicatorStyle: .Gray)
             
             cell = imageCell
@@ -221,6 +223,8 @@ public class ScreenViewController: UICollectionViewController {
             var backgroundView = UIImageView()
             backgroundView.setBackgroundImage(url: backgroundImage.url, contentMode: block!.backgroundContentMode, scale: block!.backgroundScale)
             cell.backgroundView = backgroundView
+        } else {
+            cell.backgroundView = nil
         }
         
         // Appearance
@@ -236,6 +240,16 @@ public class ScreenViewController: UICollectionViewController {
         
         cell.inset = block?.inset ?? cell.inset
         cell.delegate = self
+
+        
+        if let clipPath = layout.clipPathForItemAtIndexPath(indexPath) {
+            print("Block: \(block)")
+            let maskLayer = CAShapeLayer()
+            maskLayer.path = clipPath
+            cell.layer.mask = maskLayer
+        } else {
+            cell.layer.mask = nil
+        }
         
         return cell
     }

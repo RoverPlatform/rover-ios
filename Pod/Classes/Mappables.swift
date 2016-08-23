@@ -281,7 +281,7 @@ extension Block : Mappable {
             let fontSize = JSON["text-font-size"] as? CGFloat
             let fontWeight = JSON["text-font-weight"] as? CGFloat
             
-            textBlock.font = UIFont.instance(JSON["text-font"] as? [String: AnyObject] ?? [:], included: nil) ?? textBlock.font
+            textBlock.font = Font.instance(JSON["text-font"] as? [String: AnyObject] ?? [:], included: nil) ?? textBlock.font
             
         case "button-block":
             block = ButtonBlock()
@@ -465,6 +465,15 @@ extension UIFont : Mappable {
         ]
         
         return UIFont.systemFontOfSize(fontSize, weight: weights[fontWeight] ?? UIFontWeightRegular)
+    }
+}
+
+extension Font : Mappable {
+    public static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> Font? {
+        guard let fontSize = JSON["size"] as? CGFloat,
+            fontWeight = JSON["weight"] as? Int else { return Font(size: 12, weight: 400) }
+        
+        return Font(size: fontSize, weight: fontWeight)
     }
 }
 

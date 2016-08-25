@@ -10,12 +10,17 @@ import Foundation
 
 @objc
 public class Row: NSObject {
-    let blocks: [Block]
+    public var blocks: [Block]
     
-    var height: Unit?
+    public var height: Unit?
+    
+    public let backgroundBlock = Block()
     
     init(blocks: [Block]) {
-        self.blocks = blocks
+        backgroundBlock.position = .Floating
+        backgroundBlock.alignment = Alignment(horizontal: .Fill, vertical: .Fill)
+        
+        self.blocks = blocks + [backgroundBlock]
         
         super.init()
     }

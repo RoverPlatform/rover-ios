@@ -33,7 +33,7 @@ class BluetoothStatusOperation: ConcurrentOperation, CBCentralManagerDelegate {
         
         rvLog("Checking Bluetooth status", level: .Trace)
         
-        centralManager = CBCentralManager(delegate: self, queue: nil)
+        centralManager = CBCentralManager(delegate: self, queue: nil, options: [CBCentralManagerOptionShowPowerAlertKey: false])
     }
     
     // MARK: CBCentralManagerDelegate

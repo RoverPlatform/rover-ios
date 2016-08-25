@@ -41,6 +41,9 @@ class ProfileViewController: UIViewController {
         tagsField.text = customer.tags?.joinWithSeparator(",")
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ProfileViewController.didShowKeyboard(_:)), name: UIKeyboardDidShowNotification, object: nil)
+        
+        let exp = ExperienceViewController(identifier: "57b74e723f1a36002771f59b")
+        presentViewController(exp, animated: true, completion: nil)
     }
 
     override func didReceiveMemoryWarning() {

@@ -20,9 +20,8 @@
 		3D5C55331C91E0E9005F4602 /* InboxTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5C55321C91E0E9005F4602 /* InboxTableViewController.swift */; };
 		3D5C55351C91F331005F4602 /* TopAlignedLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5C55341C91F331005F4602 /* TopAlignedLabel.swift */; };
 		3D5C55371C920FE6005F4602 /* MessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5C55361C920FE6005F4602 /* MessageTableViewCell.swift */; };
-		3D5C55391C935820005F4602 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5C55381C935820005F4602 /* MapKit.framework */; };
 		3D5C553B1C935994005F4602 /* LocationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5C553A1C935994005F4602 /* LocationViewController.swift */; };
-		3D81C21D1D41563400D8A67F /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D81C21C1D41563400D8A67F /* libz.tbd */; };
+		3D96DB421D5CFAEB0083F405 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5C55381C935820005F4602 /* MapKit.framework */; };
 		3DE41E7A1CCE7DA800EC69F6 /* Logs.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3DE41E781CCE7DA800EC69F6 /* Logs.storyboard */; };
 		3DF01FF11D1C3C13000BFF3B /* Account.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DF01FF01D1C3C13000BFF3B /* Account.swift */; };
 		3DF01FF31D1C3E87000BFF3B /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DF01FF21D1C3E87000BFF3B /* TabBarController.swift */; };
@@ -32,7 +31,7 @@
 		607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
-		7778106A2592EE2750B830D5 /* Pods_Rover_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D137BB9D11DD3865019952C7 /* Pods_Rover_Example.framework */; };
+		835E66AA0C90DAFF012DA5F0 /* Pods_Rover_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E5FADC080335AD02928E4A67 /* Pods_Rover_Example.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -53,8 +52,6 @@
 		3D5C55361C920FE6005F4602 /* MessageTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageTableViewCell.swift; sourceTree = "<group>"; };
 		3D5C55381C935820005F4602 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		3D5C553A1C935994005F4602 /* LocationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LocationViewController.swift; path = ../LocationViewController.swift; sourceTree = "<group>"; };
-		3D81C21C1D41563400D8A67F /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
-		3D81C21E1D415A6500D8A67F /* Gimbal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Gimbal.framework; path = ../../../../../Downloads/gimbalsdk_2.43.3_ios/Frameworks/Gimbal.framework; sourceTree = "<group>"; };
 		3DE41E791CCE7DA800EC69F6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Logs.storyboard; sourceTree = "<group>"; };
 		3DF01FF01D1C3C13000BFF3B /* Account.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Account.swift; sourceTree = "<group>"; };
 		3DF01FF21D1C3E87000BFF3B /* TabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
@@ -73,7 +70,7 @@
 		842E59DC02B68EA8585857BC /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		B15DEEEE859846A64947F0F4 /* Rover.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = Rover.podspec; path = ../Rover.podspec; sourceTree = "<group>"; };
 		C1DDE3F24770238907C40D7F /* Pods-Rover_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Rover_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Rover_Example/Pods-Rover_Example.debug.xcconfig"; sourceTree = "<group>"; };
-		D137BB9D11DD3865019952C7 /* Pods_Rover_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Rover_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E5FADC080335AD02928E4A67 /* Pods_Rover_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Rover_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F1E3C846AF64D6AE28E5A366 /* Pods-Rover_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Rover_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-Rover_Example/Pods-Rover_Example.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -82,9 +79,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3D81C21D1D41563400D8A67F /* libz.tbd in Frameworks */,
-				3D5C55391C935820005F4602 /* MapKit.framework in Frameworks */,
-				7778106A2592EE2750B830D5 /* Pods_Rover_Example.framework in Frameworks */,
+				3D96DB421D5CFAEB0083F405 /* MapKit.framework in Frameworks */,
+				835E66AA0C90DAFF012DA5F0 /* Pods_Rover_Example.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -148,10 +144,8 @@
 		53CE10A2232C5C5EF7455904 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				3D81C21E1D415A6500D8A67F /* Gimbal.framework */,
-				3D81C21C1D41563400D8A67F /* libz.tbd */,
 				3D5C55381C935820005F4602 /* MapKit.framework */,
-				D137BB9D11DD3865019952C7 /* Pods_Rover_Example.framework */,
+				E5FADC080335AD02928E4A67 /* Pods_Rover_Example.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -272,6 +266,9 @@
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 0;
+							};
+							com.apple.Push = {
+								enabled = 1;
 							};
 						};
 					};
@@ -451,7 +448,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -489,7 +486,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
@@ -510,7 +507,7 @@
 				);
 				INFOPLIST_FILE = Rover/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
 				MODULE_NAME = ExampleApp;
 				OTHER_CODE_SIGN_FLAGS = "--deep";
 				PRODUCT_BUNDLE_IDENTIFIER = io.rover.Rover;
@@ -535,7 +532,7 @@
 				);
 				INFOPLIST_FILE = Rover/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
 				MODULE_NAME = ExampleApp;
 				OTHER_CODE_SIGN_FLAGS = "--deep";
 				PRODUCT_BUNDLE_IDENTIFIER = io.rover.Rover;

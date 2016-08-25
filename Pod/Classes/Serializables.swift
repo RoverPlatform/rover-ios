@@ -126,6 +126,40 @@ extension Event : Serializable {
                 "action": "exit",
                 "gimbal-place-id": gimbalPlaceId
             ]
+        case .DidLaunchExperience(let experience, let date):
+            timestamp = date
+            serializedAttributes = [
+                "object": "experience",
+                "action": "launched",
+                "experience-id": experience.identifier
+            ]
+        case .DidDismissExperience(let experience, let date):
+            timestamp = date
+            serializedAttributes = [
+                "object": "experience",
+                "action": "dismissed",
+                "experience-id": experience.identifier
+            ]
+        case .DidViewScreen(let screen, let experience, let fromScreen, let fromBlock, let date):
+            timestamp = date
+            serializedAttributes = [
+                "object": "experience",
+                "action": "screen-viewed",
+                "experience-id": experience.identifier,
+                "screen-id": screen.identifier ?? NSNull(),
+                "from-screen-id": fromScreen?.identifier ?? NSNull(),
+                "from-block-id": fromBlock?.identifier ?? NSNull()
+            ]
+        case .DidPressBlock(let block, let screen, let experience, let date):
+            timestamp = date
+            serializedAttributes = [
+                "object": "experience",
+                "action": "block-clicked",
+                "block-id": block.identifier ?? "",
+                "screen-id": screen.identifier ?? "",
+                "experience-id": experience.identifier,
+                "block-action": block.action?.serialize() ?? NSNull()
+            ]
         default:
             break
         }
@@ -173,7 +207,7 @@ extension Device : Serializable {
             "manufacturer": "Apple",
             "os-version": "\(osVersion.majorVersion).\(osVersion.minorVersion).\(osVersion.patchVersion)",
             "model": self.platform(),
-            "sdk-version": "0.4.2",
+            "sdk-version": "1.0.0",
             "gimbal-mode": Rover.sharedInstance?.gimbalMode ?? false,
             "development": true
         ]
@@ -215,5 +249,26 @@ extension Message : Serializable {
                 ]
             ]
         ]
+    }
+}
+
+extension Block.Action : Serializable {
+    public func serialize() -> [String : AnyObject] {
+        var type: String?
+        
+        switch self {
+        case .Screen(let identifier):
+            return [
+                "type": "go-to-screen",
+                "screen-id": identifier
+            ]
+        case .Deeplink(let url):
+            return [
+                "type": "open-url",
+                "url": url.absoluteString
+            ]
+        default:
+            return [:]
+        }
     }
 }

@@ -7,49 +7,54 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		137C2EA30249FA53677D19A05072BB88 /* RVRGimbalPlaceManager.h in Headers */ = {isa = PBXBuildFile; fileRef = D129B7BDAF7B33F60E27EFB33D3316FF /* RVRGimbalPlaceManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		17FD9F4B899EB01BD6019DEC28048AC1 /* Screen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9038AC910D3D90B253F2745C3BD80E12 /* Screen.swift */; };
-		1CD7428701A413A516DED17B3E26526D /* Mappables.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B1ED429A2D33F92AEC92D372190D90 /* Mappables.swift */; };
-		21762D18F15850113E5C8F7B41390C4B /* BlockViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30A04445202E1049FE87D9F4A20DAD6B /* BlockViewLayout.swift */; };
+		007E493022E00A0581D3A65859C66E2F /* RVRGimbalPlaceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = DA7711713763F3CBC1388CBCE257012E /* RVRGimbalPlaceManager.m */; };
+		08ADAD5BC7224A4C69CE9EFE8A8BE452 /* Customer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 879D1FB13BC6BD002D21DE2F69B819B0 /* Customer.swift */; };
+		0D774E2B7801ED4E6EB0098DB49BDEE6 /* Serializables.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FDEA2CC01E268BF07CE03628A0C96B5 /* Serializables.swift */; };
+		0D99CA6B88576531430EDF3E1D2127A3 /* ScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E8C83D98D88D68EA6B29A9A496B53D /* ScreenViewController.swift */; };
+		137C2EA30249FA53677D19A05072BB88 /* RVRGimbalPlaceManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 64F8A626373F5FD77F048E5AC69D2E2C /* RVRGimbalPlaceManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		15638AD5270C46F03DC21C177B13C922 /* Block.swift in Sources */ = {isa = PBXBuildFile; fileRef = C792DCF99DD790C2977BF8ADDCD8F8BB /* Block.swift */; };
+		1AD8411D1F08C7FF113499E90E3A498C /* AssetCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = A156D4CB3D5BEE92B2B8D766BCDEEBE2 /* AssetCache.swift */; };
+		1D0D242FF3CA540A69DCD783BE76CED1 /* AssetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 921635CD372034D2302F7D2ED0AC8117 /* AssetManager.swift */; };
+		1E0C0456B9A6A5FD64904CD32CD136C9 /* Place.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26D81916A314151BBA0F70D37ADA9E55 /* Place.swift */; };
+		1EF8707722FA30E03859ED8FCA084F86 /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = 112C39257CBF80EC8428EC22A9BA3A3B /* Device.swift */; };
+		1F7FDB44A41B896BD79C9854E5294F8B /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 070CBEC1D7607A1A7A8AFE996CC860B3 /* Common.swift */; };
+		2DDF1E619F60115191D85C2147A4E7B7 /* MappingOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A34C376F08198EF24BE4D299CB520713 /* MappingOperation.swift */; };
 		2FB5F50536766183815199D1F1EB354D /* Pods-Rover_Example-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = B9E3759E3449146D1C9795415FAE1D15 /* Pods-Rover_Example-dummy.m */; };
 		3B4BCE5D02263F9CC56D41BCE8803294 /* Rover-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = B96D4DFDE2D90C222B0D867D586240FB /* Rover-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3E101BD20787E8895029990F6DC761E4 /* NetworkOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9B816CC9953E709879AA6BC2134D568 /* NetworkOperation.swift */; };
-		40A67FDE66822A278E189D4C717AB847 /* MappingOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81C7EFE216F30C5941167D4C7831E32A /* MappingOperation.swift */; };
+		3E18D8578D8A4A55A303AAD6DE4F8EED /* LocationAuthorizationOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8E2367C5E611D98D28B6341D64BA202 /* LocationAuthorizationOperation.swift */; };
 		40E3E90DD1B48A07BAE949F84C4CAE8F /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 976197FE93FD6FDDE9ADE6672C396CA5 /* UIKit.framework */; };
-		44FA57E4D6D8C809A65A92BB836CFDDD /* Place.swift in Sources */ = {isa = PBXBuildFile; fileRef = E613258DA4A69E00A80DB173EF9BAA94 /* Place.swift */; };
-		5299C9E174F460B1D5C29116A57A516A /* AssetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4112117F0E0447A7AD8375094C9AE2 /* AssetManager.swift */; };
-		5355B4C88ECBA5572D0E1070C4688A6D /* AssetCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 366DB9D373AADDF69B30C259A5B28DD8 /* AssetCache.swift */; };
-		546EB2D6F957E613571EB0EBDC9FF105 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7101596F309A9BECFA2FDCB9D5C35087 /* Message.swift */; };
-		5651F93435807CC6D20796462973CD7F /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6048B4759322C9480D4B50EC60BD8DD2 /* Common.swift */; };
-		5CDDB45D06CC4FC78C44F7245738C962 /* TextBlockViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C40872A56C21F2195FAC7BED47281D6 /* TextBlockViewCell.swift */; };
-		62723E312BF6E93B0B92C82C486C1AFF /* Customer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0951E4506A717E0EC25D1EC00F74C4 /* Customer.swift */; };
-		63B000C9D253B778FA3B31131D587BF0 /* LocationAuthorizationOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6B64A9E3AAB1C7832AC834B9907754 /* LocationAuthorizationOperation.swift */; };
-		6BDA16A5504EE4EDB2E16B2BF384B3D4 /* ScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87B362BEC6E76B9A5BA111323F587A31 /* ScreenViewController.swift */; };
-		6F16630CA45D97E53A10BFDB699C8FE2 /* BeaconConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03522B332D9FDBFA202A9330BE168E31 /* BeaconConfiguration.swift */; };
+		41D2729B683B5E49B361015281C47332 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 589DE7A57659ABBA7D26076E234B3813 /* LocationManager.swift */; };
+		443050F014277B000C40B013807EDC0B /* ExperienceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 042DADA5E0B955B2984D34B7BBC59AEF /* ExperienceViewController.swift */; };
+		446964BC6BAAEC16C1C3E72AD169E449 /* SerializingOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E6E71FE34288744346C7227906700D7 /* SerializingOperation.swift */; };
+		5DF10FBA79B36502B330B24E2E62496F /* RoverObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36E65A23192ABDCE3D03EA4214E8E2C5 /* RoverObserver.swift */; };
+		6195E76ECB2B891C981388BA87A5439D /* BeaconConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = F554EDE0A1ED3B1F814F4511874C0C94 /* BeaconConfiguration.swift */; };
+		63B1F0F3469B551110F7C3E19BB22683 /* Font.swift in Sources */ = {isa = PBXBuildFile; fileRef = F82F30E8A8E4A8F4CFB769F383CF1584 /* Font.swift */; };
+		64B5262E2327031BDFFDD42DECBAC11A /* Experience.swift in Sources */ = {isa = PBXBuildFile; fileRef = 365116A5DE7FE56C392B2B8E3FE3E0A2 /* Experience.swift */; };
 		705B607286546D70B4738A58214B0904 /* Pods-Rover_Example-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 241A79BC67CD109BF70D08B89A3D81BF /* Pods-Rover_Example-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		70BD91303440DFCCABD4B7C206A36A07 /* SerializingOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CC3510953C2EDC570CE4E19904DDFFC /* SerializingOperation.swift */; };
-		71F476F817E7FE7406C783BC8CEBDB37 /* RVRGimbalPlaceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 88BE119BD5B390AAF059880E635D479A /* RVRGimbalPlaceManager.m */; };
-		73869EDDC794EF58CA13B7A5F162913E /* Rover-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BDE885A165A942D8A140C5A0CBA3345 /* Rover-dummy.m */; };
-		7A6C93D08D78764AE0E14DF8D66961D1 /* EventOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5A8D0316C619199D936A1AFBF27C695 /* EventOperation.swift */; };
-		832D3509AA46AC06E6FB60F33D1A18DF /* Serializables.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EE4519DF45C940CE01F37ECFDC2F70C /* Serializables.swift */; };
-		896AF28769D6D780834FC813EF148AA4 /* ConcurrentOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B7FAC747819145E05DFB1F8DB94CCE9 /* ConcurrentOperation.swift */; };
-		8DAAA55D61294AB4168E0CE56303B234 /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D8BC78655340D54757410DF68D1C140 /* Router.swift */; };
+		7C35AD70E232B64E2DD2026240E83F7E /* Screen.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA50C96E8B8BAA72029F603A5FF32F11 /* Screen.swift */; };
+		7FBA1648555071E43C567F84482B7983 /* UIImageView+RVAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84BE1E2E63706B23EC1C86A06E1BCEC /* UIImageView+RVAsset.swift */; };
+		82F19C5EB517459DE9F0C4CED9902D23 /* Mappables.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3ED57E49FB2C8D79FE09B1D77F9A8FC /* Mappables.swift */; };
 		8F3916BE24551D0EC0E5CC8D8B91684C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B46287475F7F66F2FC3EF4D5A733D10 /* Foundation.framework */; };
-		A452E9543AD57956DC37B1A21C43E05A /* UIImageView+RVAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9683EC42F5289E1FEDAAD8D275E740E7 /* UIImageView+RVAsset.swift */; };
-		B4481AC231B4C7DE7C12E370FFFB90A5 /* NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FE63428AC4EF080C0AD084914F5206F /* NavigationController.swift */; };
-		B609B74AC94C1C3A2F54A26D9C136E42 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0CD2357D0B055BC6F934291C5AEA1E9 /* LocationManager.swift */; };
+		9CEA4800629382C48E2A8A18CE368A18 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = B007DE7CB11505C29472FA159177DAE4 /* Message.swift */; };
+		A26AC398BBF8FA9243946D268160C997 /* ButtonBlockViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B92FC5625D814DAB436445A88C35AFB /* ButtonBlockViewCell.swift */; };
+		A613A31B90942759E9AA657E7681AD65 /* BlockViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 574E53554E042EE215A310A0F7A6A390 /* BlockViewLayout.swift */; };
+		A7D6D693956CF89751C23D1FF8FE5897 /* BlockViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1292DAECD1B3E31C0B15AB3DBEC9DB95 /* BlockViewCell.swift */; };
+		AA394F53FFD01545973473C1F5CB0232 /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = B891B59EDCC2817E97B26DBBFACFB9CD /* Router.swift */; };
+		AD5B1E56A1D92BEFA7F109164D60045B /* Row.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1564945592C5D6AC6E9FA2D28CE39B42 /* Row.swift */; };
+		B5B477BE3A1D37FCD9439AD9B1C880C8 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6690A5314A52F84D652A94093C25ACF /* Event.swift */; };
+		B6C977877D6B7277D7B9F2DE00AC92AD /* NetworkOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 409EEEF94CACC4AABFF96C93E43C14E9 /* NetworkOperation.swift */; };
 		B82B06FFB50EED71257120D54CB0B3CC /* Rover.bundle in Resources */ = {isa = PBXBuildFile; fileRef = AB2DA248686CA9D219391CF5B8821DA5 /* Rover.bundle */; };
-		BD23430B4CFDB1CE897D05F70E701337 /* Block.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBC22FB08FC4A395D508BE09A57652D7 /* Block.swift */; };
-		BDA451A87BEF4CBD7D9D68A96E9C86FB /* ButtonBlockViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E1A1F92A3C19C66B9E6B6409E1B4E32 /* ButtonBlockViewCell.swift */; };
-		C18C4F764AF393EF26AC89B2B89C6398 /* Rover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E74FBC30DF1B693B3ECF11ACB7D6E73 /* Rover.swift */; };
-		CB80AA055F4B99DC06C89996052575E8 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACFB9DF261EF830C1850B24C3F665719 /* Event.swift */; };
+		BB091AD55B7F2118B2C7C675F8EF328D /* ImageBlockViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC89A47784BA058D3522B6D576DED86F /* ImageBlockViewCell.swift */; };
+		BEBD0CBD4B06FEBA7B1D5261902F48E5 /* TextBlockViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E55D7B7590FA260EDF8E47E3E658D5D4 /* TextBlockViewCell.swift */; };
+		C846F42D008DE1FDA2971CE706478985 /* Rover-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BDE885A165A942D8A140C5A0CBA3345 /* Rover-dummy.m */; };
+		C8E93E843D4CC9E2699AE16AC07759BA /* WebBlockViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCDC4D97BFF5DD55BA855C8063C1CFC4 /* WebBlockViewCell.swift */; };
+		CB9DBB6BE9927CF14A1C69FAC63C9CAD /* ConcurrentOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B184F1AC432F3C5265EC0F7C8A671E20 /* ConcurrentOperation.swift */; };
 		CC4224E636069B0A3F601A8B18A9B21D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B46287475F7F66F2FC3EF4D5A733D10 /* Foundation.framework */; };
-		CDCFC0FBEEEEA5D738EB9990E6F681CF /* ImageBlockViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C3BF8277C179D2783F2A7019AD975E2 /* ImageBlockViewCell.swift */; };
-		D5DD97CC45AB0F75791CB441ADF9EDA5 /* RoverObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24B4607A57AB4FCDC0F528B58D331AD4 /* RoverObserver.swift */; };
+		D5E68E4FCCE1B81031EA655A93AF528E /* ModalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2DBCED4749BCB8CD91D84A065D67046 /* ModalViewController.swift */; };
 		E20FBD6BF2AC9AAB6DFDF32A54D6AB3A /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCF5C4E1FA3A269BCA07B8D5D73BF084 /* CoreLocation.framework */; };
-		F31B839E8A4BB764DA08FF2451A149C4 /* BluetoothStatusOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 408549C4D297940E6F81F7A9AB279C10 /* BluetoothStatusOperation.swift */; };
-		F85F85B86F382A181B110703C9FACA1A /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F6D1CD356E882EA0482192DE85B8FA4 /* Device.swift */; };
-		FF4EE9657BDEDB2DE08A97EFBE06EA08 /* Row.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0368A0CECA2B8544A49C4579E34463F8 /* Row.swift */; };
+		ED11550E54376E853ED671541D771AD7 /* EventOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C82517F25A98B78B81A279ECCA467A61 /* EventOperation.swift */; };
+		F4BB250F2CB2DBD39DB651AAB713E9FB /* BluetoothStatusOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ABC8956CF850D75BBFA211FE8187787 /* BluetoothStatusOperation.swift */; };
+		F61F4282C6796D12A431873C4873026D /* Rover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85F6D1CC6BE75D2EAE7B40744DC9CFB2 /* Rover.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -70,64 +75,69 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		03522B332D9FDBFA202A9330BE168E31 /* BeaconConfiguration.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BeaconConfiguration.swift; sourceTree = "<group>"; };
-		0368A0CECA2B8544A49C4579E34463F8 /* Row.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Row.swift; sourceTree = "<group>"; };
-		0F6D1CD356E882EA0482192DE85B8FA4 /* Device.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
-		0FE63428AC4EF080C0AD084914F5206F /* NavigationController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NavigationController.swift; sourceTree = "<group>"; };
+		042DADA5E0B955B2984D34B7BBC59AEF /* ExperienceViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ExperienceViewController.swift; sourceTree = "<group>"; };
+		070CBEC1D7607A1A7A8AFE996CC860B3 /* Common.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Common.swift; sourceTree = "<group>"; };
+		112C39257CBF80EC8428EC22A9BA3A3B /* Device.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
+		1292DAECD1B3E31C0B15AB3DBEC9DB95 /* BlockViewCell.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BlockViewCell.swift; sourceTree = "<group>"; };
+		1564945592C5D6AC6E9FA2D28CE39B42 /* Row.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Row.swift; sourceTree = "<group>"; };
+		19E8C83D98D88D68EA6B29A9A496B53D /* ScreenViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ScreenViewController.swift; sourceTree = "<group>"; };
 		241A79BC67CD109BF70D08B89A3D81BF /* Pods-Rover_Example-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-Rover_Example-umbrella.h"; sourceTree = "<group>"; };
-		24B4607A57AB4FCDC0F528B58D331AD4 /* RoverObserver.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RoverObserver.swift; sourceTree = "<group>"; };
-		2D8BC78655340D54757410DF68D1C140 /* Router.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
+		26D81916A314151BBA0F70D37ADA9E55 /* Place.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Place.swift; sourceTree = "<group>"; };
+		2ABC8956CF850D75BBFA211FE8187787 /* BluetoothStatusOperation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BluetoothStatusOperation.swift; sourceTree = "<group>"; };
 		2FD231B15C0D1A98913F8CC3A2042D67 /* Pods_Rover_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Rover_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		30A04445202E1049FE87D9F4A20DAD6B /* BlockViewLayout.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BlockViewLayout.swift; sourceTree = "<group>"; };
-		31B1ED429A2D33F92AEC92D372190D90 /* Mappables.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Mappables.swift; sourceTree = "<group>"; };
 		3575E348A81E0DB4B78ECBD9AEACE7CE /* ResourceBundle-Rover-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "ResourceBundle-Rover-Info.plist"; sourceTree = "<group>"; };
-		366DB9D373AADDF69B30C259A5B28DD8 /* AssetCache.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AssetCache.swift; sourceTree = "<group>"; };
+		365116A5DE7FE56C392B2B8E3FE3E0A2 /* Experience.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Experience.swift; sourceTree = "<group>"; };
+		36E65A23192ABDCE3D03EA4214E8E2C5 /* RoverObserver.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RoverObserver.swift; sourceTree = "<group>"; };
 		37D26ABF3E3D55C659D13254611E23D8 /* Pods-Rover_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-Rover_Example.release.xcconfig"; sourceTree = "<group>"; };
 		3A2F5F2BB8D22799EFF0463AD689785A /* Pods-Rover_Example-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-Rover_Example-acknowledgements.markdown"; sourceTree = "<group>"; };
-		3EE4519DF45C940CE01F37ECFDC2F70C /* Serializables.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Serializables.swift; sourceTree = "<group>"; };
+		3B92FC5625D814DAB436445A88C35AFB /* ButtonBlockViewCell.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ButtonBlockViewCell.swift; sourceTree = "<group>"; };
 		3EEBBDEA6F2912F4D7C64F3C02BB3DE3 /* Rover.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = Rover.modulemap; sourceTree = "<group>"; };
-		408549C4D297940E6F81F7A9AB279C10 /* BluetoothStatusOperation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BluetoothStatusOperation.swift; sourceTree = "<group>"; };
-		4C40872A56C21F2195FAC7BED47281D6 /* TextBlockViewCell.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TextBlockViewCell.swift; sourceTree = "<group>"; };
-		4E1A1F92A3C19C66B9E6B6409E1B4E32 /* ButtonBlockViewCell.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ButtonBlockViewCell.swift; sourceTree = "<group>"; };
+		409EEEF94CACC4AABFF96C93E43C14E9 /* NetworkOperation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NetworkOperation.swift; sourceTree = "<group>"; };
 		510A191BB95F867AAB9278AC18ACC4A2 /* Rover.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Rover.xcconfig; sourceTree = "<group>"; };
+		574E53554E042EE215A310A0F7A6A390 /* BlockViewLayout.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BlockViewLayout.swift; sourceTree = "<group>"; };
+		589DE7A57659ABBA7D26076E234B3813 /* LocationManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		5BDE885A165A942D8A140C5A0CBA3345 /* Rover-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Rover-dummy.m"; sourceTree = "<group>"; };
-		6048B4759322C9480D4B50EC60BD8DD2 /* Common.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Common.swift; sourceTree = "<group>"; };
-		6B7FAC747819145E05DFB1F8DB94CCE9 /* ConcurrentOperation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConcurrentOperation.swift; sourceTree = "<group>"; };
-		7101596F309A9BECFA2FDCB9D5C35087 /* Message.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
+		64F8A626373F5FD77F048E5AC69D2E2C /* RVRGimbalPlaceManager.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = RVRGimbalPlaceManager.h; sourceTree = "<group>"; };
+		6FDEA2CC01E268BF07CE03628A0C96B5 /* Serializables.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Serializables.swift; sourceTree = "<group>"; };
 		74AB793574963654EAE295DFCF3F4714 /* Pods-Rover_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-Rover_Example.debug.xcconfig"; sourceTree = "<group>"; };
-		7C3BF8277C179D2783F2A7019AD975E2 /* ImageBlockViewCell.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ImageBlockViewCell.swift; sourceTree = "<group>"; };
-		7CC3510953C2EDC570CE4E19904DDFFC /* SerializingOperation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SerializingOperation.swift; sourceTree = "<group>"; };
-		7E74FBC30DF1B693B3ECF11ACB7D6E73 /* Rover.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Rover.swift; sourceTree = "<group>"; };
-		81C7EFE216F30C5941167D4C7831E32A /* MappingOperation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MappingOperation.swift; sourceTree = "<group>"; };
-		87B362BEC6E76B9A5BA111323F587A31 /* ScreenViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ScreenViewController.swift; sourceTree = "<group>"; };
-		88BE119BD5B390AAF059880E635D479A /* RVRGimbalPlaceManager.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = RVRGimbalPlaceManager.m; sourceTree = "<group>"; };
+		85F6D1CC6BE75D2EAE7B40744DC9CFB2 /* Rover.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Rover.swift; sourceTree = "<group>"; };
+		879D1FB13BC6BD002D21DE2F69B819B0 /* Customer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Customer.swift; sourceTree = "<group>"; };
 		8B46287475F7F66F2FC3EF4D5A733D10 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
-		8B6B64A9E3AAB1C7832AC834B9907754 /* LocationAuthorizationOperation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LocationAuthorizationOperation.swift; sourceTree = "<group>"; };
-		9038AC910D3D90B253F2745C3BD80E12 /* Screen.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Screen.swift; sourceTree = "<group>"; };
+		8E6E71FE34288744346C7227906700D7 /* SerializingOperation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SerializingOperation.swift; sourceTree = "<group>"; };
+		921635CD372034D2302F7D2ED0AC8117 /* AssetManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AssetManager.swift; sourceTree = "<group>"; };
 		93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
-		9683EC42F5289E1FEDAAD8D275E740E7 /* UIImageView+RVAsset.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "UIImageView+RVAsset.swift"; sourceTree = "<group>"; };
 		976197FE93FD6FDDE9ADE6672C396CA5 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		9B6862A8EFAFF3B20E5F29FB6623456E /* Pods-Rover_Example-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-Rover_Example-acknowledgements.plist"; sourceTree = "<group>"; };
-		A0CD2357D0B055BC6F934291C5AEA1E9 /* LocationManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
+		A156D4CB3D5BEE92B2B8D766BCDEEBE2 /* AssetCache.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AssetCache.swift; sourceTree = "<group>"; };
+		A34C376F08198EF24BE4D299CB520713 /* MappingOperation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MappingOperation.swift; sourceTree = "<group>"; };
 		A9D1643BBAF0BC670D6C7814C507EF29 /* Pods-Rover_Example-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-Rover_Example-frameworks.sh"; sourceTree = "<group>"; };
+		AA50C96E8B8BAA72029F603A5FF32F11 /* Screen.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Screen.swift; sourceTree = "<group>"; };
 		AB2DA248686CA9D219391CF5B8821DA5 /* Rover.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Rover.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
-		ACFB9DF261EF830C1850B24C3F665719 /* Event.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
-		AD0951E4506A717E0EC25D1EC00F74C4 /* Customer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Customer.swift; sourceTree = "<group>"; };
+		B007DE7CB11505C29472FA159177DAE4 /* Message.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
+		B184F1AC432F3C5265EC0F7C8A671E20 /* ConcurrentOperation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConcurrentOperation.swift; sourceTree = "<group>"; };
+		B2DBCED4749BCB8CD91D84A065D67046 /* ModalViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ModalViewController.swift; sourceTree = "<group>"; };
+		B891B59EDCC2817E97B26DBBFACFB9CD /* Router.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
+		B8E2367C5E611D98D28B6341D64BA202 /* LocationAuthorizationOperation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LocationAuthorizationOperation.swift; sourceTree = "<group>"; };
 		B96D4DFDE2D90C222B0D867D586240FB /* Rover-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Rover-umbrella.h"; sourceTree = "<group>"; };
-		B9B816CC9953E709879AA6BC2134D568 /* NetworkOperation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NetworkOperation.swift; sourceTree = "<group>"; };
 		B9E3759E3449146D1C9795415FAE1D15 /* Pods-Rover_Example-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-Rover_Example-dummy.m"; sourceTree = "<group>"; };
 		BB4BD8177EE85E6066B3543A211CA8E4 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		CA4112117F0E0447A7AD8375094C9AE2 /* AssetManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AssetManager.swift; sourceTree = "<group>"; };
-		CBC22FB08FC4A395D508BE09A57652D7 /* Block.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Block.swift; sourceTree = "<group>"; };
+		BCDC4D97BFF5DD55BA855C8063C1CFC4 /* WebBlockViewCell.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WebBlockViewCell.swift; sourceTree = "<group>"; };
+		C3ED57E49FB2C8D79FE09B1D77F9A8FC /* Mappables.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Mappables.swift; sourceTree = "<group>"; };
+		C792DCF99DD790C2977BF8ADDCD8F8BB /* Block.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Block.swift; sourceTree = "<group>"; };
+		C82517F25A98B78B81A279ECCA467A61 /* EventOperation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = EventOperation.swift; sourceTree = "<group>"; };
 		CD8B4BE3116082D91BE13D924407E8BC /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D129B7BDAF7B33F60E27EFB33D3316FF /* RVRGimbalPlaceManager.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = RVRGimbalPlaceManager.h; sourceTree = "<group>"; };
 		D23A062722F4459288D4443C7108DBBD /* Rover.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Rover.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D56FB7133A3A11C3364AFC4B9C4579E1 /* Pods-Rover_Example-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-Rover_Example-resources.sh"; sourceTree = "<group>"; };
+		D84BE1E2E63706B23EC1C86A06E1BCEC /* UIImageView+RVAsset.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "UIImageView+RVAsset.swift"; sourceTree = "<group>"; };
+		DA7711713763F3CBC1388CBCE257012E /* RVRGimbalPlaceManager.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = RVRGimbalPlaceManager.m; sourceTree = "<group>"; };
 		DB3BEEB7A9175090D42E2B0222FBDEC8 /* Rover-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Rover-prefix.pch"; sourceTree = "<group>"; };
 		DCF5C4E1FA3A269BCA07B8D5D73BF084 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/System/Library/Frameworks/CoreLocation.framework; sourceTree = DEVELOPER_DIR; };
 		E1165F1707D484D7D33F6026CE13FFC0 /* Pods-Rover_Example.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = "Pods-Rover_Example.modulemap"; sourceTree = "<group>"; };
-		E613258DA4A69E00A80DB173EF9BAA94 /* Place.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Place.swift; sourceTree = "<group>"; };
-		F5A8D0316C619199D936A1AFBF27C695 /* EventOperation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = EventOperation.swift; sourceTree = "<group>"; };
+		E55D7B7590FA260EDF8E47E3E658D5D4 /* TextBlockViewCell.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TextBlockViewCell.swift; sourceTree = "<group>"; };
+		E6690A5314A52F84D652A94093C25ACF /* Event.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
+		EC89A47784BA058D3522B6D576DED86F /* ImageBlockViewCell.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ImageBlockViewCell.swift; sourceTree = "<group>"; };
+		F554EDE0A1ED3B1F814F4511874C0C94 /* BeaconConfiguration.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BeaconConfiguration.swift; sourceTree = "<group>"; };
+		F82F30E8A8E4A8F4CFB769F383CF1584 /* Font.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Font.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -159,37 +169,11 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		016383B6648A47471F17F547172EA40D /* Network */ = {
+		000C15398269E263D3212FA89787DE7C /* Common */ = {
 			isa = PBXGroup;
 			children = (
-				81C7EFE216F30C5941167D4C7831E32A /* MappingOperation.swift */,
-				B9B816CC9953E709879AA6BC2134D568 /* NetworkOperation.swift */,
-				7CC3510953C2EDC570CE4E19904DDFFC /* SerializingOperation.swift */,
-			);
-			path = Network;
-			sourceTree = "<group>";
-		};
-		03C79A243C7A50BF9D9041D30F6EB526 /* UI */ = {
-			isa = PBXGroup;
-			children = (
-				366DB9D373AADDF69B30C259A5B28DD8 /* AssetCache.swift */,
-				CA4112117F0E0447A7AD8375094C9AE2 /* AssetManager.swift */,
-				30A04445202E1049FE87D9F4A20DAD6B /* BlockViewLayout.swift */,
-				4E1A1F92A3C19C66B9E6B6409E1B4E32 /* ButtonBlockViewCell.swift */,
-				7C3BF8277C179D2783F2A7019AD975E2 /* ImageBlockViewCell.swift */,
-				0FE63428AC4EF080C0AD084914F5206F /* NavigationController.swift */,
-				87B362BEC6E76B9A5BA111323F587A31 /* ScreenViewController.swift */,
-				4C40872A56C21F2195FAC7BED47281D6 /* TextBlockViewCell.swift */,
-				9683EC42F5289E1FEDAAD8D275E740E7 /* UIImageView+RVAsset.swift */,
-			);
-			path = UI;
-			sourceTree = "<group>";
-		};
-		0E47261B2D23578BEE4D9099074E52C2 /* Common */ = {
-			isa = PBXGroup;
-			children = (
-				6048B4759322C9480D4B50EC60BD8DD2 /* Common.swift */,
-				6B7FAC747819145E05DFB1F8DB94CCE9 /* ConcurrentOperation.swift */,
+				070CBEC1D7607A1A7A8AFE996CC860B3 /* Common.swift */,
+				B184F1AC432F3C5265EC0F7C8A671E20 /* ConcurrentOperation.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -202,20 +186,32 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		2459EF63A2960189B1475832AAD0BEC5 /* Model */ = {
+		17B76196C92D9A543B1747B31943955E /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				03522B332D9FDBFA202A9330BE168E31 /* BeaconConfiguration.swift */,
-				CBC22FB08FC4A395D508BE09A57652D7 /* Block.swift */,
-				AD0951E4506A717E0EC25D1EC00F74C4 /* Customer.swift */,
-				0F6D1CD356E882EA0482192DE85B8FA4 /* Device.swift */,
-				ACFB9DF261EF830C1850B24C3F665719 /* Event.swift */,
-				7101596F309A9BECFA2FDCB9D5C35087 /* Message.swift */,
-				E613258DA4A69E00A80DB173EF9BAA94 /* Place.swift */,
-				0368A0CECA2B8544A49C4579E34463F8 /* Row.swift */,
-				9038AC910D3D90B253F2745C3BD80E12 /* Screen.swift */,
+				F554EDE0A1ED3B1F814F4511874C0C94 /* BeaconConfiguration.swift */,
+				C792DCF99DD790C2977BF8ADDCD8F8BB /* Block.swift */,
+				879D1FB13BC6BD002D21DE2F69B819B0 /* Customer.swift */,
+				112C39257CBF80EC8428EC22A9BA3A3B /* Device.swift */,
+				E6690A5314A52F84D652A94093C25ACF /* Event.swift */,
+				365116A5DE7FE56C392B2B8E3FE3E0A2 /* Experience.swift */,
+				F82F30E8A8E4A8F4CFB769F383CF1584 /* Font.swift */,
+				B007DE7CB11505C29472FA159177DAE4 /* Message.swift */,
+				26D81916A314151BBA0F70D37ADA9E55 /* Place.swift */,
+				1564945592C5D6AC6E9FA2D28CE39B42 /* Row.swift */,
+				AA50C96E8B8BAA72029F603A5FF32F11 /* Screen.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		3D3B6589725AF7B869819E553C8979ED /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				A34C376F08198EF24BE4D299CB520713 /* MappingOperation.swift */,
+				409EEEF94CACC4AABFF96C93E43C14E9 /* NetworkOperation.swift */,
+				8E6E71FE34288744346C7227906700D7 /* SerializingOperation.swift */,
+			);
+			path = Network;
 			sourceTree = "<group>";
 		};
 		3D84E594E8418CC0A45F85BCE3227C47 /* Pods-Rover_Example */ = {
@@ -236,21 +232,21 @@
 			path = "Target Support Files/Pods-Rover_Example";
 			sourceTree = "<group>";
 		};
-		51AE08C13024F62D1A526725C106907C /* Gimbal */ = {
-			isa = PBXGroup;
-			children = (
-				D129B7BDAF7B33F60E27EFB33D3316FF /* RVRGimbalPlaceManager.h */,
-				88BE119BD5B390AAF059880E635D479A /* RVRGimbalPlaceManager.m */,
-			);
-			path = Gimbal;
-			sourceTree = "<group>";
-		};
 		51FECF5F67C8D6B188216F3418B862CD /* Development Pods */ = {
 			isa = PBXGroup;
 			children = (
 				718C9945CCFD0EF05593F49847A6775D /* Rover */,
 			);
 			name = "Development Pods";
+			sourceTree = "<group>";
+		};
+		58E856E854BF4F1A7E3EFC39D9114FF2 /* Gimbal */ = {
+			isa = PBXGroup;
+			children = (
+				64F8A626373F5FD77F048E5AC69D2E2C /* RVRGimbalPlaceManager.h */,
+				DA7711713763F3CBC1388CBCE257012E /* RVRGimbalPlaceManager.m */,
+			);
+			path = Gimbal;
 			sourceTree = "<group>";
 		};
 		60ADA8FAF821FC46D1ED65CE7F061994 /* Targets Support Files */ = {
@@ -282,6 +278,46 @@
 			);
 			sourceTree = "<group>";
 		};
+		80A7F5BB366B14EC8B9512A7FDDF23C9 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				2ABC8956CF850D75BBFA211FE8187787 /* BluetoothStatusOperation.swift */,
+				C82517F25A98B78B81A279ECCA467A61 /* EventOperation.swift */,
+				B8E2367C5E611D98D28B6341D64BA202 /* LocationAuthorizationOperation.swift */,
+				589DE7A57659ABBA7D26076E234B3813 /* LocationManager.swift */,
+				C3ED57E49FB2C8D79FE09B1D77F9A8FC /* Mappables.swift */,
+				B891B59EDCC2817E97B26DBBFACFB9CD /* Router.swift */,
+				85F6D1CC6BE75D2EAE7B40744DC9CFB2 /* Rover.swift */,
+				36E65A23192ABDCE3D03EA4214E8E2C5 /* RoverObserver.swift */,
+				6FDEA2CC01E268BF07CE03628A0C96B5 /* Serializables.swift */,
+				000C15398269E263D3212FA89787DE7C /* Common */,
+				58E856E854BF4F1A7E3EFC39D9114FF2 /* Gimbal */,
+				17B76196C92D9A543B1747B31943955E /* Model */,
+				3D3B6589725AF7B869819E553C8979ED /* Network */,
+				83D411B0D3BD6BDC21B5225BC36FE4A0 /* UI */,
+			);
+			path = Classes;
+			sourceTree = "<group>";
+		};
+		83D411B0D3BD6BDC21B5225BC36FE4A0 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				A156D4CB3D5BEE92B2B8D766BCDEEBE2 /* AssetCache.swift */,
+				921635CD372034D2302F7D2ED0AC8117 /* AssetManager.swift */,
+				1292DAECD1B3E31C0B15AB3DBEC9DB95 /* BlockViewCell.swift */,
+				574E53554E042EE215A310A0F7A6A390 /* BlockViewLayout.swift */,
+				3B92FC5625D814DAB436445A88C35AFB /* ButtonBlockViewCell.swift */,
+				042DADA5E0B955B2984D34B7BBC59AEF /* ExperienceViewController.swift */,
+				EC89A47784BA058D3522B6D576DED86F /* ImageBlockViewCell.swift */,
+				B2DBCED4749BCB8CD91D84A065D67046 /* ModalViewController.swift */,
+				19E8C83D98D88D68EA6B29A9A496B53D /* ScreenViewController.swift */,
+				E55D7B7590FA260EDF8E47E3E658D5D4 /* TextBlockViewCell.swift */,
+				D84BE1E2E63706B23EC1C86A06E1BCEC /* UIImageView+RVAsset.swift */,
+				BCDC4D97BFF5DD55BA855C8063C1CFC4 /* WebBlockViewCell.swift */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
 		BAE728F86D55D152907ED209B6B67CC5 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -292,31 +328,10 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		CB47933A7092BE180CA1D77DD1ED51DB /* Classes */ = {
-			isa = PBXGroup;
-			children = (
-				408549C4D297940E6F81F7A9AB279C10 /* BluetoothStatusOperation.swift */,
-				F5A8D0316C619199D936A1AFBF27C695 /* EventOperation.swift */,
-				8B6B64A9E3AAB1C7832AC834B9907754 /* LocationAuthorizationOperation.swift */,
-				A0CD2357D0B055BC6F934291C5AEA1E9 /* LocationManager.swift */,
-				31B1ED429A2D33F92AEC92D372190D90 /* Mappables.swift */,
-				2D8BC78655340D54757410DF68D1C140 /* Router.swift */,
-				7E74FBC30DF1B693B3ECF11ACB7D6E73 /* Rover.swift */,
-				24B4607A57AB4FCDC0F528B58D331AD4 /* RoverObserver.swift */,
-				3EE4519DF45C940CE01F37ECFDC2F70C /* Serializables.swift */,
-				0E47261B2D23578BEE4D9099074E52C2 /* Common */,
-				51AE08C13024F62D1A526725C106907C /* Gimbal */,
-				2459EF63A2960189B1475832AAD0BEC5 /* Model */,
-				016383B6648A47471F17F547172EA40D /* Network */,
-				03C79A243C7A50BF9D9041D30F6EB526 /* UI */,
-			);
-			path = Classes;
-			sourceTree = "<group>";
-		};
 		D87FC4CF2903FCD252BC6418C8492010 /* Pod */ = {
 			isa = PBXGroup;
 			children = (
-				CB47933A7092BE180CA1D77DD1ED51DB /* Classes */,
+				80A7F5BB366B14EC8B9512A7FDDF23C9 /* Classes */,
 			);
 			path = Pod;
 			sourceTree = "<group>";
@@ -408,7 +423,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4A2F1AF3BAFAD670475743AEC7650E0F /* Build configuration list for PBXNativeTarget "Rover" */;
 			buildPhases = (
-				DA9F0E10B9F6134623D5A280D9F9868A /* Sources */,
+				56ADDF50C9BCC2D5DAFE07FEF9FBBBE6 /* Sources */,
 				5F01310124ECF1254C6A03454A889348 /* Frameworks */,
 				0E1C6A25AE79BDB9A47218EF73DB1D18 /* Resources */,
 				706AF37991218EAD9E33606E8C281DD5 /* Headers */,
@@ -477,52 +492,57 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		56ADDF50C9BCC2D5DAFE07FEF9FBBBE6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1AD8411D1F08C7FF113499E90E3A498C /* AssetCache.swift in Sources */,
+				1D0D242FF3CA540A69DCD783BE76CED1 /* AssetManager.swift in Sources */,
+				6195E76ECB2B891C981388BA87A5439D /* BeaconConfiguration.swift in Sources */,
+				15638AD5270C46F03DC21C177B13C922 /* Block.swift in Sources */,
+				A7D6D693956CF89751C23D1FF8FE5897 /* BlockViewCell.swift in Sources */,
+				A613A31B90942759E9AA657E7681AD65 /* BlockViewLayout.swift in Sources */,
+				F4BB250F2CB2DBD39DB651AAB713E9FB /* BluetoothStatusOperation.swift in Sources */,
+				A26AC398BBF8FA9243946D268160C997 /* ButtonBlockViewCell.swift in Sources */,
+				1F7FDB44A41B896BD79C9854E5294F8B /* Common.swift in Sources */,
+				CB9DBB6BE9927CF14A1C69FAC63C9CAD /* ConcurrentOperation.swift in Sources */,
+				08ADAD5BC7224A4C69CE9EFE8A8BE452 /* Customer.swift in Sources */,
+				1EF8707722FA30E03859ED8FCA084F86 /* Device.swift in Sources */,
+				B5B477BE3A1D37FCD9439AD9B1C880C8 /* Event.swift in Sources */,
+				ED11550E54376E853ED671541D771AD7 /* EventOperation.swift in Sources */,
+				64B5262E2327031BDFFDD42DECBAC11A /* Experience.swift in Sources */,
+				443050F014277B000C40B013807EDC0B /* ExperienceViewController.swift in Sources */,
+				63B1F0F3469B551110F7C3E19BB22683 /* Font.swift in Sources */,
+				BB091AD55B7F2118B2C7C675F8EF328D /* ImageBlockViewCell.swift in Sources */,
+				3E18D8578D8A4A55A303AAD6DE4F8EED /* LocationAuthorizationOperation.swift in Sources */,
+				41D2729B683B5E49B361015281C47332 /* LocationManager.swift in Sources */,
+				82F19C5EB517459DE9F0C4CED9902D23 /* Mappables.swift in Sources */,
+				2DDF1E619F60115191D85C2147A4E7B7 /* MappingOperation.swift in Sources */,
+				9CEA4800629382C48E2A8A18CE368A18 /* Message.swift in Sources */,
+				D5E68E4FCCE1B81031EA655A93AF528E /* ModalViewController.swift in Sources */,
+				B6C977877D6B7277D7B9F2DE00AC92AD /* NetworkOperation.swift in Sources */,
+				1E0C0456B9A6A5FD64904CD32CD136C9 /* Place.swift in Sources */,
+				AA394F53FFD01545973473C1F5CB0232 /* Router.swift in Sources */,
+				C846F42D008DE1FDA2971CE706478985 /* Rover-dummy.m in Sources */,
+				F61F4282C6796D12A431873C4873026D /* Rover.swift in Sources */,
+				5DF10FBA79B36502B330B24E2E62496F /* RoverObserver.swift in Sources */,
+				AD5B1E56A1D92BEFA7F109164D60045B /* Row.swift in Sources */,
+				007E493022E00A0581D3A65859C66E2F /* RVRGimbalPlaceManager.m in Sources */,
+				7C35AD70E232B64E2DD2026240E83F7E /* Screen.swift in Sources */,
+				0D99CA6B88576531430EDF3E1D2127A3 /* ScreenViewController.swift in Sources */,
+				0D774E2B7801ED4E6EB0098DB49BDEE6 /* Serializables.swift in Sources */,
+				446964BC6BAAEC16C1C3E72AD169E449 /* SerializingOperation.swift in Sources */,
+				BEBD0CBD4B06FEBA7B1D5261902F48E5 /* TextBlockViewCell.swift in Sources */,
+				7FBA1648555071E43C567F84482B7983 /* UIImageView+RVAsset.swift in Sources */,
+				C8E93E843D4CC9E2699AE16AC07759BA /* WebBlockViewCell.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		628320A937BD9A973EB278C97D307938 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				2FB5F50536766183815199D1F1EB354D /* Pods-Rover_Example-dummy.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		DA9F0E10B9F6134623D5A280D9F9868A /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				5355B4C88ECBA5572D0E1070C4688A6D /* AssetCache.swift in Sources */,
-				5299C9E174F460B1D5C29116A57A516A /* AssetManager.swift in Sources */,
-				6F16630CA45D97E53A10BFDB699C8FE2 /* BeaconConfiguration.swift in Sources */,
-				BD23430B4CFDB1CE897D05F70E701337 /* Block.swift in Sources */,
-				21762D18F15850113E5C8F7B41390C4B /* BlockViewLayout.swift in Sources */,
-				F31B839E8A4BB764DA08FF2451A149C4 /* BluetoothStatusOperation.swift in Sources */,
-				BDA451A87BEF4CBD7D9D68A96E9C86FB /* ButtonBlockViewCell.swift in Sources */,
-				5651F93435807CC6D20796462973CD7F /* Common.swift in Sources */,
-				896AF28769D6D780834FC813EF148AA4 /* ConcurrentOperation.swift in Sources */,
-				62723E312BF6E93B0B92C82C486C1AFF /* Customer.swift in Sources */,
-				F85F85B86F382A181B110703C9FACA1A /* Device.swift in Sources */,
-				CB80AA055F4B99DC06C89996052575E8 /* Event.swift in Sources */,
-				7A6C93D08D78764AE0E14DF8D66961D1 /* EventOperation.swift in Sources */,
-				CDCFC0FBEEEEA5D738EB9990E6F681CF /* ImageBlockViewCell.swift in Sources */,
-				63B000C9D253B778FA3B31131D587BF0 /* LocationAuthorizationOperation.swift in Sources */,
-				B609B74AC94C1C3A2F54A26D9C136E42 /* LocationManager.swift in Sources */,
-				1CD7428701A413A516DED17B3E26526D /* Mappables.swift in Sources */,
-				40A67FDE66822A278E189D4C717AB847 /* MappingOperation.swift in Sources */,
-				546EB2D6F957E613571EB0EBDC9FF105 /* Message.swift in Sources */,
-				B4481AC231B4C7DE7C12E370FFFB90A5 /* NavigationController.swift in Sources */,
-				3E101BD20787E8895029990F6DC761E4 /* NetworkOperation.swift in Sources */,
-				44FA57E4D6D8C809A65A92BB836CFDDD /* Place.swift in Sources */,
-				8DAAA55D61294AB4168E0CE56303B234 /* Router.swift in Sources */,
-				73869EDDC794EF58CA13B7A5F162913E /* Rover-dummy.m in Sources */,
-				C18C4F764AF393EF26AC89B2B89C6398 /* Rover.swift in Sources */,
-				D5DD97CC45AB0F75791CB441ADF9EDA5 /* RoverObserver.swift in Sources */,
-				FF4EE9657BDEDB2DE08A97EFBE06EA08 /* Row.swift in Sources */,
-				71F476F817E7FE7406C783BC8CEBDB37 /* RVRGimbalPlaceManager.m in Sources */,
-				17FD9F4B899EB01BD6019DEC28048AC1 /* Screen.swift in Sources */,
-				6BDA16A5504EE4EDB2E16B2BF384B3D4 /* ScreenViewController.swift in Sources */,
-				832D3509AA46AC06E6FB60F33D1A18DF /* Serializables.swift in Sources */,
-				70BD91303440DFCCABD4B7C206A36A07 /* SerializingOperation.swift in Sources */,
-				5CDDB45D06CC4FC78C44F7245738C962 /* TextBlockViewCell.swift in Sources */,
-				A452E9543AD57956DC37B1A21C43E05A /* UIImageView+RVAsset.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -586,7 +606,7 @@
 			};
 			name = Debug;
 		};
-		699DB23E8624F333386F31A273929645 /* Release */ = {
+		25405DC68AC3B92A34825CBEEA155667 /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 510A191BB95F867AAB9278AC18ACC4A2 /* Rover.xcconfig */;
 			buildSettings = {
@@ -615,37 +635,7 @@
 			};
 			name = Release;
 		};
-		7158660A7C262E31D9FBDB083A4E6064 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 510A191BB95F867AAB9278AC18ACC4A2 /* Rover.xcconfig */;
-			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREFIX_HEADER = "Target Support Files/Rover/Rover-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/Rover/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MODULEMAP_FILE = "Target Support Files/Rover/Rover.modulemap";
-				MTL_ENABLE_DEBUG_INFO = YES;
-				PRODUCT_NAME = Rover;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
-		};
-		90F88D96A3F995A65C813A39B4B7CFA5 /* Release */ = {
+		63223853837970B652EC58B6B352FC0E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 510A191BB95F867AAB9278AC18ACC4A2 /* Rover.xcconfig */;
 			buildSettings = {
@@ -653,7 +643,24 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				INFOPLIST_FILE = "Target Support Files/Rover/ResourceBundle-Rover-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
+				PRODUCT_NAME = Rover;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Debug;
+		};
+		9A7AEFDD342232F9231B52E6666F775B /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 510A191BB95F867AAB9278AC18ACC4A2 /* Rover.xcconfig */;
+			buildSettings = {
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/Rover";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = "Target Support Files/Rover/ResourceBundle-Rover-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				PRODUCT_NAME = Rover;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -661,23 +668,6 @@
 				WRAPPER_EXTENSION = bundle;
 			};
 			name = Release;
-		};
-		C0E6711136227DB04A09E0EB1ECF98F4 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 510A191BB95F867AAB9278AC18ACC4A2 /* Rover.xcconfig */;
-			buildSettings = {
-				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/Rover";
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				INFOPLIST_FILE = "Target Support Files/Rover/ResourceBundle-Rover-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				PRODUCT_NAME = Rover;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				WRAPPER_EXTENSION = bundle;
-			};
-			name = Debug;
 		};
 		C7E474A03CAE21F1CB6046E7344C59BD /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -751,6 +741,36 @@
 			};
 			name = Debug;
 		};
+		EE4EDD609F93B4201A66DB0E64F87824 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 510A191BB95F867AAB9278AC18ACC4A2 /* Rover.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREFIX_HEADER = "Target Support Files/Rover/Rover-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/Rover/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = "Target Support Files/Rover/Rover.modulemap";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = Rover;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
 		F03A424D54E652019BB01178FE547E72 /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 37D26ABF3E3D55C659D13254611E23D8 /* Pods-Rover_Example.release.xcconfig */;
@@ -790,8 +810,8 @@
 		1A9524E9740DC9C8F1391C9DB8435ED3 /* Build configuration list for PBXNativeTarget "Rover-Rover" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C0E6711136227DB04A09E0EB1ECF98F4 /* Debug */,
-				90F88D96A3F995A65C813A39B4B7CFA5 /* Release */,
+				63223853837970B652EC58B6B352FC0E /* Debug */,
+				9A7AEFDD342232F9231B52E6666F775B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -808,8 +828,8 @@
 		4A2F1AF3BAFAD670475743AEC7650E0F /* Build configuration list for PBXNativeTarget "Rover" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				7158660A7C262E31D9FBDB083A4E6064 /* Debug */,
-				699DB23E8624F333386F31A273929645 /* Release */,
+				EE4EDD609F93B4201A66DB0E64F87824 /* Debug */,
+				25405DC68AC3B92A34825CBEEA155667 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -10,11 +10,15 @@ import UIKit
 
 @objc public protocol ScreenViewControllerDelegate: class {
     optional func screenViewController(viewController: ScreenViewController, handleOpenURL url: NSURL)
+    optional func screenViewController(viewController: ScreenViewController, handleOpenScreenWithIdentifier identifier: String)
+    optional func screenViewController(viewController: ScreenViewController, didPressBlock block: Block)
 }
 
+private let defaultBlockCellIdentifier = "defaultBlockCellIdentifier"
 private let textBlockCellIdentifier = "textBlockCellIdentifier"
 private let imageBlockCellIdentifier = "imageBlockCellIdentifier"
 private let buttonBlockCellIdentifier = "buttonBlockCellIdentifier"
+private let webBlockCellIdentifier = "webBlockCellIdentifier"
 
 public class ScreenViewController: UICollectionViewController {
     
@@ -29,8 +33,9 @@ public class ScreenViewController: UICollectionViewController {
     
     public weak var delegate: ScreenViewControllerDelegate?
     
+    let layout = BlockViewLayout()
+    
     public init() {
-        let layout = BlockViewLayout()
         super.init(collectionViewLayout: layout)
         layout.dataSource = self
     }
@@ -52,13 +57,12 @@ public class ScreenViewController: UICollectionViewController {
         // self.clearsSelectionOnViewWillAppear = false
 
         // Register cell classes
+        self.collectionView!.registerClass(BlockViewCell.self, forCellWithReuseIdentifier: defaultBlockCellIdentifier)
         self.collectionView!.registerClass(TextBlockViewCell.self, forCellWithReuseIdentifier: textBlockCellIdentifier)
         self.collectionView!.registerClass(ImageBlockViewCell.self, forCellWithReuseIdentifier: imageBlockCellIdentifier)
         self.collectionView!.registerClass(ButtonBlockViewCell.self, forCellWithReuseIdentifier: buttonBlockCellIdentifier)
-        
-        //if let navBarColor = screen?.navBarColor {
+        self.collectionView!.registerClass(WebBlockViewCell.self, forCellWithReuseIdentifier: webBlockCellIdentifier)
 
-        //}
     }
     
     public override func viewWillAppear(animated: Bool) {
@@ -76,12 +80,44 @@ public class ScreenViewController: UICollectionViewController {
         // Dispose of any resources that can be recreated.
     }
     
+    var leftNavBarItem: UIBarButtonItem?
+    var rightNavBarItem: UIBarButtonItem?
+    
     func reloadScreen() {
         self.title = screen?.title
+        self.collectionView!.backgroundView = nil
         self.collectionView!.backgroundColor = screen?.backgroundColor ?? UIColor.whiteColor()
         
         if !(screen?.useDefaultNavBarStyle ?? true) {
             applyNavigationBarStyle()
+        }
+        
+        leftNavBarItem = navigationItem.leftBarButtonItem
+        rightNavBarItem = navigationItem.rightBarButtonItem
+        
+        switch screen?.navBarButtons {
+        case .Close?:
+            navigationItem.leftBarButtonItem = nil
+            navigationItem.setHidesBackButton(true, animated: true)
+            navigationItem.rightBarButtonItem = rightNavBarItem
+        case .Back?:
+            navigationItem.rightBarButtonItem = nil
+            navigationItem.leftBarButtonItem = leftNavBarItem
+            navigationItem.setHidesBackButton(false, animated: true)
+        case .None?:
+            navigationItem.leftBarButtonItem = nil
+            navigationItem.rightBarButtonItem = nil
+            navigationItem.setHidesBackButton(true, animated: true)
+        default:
+            navigationItem.leftBarButtonItem = leftNavBarItem
+            navigationItem.rightBarButtonItem = rightNavBarItem
+            navigationItem.setHidesBackButton(false, animated: true)
+        }
+        
+        if let backgroundImage = screen?.backgroundImage {
+            let imageView = UIImageView()
+            imageView.setBackgroundImage(url: backgroundImage.url, contentMode: screen!.backgorundContentMode, scale: screen!.backgroundScale)
+            self.collectionView!.backgroundView = imageView
         }
     }
     
@@ -134,22 +170,23 @@ public class ScreenViewController: UICollectionViewController {
     }
 
     override public func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        var cell: UICollectionViewCell
+        var cell: BlockViewCell
         let block = screen?.rows[indexPath.section].blocks[indexPath.row]
         
         switch block {
         case let textBlock as TextBlock:
             let textCell = collectionView.dequeueReusableCellWithReuseIdentifier(textBlockCellIdentifier, forIndexPath: indexPath) as! TextBlockViewCell
         
-            textCell.text = textBlock.text
+            textCell.text = textBlock.attributedText
             textCell.textAlignment = textBlock.textAlignment
             textCell.textColor = textBlock.textColor
-            textCell.font = textBlock.font
+            //textCell.font = textBlock.font
 
             cell = textCell
         case let imageBlock as ImageBock:
             let imageCell = collectionView.dequeueReusableCellWithReuseIdentifier(imageBlockCellIdentifier, forIndexPath: indexPath) as! ImageBlockViewCell
             
+            // TODO: cancel any requests or images from the reused cell
             imageCell.imageView.rv_setImage(url: imageBlock.image?.url, activityIndicatorStyle: .Gray)
             
             cell = imageCell
@@ -157,7 +194,7 @@ public class ScreenViewController: UICollectionViewController {
             let buttonCell = collectionView.dequeueReusableCellWithReuseIdentifier(buttonBlockCellIdentifier, forIndexPath: indexPath) as! ButtonBlockViewCell
             
             buttonBlock.appearences.forEach { (state, appearance) in
-                buttonCell.setTitle(appearance.title, forState: state.controlState)
+                buttonCell.setTitle(appearance.attributedTitle, forState: state.controlState)
                 buttonCell.setTitleColor(appearance.titleColor, forState: state.controlState)
                 buttonCell.setTitleAlignment(appearance.titleAlignment, forState: state.controlState)
                 buttonCell.setTitleOffset(appearance.titleOffset, forState: state.controlState)
@@ -168,18 +205,49 @@ public class ScreenViewController: UICollectionViewController {
                 buttonCell.setCornerRadius(appearance.borderRadius, forState: state.controlState)
             }
             
-            buttonCell.delegate = self
-            
             cell = buttonCell
+        case let webBlock as WebBlock:
+            let webCell = collectionView.dequeueReusableCellWithReuseIdentifier(webBlockCellIdentifier, forIndexPath: indexPath) as! WebBlockViewCell
+            
+            webCell.url = webBlock.url
+            webCell.scrollable = webBlock.scrollable
+            
+            cell = webCell
         default:
-            fatalError("Unknown block type")
+            cell = collectionView.dequeueReusableCellWithReuseIdentifier(defaultBlockCellIdentifier, forIndexPath: indexPath) as! BlockViewCell
         }
+        
+        // BackgroundImage
+        
+        if let backgroundImage = block?.backgroundImage {
+            var backgroundView = UIImageView()
+            backgroundView.setBackgroundImage(url: backgroundImage.url, contentMode: block!.backgroundContentMode, scale: block!.backgroundScale)
+            cell.backgroundView = backgroundView
+        } else {
+            cell.backgroundView = nil
+        }
+        
+        // Appearance
         
         if !(cell is ButtonBlockViewCell) {
         	cell.backgroundColor = block?.backgroundColor
         	cell.layer.borderColor = block?.borderColor.CGColor
             cell.layer.borderWidth = block?.borderWidth ?? cell.layer.borderWidth
             cell.layer.cornerRadius = block?.borderRadius ?? cell.layer.cornerRadius
+        }
+        
+        cell.layer.opacity = block?.opacity ?? cell.layer.opacity
+        
+        cell.inset = block?.inset ?? cell.inset
+        cell.delegate = self
+
+        
+        if let clipPath = layout.clipPathForItemAtIndexPath(indexPath) {
+            let maskLayer = CAShapeLayer()
+            maskLayer.path = clipPath
+            cell.layer.mask = maskLayer
+        } else {
+            cell.layer.mask = nil
         }
         
         return cell
@@ -216,39 +284,31 @@ public class ScreenViewController: UICollectionViewController {
     }
     */
     
-    public func showActivityIndicator() {
-        let activityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: .Gray)
-        view.addSubview(activityIndicatorView)
-        view.addConstraints([
-            NSLayoutConstraint(item: activityIndicatorView, attribute: .CenterX, relatedBy: .Equal, toItem: view, attribute: .CenterX, multiplier: 1, constant: 0),
-            NSLayoutConstraint(item: activityIndicatorView, attribute: .CenterY, relatedBy: .Equal, toItem: view, attribute: .CenterY, multiplier: 1, constant: 0)
-            ])
-        activityIndicatorView.startAnimating()
-        self.activityIndicatorView = activityIndicatorView
-    }
-    
-    public func hideActivityIndicator() {
-        activityIndicatorView?.stopAnimating()
-        activityIndicatorView?.removeFromSuperview()
+    public override func willRotateToInterfaceOrientation(toInterfaceOrientation: UIInterfaceOrientation, duration: NSTimeInterval) {
+        super.willRotateToInterfaceOrientation(toInterfaceOrientation, duration: duration)
+        layout.invalidateLayout()
+        collectionView?.reloadData()
     }
 
 }
 
-extension ScreenViewController : ButtonBlockViewCellDelegate {
-    func buttonBlockViewCellDidPressButton(cell: ButtonBlockViewCell) {
+extension ScreenViewController : BlockViewCellDelegate {
+    func blockViewCellDidPressButton(cell: BlockViewCell) {
         guard let indexPath = collectionView!.indexPathForCell(cell),
-            buttonBlock = screen?.rows[indexPath.section].blocks[indexPath.row] as? ButtonBlock,
-            action = buttonBlock.action else { return }
+            block = screen?.rows[indexPath.section].blocks[indexPath.row],
+            action = block.action else { return }
+        
+        delegate?.screenViewController?(self, didPressBlock:block)
         
         switch action {
         case .Deeplink(let url):
             UIApplication.sharedApplication().openURL(url)
-        case .Website(let url):
-            if let urlDelegate = delegate?.screenViewController {
-                urlDelegate(self, handleOpenURL: url)
-            } else {
-                UIApplication.sharedApplication().openURL(url)
-            }
+        case .Website(let url): // Legacy
+            //guard let urlDelegate = delegate?.screenViewController?(self, handleOpenURL: url) else { return }
+
+            UIApplication.sharedApplication().openURL(url)
+        case .Screen(let identifier):
+            delegate?.screenViewController?(self, handleOpenScreenWithIdentifier: identifier)
         }
     }
 }
@@ -297,4 +357,33 @@ extension ButtonBlock.State {
     }
 }
 
+extension UIViewContentMode {
+    init(imageContentMode: ImageContentMode) {
+        switch imageContentMode {
+        case .Fill:
+            self = .ScaleAspectFill
+        case .Fit:
+            self = .ScaleAspectFit
+        case .Stretch:
+            self = .ScaleToFill
+        default:
+            self = .Center
+        }
+    }
+}
+
+extension UIImageView {
+    func setBackgroundImage(url url: NSURL, contentMode: ImageContentMode, scale: CGFloat) {
+        AssetManager.sharedManager.fetchAsset(url: url) { (data) in
+            guard let data = data, image = UIImage(data: data, scale: scale) else { return }
+            switch contentMode {
+            case .Tile:
+                self.backgroundColor = UIColor(patternImage: image)
+            default:
+                self.image = image
+                self.contentMode = UIViewContentMode(imageContentMode: contentMode)
+            }
+        }
+    }
+}
 

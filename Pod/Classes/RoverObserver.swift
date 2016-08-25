@@ -67,4 +67,14 @@ public protocol RoverObserver {
         - message: The `Message` to be openned.
      */
     optional func shouldOpenMessage(message: Message) -> Bool
+    
+    /*
+     Called when any ExperienceViewController is about to load and render an Experience.
+     Use this method to make any custom changes to the Experience.
+     
+     - parameters:
+        - viewController: The `ExperienceViewController` instance that is about to load and render the experience.
+        - experience: The `Experience` that is about to be loaded and rendered.
+     */
+    optional func experienceViewController(viewController: ExperienceViewController, willLoadExperience experience: Experience)
 }

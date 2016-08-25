@@ -20,7 +20,7 @@ class AssetManager {
         
         if let data = cache.inMemoryCachedData(key: key) {
             dispatch_async(dispatch_get_main_queue()) {
-                rvLog("Asset found in memory cache", data: url.path, level: .Trace)
+                //rvLog("Asset found in memory cache", data: url.path, level: .Trace)
                 completion(data)
             }
             return
@@ -40,7 +40,7 @@ class AssetManager {
         
         cache.queryDiskCache(key: key) { (data, error) in
             if let data = data {
-                rvLog("Asset found on disk cache", data: url.path, level: .Trace)
+                //rvLog("Asset found on disk cache", data: url.path, level: .Trace)
                 completion(data)
                 return
             }
@@ -64,6 +64,6 @@ class AssetManager {
     // MARK: Helpers
     
     func cacheKey(url url: NSURL) -> String {
-        return url.lastPathComponent ?? url.absoluteString
+        return url.absoluteString.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding) ?? url.absoluteString
     }
 }

@@ -243,7 +243,6 @@ public class ScreenViewController: UICollectionViewController {
 
         
         if let clipPath = layout.clipPathForItemAtIndexPath(indexPath) {
-            print("Block: \(block)")
             let maskLayer = CAShapeLayer()
             maskLayer.path = clipPath
             cell.layer.mask = maskLayer
@@ -284,6 +283,12 @@ public class ScreenViewController: UICollectionViewController {
     
     }
     */
+    
+    public override func willRotateToInterfaceOrientation(toInterfaceOrientation: UIInterfaceOrientation, duration: NSTimeInterval) {
+        super.willRotateToInterfaceOrientation(toInterfaceOrientation, duration: duration)
+        layout.invalidateLayout()
+        collectionView?.reloadData()
+    }
 
 }
 
@@ -299,7 +304,7 @@ extension ScreenViewController : BlockViewCellDelegate {
         case .Deeplink(let url):
             UIApplication.sharedApplication().openURL(url)
         case .Website(let url): // Legacy
-            guard let urlDelegate = delegate?.screenViewController?(self, handleOpenURL: url) else { return }
+            //guard let urlDelegate = delegate?.screenViewController?(self, handleOpenURL: url) else { return }
 
             UIApplication.sharedApplication().openURL(url)
         case .Screen(let identifier):

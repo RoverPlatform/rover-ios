@@ -300,7 +300,7 @@ extension Block : Mappable {
             block = WebBlock(url: url)
             
             let webBlock = block as! WebBlock
-            webBlock.scrollable = true//JSON["scrollable"] as? Bool ?? webBlock.scrollable
+            webBlock.scrollable = JSON["scrollable"] as? Bool ?? webBlock.scrollable
         default:
             block = Block()
         }

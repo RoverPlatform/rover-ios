@@ -139,7 +139,9 @@ class TextBlock: Block {
                 
                 attributedString.addAttributes(attributes, range: NSMakeRange(0, attributedString.length))
                 
-                if attributedString.length > 0 {
+                let string = attributedString.string
+                
+                if attributedString.length > 0 && string.substringFromIndex(string.endIndex.advancedBy(-1)) == "\n" {
                     attributedString.replaceCharactersInRange(NSMakeRange(attributedString.length - 1, 1), withString: "")
                 }
                 

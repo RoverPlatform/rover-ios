@@ -13,7 +13,7 @@ We monitor these issues regularly and usually respond within an hour.
 
 ## Requirements
   - XCode 7 or higher
-  - iOS 8.0 or higher
+  - iOS 8.4 or higher
   - iPhone 4S or higher
 
 ## Installing the library
@@ -154,14 +154,16 @@ Rover.registerForNotifications()
 The Rover SDK needs a few more hooks in your AppDelegate to fully enable notifications, so make sure the following delegate methods are passed onto Rover.
 
 ```swift
-  func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject], fetchCompletionHandler completionHandler: (UIBackgroundFetchResult) -> Void) {
-      Rover.didReceiveRemoteNotification(userInfo, fetchCompletionHandler: completionHandler)
+  func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]) {
+      Rover.didReceiveRemoteNotification(userInfo, fetchCompletionHandler: nil)
   }
     
   func application(application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData) {
       Rover.didRegisterForRemoteNotification(deviceToken: deviceToken)
   }
 ```
+
+NOTE: If you have `Remote notificaitons` enabled as a background mode in your iOS app, you should implement the `Rover.didReceiveRemoteNotification(_:fethCompletionHandler:)` method in the `application(_:didReceiveRemoteNotification:fetchCompletionHandler:)` equivilant instead, passing along the respective arguments.
 
 ### Message Observers
 

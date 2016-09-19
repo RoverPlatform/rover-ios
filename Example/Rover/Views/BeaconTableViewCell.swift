@@ -10,8 +10,8 @@ import UIKit
 
 @objc
 protocol BeaconTableViewCellDelegate: class {
-    optional func beaconTableViewCellDidPressEnter(cell: BeaconTableViewCell)
-    optional func beaconTableViewCellDidPressExit(cell: BeaconTableViewCell)
+    @objc optional func beaconTableViewCellDidPressEnter(_ cell: BeaconTableViewCell)
+    @objc optional func beaconTableViewCellDidPressExit(_ cell: BeaconTableViewCell)
 }
 
 class BeaconTableViewCell: UITableViewCell {
@@ -29,17 +29,17 @@ class BeaconTableViewCell: UITableViewCell {
         
     }
 
-    override func setSelected(selected: Bool, animated: Bool) {
+    override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
         // Configure the view for the selected state
     }
 
-    @IBAction func enterClicked(sender: UIButton) {
+    @IBAction func enterClicked(_ sender: UIButton) {
         delegate?.beaconTableViewCellDidPressEnter?(self)
     }
     
-    @IBAction func exitClicked(sender: UIButton) {
+    @IBAction func exitClicked(_ sender: UIButton) {
         delegate?.beaconTableViewCellDidPressExit?(self)
     }
     

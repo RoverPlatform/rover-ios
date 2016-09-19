@@ -23,7 +23,7 @@ public protocol RoverObserver {
         - config: The configuration of the beacon as it was set in the Rover Proximity App.
         - place: The place of the beacon if had been assigned.
      */
-    optional func didEnterBeaconRegion(config config: BeaconConfiguration, place: Place?)
+    @objc optional func didEnterBeaconRegion(config: BeaconConfiguration, place: Place?)
     
     /*
      Called when user exits a beacon region.
@@ -32,7 +32,7 @@ public protocol RoverObserver {
         - config: The configuration of the beacon as it was set in the Rover Proximity App.
         - place: The place of the beacon if had been assigned.
      */
-    optional func didExitBeaconRegion(config config: BeaconConfiguration, place: Place?)
+    @objc optional func didExitBeaconRegion(config: BeaconConfiguration, place: Place?)
     
     
     /*
@@ -41,7 +41,7 @@ public protocol RoverObserver {
      - paramters: 
         - place: The place that was entered.
     */
-    optional func didEnterGeofence(place place: Place) // 3 rules of real estate!!! :)
+    @objc optional func didEnterGeofence(place: Place) // 3 rules of real estate!!! :)
     
     /*
      Called when user exits a geofence.
@@ -49,7 +49,7 @@ public protocol RoverObserver {
      - parameters:
         - place: The place that was exited.
      */
-    optional func didExitGeofence(place place: Place)
+    @objc optional func didExitGeofence(place: Place)
     
     /*
      Called after a `Message` has been received.
@@ -57,7 +57,7 @@ public protocol RoverObserver {
      - parameters:
         - message: The `Message` that was received.
      */
-    optional func didReceiveMessage(message: Message)
+    @objc optional func didReceiveMessage(_ message: Message)
     
     /*
      Called to after a message has been received. Returning true will open the message content
@@ -66,7 +66,7 @@ public protocol RoverObserver {
      - parameters:
         - message: The `Message` to be openned.
      */
-    optional func shouldOpenMessage(message: Message) -> Bool
+    @objc optional func shouldOpenMessage(_ message: Message) -> Bool
     
     /*
      Called when any ExperienceViewController is about to load and render an Experience.
@@ -76,5 +76,5 @@ public protocol RoverObserver {
         - viewController: The `ExperienceViewController` instance that is about to load and render the experience.
         - experience: The `Experience` that is about to be loaded and rendered.
      */
-    optional func experienceViewController(viewController: ExperienceViewController, willLoadExperience experience: Experience)
+    @objc optional func experienceViewController(_ viewController: ExperienceViewController, willLoadExperience experience: Experience)
 }

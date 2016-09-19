@@ -8,7 +8,7 @@
 
 import Foundation
 
-public class Font : NSObject {
+open class Font : NSObject {
     let size: CGFloat
     let weight: Int
     
@@ -30,6 +30,6 @@ public class Font : NSObject {
             900: UIFontWeightBlack
         ]
         
-        return UIFont.systemFontOfSize(size, weight: weights[weight] ?? UIFontWeightRegular)
+        return UIFont.systemFont(ofSize: size, weight: weights[weight] ?? UIFontWeightRegular)
     }
 }

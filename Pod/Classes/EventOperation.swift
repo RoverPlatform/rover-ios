@@ -21,15 +21,15 @@ import UIKit
 import CoreLocation
 
 protocol EventOperationDelegate: class {
-    func eventOperation(operation: EventOperation, didPostEvent event: Event)
-    func eventOperation(operation: EventOperation, didReceiveRegions regions: [CLRegion])
+    func eventOperation(_ operation: EventOperation, didPostEvent event: Event)
+    func eventOperation(_ operation: EventOperation, didReceiveRegions regions: [CLRegion])
 }
 
 class EventOperation: ConcurrentOperation {
 
-    private let internalQueue = NSOperationQueue()
+    fileprivate let internalQueue = OperationQueue()
     
-    private var event: Event
+    fileprivate var event: Event
     
     weak var delegate: EventOperationDelegate?
     
@@ -38,11 +38,11 @@ class EventOperation: ConcurrentOperation {
         
         super.init()
         
-        internalQueue.suspended = true
+        internalQueue.isSuspended = true
         
         // Operations
         
-        let finishingOperation = NSBlockOperation {
+        let finishingOperation = BlockOperation {
             self.finish()
         }
         let regionMappingOperation = MappingOperation { (regions: [CLRegion]) in
@@ -50,7 +50,7 @@ class EventOperation: ConcurrentOperation {
             
             //rvLog("Received new regions", data: regions, level: .Trace)
             
-            dispatch_async(dispatch_get_main_queue()) {
+            DispatchQueue.main.async {
                 self.delegate?.eventOperation(self, didReceiveRegions: regions)
             }
         }
@@ -59,7 +59,7 @@ class EventOperation: ConcurrentOperation {
             //rvLog("Event submitted: \(event)", data: event, level: .Trace)
             self.delegate?.eventOperation(self, didPostEvent: event)
         }
-        let networkOperation = NetworkOperation(mutableUrlRequest: Router.Events.urlRequest) {
+        let networkOperation = NetworkOperation(mutableUrlRequest: Router.events.urlRequest) {
             [unowned regionMappingOperation, unowned eventMappingOperation]
             JSON, error in
 
@@ -103,9 +103,9 @@ class EventOperation: ConcurrentOperation {
     }
     
     override func execute() {
-        rvLog("Submitting event", data: self.event, level: .Trace)
+        rvLog("Submitting event", data: self.event, level: .trace)
         
-        internalQueue.suspended = false
+        internalQueue.isSuspended = false
     }
     
 }

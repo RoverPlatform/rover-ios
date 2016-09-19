@@ -16,10 +16,10 @@ class SessionManager {
     
     static let sharedManager = SessionManager()
     
-    private static var _currentSession: Session? {
+    fileprivate static var _currentSession: Session? {
         didSet {
-            NSUserDefaults.standardUserDefaults().setObject(_currentSession?.authToken, forKey: "ROVER_AUTH_TOKEN")
-            NSUserDefaults.standardUserDefaults().setObject(_currentSession?.accountId, forKey: "ROVER_ACCOUNT_ID")
+            UserDefaults.standard.set(_currentSession?.authToken, forKey: "ROVER_AUTH_TOKEN")
+            UserDefaults.standard.set(_currentSession?.accountId, forKey: "ROVER_ACCOUNT_ID")
         }
     }
     static var currentSession: Session? {
@@ -27,33 +27,33 @@ class SessionManager {
             return _currentSession
         }
         
-        if let authToken = NSUserDefaults.standardUserDefaults().stringForKey("ROVER_AUTH_TOKEN"),
-         let accountId = NSUserDefaults.standardUserDefaults().stringForKey("ROVER_ACCOUNT_ID") {
+        if let authToken = UserDefaults.standard.string(forKey: "ROVER_AUTH_TOKEN"),
+         let accountId = UserDefaults.standard.string(forKey: "ROVER_ACCOUNT_ID") {
             _currentSession = Session(authToken: authToken, email: nil, password: nil, accountId: accountId)
         }
         return _currentSession
     }
     
-    var operationQueue = NSOperationQueue()
+    var operationQueue = OperationQueue()
     
-    class func startNewSession(session: Session) {
+    class func startNewSession(_ session: Session) {
         let mappingOperation = MappingOperation { (session: Session) in
             SessionManager._currentSession = session
             
-            dispatch_async(dispatch_get_main_queue()) {
-                NSNotificationCenter.defaultCenter().postNotificationName(RoverNewSessionNotification, object: nil, userInfo: ["token": session.authToken ?? ""])
+            DispatchQueue.main.async {
+                NotificationCenter.default.post(name: Notification.Name(rawValue: RoverNewSessionNotification), object: nil, userInfo: ["token": session.authToken ?? ""])
             }
         }
         
-        let networkOperation = NetworkOperation(mutableUrlRequest: APIRouter.SessionSignIn.urlRequest) {
+        let networkOperation = NetworkOperation(mutableUrlRequest: APIRouter.sessionSignIn.urlRequest) {
             [unowned mappingOperation]
             (JSON, error) in
             
             mappingOperation.json = JSON
             
             if error != nil {
-                dispatch_async(dispatch_get_main_queue()) {
-                    NSNotificationCenter.defaultCenter().postNotificationName(RoverSessionErrorNotification, object: nil, userInfo: nil)
+                DispatchQueue.main.async {
+                    NotificationCenter.default.post(name: Notification.Name(rawValue: RoverSessionErrorNotification), object: nil, userInfo: nil)
                 }
             }
         }
@@ -79,7 +79,7 @@ class SessionManager {
 }
 
 extension Session : Serializable {
-    func serialize() -> [String : AnyObject] {
+    func serialize() -> [String : Any] {
         return [
             "data": [
                 "type": "sessions",
@@ -93,15 +93,15 @@ extension Session : Serializable {
 }
 
 extension Session : Mappable {
-    static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> Session? {
+    static func instance(_ JSON: [String : Any], included: [String : Any]?) -> Session? {
         guard let type = JSON["type"] as? String,
-            attributes = JSON["attributes"] as? [String: AnyObject],
-            token = attributes["token"] as? String,
-            relationships = JSON["relationships"] as? [String: AnyObject],
-            accountData = relationships["account"] as? [String: AnyObject],
-            accountAttributes = accountData["data"] as? [String: AnyObject],
-            accountId = accountAttributes["id"] as? String
-            where type == "sessions" else { return nil }
+            let attributes = JSON["attributes"] as? [String: Any],
+            let token = attributes["token"] as? String,
+            let relationships = JSON["relationships"] as? [String: Any],
+            let accountData = relationships["account"] as? [String: Any],
+            let accountAttributes = accountData["data"] as? [String: Any],
+            let accountId = accountAttributes["id"] as? String
+            , type == "sessions" else { return nil }
         
         let email = attributes["email"] as? String
         

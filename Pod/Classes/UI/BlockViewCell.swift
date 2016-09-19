@@ -9,13 +9,13 @@
 import Foundation
 
 @objc protocol BlockViewCellDelegate: class {
-    optional func blockViewCellDidPressButton(cell: BlockViewCell)
+    @objc optional func blockViewCellDidPressButton(_ cell: BlockViewCell)
 }
 
 class BlockViewCell: UICollectionViewCell {
     weak var delegate: BlockViewCellDelegate?
     
-    var inset = UIEdgeInsetsZero
+    var inset = UIEdgeInsets.zero
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -48,19 +48,19 @@ class BlockViewCell: UICollectionViewCell {
         
     }
     
-    func gestureRecognized(recognizer: UILongPressGestureRecognizer) {
+    func gestureRecognized(_ recognizer: UILongPressGestureRecognizer) {
         
         struct Static {
             static var touchCancelled = false
-            static var location = CGPointZero
+            static var location = CGPoint.zero
         }
         
         switch recognizer.state {
-        case .Began:
+        case .began:
             Static.touchCancelled = false
-            Static.location = recognizer.locationInView(self.window)
+            Static.location = recognizer.location(in: self.window)
             didTouchDown()
-        case .Ended:
+        case .ended:
             if !Static.touchCancelled {
                 delegate?.blockViewCellDidPressButton?(self)
                 Static.touchCancelled = true
@@ -68,7 +68,7 @@ class BlockViewCell: UICollectionViewCell {
             didEndTouch()
         default:
             // iPhone 6S sensitivity
-            let newLocation = recognizer.locationInView(self.window)
+            let newLocation = recognizer.location(in: self.window)
             let dx = newLocation.x - Static.location.x
             let dy = newLocation.y - Static.location.y
             let distance = dx*dx + dy*dy
@@ -82,7 +82,7 @@ class BlockViewCell: UICollectionViewCell {
 }
 
 extension BlockViewCell : UIGestureRecognizerDelegate {
-    func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
 }

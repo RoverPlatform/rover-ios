@@ -10,14 +10,14 @@ import Foundation
 import CoreLocation
 
 extension CLRegion : Mappable {
-    public static func instance(JSON: [String: AnyObject], included: [String: Any]?) -> CLRegion? {
+    public static func instance(_ JSON: [String: Any], included: [String: Any]?) -> CLRegion? {
         guard let type = JSON["type"] as? String,
-            identifier = JSON["id"] as? String,
-            attributes = JSON["attributes"] as? [String: AnyObject] else { return nil }
+            let identifier = JSON["id"] as? String,
+            let attributes = JSON["attributes"] as? [String: AnyObject] else { return nil }
         
         switch type {
         case "ibeacon-regions":
-            guard let uuidString = attributes["uuid"] as? String, uuid = NSUUID(UUIDString: uuidString) else { return nil }
+            guard let uuidString = attributes["uuid"] as? String, let uuid = UUID(uuidString: uuidString) else { return nil }
             
             let major = attributes["major-number"] as? Int
             let minor = attributes["minor-number"] as? Int
@@ -31,8 +31,8 @@ extension CLRegion : Mappable {
             }
         case "geofence-regions":
             guard let latitude = attributes["latitude"] as? CLLocationDegrees,
-                longitude = attributes["longitude"] as? CLLocationDegrees,
-                radius = attributes["radius"] as? CLLocationDistance else { return nil }
+                let longitude = attributes["longitude"] as? CLLocationDegrees,
+                let radius = attributes["radius"] as? CLLocationDistance else { return nil }
             
             return CLCircularRegion(center: CLLocationCoordinate2D(latitude: latitude, longitude: longitude), radius: radius, identifier: identifier)
         default:
@@ -44,13 +44,13 @@ extension CLRegion : Mappable {
 }
 
 extension Event : Mappable {
-    public static func instance(JSON: [String : AnyObject], included: [String: Any]?) -> Event? {
+    public static func instance(_ JSON: [String : Any], included: [String: Any]?) -> Event? {
         guard let type = JSON["type"] as? String,
-            attributes = JSON["attributes"] as? [String: AnyObject],
-            object = attributes["object"] as? String,
-            action = attributes["action"] as? String,
-            date = included?["date"] as? NSDate
-            where type == "events" else { return nil }
+            let attributes = JSON["attributes"] as? [String: Any],
+            let object = attributes["object"] as? String,
+            let action = attributes["action"] as? String,
+            let date = included?["date"] as? Date
+            , type == "events" else { return nil }
         
         switch (object, action) {
         case ("app", "open"):
@@ -59,37 +59,37 @@ extension Event : Mappable {
             guard let
                 location = included?["location"] as? CLLocation else { return nil }
             
-            return Event.DidUpdateLocation(location, date: date)
+            return Event.didUpdateLocation(location, date: date)
         case ("beacon-region", let action):
             guard let
-                config = attributes["configuration"] as? [String: AnyObject],
-                beaconConfig = BeaconConfiguration.instance(config, included: nil),
-                beaconRegion = included?["region"] as? CLBeaconRegion else { return nil }
+                config = attributes["configuration"] as? [String: Any],
+                let beaconConfig = BeaconConfiguration.instance(config, included: nil),
+                let beaconRegion = included?["region"] as? CLBeaconRegion else { return nil }
             
             var place: Place?
-            if let placeAttributes = attributes["place"] as? [String: AnyObject] {
+            if let placeAttributes = attributes["place"] as? [String: Any] {
                 place = Place.instance(placeAttributes, included: nil)
             }
             
             switch action {
             case "enter":
-                return Event.DidEnterBeaconRegion(beaconRegion, config: beaconConfig, place: place, date: date)
+                return Event.didEnterBeaconRegion(beaconRegion, config: beaconConfig, place: place, date: date)
             case "exit":
-                return Event.DidExitBeaconRegion(beaconRegion, config: beaconConfig, place: place, date: date)
+                return Event.didExitBeaconRegion(beaconRegion, config: beaconConfig, place: place, date: date)
             default:
                 return nil
             }
         case ("geofence-region", let action):
             guard let
-                placeJSON = attributes["place"] as? [String: AnyObject],
-                place = Place.instance(placeJSON, included: nil),
-                circularRegion = included?["region"] as? CLCircularRegion else { return nil }
+                placeJSON = attributes["place"] as? [String: Any],
+                let place = Place.instance(placeJSON, included: nil),
+                let circularRegion = included?["region"] as? CLCircularRegion else { return nil }
             
             switch action {
             case "enter":
-                return Event.DidEnterCircularRegion(circularRegion, place: place, date: date)
+                return Event.didEnterCircularRegion(circularRegion, place: place, date: date)
             case "exit":
-                return Event.DidExitCircularRegion(circularRegion, place: place, date: date)
+                return Event.didExitCircularRegion(circularRegion, place: place, date: date)
             default:
                 return nil
             }
@@ -100,12 +100,12 @@ extension Event : Mappable {
 }
 
 extension BeaconConfiguration : Mappable {
-    public static func instance(JSON: [String : AnyObject], included: [String: Any]?) -> BeaconConfiguration? {
+    public static func instance(_ JSON: [String : Any], included: [String: Any]?) -> BeaconConfiguration? {
         guard let
             uuidString = JSON["uuid"] as? String,
-            uuid = NSUUID(UUIDString: uuidString),
-            name = JSON["name"] as? String,
-            tags = JSON["tags"] as? [String] else { return nil }
+            let uuid = Foundation.UUID(uuidString: uuidString),
+            let name = JSON["name"] as? String,
+            let tags = JSON["tags"] as? [String] else { return nil }
         
         var majorNumber: CLBeaconMajorValue?
         if let major = JSON["major-number"] as? Int { majorNumber = CLBeaconMajorValue(major) }
@@ -118,29 +118,29 @@ extension BeaconConfiguration : Mappable {
 }
 
 extension Place : Mappable {
-    public static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> Place? {
+    public static func instance(_ JSON: [String : Any], included: [String : Any]?) -> Place? {
         guard let
             latitude = JSON["latitude"] as? CLLocationDegrees,
-            longitude = JSON["longitude"] as? CLLocationDegrees,
-            radius = JSON["radius"] as? CLLocationDistance,
-            name = JSON["name"] as? String,
-            tags = JSON["tags"] as? [String] else { return nil }
+            let longitude = JSON["longitude"] as? CLLocationDegrees,
+            let radius = JSON["radius"] as? CLLocationDistance,
+            let name = JSON["name"] as? String,
+            let tags = JSON["tags"] as? [String] else { return nil }
         
         return Place(coordinates: CLLocationCoordinate2D(latitude: latitude, longitude: longitude), radius: radius, name: name, tags: tags)
     }
 }
 
 extension Message : Mappable {
-    public static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> Message? {
+    public static func instance(_ JSON: [String : Any], included: [String : Any]?) -> Message? {
         guard let type = JSON["type"] as? String,
-            identifier = JSON["id"] as? String,
-            attributes = JSON["attributes"] as? [String: AnyObject],
-            title = attributes["ios-title"] as? String?,
-            timestampString = attributes["timestamp"] as? String,
-            timestamp = rvDateFormatter.dateFromString(timestampString),
-            text = attributes["notification-text"] as? String,
-            properties = attributes["properties"] as? [String: String]
-            where type == "messages" else { return nil }
+            let identifier = JSON["id"] as? String,
+            let attributes = JSON["attributes"] as? [String: Any],
+            let title = attributes["ios-title"] as? String?,
+            let timestampString = attributes["timestamp"] as? String,
+            let timestamp = rvDateFormatter.date(from: timestampString),
+            let text = attributes["notification-text"] as? String,
+            let properties = attributes["properties"] as? [String: String]
+            , type == "messages" else { return nil }
         
         
         
@@ -152,30 +152,30 @@ extension Message : Mappable {
         if let action = attributes["content-type"] as? String {
             switch action {
             case "deep-link":
-                message.action = .DeepLink
+                message.action = .deepLink
                 if let url = attributes["deep-link-url"] as? String {
-                    message.url = NSURL(string: url)
+                    message.url = URL(string: url)
                 }
             case "website":
-                message.action = .Website
+                message.action = .website
                 // TODO: this can throw, needs to be safer
                 if let url = attributes["website-url"] as? String {
-                    message.url = NSURL(string: url)
+                    message.url = URL(string: url)
                 }
             case "landing-page":
-                message.action = .LandingPage
+                message.action = .landingPage
                 
-                if let landingPageAttributes = attributes["landing-page"] as? [String: AnyObject] {
+                if let landingPageAttributes = attributes["landing-page"] as? [String: Any] {
                     message.landingPage = Screen.instance(landingPageAttributes, included: nil)
                 }
             case "experience":
-                message.action = .Experience
+                message.action = .experience
                 
                 if let experienceId = attributes["experience-id"] as? String {
                     message.experienceId = experienceId
                 }
             default:
-                message.action = .None
+                message.action = .none
             }
         }
 
@@ -185,12 +185,12 @@ extension Message : Mappable {
 }
 
 extension Experience : Mappable {
-    public static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> Experience? {
-        guard let attributes = JSON["attributes"] as? [String: AnyObject],
-            identifier = JSON["id"] as? String,
-            screensAttributes = attributes["screens"] as? [[String: AnyObject]],
-            screens = screensAttributes.map({ Screen.instance($0, included: nil) }) as? [Screen],
-            homeScreenId = attributes["home-screen-id"] as? String else {
+    public static func instance(_ JSON: [String : Any], included: [String : Any]?) -> Experience? {
+        guard let attributes = JSON["attributes"] as? [String: Any],
+            let identifier = JSON["id"] as? String,
+            let screensAttributes = attributes["screens"] as? [[String: Any]],
+            let screens = screensAttributes.map({ Screen.instance($0, included: nil) }) as? [Screen],
+            let homeScreenId = attributes["home-screen-id"] as? String else {
                 return nil
         }
         
@@ -199,9 +199,9 @@ extension Experience : Mappable {
 }
 
 extension Screen : Mappable {
-    public static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> Screen? {
-        guard let rowsAttributes = JSON["rows"] as? [[String : AnyObject]],
-            rows = rowsAttributes.map({ Row.instance($0, included: nil) }) as? [Row] else {
+    public static func instance(_ JSON: [String : Any], included: [String : Any]?) -> Screen? {
+        guard let rowsAttributes = JSON["rows"] as? [[String : Any]],
+            let rows = rowsAttributes.map({ Row.instance($0, included: nil) }) as? [Row] else {
                 return nil
         }
         
@@ -226,9 +226,9 @@ extension Screen : Mappable {
 }
 
 extension Row : Mappable {
-    public static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> Row? {
-        guard let blocksAttributes = JSON["blocks"] as? [[String : AnyObject]],
-            blocks = blocksAttributes.map({ Block.instance($0, included: nil) }) as? [Block] else {
+    public static func instance(_ JSON: [String : Any], included: [String : Any]?) -> Row? {
+        guard let blocksAttributes = JSON["blocks"] as? [[String : Any]],
+            let blocks = blocksAttributes.map({ Block.instance($0, included: nil) }) as? [Block] else {
                 return nil
         }
         
@@ -239,7 +239,7 @@ extension Row : Mappable {
         row.backgroundBlock.backgroundScale = JSON["background-scale"] as? CGFloat ?? row.backgroundBlock.backgroundScale
         row.backgroundBlock.backgroundContentMode = ImageContentMode(rawValue: JSON["background-content-mode"] as? String ?? "") ?? row.backgroundBlock.backgroundContentMode
         
-        if let isAutoHeight = JSON["auto-height"] as? Bool where isAutoHeight {
+        if let isAutoHeight = JSON["auto-height"] as? Bool , isAutoHeight {
             row.height = nil
         }
         
@@ -248,7 +248,7 @@ extension Row : Mappable {
 }
 
 extension Block : Mappable {
-    public static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> Block? {
+    public static func instance(_ JSON: [String : Any], included: [String : Any]?) -> Block? {
         guard let type = JSON["type"] as? String else {
             return nil
         }
@@ -267,7 +267,7 @@ extension Block : Mappable {
             
             let textBlock = block as! TextBlock
             textBlock.text = JSON["text"] as? String
-            textBlock.text = textBlock.text?.stringByReplacingOccurrencesOfString("<br>", withString: "")
+            textBlock.text = textBlock.text?.replacingOccurrences(of: "<br>", with: "")
             
             if let alignment = Alignment.instance(JSON["text-alignment"] as? [String: AnyObject] ?? [:], included: nil) {
                 textBlock.textAlignment = alignment
@@ -288,14 +288,14 @@ extension Block : Mappable {
             
             let buttonBlock = block as! ButtonBlock
         
-            if let states = JSON["states"] as? [String: AnyObject] {
-                buttonBlock.appearences[.Normal] = ButtonBlock.Appearance.instance(states["normal"] as? [String: AnyObject] ?? [:], included: nil)
-                buttonBlock.appearences[.Highlighted] = ButtonBlock.Appearance.instance(states["highlighted"] as? [String: AnyObject] ?? [:], included: nil)
-                buttonBlock.appearences[.Selected] = ButtonBlock.Appearance.instance(states["selected"] as? [String: AnyObject] ?? [:], included: nil)
-                buttonBlock.appearences[.Disabled] = ButtonBlock.Appearance.instance(states["disabled"] as? [String: AnyObject] ?? [:], included: nil)
+            if let states = JSON["states"] as? [String: Any] {
+                buttonBlock.appearences[.normal] = ButtonBlock.Appearance.instance(states["normal"] as? [String: AnyObject] ?? [:], included: nil)
+                buttonBlock.appearences[.highlighted] = ButtonBlock.Appearance.instance(states["highlighted"] as? [String: AnyObject] ?? [:], included: nil)
+                buttonBlock.appearences[.selected] = ButtonBlock.Appearance.instance(states["selected"] as? [String: AnyObject] ?? [:], included: nil)
+                buttonBlock.appearences[.disabled] = ButtonBlock.Appearance.instance(states["disabled"] as? [String: AnyObject] ?? [:], included: nil)
             }
         case "web-view-block":
-            let url = NSURL(string: JSON["url"] as? String ?? "")
+            let url = URL(string: JSON["url"] as? String ?? "")
             
             block = WebBlock(url: url)
             
@@ -325,7 +325,7 @@ extension Block : Mappable {
         block.inset = UIEdgeInsets.instance(JSON["inset"] as? [String: AnyObject] ?? [:], included: nil) ?? block.inset
         block.opacity = JSON["opacity"] as? Float ?? block.opacity
         
-        if let isAutoHeight = JSON["auto-height"] as? Bool where isAutoHeight {
+        if let isAutoHeight = JSON["auto-height"] as? Bool , isAutoHeight {
             block.height = nil
         }
         
@@ -340,25 +340,25 @@ extension Block : Mappable {
 }
 
 extension Block.Action : Mappable {
-    public static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> ButtonBlock.Action? {
+    public static func instance(_ JSON: [String : Any], included: [String : Any]?) -> ButtonBlock.Action? {
         guard let type = JSON["type"] as? String else { return nil }
         
         let urlString = JSON["url"] as? String ?? ""
-        let url = NSURL(string: urlString)
+        let url = URL(string: urlString)
         
         switch type {
         case "website-action":
             guard let url = url else { return nil }
-            return .Website(url)
+            return .website(url)
         case "deep-link-action":
             guard let url = url else { return nil }
-            return .Deeplink(url)
+            return .deeplink(url)
         case "go-to-screen":
             guard let screenIdentifier = JSON["screen-id"] as? String else { return nil }
-            return .Screen(screenIdentifier)
+            return .screen(screenIdentifier)
         case "open-url":
             guard let url = url else { return nil }
-            return .Deeplink(url)
+            return .deeplink(url)
         default:
             return nil
         }
@@ -366,7 +366,7 @@ extension Block.Action : Mappable {
 }
 
 extension ButtonBlock.Appearance : Mappable {
-    public static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> ButtonBlock.Appearance? {
+    public static func instance(_ JSON: [String : Any], included: [String : Any]?) -> ButtonBlock.Appearance? {
         var appearance = ButtonBlock.Appearance()
         appearance.title = JSON["text"] as? String
         
@@ -388,48 +388,48 @@ extension ButtonBlock.Appearance : Mappable {
 }
 
 extension Image: Mappable {
-    public static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> Image? {
+    public static func instance(_ JSON: [String : Any], included: [String : Any]?) -> Image? {
         guard let width = JSON["width"] as? CGFloat,
-            height = JSON["height"] as? CGFloat,
-            urlString = JSON["url"] as? String,
-            url = NSURL(string: urlString) else { return nil }
+            let height = JSON["height"] as? CGFloat,
+            let urlString = JSON["url"] as? String,
+            let url = URL(string: urlString) else { return nil }
         
         return Image(size: CGSize(width: width, height: height), url: url)
     }
 }
 
 extension Offset : Mappable {
-    public static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> Offset? {
-        let top = Unit.instance(JSON["top"] as? [String: AnyObject] ?? [:], included: nil) ?? .Points(0)
-        let right = Unit.instance(JSON["right"] as? [String: AnyObject] ?? [:], included: nil) ?? .Points(0)
-        let bottom = Unit.instance(JSON["bottom"] as? [String: AnyObject] ?? [:], included: nil) ?? .Points(0)
-        let left = Unit.instance(JSON["left"] as? [String: AnyObject] ?? [:], included: nil) ?? .Points(0)
-        let center = Unit.instance(JSON["center"] as? [String: AnyObject] ?? [:], included: nil) ?? .Points(0)
-        let middle = Unit.instance(JSON["middle"] as? [String: AnyObject] ?? [:], included: nil) ?? .Points(0)
+    public static func instance(_ JSON: [String : Any], included: [String : Any]?) -> Offset? {
+        let top = Unit.instance(JSON["top"] as? [String: AnyObject] ?? [:], included: nil) ?? .points(0)
+        let right = Unit.instance(JSON["right"] as? [String: AnyObject] ?? [:], included: nil) ?? .points(0)
+        let bottom = Unit.instance(JSON["bottom"] as? [String: AnyObject] ?? [:], included: nil) ?? .points(0)
+        let left = Unit.instance(JSON["left"] as? [String: AnyObject] ?? [:], included: nil) ?? .points(0)
+        let center = Unit.instance(JSON["center"] as? [String: AnyObject] ?? [:], included: nil) ?? .points(0)
+        let middle = Unit.instance(JSON["middle"] as? [String: AnyObject] ?? [:], included: nil) ?? .points(0)
 
         return Offset(left: left, right: right, top: top, bottom: bottom, center: center, middle: middle)
     }
 }
 
 extension Alignment : Mappable {
-    public static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> Alignment? {
+    public static func instance(_ JSON: [String : Any], included: [String : Any]?) -> Alignment? {
         guard let horizontal = Alignment.HorizontalAlignment(rawValue: JSON["horizontal"] as? String ?? ""),
-            vertical = Alignment.VerticalAlignment(rawValue: JSON["vertical"] as? String ?? "") else { return nil }
+            let vertical = Alignment.VerticalAlignment(rawValue: JSON["vertical"] as? String ?? "") else { return nil }
         
         return Alignment(horizontal: horizontal, vertical: vertical)
     }
 }
 
 extension Unit : Mappable {
-    public static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> Unit? {
+    public static func instance(_ JSON: [String : Any], included: [String : Any]?) -> Unit? {
         guard let value = JSON["value"] as? CGFloat,
-            type = JSON["type"] as? String else { return nil }
+            let type = JSON["type"] as? String else { return nil }
         
         switch type {
         case "points":
-            return Unit.Points(value)
+            return Unit.points(value)
         case "percentage":
-            return Unit.Percentage(value)
+            return Unit.percentage(value)
         default:
             return nil
         }
@@ -437,20 +437,20 @@ extension Unit : Mappable {
 }
 
 extension UIColor : Mappable {
-    public static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> UIColor? {
+    public static func instance(_ JSON: [String : Any], included: [String : Any]?) -> UIColor? {
         guard let red = JSON["red"] as? CGFloat,
-            blue = JSON["blue"] as? CGFloat,
-            green = JSON["green"] as? CGFloat,
-            alpha = JSON["alpha"] as? CGFloat else { return nil }
+            let blue = JSON["blue"] as? CGFloat,
+            let green = JSON["green"] as? CGFloat,
+            let alpha = JSON["alpha"] as? CGFloat else { return nil }
         
         return UIColor(red: red/255.0, green: green/255.0, blue: blue/255.0, alpha: alpha)
     }
 }
 
 extension UIFont : Mappable {
-    public static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> UIFont? {
+    public static func instance(_ JSON: [String : Any], included: [String : Any]?) -> UIFont? {
         guard let fontSize = JSON["size"] as? CGFloat,
-            fontWeight = JSON["weight"] as? Int else { return UIFont.systemFontOfSize(12) }
+            let fontWeight = JSON["weight"] as? Int else { return UIFont.systemFont(ofSize: 12) }
         
         let weights = [
             100: UIFontWeightUltraLight,
@@ -464,36 +464,36 @@ extension UIFont : Mappable {
             900: UIFontWeightBlack
         ]
         
-        return UIFont.systemFontOfSize(fontSize, weight: weights[fontWeight] ?? UIFontWeightRegular)
+        return UIFont.systemFont(ofSize: fontSize, weight: weights[fontWeight] ?? UIFontWeightRegular)
     }
 }
 
 extension Font : Mappable {
-    public static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> Font? {
+    public static func instance(_ JSON: [String : Any], included: [String : Any]?) -> Font? {
         guard let fontSize = JSON["size"] as? CGFloat,
-            fontWeight = JSON["weight"] as? Int else { return Font(size: 12, weight: 400) }
+            let fontWeight = JSON["weight"] as? Int else { return Font(size: 12, weight: 400) }
         
         return Font(size: fontSize, weight: fontWeight)
     }
 }
 
 extension UIStatusBarStyle {
-    public static func instance(string: String?) -> UIStatusBarStyle? {
+    public static func instance(_ string: String?) -> UIStatusBarStyle? {
         switch string {
         case "light"?:
-            return .LightContent
+            return .lightContent
         default:
-            return .Default
+            return .default
         }
     }
 }
 
 extension UIEdgeInsets : Mappable {
-    public static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> UIEdgeInsets? {
+    public static func instance(_ JSON: [String : Any], included: [String : Any]?) -> UIEdgeInsets? {
         guard let top = JSON["top"] as? CGFloat,
-            bottom = JSON["bottom"] as? CGFloat,
-            left = JSON["left"] as? CGFloat,
-            right = JSON["right"] as? CGFloat else { return nil }
+            let bottom = JSON["bottom"] as? CGFloat,
+            let left = JSON["left"] as? CGFloat,
+            let right = JSON["right"] as? CGFloat else { return nil }
         
         return UIEdgeInsets(top: top, left: left, bottom: bottom, right: right)
     }

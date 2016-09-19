@@ -13,27 +13,27 @@ import CoreBluetooth
 import CoreTelephony
 
 extension Event : Serializable {
-    public func serialize() -> [String : AnyObject] {
+    public func serialize() -> [String : Any] {
         let serializedCustomer = Customer.sharedCustomer.serialize()
-        let serializedDevice = Device.CurrentDevice.serialize()
+        let serializedDevice = Device.currentDevice.serialize()
         
-        var timestamp: NSDate
-        var serializedAttributes: [String : AnyObject]
+        var timestamp: Date
+        var serializedAttributes: [String : Any]
         
         switch self {
-        case .ApplicationOpen(let date):
+        case .applicationOpen(let date):
             timestamp = date
             serializedAttributes = [
                 "object": "app",
                 "action": "open"
             ]
-        case .DeviceUpdate(let date):
+        case .deviceUpdate(let date):
             timestamp = date
             serializedAttributes = [
                 "object": "device",
                 "action": "update"
             ]
-        case .DidUpdateLocation(let location, let date):
+        case .didUpdateLocation(let location, let date):
             timestamp = date
             serializedAttributes = [
                 "object": "location",
@@ -42,42 +42,42 @@ extension Event : Serializable {
                 "longitude": location.coordinate.longitude,
                 "accuracy": location.horizontalAccuracy
             ]
-        case .DidEnterBeaconRegion(let region, _, _, let date):
+        case .didEnterBeaconRegion(let region, _, _, let date):
             timestamp = date
             serializedAttributes = [
                 "object": "beacon-region",
                 "action": "enter",
                 "identifier": region.identifier,
-                "uuid": region.proximityUUID.UUIDString,
+                "uuid": region.proximityUUID.uuidString,
                 "major-number": region.major!,
                 "minor-number": region.minor!
             ]
-        case .DidExitBeaconRegion(let region, _, _, let date):
+        case .didExitBeaconRegion(let region, _, _, let date):
             timestamp = date
             serializedAttributes = [
                 "object": "beacon-region",
                 "action": "exit",
                 "identifier": region.identifier,
-                "uuid": region.proximityUUID.UUIDString,
+                "uuid": region.proximityUUID.uuidString,
                 "major-number": region.major!,
                 "minor-number": region.minor!
             ]
-        case .DidOpenMessage(let message, let source, let date):
+        case .didOpenMessage(let message, let source, let date):
             timestamp = date
             serializedAttributes = [
                 "object": "message",
                 "action": "open",
-                "source": source ?? NSNull(),
+                "source": source ?? NSNull() as Any,
                 "message-id": message.identifier
             ]
         default:
-            timestamp = NSDate()
+            timestamp = Date()
             serializedAttributes = [String : AnyObject]()
         }
         
         _swiftBugWorkaround(serializedAttributes: &serializedAttributes , timestamp: &timestamp)
         
-        serializedAttributes["time"] = rvDateFormatter.stringFromDate(timestamp)
+        serializedAttributes["time"] = rvDateFormatter.string(from: timestamp)
         serializedAttributes["user"] = serializedCustomer
         serializedAttributes["device"] = serializedDevice
         
@@ -89,9 +89,9 @@ extension Event : Serializable {
         ]
     }
     
-    func _swiftBugWorkaround(inout serializedAttributes serializedAttributes: [String: AnyObject], inout timestamp: NSDate) {
+    func _swiftBugWorkaround(serializedAttributes: inout [String: Any], timestamp: inout Date) {
         switch self {
-        case .DidEnterCircularRegion(let region, _, let date):
+        case .didEnterCircularRegion(let region, _, let date):
             timestamp = date
             serializedAttributes = [
                 "object": "geofence-region",
@@ -102,7 +102,7 @@ extension Event : Serializable {
                 "longitude": region.center.longitude,
                 "radius": region.radius
             ]
-        case .DidExitCircularRegion(let region, _, let date):
+        case .didExitCircularRegion(let region, _, let date):
             timestamp = date
             serializedAttributes = [
                 "object": "geofence-region",
@@ -112,45 +112,45 @@ extension Event : Serializable {
                 "longitude": region.center.longitude,
                 "radius": region.radius
             ]
-        case .DidEnterGimbalPlace(let gimbalPlaceId, let date):
+        case .didEnterGimbalPlace(let gimbalPlaceId, let date):
             timestamp = date
             serializedAttributes = [
                 "object": "gimbal-place",
                 "action": "enter",
                 "gimbal-place-id": gimbalPlaceId
             ]
-        case .DidExitGimbalPlace(let gimbalPlaceId, let date):
+        case .didExitGimbalPlace(let gimbalPlaceId, let date):
             timestamp = date
             serializedAttributes = [
                 "object": "gimbal-place",
                 "action": "exit",
                 "gimbal-place-id": gimbalPlaceId
             ]
-        case .DidLaunchExperience(let experience, let date):
+        case .didLaunchExperience(let experience, let date):
             timestamp = date
             serializedAttributes = [
                 "object": "experience",
                 "action": "launched",
                 "experience-id": experience.identifier
             ]
-        case .DidDismissExperience(let experience, let date):
+        case .didDismissExperience(let experience, let date):
             timestamp = date
             serializedAttributes = [
                 "object": "experience",
                 "action": "dismissed",
                 "experience-id": experience.identifier
             ]
-        case .DidViewScreen(let screen, let experience, let fromScreen, let fromBlock, let date):
+        case .didViewScreen(let screen, let experience, let fromScreen, let fromBlock, let date):
             timestamp = date
             serializedAttributes = [
                 "object": "experience",
                 "action": "screen-viewed",
                 "experience-id": experience.identifier,
-                "screen-id": screen.identifier ?? NSNull(),
-                "from-screen-id": fromScreen?.identifier ?? NSNull(),
-                "from-block-id": fromBlock?.identifier ?? NSNull()
+                "screen-id": screen.identifier ?? NSNull() as Any,
+                "from-screen-id": fromScreen?.identifier ?? NSNull() as Any,
+                "from-block-id": fromBlock?.identifier ?? NSNull() as Any
             ]
-        case .DidPressBlock(let block, let screen, let experience, let date):
+        case .didPressBlock(let block, let screen, let experience, let date):
             timestamp = date
             serializedAttributes = [
                 "object": "experience",
@@ -172,34 +172,34 @@ extension Device : Serializable {
         uname(&systemInfo)
         let machineMirror = Mirror(reflecting: systemInfo.machine)
         let identifier = machineMirror.children.reduce("") { identifier, element in
-            guard let value = element.value as? Int8 where value != 0 else { return identifier }
+            guard let value = element.value as? Int8 , value != 0 else { return identifier }
             return identifier + String(UnicodeScalar(UInt8(value)))
         }
         return identifier
     }
     
-    func serialize() -> [String : AnyObject] {
-        let carrierName = CTTelephonyNetworkInfo().subscriberCellularProvider?.carrierName ?? NSNull()
-        let osVersion = NSProcessInfo.processInfo().operatingSystemVersion
-        let localeComponents = NSLocale.componentsFromLocaleIdentifier(NSLocale.currentLocale().localeIdentifier)
-        let localeLanguage = localeComponents[NSLocaleLanguageCode]
-        let localeRegion = localeComponents[NSLocaleCountryCode]
-        let localNotificationsEnabled = UIApplication.sharedApplication().currentUserNotificationSettings()?.types.contains(.Alert) ?? false
-        let deviceToken: AnyObject = Device.pushToken ?? NSNull()
+    func serialize() -> [String : Any] {
+        let carrierName: Any = CTTelephonyNetworkInfo().subscriberCellularProvider?.carrierName ?? NSNull()
+        let osVersion = ProcessInfo.processInfo.operatingSystemVersion
+        let localeComponents = Locale.components(fromIdentifier: Locale.current.identifier)
+        let localeLanguage = localeComponents[NSLocale.Key.languageCode.rawValue]
+        let localeRegion = localeComponents[NSLocale.Key.countryCode.rawValue]
+        let localNotificationsEnabled = UIApplication.shared.currentUserNotificationSettings?.types.contains(.alert) ?? false
+        let deviceToken: AnyObject = Device.pushToken as AnyObject? ?? NSNull()
         
         return [
-            "app-identifier": NSBundle.mainBundle().bundleIdentifier ?? "",
-            "udid": UIDevice.currentDevice().identifierForVendor!.UUIDString,
-            "aid": ASIdentifierManager.sharedManager().advertisingIdentifier.UUIDString,
-            "ad-tracking": ASIdentifierManager.sharedManager().advertisingTrackingEnabled ,
+            "app-identifier": Bundle.main.bundleIdentifier ?? "",
+            "udid": UIDevice.current.identifierForVendor!.uuidString,
+            "aid": ASIdentifierManager.shared().advertisingIdentifier.uuidString,
+            "ad-tracking": ASIdentifierManager.shared().isAdvertisingTrackingEnabled ,
             "token": deviceToken,
             "locale-lang": localeLanguage ?? "",
             "locale-region": localeRegion ?? "",
-            "time-zone": NSTimeZone.localTimeZone().name,
+            "time-zone": TimeZone.autoupdatingCurrent.identifier,
             "local-notifications-enabled": localNotificationsEnabled,
-            "remote-notifications-enabled": UIApplication.sharedApplication().isRegisteredForRemoteNotifications(),
-            "background-enabled": UIApplication.sharedApplication().backgroundRefreshStatus == .Available,
-            "location-monitoring-enabled": CLLocationManager.authorizationStatus() == .AuthorizedAlways,
+            "remote-notifications-enabled": UIApplication.shared.isRegisteredForRemoteNotifications,
+            "background-enabled": UIApplication.shared.backgroundRefreshStatus == .available,
+            "location-monitoring-enabled": CLLocationManager.authorizationStatus() == .authorizedAlways,
             "bluetooth-enabled": Device.bluetoothOn,
             "carrier": carrierName,
             "os-name": "iOS",
@@ -215,15 +215,15 @@ extension Device : Serializable {
 }
 
 extension Customer : Serializable {
-    public func serialize() -> [String : AnyObject] {
-        let firstName: AnyObject = self.firstName ?? NSNull()
-        let lastName: AnyObject = self.lastName ?? NSNull()
-        let phoneNumber: AnyObject = self.phone ?? NSNull()
-        let identifier: AnyObject = self.identifier ?? NSNull()
-        let gender: AnyObject = self.gender ?? NSNull()
-        let age: AnyObject = self.age ?? NSNull()
-        let tags: AnyObject = self.tags ?? NSNull()
-        let email: AnyObject = self.email ?? NSNull()
+    public func serialize() -> [String : Any] {
+        let firstName = self.firstName ?? NSNull() as Any
+        let lastName = self.lastName ?? NSNull() as Any
+        let phoneNumber = self.phone ?? NSNull() as Any
+        let identifier = self.identifier ?? NSNull() as Any
+        let gender = self.gender ?? NSNull() as Any
+        let age = self.age ?? NSNull() as Any
+        let tags = self.tags ?? NSNull() as Any
+        let email = self.email ?? NSNull() as Any
         
         return [
             "first-name": firstName,
@@ -239,7 +239,7 @@ extension Customer : Serializable {
 }
 
 extension Message : Serializable {
-    public func serialize() -> [String : AnyObject] {
+    public func serialize() -> [String : Any] {
         return [
             "data": [
                 "type": "messages",
@@ -253,16 +253,16 @@ extension Message : Serializable {
 }
 
 extension Block.Action : Serializable {
-    public func serialize() -> [String : AnyObject] {
+    public func serialize() -> [String : Any] {
         var type: String?
         
         switch self {
-        case .Screen(let identifier):
+        case .screen(let identifier):
             return [
                 "type": "go-to-screen",
                 "screen-id": identifier
             ]
-        case .Deeplink(let url):
+        case .deeplink(let url):
             return [
                 "type": "open-url",
                 "url": url.absoluteString

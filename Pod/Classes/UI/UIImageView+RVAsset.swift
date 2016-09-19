@@ -10,7 +10,7 @@ import UIKit
 
 extension UIImageView {
     
-    func rv_setImage(url url: NSURL) {
+    func rv_setImage(url: URL) {
         AssetManager.sharedManager.fetchAsset(url: url) { (data) in
             guard let data = data else { return }
             
@@ -18,7 +18,7 @@ extension UIImageView {
         }
     }
     
-    func rv_setImage(url url: NSURL?, activityIndicatorStyle: UIActivityIndicatorViewStyle) {
+    func rv_setImage(url: URL?, activityIndicatorStyle: UIActivityIndicatorViewStyle) {
         guard let url = url else {
             image = nil
             return
@@ -30,8 +30,8 @@ extension UIImageView {
         addSubview(activityIndicatorView)
         
         addConstraints([
-            NSLayoutConstraint(item: activityIndicatorView, attribute: .CenterX, relatedBy: .Equal, toItem: self, attribute: .CenterX, multiplier: 1, constant: 0),
-            NSLayoutConstraint(item: activityIndicatorView, attribute: .CenterY, relatedBy: .Equal, toItem: self, attribute: .CenterY, multiplier: 1, constant: 0)
+            NSLayoutConstraint(item: activityIndicatorView, attribute: .centerX, relatedBy: .equal, toItem: self, attribute: .centerX, multiplier: 1, constant: 0),
+            NSLayoutConstraint(item: activityIndicatorView, attribute: .centerY, relatedBy: .equal, toItem: self, attribute: .centerY, multiplier: 1, constant: 0)
             ])
         
         activityIndicatorView.startAnimating()

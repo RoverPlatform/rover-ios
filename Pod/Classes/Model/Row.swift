@@ -9,12 +9,12 @@
 import Foundation
 
 @objc
-public class Row: NSObject {
-    public var blocks: [Block]
+open class Row: NSObject {
+    open var blocks: [Block]
     
-    public var height: Unit?
+    open var height: Unit?
     
-    public let backgroundBlock = Block()
+    open let backgroundBlock = Block()
     
     init(blocks: [Block]) {
         backgroundBlock.position = .Floating

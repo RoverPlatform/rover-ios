@@ -10,18 +10,18 @@ import Foundation
 import UIKit
 
 enum Device {
-    case CurrentDevice
+    case currentDevice
     
-    private static var _pushToken: String?
+    fileprivate static var _pushToken: String?
     static var pushToken: String? {
         get {
             guard _pushToken == nil else { return _pushToken }
-            _pushToken = NSUserDefaults.standardUserDefaults().objectForKey("ROVER_PUSH_TOKEN") as? String
+            _pushToken = UserDefaults.standard.object(forKey: "ROVER_PUSH_TOKEN") as? String
             return _pushToken
         }
         set {
             _pushToken = newValue
-            NSUserDefaults.standardUserDefaults().setObject(newValue, forKey:"ROVER_PUSH_TOKEN")
+            UserDefaults.standard.set(newValue, forKey:"ROVER_PUSH_TOKEN")
         }
     }
     

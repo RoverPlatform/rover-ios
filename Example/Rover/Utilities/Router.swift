@@ -10,36 +10,36 @@ import Foundation
 import Rover
 
 enum APIRouter {
-    case SessionSignIn
-    case Accounts
+    case sessionSignIn
+    case accounts
     
-    var baseURL: NSURL {
-        return NSURL(string: Router.baseURLString)!
+    var baseURL: URL {
+        return URL(string: Router.baseURLString)!
     }
     
     var method: String {
         switch self {
-        case .SessionSignIn:
+        case .sessionSignIn:
             return "POST"
         default:
             return "GET"
         }
     }
     
-    var url: NSURL {
+    var url: URL {
         switch self {
-        case .SessionSignIn:
-            return baseURL.URLByAppendingPathComponent("sessions")
-        case .Accounts:
+        case .sessionSignIn:
+            return baseURL.appendingPathComponent("sessions")
+        case .accounts:
             let accountId = SessionManager.currentSession?.accountId ?? ""
-            return baseURL.URLByAppendingPathComponent("accounts/\(accountId)")
+            return baseURL.appendingPathComponent("accounts/\(accountId)")
         }
     }
     
     var urlRequest: NSMutableURLRequest {
-        let request = NSMutableURLRequest(URL: url)
+        let request = NSMutableURLRequest(url: url)
         let token = SessionManager.currentSession?.authToken ?? ""
-        request.HTTPMethod = method
+        request.httpMethod = method
         request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         return request
     }

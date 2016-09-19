@@ -8,21 +8,21 @@
 
 import Foundation
 
-public class SerializingOperation : NSOperation {
-    public typealias JSONSerializedCompletion = (JSON: [String: AnyObject]) -> Void
+open class SerializingOperation : Operation {
+    public typealias JSONSerializedCompletion = (_ JSON: [String: Any]) -> Void
     
     let model: Serializable
     let completion: JSONSerializedCompletion
     
-    public init(model: Serializable, completion: JSONSerializedCompletion) {
+    public init(model: Serializable, completion: @escaping JSONSerializedCompletion) {
         self.model = model
         self.completion = completion
         super.init()
     }
     
-    override public func main() {
+    override open func main() {
         let JSON = model.serialize()
-        completion(JSON: JSON)
+        completion(JSON)
 //        if let JSON = model.serialize() {
 //            //completion(JSON: JSON)
 //        } else {
@@ -33,5 +33,5 @@ public class SerializingOperation : NSOperation {
 
 public protocol Serializable {
     // TODO: remove the optional from the whole dic
-    func serialize() -> [String: AnyObject]
+    func serialize() -> [String: Any]
 }

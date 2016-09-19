@@ -10,53 +10,53 @@ import Foundation
 
 public enum Router {
     
-    case Events
-    case Inbox
-    case DeleteMessage(Message)
-    case PatchMessage(Message)
-    case GetMessage(String)
-    case GetLandingPage(Message)
-    case GetExperience(String)
+    case events
+    case inbox
+    case deleteMessage(Message)
+    case patchMessage(Message)
+    case getMessage(String)
+    case getLandingPage(Message)
+    case getExperience(String)
     
     public static var baseURLString = "https://api.rover.io/v1" //"https://rover-content-api-development.herokuapp.com/v1"
     
     var method: String {
         switch self {
-        case .Events:
+        case .events:
             return "POST"
-        case .DeleteMessage(_):
+        case .deleteMessage(_):
             return "DELETE"
-        case .PatchMessage(_):
+        case .patchMessage(_):
             return "PATCH"
         default:
             return "GET"
         }
     }
     
-    var url: NSURL {
+    var url: URL {
         switch self {
-        case .Events:
-            return NSURL(string: "\(Router.baseURLString)/events")!
-        case .Inbox:
-            return NSURL(string: "\(Router.baseURLString)/inbox")!
-        case .DeleteMessage(let message):
-            return NSURL(string: "\(Router.baseURLString)/inbox/\(message.identifier)")!
-        case .PatchMessage(let message):
-            return NSURL(string: "\(Router.baseURLString)/inbox/\(message.identifier)")!
-        case .GetMessage(let id):
-            return NSURL(string: "\(Router.baseURLString)/inbox/\(id)")!
-        case .GetLandingPage(let message):
-            return NSURL(string: "\(Router.baseURLString)/inbox/\(message.identifier)/landing-page")!
-        case .GetExperience(let identifier):
-            return NSURL(string: "\(Router.baseURLString)/experiences/\(identifier)")!
+        case .events:
+            return URL(string: "\(Router.baseURLString)/events")!
+        case .inbox:
+            return URL(string: "\(Router.baseURLString)/inbox")!
+        case .deleteMessage(let message):
+            return URL(string: "\(Router.baseURLString)/inbox/\(message.identifier)")!
+        case .patchMessage(let message):
+            return URL(string: "\(Router.baseURLString)/inbox/\(message.identifier)")!
+        case .getMessage(let id):
+            return URL(string: "\(Router.baseURLString)/inbox/\(id)")!
+        case .getLandingPage(let message):
+            return URL(string: "\(Router.baseURLString)/inbox/\(message.identifier)/landing-page")!
+        case .getExperience(let identifier):
+            return URL(string: "\(Router.baseURLString)/experiences/\(identifier)")!
         }
     }
     
     var urlRequest: NSMutableURLRequest {
-        let urlRequest = NSMutableURLRequest(URL: self.url)
-        urlRequest.HTTPMethod = self.method
+        let urlRequest = NSMutableURLRequest(url: self.url)
+        urlRequest.httpMethod = self.method
         urlRequest.setValue(Rover.sharedInstance?.applicationToken, forHTTPHeaderField: "X-Rover-Api-Key")
-        urlRequest.setValue(UIDevice.currentDevice().identifierForVendor?.UUIDString ?? "[UNKNOWN]", forHTTPHeaderField: "X-Rover-Device-Id")
+        urlRequest.setValue(UIDevice.current.identifierForVendor?.uuidString ?? "[UNKNOWN]", forHTTPHeaderField: "X-Rover-Device-Id")
         return urlRequest
     }
 }

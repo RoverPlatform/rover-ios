@@ -25,23 +25,23 @@ class InboxTableViewController: UITableViewController {
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(applicationDidOpen), name: UIApplicationDidFinishLaunchingNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(applicationDidOpen), name: UIApplicationWillEnterForegroundNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidOpen), name: NSNotification.Name.UIApplicationDidFinishLaunching, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidOpen), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.navigationItem.rightBarButtonItem = self.editButtonItem()
+        self.navigationItem.rightBarButtonItem = self.editButtonItem
         
         self.refreshControl = UIRefreshControl()
-        self.refreshControl?.addTarget(self, action: #selector(InboxTableViewController.reloadMessages), forControlEvents: .ValueChanged)
+        self.refreshControl?.addTarget(self, action: #selector(InboxTableViewController.reloadMessages), for: .valueChanged)
         
         Rover.addObserver(self)
     }
 
     deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
         Rover.removeObserver(self)
     }
     
@@ -57,55 +57,55 @@ class InboxTableViewController: UITableViewController {
 
     // MARK: - Table view data source
 
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
 
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return messages.count
     }
 
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("MessageTableViewCellIdentifier", forIndexPath: indexPath) as! MessageTableViewCell
-        let message = messages[indexPath.row]
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "MessageTableViewCellIdentifier", for: indexPath) as! MessageTableViewCell
+        let message = messages[(indexPath as NSIndexPath).row]
         
         cell.titleLabel.text = message.title
         cell.messageTextLabel.text = message.text
-        cell.unreadIndicatorView.hidden = message.read
+        cell.unreadIndicatorView.isHidden = message.read
         
         return cell
     }
 
     // MARK: - Table view delegate
 
-    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-        if editingStyle == .Delete {
-            let message = messages[indexPath.row]
-            messages.removeAtIndex(indexPath.row)
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            let message = messages[(indexPath as NSIndexPath).row]
+            messages.remove(at: (indexPath as NSIndexPath).row)
             Rover.deleteMessage(message)
-            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+            tableView.deleteRows(at: [indexPath], with: .fade)
         }
     }
     
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        let message = messages[indexPath.row]
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let message = messages[(indexPath as NSIndexPath).row]
         
         switch message.action {
-        case .Website:
+        case .website:
             fallthrough
-        case .DeepLink:
+        case .deepLink:
             guard let url = message.url else { break }
-            UIApplication.sharedApplication().openURL(url)
-        case .LandingPage:
+            UIApplication.shared.openURL(url)
+        case .landingPage:
             if let screenViewController = Rover.viewController(message: message) as? ScreenViewController {
                 screenViewController.delegate = self
                 navigationController?.pushViewController(screenViewController, animated: true)
             }
             break
-        case .Experience:
+        case .experience:
             if let experienceId = message.experienceId {
                 let experienceViewController = ExperienceViewController(identifier: experienceId)
-                presentViewController(experienceViewController, animated: true, completion: nil)
+                present(experienceViewController, animated: true, completion: nil)
             }
         default:
             break
@@ -118,8 +118,8 @@ class InboxTableViewController: UITableViewController {
             self.unreadMessagesCount -= 1
             Rover.patchMessage(message)
             
-            let cell = tableView.cellForRowAtIndexPath(indexPath) as! MessageTableViewCell
-            cell.unreadIndicatorView.hidden = true
+            let cell = tableView.cellForRow(at: indexPath) as! MessageTableViewCell
+            cell.unreadIndicatorView.isHidden = true
         }
     }
     
@@ -132,18 +132,18 @@ class InboxTableViewController: UITableViewController {
 }
 
 extension InboxTableViewController : ScreenViewControllerDelegate {
-    func screenViewController(viewController: ScreenViewController, handleOpenURL url: NSURL) {
-        UIApplication.sharedApplication().openURL(url)
+    func screenViewController(_ viewController: ScreenViewController, handleOpenURL url: URL) {
+        UIApplication.shared.openURL(url)
     }
 }
 
 extension InboxTableViewController : RoverObserver {
-    func didReceiveMessage(message: Message) {
+    func didReceiveMessage(_ message: Message) {
         // Only add messages that have been marked to be saved
         guard message.savedToInbox else { return }
         unreadMessagesCount += 1
         // You may choose to add them to your CoreData model instead
-        messages.insert(message, atIndex: 0)
-        tableView.insertRowsAtIndexPaths([NSIndexPath(forRow: 0, inSection: 0)], withRowAnimation: .Automatic)
+        messages.insert(message, at: 0)
+        tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
     }
 }

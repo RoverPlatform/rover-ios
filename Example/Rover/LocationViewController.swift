@@ -28,24 +28,24 @@ class LocationViewController: UIViewController {
     
     // MARK: Actions
     
-    @IBAction func didPressClose(sender: AnyObject) {
-        dismissViewControllerAnimated(true, completion: nil)
+    @IBAction func didPressClose(_ sender: AnyObject) {
+        dismiss(animated: true, completion: nil)
     }
     
-    @IBAction func didLongPress(sender: UILongPressGestureRecognizer) {
-        guard sender.state != .Ended, let mapView = sender.view as? MKMapView else { return }
+    @IBAction func didLongPress(_ sender: UILongPressGestureRecognizer) {
+        guard sender.state != .ended, let mapView = sender.view as? MKMapView else { return }
         
         mapView.removeAnnotations(mapView.annotations)
         
-        let point = sender.locationInView(mapView)
-        let coordinate = mapView.convertPoint(point, toCoordinateFromView: mapView)
+        let point = sender.location(in: mapView)
+        let coordinate = mapView.convert(point, toCoordinateFrom: mapView)
         let annotation = LocationAnnotation(coordinate: coordinate)
         
         selectedLocation = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
         
         mapView.addAnnotation(annotation)
         
-        spoofBarButtonItem.enabled = true
+        spoofBarButtonItem.isEnabled = true
     }
 
     /*
@@ -61,17 +61,17 @@ class LocationViewController: UIViewController {
 }
 
 extension LocationViewController : MKMapViewDelegate {
-    func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         guard annotation is LocationAnnotation else { return nil }
         
-        var pin = mapView.dequeueReusableAnnotationViewWithIdentifier("annotationView") as? MKPinAnnotationView
+        var pin = mapView.dequeueReusableAnnotationView(withIdentifier: "annotationView") as? MKPinAnnotationView
         if (pin == nil) {
             pin = MKPinAnnotationView(annotation: annotation, reuseIdentifier: "annotationView")
         } else {
             pin?.annotation = annotation
         }
         
-        pin?.pinColor = .Purple
+        pin?.pinColor = .purple
         pin?.animatesDrop = true
         
         return pin

@@ -9,10 +9,10 @@
 import UIKit
 
 protocol ModalViewControllerDelegate: class {
-    func didDismissModalViewController(viewController: ModalViewController)
+    func didDismissModalViewController(_ viewController: ModalViewController)
 }
 
-public class ModalViewController: UINavigationController {
+open class ModalViewController: UINavigationController {
     
     weak var modalDelegate: ModalViewControllerDelegate?
     
@@ -26,25 +26,25 @@ public class ModalViewController: UINavigationController {
         super.init(coder: aDecoder)
     }
     
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
     }
     
-    override public func pushViewController(viewController: UIViewController, animated: Bool) {
+    override open func pushViewController(_ viewController: UIViewController, animated: Bool) {
         addCloseButtonToViewController(viewController)
         super.pushViewController(viewController, animated: animated)
     }
     
-    override public func dismissViewControllerAnimated(flag: Bool, completion: (() -> Void)?) {
-        super.dismissViewControllerAnimated(flag, completion: completion)
+    override open func dismiss(animated flag: Bool, completion: (() -> Void)?) {
+        super.dismiss(animated: flag, completion: completion)
         modalDelegate?.didDismissModalViewController(self)
     }
 
     func dismissViewController() {
-        self.dismissViewControllerAnimated(true, completion: nil)
+        self.dismiss(animated: true, completion: nil)
     }
     
-    func addCloseButtonToViewController(viewController: UIViewController) {
-        viewController.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Close", style: .Plain, target: self, action: #selector(dismissViewController))
+    func addCloseButtonToViewController(_ viewController: UIViewController) {
+        viewController.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Close", style: .plain, target: self, action: #selector(dismissViewController))
     }
 }

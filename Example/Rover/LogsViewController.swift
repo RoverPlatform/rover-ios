@@ -18,10 +18,10 @@ class LogsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(LogsViewController.didReceiveLogReport(_:)), name: "RoverLogReportNotification", object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(LogsViewController.didReceiveLogReport(_:)), name: NSNotification.Name(rawValue: "RoverLogReportNotification"), object: nil)
     }
 
-    @IBAction func didPressClear(sender: UIBarButtonItem) {
+    @IBAction func didPressClear(_ sender: UIBarButtonItem) {
         liveLogs = ""
         textView.text = liveLogs
     }
@@ -32,32 +32,32 @@ class LogsViewController: UIViewController {
     }
     
     deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
 
-    @IBAction func segmentChanged(sender: UISegmentedControl) {
+    @IBAction func segmentChanged(_ sender: UISegmentedControl) {
 
     }
     
-    func didReceiveLogReport(note: NSNotification) {
+    func didReceiveLogReport(_ note: Notification) {
         guard let log = note.object as? String else { return }
         liveLogs = liveLogs + "\n" + log
         textView.text = liveLogs
     }
     
-    @IBAction func didPressChangeServer(sender: UIBarButtonItem) {
-        let alertController = UIAlertController(title: "Change Server", message: nil, preferredStyle: .Alert)
-        let action = UIAlertAction(title: "Change", style: .Default) { (action) in
-            NSUserDefaults.standardUserDefaults().setObject(alertController.textFields![0].text, forKey: "ROVER_SERVER_URL")
+    @IBAction func didPressChangeServer(_ sender: UIBarButtonItem) {
+        let alertController = UIAlertController(title: "Change Server", message: nil, preferredStyle: .alert)
+        let action = UIAlertAction(title: "Change", style: .default) { (action) in
+            UserDefaults.standard.set(alertController.textFields![0].text, forKey: "ROVER_SERVER_URL")
             Router.baseURLString = alertController.textFields![0].text!
         }
-        alertController.addTextFieldWithConfigurationHandler { (textField) in
+        alertController.addTextField { (textField) in
             textField.text = Router.baseURLString
         }
         alertController.addAction(action)
-        alertController.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: nil))
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         
-        presentViewController(alertController, animated: true, completion: nil)
+        present(alertController, animated: true, completion: nil)
     }
     
     /*

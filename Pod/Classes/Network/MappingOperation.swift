@@ -8,15 +8,15 @@
 
 import Foundation
 
-public class MappingOperation<T where T : Mappable> : NSOperation {
-    typealias JSON = [String: AnyObject]
-    public typealias ResourceCallback = T -> Void
-    public typealias CollectionCallback = [T] -> Void
+open class MappingOperation<T> : Operation where T : Mappable {
+    typealias JSON = [String: Any]
+    public typealias ResourceCallback = (T) -> Void
+    public typealias CollectionCallback = ([T]) -> Void
     
-    public var json: [String: AnyObject]?
+    open var json: [String: Any]?
     var resourceCompletion: ResourceCallback?
     var collectionCompletion: CollectionCallback?
-    public var included: [String: Any]?
+    open var included: [String: Any]?
     
     public init(resourceCompletion: ResourceCallback?) {
         self.resourceCompletion = resourceCompletion
@@ -28,7 +28,7 @@ public class MappingOperation<T where T : Mappable> : NSOperation {
         super.init()
     }
     
-    override public func main() {
+    override open func main() {
         // TODO: each return statement should fire completion
         guard let json = json, let data = json["data"] else {
             cancel()
@@ -45,18 +45,18 @@ public class MappingOperation<T where T : Mappable> : NSOperation {
                 itemsArray.append(resource)
             }
             
-            rvLog("Mapped collection of type \(T.self.dynamicType)", data: "\(itemsArray.count) items", level: .Trace)
+            rvLog("Mapped collection of type \(type(of: T.self))", data: "\(itemsArray.count) items", level: .trace)
             collectionCompletion?(itemsArray)
-        case is [String: AnyObject]:
+        case is [String: Any]:
             let resource = T.instance(data as! [String : AnyObject], included: included)
             guard let typedResource = resource as? T else {
                 // error couldnt map to type T
                 return
             }
-            rvLog("Mapped resource of type \(T.self.dynamicType)", data: nil, level: .Trace)
+            rvLog("Mapped resource of type \(type(of: T.self))", data: nil, level: .trace)
             resourceCompletion?(typedResource)
         default:
-            rvLog("Invalid data.", data: data, level: .Error)
+            rvLog("Invalid data.", data: data, level: .error)
             break
         }
     }
@@ -66,5 +66,5 @@ public class MappingOperation<T where T : Mappable> : NSOperation {
 
 public protocol Mappable {
     associatedtype MappableType
-    static func instance(JSON: [String: AnyObject], included: [String: Any]?) -> MappableType?
+    static func instance(_ JSON: [String: Any], included: [String: Any]?) -> MappableType?
 }

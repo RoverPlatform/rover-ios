@@ -9,38 +9,38 @@
 import UIKit
 
 protocol BlockViewLayoutDataSource: class {
-    func blockViewLayout(blockViewLayout: BlockViewLayout, heightForSection section: Int) -> CGFloat
-    func blockViewLayout(blockViewLayout: BlockViewLayout, layoutForItemAtIndexPath indexPath: NSIndexPath) -> Block // TODO: Change to layout model
+    func blockViewLayout(_ blockViewLayout: BlockViewLayout, heightForSection section: Int) -> CGFloat
+    func blockViewLayout(_ blockViewLayout: BlockViewLayout, layoutForItemAtIndexPath indexPath: IndexPath) -> Block // TODO: Change to layout model
 }
 
 class BlockViewLayout: UICollectionViewLayout {
     
     weak var dataSource: BlockViewLayoutDataSource?
 
-    private var cellAttributes = [NSIndexPath : UICollectionViewLayoutAttributes]()
-    private var height: CGFloat = 0
-    private var cellClipPaths = [NSIndexPath: CGPath]()
+    fileprivate var cellAttributes = [IndexPath : UICollectionViewLayoutAttributes]()
+    fileprivate var height: CGFloat = 0
+    fileprivate var cellClipPaths = [IndexPath: CGPath]()
     
-    override func prepareLayout() {
+    override func prepare() {
         
         cellAttributes = [:]
         height = 0
         cellClipPaths = [:]
         
-        let numSections = self.collectionView!.numberOfSections()
+        let numSections = self.collectionView!.numberOfSections
         
         for section in 0..<numSections {
             
             let sectionHeight = self.dataSource!.blockViewLayout(self, heightForSection: section)
-            let numItems = self.collectionView!.numberOfItemsInSection(section)
+            let numItems = self.collectionView!.numberOfItems(inSection: section)
             var yOffset = height
             
             for item in 0..<numItems {
                 
-                let indexPath = NSIndexPath(forRow: item, inSection: section)
+                let indexPath = IndexPath(row: item, section: section)
                 let block = self.dataSource!.blockViewLayout(self, layoutForItemAtIndexPath: indexPath)
                 let stacked = block.position == .Stacked
-                let attributes = UICollectionViewLayoutAttributes(forCellWithIndexPath: indexPath)
+                let attributes = UICollectionViewLayoutAttributes(forCellWith: indexPath)
                 
                 attributes.frame = frameForItem(layout: block, yOffset: stacked ? yOffset : height, sectionHeight: sectionHeight)
                 attributes.zIndex = (numItems - item)
@@ -51,7 +51,7 @@ class BlockViewLayout: UICollectionViewLayout {
                     attributes.frame.origin.y < height {
                     let clippedY = max(0, height - attributes.frame.origin.y)
                     let clippedHeight = min(height + sectionHeight - attributes.frame.origin.y, attributes.frame.height) - clippedY
-                    cellClipPaths[indexPath] = CGPathCreateWithRect(CGRect(origin: CGPoint(x: 0, y:clippedY), size: CGSize(width: attributes.frame.width, height: clippedHeight)), nil)
+                    cellClipPaths[indexPath] = CGPath(rect: CGRect(origin: CGPoint(x: 0, y:clippedY), size: CGSize(width: attributes.frame.width, height: clippedHeight)), transform: nil)
                 }
                 
                 if stacked {
@@ -63,16 +63,16 @@ class BlockViewLayout: UICollectionViewLayout {
         }
     }
     
-    override func collectionViewContentSize() -> CGSize {
+    override var collectionViewContentSize : CGSize {
         return CGSize(width: self.collectionView!.frame.size.width, height: height)
     }
     
-    override func layoutAttributesForElementsInRect(rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
+    override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
         
         var attributesArray = [UICollectionViewLayoutAttributes]()
         
         for (_, attributes) in cellAttributes {
-            if CGRectIntersectsRect(rect, attributes.frame) {
+            if rect.intersects(attributes.frame) {
                 attributesArray.append(attributes)
             }
         }
@@ -80,11 +80,11 @@ class BlockViewLayout: UICollectionViewLayout {
         return attributesArray
     }
     
-    override func layoutAttributesForItemAtIndexPath(indexPath: NSIndexPath) -> UICollectionViewLayoutAttributes? {
+    override func layoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
         return cellAttributes[indexPath]
     }
     
-    func clipPathForItemAtIndexPath(indexPath: NSIndexPath) -> CGPath? {
+    func clipPathForItemAtIndexPath(_ indexPath: IndexPath) -> CGPath? {
         return cellClipPaths[indexPath]
     }
     
@@ -166,11 +166,11 @@ class BlockViewLayout: UICollectionViewLayout {
 }
 
 extension Unit {
-    func forParentValue(parentValue: CGFloat) -> CGFloat {
+    func forParentValue(_ parentValue: CGFloat) -> CGFloat {
         switch self {
-        case .Percentage(let value):
+        case .percentage(let value):
             return CGFloat(value) * parentValue / 100.0
-        case .Points(let value):
+        case .points(let value):
             return CGFloat(value)
         }
     }
@@ -179,23 +179,23 @@ extension Unit {
 // MARK: Block Size
 
 extension Block {
-    func heightInCollectionView(collectionView: UICollectionView, sectionHeight: CGFloat) -> CGFloat {
+    func heightInCollectionView(_ collectionView: UICollectionView, sectionHeight: CGFloat) -> CGFloat {
         
         if let height = height?.forParentValue(sectionHeight) {
             return height
-        } else if let imageBock = self as? ImageBock, aspectRatio = imageBock.image?.aspectRatio where aspectRatio != 0 {
+        } else if let imageBock = self as? ImageBock, let aspectRatio = imageBock.image?.aspectRatio , aspectRatio != 0 {
             let width = widthInCollectionView(collectionView)
             return width / aspectRatio
-        } else if let textBlock = self as? TextBlock, attributedString = textBlock.attributedText {
+        } else if let textBlock = self as? TextBlock, let attributedString = textBlock.attributedText {
             let width = widthInCollectionView(collectionView) - self.inset.left - self.inset.right
-            return attributedString.boundingRectWithSize(CGSize(width: width, height: CGFloat.max), options: [.UsesLineFragmentOrigin, .UsesFontLeading], context: nil).height + inset.top + inset.bottom
+            return attributedString.boundingRect(with: CGSize(width: width, height: CGFloat.greatestFiniteMagnitude), options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil).height + inset.top + inset.bottom
         }
         
         return 0
     }
     // TODO: MORE BUGS HERE
     
-    func widthInCollectionView(collectionView: UICollectionView) -> CGFloat {
+    func widthInCollectionView(_ collectionView: UICollectionView) -> CGFloat {
         if alignment.horizontal == .Fill {
             let left = offset.left.forParentValue(collectionView.frame.width)
             let right = offset.right.forParentValue(collectionView.frame.width)

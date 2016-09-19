@@ -9,7 +9,7 @@
 import Foundation
 
 @objc
-public class Screen: NSObject {
+open class Screen: NSObject {
 
     public enum NavBarButtons : String {
         case Close = "close"
@@ -18,22 +18,22 @@ public class Screen: NSObject {
         case None = "none"
     }
     
-    public var identifier: String?
-    public var title: String?
-    public var headerRows: [Row]?
-    public var rows:[Row]
-    public var footerRows: [Row]?
-    public var backgroundColor = UIColor.whiteColor()
-    public var titleColor: UIColor?
-    public var navBarColor: UIColor?
-    public var navItemColor: UIColor?
-    public var statusBarStyle: UIStatusBarStyle?
-    public var useDefaultNavBarStyle = true
-    public var navBarButtons = NavBarButtons.Both
+    open var identifier: String?
+    open var title: String?
+    open var headerRows: [Row]?
+    open var rows:[Row]
+    open var footerRows: [Row]?
+    open var backgroundColor = UIColor.white
+    open var titleColor: UIColor?
+    open var navBarColor: UIColor?
+    open var navItemColor: UIColor?
+    open var statusBarStyle: UIStatusBarStyle?
+    open var useDefaultNavBarStyle = true
+    open var navBarButtons = NavBarButtons.Both
     
-    public var backgroundImage: Image?
-    public var backgorundContentMode: ImageContentMode = .Original
-    public var backgroundScale: CGFloat = 1
+    open var backgroundImage: Image?
+    open var backgorundContentMode: ImageContentMode = .Original
+    open var backgroundScale: CGFloat = 1
     
     init(rows: [Row]) {
         self.rows = rows

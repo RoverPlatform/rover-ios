@@ -9,23 +9,23 @@
 import Foundation
 
 protocol ExperienceViewControllerDelegate: class {
-    func experienceViewControllerDidLaunch(viewController: ExperienceViewController)
-    func experienceViewControllerDidDismiss(viewController: ExperienceViewController)
-    func experienceViewController(viewController: ExperienceViewController, didViewScreen screen: Screen, referrerScreen referrerScreen: Screen?, referrerBlock referrerBlock: Block?)
-    func experienceViewController(viewController: ExperienceViewController, didPressBlock block: Block, screen: Screen)
-    func experienceViewController(viewController: ExperienceViewController, willLoadExperience experience: Experience)
+    func experienceViewControllerDidLaunch(_ viewController: ExperienceViewController)
+    func experienceViewControllerDidDismiss(_ viewController: ExperienceViewController)
+    func experienceViewController(_ viewController: ExperienceViewController, didViewScreen screen: Screen, referrerScreen: Screen?, referrerBlock: Block?)
+    func experienceViewController(_ viewController: ExperienceViewController, didPressBlock block: Block, screen: Screen)
+    func experienceViewController(_ viewController: ExperienceViewController, willLoadExperience experience: Experience)
 }
 
-public class ExperienceViewController: ModalViewController {
+open class ExperienceViewController: ModalViewController {
     
     internal(set) static weak var superDelegate: ExperienceViewControllerDelegate?
     
     var experience: Experience?
-    var operationQueue = NSOperationQueue()
+    var operationQueue = OperationQueue()
     
     required public init(identifier: String) {
         super.init(rootViewController: LoadingViewController())
-        view.backgroundColor = UIColor.whiteColor()
+        view.backgroundColor = UIColor.white
         fetchExperience(identifier: identifier)
     }
     
@@ -33,21 +33,21 @@ public class ExperienceViewController: ModalViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
     }
     
-    func fetchExperience(identifier identifier: String) {
+    func fetchExperience(identifier: String) {
         let mappingOperation = MappingOperation { (experience: Experience) in
             self.experience = experience
-            dispatch_async(dispatch_get_main_queue(), { 
+            DispatchQueue.main.async(execute: { 
                 self.reloadExperience()
             })
         }
         
         // TODO: Handle bad internet and reload capabilities with the spinner
         
-        let networkOperation = NetworkOperation(urlRequest: Router.GetExperience(identifier).urlRequest) {
+        let networkOperation = NetworkOperation(urlRequest: Router.getExperience(identifier).urlRequest as URLRequest) {
             [unowned mappingOperation]
             (JSON, error) in
             
@@ -78,22 +78,22 @@ public class ExperienceViewController: ModalViewController {
         ExperienceViewController.superDelegate?.experienceViewController(self, didViewScreen: homeScreen, referrerScreen: nil, referrerBlock: nil)
     }
     
-    func viewController(screen screen: Screen) -> ScreenViewController {
+    func viewController(screen: Screen) -> ScreenViewController {
         let screenViewController = ScreenViewController(screen: screen)
         screenViewController.delegate = self
         return screenViewController
     }
     
-    public override func pushViewController(viewController: UIViewController, animated: Bool) {
+    open override func pushViewController(_ viewController: UIViewController, animated: Bool) {
         super.pushViewController(viewController, animated: animated)
         
     }
     
-    public override func popViewControllerAnimated(animated: Bool) -> UIViewController? {
-        let vc = super.popViewControllerAnimated(animated)
+    open override func popViewController(animated: Bool) -> UIViewController? {
+        let vc = super.popViewController(animated: animated)
         
         // Track Screen
-        if let viewController = topViewController as? ScreenViewController, screen = viewController.screen {
+        if let viewController = topViewController as? ScreenViewController, let screen = viewController.screen {
             let svc = vc as? ScreenViewController
             let referrerScreen = svc?.screen
             ExperienceViewController.superDelegate?.experienceViewController(self, didViewScreen: screen, referrerScreen: referrerScreen, referrerBlock: nil)
@@ -109,20 +109,20 @@ public class ExperienceViewController: ModalViewController {
 }
 
 extension ExperienceViewController : ScreenViewControllerDelegate {
-    public func screenViewController(viewController: ScreenViewController, handleOpenScreenWithIdentifier identifier: String) {
+    public func screenViewController(_ viewController: ScreenViewController, handleOpenScreenWithIdentifier identifier: String) {
         guard let screen = experience?.screens.filter({ $0.identifier == identifier}).first else { return }
         let viewController = self.viewController(screen: screen)
         pushViewController(viewController, animated: true)
     }
     
-    public func screenViewController(viewController: ScreenViewController, didPressBlock block: Block) {
+    public func screenViewController(_ viewController: ScreenViewController, didPressBlock block: Block) {
         guard let screen = viewController.screen else { return }
         ExperienceViewController.superDelegate?.experienceViewController(self, didPressBlock: block, screen: screen)
         
         
         // Track Screen
         switch block.action {
-        case .Screen(let identifier)?:
+        case .screen(let identifier)?:
             guard let toScreen = experience?.screens.filter({ $0.identifier == identifier}).first else { break }
             ExperienceViewController.superDelegate?.experienceViewController(self, didViewScreen: toScreen, referrerScreen: screen, referrerBlock: block)
         default:
@@ -134,7 +134,7 @@ extension ExperienceViewController : ScreenViewControllerDelegate {
 class LoadingViewController : UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
-        let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .Gray)
+        let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .gray)
         activityIndicator.center = view.center
         view.addSubview(activityIndicator)
         activityIndicator.startAnimating()

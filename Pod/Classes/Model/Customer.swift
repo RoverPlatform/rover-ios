@@ -8,23 +8,23 @@
 
 import Foundation
 
-public class Customer : NSObject, NSCoding {
+open class Customer : NSObject, NSCoding {
     
-    public var identifier: String?
-    public var firstName: String?
-    public var lastName: String?
-    public var email: String?
-    public var phone: String?
-    public var tags: [String]?
-    public var gender: String?
-    public var age: Int?
-    public var traits: [String: AnyObject]
+    open var identifier: String?
+    open var firstName: String?
+    open var lastName: String?
+    open var email: String?
+    open var phone: String?
+    open var tags: [String]?
+    open var gender: String?
+    open var age: Int?
+    open var traits: [String: Any]
     
-    private static var _sharedCustomer: Customer?
+    fileprivate static var _sharedCustomer: Customer?
     static var sharedCustomer: Customer {
         guard _sharedCustomer == nil else { return _sharedCustomer! }
         
-        if let data = NSUserDefaults.standardUserDefaults().objectForKey("ROVER_SHARED_CUSTOMER") as? NSData, _customer = NSKeyedUnarchiver.unarchiveObjectWithData(data) as? Customer {
+        if let data = UserDefaults.standard.object(forKey: "ROVER_SHARED_CUSTOMER") as? Data, let _customer = NSKeyedUnarchiver.unarchiveObject(with: data) as? Customer {
             _sharedCustomer = _customer
             return _sharedCustomer!
         } else {
@@ -34,44 +34,44 @@ public class Customer : NSObject, NSCoding {
     }
     
     override init() {
-        traits = [String: AnyObject]()
+        traits = [String: Any]()
         
         super.init()
     }
     
-    public func save() {
-        let data = NSKeyedArchiver.archivedDataWithRootObject(self)
-        NSUserDefaults.standardUserDefaults().setObject(data, forKey: "ROVER_SHARED_CUSTOMER")
-        NSUserDefaults.standardUserDefaults().synchronize()
+    open func save() {
+        let data = NSKeyedArchiver.archivedData(withRootObject: self)
+        UserDefaults.standard.set(data, forKey: "ROVER_SHARED_CUSTOMER")
+        UserDefaults.standard.synchronize()
     }
     
     // MARK: NSCoding
     
     required convenience public init?(coder aDecoder: NSCoder) {
         self.init()
-        firstName = aDecoder.decodeObjectForKey("firstName") as? String
-        lastName = aDecoder.decodeObjectForKey("lastName") as? String
-        email = aDecoder.decodeObjectForKey("email") as? String
-        phone = aDecoder.decodeObjectForKey("phone") as? String
-        identifier = aDecoder.decodeObjectForKey("identifier") as? String
-        tags = aDecoder.decodeObjectForKey("tags") as? [String]
-        gender = aDecoder.decodeObjectForKey("gender") as? String
-        age = aDecoder.decodeObjectForKey("age") as? Int
-        if let traits = aDecoder.decodeObjectForKey("traits") as? [String: AnyObject] {
+        firstName = aDecoder.decodeObject(forKey: "firstName") as? String
+        lastName = aDecoder.decodeObject(forKey: "lastName") as? String
+        email = aDecoder.decodeObject(forKey: "email") as? String
+        phone = aDecoder.decodeObject(forKey: "phone") as? String
+        identifier = aDecoder.decodeObject(forKey: "identifier") as? String
+        tags = aDecoder.decodeObject(forKey: "tags") as? [String]
+        gender = aDecoder.decodeObject(forKey: "gender") as? String
+        age = aDecoder.decodeObject(forKey: "age") as? Int
+        if let traits = aDecoder.decodeObject(forKey: "traits") as? [String: Any] {
             self.traits = traits
         }
     }
     
-    public func encodeWithCoder(aCoder: NSCoder) {
-        aCoder.encodeObject(firstName, forKey: "firstname")
-        aCoder.encodeObject(lastName, forKey: "lastName")
-        aCoder.encodeObject(email, forKey: "email")
-        aCoder.encodeObject(phone, forKey: "phone")
-        aCoder.encodeObject(identifier, forKey: "identifier")
-        aCoder.encodeObject(tags, forKey: "tags")
-        aCoder.encodeObject(traits, forKey: "traits")
-        aCoder.encodeObject(gender, forKey: "gender")
-        aCoder.encodeObject(age, forKey: "age")
+    open func encode(with aCoder: NSCoder) {
+        aCoder.encode(firstName, forKey: "firstname")
+        aCoder.encode(lastName, forKey: "lastName")
+        aCoder.encode(email, forKey: "email")
+        aCoder.encode(phone, forKey: "phone")
+        aCoder.encode(identifier, forKey: "identifier")
+        aCoder.encode(tags, forKey: "tags")
+        aCoder.encode(traits, forKey: "traits")
+        aCoder.encode(gender, forKey: "gender")
+        aCoder.encode(age, forKey: "age")
     }
     
 }

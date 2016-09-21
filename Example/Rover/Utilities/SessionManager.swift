@@ -45,7 +45,7 @@ class SessionManager {
             }
         }
         
-        let networkOperation = NetworkOperation(mutableUrlRequest: APIRouter.sessionSignIn.urlRequest) {
+        let networkOperation = NetworkOperation(urlRequest: APIRouter.sessionSignIn.urlRequest) {
             [unowned mappingOperation]
             (JSON, error) in
             

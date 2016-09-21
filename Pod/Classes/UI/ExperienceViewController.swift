@@ -23,6 +23,8 @@ open class ExperienceViewController: ModalViewController {
     var experience: Experience?
     var operationQueue = OperationQueue()
     
+    let sessionID = NSUUID().uuidString
+    
     required public init(identifier: String) {
         super.init(rootViewController: LoadingViewController())
         view.backgroundColor = UIColor.white

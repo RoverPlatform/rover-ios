@@ -36,8 +36,8 @@ enum APIRouter {
         }
     }
     
-    var urlRequest: NSMutableURLRequest {
-        let request = NSMutableURLRequest(url: url)
+    var urlRequest: URLRequest {
+        var request = URLRequest(url: url)
         let token = SessionManager.currentSession?.authToken ?? ""
         request.httpMethod = method
         request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")

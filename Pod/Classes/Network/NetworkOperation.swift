@@ -10,7 +10,7 @@ import Foundation
 
 open class NetworkOperation: ConcurrentOperation {
     
-    var urlRequest: NSMutableURLRequest
+    var urlRequest: URLRequest
     var urlSessionTask: URLSessionDataTask?
     open var payload: [String: Any]?
     var completion: JSONCompletionBlock?
@@ -29,28 +29,24 @@ open class NetworkOperation: ConcurrentOperation {
     
     public typealias JSONCompletionBlock = ([String: Any]?, Error?) -> Void
     
-    required public init(mutableUrlRequest: NSMutableURLRequest, completion: JSONCompletionBlock?) {
-        self.urlRequest = mutableUrlRequest
+    required public init(urlRequest: URLRequest, completion: JSONCompletionBlock?) {
+        self.urlRequest = urlRequest
         self.completion = completion
         super.init()
     }
     
-    convenience init(urlRequest: URLRequest, completion: JSONCompletionBlock?) {
-        self.init(mutableUrlRequest: (urlRequest as NSURLRequest).mutableCopy() as! NSMutableURLRequest, completion: completion)
-    }
-    
     convenience init(url: URL, method: String, completion: JSONCompletionBlock?) {
-        let urlRequest = NSMutableURLRequest(url: url)
+        var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = method
         
-        self.init(mutableUrlRequest: urlRequest, completion: completion)
+        self.init(urlRequest: urlRequest, completion: completion)
     }
 
     override func execute() {
         do {
             if let payload = payload {
                 switch self.urlRequest.httpMethod {
-                case "GET":
+                case "GET"?:
                     urlRequest.url = URL(string: "\(urlRequest.url?.absoluteString)?\(payloadAsQuery)")
                 default:
                     urlRequest.httpBody = try JSONSerialization.data(withJSONObject: payload, options: .prettyPrinted)
@@ -69,7 +65,7 @@ open class NetworkOperation: ConcurrentOperation {
         
         // TODO: maybe use KVO on URLSession like they do in AdvancedNSOperations example project
 
-        let urlSessionTask = URLSession.shared.dataTask(with: urlRequest as URLRequest) { (data, response, error) -> Void in
+        let urlSessionTask = URLSession.shared.dataTask(with: urlRequest) { (data, response, error) -> Void in
             defer {
                 self.finish()
             }
@@ -91,6 +87,17 @@ open class NetworkOperation: ConcurrentOperation {
                     } else {
                         rvLog("Unexpected JSON", data: nil, level: .error)
                         self.completion?(nil, NSError(domain: "io.rover.unexpectedjson", code: 13, userInfo: nil))
+                    }
+                    
+                    if let date = response.allHeaderFields["Expires"] as? String,
+                        let cache = URLCache.shared.cachedResponse(for: self.urlRequest),
+                        let cachedResponse = cache.response as? HTTPURLResponse,
+                        let cachedDate = cachedResponse.allHeaderFields["Expires"] as? String,
+                        let data = data {
+                        
+                        if date != cachedDate {
+                            URLCache.shared.storeCachedResponse(CachedURLResponse(response: response, data: data), for: self.urlRequest)
+                        }
                     }
                 case 204:
                     rvLog("No content", data: nil, level: .trace)

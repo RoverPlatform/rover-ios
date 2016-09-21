@@ -186,6 +186,7 @@ open class ScreenViewController: UICollectionViewController {
         case let imageBlock as ImageBock:
             let imageCell = collectionView.dequeueReusableCell(withReuseIdentifier: imageBlockCellIdentifier, for: indexPath) as! ImageBlockViewCell
             
+            imageCell.imageView.image = nil
             // TODO: cancel any requests or images from the reused cell
             imageCell.imageView.rv_setImage(url: imageBlock.image?.url, activityIndicatorStyle: .gray)
             
@@ -219,12 +220,12 @@ open class ScreenViewController: UICollectionViewController {
         
         // BackgroundImage
         
+        cell.backgroundView = nil
+        
         if let backgroundImage = block?.backgroundImage {
             var backgroundView = UIImageView()
             backgroundView.setBackgroundImage(url: backgroundImage.url as URL, contentMode: block!.backgroundContentMode, scale: block!.backgroundScale)
             cell.backgroundView = backgroundView
-        } else {
-            cell.backgroundView = nil
         }
         
         // Appearance

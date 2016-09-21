@@ -194,7 +194,9 @@ extension Experience : Mappable {
                 return nil
         }
         
-        return Experience(screens: screens, homeScreenIdentifier: homeScreenId, identifier: identifier)
+        let experience = Experience(screens: screens, homeScreenIdentifier: homeScreenId, identifier: identifier)
+        experience.version = attributes["version-id"] as? String
+        return experience
     }
 }
 

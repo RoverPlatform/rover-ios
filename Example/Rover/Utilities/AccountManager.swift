@@ -53,7 +53,7 @@ class AccountManager {
             }
         }
         
-        let networkOperation = NetworkOperation(mutableUrlRequest: APIRouter.accounts.urlRequest) {
+        let networkOperation = NetworkOperation(urlRequest: APIRouter.accounts.urlRequest) {
             [unowned mappingOperation]
             (JSON, error) in
             

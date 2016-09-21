@@ -59,7 +59,7 @@ class EventOperation: ConcurrentOperation {
             //rvLog("Event submitted: \(event)", data: event, level: .Trace)
             self.delegate?.eventOperation(self, didPostEvent: event)
         }
-        let networkOperation = NetworkOperation(mutableUrlRequest: Router.events.urlRequest) {
+        let networkOperation = NetworkOperation(urlRequest: Router.events.urlRequest) {
             [unowned regionMappingOperation, unowned eventMappingOperation]
             JSON, error in
 

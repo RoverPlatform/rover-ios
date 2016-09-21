@@ -71,12 +71,8 @@ class AssetCache {
             self.fileManager?.createFile(atPath: filePath, contents: data, attributes: nil)
             
             // Disable iCloud backup
-            let fileURL: URL = URL(fileURLWithPath: filePath)
-            do {
-                try (fileURL as NSURL).setResourceValue(false, forKey: URLResourceKey.isExcludedFromBackupKey)
-            } catch {
-                rvLog("Cold not disable iCloud backup on cached asset", data: key, level: .error)
-            }
+            var fileURL: URL = URL(fileURLWithPath: filePath)
+            fileURL.setTemporaryResourceValue(false, forKey: URLResourceKey.isExcludedFromBackupKey)
         }
     }
     

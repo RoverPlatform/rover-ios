@@ -40,7 +40,7 @@ class AssetManager {
         
         cache.queryDiskCache(key: key) { (data, error) in
             if let data = data {
-                //rvLog("Asset found on disk cache", data: url.path, level: .Trace)
+                rvLog("Asset found on disk cache", data: url.path, level: .trace)
                 completion(data)
                 return
             }
@@ -64,6 +64,6 @@ class AssetManager {
     // MARK: Helpers
     
     func cacheKey(url: URL) -> String {
-        return url.absoluteString.addingPercentEscapes(using: String.Encoding.utf8) ?? url.absoluteString
+        return url.absoluteString.addingPercentEncoding(withAllowedCharacters: .alphanumerics) ?? url.absoluteString
     }
 }

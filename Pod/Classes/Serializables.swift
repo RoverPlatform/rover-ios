@@ -126,21 +126,25 @@ extension Event : Serializable {
                 "action": "exit",
                 "gimbal-place-id": gimbalPlaceId
             ]
-        case .didLaunchExperience(let experience, let date):
+        case .didLaunchExperience(let experience, let session, let date):
             timestamp = date
             serializedAttributes = [
                 "object": "experience",
                 "action": "launched",
-                "experience-id": experience.identifier
+                "experience-id": experience.identifier,
+                "veresion-id": experience.version ?? NSNull() as Any,
+                "experience-session-id": session
             ]
-        case .didDismissExperience(let experience, let date):
+        case .didDismissExperience(let experience, let session, let date):
             timestamp = date
             serializedAttributes = [
                 "object": "experience",
                 "action": "dismissed",
-                "experience-id": experience.identifier
+                "experience-id": experience.identifier,
+                "version-id": experience.version ?? NSNull() as Any,
+                "experience-session-id": session
             ]
-        case .didViewScreen(let screen, let experience, let fromScreen, let fromBlock, let date):
+        case .didViewScreen(let screen, let experience, let fromScreen, let fromBlock, let session, let date):
             timestamp = date
             serializedAttributes = [
                 "object": "experience",
@@ -148,9 +152,11 @@ extension Event : Serializable {
                 "experience-id": experience.identifier,
                 "screen-id": screen.identifier ?? NSNull() as Any,
                 "from-screen-id": fromScreen?.identifier ?? NSNull() as Any,
-                "from-block-id": fromBlock?.identifier ?? NSNull() as Any
+                "from-block-id": fromBlock?.identifier ?? NSNull() as Any,
+                "version-id": experience.version ?? NSNull() as Any,
+                "experience-session-id": session
             ]
-        case .didPressBlock(let block, let screen, let experience, let date):
+        case .didPressBlock(let block, let screen, let experience, let session, let date):
             timestamp = date
             serializedAttributes = [
                 "object": "experience",
@@ -158,7 +164,9 @@ extension Event : Serializable {
                 "block-id": block.identifier ?? "",
                 "screen-id": screen.identifier ?? "",
                 "experience-id": experience.identifier,
-                "block-action": block.action?.serialize() ?? NSNull()
+                "block-action": block.action?.serialize() ?? NSNull() as Any,
+                "version-id": experience.version ?? NSNull() as Any,
+                "experience-session-id": session
             ]
         default:
             break

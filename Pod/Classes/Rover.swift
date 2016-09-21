@@ -134,7 +134,7 @@ open class Rover : NSObject {
                 completion?(messages, unreadMessagesCount)
             }
         }
-        let networkOperation = NetworkOperation(mutableUrlRequest: Router.inbox.urlRequest) { JSON, error in
+        let networkOperation = NetworkOperation(urlRequest: Router.inbox.urlRequest) { JSON, error in
             if let meta = JSON?["meta"] as? [String: AnyObject] {
                 unreadMessagesCount = meta["unread-messages-count"] as? Int ?? 0
             }
@@ -416,22 +416,22 @@ extension Rover /*: RVRGimbalPlaceManagerDelegate*/ {
 extension Rover: ExperienceViewControllerDelegate {
     func experienceViewControllerDidLaunch(_ viewController: ExperienceViewController) {
         guard let experience = viewController.experience else { return }
-        sendEvent(.didLaunchExperience(experience, date: Date()))
+        sendEvent(.didLaunchExperience(experience, session: viewController.sessionID, date: Date()))
     }
     
     func experienceViewControllerDidDismiss(_ viewController: ExperienceViewController) {
         guard let experience = viewController.experience else { return }
-        sendEvent(.didDismissExperience(experience, date: Date()))
+        sendEvent(.didDismissExperience(experience, session: viewController.sessionID, date: Date()))
     }
     
     func experienceViewController(_ viewController: ExperienceViewController, didViewScreen screen: Screen, referrerScreen: Screen?, referrerBlock: Block?) {
         guard let experience = viewController.experience else { return }
-        sendEvent(.didViewScreen(screen, experience: experience, fromScreen: referrerScreen, fromBlock: referrerBlock, date: Date()))
+        sendEvent(.didViewScreen(screen, experience: experience, fromScreen: referrerScreen, fromBlock: referrerBlock, session: viewController.sessionID, date: Date()))
     }
     
     func experienceViewController(_ viewController: ExperienceViewController, didPressBlock block: Block, screen: Screen) {
         guard let experience = viewController.experience else { return }
-        sendEvent(.didPressBlock(block, screen: screen, experience: experience, date: Date()))
+        sendEvent(.didPressBlock(block, screen: screen, experience: experience, session: viewController.sessionID, date: Date()))
     }
     
     func experienceViewController(_ viewController: ExperienceViewController, willLoadExperience experience: Experience) {

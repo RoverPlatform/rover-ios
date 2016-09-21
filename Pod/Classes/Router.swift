@@ -18,7 +18,7 @@ public enum Router {
     case getLandingPage(Message)
     case getExperience(String)
     
-    public static var baseURLString = "https://api.rover.io/v1" //"https://rover-content-api-development.herokuapp.com/v1"
+    public static var baseURLString = "https://api.rover.io/v1"  //"https://api-development.rover.io/v1"
     
     var method: String {
         switch self {
@@ -52,8 +52,8 @@ public enum Router {
         }
     }
     
-    var urlRequest: NSMutableURLRequest {
-        let urlRequest = NSMutableURLRequest(url: self.url)
+    var urlRequest: URLRequest {
+        var urlRequest = URLRequest(url: self.url)
         urlRequest.httpMethod = self.method
         urlRequest.setValue(Rover.sharedInstance?.applicationToken, forHTTPHeaderField: "X-Rover-Api-Key")
         urlRequest.setValue(UIDevice.current.identifierForVendor?.uuidString ?? "[UNKNOWN]", forHTTPHeaderField: "X-Rover-Device-Id")

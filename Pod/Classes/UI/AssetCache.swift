@@ -46,7 +46,7 @@ class AssetCache {
     }
     
     func hasInMemoryCache(key: String) -> Bool {
-        if memCache.object(forKey: key as! NSString) != nil {
+        if memCache.object(forKey: key as NSString) != nil {
             return true
         }
         return false
@@ -54,7 +54,7 @@ class AssetCache {
     
     func setAsset(data: Data, key: String) {
         // Store in memory
-        memCache.setObject(data as! NSData, forKey: key as! NSString, cost: data.count)
+        memCache.setObject(data as NSData, forKey: key as NSString, cost: data.count)
         
         // Store on disk
         ioQueue.async { 
@@ -106,7 +106,7 @@ class AssetCache {
     }
     
     func inMemoryCachedData(key: String) -> Data? {
-        if let data = memCache.object(forKey: key as! NSString) as? Data {
+        if let data = memCache.object(forKey: key as NSString) as? Data {
             return data
         }
         return nil

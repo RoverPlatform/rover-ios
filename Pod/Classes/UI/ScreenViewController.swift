@@ -223,7 +223,7 @@ open class ScreenViewController: UICollectionViewController {
         cell.backgroundView = nil
         
         if let backgroundImage = block?.backgroundImage {
-            var backgroundView = UIImageView()
+            let backgroundView = UIImageView()
             backgroundView.setBackgroundImage(url: backgroundImage.url as URL, contentMode: block!.backgroundContentMode, scale: block!.backgroundScale)
             cell.backgroundView = backgroundView
         }

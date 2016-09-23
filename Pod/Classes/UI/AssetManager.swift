@@ -20,7 +20,7 @@ class AssetManager {
         
         if let data = cache.inMemoryCachedData(key: key) {
             DispatchQueue.main.async {
-                //rvLog("Asset found in memory cache", data: url.path, level: .Trace)
+                rvLog("Asset found in memory cache", data: url.path, level: .trace)
                 completion(data as Data)
             }
             return

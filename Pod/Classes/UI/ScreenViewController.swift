@@ -116,7 +116,7 @@ open class ScreenViewController: UICollectionViewController {
         
         if let backgroundImage = screen?.backgroundImage {
             let imageView = UIImageView()
-            imageView.setBackgroundImage(url: backgroundImage.url as URL, contentMode: screen!.backgorundContentMode, scale: screen!.backgroundScale)
+            imageView.setBackgroundImage(url: backgroundImage.url, contentMode: screen!.backgorundContentMode, scale: screen!.backgroundScale)
             self.collectionView!.backgroundView = imageView
         }
     }
@@ -171,7 +171,7 @@ open class ScreenViewController: UICollectionViewController {
 
     override open func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         var cell: BlockViewCell
-        let block = screen?.rows[(indexPath as NSIndexPath).section].blocks[(indexPath as NSIndexPath).row]
+        let block = screen?.rows[indexPath.section].blocks[indexPath.row]
         
         switch block {
         case let textBlock as TextBlock:

@@ -20,6 +20,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         NotificationCenter.default.addObserver(self, selector: #selector(didUpdateAccount), name: NSNotification.Name(rawValue: RoverAccountUpdatedNotification), object: nil)
         
+        #if DEBUG
+            Rover.isDevelopment = true
+        #else
+            Rover.isDevelopment = false
+        #endif
+        //Rover.isDevelopment = true
         // Override point for customization after application launch.
         return true
     }

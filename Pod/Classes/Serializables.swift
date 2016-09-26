@@ -64,10 +64,11 @@ extension Event : Serializable {
             ]
         case .didOpenMessage(let message, let source, let date):
             timestamp = date
+            let source: Any = source ?? NSNull()
             serializedAttributes = [
                 "object": "message",
                 "action": "open",
-                "source": source ?? NSNull() as Any,
+                "source": source,
                 "message-id": message.identifier
             ]
         default:
@@ -189,49 +190,77 @@ extension Device : Serializable {
     func serialize() -> [String : Any] {
         let carrierName: Any = CTTelephonyNetworkInfo().subscriberCellularProvider?.carrierName ?? NSNull()
         let osVersion = ProcessInfo.processInfo.operatingSystemVersion
-        let localeComponents = Locale.components(fromIdentifier: Locale.current.identifier)
-        let localeLanguage = localeComponents[NSLocale.Key.languageCode.rawValue]
-        let localeRegion = localeComponents[NSLocale.Key.countryCode.rawValue]
+        let osVersionString = "\(osVersion.majorVersion).\(osVersion.minorVersion).\(osVersion.patchVersion)"
+        let localeComponents: [String: String] = Locale.components(fromIdentifier: Locale.current.identifier)
+        let localeLanguage = localeComponents[NSLocale.Key.languageCode.rawValue] ?? ""
+        let localeRegion = localeComponents[NSLocale.Key.countryCode.rawValue] ?? ""
         let localNotificationsEnabled = UIApplication.shared.currentUserNotificationSettings?.types.contains(.alert) ?? false
-        let deviceToken: AnyObject = Device.pushToken as AnyObject? ?? NSNull()
+        let deviceToken: Any = Device.pushToken ?? NSNull()
+        let appIdentifier = Bundle.main.bundleIdentifier ?? ""
+        let udid = UIDevice.current.identifierForVendor!.uuidString
+        let backgroundEnabled = UIApplication.shared.backgroundRefreshStatus == .available
+        let locationMonitoringEnabled = CLLocationManager.authorizationStatus() == .authorizedAlways
+        let gimbalMode = Rover.sharedInstance?.gimbalMode ?? false
+        let aid = ASIdentifierManager.shared().advertisingIdentifier.uuidString
+        let adTracking = ASIdentifierManager.shared().isAdvertisingTrackingEnabled
+        let timeZone = TimeZone.autoupdatingCurrent.identifier
+        let remoteNotificationRegistered = UIApplication.shared.isRegisteredForRemoteNotifications
+        let bluetoothStatus = Device.bluetoothOn
+        let isDevelopment = Rover.isDevelopment
+        
+        
+        if let mobileProvisionURL = Bundle.main.url(forResource: "embedded", withExtension: "mobileprovision") {
+            do {
+                let mobileProvisionData = try Data(contentsOf: mobileProvisionURL)
+//            let mobileProvision = TCMobileProvision(data: mobileProvisionData)
+//            if let entitlements = mobileProvision.dict["Entitlements"],
+//                let apsEnvironment = entitlements["aps-environment"] as? String
+//                where apsEnvironment == "development" {
+//                return true
+//            }
+            } catch {
+                
+            }
+        }
+
         
         return [
-            "app-identifier": Bundle.main.bundleIdentifier ?? "",
-            "udid": UIDevice.current.identifierForVendor!.uuidString,
-            "aid": ASIdentifierManager.shared().advertisingIdentifier.uuidString,
-            "ad-tracking": ASIdentifierManager.shared().isAdvertisingTrackingEnabled ,
+            "app-identifier": appIdentifier,
+            "udid": udid,
+            "aid": aid,
+            "ad-tracking": adTracking ,
             "token": deviceToken,
-            "locale-lang": localeLanguage ?? "",
-            "locale-region": localeRegion ?? "",
-            "time-zone": TimeZone.autoupdatingCurrent.identifier,
+            "locale-lang": localeLanguage,
+            "locale-region": localeRegion,
+            "time-zone": timeZone,
             "local-notifications-enabled": localNotificationsEnabled,
-            "remote-notifications-enabled": UIApplication.shared.isRegisteredForRemoteNotifications,
-            "background-enabled": UIApplication.shared.backgroundRefreshStatus == .available,
-            "location-monitoring-enabled": CLLocationManager.authorizationStatus() == .authorizedAlways,
-            "bluetooth-enabled": Device.bluetoothOn,
+            "remote-notifications-enabled": remoteNotificationRegistered,
+            "background-enabled": backgroundEnabled,
+            "location-monitoring-enabled": locationMonitoringEnabled,
+            "bluetooth-enabled": bluetoothStatus,
             "carrier": carrierName,
             "os-name": "iOS",
             "platform": "iOS",
             "manufacturer": "Apple",
-            "os-version": "\(osVersion.majorVersion).\(osVersion.minorVersion).\(osVersion.patchVersion)",
+            "os-version": osVersionString,
             "model": self.platform(),
-            "sdk-version": "1.0.0",
-            "gimbal-mode": Rover.sharedInstance?.gimbalMode ?? false,
-            "development": true
+            "sdk-version": "1.1.0",
+            "gimbal-mode": gimbalMode,
+            "development": isDevelopment
         ]
     }
 }
 
 extension Customer : Serializable {
     public func serialize() -> [String : Any] {
-        let firstName = self.firstName ?? NSNull() as Any
-        let lastName = self.lastName ?? NSNull() as Any
-        let phoneNumber = self.phone ?? NSNull() as Any
-        let identifier = self.identifier ?? NSNull() as Any
-        let gender = self.gender ?? NSNull() as Any
-        let age = self.age ?? NSNull() as Any
-        let tags = self.tags ?? NSNull() as Any
-        let email = self.email ?? NSNull() as Any
+        let firstName: Any = self.firstName ?? NSNull()
+        let lastName: Any = self.lastName ?? NSNull()
+        let phoneNumber: Any = self.phone ?? NSNull()
+        let identifier: Any = self.identifier ?? NSNull()
+        let gender: Any = self.gender ?? NSNull()
+        let age: Any = self.age ?? NSNull()
+        let tags: Any = self.tags ?? NSNull()
+        let email: Any = self.email ?? NSNull()
         
         return [
             "first-name": firstName,

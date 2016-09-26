@@ -53,6 +53,8 @@ open class Rover : NSObject {
         return sharedInstance?.locationManager?.isMonitoring ?? false
     }
     
+    open static var isDevelopment = false
+    
     open class func setup(applicationToken: String) {
         let gimbalClass = NSClassFromString("GMBLPlaceManager")
         setup(applicationToken: applicationToken, gimbalMode: gimbalClass != nil)
@@ -111,16 +113,6 @@ open class Rover : NSObject {
     open class func removeObserver(_ observer: RoverObserver) {
         sharedInstance?.observers.remove(at: (sharedInstance!.observers.index(where: {$0 === observer})!))
     }
-    
-//    public class func simulateBeaconEnter(UUID UUID: NSUUID, major: CLBeaconMajorValue, minor: CLBeaconMinorValue) {
-//        let region = CLBeaconRegion(proximityUUID: UUID, major: major, minor: minor, identifier: "SIMULATE")
-//        sharedInstance?.didEnterBeaconRegion(region)
-//    }
-//    
-//    public class func simulateBeaconExit(UUID UUID: NSUUID, major: CLBeaconMajorValue, minor: CLBeaconMinorValue) {
-//        let region = CLBeaconRegion(proximityUUID: UUID, major: major, minor: minor, identifier: "SIMULATE")
-//        sharedInstance?.didExitBeaconRegion(region)
-//    }
     
     open class func simulateEvent(_ event: Event) {
         sharedInstance?.sendEvent(event)
@@ -197,7 +189,7 @@ open class Rover : NSObject {
     // MARK: Application Hooks
     
     open class func didRegisterForRemoteNotification(deviceToken: Data) {
-        let deviceTokenString = String(describing: deviceToken).trimmingCharacters(in: CharacterSet(charactersIn: "<>")).replacingOccurrences(of: " ", with: "")
+        let deviceTokenString = deviceToken.reduce("", {$0 + String(format: "%02X", $1)})
         guard Device.pushToken != deviceTokenString else {
             return
         }

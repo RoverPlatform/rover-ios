@@ -13,26 +13,26 @@ class TabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(didUpdateAccount), name: RoverAccountUpdatedNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(didUpdateAccount), name: NSNotification.Name(rawValue: RoverAccountUpdatedNotification), object: nil)
     }
     
     deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
         presentSignInIfNeeded()
     }
     
-    func didUpdateAccount(note: NSNotification) {
+    func didUpdateAccount(_ note: Notification) {
         presentSignInIfNeeded()
     }
     
     func presentSignInIfNeeded() {
         if AccountManager.currentAccount == nil {
-            performSegueWithIdentifier("LoginSegue", sender: nil)
+            performSegue(withIdentifier: "LoginSegue", sender: nil)
         }
     }
 }

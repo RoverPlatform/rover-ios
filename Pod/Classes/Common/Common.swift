@@ -9,24 +9,24 @@
 import Foundation
 
 @objc enum LogLevel: Int {
-    case Error = 0
-    case Warn = 1
-    case Info = 2
-    case Debug = 3
-    case Trace = 4
-    case Report = 5
+    case error = 0
+    case warn = 1
+    case info = 2
+    case debug = 3
+    case trace = 4
+    case report = 5
 }
 
-var logLevel: LogLevel = .Report
+var logLevel: LogLevel = .report
 
 public let RoverLogReportNotification = "RoverLogReportNotification"
 
-func rvLog(@autoclosure message: () -> String, data: Any? = nil, level: LogLevel = .Debug, filename: String = #file, function: String = #function, line: Int = #line) {
+func rvLog(_ message: @autoclosure () -> String, data: Any? = nil, level: LogLevel = .debug, filename: String = #file, function: String = #function, line: Int = #line) {
     
-    if logLevel == .Report {
+    if logLevel == .report {
         let m = message()
-        dispatch_async(dispatch_get_main_queue(), {
-            NSNotificationCenter.defaultCenter().postNotificationName(RoverLogReportNotification, object: m)
+        DispatchQueue.main.async(execute: {
+            NotificationCenter.default.post(name: Notification.Name(rawValue: RoverLogReportNotification), object: m)
         })
     }
     
@@ -39,9 +39,9 @@ func rvLog(@autoclosure message: () -> String, data: Any? = nil, level: LogLevel
     
 }
 
-var rvDateFormatter: NSDateFormatter {
-    let dateFormatter = NSDateFormatter()
-    let enUSPOSIXLocale = NSLocale(localeIdentifier: "en_US_POSIX")
+var rvDateFormatter: DateFormatter {
+    let dateFormatter = DateFormatter()
+    let enUSPOSIXLocale = Locale(identifier: "en_US_POSIX")
     dateFormatter.locale = enUSPOSIXLocale
     dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZ"
     return dateFormatter

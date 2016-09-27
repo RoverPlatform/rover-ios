@@ -8,6 +8,26 @@
 
 import UIKit
 import Rover
+fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l < r
+  case (nil, _?):
+    return true
+  default:
+    return false
+  }
+}
+
+fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l > r
+  default:
+    return rhs < lhs
+  }
+}
+
 
 let UserDidSignOutNotification = "UserDidSignOutNotification"
 
@@ -37,13 +57,13 @@ class ProfileViewController: UIViewController {
         emailField.text = customer.email
         phoneField.text = customer.phone
         genderField.text = customer.gender
-        ageField.text = String(customer.age)
-        tagsField.text = customer.tags?.joinWithSeparator(",")
+        ageField.text = String(describing: customer.age)
+        tagsField.text = customer.tags?.joined(separator: ",")
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ProfileViewController.didShowKeyboard(_:)), name: UIKeyboardDidShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(ProfileViewController.didShowKeyboard(_:)), name: NSNotification.Name.UIKeyboardDidShow, object: nil)
         
         let exp = ExperienceViewController(identifier: "57b74e723f1a36002771f59b")
-        presentViewController(exp, animated: true, completion: nil)
+        present(exp, animated: true, completion: nil)
     }
 
     override func didReceiveMemoryWarning() {
@@ -52,12 +72,12 @@ class ProfileViewController: UIViewController {
     }
     
     deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
     
-    func didShowKeyboard(note: NSNotification) {
+    func didShowKeyboard(_ note: Notification) {
         //navigationItem.leftBarButtonItem = nil
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Done", style: .Done, target: self, action: #selector(ProfileViewController.didFinishEditing))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(ProfileViewController.didFinishEditing))
     }
     
     func didFinishEditing() {
@@ -67,23 +87,23 @@ class ProfileViewController: UIViewController {
 
     // MARK: Actions
     
-    @IBAction func didPressAddTrait(sender: UIButton) {
-        let alert = UIAlertController(title: nil, message: "Select type of trait", preferredStyle: .ActionSheet)
-        let integerAction = UIAlertAction(title: "Number", style: .Default, handler: addTraitAction(.Number))
-        let stringAction = UIAlertAction(title: "String", style: .Default, handler: addTraitAction(.String))
-        let cancelAction = UIAlertAction(title: "Cancel", style: .Cancel, handler: nil)
+    @IBAction func didPressAddTrait(_ sender: UIButton) {
+        let alert = UIAlertController(title: nil, message: "Select type of trait", preferredStyle: .actionSheet)
+        let integerAction = UIAlertAction(title: "Number", style: .default, handler: addTraitAction(.Number))
+        let stringAction = UIAlertAction(title: "String", style: .default, handler: addTraitAction(.String))
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         
         alert.addAction(integerAction)
         alert.addAction(stringAction)
         alert.addAction(cancelAction)
-        presentViewController(alert, animated: true, completion: nil)
+        present(alert, animated: true, completion: nil)
     }
     
-    @IBAction func textFieldDidFinishEditing(sender: UITextField) {
+    @IBAction func textFieldDidFinishEditing(_ sender: UITextField) {
         let customer = Rover.customer
         customer.identifier = self.identifierField.text
         
-        let name = self.nameField.text?.componentsSeparatedByString(" ")
+        let name = self.nameField.text?.components(separatedBy: " ")
         if name?.count > 0 {
             customer.firstName = name?[0]
         }
@@ -95,37 +115,37 @@ class ProfileViewController: UIViewController {
         customer.phone = self.phoneField.text
         customer.gender = self.genderField.text
         customer.age = Int(self.ageField.text ?? "0")
-        customer.tags = self.tagsField.text?.componentsSeparatedByString(",")
+        customer.tags = self.tagsField.text?.components(separatedBy: ",")
         customer.save()
     }
     
     
-    @IBAction func didPressSignOutButton(sender: UIBarButtonItem) {
-        let alert = UIAlertController(title: "Sign Out", message: "Are you sure you want to sign out?", preferredStyle: .Alert)
-        let yesAction = UIAlertAction(title: "Yes", style: .Default) { _ in
+    @IBAction func didPressSignOutButton(_ sender: UIBarButtonItem) {
+        let alert = UIAlertController(title: "Sign Out", message: "Are you sure you want to sign out?", preferredStyle: .alert)
+        let yesAction = UIAlertAction(title: "Yes", style: .default) { _ in
             Rover.stopMonitoring()
             AccountManager.clearCurrentAccount()
             SessionManager.clearCurrentSession()
-            NSNotificationCenter.defaultCenter().postNotificationName(UserDidSignOutNotification, object: nil)
+            NotificationCenter.default.post(name: Notification.Name(rawValue: UserDidSignOutNotification), object: nil)
         }
-        let noAction = UIAlertAction(title: "No", style: .Cancel, handler: nil)
+        let noAction = UIAlertAction(title: "No", style: .cancel, handler: nil)
         alert.addAction(yesAction)
         alert.addAction(noAction)
         
-        presentViewController(alert, animated: true, completion: nil)
+        present(alert, animated: true, completion: nil)
     }
     
     // MARK: Helper
     
-    func addTraitAction(type: TraitType) -> (UIAlertAction -> Void) {
+    func addTraitAction(_ type: TraitType) -> ((UIAlertAction) -> Void) {
         let customer = Rover.customer
         return { action in
-            let keyAlert = UIAlertController(title: "New Trait", message: "Enter a key for this trait", preferredStyle: .Alert)
+            let keyAlert = UIAlertController(title: "New Trait", message: "Enter a key for this trait", preferredStyle: .alert)
             var keyTextField: UITextField?
-            keyAlert.addTextFieldWithConfigurationHandler { textField in
+            keyAlert.addTextField { textField in
                 keyTextField = textField
             }
-            let addAction = UIAlertAction(title: "Add", style: .Default) { action in
+            let addAction = UIAlertAction(title: "Add", style: .default) { action in
                 guard let keyText = keyTextField?.text else { return }
                 
                 switch type {
@@ -139,11 +159,11 @@ class ProfileViewController: UIViewController {
                 
                 self.traitsTable.reloadData()
             }
-            let cancelAction = UIAlertAction(title: "Cancel", style: .Cancel, handler: nil)
+            let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
             keyAlert.addAction(addAction)
             keyAlert.addAction(cancelAction)
             
-            self.presentViewController(keyAlert, animated: true, completion: nil)
+            self.present(keyAlert, animated: true, completion: nil)
         }
     }
 
@@ -151,35 +171,35 @@ class ProfileViewController: UIViewController {
 
 extension ProfileViewController: UITableViewDataSource {
     
-    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return Rover.customer.traits.count
     }
     
-    func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return "Traits"
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let customer = Rover.customer
         let traitKeys = Array(customer.traits.keys)
-        let traitLabel = traitKeys[indexPath.row]
+        let traitLabel = traitKeys[(indexPath as NSIndexPath).row]
         let traitValue = customer.traits[traitLabel]
         
         var cell: TraitTableViewCell
         
         switch traitValue {
         case is String:
-            cell = tableView.dequeueReusableCellWithIdentifier("StringTraitCellIdentifier", forIndexPath: indexPath) as! TraitTableViewCell
+            cell = tableView.dequeueReusableCell(withIdentifier: "StringTraitCellIdentifier", for: indexPath) as! TraitTableViewCell
             cell.label.text = traitLabel
             cell.textField.text = traitValue as? String
             cell.delegate = self
             break
         case is Double:
-            cell = tableView.dequeueReusableCellWithIdentifier("NumberTraitCellIdentifier", forIndexPath: indexPath) as! TraitTableViewCell
+            cell = tableView.dequeueReusableCell(withIdentifier: "NumberTraitCellIdentifier", for: indexPath) as! TraitTableViewCell
             cell.label.text = traitLabel
             cell.textField.text = String(traitValue as! Double)
             cell.delegate = self
@@ -195,7 +215,7 @@ extension ProfileViewController: UITableViewDataSource {
 
 extension ProfileViewController: TraitTableViewCellDelegate {
     
-    func traitTableViewCell(cell: TraitTableViewCell, didChangeValue value: String?) {
+    func traitTableViewCell(_ cell: TraitTableViewCell, didChangeValue value: String?) {
         guard let key = cell.label.text else { return }
         let customer = Rover.customer
         switch customer.traits[key] {
@@ -211,13 +231,14 @@ extension ProfileViewController: TraitTableViewCellDelegate {
 
 extension ProfileViewController: UITableViewDelegate {
     
-    func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-        guard editingStyle == .Delete else { return }
+    @objc(tableView:commitEditingStyle:forRowAtIndexPath:)
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        guard editingStyle == .delete else { return }
         let customer = Rover.customer
-        let traitKey = Array(customer.traits.keys)[indexPath.row]
+        let traitKey = Array(customer.traits.keys)[(indexPath as NSIndexPath).row]
         
-        customer.traits.removeValueForKey(traitKey)
-        traitsTable.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
+        customer.traits.removeValue(forKey: traitKey)
+        traitsTable.deleteRows(at: [indexPath], with: .automatic)
         
         customer.save()
     }

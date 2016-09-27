@@ -37,19 +37,19 @@ class MonitoringViewController: UIViewController {
         
         monitoringSwitch.setOn(Rover.isMonitoring, animated: false)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(userDidSignOut), name: UserDidSignOutNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(userDidSignOut), name: NSNotification.Name(rawValue: UserDidSignOutNotification), object: nil)
     }
     
     deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
     
     func reloadData() {
         geofenceRegions = locationManager.monitoredRegions.filter({ $0 is CLCircularRegion }) as! [CLCircularRegion]
         beaconRegions = locationManager.monitoredRegions.filter({ $0 is CLBeaconRegion }) as! [CLBeaconRegion]
         
-        segmentedControl.setTitle("Geofences (\(geofenceRegions.count))", forSegmentAtIndex: 0)
-        segmentedControl.setTitle("Beacons (\(beaconRegions.count))", forSegmentAtIndex: 1)
+        segmentedControl.setTitle("Geofences (\(geofenceRegions.count))", forSegmentAt: 0)
+        segmentedControl.setTitle("Beacons (\(beaconRegions.count))", forSegmentAt: 1)
         
         reloadMapOverlays()
     }
@@ -60,23 +60,23 @@ class MonitoringViewController: UIViewController {
             mapView.removeAnnotation(annotation)
         }
         geofenceRegions.forEach { region in
-            locationManager.requestStateForRegion(region)
+            locationManager.requestState(for: region)
 
         }
     }
     
-    func enterGeofence(sender: UIButton) {
+    func enterGeofence(_ sender: UIButton) {
         let region = geofenceRegions[sender.tag]
-        Rover.simulateEvent(Event.DidEnterCircularRegion(region, place: nil, date: NSDate()))
+        Rover.simulateEvent(Event.didEnterCircularRegion(region, place: nil, date: Date()))
     }
     
-    func exitGeofence(sender: UIButton) {
+    func exitGeofence(_ sender: UIButton) {
         let region = geofenceRegions[sender.tag]
-        Rover.simulateEvent(Event.DidExitCircularRegion(region, place: nil, date: NSDate()))
+        Rover.simulateEvent(Event.didExitCircularRegion(region, place: nil, date: Date()))
     }
     
-    func userDidSignOut(note: NSNotification) {
-        monitoringSwitch.on = false
+    func userDidSignOut(_ note: Notification) {
+        monitoringSwitch.isOn = false
         stopMonitoring()
     }
     
@@ -89,13 +89,13 @@ class MonitoringViewController: UIViewController {
     
     // MARK: Actions
     
-    @IBAction func segmentChanged(sender: UISegmentedControl) {
-        mapView.hidden = sender.selectedSegmentIndex == 1
-        tableView.hidden = sender.selectedSegmentIndex == 0
+    @IBAction func segmentChanged(_ sender: UISegmentedControl) {
+        mapView.isHidden = sender.selectedSegmentIndex == 1
+        tableView.isHidden = sender.selectedSegmentIndex == 0
     }
     
-    @IBAction func monitoringSwitched(sender: UISwitch) {
-        if sender.on {
+    @IBAction func monitoringSwitched(_ sender: UISwitch) {
+        if sender.isOn {
             Rover.startMonitoring()
             if let location = CLLocationManager().location {
                 Rover.updateLocation(location)
@@ -107,7 +107,7 @@ class MonitoringViewController: UIViewController {
 }
 
 extension MonitoringViewController : MKMapViewDelegate {
-    func mapView(mapView: MKMapView, rendererForOverlay overlay: MKOverlay) -> MKOverlayRenderer {
+    func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
         let circleView = MKCircleRenderer(overlay: overlay)
         if overlay is RedCircle {
             circleView.strokeColor = UIColor(red: 1, green: 8.0/255.0, blue: 0, alpha: 1)
@@ -120,12 +120,12 @@ extension MonitoringViewController : MKMapViewDelegate {
         return circleView
     }
     
-    func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         guard let annotation = annotation as? MyAnnotation,
-            region = annotation.region,
-            geofenceRegion = geofenceRegions.indexOf(region) else { return nil }
+            let region = annotation.region,
+            let geofenceRegion = geofenceRegions.index(of: region) else { return nil }
         
-        var pin = mapView.dequeueReusableAnnotationViewWithIdentifier("annotationView") as? MKPinAnnotationView
+        var pin = mapView.dequeueReusableAnnotationView(withIdentifier: "annotationView") as? MKPinAnnotationView
         if (pin == nil) {
             pin = MKPinAnnotationView(annotation: annotation, reuseIdentifier: "annotationView")
         } else {
@@ -141,22 +141,22 @@ extension MonitoringViewController : MKMapViewDelegate {
         let calloutView = UIView()
         
         let enterButton = UIButton(frame: CGRect(x: 0, y: 0, width: 100, height: 44))
-        enterButton.setTitle("Enter", forState: .Normal)
-        enterButton.setTitleColor(UIColor(red: 0, green: 122.0/255.0, blue: 255, alpha: 1), forState: .Normal)
-        enterButton.addTarget(self, action: #selector(MonitoringViewController.enterGeofence(_:)), forControlEvents: .TouchUpInside)
+        enterButton.setTitle("Enter", for: UIControlState())
+        enterButton.setTitleColor(UIColor(red: 0, green: 122.0/255.0, blue: 255, alpha: 1), for: UIControlState())
+        enterButton.addTarget(self, action: #selector(MonitoringViewController.enterGeofence(_:)), for: .touchUpInside)
         enterButton.tag = geofenceRegion
         
         let exitButton = UIButton(frame: CGRect(x: 100, y: 0, width: 100, height: 44))
-        exitButton.setTitle("Exit", forState: .Normal)
-        exitButton.setTitleColor(UIColor(red: 0, green: 122.0/255.0, blue: 255, alpha: 1), forState: .Normal)
-        exitButton.addTarget(self, action: #selector(MonitoringViewController.exitGeofence(_:)), forControlEvents: .TouchUpInside)
+        exitButton.setTitle("Exit", for: UIControlState())
+        exitButton.setTitleColor(UIColor(red: 0, green: 122.0/255.0, blue: 255, alpha: 1), for: UIControlState())
+        exitButton.addTarget(self, action: #selector(MonitoringViewController.exitGeofence(_:)), for: .touchUpInside)
         exitButton.tag = geofenceRegion
         
         calloutView.addSubview(enterButton)
         calloutView.addSubview(exitButton)
         
-        calloutView.addConstraint(NSLayoutConstraint(item: calloutView, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 200))
-        calloutView.addConstraint(NSLayoutConstraint(item: calloutView, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 44))
+        calloutView.addConstraint(NSLayoutConstraint(item: calloutView, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 200))
+        calloutView.addConstraint(NSLayoutConstraint(item: calloutView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 44))
         
         pin?.detailCalloutAccessoryView = calloutView
         
@@ -166,73 +166,73 @@ extension MonitoringViewController : MKMapViewDelegate {
 
 extension MonitoringViewController : UITableViewDataSource {
 
-    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return beaconRegions.count
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("beaconCellIdentifier", forIndexPath: indexPath)
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "beaconCellIdentifier", for: indexPath)
         
-        let region = beaconRegions[indexPath.row]
+        let region = beaconRegions[(indexPath as NSIndexPath).row]
             
-        cell.detailTextLabel?.text = region.proximityUUID.UUIDString
-        cell.textLabel?.text = "Major: \(region.major == nil ? "*" : region.major!)  Minor: \(region.minor == nil ? "*" : region.minor!)"
+        cell.detailTextLabel?.text = region.proximityUUID.uuidString
+        cell.textLabel?.text = "Major: \(region.major == nil ? "*" : String(describing: region.major!))  Minor: \(region.minor == nil ? "*" : String(describing: region.minor!))"
         
         return cell
     }
 }
 
 extension MonitoringViewController : UITableViewDelegate {
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        let region = beaconRegions[indexPath.row]
-        let alertController = UIAlertController(title: "Simulate", message: "Enter Major/Minor number:", preferredStyle: .Alert)
-        alertController.addTextFieldWithConfigurationHandler { (textField) in
-            textField.keyboardType = .NumberPad
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let region = beaconRegions[(indexPath as NSIndexPath).row]
+        let alertController = UIAlertController(title: "Simulate", message: "Enter Major/Minor number:", preferredStyle: .alert)
+        alertController.addTextField { (textField) in
+            textField.keyboardType = .numberPad
             textField.text = "1"
         }
-        alertController.addTextFieldWithConfigurationHandler { (textField) in
-            textField.keyboardType = .NumberPad
+        alertController.addTextField { (textField) in
+            textField.keyboardType = .numberPad
             textField.text = "1"
         }
-        let enterAction = UIAlertAction(title: "Enter", style: .Default) { (action) in
+        let enterAction = UIAlertAction(title: "Enter", style: .default) { (action) in
             let r = CLBeaconRegion(proximityUUID: region.proximityUUID, major: UInt16(alertController.textFields![0].text ?? "1")!, minor: UInt16(alertController.textFields![1].text ?? "1")!, identifier: "")
-            Rover.simulateEvent(.DidEnterBeaconRegion(r, config: nil, place: nil, date: NSDate()))
+            Rover.simulateEvent(.didEnterBeaconRegion(r, config: nil, place: nil, date: Date()))
         }
-        let exitAction = UIAlertAction(title: "Exit", style: .Default) { (action) in
+        let exitAction = UIAlertAction(title: "Exit", style: .default) { (action) in
             let r = CLBeaconRegion(proximityUUID: region.proximityUUID, major: UInt16(alertController.textFields![0].text ?? "1")!, minor: UInt16(alertController.textFields![1].text ?? "1")!, identifier: "")
-            Rover.simulateEvent(.DidExitBeaconRegion(r, config: nil, place: nil, date: NSDate()))
+            Rover.simulateEvent(.didExitBeaconRegion(r, config: nil, place: nil, date: Date()))
         }
         alertController.addAction(enterAction)
         alertController.addAction(exitAction)
-        alertController.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: nil))
-        presentViewController(alertController, animated: true) { 
-            tableView.deselectRowAtIndexPath(indexPath, animated: true)
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        present(alertController, animated: true) { 
+            tableView.deselectRow(at: indexPath, animated: true)
         }
     }
 }
 
 extension MonitoringViewController : CLLocationManagerDelegate {
-    func locationManager(manager: CLLocationManager, didStartMonitoringForRegion region: CLRegion) {
+    func locationManager(_ manager: CLLocationManager, didStartMonitoringFor region: CLRegion) {
         reloadData()
     }
     
-    func locationManager(manager: CLLocationManager, didDetermineState state: CLRegionState, forRegion region: CLRegion) {
+    func locationManager(_ manager: CLLocationManager, didDetermineState state: CLRegionState, for region: CLRegion) {
         guard let region = region as? CLCircularRegion else { return }
         
         let annotation = MyAnnotation()
         
         var circle: MKCircle
-        if state == .Inside {
-            circle = RedCircle(centerCoordinate: region.center, radius: region.radius)
+        if state == .inside {
+            circle = RedCircle(center: region.center, radius: region.radius)
             annotation.inside = true
         } else {
-            circle = BlueCircle(centerCoordinate: region.center, radius: region.radius)
+            circle = BlueCircle(center: region.center, radius: region.radius)
         }
-        mapView.addOverlay(circle)
+        mapView.add(circle)
         
         annotation.coordinate = region.center
         annotation.title = "Simulate"
@@ -242,13 +242,13 @@ extension MonitoringViewController : CLLocationManagerDelegate {
         mapView.showAnnotations(mapView.annotations, animated: true)
     }
     
-    func locationManager(manager: CLLocationManager, didEnterRegion region: CLRegion) {
+    func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
         if region is CLCircularRegion {
             reloadMapOverlays()
         }
     }
     
-    func locationManager(manager: CLLocationManager, didExitRegion region: CLRegion) {
+    func locationManager(_ manager: CLLocationManager, didExitRegion region: CLRegion) {
         if region is CLCircularRegion {
             reloadMapOverlays()
         }

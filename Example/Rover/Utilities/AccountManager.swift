@@ -16,9 +16,9 @@ class AccountManager {
     
     static let sharedManager = AccountManager()
     
-    private var _currentAcount: Account? {
+    fileprivate var _currentAcount: Account? {
         didSet {
-            NSUserDefaults.standardUserDefaults().setObject(_currentAcount?.applicationToken, forKey: "ROVER_APPLICATION_TOKEN")
+            UserDefaults.standard.set(_currentAcount?.applicationToken, forKey: "ROVER_APPLICATION_TOKEN")
         }
     }
     
@@ -27,41 +27,41 @@ class AccountManager {
             return sharedManager._currentAcount
         }
         
-        if let applicationToken = NSUserDefaults.standardUserDefaults().stringForKey("ROVER_APPLICATION_TOKEN") {
+        if let applicationToken = UserDefaults.standard.string(forKey: "ROVER_APPLICATION_TOKEN") {
             sharedManager._currentAcount = Account(applicationToken: applicationToken)
         }
         return sharedManager._currentAcount
     }
     
-    var operationQueue = NSOperationQueue()
+    var operationQueue = OperationQueue()
     
-    private init() {
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(didCreateNewSession), name: RoverNewSessionNotification, object: nil)
+    fileprivate init() {
+        NotificationCenter.default.addObserver(self, selector: #selector(didCreateNewSession), name: NSNotification.Name(rawValue: RoverNewSessionNotification), object: nil)
     }
     
     deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
     
-    @objc func didCreateNewSession(note: NSNotification) {
+    @objc func didCreateNewSession(_ note: Notification) {
         
         let mappingOperation = MappingOperation { (account: Account) in
             self._currentAcount = account
             
-            dispatch_async(dispatch_get_main_queue()) {
-                NSNotificationCenter.defaultCenter().postNotificationName(RoverAccountUpdatedNotification, object: nil)
+            DispatchQueue.main.async {
+                NotificationCenter.default.post(name: Notification.Name(rawValue: RoverAccountUpdatedNotification), object: nil)
             }
         }
         
-        let networkOperation = NetworkOperation(mutableUrlRequest: APIRouter.Accounts.urlRequest) {
+        let networkOperation = NetworkOperation(urlRequest: APIRouter.accounts.urlRequest) {
             [unowned mappingOperation]
             (JSON, error) in
             
             mappingOperation.json = JSON
             
             if error != nil {
-                dispatch_async(dispatch_get_main_queue()) {
-                    NSNotificationCenter.defaultCenter().postNotificationName(RoverAccountErrorNotification, object: nil)
+                DispatchQueue.main.async {
+                    NotificationCenter.default.post(name: Notification.Name(rawValue: RoverAccountErrorNotification), object: nil)
                 }
             }
         }
@@ -74,16 +74,16 @@ class AccountManager {
     
     class func clearCurrentAccount() {
         sharedManager._currentAcount = nil
-        NSNotificationCenter.defaultCenter().postNotificationName(RoverAccountUpdatedNotification, object: nil)
+        NotificationCenter.default.post(name: Notification.Name(rawValue: RoverAccountUpdatedNotification), object: nil)
     }
 }
 
 extension Account : Mappable {
-    static func instance(JSON: [String : AnyObject], included: [String : Any]?) -> Account? {
+    static func instance(_ JSON: [String : Any], included: [String : Any]?) -> Account? {
         guard let type = JSON["type"] as? String,
-            attributes = JSON["attributes"] as? [String: AnyObject],
-            token = attributes["token"] as? String
-            where type == "accounts" else { return nil }
+            let attributes = JSON["attributes"] as? [String: Any],
+            let token = attributes["token"] as? String
+            , type == "accounts" else { return nil }
         
         return Account(applicationToken: token)
     }

@@ -10,11 +10,11 @@ import CoreBluetooth
 
 class BluetoothStatusOperation: ConcurrentOperation, CBCentralManagerDelegate {
     
-    private var centralManager: CBCentralManager?
-    private var completion: (Bool) -> Void
+    fileprivate var centralManager: CBCentralManager?
+    fileprivate var completion: (Bool) -> Void
     //private static var foundStatus: CBCentralManagerState?
     
-    required init(completion: (isOn: Bool) -> Void) {
+    required init(completion: @escaping (_ isOn: Bool) -> Void) {
         self.completion = completion
         super.init()
     }
@@ -26,27 +26,27 @@ class BluetoothStatusOperation: ConcurrentOperation, CBCentralManagerDelegate {
 //            return
 //        }
 
-        if cancelled {
+        if isCancelled {
             finish()
             return
         }
         
-        rvLog("Checking Bluetooth status", level: .Trace)
+        rvLog("Checking Bluetooth status", level: .trace)
         
         centralManager = CBCentralManager(delegate: self, queue: nil, options: [CBCentralManagerOptionShowPowerAlertKey: false])
     }
     
     // MARK: CBCentralManagerDelegate
     
-    func centralManagerDidUpdateState(central: CBCentralManager) {
-        if cancelled {
+    func centralManagerDidUpdateState(_ central: CBCentralManager) {
+        if isCancelled {
             finish()
             return
         }
         
         //BluetoothStatusOperation.foundStatus = central.state
-        rvLog("Determined Bluetooth status", data: central.state == .PoweredOn, level: .Trace)
-        self.completion(central.state == .PoweredOn)
+        rvLog("Determined Bluetooth status", data: central.state == .poweredOn, level: .trace)
+        self.completion(central.state == .poweredOn)
         finish()
     }
 }

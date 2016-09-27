@@ -11,30 +11,30 @@ import CoreData
 
 @objc
 public enum Action : Int {
-    case None
-    case Website
-    case LandingPage
-    case DeepLink
-    case Experience
+    case none
+    case website
+    case landingPage
+    case deepLink
+    case experience
 }
 
 @objc
-public class Message : NSObject {
+open class Message : NSObject {
     
-    public let identifier: String
-    public let title: String?
-    public let text: String
-    public let timestamp: NSDate
-    public let properties: [String: String]
-    public var read: Bool = false
+    open let identifier: String
+    open let title: String?
+    open let text: String
+    open let timestamp: Date
+    open let properties: [String: String]
+    open var read: Bool = false
     
-    public internal(set) var savedToInbox: Bool = false
-    public internal(set) var action: Action = .None
-    public internal(set) var url: NSURL?
-    public internal(set) var landingPage: Screen?
-    public internal(set) var experienceId: String?
+    open internal(set) var savedToInbox: Bool = false
+    open internal(set) var action: Action = .none
+    open internal(set) var url: URL?
+    open internal(set) var landingPage: Screen?
+    open internal(set) var experienceId: String?
     
-    init(title: String?, text: String, timestamp: NSDate, identifier: String, properties: [String: String]) {
+    init(title: String?, text: String, timestamp: Date, identifier: String, properties: [String: String]) {
         self.title = title
         self.text = text
         self.timestamp = timestamp

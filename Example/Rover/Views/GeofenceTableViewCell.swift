@@ -10,8 +10,8 @@ import UIKit
 
 @objc
 protocol GeofenceTableViewCellDelegate: class {
-    optional func geofenceTableViewCellDidPressEnter(cell: GeofenceTableViewCell)
-    optional func geofenceTableViewCellDidPressExit(cell: GeofenceTableViewCell)
+    @objc optional func geofenceTableViewCellDidPressEnter(_ cell: GeofenceTableViewCell)
+    @objc optional func geofenceTableViewCellDidPressExit(_ cell: GeofenceTableViewCell)
 }
 
 class GeofenceTableViewCell: UITableViewCell {
@@ -25,17 +25,17 @@ class GeofenceTableViewCell: UITableViewCell {
         // Initialization code
     }
 
-    override func setSelected(selected: Bool, animated: Bool) {
+    override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
         // Configure the view for the selected state
     }
     
-    @IBAction func enterClicked(sender: UIButton) {
+    @IBAction func enterClicked(_ sender: UIButton) {
         delegate?.geofenceTableViewCellDidPressEnter?(self)
     }
 
-    @IBAction func exitClicked(sender: UIButton) {
+    @IBAction func exitClicked(_ sender: UIButton) {
         delegate?.geofenceTableViewCellDidPressExit?(self)
     }
     

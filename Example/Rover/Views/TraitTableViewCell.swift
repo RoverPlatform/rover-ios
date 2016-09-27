@@ -9,7 +9,7 @@
 import UIKit
 
 protocol TraitTableViewCellDelegate: class {
-    func traitTableViewCell(cell: TraitTableViewCell, didChangeValue value: String?)
+    func traitTableViewCell(_ cell: TraitTableViewCell, didChangeValue value: String?)
 }
 
 
@@ -25,13 +25,13 @@ class TraitTableViewCell: UITableViewCell {
         // Initialization code
     }
 
-    override func setSelected(selected: Bool, animated: Bool) {
+    override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
         // Configure the view for the selected state
     }
     
-    @IBAction func editingDidEnd(sender: UITextField) {
+    @IBAction func editingDidEnd(_ sender: UITextField) {
         delegate?.traitTableViewCell(self, didChangeValue: sender.text)
     }
 

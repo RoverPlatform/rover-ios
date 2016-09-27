@@ -16,7 +16,7 @@ class TextBlockViewCell: BlockViewCell {
             textView.setNeedsDisplay()
         }
     }
-    var font = UIFont.systemFontOfSize(12)
+    var font = UIFont.systemFont(ofSize: 12)
 
     var textAlignment = Alignment() {
         didSet {
@@ -30,24 +30,24 @@ class TextBlockViewCell: BlockViewCell {
         }
     }
     
-    var textColor = UIColor.blackColor()
+    var textColor = UIColor.black
     var textOffset = Offset.ZeroOffset // offsets were never used
     
-    private let textView = TextView()
+    fileprivate let textView = TextView()
     
     override func commonInit() {
         super.commonInit()
         
         textView.translatesAutoresizingMaskIntoConstraints = false
-        textView.backgroundColor = UIColor.clearColor()
-        textView.userInteractionEnabled = false
+        textView.backgroundColor = UIColor.clear
+        textView.isUserInteractionEnabled = false
         
         addSubview(textView)
         addConstraints([
-            NSLayoutConstraint(item: textView, attribute: .Top, relatedBy: .Equal, toItem: self, attribute: .Top, multiplier: 1, constant: 0),
-            NSLayoutConstraint(item: textView, attribute: .Leading, relatedBy: .Equal, toItem: self, attribute: .Leading, multiplier: 1, constant: 0),
-            NSLayoutConstraint(item: textView, attribute: .Bottom, relatedBy: .Equal, toItem: self, attribute: .Bottom, multiplier: 1, constant: 0),
-            NSLayoutConstraint(item: textView, attribute: .Trailing, relatedBy: .Equal, toItem: self, attribute: .Trailing, multiplier: 1, constant: 0)
+            NSLayoutConstraint(item: textView, attribute: .top, relatedBy: .equal, toItem: self, attribute: .top, multiplier: 1, constant: 0),
+            NSLayoutConstraint(item: textView, attribute: .leading, relatedBy: .equal, toItem: self, attribute: .leading, multiplier: 1, constant: 0),
+            NSLayoutConstraint(item: textView, attribute: .bottom, relatedBy: .equal, toItem: self, attribute: .bottom, multiplier: 1, constant: 0),
+            NSLayoutConstraint(item: textView, attribute: .trailing, relatedBy: .equal, toItem: self, attribute: .trailing, multiplier: 1, constant: 0)
             ])
     }
 }
@@ -56,15 +56,15 @@ extension Alignment.HorizontalAlignment {
     var asNSTextAlignment: NSTextAlignment {
         switch self {
         case .Center:
-            return .Center
+            return .center
         case .Left:
-            return .Left
+            return .left
         case .Right:
-            return .Right
+            return .right
         case .Fill:
-            return .Justified
+            return .justified
         default:
-            return .Natural
+            return .natural
         }
     }
 }
@@ -73,18 +73,18 @@ class TextView : UIView {
     
     var text: NSAttributedString?
     var textAlignment = Alignment()
-    var inset = UIEdgeInsetsZero
+    var inset = UIEdgeInsets.zero
     
 //    convenience init() {
 //        self.init(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
 //    }
     
-    override func drawRect(rect: CGRect) {
+    override func draw(_ rect: CGRect) {
         guard let text = text else { return }
         
         let insettedWidth = rect.width - inset.left - inset.right
         
-        let textRect = text.boundingRectWithSize(CGSize(width: insettedWidth, height: CGFloat.max), options: .UsesLineFragmentOrigin, context: nil)
+        let textRect = text.boundingRect(with: CGSize(width: insettedWidth, height: CGFloat.greatestFiniteMagnitude), options: .usesLineFragmentOrigin, context: nil)
         
         var x: CGFloat, y: CGFloat, width: CGFloat, height: CGFloat
         
@@ -114,6 +114,6 @@ class TextView : UIView {
         
         let drawableRect = CGRect(x: x, y: y, width: width, height: height)
         
-        text.drawInRect(drawableRect )
+        text.draw(in: drawableRect )
     }
 }

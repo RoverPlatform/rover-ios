@@ -11,16 +11,16 @@ import UIKit
 @IBDesignable
 class TopAlignedLabel: UILabel {
     
-    override func drawTextInRect(rect: CGRect) {
+    override func drawText(in rect: CGRect) {
         if let stringText = text {
             let stringTextAsNSString = stringText as NSString
-            let labelStringSize = stringTextAsNSString.boundingRectWithSize(CGSize(width: rect.size.width, height: rect.size.height),
-                options: NSStringDrawingOptions.UsesLineFragmentOrigin,
+            let labelStringSize = stringTextAsNSString.boundingRect(with: CGSize(width: rect.size.width, height: rect.size.height),
+                options: NSStringDrawingOptions.usesLineFragmentOrigin,
                 attributes: [NSFontAttributeName: font],
                 context: nil).size
-            super.drawTextInRect(CGRectMake(0, 0, CGRectGetWidth(self.frame), ceil(labelStringSize.height)))
+            super.drawText(in: CGRect(x: 0, y: 0, width: self.frame.width, height: ceil(labelStringSize.height)))
         } else {
-            super.drawTextInRect(rect)
+            super.drawText(in: rect)
         }
     }
 

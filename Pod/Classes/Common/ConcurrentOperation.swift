@@ -8,55 +8,55 @@
 
 import UIKit
 
-public class ConcurrentOperation: NSOperation {
-    private var _finished = false
-    private var _executing = false
-    override private(set) public var finished: Bool {
+open class ConcurrentOperation: Operation {
+    fileprivate var _finished = false
+    fileprivate var _executing = false
+    override fileprivate(set) open var isFinished: Bool {
         get { return _finished }
         set {
-            willChangeValueForKey("isFinished")
+            willChangeValue(forKey: "isFinished")
             _finished = newValue
-            didChangeValueForKey("isFinished")
+            didChangeValue(forKey: "isFinished")
         }
     }
-    override private(set) public var executing: Bool {
+    override fileprivate(set) open var isExecuting: Bool {
         get { return _executing }
         set {
-            willChangeValueForKey("isExecuting")
+            willChangeValue(forKey: "isExecuting")
             _executing = newValue
-            didChangeValueForKey("isExecuting")
+            didChangeValue(forKey: "isExecuting")
         }
     }
-    override final public var concurrent: Bool {
+    override final public var isConcurrent: Bool {
         return true
     }
     
-    override public var asynchronous: Bool {
+    override open var isAsynchronous: Bool {
         return true
     }
     
     
     override final public func start() {
-        guard !cancelled else {
+        guard !isCancelled else {
             finish()
             return
         }
         
-        executing = true
+        isExecuting = true
         
         execute()
     }
     
     func execute() {
-        print("\(self.dynamicType) must override `execute()`.")
+        print("\(type(of: self)) must override `execute()`.")
         
         finish()
     }
     
     final func finish() {
-        if executing {
-            executing = false
+        if isExecuting {
+            isExecuting = false
         }
-        finished = true
+        isFinished = true
     }
 }

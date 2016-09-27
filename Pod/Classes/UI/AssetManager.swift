@@ -13,34 +13,34 @@ class AssetManager {
     static let sharedManager = AssetManager()
     
     let cache = AssetCache()
-    let session = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())
+    let session = URLSession(configuration: URLSessionConfiguration.default)
 
-    func fetchAsset(url url: NSURL, completion: (NSData? -> Void)) {
+    func fetchAsset(url: URL, completion: @escaping ((Data?) -> Void)) {
         let key = cacheKey(url: url)
         
         if let data = cache.inMemoryCachedData(key: key) {
-            dispatch_async(dispatch_get_main_queue()) {
-                //rvLog("Asset found in memory cache", data: url.path, level: .Trace)
-                completion(data)
+            DispatchQueue.main.async {
+                rvLog("Asset found in memory cache", data: url.path, level: .trace)
+                completion(data as Data)
             }
             return
         }
         
-        let dataTask = session.dataTaskWithURL(url) { (data, response, error) in
+        let dataTask = session.dataTask(with: url, completionHandler: { (data, response, error) in
             if error != nil {
-                rvLog("Could not download asset", data: url, level: .Error)
+                rvLog("Could not download asset", data: url, level: .error)
             } else if let data = data {
                 self.cache.setAsset(data: data, key: key)
             }
             
-            dispatch_async(dispatch_get_main_queue()) {
+            DispatchQueue.main.async {
                 completion(data)
             }
-        }
+        }) 
         
         cache.queryDiskCache(key: key) { (data, error) in
             if let data = data {
-                //rvLog("Asset found on disk cache", data: url.path, level: .Trace)
+                rvLog("Asset found on disk cache", data: url.path, level: .trace)
                 completion(data)
                 return
             }
@@ -49,11 +49,11 @@ class AssetManager {
         }
     }
     
-    func hasCacheForAsset(url url: NSURL) -> Bool {
+    func hasCacheForAsset(url: URL) -> Bool {
         return cache.hasInMemoryCache(key: cacheKey(url: url))
     }
     
-    func cacheAsset(data data: NSData, url: NSURL) {
+    func cacheAsset(data: Data, url: URL) {
         cache.setAsset(data: data, key: cacheKey(url: url))
     }
     
@@ -63,7 +63,7 @@ class AssetManager {
     
     // MARK: Helpers
     
-    func cacheKey(url url: NSURL) -> String {
-        return url.absoluteString.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding) ?? url.absoluteString
+    func cacheKey(url: URL) -> String {
+        return url.absoluteString.addingPercentEncoding(withAllowedCharacters: .alphanumerics) ?? url.absoluteString
     }
 }

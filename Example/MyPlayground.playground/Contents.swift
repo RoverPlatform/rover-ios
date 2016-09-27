@@ -4,8 +4,8 @@ import UIKit
 import Foundation
 
 
-var arr = ["ata", "steve", "sean"]
+let string = "https://barcodes.rover.io/?type=hibcpdf417&text=ROVER&scaleX=5&scaleY=5"
 
-arr += ["john"]
+let url = URL(string: string)
 
-print(arr)
+let key = url!.absoluteString.addingPercentEncoding(withAllowedCharacters: .alphanumerics)

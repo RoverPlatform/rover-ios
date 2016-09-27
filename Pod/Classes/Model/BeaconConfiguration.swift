@@ -9,15 +9,15 @@
 import Foundation
 import CoreLocation
 
-public class BeaconConfiguration : NSObject {
+open class BeaconConfiguration : NSObject {
     
-    let UUID: NSUUID
+    let UUID: Foundation.UUID
     let majorNumber: CLBeaconMajorValue?
     let minorNumber: CLBeaconMinorValue?
     let tags: [String]
     let name: String
     
-    init(name: String, UUID: NSUUID, majorNumber: CLBeaconMajorValue?, minorNumber: CLBeaconMinorValue?, tags: [String]) {
+    init(name: String, UUID: Foundation.UUID, majorNumber: CLBeaconMajorValue?, minorNumber: CLBeaconMinorValue?, tags: [String]) {
         self.name = name
         self.UUID = UUID
         self.majorNumber = majorNumber

@@ -10,12 +10,12 @@ import Foundation
 import CoreLocation
 
 @objc
-public class Rover : NSObject {
+open class Rover : NSObject {
     
-    private static let _sharedInstance = Rover()
+    fileprivate static let _sharedInstance = Rover()
     static var sharedInstance: Rover? {
         guard _sharedInstance.applicationToken != nil else {
-            rvLog("Rover accessed before setup", level: .Error)
+            rvLog("Rover accessed before setup", level: .error)
             return nil
         }
         return _sharedInstance
@@ -24,41 +24,43 @@ public class Rover : NSObject {
     var applicationToken: String?
     var gimbalMode = false
     
-    private var locationManager: LocatioManager?
-    private var gimbalPlaceManager: RVRGimbalPlaceManager?
+    fileprivate var locationManager: LocatioManager?
+    fileprivate var gimbalPlaceManager: RVRGimbalPlaceManager?
     
-    private let operationQueue = NSOperationQueue()
-    private let eventOperationQueue = NSOperationQueue()
+    fileprivate let operationQueue = OperationQueue()
+    fileprivate let eventOperationQueue = OperationQueue()
     
-    private var window: UIWindow?
+    fileprivate var window: UIWindow?
     
-    private override init () {
+    fileprivate override init () {
         super.init()
         
         eventOperationQueue.maxConcurrentOperationCount = 1
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(Rover.applicationDidOpen(_:)), name: UIApplicationDidFinishLaunchingNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(Rover.applicationDidOpen(_:)), name: UIApplicationWillEnterForegroundNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(Rover.applicationDidBecomeActive(_:)), name: UIApplicationDidBecomeActiveNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(Rover.applicationDidEnterBackground(_:)), name: UIApplicationDidEnterBackgroundNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(Rover.applicationDidOpen(_:)), name: NSNotification.Name.UIApplicationDidFinishLaunching, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(Rover.applicationDidOpen(_:)), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(Rover.applicationDidBecomeActive(_:)), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(Rover.applicationDidEnterBackground(_:)), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
         
         ExperienceViewController.superDelegate = self
     }
     
     // MARK: Class Methods
     
-    public static let customer = Customer.sharedCustomer
+    open static let customer = Customer.sharedCustomer
     
-    public static var isMonitoring: Bool {
+    open static var isMonitoring: Bool {
         return sharedInstance?.locationManager?.isMonitoring ?? false
     }
     
-    public class func setup(applicationToken applicationToken: String) {
+    open static var isDevelopment = false
+    
+    open class func setup(applicationToken: String) {
         let gimbalClass = NSClassFromString("GMBLPlaceManager")
         setup(applicationToken: applicationToken, gimbalMode: gimbalClass != nil)
     }
     
-    private class func setup(applicationToken applicationToken: String, gimbalMode: Bool) {
+    fileprivate class func setup(applicationToken: String, gimbalMode: Bool) {
         _sharedInstance.applicationToken = applicationToken
         _sharedInstance.gimbalMode = gimbalMode
         
@@ -71,70 +73,60 @@ public class Rover : NSObject {
         }
     }
     
-    public class func startMonitoring() {
+    open class func startMonitoring() {
         guard !_sharedInstance.gimbalMode else {
-            rvLog("Use GMBLPlaceManager.startMonitoring() when in Gimbal mode.", data: nil, level: .Error)
+            rvLog("Use GMBLPlaceManager.startMonitoring() when in Gimbal mode.", data: nil, level: .error)
             return
         }
         
         let locationAuthorizationOperation = LocationAuthorizationOperation()
         locationAuthorizationOperation.completionBlock = {
-            if CLLocationManager.authorizationStatus() == .AuthorizedAlways {
+            if CLLocationManager.authorizationStatus() == .authorizedAlways {
                 sharedInstance?.locationManager?.startMonitoring()
             } else {
-                rvLog("Location permissions not granted", level: .Warn)
+                rvLog("Location permissions not granted", level: .warn)
             }
         }
         sharedInstance?.operationQueue.addOperation(locationAuthorizationOperation)
     }
     
-    public class func stopMonitoring() {
+    open class func stopMonitoring() {
         guard !_sharedInstance.gimbalMode else {
-            rvLog("Use GMBLPlaceManager.stopMonitoring() when in Gimbal mode", data: nil, level: .Error)
+            rvLog("Use GMBLPlaceManager.stopMonitoring() when in Gimbal mode", data: nil, level: .error)
             return
         }
         
         sharedInstance?.locationManager?.stopMonitoring()
     }
     
-    public class func registerForNotifications() {
-        UIApplication.sharedApplication().registerUserNotificationSettings(UIUserNotificationSettings(forTypes: [.Alert, .Badge, .Sound], categories: nil))
-        UIApplication.sharedApplication().registerForRemoteNotifications()
+    open class func registerForNotifications() {
+        UIApplication.shared.registerUserNotificationSettings(UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil))
+        UIApplication.shared.registerForRemoteNotifications()
     }
     
-    private(set) var observers = [RoverObserver]()
+    fileprivate(set) var observers = [RoverObserver]()
     
-    public class func addObserver(observer: RoverObserver) {
+    open class func addObserver(_ observer: RoverObserver) {
         sharedInstance?.observers.append(observer)
     }
     
-    public class func removeObserver(observer: RoverObserver) {
-        sharedInstance?.observers.removeAtIndex((sharedInstance!.observers.indexOf({$0 === observer})!))
+    open class func removeObserver(_ observer: RoverObserver) {
+        sharedInstance?.observers.remove(at: (sharedInstance!.observers.index(where: {$0 === observer})!))
     }
     
-//    public class func simulateBeaconEnter(UUID UUID: NSUUID, major: CLBeaconMajorValue, minor: CLBeaconMinorValue) {
-//        let region = CLBeaconRegion(proximityUUID: UUID, major: major, minor: minor, identifier: "SIMULATE")
-//        sharedInstance?.didEnterBeaconRegion(region)
-//    }
-//    
-//    public class func simulateBeaconExit(UUID UUID: NSUUID, major: CLBeaconMajorValue, minor: CLBeaconMinorValue) {
-//        let region = CLBeaconRegion(proximityUUID: UUID, major: major, minor: minor, identifier: "SIMULATE")
-//        sharedInstance?.didExitBeaconRegion(region)
-//    }
-    
-    public class func simulateEvent(event: Event) {
+    open class func simulateEvent(_ event: Event) {
         sharedInstance?.sendEvent(event)
     }
     
-    public class func reloadInbox(completion: (([Message], Int) -> Void)?) {
+    open class func reloadInbox(_ completion: (([Message], Int) -> Void)?) {
         var unreadMessagesCount: Int = 0
         
         let mappingOperation = MappingOperation { (messages: [Message]) in
-            dispatch_async(dispatch_get_main_queue()) {
+            DispatchQueue.main.async {
                 completion?(messages, unreadMessagesCount)
             }
         }
-        let networkOperation = NetworkOperation(mutableUrlRequest: Router.Inbox.urlRequest) { JSON, error in
+        let networkOperation = NetworkOperation(urlRequest: Router.inbox.urlRequest) { JSON, error in
             if let meta = JSON?["meta"] as? [String: AnyObject] {
                 unreadMessagesCount = meta["unread-messages-count"] as? Int ?? 0
             }
@@ -147,13 +139,13 @@ public class Rover : NSObject {
         sharedInstance?.operationQueue.addOperation(mappingOperation)
     }
     
-    public class func deleteMessage(message: Message) {
-        let networkOperation = NetworkOperation(urlRequest: Router.DeleteMessage(message).urlRequest, completion: nil)
+    open class func deleteMessage(_ message: Message) {
+        let networkOperation = NetworkOperation(urlRequest: Router.deleteMessage(message).urlRequest as URLRequest, completion: nil)
         sharedInstance?.operationQueue.addOperation(networkOperation)
     }
     
-    public class func patchMessage(message: Message) {
-        let networkOperation = NetworkOperation(urlRequest: Router.PatchMessage(message).urlRequest, completion: nil)
+    open class func patchMessage(_ message: Message) {
+        let networkOperation = NetworkOperation(urlRequest: Router.patchMessage(message).urlRequest as URLRequest, completion: nil)
         let serializingOperation = SerializingOperation(model: message) { JSON in
             networkOperation.payload = JSON
         }
@@ -164,27 +156,27 @@ public class Rover : NSObject {
         sharedInstance?.operationQueue.addOperation(networkOperation)
     }
     
-    public class func trackMessageOpenEvent(message: Message) {
-        sharedInstance?.sendEvent(.DidOpenMessage(message, source: "inbox", date: NSDate()))
+    open class func trackMessageOpenEvent(_ message: Message) {
+        sharedInstance?.sendEvent(.didOpenMessage(message, source: "inbox", date: Date()))
     }
     
-    public class func updateLocation(location: CLLocation) {
-        sharedInstance?.sendEvent(.DidUpdateLocation(location, date: NSDate()))
+    open class func updateLocation(_ location: CLLocation) {
+        sharedInstance?.sendEvent(.didUpdateLocation(location, date: Date()))
     }
     
-    public class func followAction(message message: Message) {
+    open class func followAction(message: Message) {
         switch message.action {
-        case .Website:
+        case .website:
             fallthrough
-        case .DeepLink:
+        case .deepLink:
             if let url = message.url {
-                UIApplication.sharedApplication().openURL(url)
+                UIApplication.shared.openURL(url as URL)
             }
-        case .LandingPage:
+        case .landingPage:
             if let viewController = viewController(message: message) {
                 presentViewController(viewController)
             }
-        case .Experience:
+        case .experience:
             if let viewController = viewController(message: message) as? ExperienceViewController {
                 viewController.modalDelegate = sharedInstance
                 presentViewController(viewController, includeNavigation: false)
@@ -196,30 +188,30 @@ public class Rover : NSObject {
     
     // MARK: Application Hooks
     
-    public class func didRegisterForRemoteNotification(deviceToken deviceToken: NSData) {
-        let deviceTokenString = String(deviceToken).stringByTrimmingCharactersInSet(NSCharacterSet(charactersInString: "<>")).stringByReplacingOccurrencesOfString(" ", withString: "")
+    open class func didRegisterForRemoteNotification(deviceToken: Data) {
+        let deviceTokenString = deviceToken.reduce("", {$0 + String(format: "%02X", $1)})
         guard Device.pushToken != deviceTokenString else {
             return
         }
         
         Device.pushToken = deviceTokenString
         
-        sharedInstance?.sendEvent(Event.DeviceUpdate(date: NSDate()))
+        sharedInstance?.sendEvent(Event.deviceUpdate(date: Date()))
     }
     
-    public class func didReceiveRemoteNotification(userInfo: [NSObject: AnyObject], fetchCompletionHandler completionHandler: ((UIBackgroundFetchResult) -> Void)?) -> Bool {
+    open class func didReceiveRemoteNotification(_ userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: ((UIBackgroundFetchResult) -> Void)?) -> Bool {
         return didReceiveRemoteNotification(userInfo, fetchCompletionHandler: completionHandler, fromLaunch: false)
     }
     
-    private class func didReceiveRemoteNotification(userInfo: [NSObject: AnyObject], fetchCompletionHandler completionHandler: ((UIBackgroundFetchResult) -> Void)?, fromLaunch fromLaunch: Bool) -> Bool {
-        guard let data = userInfo["data"] as? [String: AnyObject], isRover = userInfo["_rover"] as? Bool where isRover else { return false }
+    fileprivate class func didReceiveRemoteNotification(_ userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: ((UIBackgroundFetchResult) -> Void)?, fromLaunch: Bool) -> Bool {
+        guard let data = userInfo["data"] as? [String: AnyObject], let isRover = userInfo["_rover"] as? Bool , isRover else { return false }
         
         let mappingOperation = MappingOperation { (message: Message) in
             
-            dispatch_async(dispatch_get_main_queue()) {
+            DispatchQueue.main.async {
                 
                 if (!fromLaunch) {
-                    sharedInstance?.notifyObservers(event: .DidReceiveMessage(message))
+                    sharedInstance?.notifyObservers(event: .didReceiveMessage(message))
                 }
                 
                 guard let sharedInstance = sharedInstance else { return }
@@ -238,14 +230,14 @@ public class Rover : NSObject {
                     message.read = true
                     patchMessage(message)
                     followAction(message: message)
-                    sharedInstance.sendEvent(.DidOpenMessage(message, source: "notification", date: NSDate()))
+                    sharedInstance.sendEvent(.didOpenMessage(message, source: "notification", date: Date()))
                 }
             }
         }
         
-        mappingOperation.json = ["data": data]
+        mappingOperation.json = ["data": data as AnyObject]
         mappingOperation.completionBlock = {
-            completionHandler?(.NoData)
+            completionHandler?(.noData)
         }
         
         sharedInstance?.operationQueue.addOperation(mappingOperation)
@@ -255,38 +247,38 @@ public class Rover : NSObject {
     
     // MARK: Instance Methods
     
-    func notifyObservers(event event: Event) {
+    func notifyObservers(event: Event) {
         for observer in observers {
             event.call(observer)
         }
     }
     
-    public class func presentViewController(viewController: UIViewController) {
+    open class func presentViewController(_ viewController: UIViewController) {
         presentViewController(viewController, includeNavigation: true)
     }
     
-    private class func presentViewController(viewController: UIViewController, includeNavigation includeNav: Bool) {
-        var frame = UIScreen.mainScreen().bounds
-        if UIDeviceOrientationIsLandscape(UIDevice.currentDevice().orientation) {
+    fileprivate class func presentViewController(_ viewController: UIViewController, includeNavigation includeNav: Bool) {
+        var frame = UIScreen.main.bounds
+        if UIDeviceOrientationIsLandscape(UIDevice.current.orientation) {
             frame = CGRect(x: 0, y: 0, width: frame.height, height: frame.width)
         }
         
         sharedInstance?.window = UIWindow(frame: frame)
-        sharedInstance?.window?.hidden = false
+        sharedInstance?.window?.isHidden = false
         sharedInstance?.window?.rootViewController = UIViewController()
         
         if includeNav {
             let navController = ModalViewController(rootViewController: viewController)
             navController.modalDelegate = sharedInstance
-            sharedInstance?.window?.rootViewController?.presentViewController(navController, animated: true, completion: nil)
+            sharedInstance?.window?.rootViewController?.present(navController, animated: true, completion: nil)
         } else {
-            sharedInstance?.window?.rootViewController?.presentViewController(viewController, animated: true, completion: nil)
+            sharedInstance?.window?.rootViewController?.present(viewController, animated: true, completion: nil)
         }
     }
     
-    public class func viewController(message message: Message) -> UIViewController? {
+    open class func viewController(message: Message) -> UIViewController? {
         switch message.action {
-        case .LandingPage:
+        case .landingPage:
             let viewController = ScreenViewController()
             
             if let screen = message.landingPage {
@@ -297,7 +289,7 @@ public class Rover : NSObject {
                 let mappingOperation = MappingOperation() { (screen: Screen) in
                     message.landingPage = screen
                     
-                    dispatch_async(dispatch_get_main_queue()) {
+                    DispatchQueue.main.async {
                         viewController.screen = screen
                     }
                 }
@@ -306,7 +298,7 @@ public class Rover : NSObject {
                     //viewController.hideActivityIndicator()
                 }
                 
-                let networkOperation = NetworkOperation(urlRequest: Router.GetLandingPage(message).urlRequest) {
+                let networkOperation = NetworkOperation(urlRequest: Router.getLandingPage(message).urlRequest as URLRequest) {
                     [unowned mappingOperation]
                     (JSON, error) in
                     
@@ -320,7 +312,7 @@ public class Rover : NSObject {
             }
             
             return viewController
-        case .Experience:
+        case .experience:
             guard let experienceId = message.experienceId else { return nil }
             return ExperienceViewController(identifier: experienceId)
         default:
@@ -330,24 +322,24 @@ public class Rover : NSObject {
     
     // MARK: UIApplicationNotifications
     
-    func applicationDidOpen(note: NSNotification) {
-        if let userInfo = note.userInfo?[UIApplicationLaunchOptionsRemoteNotificationKey] as? [NSObject: AnyObject] {
+    func applicationDidOpen(_ note: Notification) {
+        if let userInfo = (note as NSNotification).userInfo?[UIApplicationLaunchOptionsKey.remoteNotification] as? [AnyHashable: Any] {
             Rover.didReceiveRemoteNotification(userInfo, fetchCompletionHandler: nil, fromLaunch: true)
         }
-        self.sendEvent(.ApplicationOpen(date: NSDate()))
+        self.sendEvent(.applicationOpen(date: Date()))
     }
     
     var applicationIsActive = false
     
-    func applicationDidEnterBackground(note: NSNotification) {
+    func applicationDidEnterBackground(_ note: Notification) {
         applicationIsActive = false
     }
     
-    func applicationDidBecomeActive(note: NSNotification) {
+    func applicationDidBecomeActive(_ note: Notification) {
         applicationIsActive = true
     }
     
-    func sendEvent(event: Event) {
+    func sendEvent(_ event: Event) {
         let eventOperation = EventOperation(event: event)
         eventOperation.delegate = self
         
@@ -356,7 +348,7 @@ public class Rover : NSObject {
 }
 
 extension Rover : ModalViewControllerDelegate {
-    func didDismissModalViewController(viewController: ModalViewController) {
+    func didDismissModalViewController(_ viewController: ModalViewController) {
         window?.rootViewController = nil
         window = nil
     }
@@ -364,77 +356,77 @@ extension Rover : ModalViewControllerDelegate {
 
 extension Rover : LocationManagerDelegate {
     
-    func locationManager(manager: LocatioManager, didEnterRegion region: CLRegion) {
+    func locationManager(_ manager: LocatioManager, didEnterRegion region: CLRegion) {
         if region is CLBeaconRegion {
-            sendEvent(.DidEnterBeaconRegion(region as! CLBeaconRegion, config: nil, place: nil, date: NSDate()))
+            sendEvent(.didEnterBeaconRegion(region as! CLBeaconRegion, config: nil, place: nil, date: Date()))
         } else {
-            sendEvent(.DidEnterCircularRegion(region as! CLCircularRegion, place: nil, date: NSDate()))
+            sendEvent(.didEnterCircularRegion(region as! CLCircularRegion, place: nil, date: Date()))
         }
     }
     
-    func locationManager(manager: LocatioManager, didExitRegion region: CLRegion) {
+    func locationManager(_ manager: LocatioManager, didExitRegion region: CLRegion) {
         if region is CLBeaconRegion {
-            sendEvent(.DidExitBeaconRegion(region as! CLBeaconRegion, config: nil, place: nil, date: NSDate()))
+            sendEvent(.didExitBeaconRegion(region as! CLBeaconRegion, config: nil, place: nil, date: Date()))
         } else {
-            sendEvent(.DidExitCircularRegion(region as! CLCircularRegion, place: nil, date: NSDate()))
+            sendEvent(.didExitCircularRegion(region as! CLCircularRegion, place: nil, date: Date()))
         }
     }
     
-    func locationManager(manager: LocatioManager, didUpdateLocations locations: [CLLocation]) {
+    func locationManager(_ manager: LocatioManager, didUpdateLocations locations: [CLLocation]) {
         let location = locations[0]
-        let date = NSDate()
-        sendEvent(.DidUpdateLocation(location, date: date))
+        let date = Date()
+        sendEvent(.didUpdateLocation(location, date: date))
     }
 }
 
 extension Rover : EventOperationDelegate {
     
-    func eventOperation(operation: EventOperation, didPostEvent event: Event) {
+    func eventOperation(_ operation: EventOperation, didPostEvent event: Event) {
         self.notifyObservers(event: event)
     }
     
-    func eventOperation(operation: EventOperation, didReceiveRegions regions: [CLRegion]) {
+    func eventOperation(_ operation: EventOperation, didReceiveRegions regions: [CLRegion]) {
         self.locationManager?.monitoredRegions = Set(regions)
     }
 }
 
 extension Rover /*: RVRGimbalPlaceManagerDelegate*/ {
     
-    public func placeManager(manager: RVRGimbalPlaceManager!, didUpdateLocation location: CLLocation!) {
-        sendEvent(.DidUpdateLocation(location, date: NSDate()))
+    public func placeManager(_ manager: RVRGimbalPlaceManager!, didUpdateLocation location: CLLocation!) {
+        sendEvent(.didUpdateLocation(location, date: Date()))
     }
     
-    public func placeManager(manager: RVRGimbalPlaceManager!, didEnterGimbalPlaceWithIdentifier identifier: String!) {
-        sendEvent(.DidEnterGimbalPlace(id: identifier, date: NSDate()))
+    public func placeManager(_ manager: RVRGimbalPlaceManager!, didEnterGimbalPlaceWithIdentifier identifier: String!) {
+        sendEvent(.didEnterGimbalPlace(id: identifier, date: Date()))
     }
     
-    public func placeManager(manager: RVRGimbalPlaceManager!, didExitGimbalPlaceWithIdentifier identifier: String!) {
-        sendEvent(.DidExitGimbalPlace(id: identifier, date: NSDate()))
+    public func placeManager(_ manager: RVRGimbalPlaceManager!, didExitGimbalPlaceWithIdentifier identifier: String!) {
+        sendEvent(.didExitGimbalPlace(id: identifier, date: Date()))
     }
 }
 
 extension Rover: ExperienceViewControllerDelegate {
-    func experienceViewControllerDidLaunch(viewController: ExperienceViewController) {
+    func experienceViewControllerDidLaunch(_ viewController: ExperienceViewController) {
         guard let experience = viewController.experience else { return }
-        sendEvent(.DidLaunchExperience(experience, date: NSDate()))
+        sendEvent(.didLaunchExperience(experience, session: viewController.sessionID, date: Date()))
     }
     
-    func experienceViewControllerDidDismiss(viewController: ExperienceViewController) {
+    func experienceViewControllerDidDismiss(_ viewController: ExperienceViewController) {
         guard let experience = viewController.experience else { return }
-        sendEvent(.DidDismissExperience(experience, date: NSDate()))
+        sendEvent(.didDismissExperience(experience, session: viewController.sessionID, date: Date()))
     }
     
-    func experienceViewController(viewController: ExperienceViewController, didViewScreen screen: Screen, referrerScreen: Screen?, referrerBlock: Block?) {
+    func experienceViewController(_ viewController: ExperienceViewController, didViewScreen screen: Screen, referrerScreen: Screen?, referrerBlock: Block?) {
         guard let experience = viewController.experience else { return }
-        sendEvent(.DidViewScreen(screen, experience: experience, fromScreen: referrerScreen, fromBlock: referrerBlock, date: NSDate()))
+        sendEvent(.didViewScreen(screen, experience: experience, fromScreen: referrerScreen, fromBlock: referrerBlock, session: viewController.sessionID, date: Date()))
     }
     
-    func experienceViewController(viewController: ExperienceViewController, didPressBlock block: Block, screen: Screen) {
+    func experienceViewController(_ viewController: ExperienceViewController, didPressBlock block: Block, screen: Screen) {
         guard let experience = viewController.experience else { return }
-        sendEvent(.DidPressBlock(block, screen: screen, experience: experience, date: NSDate()))
+        sendEvent(.didPressBlock(block, screen: screen, experience: experience, session: viewController.sessionID, date: Date()))
     }
     
-    func experienceViewController(viewController: ExperienceViewController, willLoadExperience experience: Experience) {
+    func experienceViewController(_ viewController: ExperienceViewController, willLoadExperience experience: Experience) {
         for observer in observers {
             observer.experienceViewController?(viewController, willLoadExperience: experience)
         }

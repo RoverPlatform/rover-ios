@@ -9,9 +9,9 @@
 import UIKit
 
 @objc public protocol ScreenViewControllerDelegate: class {
-    optional func screenViewController(viewController: ScreenViewController, handleOpenURL url: NSURL)
-    optional func screenViewController(viewController: ScreenViewController, handleOpenScreenWithIdentifier identifier: String)
-    optional func screenViewController(viewController: ScreenViewController, didPressBlock block: Block)
+    @objc optional func screenViewController(_ viewController: ScreenViewController, handleOpenURL url: URL)
+    @objc optional func screenViewController(_ viewController: ScreenViewController, handleOpenScreenWithIdentifier identifier: String)
+    @objc optional func screenViewController(_ viewController: ScreenViewController, didPressBlock block: Block)
 }
 
 private let defaultBlockCellIdentifier = "defaultBlockCellIdentifier"
@@ -20,7 +20,7 @@ private let imageBlockCellIdentifier = "imageBlockCellIdentifier"
 private let buttonBlockCellIdentifier = "buttonBlockCellIdentifier"
 private let webBlockCellIdentifier = "webBlockCellIdentifier"
 
-public class ScreenViewController: UICollectionViewController {
+open class ScreenViewController: UICollectionViewController {
     
     var screen: Screen? {
         didSet {
@@ -31,7 +31,7 @@ public class ScreenViewController: UICollectionViewController {
     
     var activityIndicatorView: UIActivityIndicatorView?
     
-    public weak var delegate: ScreenViewControllerDelegate?
+    open weak var delegate: ScreenViewControllerDelegate?
     
     let layout = BlockViewLayout()
     
@@ -50,32 +50,32 @@ public class ScreenViewController: UICollectionViewController {
         fatalError("init(coder:) has not been implemented. You must use init(screen:).")
     }
     
-    override public func viewDidLoad() {
+    override open func viewDidLoad() {
         super.viewDidLoad()
 
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
         // Register cell classes
-        self.collectionView!.registerClass(BlockViewCell.self, forCellWithReuseIdentifier: defaultBlockCellIdentifier)
-        self.collectionView!.registerClass(TextBlockViewCell.self, forCellWithReuseIdentifier: textBlockCellIdentifier)
-        self.collectionView!.registerClass(ImageBlockViewCell.self, forCellWithReuseIdentifier: imageBlockCellIdentifier)
-        self.collectionView!.registerClass(ButtonBlockViewCell.self, forCellWithReuseIdentifier: buttonBlockCellIdentifier)
-        self.collectionView!.registerClass(WebBlockViewCell.self, forCellWithReuseIdentifier: webBlockCellIdentifier)
+        self.collectionView!.register(BlockViewCell.self, forCellWithReuseIdentifier: defaultBlockCellIdentifier)
+        self.collectionView!.register(TextBlockViewCell.self, forCellWithReuseIdentifier: textBlockCellIdentifier)
+        self.collectionView!.register(ImageBlockViewCell.self, forCellWithReuseIdentifier: imageBlockCellIdentifier)
+        self.collectionView!.register(ButtonBlockViewCell.self, forCellWithReuseIdentifier: buttonBlockCellIdentifier)
+        self.collectionView!.register(WebBlockViewCell.self, forCellWithReuseIdentifier: webBlockCellIdentifier)
 
     }
     
-    public override func viewWillAppear(animated: Bool) {
+    open override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         reloadScreen()
     }
     
-    public override func viewWillDisappear(animated: Bool) {
+    open override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         revertNavigationBarStyles()
     }
 
-    override public func didReceiveMemoryWarning() {
+    override open func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
@@ -86,7 +86,7 @@ public class ScreenViewController: UICollectionViewController {
     func reloadScreen() {
         self.title = screen?.title
         self.collectionView!.backgroundView = nil
-        self.collectionView!.backgroundColor = screen?.backgroundColor ?? UIColor.whiteColor()
+        self.collectionView!.backgroundColor = screen?.backgroundColor ?? UIColor.white
         
         if !(screen?.useDefaultNavBarStyle ?? true) {
             applyNavigationBarStyle()
@@ -145,7 +145,7 @@ public class ScreenViewController: UICollectionViewController {
         }
         if let statusBarStyle = screen?.statusBarStyle {
             navBarStyle = self.navigationController?.navigationBar.barStyle
-            self.navigationController?.navigationBar.barStyle = statusBarStyle == .LightContent ? .Black : .Default
+            self.navigationController?.navigationBar.barStyle = statusBarStyle == .lightContent ? .black : .default
         }
     }
     
@@ -160,22 +160,22 @@ public class ScreenViewController: UICollectionViewController {
 
     // MARK: UICollectionViewDataSource
 
-    override public func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
+    override open func numberOfSections(in collectionView: UICollectionView) -> Int {
         return screen?.rows.count ?? 0
     }
 
 
-    override public func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    override open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return screen?.rows[section].blocks.count ?? 0
     }
 
-    override public func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+    override open func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         var cell: BlockViewCell
         let block = screen?.rows[indexPath.section].blocks[indexPath.row]
         
         switch block {
         case let textBlock as TextBlock:
-            let textCell = collectionView.dequeueReusableCellWithReuseIdentifier(textBlockCellIdentifier, forIndexPath: indexPath) as! TextBlockViewCell
+            let textCell = collectionView.dequeueReusableCell(withReuseIdentifier: textBlockCellIdentifier, for: indexPath) as! TextBlockViewCell
         
             textCell.text = textBlock.attributedText
             textCell.textAlignment = textBlock.textAlignment
@@ -184,14 +184,15 @@ public class ScreenViewController: UICollectionViewController {
 
             cell = textCell
         case let imageBlock as ImageBock:
-            let imageCell = collectionView.dequeueReusableCellWithReuseIdentifier(imageBlockCellIdentifier, forIndexPath: indexPath) as! ImageBlockViewCell
+            let imageCell = collectionView.dequeueReusableCell(withReuseIdentifier: imageBlockCellIdentifier, for: indexPath) as! ImageBlockViewCell
             
+            imageCell.imageView.image = nil
             // TODO: cancel any requests or images from the reused cell
-            imageCell.imageView.rv_setImage(url: imageBlock.image?.url, activityIndicatorStyle: .Gray)
+            imageCell.imageView.rv_setImage(url: imageBlock.image?.url, activityIndicatorStyle: .gray)
             
             cell = imageCell
         case let buttonBlock as ButtonBlock:
-            let buttonCell = collectionView.dequeueReusableCellWithReuseIdentifier(buttonBlockCellIdentifier, forIndexPath: indexPath) as! ButtonBlockViewCell
+            let buttonCell = collectionView.dequeueReusableCell(withReuseIdentifier: buttonBlockCellIdentifier, for: indexPath) as! ButtonBlockViewCell
             
             buttonBlock.appearences.forEach { (state, appearance) in
                 buttonCell.setTitle(appearance.attributedTitle, forState: state.controlState)
@@ -207,31 +208,31 @@ public class ScreenViewController: UICollectionViewController {
             
             cell = buttonCell
         case let webBlock as WebBlock:
-            let webCell = collectionView.dequeueReusableCellWithReuseIdentifier(webBlockCellIdentifier, forIndexPath: indexPath) as! WebBlockViewCell
+            let webCell = collectionView.dequeueReusableCell(withReuseIdentifier: webBlockCellIdentifier, for: indexPath) as! WebBlockViewCell
             
             webCell.url = webBlock.url
             webCell.scrollable = webBlock.scrollable
             
             cell = webCell
         default:
-            cell = collectionView.dequeueReusableCellWithReuseIdentifier(defaultBlockCellIdentifier, forIndexPath: indexPath) as! BlockViewCell
+            cell = collectionView.dequeueReusableCell(withReuseIdentifier: defaultBlockCellIdentifier, for: indexPath) as! BlockViewCell
         }
         
         // BackgroundImage
         
+        cell.backgroundView = nil
+        
         if let backgroundImage = block?.backgroundImage {
-            var backgroundView = UIImageView()
-            backgroundView.setBackgroundImage(url: backgroundImage.url, contentMode: block!.backgroundContentMode, scale: block!.backgroundScale)
+            let backgroundView = UIImageView()
+            backgroundView.setBackgroundImage(url: backgroundImage.url as URL, contentMode: block!.backgroundContentMode, scale: block!.backgroundScale)
             cell.backgroundView = backgroundView
-        } else {
-            cell.backgroundView = nil
         }
         
         // Appearance
         
         if !(cell is ButtonBlockViewCell) {
         	cell.backgroundColor = block?.backgroundColor
-        	cell.layer.borderColor = block?.borderColor.CGColor
+        	cell.layer.borderColor = block?.borderColor.cgColor
             cell.layer.borderWidth = block?.borderWidth ?? cell.layer.borderWidth
             cell.layer.cornerRadius = block?.borderRadius ?? cell.layer.cornerRadius
         }
@@ -284,8 +285,8 @@ public class ScreenViewController: UICollectionViewController {
     }
     */
     
-    public override func willRotateToInterfaceOrientation(toInterfaceOrientation: UIInterfaceOrientation, duration: NSTimeInterval) {
-        super.willRotateToInterfaceOrientation(toInterfaceOrientation, duration: duration)
+    open override func willRotate(to toInterfaceOrientation: UIInterfaceOrientation, duration: TimeInterval) {
+        super.willRotate(to: toInterfaceOrientation, duration: duration)
         layout.invalidateLayout()
         collectionView?.reloadData()
     }
@@ -293,38 +294,38 @@ public class ScreenViewController: UICollectionViewController {
 }
 
 extension ScreenViewController : BlockViewCellDelegate {
-    func blockViewCellDidPressButton(cell: BlockViewCell) {
-        guard let indexPath = collectionView!.indexPathForCell(cell),
-            block = screen?.rows[indexPath.section].blocks[indexPath.row],
-            action = block.action else { return }
+    func blockViewCellDidPressButton(_ cell: BlockViewCell) {
+        guard let indexPath = collectionView!.indexPath(for: cell),
+            let block = screen?.rows[(indexPath as NSIndexPath).section].blocks[(indexPath as NSIndexPath).row],
+            let action = block.action else { return }
         
         delegate?.screenViewController?(self, didPressBlock:block)
         
         switch action {
-        case .Deeplink(let url):
-            UIApplication.sharedApplication().openURL(url)
-        case .Website(let url): // Legacy
+        case .deeplink(let url):
+            UIApplication.shared.openURL(url)
+        case .website(let url): // Legacy
             //guard let urlDelegate = delegate?.screenViewController?(self, handleOpenURL: url) else { return }
 
-            UIApplication.sharedApplication().openURL(url)
-        case .Screen(let identifier):
+            UIApplication.shared.openURL(url)
+        case .screen(let identifier):
             delegate?.screenViewController?(self, handleOpenScreenWithIdentifier: identifier)
         }
     }
 }
 
 extension ScreenViewController : BlockViewLayoutDataSource {
-    func blockViewLayout(blockViewLayout: BlockViewLayout, heightForSection section: Int) -> CGFloat {
+    func blockViewLayout(_ blockViewLayout: BlockViewLayout, heightForSection section: Int) -> CGFloat {
         return screen!.rows[section].instrinsicHeight(collectionView: collectionView!)
     }
     
-    func blockViewLayout(blockViewLayout: BlockViewLayout, layoutForItemAtIndexPath indexPath: NSIndexPath) -> Block {
-        return screen!.rows[indexPath.section].blocks[indexPath.row]
+    func blockViewLayout(_ blockViewLayout: BlockViewLayout, layoutForItemAtIndexPath indexPath: IndexPath) -> Block {
+        return screen!.rows[(indexPath as NSIndexPath).section].blocks[(indexPath as NSIndexPath).row]
     }
 }
 
 extension Row {
-    func instrinsicHeight(collectionView collectionView: UICollectionView) -> CGFloat {
+    func instrinsicHeight(collectionView: UICollectionView) -> CGFloat {
         return height?.forParentValue(collectionView.frame.height) ?? blocks.reduce(0) { (height, block) -> CGFloat in
             return height + block.instrinsicHeight(collectionView: collectionView)
         }
@@ -332,7 +333,7 @@ extension Row {
 }
 
 extension Block {
-    func instrinsicHeight(collectionView collectionView: UICollectionView) -> CGFloat {
+    func instrinsicHeight(collectionView: UICollectionView) -> CGFloat {
         if position == .Stacked {
             let height = heightInCollectionView(collectionView, sectionHeight: 0)
             return offset.top.forParentValue(0) + height + offset.bottom.forParentValue(0)
@@ -345,14 +346,14 @@ extension Block {
 extension ButtonBlock.State {
     var controlState: UIControlState {
         switch self {
-        case .Disabled:
-            return .Disabled
-        case .Highlighted:
-            return .Highlighted
-        case .Selected:
-            return .Selected
+        case .disabled:
+            return .disabled
+        case .highlighted:
+            return .highlighted
+        case .selected:
+            return .selected
         default:
-            return .Normal
+            return UIControlState()
         }
     }
 }
@@ -361,21 +362,21 @@ extension UIViewContentMode {
     init(imageContentMode: ImageContentMode) {
         switch imageContentMode {
         case .Fill:
-            self = .ScaleAspectFill
+            self = .scaleAspectFill
         case .Fit:
-            self = .ScaleAspectFit
+            self = .scaleAspectFit
         case .Stretch:
-            self = .ScaleToFill
+            self = .scaleToFill
         default:
-            self = .Center
+            self = .center
         }
     }
 }
 
 extension UIImageView {
-    func setBackgroundImage(url url: NSURL, contentMode: ImageContentMode, scale: CGFloat) {
+    func setBackgroundImage(url: URL, contentMode: ImageContentMode, scale: CGFloat) {
         AssetManager.sharedManager.fetchAsset(url: url) { (data) in
-            guard let data = data, image = UIImage(data: data, scale: scale) else { return }
+            guard let data = data, let image = UIImage(data: data, scale: scale) else { return }
             switch contentMode {
             case .Tile:
                 self.backgroundColor = UIColor(patternImage: image)

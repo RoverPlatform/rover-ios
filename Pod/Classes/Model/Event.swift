@@ -11,45 +11,45 @@ import CoreLocation
 
 public enum Event {
     
-    case ApplicationOpen(date: NSDate)
-    case DeviceUpdate(date: NSDate)
+    case applicationOpen(date: Date)
+    case deviceUpdate(date: Date)
     
-    case DidUpdateLocation(CLLocation, date: NSDate)
+    case didUpdateLocation(CLLocation, date: Date)
     
-    case DidEnterBeaconRegion(CLBeaconRegion, config: BeaconConfiguration?, place: Place?, date: NSDate)
-    case DidExitBeaconRegion(CLBeaconRegion, config: BeaconConfiguration?, place: Place?,  date: NSDate)
+    case didEnterBeaconRegion(CLBeaconRegion, config: BeaconConfiguration?, place: Place?, date: Date)
+    case didExitBeaconRegion(CLBeaconRegion, config: BeaconConfiguration?, place: Place?,  date: Date)
 
-    case DidEnterCircularRegion(CLCircularRegion, place: Place?, date: NSDate)
-    case DidExitCircularRegion(CLCircularRegion, place: Place?, date: NSDate)
+    case didEnterCircularRegion(CLCircularRegion, place: Place?, date: Date)
+    case didExitCircularRegion(CLCircularRegion, place: Place?, date: Date)
     
-    case DidReceiveMessage(Message)
-    case DidOpenMessage(Message, source: String, date: NSDate)
+    case didReceiveMessage(Message)
+    case didOpenMessage(Message, source: String, date: Date)
     
-    case DidEnterGimbalPlace(id: String, date: NSDate)
-    case DidExitGimbalPlace(id: String, date: NSDate)
+    case didEnterGimbalPlace(id: String, date: Date)
+    case didExitGimbalPlace(id: String, date: Date)
     
-    case DidLaunchExperience(Experience, date: NSDate)
-    case DidDismissExperience(Experience, date: NSDate)
-    case DidViewScreen(Screen, experience: Experience, fromScreen: Screen?, fromBlock: Block?, date: NSDate)
-    case DidPressBlock(Block, screen: Screen, experience: Experience, date: NSDate)
+    case didLaunchExperience(Experience, session: String, date: Date)
+    case didDismissExperience(Experience, session: String, date: Date)
+    case didViewScreen(Screen, experience: Experience, fromScreen: Screen?, fromBlock: Block?, session: String, date: Date)
+    case didPressBlock(Block, screen: Screen, experience: Experience, session: String, date: Date)
     
     var properties: [String: Any] {
         switch self {
-        case .DidUpdateLocation(let location, let date):
+        case .didUpdateLocation(let location, let date):
             return ["location": location, "date": date]
-        case .DidEnterBeaconRegion(let region, let config, let location, let date):
+        case .didEnterBeaconRegion(let region, let config, let location, let date):
             return ["region": region, "config": config, "location": location, "date": date]
-        case .DidExitBeaconRegion(let region, let config, let location, let date):
+        case .didExitBeaconRegion(let region, let config, let location, let date):
             return ["region": region, "config": config, "location": location, "date": date]
-        case .DidEnterCircularRegion(let region, let location, let date):
+        case .didEnterCircularRegion(let region, let location, let date):
             return ["region": region, "location": location, "date": date]
-        case .DidExitCircularRegion(let region, let location, let date):
+        case .didExitCircularRegion(let region, let location, let date):
             return ["region": region, "location": location, "date": date]
-        case .DidOpenMessage(let message, let source, let date):
+        case .didOpenMessage(let message, let source, let date):
             return ["message": message, "source": source, "date": date]
-        case .DidEnterGimbalPlace(let placeId, let date):
+        case .didEnterGimbalPlace(let placeId, let date):
             return ["gimbalPlaceId": placeId, "date": date]
-        case .DidEnterGimbalPlace(let placeId, let date):
+        case .didEnterGimbalPlace(let placeId, let date):
             return ["gimbalPlaceId": placeId, "date": date]
         default:
             return [:]
@@ -60,17 +60,17 @@ public enum Event {
 
 extension Event {
     
-    func call(observer: RoverObserver) {
+    func call(_ observer: RoverObserver) {
         switch self {
-        case .DidEnterBeaconRegion(_, let config?, let place?, _):
+        case .didEnterBeaconRegion(_, let config?, let place?, _):
             observer.didEnterBeaconRegion?(config: config, place: place)
-        case .DidExitBeaconRegion(_, let config?, let place?, _):
+        case .didExitBeaconRegion(_, let config?, let place?, _):
             observer.didExitBeaconRegion?(config: config, place: place)
-        case .DidEnterCircularRegion(_, let place?, _):
+        case .didEnterCircularRegion(_, let place?, _):
             observer.didEnterGeofence?(place: place)
-        case .DidExitCircularRegion(_, let place?, _):
+        case .didExitCircularRegion(_, let place?, _):
             observer.didExitGeofence?(place: place)
-        case .DidReceiveMessage(let message):
+        case .didReceiveMessage(let message):
             observer.didReceiveMessage?(message)
         default:
             break

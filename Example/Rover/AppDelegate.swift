@@ -14,29 +14,36 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-    func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
         setupRover()
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(didUpdateAccount), name: RoverAccountUpdatedNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(didUpdateAccount), name: NSNotification.Name(rawValue: RoverAccountUpdatedNotification), object: nil)
         
+        #if DEBUG
+            Rover.isDevelopment = true
+        #else
+            Rover.isDevelopment = false
+        #endif
+        //Rover.isDevelopment = true
         // Override point for customization after application launch.
         return true
     }
     
     deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
     
-    func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]) {
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any]) {
         Rover.didReceiveRemoteNotification(userInfo, fetchCompletionHandler: nil)
     }
     
-    func application(application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData) {
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        print("token: \(deviceToken)")
         Rover.didRegisterForRemoteNotification(deviceToken: deviceToken)
     }
     
-    func application(application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: NSError) {
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
 
     }
     
@@ -48,11 +55,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
     
-    func didUpdateAccount(note: NSNotification) {
+    func didUpdateAccount(_ note: Notification) {
         setupRover()
     }
     
-    func application(application: UIApplication, handleOpenURL url: NSURL) -> Bool {
+    func application(_ application: UIApplication, handleOpen url: URL) -> Bool {
         print("url: \(url)")
         return true
     }

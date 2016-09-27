@@ -10,9 +10,9 @@ import UIKit
 import CoreLocation
 
 protocol LocationManagerDelegate: class {
-    func locationManager(manager: LocatioManager, didEnterRegion region: CLRegion)
-    func locationManager(manager: LocatioManager, didExitRegion region: CLRegion)
-    func locationManager(manager: LocatioManager, didUpdateLocations locations: [CLLocation])
+    func locationManager(_ manager: LocatioManager, didEnterRegion region: CLRegion)
+    func locationManager(_ manager: LocatioManager, didExitRegion region: CLRegion)
+    func locationManager(_ manager: LocatioManager, didUpdateLocations locations: [CLLocation])
 }
 
 let RoverMonitoringStartedKey = "ROVER_MONITORING_STARTED"
@@ -27,8 +27,8 @@ class LocatioManager: NSObject {
         }
         set {
             if isMonitoring {
-                let newRegions = newValue.subtract(monitoredRegions)
-                let oldRegions = monitoredRegions.subtract(newValue)
+                let newRegions = newValue.subtracting(monitoredRegions)
+                let oldRegions = monitoredRegions.subtracting(newValue)
                 
                 stopMonitoringAndRangingForRegions(oldRegions)
                 startMonitoringAndRangingForRegions(newRegions)
@@ -41,15 +41,15 @@ class LocatioManager: NSObject {
             return monitoring
         }
         
-        _isMonitoring = NSUserDefaults.standardUserDefaults().boolForKey(RoverMonitoringStartedKey)
+        _isMonitoring = UserDefaults.standard.bool(forKey: RoverMonitoringStartedKey)
         return _isMonitoring ?? false
     }
     
-    private let locationManager = CLLocationManager()
-    private var currentBeaconRegions = [String:Set<CLBeaconRegion>]()
-    private var _isMonitoring: Bool? {
+    fileprivate let locationManager = CLLocationManager()
+    fileprivate var currentBeaconRegions = [String:Set<CLBeaconRegion>]()
+    fileprivate var _isMonitoring: Bool? {
         didSet {
-            NSUserDefaults.standardUserDefaults().setBool(_isMonitoring!, forKey: RoverMonitoringStartedKey)
+            UserDefaults.standard.set(_isMonitoring!, forKey: RoverMonitoringStartedKey)
         }
     }
     
@@ -63,7 +63,7 @@ class LocatioManager: NSObject {
             
             let beaconRegions = monitoredRegions.filter { $0 is CLBeaconRegion } as! [CLBeaconRegion]
             beaconRegions.forEach { region in
-                locationManager.startRangingBeaconsInRegion(region)
+                locationManager.startRangingBeacons(in: region)
             }
         }
     }
@@ -73,7 +73,7 @@ class LocatioManager: NSObject {
         
         _isMonitoring = true
         
-        rvLog("Monitoring started.", level: .Trace)
+        rvLog("Monitoring started.", level: .trace)
     }
     
     func stopMonitoring() {
@@ -83,25 +83,25 @@ class LocatioManager: NSObject {
         
         _isMonitoring = false
         
-        rvLog("Monitoring stopped.", level: .Trace)
+        rvLog("Monitoring stopped.", level: .trace)
     }
     
-    private func stopMonitoringAndRangingForRegions(regions: Set<CLRegion>) {
+    fileprivate func stopMonitoringAndRangingForRegions(_ regions: Set<CLRegion>) {
         regions.forEach { region in
-            locationManager.stopMonitoringForRegion(region)
+            locationManager.stopMonitoring(for: region)
             
             if let beaconRegion = region as? CLBeaconRegion {
-                locationManager.stopRangingBeaconsInRegion(beaconRegion)
+                locationManager.stopRangingBeacons(in: beaconRegion)
             }
         }
     }
     
-    private func startMonitoringAndRangingForRegions(regions: Set<CLRegion>) {
+    fileprivate func startMonitoringAndRangingForRegions(_ regions: Set<CLRegion>) {
         regions.forEach { region in
-            locationManager.startMonitoringForRegion(region)
+            locationManager.startMonitoring(for: region)
             
             if let beaconRegion = region as? CLBeaconRegion {
-                locationManager.startRangingBeaconsInRegion(beaconRegion)
+                locationManager.startRangingBeacons(in: beaconRegion)
             }
         }
     }
@@ -110,55 +110,55 @@ class LocatioManager: NSObject {
 
 extension LocatioManager : CLLocationManagerDelegate {
     
-    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        rvLog("Received location update.", data: locations[0], level: .Trace)
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        rvLog("Received location update.", data: locations[0], level: .trace)
         delegate?.locationManager(self, didUpdateLocations: locations)
     }
     
-    func locationManager(manager: CLLocationManager, didEnterRegion region: CLRegion) {
+    func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
         guard region is CLCircularRegion else { return }
-        rvLog("Received geofence enter.", data: region, level: .Trace)
+        rvLog("Received geofence enter.", data: region, level: .trace)
         delegate?.locationManager(self, didEnterRegion: region)
     }
     
-    func locationManager(manager: CLLocationManager, didExitRegion region: CLRegion) {
+    func locationManager(_ manager: CLLocationManager, didExitRegion region: CLRegion) {
         guard region is CLCircularRegion else { return }
-        rvLog("Received geofence exit", data: region, level: .Trace)
+        rvLog("Received geofence exit", data: region, level: .trace)
         delegate?.locationManager(self, didExitRegion: region)
     }
     
-    func locationManager(manager: CLLocationManager, didRangeBeacons beacons: [CLBeacon], inRegion region: CLBeaconRegion) {
+    func locationManager(_ manager: CLLocationManager, didRangeBeacons beacons: [CLBeacon], in region: CLBeaconRegion) {
         
         guard manager == locationManager else { return }
         
         let regions = Set(beacons.map { (beacon) -> CLBeaconRegion in
-            CLBeaconRegion(proximityUUID: beacon.proximityUUID, major: CLBeaconMajorValue(beacon.major.integerValue), minor: CLBeaconMinorValue(beacon.minor.integerValue), identifier: identifierForBeacon(beacon))
+            CLBeaconRegion(proximityUUID: beacon.proximityUUID, major: CLBeaconMajorValue(beacon.major.intValue), minor: CLBeaconMinorValue(beacon.minor.intValue), identifier: identifierForBeacon(beacon))
         })
         
         let currentRegions = currentBeaconRegions[region.identifier] ?? Set<CLBeaconRegion>()
         
         guard regions != currentRegions else { return }
         
-        let enteredRegions = regions.subtract(currentRegions)
-        let exitedRegions = currentRegions.subtract(regions)
+        let enteredRegions = regions.subtracting(currentRegions)
+        let exitedRegions = currentRegions.subtracting(regions)
         
         currentBeaconRegions[region.identifier] = regions
         
         exitedRegions.forEach { region in
-            rvLog("Received beacon exit", data: region, level: .Trace)
+            rvLog("Received beacon exit", data: region, level: .trace)
             delegate?.locationManager(self, didExitRegion: region)
         }
         
         enteredRegions.forEach { region in
-            rvLog("Received beacon enter", data: region, level: .Trace)
+            rvLog("Received beacon enter", data: region, level: .trace)
             delegate?.locationManager(self, didEnterRegion: region)
         }
     }
     
     // MARK: Helpers
     
-    func identifierForBeacon(beacon: CLBeacon) -> String {
-        return "\(beacon.proximityUUID.UUIDString)-\(beacon.major)-\(beacon.minor)"
+    func identifierForBeacon(_ beacon: CLBeacon) -> String {
+        return "\(beacon.proximityUUID.uuidString)-\(beacon.major)-\(beacon.minor)"
     }
     
 }

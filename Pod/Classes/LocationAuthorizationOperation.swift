@@ -14,18 +14,18 @@ class LocationAuthorizationOperation: ConcurrentOperation, CLLocationManagerDele
     var locationManager: CLLocationManager?
     
     override func execute() {
-        guard CLLocationManager.authorizationStatus() == .NotDetermined && !cancelled else {
+        guard CLLocationManager.authorizationStatus() == .notDetermined && !isCancelled else {
             finish()
             return
         }
         
-        rvLog("Requesting location permissions", level: .Trace)
+        rvLog("Requesting location permissions", level: .trace)
         
         // TODO: Do a check for NSLocationAlwaysUsageDescription in the application .plist
         
         // Delegate won't fire unless CLLocationManager setup is done on main thread
         
-        dispatch_async(dispatch_get_main_queue()) {
+        DispatchQueue.main.async {
             self.locationManager = CLLocationManager()
             self.locationManager?.delegate = self
             self.locationManager?.requestAlwaysAuthorization()
@@ -34,8 +34,8 @@ class LocationAuthorizationOperation: ConcurrentOperation, CLLocationManagerDele
     
     // MARK: CLLocationManagerDelegate
     
-    func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
-        if status != .NotDetermined {
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        if status != .notDetermined {
             finish()
         }
     }

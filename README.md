@@ -12,7 +12,7 @@ We monitor these issues regularly and usually respond within an hour.
 # iOS SDK Integration
 
 ## Requirements
-  - XCode 7 or higher
+  - XCode 8 or higher
   - iOS 8.4 or higher
   - iPhone 4S or higher
 
@@ -43,7 +43,7 @@ Coming soon...
 
 ### Manual Installation
 
-You can also get the library by downloading the [latest version from Github](https://github.com/RoverPlatform/rover-ios/tree/0.2.0) and copying it into your project. Just copy all files from [this directory](https://github.com/RoverPlatform/rover-ios/tree/master/Pod/Classes)
+You can also get the library by downloading the [latest version from Github](https://github.com/RoverPlatform/rover-ios/tree/1.1.0) and copying it into your project. Just copy all files from [this directory](https://github.com/RoverPlatform/rover-ios/tree/master/Pod/Classes)
 
 ## Initializing the SDK
 
@@ -165,6 +165,8 @@ The Rover SDK needs a few more hooks in your AppDelegate to fully enable notific
 
 NOTE: If you have `Remote notificaitons` enabled as a background mode in your iOS app, you should implement the `Rover.didReceiveRemoteNotification(_:fethCompletionHandler:)` method in the `application(_:didReceiveRemoteNotification:fetchCompletionHandler:)` equivilant instead, passing along the respective arguments.
 
+NOTE: Notifications by default are sent through Apple's production servers. This means they will only work in release builds. To have them work during development and debug builds you must set `Rover.isDevelopment = true` during initialization. A good approach would be set this flag conditionally based on DEBUG symbols like demonstrated [here](https://github.com/RoverPlatform/rover-ios/blob/master/Example/Rover/AppDelegate.swift). For more information on how to accomplish this in Swift see [this](http://stackoverflow.com/questions/24003291/ifdef-replacement-in-swift-language) stackoverflow post.
+
 ### Message Observers
 
 Rover implements callbacks you can implement in your RoverObservers to handle the receiving and opening of messages.
@@ -219,7 +221,7 @@ didReceiveMessage(message: Message) {
 
 ##### The Screen View Controller
 
-If the message contains a landing page you probably want to instantiate a view controller for it. The `landingPage` property of a [`Message`](https://github.com/RoverPlatform/rover-ios/blob/0.2.0/Pod/Classes/Model/Message.swift) object is of type [`Screen`](https://github.com/RoverPlatform/rover-ios/blob/0.2.0/Pod/Classes/Model/Screen.swift). You can use the `Rover.viewController` method which takes a [`Message`](https://github.com/RoverPlatform/rover-ios/blob/0.2.0/Pod/Classes/Model/Message.swift) object and returns a [`ScreenViewController`](https://github.com/RoverPlatform/rover-ios/blob/0.2.0/Pod/Classes/UI/RVScreenViewController.swift).
+If the message contains a landing page you probably want to instantiate a view controller for it. The `landingPage` property of a [`Message`](https://github.com/RoverPlatform/rover-ios/blob/1.1.0/Pod/Classes/Model/Message.swift) object is of type [`Screen`](https://github.com/RoverPlatform/rover-ios/blob/1.1.0/Pod/Classes/Model/Screen.swift). You can use the `Rover.viewController` method which takes a [`Message`](https://github.com/RoverPlatform/rover-ios/blob/1.1.0/Pod/Classes/Model/Message.swift) object and returns a [`ScreenViewController`](https://github.com/RoverPlatform/rover-ios/blob/1.1.0/Pod/Classes/UI/RVScreenViewController.swift).
 
 ```swift
 didReceiveMessage(message: Message) {
@@ -231,9 +233,13 @@ didReceiveMessage(message: Message) {
 
 There is a little magic happening behind the scenes that makes this method especially valuable. 
 
-Often you will have a [`Message`](https://github.com/RoverPlatform/rover-ios/blob/0.2.0/Pod/Classes/Model/Message.swift) object with its content type set to `.LandingPage` but the `message.landingPage` property is null. This is because the SDK has received the message but has not yet loaded the landing page. A typical landing page amounts for 5-6 Kb and is loaded on demand to optimize bandwidth effeciency. 
+Often you will have a [`Message`](https://github.com/RoverPlatform/rover-ios/blob/1.1.0/Pod/Classes/Model/Message.swift) object with its content type set to `.LandingPage` but the `message.landingPage` property is null. This is because the SDK has received the message but has not yet loaded the landing page. A typical landing page amounts for 5-6 Kb and is loaded on demand to optimize bandwidth effeciency. 
 
-The `Rover.viewController` method accepts a [`Message`](https://github.com/RoverPlatform/rover-ios/blob/0.2.0/Pod/Classes/Model/Message.swift) object and returns a [`ScreenViewController`](https://github.com/RoverPlatform/rover-ios/blob/0.2.0/Pod/Classes/UI/RVScreenViewController.swift) that knows how to load its contents.
+The `Rover.viewController` method accepts a [`Message`](https://github.com/RoverPlatform/rover-ios/blob/1.1.0/Pod/Classes/Model/Message.swift) object and returns a [`ScreenViewController`](https://github.com/RoverPlatform/rover-ios/blob/0.2.0/Pod/Classes/UI/RVScreenViewController.swift) that knows how to load its contents.
+
+#### The Experience View Controller
+
+Much like the `ScreenViewController`, the `ExperienceViewController` is used for messages containing an experience. You may continue using the `Rover.viewController` method for these messages with the one caveat that `ExperienceViewController`s are a subclass of `UINavigationController` and therefore must always be presented modally. 
 
 ##### The Modal View Controller
 
@@ -260,14 +266,6 @@ didReceiveMessage(message: Message) {
 }
 ```
 
-##### Tracking Message Open Events
-
-The Rover SDK will automatically track message open events on notificaiton swipes. However if you have implemented an Inbox style view controller where users can relaunch message content, you will need to user the following method to accurately track message open events.
-
-```swift
-Rover.trackMessageOpenEvent(message: Message)
-```
-
 ### Inbox
 
 Most applications provide means for users to recall messages. You can use the `didDeliverMessage(_:)` callback on a [`RoverObserver`](https://github.com/RoverPlatform/rover-ios-beta/blob/master/Pod/Classes/RoverObserver.swift) to map and add Rover messages to your application's inbox as they are delivered. You may also rely solely on Rover for a simple implementation of such inbox if your application doesn't already have one:
@@ -282,6 +280,14 @@ Rover.reloadInbox { messages in
 Note that the `reloadInbox` method will only return messages that have been marked to be saved in the Rover Messages app.
 
 See the [InboxViewController](https://github.com/RoverPlatform/rover-ios-beta/blob/master/Example/Rover/InboxTableViewController.swift) for a quick implementation of both strategies.
+
+##### Tracking Message Open Events
+
+The Rover SDK will automatically track message open events on notificaiton swipes. However if you have implemented an Inbox style view controller where users can relaunch message content, you will need to user the following method to accurately track message open events.
+
+```swift
+Rover.trackMessageOpenEvent(message: Message)
+```
 
 ### Customer Identity
 

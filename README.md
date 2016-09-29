@@ -40,7 +40,9 @@ The easiest way to get Rover into your iOS project is to use [CocoaPods](http://
 
 Rover also supports Carthage to package your dependencies as a framework. Include the following dependency in your Cartfile:
 
+```
 github "RoverPlatform/rover-ios"
+```
 
 ### Manual Installation
 

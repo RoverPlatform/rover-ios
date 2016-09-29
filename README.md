@@ -14,7 +14,7 @@ We monitor these issues regularly and usually respond within an hour.
 ## Requirements
   - XCode 8 or higher
   - iOS 8.4 or higher
-  - iPhone 4S or higher
+  - iPhone 5 or higher
 
 ## Installing the library
 
@@ -30,20 +30,21 @@ The easiest way to get Rover into your iOS project is to use [CocoaPods](http://
    use_frameworks!
    
    target 'My App' do
-       pod 'Rover', :git => 'https://github.com/RoverPlatform/rover-ios.git'
+       pod 'Rover'
    end
    ```
    
-   Note: The path to the GitHub repository is required while the Rover SDK is in beta. 
 4. Run `pod install` from your Xcode project directory. CocoaPods should download and install the Rover library, and create a new Xcode workspace. Open up this workspace in Xcode.
 
 ### Carthage
 
-Coming soon...
+Rover also supports Carthage to package your dependencies as a framework. Include the following dependency in your Cartfile:
+
+github "RoverPlatform/rover-ios"
 
 ### Manual Installation
 
-You can also get the library by downloading the [latest version from Github](https://github.com/RoverPlatform/rover-ios/tree/1.1.0) and copying it into your project. Just copy all files from [this directory](https://github.com/RoverPlatform/rover-ios/tree/master/Pod/Classes)
+You can also get the library by downloading the latest version from Github and copying it into your project. Just copy all files from the Rover directory.
 
 ## Initializing the SDK
 

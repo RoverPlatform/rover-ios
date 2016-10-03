@@ -242,7 +242,14 @@ The `Rover.viewController` method accepts a [`Message`](https://github.com/Rover
 
 #### The Experience View Controller
 
-Much like the `ScreenViewController`, the `ExperienceViewController` is used for messages containing an experience. You may continue using the `Rover.viewController` method for these messages with the one caveat that `ExperienceViewController`s are a subclass of `UINavigationController` and therefore must always be presented modally. 
+Much like the `ScreenViewController`, the `ExperienceViewController` is used for messages containing an experience. You may continue using the `Rover.viewController` method for these messages with the one caveat that `ExperienceViewController`s are a subclass of `UINavigationController` and therefore must always be presented modally.
+
+You can also launch an experience using it's identifier. To do so simply instantiate an `ExperienceViewController` using its designated initializer passing in the experience id.
+
+```swift
+let viewController = ExperienceViewController(identifier: "123456789")
+present(viewController, animated: true, completion: nil)
+```
 
 ##### The Modal View Controller
 

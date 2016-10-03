@@ -43,6 +43,6 @@ var rvDateFormatter: DateFormatter {
     let dateFormatter = DateFormatter()
     let enUSPOSIXLocale = Locale(identifier: "en_US_POSIX")
     dateFormatter.locale = enUSPOSIXLocale
-    dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZ"
+    dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ"
     return dateFormatter
 }

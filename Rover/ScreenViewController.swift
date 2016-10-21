@@ -173,6 +173,9 @@ open class ScreenViewController: UICollectionViewController {
         var cell: BlockViewCell
         let block = screen?.rows[indexPath.section].blocks[indexPath.row]
         
+        let frame = layout.layoutAttributesForItem(at: indexPath)?.frame ?? CGRect.zero
+        let maxCornerRadius = min(frame.height, frame.width) / 2
+        
         switch block {
         case let textBlock as TextBlock:
             let textCell = collectionView.dequeueReusableCell(withReuseIdentifier: textBlockCellIdentifier, for: indexPath) as! TextBlockViewCell
@@ -203,7 +206,9 @@ open class ScreenViewController: UICollectionViewController {
                 buttonCell.setBackgroundColor(appearance.backgroundColor, forState: state.controlState)
                 buttonCell.setBorderColor(appearance.borderColor, forState: state.controlState)
                 buttonCell.setBorderWidth(appearance.borderWidth, forState: state.controlState)
-                buttonCell.setCornerRadius(appearance.borderRadius, forState: state.controlState)
+                if let cornerRadius = appearance.borderRadius {
+                    buttonCell.setCornerRadius(min(cornerRadius, maxCornerRadius), forState: state.controlState)
+                }
             }
             
             cell = buttonCell
@@ -234,7 +239,7 @@ open class ScreenViewController: UICollectionViewController {
         	cell.backgroundColor = block?.backgroundColor
         	cell.layer.borderColor = block?.borderColor.cgColor
             cell.layer.borderWidth = block?.borderWidth ?? cell.layer.borderWidth
-            cell.layer.cornerRadius = block?.borderRadius ?? cell.layer.cornerRadius
+            cell.layer.cornerRadius = min(block?.borderRadius ?? cell.layer.cornerRadius, maxCornerRadius)
         }
         
         cell.layer.opacity = block?.opacity ?? cell.layer.opacity

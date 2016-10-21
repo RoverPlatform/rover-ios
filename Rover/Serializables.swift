@@ -133,7 +133,7 @@ extension Event : Serializable {
                 "object": "experience",
                 "action": "launched",
                 "experience-id": experience.identifier,
-                "veresion-id": experience.version ?? NSNull() as Any,
+                "version-id": experience.version ?? NSNull() as Any,
                 "experience-session-id": session
             ]
         case .didDismissExperience(let experience, let session, let date):

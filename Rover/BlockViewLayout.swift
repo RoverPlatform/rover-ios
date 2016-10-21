@@ -42,7 +42,7 @@ class BlockViewLayout: UICollectionViewLayout {
                 let stacked = block.position == .Stacked
                 let attributes = UICollectionViewLayoutAttributes(forCellWith: indexPath)
                 
-                attributes.frame = frameForItem(layout: block, yOffset: stacked ? yOffset : height, sectionHeight: sectionHeight)
+                attributes.frame = frameForItem(layout: block, yOffset: stacked ? yOffset : height, sectionHeight: sectionHeight, isStacked: stacked)
                 attributes.zIndex = (numItems - item)
                 
                 cellAttributes[indexPath] = attributes
@@ -91,7 +91,7 @@ class BlockViewLayout: UICollectionViewLayout {
     // MARK: Helpers
     
     
-    func frameForItem(layout block: Block, yOffset: CGFloat, sectionHeight: CGFloat) -> CGRect {
+    func frameForItem(layout block: Block, yOffset: CGFloat, sectionHeight: CGFloat, isStacked: Bool) -> CGRect {
         let collectionViewWidth = self.collectionView!.frame.width
         
         var x: CGFloat, y: CGFloat, width: CGFloat, height: CGFloat
@@ -124,28 +124,35 @@ class BlockViewLayout: UICollectionViewLayout {
         
         // Vertical Layout
         
-        switch block.alignment.vertical {
-        case .Fill:
-            let topOffset = block.offset.top.forParentValue(sectionHeight)
-            let bottomOffset = block.offset.bottom.forParentValue(sectionHeight)
-            
-            height = sectionHeight - topOffset - bottomOffset
-            y = yOffset + topOffset
-        case .Top:
+        if isStacked {
             let topOffset = block.offset.top.forParentValue(sectionHeight)
             
             y = yOffset + topOffset
             height = block.heightInCollectionView(collectionView!, sectionHeight: sectionHeight)
-        case .Bottom:
-            let bottomOffset = block.offset.bottom.forParentValue(sectionHeight)
-            
-            height = block.heightInCollectionView(collectionView!, sectionHeight: sectionHeight)
-            y = yOffset + sectionHeight - height - bottomOffset
-        case .Middle:
-            let middleOffset = block.offset.middle.forParentValue(sectionHeight)
-            
-            height = block.heightInCollectionView(collectionView!, sectionHeight: sectionHeight)
-            y = yOffset + ((sectionHeight - height) / 2.0) + middleOffset
+        } else {
+            switch block.alignment.vertical {
+            case .Fill:
+                let topOffset = block.offset.top.forParentValue(sectionHeight)
+                let bottomOffset = block.offset.bottom.forParentValue(sectionHeight)
+                
+                height = sectionHeight - topOffset - bottomOffset
+                y = yOffset + topOffset
+            case .Top:
+                let topOffset = block.offset.top.forParentValue(sectionHeight)
+                
+                y = yOffset + topOffset
+                height = block.heightInCollectionView(collectionView!, sectionHeight: sectionHeight)
+            case .Bottom:
+                let bottomOffset = block.offset.bottom.forParentValue(sectionHeight)
+                
+                height = block.heightInCollectionView(collectionView!, sectionHeight: sectionHeight)
+                y = yOffset + sectionHeight - height - bottomOffset
+            case .Middle:
+                let middleOffset = block.offset.middle.forParentValue(sectionHeight)
+                
+                height = block.heightInCollectionView(collectionView!, sectionHeight: sectionHeight)
+                y = yOffset + ((sectionHeight - height) / 2.0) + middleOffset
+            }
         }
         
         return CGRect(x: x, y: y, width: width, height: height)

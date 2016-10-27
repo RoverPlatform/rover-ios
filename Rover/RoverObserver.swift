@@ -68,6 +68,45 @@ public protocol RoverObserver {
      */
     @objc optional func shouldOpenMessage(_ message: Message) -> Bool
     
+    
+    
+    /*
+     Called when an experience is presented through an `ExperienceViewController`
+     
+     - parameters:
+        - viewController: The `ExperienceViewController` that was presented.
+     */
+    @objc optional func experienceViewControllerDidLaunch(_ viewController: ExperienceViewController)
+    
+    /*
+     Called when an `ExperienceViewController` is dismissed
+     
+     - parameters:
+        - viewController: The `ExperienceViewController` that was dismissed.
+     */
+    @objc optional func experienceViewControllerDidDismiss(_ viewController: ExperienceViewController)
+    
+    /*
+     Called when a `Screen` is viewed through an `ExperienceViewController`.
+     
+     - parameters:
+        - viewController: The `ExperienceViewController` that displayed the `Screen`.
+        - didViewScreen: The `Screen` that was viewed.
+        - referrerScreen: The previous `Screen` that the viewed `Screen` was navigated from.
+        - referrerBlock: The `Block` that was tapped that caused the viewed `Screen` to be displayed.
+     */
+    @objc optional func experienceViewController(_ viewController: ExperienceViewController, didViewScreen screen: Screen, referrerScreen: Screen?, referrerBlock: Block?)
+    
+    /*
+     Called when a `Block` is tapped when loaded through an `ExperienceViewController`.
+     
+     - parameters:
+        - viewController: The `ExperienceViewController` that presented the `Block`.
+        - didPressBlock: The `Block` that was tapped.
+        - screen: The `Screen` the block is part of.
+     */
+    @objc optional func experienceViewController(_ viewController: ExperienceViewController, didPressBlock block: Block, screen: Screen)
+    
     /*
      Called when any ExperienceViewController is about to load and render an Experience.
      Use this method to make any custom changes to the Experience.

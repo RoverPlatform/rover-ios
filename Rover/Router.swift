@@ -17,6 +17,7 @@ public enum Router {
     case getMessage(String)
     case getLandingPage(Message)
     case getExperience(String)
+    case getCurrentExperience(String)
     
     public static var baseURLString = "https://api.rover.io/v1" //"https://api-development.rover.io/v1"
     
@@ -49,6 +50,8 @@ public enum Router {
             return URL(string: "\(Router.baseURLString)/inbox/\(message.identifier)/landing-page")!
         case .getExperience(let identifier):
             return URL(string: "\(Router.baseURLString)/experiences/\(identifier)")!
+        case .getCurrentExperience(let identifier):
+            return URL(string: "\(Router.baseURLString)/experiences/\(identifier)/current")!
         }
     }
     

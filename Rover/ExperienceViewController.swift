@@ -25,10 +25,13 @@ open class ExperienceViewController: ModalViewController {
     
     let sessionID = NSUUID().uuidString
     
-    required public init(identifier: String) {
+    required public init(identifier: String, useCurrentVersion: Bool = false) {
         super.init(rootViewController: LoadingViewController())
         view.backgroundColor = UIColor.white
-        fetchExperience(identifier: identifier)
+        
+        let request = useCurrentVersion ? Router.getCurrentExperience(identifier).urlRequest : Router.getExperience(identifier).urlRequest
+        
+        fetchExperience(identifier: identifier, request: request)
     }
     
     required public init?(coder aDecoder: NSCoder) {
@@ -39,7 +42,7 @@ open class ExperienceViewController: ModalViewController {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
     }
     
-    func fetchExperience(identifier: String) {
+    func fetchExperience(identifier: String, request: URLRequest) {
         let mappingOperation = MappingOperation { (experience: Experience) in
             self.experience = experience
             DispatchQueue.main.async(execute: { 
@@ -49,7 +52,7 @@ open class ExperienceViewController: ModalViewController {
         
         // TODO: Handle bad internet and reload capabilities with the spinner
         
-        let networkOperation = NetworkOperation(urlRequest: Router.getExperience(identifier).urlRequest as URLRequest) {
+        let networkOperation = NetworkOperation(urlRequest: request) {
             [unowned mappingOperation]
             (JSON, error) in
             

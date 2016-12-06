@@ -49,6 +49,73 @@ open class Rover : NSObject {
     
     open static let customer = Customer.sharedCustomer
     
+    open static func identify(traits: Traits) {
+        if let identifier = traits.identifier {
+            customer.identifier = identifier as? String
+        }
+        
+        if let firstName = traits.firstName {
+            customer.firstName = firstName as? String
+        }
+        
+        if let lastName = traits.lastName {
+            customer.lastName = lastName as? String
+        }
+        
+        if let email = traits.email {
+            customer.email = email as? String
+        }
+        
+        if let phoneNumber = traits.phoneNumber {
+            customer.phone = phoneNumber as? String
+        }
+        
+        if let tags = traits.tags {
+            customer.tags = tags
+        } else {
+            if let tagsToAdd = traits.tagsToAdd {
+                customer.tags?.append(contentsOf: tagsToAdd)
+            }
+            
+            if let tagsToRemove = traits.tagsToRemove {
+                customer.tags = customer.tags?.filter { !tagsToRemove.contains($0) }
+            }
+        }
+        
+        if let gender = traits.gender {
+            customer.gender = gender as? String
+        }
+        
+        if let age = traits.age {
+            customer.age = age as? Int
+        }
+        
+        if let customValues = traits.customValues {
+            customer.traits = [String: Any]()
+            for (key, value) in customValues.filter({ !($0.1 is NSNull) }) {
+                customer.traits[key] = value
+            }
+        }
+        
+        customer.save()
+        sharedInstance?.sendEvent(.deviceUpdate(date: Date()))
+    }
+    
+    open static func clearCustomer() {
+        customer.identifier = nil
+        customer.firstName = nil
+        customer.lastName = nil
+        customer.email = nil
+        customer.phone = nil
+        customer.tags = nil
+        customer.gender = nil
+        customer.age = nil
+        customer.traits = [String: Any]()
+
+        customer.save()
+        sharedInstance?.sendEvent(.deviceUpdate(date: Date()))
+    }
+    
     open static var isMonitoring: Bool {
         return sharedInstance?.locationManager?.isMonitoring ?? false
     }

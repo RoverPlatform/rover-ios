@@ -63,7 +63,7 @@ open class Customer : NSObject, NSCoding {
     }
     
     open func encode(with aCoder: NSCoder) {
-        aCoder.encode(firstName, forKey: "firstname")
+        aCoder.encode(firstName, forKey: "firstName")
         aCoder.encode(lastName, forKey: "lastName")
         aCoder.encode(email, forKey: "email")
         aCoder.encode(phone, forKey: "phone")

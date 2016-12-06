@@ -98,6 +98,9 @@ class TraitsTests: XCTestCase {
         XCTAssertEqual(traits.valueMap.count, 2)
         XCTAssertEqual(traits.customValues?.count, 1)
         XCTAssertEqual(traits.customValues?["foo"] as? String, "bar")
+        
+        traits.removeCustomValue(forKey: "foo")
+        XCTAssert(traits.customValues?["foo"] is NSNull)
     }
     
     func testInitializeByDictionary() {

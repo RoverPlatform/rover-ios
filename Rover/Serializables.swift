@@ -262,7 +262,7 @@ extension Customer : Serializable {
         let tags: Any = self.tags ?? NSNull()
         let email: Any = self.email ?? NSNull()
         
-        return [
+        var json = [
             "first-name": firstName,
             "last-name": lastName,
             "email": email,
@@ -272,6 +272,12 @@ extension Customer : Serializable {
             "age": age,
             "tags": tags
         ]
+        
+        if let traits = self.traits as? [String: Any] {
+            json["traits"] = traits
+        }
+        
+        return json
     }
 }
 

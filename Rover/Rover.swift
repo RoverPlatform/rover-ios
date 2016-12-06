@@ -91,7 +91,10 @@ open class Rover : NSObject {
         }
         
         if let customValues = traits.customValues {
-            customer.traits = customValues
+            customer.traits = [String: Any]()
+            for (key, value) in customValues.filter({ !($0.1 is NSNull) }) {
+                customer.traits[key] = value
+            }
         }
         
         customer.save()

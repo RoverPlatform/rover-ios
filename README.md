@@ -309,7 +309,44 @@ customer.identifier = "1234abcdef"
 customer.save()
 ```
 
-In addition to identifiers, you may provide other user attributes for more personlized and segmented messaging via the Rover Messages app. For a full list attributes check [here](https://github.com/RoverPlatform/rover-ios-beta/blob/master/Pod/Classes/Model/Customer.swift).
+#### Traits API
+
+Version 1.5.0 of the Rover SDK added a new method of identifying the current user. The `Rover.identify(traits:)` method accepts a `Traits` object to set the properties on the customer. In addition to setting the customer properties, the `Rover.identify` method will also trigger a `device-update` event to ensure the customer properties are persisted to the server immediately.
+
+The `Traits` object can be accessed like a dictionary or using convenience methods.
+
+```swift
+// Dictionary
+
+Rover.identify(traits: [
+    "identifier": "marieavgeropoulos",
+    "first-name": "Maire",
+    "last-name": "Avgeropoulos",
+    "email": "marie.avgeropoulos@example.com",
+    "gender": Traits.Gender.female,
+    "age": 30,
+    "phone-number": "555-555-5555",
+    "tags": ["actress"],
+    "foo": "bar"
+])
+
+// Convenience methods
+
+var traits = Traits()
+traits.set(identifier: "marieavgeropoulos")
+traits.set(firstName: "Marie")
+traits.set(lastName: "Avgeropoulos")
+traits.set(email: "marie.avgeropoulos@example.com")
+traits.set(gender: .female)
+traits.set(age: 30)
+traits.set(phoneNumber: "555-555-5555")
+traits.set(tags: ["actress", "model"])
+traits.set(customValue: "bar", forKey: "foo")
+
+Rover.identify(traits: traits)
+```
+
+Additionaly there is a `Rover.clearCustomer` method which clears all customer properties and issues a `device-update` event to ensure the current user is immediately returned to an anonymous state.
 
 ## License
 

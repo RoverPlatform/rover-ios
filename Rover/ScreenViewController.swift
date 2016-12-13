@@ -298,8 +298,8 @@ open class ScreenViewController: UICollectionViewController {
         
         var queryItems = components.queryItems ?? [URLQueryItem]()
         
-        let width = rect.width * block.backgroundScale
-        let height = rect.height * block.backgroundScale
+        let width = min(rect.width * block.backgroundScale, backgroundImage.size.width)
+        let height = min(rect.height * block.backgroundScale, backgroundImage.size.height)
         let x = (backgroundImage.size.width - width) / 2
         let y = (backgroundImage.size.height - height) / 2
         

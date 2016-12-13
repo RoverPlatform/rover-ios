@@ -227,13 +227,7 @@ open class ScreenViewController: UICollectionViewController {
         
         // BackgroundImage
         
-        cell.backgroundView = nil
-        
-        if let backgroundImage = block?.backgroundImage {
-            let backgroundView = UIImageView()
-            backgroundView.setBackgroundImage(url: backgroundImage.url as URL, contentMode: block!.backgroundContentMode, scale: block!.backgroundScale)
-            cell.backgroundView = backgroundView
-        }
+        cell.backgroundView = backgroundView(forBlock: block, inRect: frame)
         
         // Appearance
         
@@ -282,6 +276,81 @@ open class ScreenViewController: UICollectionViewController {
         
         components.queryItems = queryItems
         return components.url
+    }
+    
+    func backgroundView(forBlock block: Block?, inRect rect: CGRect) -> UIImageView? {
+        guard let block = block, let backgroundImage = block.backgroundImage else {
+            return nil
+        }
+        
+        switch block.backgroundContentMode {
+        case .Original:
+            return croppedBackgroundView(forBlock: block, backgroundImage: backgroundImage, inRect: rect)
+        default:
+            return nil
+        }
+    }
+
+    func croppedBackgroundView(forBlock block: Block, backgroundImage: Image, inRect rect: CGRect) -> UIImageView? {
+        guard var components = URLComponents(url: backgroundImage.url, resolvingAgainstBaseURL: false) else {
+            return nil
+        }
+        
+        var queryItems = components.queryItems ?? [URLQueryItem]()
+        
+        let width = rect.width * block.backgroundScale
+        let height = rect.height * block.backgroundScale
+        let x = (backgroundImage.size.width - width) / 2
+        let y = (backgroundImage.size.height - height) / 2
+        
+        func floatParam(_ float: CGFloat) -> String {
+            let r = float.rounded()
+            let i = Int(r)
+            return i.description
+        }
+        
+        let value = [
+            floatParam(x),
+            floatParam(y),
+            floatParam(width),
+            floatParam(height)
+        ].joined(separator: ",")
+        
+        let rect = URLQueryItem(name: "rect", value: value)
+        queryItems.append(rect)
+        
+        var deviceScale = block.backgroundScale
+        
+        if UIScreen.main.scale < block.backgroundScale {
+            let scaledWidth = floatParam(width / block.backgroundScale * UIScreen.main.scale)
+            let w = URLQueryItem(name: "w", value: scaledWidth)
+            queryItems.append(w)
+            
+            let scaledHeight = floatParam(height / block.backgroundScale * UIScreen.main.scale)
+            let h = URLQueryItem(name: "h", value: scaledHeight)
+            queryItems.append(h)
+            
+            deviceScale = UIScreen.main.scale
+        }
+        
+        components.queryItems = queryItems
+        
+        guard let url = components.url else {
+            return nil
+        }
+        
+        let backgroundView = UIImageView()
+        
+        AssetManager.sharedManager.fetchAsset(url: url) { data in
+            guard let data = data, let image = UIImage(data: data, scale: deviceScale) else {
+                return
+            }
+
+            backgroundView.image = image
+            backgroundView.contentMode = UIViewContentMode(imageContentMode: .Original)
+        }
+        
+        return backgroundView
     }
 
     // MARK: UICollectionViewDelegate

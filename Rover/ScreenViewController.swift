@@ -191,7 +191,9 @@ open class ScreenViewController: UICollectionViewController {
             
             imageCell.imageView.image = nil
             // TODO: cancel any requests or images from the reused cell
-            imageCell.imageView.rv_setImage(url: imageBlock.image?.url, activityIndicatorStyle: .gray)
+            
+            let url = format(imageURL: imageBlock.image?.url, toSize: frame.size)
+            imageCell.imageView.rv_setImage(url: url, activityIndicatorStyle: .gray)
             
             cell = imageCell
         case let buttonBlock as ButtonBlock:
@@ -257,6 +259,29 @@ open class ScreenViewController: UICollectionViewController {
         }
         
         return cell
+    }
+    
+    func format(imageURL: URL?, toSize size: CGSize) -> URL? {
+        guard let url = imageURL else {
+            return nil
+        }
+        
+        guard var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
+            return url
+        }
+        
+        var queryItems = components.queryItems ?? [URLQueryItem]()
+        
+        let width = (UIScreen.main.scale * size.width).rounded()
+        let w = URLQueryItem(name: "w", value: Int(width).description)
+        queryItems.append(w)
+        
+        let height = (UIScreen.main.scale * size.height).rounded()
+        let h = URLQueryItem(name: "h", value: Int(height).description)
+        queryItems.append(h)
+        
+        components.queryItems = queryItems
+        return components.url
     }
 
     // MARK: UICollectionViewDelegate

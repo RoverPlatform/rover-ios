@@ -227,7 +227,7 @@ open class ScreenViewController: UICollectionViewController {
         
         // BackgroundImage
         
-        cell.backgroundView = backgroundView(forBlock: block, inRect: frame)
+        cell.backgroundView = backgroundView(forBlock: block, inFrame: frame)
         
         // Appearance
         
@@ -278,19 +278,47 @@ open class ScreenViewController: UICollectionViewController {
         return components.url
     }
     
-    func backgroundView(forBlock block: Block?, inRect rect: CGRect) -> UIImageView? {
-        guard let block = block, let backgroundImage = block.backgroundImage else {
+    func backgroundView(forBlock block: Block?, inFrame frame: CGRect) -> UIImageView? {
+        guard let block = block else {
             return nil
         }
         
         switch block.backgroundContentMode {
         case .Original:
-            return croppedBackgroundView(forBlock: block, backgroundImage: backgroundImage, inRect: rect)
+            return centeredBackgroundView(forBlock: block, inFrame: frame)
+        case .Tile:
+            return tiledBackgroundView(forBlock: block, inFrame: frame)
         default:
             return nil
         }
     }
 
+    func centeredBackgroundView(forBlock block: Block, inFrame frame: CGRect) -> UIImageView? {
+        guard let backgroundImage = block.backgroundImage else {
+            return nil
+        }
+        
+        let width = min(frame.width * block.backgroundScale, backgroundImage.size.width)
+        let height = min(frame.height * block.backgroundScale, backgroundImage.size.height)
+        let x = (backgroundImage.size.width - width) / 2
+        let y = (backgroundImage.size.height - height) / 2
+        let rect = CGRect(x: x, y: y, width: width, height: height)
+        
+        return croppedBackgroundView(forBlock: block, backgroundImage: backgroundImage, inRect: rect)
+    }
+    
+    func tiledBackgroundView(forBlock block: Block, inFrame frame: CGRect) -> UIImageView? {
+        guard let backgroundImage = block.backgroundImage else {
+            return nil
+        }
+        
+        let width = min(frame.width * block.backgroundScale, backgroundImage.size.width)
+        let height = min(frame.height * block.backgroundScale, backgroundImage.size.height)
+        let rect = CGRect(x: 0, y: 0, width: width, height: height)
+        
+        return croppedBackgroundView(forBlock: block, backgroundImage: backgroundImage, inRect: rect)
+    }
+    
     func croppedBackgroundView(forBlock block: Block, backgroundImage: Image, inRect rect: CGRect) -> UIImageView? {
         guard var components = URLComponents(url: backgroundImage.url, resolvingAgainstBaseURL: false) else {
             return nil
@@ -298,39 +326,27 @@ open class ScreenViewController: UICollectionViewController {
         
         var queryItems = components.queryItems ?? [URLQueryItem]()
         
-        let width = min(rect.width * block.backgroundScale, backgroundImage.size.width)
-        let height = min(rect.height * block.backgroundScale, backgroundImage.size.height)
-        let x = (backgroundImage.size.width - width) / 2
-        let y = (backgroundImage.size.height - height) / 2
-        
-        func floatParam(_ float: CGFloat) -> String {
+        let floatToString = { (float: CGFloat) -> String in
             let r = float.rounded()
             let i = Int(r)
             return i.description
         }
         
-        let value = [
-            floatParam(x),
-            floatParam(y),
-            floatParam(width),
-            floatParam(height)
-        ].joined(separator: ",")
+        let value = [rect.origin.x, rect.origin.y, rect.size.width, rect.size.height].map(floatToString).joined(separator: ",")
+        queryItems.append(URLQueryItem(name: "rect", value: value))
         
-        let rect = URLQueryItem(name: "rect", value: value)
-        queryItems.append(rect)
-        
-        var deviceScale = block.backgroundScale
+        var scale = block.backgroundScale
         
         if UIScreen.main.scale < block.backgroundScale {
-            let scaledWidth = floatParam(width / block.backgroundScale * UIScreen.main.scale)
+            let scaledWidth = floatToString(rect.size.width / block.backgroundScale * UIScreen.main.scale)
             let w = URLQueryItem(name: "w", value: scaledWidth)
             queryItems.append(w)
             
-            let scaledHeight = floatParam(height / block.backgroundScale * UIScreen.main.scale)
+            let scaledHeight = floatToString(rect.size.height / block.backgroundScale * UIScreen.main.scale)
             let h = URLQueryItem(name: "h", value: scaledHeight)
             queryItems.append(h)
             
-            deviceScale = UIScreen.main.scale
+            scale = UIScreen.main.scale
         }
         
         components.queryItems = queryItems
@@ -340,16 +356,7 @@ open class ScreenViewController: UICollectionViewController {
         }
         
         let backgroundView = UIImageView()
-        
-        AssetManager.sharedManager.fetchAsset(url: url) { data in
-            guard let data = data, let image = UIImage(data: data, scale: deviceScale) else {
-                return
-            }
-
-            backgroundView.image = image
-            backgroundView.contentMode = UIViewContentMode(imageContentMode: .Original)
-        }
-        
+        backgroundView.setBackgroundImage(url: url, contentMode: block.backgroundContentMode, scale: scale)
         return backgroundView
     }
 
@@ -474,8 +481,11 @@ extension UIViewContentMode {
 
 extension UIImageView {
     func setBackgroundImage(url: URL, contentMode: ImageContentMode, scale: CGFloat) {
-        AssetManager.sharedManager.fetchAsset(url: url) { (data) in
-            guard let data = data, let image = UIImage(data: data, scale: scale) else { return }
+        AssetManager.sharedManager.fetchAsset(url: url) { data in
+            guard let data = data, let image = UIImage(data: data, scale: scale) else {
+                return
+            }
+            
             switch contentMode {
             case .Tile:
                 self.backgroundColor = UIColor(patternImage: image)

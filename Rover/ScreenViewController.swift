@@ -279,87 +279,42 @@ open class ScreenViewController: UICollectionViewController {
     }
     
     func backgroundView(forBlock block: Block?, inFrame frame: CGRect) -> UIImageView? {
-        guard let block = block else {
+        guard let block = block, let backgroundImage = block.backgroundImage else {
             return nil
         }
+        
+        var config: ImageConfiguration = (backgroundImage.url, 1)
         
         switch block.backgroundContentMode {
         case .Original:
-            return centeredBackgroundView(forBlock: block, inFrame: frame)
+            config = backgroundImage.centeredConfiguration(forFrame: frame, scale: block.backgroundScale)
         case .Tile:
-            return tiledBackgroundView(forBlock: block, inFrame: frame)
+            config = backgroundImage.tiledConfiguration(forFrame: frame, scale: block.backgroundScale)
+        case .Stretch:
+            config = backgroundImage.constrainedConfiguration(forFrame: frame)
         default:
-            return nil
-        }
-    }
-
-    func centeredBackgroundView(forBlock block: Block, inFrame frame: CGRect) -> UIImageView? {
-        guard let backgroundImage = block.backgroundImage else {
-            return nil
-        }
-        
-        let width = min(frame.width * block.backgroundScale, backgroundImage.size.width)
-        let height = min(frame.height * block.backgroundScale, backgroundImage.size.height)
-        let x = (backgroundImage.size.width - width) / 2
-        let y = (backgroundImage.size.height - height) / 2
-        let rect = CGRect(x: x, y: y, width: width, height: height)
-        
-        return croppedBackgroundView(forBlock: block, backgroundImage: backgroundImage, inRect: rect)
-    }
-    
-    func tiledBackgroundView(forBlock block: Block, inFrame frame: CGRect) -> UIImageView? {
-        guard let backgroundImage = block.backgroundImage else {
-            return nil
-        }
-        
-        let width = min(frame.width * block.backgroundScale, backgroundImage.size.width)
-        let height = min(frame.height * block.backgroundScale, backgroundImage.size.height)
-        let rect = CGRect(x: 0, y: 0, width: width, height: height)
-        
-        return croppedBackgroundView(forBlock: block, backgroundImage: backgroundImage, inRect: rect)
-    }
-    
-    func croppedBackgroundView(forBlock block: Block, backgroundImage: Image, inRect rect: CGRect) -> UIImageView? {
-        guard var components = URLComponents(url: backgroundImage.url, resolvingAgainstBaseURL: false) else {
-            return nil
-        }
-        
-        var queryItems = components.queryItems ?? [URLQueryItem]()
-        
-        let floatToString = { (float: CGFloat) -> String in
-            let r = float.rounded()
-            let i = Int(r)
-            return i.description
-        }
-        
-        let value = [rect.origin.x, rect.origin.y, rect.size.width, rect.size.height].map(floatToString).joined(separator: ",")
-        queryItems.append(URLQueryItem(name: "rect", value: value))
-        
-        var scale = block.backgroundScale
-        
-        if UIScreen.main.scale < block.backgroundScale {
-            let scaledWidth = floatToString(rect.size.width / block.backgroundScale * UIScreen.main.scale)
-            let w = URLQueryItem(name: "w", value: scaledWidth)
-            queryItems.append(w)
-            
-            let scaledHeight = floatToString(rect.size.height / block.backgroundScale * UIScreen.main.scale)
-            let h = URLQueryItem(name: "h", value: scaledHeight)
-            queryItems.append(h)
-            
-            scale = UIScreen.main.scale
-        }
-        
-        components.queryItems = queryItems
-        
-        guard let url = components.url else {
-            return nil
+            break
         }
         
         let backgroundView = UIImageView()
-        backgroundView.setBackgroundImage(url: url, contentMode: block.backgroundContentMode, scale: scale)
+        
+        AssetManager.sharedManager.fetchAsset(url: config.url) { data in
+            guard let data = data, let image = UIImage(data: data, scale: config.scale) else {
+                return
+            }
+            
+            switch block.backgroundContentMode {
+            case .Tile:
+                backgroundView.backgroundColor = UIColor(patternImage: image)
+            default:
+                backgroundView.image = image
+                backgroundView.contentMode = UIViewContentMode(imageContentMode: block.backgroundContentMode)
+            }
+        }
+        
         return backgroundView
     }
-
+    
     // MARK: UICollectionViewDelegate
 
     /*
@@ -497,3 +452,95 @@ extension UIImageView {
     }
 }
 
+fileprivate extension CGFloat {
+    
+    var paramValue: String {
+        let rounded = self.rounded()
+        let int = Int(rounded)
+        return int.description
+    }
+}
+
+fileprivate typealias ImageConfiguration = (url: URL, scale: CGFloat)
+
+fileprivate extension Image {
+    
+    func constrainedConfiguration(forFrame frame: CGRect) -> ImageConfiguration {
+        guard var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
+            return (url, 1)
+        }
+        
+        var queryItems = components.queryItems ?? [URLQueryItem]()
+        
+        let width = min(frame.width * UIScreen.main.scale, size.width)
+        let height = min(frame.height * UIScreen.main.scale, size.height)
+        
+        queryItems.append(contentsOf: [
+            URLQueryItem(name: "w", value: width.paramValue),
+            URLQueryItem(name: "h", value: height.paramValue)
+            ])
+        
+        components.queryItems = queryItems
+        
+        guard let optimizedURL = components.url else {
+            return (url, 1)
+        }
+        
+        return (optimizedURL, 1)
+    }
+    
+    func centeredConfiguration(forFrame frame: CGRect, scale: CGFloat) -> ImageConfiguration {
+        let width = min(frame.width * scale, size.width)
+        let height = min(frame.height * scale, size.height)
+        let x = (size.width - width) / 2
+        let y = (size.height - height) / 2
+        let rect = CGRect(x: x, y: y, width: width, height: height)
+        return croppedConfiguration(forRect: rect, scale: scale)
+    }
+
+    func tiledConfiguration(forFrame frame: CGRect, scale: CGFloat) -> ImageConfiguration {
+        let width = min(frame.width * scale, size.width)
+        let height = min(frame.height * scale, size.height)
+        let rect = CGRect(x: 0, y: 0, width: width, height: height)
+        return croppedConfiguration(forRect: rect, scale: scale)
+    }
+    
+    func croppedConfiguration(forRect rect: CGRect, scale: CGFloat) -> ImageConfiguration {
+        guard var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
+            return (url, 1)
+        }
+        
+        var queryItems = components.queryItems ?? [URLQueryItem]()
+        
+        let value = [
+            rect.origin.x.paramValue,
+            rect.origin.y.paramValue,
+            rect.width.paramValue,
+            rect.height.paramValue
+            ].joined(separator: ",")
+        
+        queryItems.append(URLQueryItem(name: "rect", value: value))
+        
+        var croppedScale = scale
+        
+        if UIScreen.main.scale < croppedScale {
+            let width = rect.width / scale * UIScreen.main.scale
+            let height = rect.height / scale * UIScreen.main.scale
+            
+            queryItems.append(contentsOf: [
+                URLQueryItem(name: "w", value: width.paramValue),
+                URLQueryItem(name: "h", value: height.paramValue)
+                ])
+            
+            croppedScale = UIScreen.main.scale
+        }
+        
+        components.queryItems = queryItems
+        
+        guard let croppedURL = components.url else {
+            return (url, 1)
+        }
+        
+        return (croppedURL, croppedScale)
+    }
+}

@@ -32,7 +32,7 @@ open class Screen: NSObject {
     open var navBarButtons = NavBarButtons.Both
     
     open var backgroundImage: Image?
-    open var backgorundContentMode: ImageContentMode = .Original
+    open var backgroundContentMode: ImageContentMode = .Original
     open var backgroundScale: CGFloat = 1
     
     init(rows: [Row]) {

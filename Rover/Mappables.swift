@@ -220,7 +220,7 @@ extension Screen : Mappable {
         screen.identifier = JSON["id"] as? String
         screen.navBarButtons = Screen.NavBarButtons(rawValue: JSON["title-bar-buttons"] as? String ?? "") ?? screen.navBarButtons
         screen.backgroundImage = Image.instance(JSON["background-image"] as? [String: AnyObject] ?? [:], included: nil)
-        screen.backgorundContentMode = ImageContentMode(rawValue: JSON["background-content-mode"] as? String ?? "") ?? screen.backgorundContentMode
+        screen.backgroundContentMode = ImageContentMode(rawValue: JSON["background-content-mode"] as? String ?? "") ?? screen.backgroundContentMode
         screen.backgroundScale = JSON["background-scale"] as? CGFloat ?? screen.backgroundScale
         
         return screen

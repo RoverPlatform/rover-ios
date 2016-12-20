@@ -114,11 +114,7 @@ open class ScreenViewController: UICollectionViewController {
             navigationItem.setHidesBackButton(false, animated: true)
         }
         
-        if let backgroundImage = screen?.backgroundImage {
-            let imageView = UIImageView()
-            imageView.setBackgroundImage(url: backgroundImage.url, contentMode: screen!.backgorundContentMode, scale: screen!.backgroundScale)
-            self.collectionView!.backgroundView = imageView
-        }
+        self.collectionView!.backgroundView = backgroundView(backgroundConfiguration: screen, inFrame: collectionView!.frame)
     }
     
     var navBarStyle: UIBarStyle?
@@ -192,8 +188,10 @@ open class ScreenViewController: UICollectionViewController {
             imageCell.imageView.image = nil
             // TODO: cancel any requests or images from the reused cell
             
-            let url = format(imageURL: imageBlock.image?.url, toSize: frame.size)
-            imageCell.imageView.rv_setImage(url: url, activityIndicatorStyle: .gray)
+            if let image = imageBlock.image {
+                let config = image.constrainedConfiguration(forFrame: frame)
+                imageCell.imageView.rv_setImage(url: config.url, activityIndicatorStyle: .gray)
+            }
             
             cell = imageCell
         case let buttonBlock as ButtonBlock:
@@ -227,7 +225,7 @@ open class ScreenViewController: UICollectionViewController {
         
         // BackgroundImage
         
-        cell.backgroundView = backgroundView(forBlock: block, inFrame: frame)
+        cell.backgroundView = backgroundView(backgroundConfiguration: block, inFrame: frame)
         
         // Appearance
         
@@ -255,60 +253,37 @@ open class ScreenViewController: UICollectionViewController {
         return cell
     }
     
-    func format(imageURL: URL?, toSize size: CGSize) -> URL? {
-        guard let url = imageURL else {
+    func backgroundView(backgroundConfiguration: BackgroundConfiguration?, inFrame frame: CGRect) -> UIImageView? {
+        guard let backgroundConfiguration = backgroundConfiguration, let backgroundImage = backgroundConfiguration.backgroundImage else {
             return nil
         }
         
-        guard var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
-            return url
-        }
+        var imageConfiguration: ImageConfiguration = (backgroundImage.url, 1)
         
-        var queryItems = components.queryItems ?? [URLQueryItem]()
-        
-        let width = (UIScreen.main.scale * size.width).rounded()
-        let w = URLQueryItem(name: "w", value: Int(width).description)
-        queryItems.append(w)
-        
-        let height = (UIScreen.main.scale * size.height).rounded()
-        let h = URLQueryItem(name: "h", value: Int(height).description)
-        queryItems.append(h)
-        
-        components.queryItems = queryItems
-        return components.url
-    }
-    
-    func backgroundView(forBlock block: Block?, inFrame frame: CGRect) -> UIImageView? {
-        guard let block = block, let backgroundImage = block.backgroundImage else {
-            return nil
-        }
-        
-        var config: ImageConfiguration = (backgroundImage.url, 1)
-        
-        switch block.backgroundContentMode {
+        switch backgroundConfiguration.backgroundContentMode {
         case .Original:
-            config = backgroundImage.centeredConfiguration(forFrame: frame, scale: block.backgroundScale)
+            imageConfiguration = backgroundImage.centeredConfiguration(forFrame: frame, scale: backgroundConfiguration.backgroundScale)
         case .Tile:
-            config = backgroundImage.tiledConfiguration(forFrame: frame, scale: block.backgroundScale)
+            imageConfiguration = backgroundImage.tiledConfiguration(forFrame: frame, scale: backgroundConfiguration.backgroundScale)
         case .Stretch:
-            config = backgroundImage.constrainedConfiguration(forFrame: frame)
+            imageConfiguration = backgroundImage.constrainedConfiguration(forFrame: frame)
         default:
             break
         }
         
         let backgroundView = UIImageView()
         
-        AssetManager.sharedManager.fetchAsset(url: config.url) { data in
-            guard let data = data, let image = UIImage(data: data, scale: config.scale) else {
+        AssetManager.sharedManager.fetchAsset(url: imageConfiguration.url) { data in
+            guard let data = data, let image = UIImage(data: data, scale: imageConfiguration.scale) else {
                 return
             }
             
-            switch block.backgroundContentMode {
+            switch backgroundConfiguration.backgroundContentMode {
             case .Tile:
                 backgroundView.backgroundColor = UIColor(patternImage: image)
             default:
                 backgroundView.image = image
-                backgroundView.contentMode = UIViewContentMode(imageContentMode: block.backgroundContentMode)
+                backgroundView.contentMode = UIViewContentMode(imageContentMode: backgroundConfiguration.backgroundContentMode)
             }
         }
         
@@ -434,24 +409,6 @@ extension UIViewContentMode {
     }
 }
 
-extension UIImageView {
-    func setBackgroundImage(url: URL, contentMode: ImageContentMode, scale: CGFloat) {
-        AssetManager.sharedManager.fetchAsset(url: url) { data in
-            guard let data = data, let image = UIImage(data: data, scale: scale) else {
-                return
-            }
-            
-            switch contentMode {
-            case .Tile:
-                self.backgroundColor = UIColor(patternImage: image)
-            default:
-                self.image = image
-                self.contentMode = UIViewContentMode(imageContentMode: contentMode)
-            }
-        }
-    }
-}
-
 fileprivate extension CGFloat {
     
     var paramValue: String {
@@ -460,6 +417,19 @@ fileprivate extension CGFloat {
         return int.description
     }
 }
+
+protocol BackgroundConfiguration {
+    
+    var backgroundImage: Image? { get }
+    
+    var backgroundContentMode: ImageContentMode { get }
+    
+    var backgroundScale: CGFloat { get }
+}
+
+extension Block: BackgroundConfiguration { }
+
+extension Screen: BackgroundConfiguration { }
 
 fileprivate typealias ImageConfiguration = (url: URL, scale: CGFloat)
 

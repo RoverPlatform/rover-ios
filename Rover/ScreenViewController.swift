@@ -186,10 +186,11 @@ open class ScreenViewController: UICollectionViewController {
             let imageCell = collectionView.dequeueReusableCell(withReuseIdentifier: imageBlockCellIdentifier, for: indexPath) as! ImageBlockViewCell
             
             imageCell.imageView.image = nil
+            
             // TODO: cancel any requests or images from the reused cell
             
             if let image = imageBlock.image {
-                let config = image.constrainedConfiguration(forFrame: frame)
+                let config = image.stretchConfiguration(forFrame: frame)
                 imageCell.imageView.rv_setImage(url: config.url, activityIndicatorStyle: .gray)
             }
             
@@ -262,11 +263,15 @@ open class ScreenViewController: UICollectionViewController {
         
         switch backgroundConfiguration.backgroundContentMode {
         case .Original:
-            imageConfiguration = backgroundImage.centeredConfiguration(forFrame: frame, scale: backgroundConfiguration.backgroundScale)
+            imageConfiguration = backgroundImage.originalConfiguration(forFrame: frame, scale: backgroundConfiguration.backgroundScale)
         case .Tile:
-            imageConfiguration = backgroundImage.tiledConfiguration(forFrame: frame, scale: backgroundConfiguration.backgroundScale)
+            imageConfiguration = backgroundImage.tileConfiguration(forFrame: frame, scale: backgroundConfiguration.backgroundScale)
         case .Stretch:
-            imageConfiguration = backgroundImage.constrainedConfiguration(forFrame: frame)
+            imageConfiguration = backgroundImage.stretchConfiguration(forFrame: frame)
+        case .Fill:
+            imageConfiguration = backgroundImage.fillConfiguration(forFrame: frame)
+        case .Fit:
+            imageConfiguration = backgroundImage.fitConfiguration(forFrame: frame)
         default:
             break
         }
@@ -435,7 +440,7 @@ fileprivate typealias ImageConfiguration = (url: URL, scale: CGFloat)
 
 fileprivate extension Image {
     
-    func constrainedConfiguration(forFrame frame: CGRect) -> ImageConfiguration {
+    func stretchConfiguration(forFrame frame: CGRect) -> ImageConfiguration {
         guard var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
             return (url, 1)
         }
@@ -459,7 +464,57 @@ fileprivate extension Image {
         return (optimizedURL, 1)
     }
     
-    func centeredConfiguration(forFrame frame: CGRect, scale: CGFloat) -> ImageConfiguration {
+    func fitConfiguration(forFrame frame: CGRect) -> ImageConfiguration {
+        guard var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
+            return (url, 1)
+        }
+        
+        var queryItems = components.queryItems ?? [URLQueryItem]()
+        
+        let width = frame.width * UIScreen.main.scale
+        let height = frame.height * UIScreen.main.scale
+        
+        queryItems.append(contentsOf: [
+            URLQueryItem(name: "fit", value: "max"),
+            URLQueryItem(name: "w", value: width.paramValue),
+            URLQueryItem(name: "h", value: height.paramValue)
+            ])
+        
+        components.queryItems = queryItems
+        
+        guard let optimizedURL = components.url else {
+            return (url, 1)
+        }
+        
+        return (optimizedURL, 1)
+    }
+    
+    func fillConfiguration(forFrame frame: CGRect) -> ImageConfiguration {
+        guard var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
+            return (url, 1)
+        }
+        
+        var queryItems = components.queryItems ?? [URLQueryItem]()
+
+        let width = frame.width * UIScreen.main.scale
+        let height = frame.height * UIScreen.main.scale
+        
+        queryItems.append(contentsOf: [
+            URLQueryItem(name: "fit", value: "min"),
+            URLQueryItem(name: "w", value: width.paramValue),
+            URLQueryItem(name: "h", value: height.paramValue)
+            ])
+        
+        components.queryItems = queryItems
+        
+        guard let optimizedURL = components.url else {
+            return (url, 1)
+        }
+        
+        return (optimizedURL, 1)
+    }
+    
+    func originalConfiguration(forFrame frame: CGRect, scale: CGFloat) -> ImageConfiguration {
         let width = min(frame.width * scale, size.width)
         let height = min(frame.height * scale, size.height)
         let x = (size.width - width) / 2
@@ -468,7 +523,7 @@ fileprivate extension Image {
         return croppedConfiguration(forRect: rect, scale: scale)
     }
 
-    func tiledConfiguration(forFrame frame: CGRect, scale: CGFloat) -> ImageConfiguration {
+    func tileConfiguration(forFrame frame: CGRect, scale: CGFloat) -> ImageConfiguration {
         let width = min(frame.width * scale, size.width)
         let height = min(frame.height * scale, size.height)
         let rect = CGRect(x: 0, y: 0, width: width, height: height)

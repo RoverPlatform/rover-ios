@@ -82,4 +82,36 @@ class RoverTests: XCTestCase {
         XCTAssertNil(customer.phone)
         XCTAssertNil(customer.tags)
     }
+    
+    func testContinueUserActivity() {
+        let valid: [URL] = [
+            URL(string: "https://inbox.rvr.co/foo")!,
+            URL(string: "https://inbox.rvr.co/foo?version=current")!,
+            URL(string: "http://mlse.rvr.co/foo")!,
+            URL(string: "https://carrot-rewards.rvr.co/foo/bar")!
+        ]
+        
+        let invalid: [URL] = [
+            URL(string: "https://rvr.co/foo")!,
+            URL(string: "https://inbox.rvr.co/")!,
+            URL(string: "https://inbox.rvr.co")!,
+            URL(string: "https://inbox.rover.io/foo")!
+        ]
+        
+        for url in valid {
+            let userActivity = NSUserActivity(activityType: NSUserActivityTypeBrowsingWeb)
+            userActivity.webpageURL = url
+            
+            let didContinueActivity = Rover.continueUserActivity(userActivity)
+            assert(didContinueActivity, "Failed to continue activity for valid URL: \(url)")
+        }
+        
+        for url in invalid {
+            let userActivity = NSUserActivity(activityType: NSUserActivityTypeBrowsingWeb)
+            userActivity.webpageURL = url
+            
+            let didContinueActivity = Rover.continueUserActivity(userActivity)
+            assert(!didContinueActivity, "Continued activity for invalid URL: \(url)")
+        }
+    }
 }

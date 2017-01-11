@@ -253,6 +253,36 @@ open class Rover : NSObject {
         }
     }
     
+    open class func continueUserActivity(_ userActivity: NSUserActivity) -> Bool {
+        guard userActivity.activityType == NSUserActivityTypeBrowsingWeb, let webpageURL = userActivity.webpageURL, let urlComponents = URLComponents(url: webpageURL, resolvingAgainstBaseURL: false), let host = urlComponents.host else {
+            return false
+        }
+        
+        let hostComponents = host.components(separatedBy: ".")
+        
+        guard hostComponents.count == 3, hostComponents[1].lowercased() == "rvr", hostComponents[2].lowercased() == "co" else {
+            return false
+        }
+        
+        let pathComponents = urlComponents.path.components(separatedBy: "/")
+        
+        guard pathComponents.count > 1 else {
+            return false
+        }
+        
+        let experienceId = pathComponents[1]
+        
+        guard !experienceId.isEmpty else {
+            return false
+        }
+        
+        let viewController = ExperienceViewController(identifier: experienceId)
+        viewController.modalDelegate = sharedInstance
+        presentViewController(viewController, includeNavigation: false)
+        
+        return true
+    }
+    
     // MARK: Application Hooks
     
     open class func didRegisterForRemoteNotification(deviceToken: Data) {

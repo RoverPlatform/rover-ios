@@ -254,7 +254,15 @@ open class Rover : NSObject {
     }
     
     open class func continueUserActivity(_ userActivity: NSUserActivity) -> Bool {
-        guard userActivity.activityType == NSUserActivityTypeBrowsingWeb, let webpageURL = userActivity.webpageURL, let urlComponents = URLComponents(url: webpageURL, resolvingAgainstBaseURL: false), let host = urlComponents.host else {
+        guard userActivity.activityType == NSUserActivityTypeBrowsingWeb, let webpageURL = userActivity.webpageURL else {
+            return false
+        }
+        
+        return open(url: webpageURL)
+    }
+    
+    open class func open(url: URL) -> Bool {
+        guard let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false), let host = urlComponents.host else {
             return false
         }
         

@@ -82,4 +82,43 @@ class RoverTests: XCTestCase {
         XCTAssertNil(customer.phone)
         XCTAssertNil(customer.tags)
     }
+    
+    func testContinueUserActivity() {
+        let validActivity = NSUserActivity(activityType: NSUserActivityTypeBrowsingWeb)
+        validActivity.webpageURL = URL(string: "https://inbox.rvr.co/foo")
+        assert(Rover.continueUserActivity(validActivity), "Failed to continue valid user activity")
+        
+        let wrongActivityType = NSUserActivity(activityType: "io.rover.invalid")
+        assert(!Rover.continueUserActivity(wrongActivityType), "Continued user activity of invalid activityType")
+        
+        let invalidURL = NSUserActivity(activityType: NSUserActivityTypeBrowsingWeb)
+        invalidURL.webpageURL = URL(string: "http://www.example.com/foo")!
+        assert(!Rover.continueUserActivity(invalidURL), "Continued user activity with invalid webpageURL")
+    }
+    
+    func testOpenURL() {
+        let valid: [URL] = [
+            URL(string: "https://inbox.rvr.co/foo")!,
+            URL(string: "https://inbox.rvr.co/foo?version=current")!,
+            URL(string: "http://mlse.rvr.co/foo")!,
+            URL(string: "https://carrot-rewards.rvr.co/foo/bar")!
+        ]
+        
+        let invalid: [URL] = [
+            URL(string: "https://rvr.co/foo")!,
+            URL(string: "https://inbox.rvr.co/")!,
+            URL(string: "https://inbox.rvr.co")!,
+            URL(string: "https://inbox.rover.io/foo")!
+        ]
+        
+        for url in valid {
+            let didOpenURL = Rover.open(url: url)
+            assert(didOpenURL, "Failed to open valid URL: \(url)")
+        }
+        
+        for url in invalid {
+            let didOpenURL = Rover.open(url: url)
+            assert(!didOpenURL, "Opened invalid URL: \(url)")
+        }
+    }
 }

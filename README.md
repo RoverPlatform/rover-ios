@@ -351,3 +351,23 @@ Additionaly there is a `Rover.clearCustomer` method which clears all customer pr
 ## License
 
 Rover is available under the MIT license. See the LICENSE file for more info.
+
+## Universal Links
+
+Version 1.6.0 of the Rover SDK added support for Universal Links. Every Rover Experience has a URL associate with it that can be obtained through the Experiences browser app. These URLs will launch a web-based version of the Experience in the browser. You can optionally associate Rover Experience URLs with your app and have those URLs launch your app directly instead of opening the URL in the browser. For more details on Univeral Links, see [Apple's documentation](https://developer.apple.com/library/content/documentation/General/Conceptual/AppSearch/UniversalLinks.html).
+
+Rover handles all the heavy lifting required to support Universal Links. All you need to do is implement the following hooks in your App Delegate and call the corresponding Rover method.
+
+```swift
+func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
+    return Rover.continueUserActivity(userActivity)
+}
+
+func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
+    return Rover.open(url: url)
+}
+
+func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+    return Rover.open(url: url)
+}
+```

@@ -348,10 +348,6 @@ Rover.identify(traits: traits)
 
 Additionaly there is a `Rover.clearCustomer` method which clears all customer properties and issues a `device-update` event to ensure the current user is immediately returned to an anonymous state.
 
-## License
-
-Rover is available under the MIT license. See the LICENSE file for more info.
-
 ## Universal Links
 
 Version 1.6.0 of the Rover SDK added support for Universal Links. Every Rover Experience has a URL associated with it that can be obtained through the Experiences browser app. These URLs will launch a web-based version of the Experience in the browser. You can optionally associate Rover Experience URLs with your app and have those URLs launch your app directly instead of opening the URL in the browser. For more details on how Univeral Links work see [Apple's documentation](https://developer.apple.com/library/content/documentation/General/Conceptual/AppSearch/UniversalLinks.html).
@@ -388,3 +384,7 @@ func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpe
 ```
 
 With this in place Rover can automatically launch your app and render an experience directly from a URL.
+
+## License
+
+Rover is available under the MIT license. See the LICENSE file for more info.

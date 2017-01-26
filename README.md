@@ -358,12 +358,12 @@ Version 1.6.0 of the Rover SDK added support for Universal Links. Every Rover Ex
 
 ### Site Association
 
-Every Rover account has a unique domain associated with it that is used for Experiences URLs. E.g. my-awesome-app.rvr.co. For Universal Links to work you must establish a relationship between your app and your Rover domain. This is done in two parts: 
+Every Rover account has a unique domain associated with it that is used for Experience URLs. E.g. `my-awesome-app.rvr.co`. For Universal Links to work you must establish a relationship between your app and your Rover domain. This is done in two parts: 
 
 1. A site association file must be available at your Rover domain that renders a JSON object describing the types of URLs your app responds to.
 2. You must add an entitlement to your app that specifies that your app can open URLs associated with your Rover domain.
 
-Rover will automatically generate a site association file for you based on credentials entered in the Settings app. Setting up your site association file is [described on our wiki](https://github.com/RoverPlatform/rover-ios/wiki/Universal-Links). You should make sure this is configured properly before continuing. 
+Rover will automatically generate a site association file for you based on credentials entered in the [Rover Settings app](https://app.rover.io/settings/). Setting up your site association file is [described on our wiki](https://github.com/RoverPlatform/rover-ios/wiki/Universal-Links). You should make sure this is configured properly before continuing. 
 
 The process for adding an associated domains entitlement is described in [Preparing Your App to Handle Universal Links](https://developer.apple.com/library/content/documentation/General/Conceptual/AppSearch/UniversalLinks.html#//apple_ref/doc/uid/TP40016308-CH12-SW2) on Apple's Developer portal. You'll need to add your Rover domain to the list of associated domains in the entitlement. You can find your Rover domain by checking any of your Experience URLs. 
 
@@ -387,4 +387,4 @@ func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpe
 }
 ```
 
-With this in place Rover can automatically launch your app and render an experiences directly from a URL.
+With this in place Rover can automatically launch your app and render an experience directly from a URL.

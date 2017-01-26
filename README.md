@@ -354,9 +354,24 @@ Rover is available under the MIT license. See the LICENSE file for more info.
 
 ## Universal Links
 
-Version 1.6.0 of the Rover SDK added support for Universal Links. Every Rover Experience has a URL associate with it that can be obtained through the Experiences browser app. These URLs will launch a web-based version of the Experience in the browser. You can optionally associate Rover Experience URLs with your app and have those URLs launch your app directly instead of opening the URL in the browser. For more details on Univeral Links, see [Apple's documentation](https://developer.apple.com/library/content/documentation/General/Conceptual/AppSearch/UniversalLinks.html).
+Version 1.6.0 of the Rover SDK added support for Universal Links. Every Rover Experience has a URL associated with it that can be obtained through the Experiences browser app. These URLs will launch a web-based version of the Experience in the browser. You can optionally associate Rover Experience URLs with your app and have those URLs launch your app directly instead of opening the URL in the browser. For more details on how Univeral Links work see [Apple's documentation](https://developer.apple.com/library/content/documentation/General/Conceptual/AppSearch/UniversalLinks.html).
 
-Rover handles all the heavy lifting required to support Universal Links. All you need to do is implement the following hooks in your App Delegate and call the corresponding Rover method.
+### Site Association
+
+Every Rover account has a unique domain associated with it that is used for Experiences URLs. E.g. my-awesome-app.rvr.co. For Universal Links to work you must establish a relationship between your app and your Rover domain. This is done in two parts: 
+
+1. A site association file must be available at your Rover domain that renders a JSON object describing the types of URLs your app responds to.
+2. You must add an entitlement to your app that specifies that your app can open URLs associated with your Rover domain.
+
+Rover will automatically generate a site association file for you based on credentials entered in the Settings app. Setting up your site association file is [described on our wiki](https://github.com/RoverPlatform/rover-ios/wiki/Universal-Links). You should make sure this is configured properly before continuing. 
+
+The process for adding an associated domains entitlement is described in [Preparing Your App to Handle Universal Links](https://developer.apple.com/library/content/documentation/General/Conceptual/AppSearch/UniversalLinks.html#//apple_ref/doc/uid/TP40016308-CH12-SW2) on Apple's Developer portal. You'll need to add your Rover domain to the list of associated domains in the entitlement. You can find your Rover domain by checking any of your Experience URLs. 
+
+For example, given the Experience URL `https://my-awesome-app.rvr.co/lNTwfg` you would need to add `applinks:my-awesome-app.rvr.co` to your list of associated domains.
+
+### Handling Universal Links
+
+In order for your app to respond to Rover Experience URLs you need to adopt the following UIApplicationDelegate methods and pass the UserActivity or URL to the corresponding Rover method.
 
 ```swift
 func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
@@ -371,3 +386,5 @@ func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpe
     return Rover.open(url: url)
 }
 ```
+
+With this in place Rover can automatically launch your app and render an experiences directly from a URL.

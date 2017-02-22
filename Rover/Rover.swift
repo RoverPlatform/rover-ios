@@ -365,7 +365,7 @@ open class Rover : NSObject {
     fileprivate class func presentViewController(_ viewController: UIViewController, includeNavigation includeNav: Bool) {
         var frame = UIScreen.main.bounds
         if UIDeviceOrientationIsLandscape(UIDevice.current.orientation) {
-            frame = CGRect(x: 0, y: 0, width: frame.height, height: frame.width)
+            frame = CGRect(x: 0, y: 0, width: frame.width, height: frame.height)
         }
         
         sharedInstance?.window = UIWindow(frame: frame)

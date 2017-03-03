@@ -268,7 +268,13 @@ open class Rover : NSObject {
         
         let hostComponents = host.components(separatedBy: ".")
         
-        guard hostComponents.count == 3, hostComponents[1].lowercased() == "rvr", hostComponents[2].lowercased() == "co" else {
+        guard hostComponents.count == 3 else {
+            return false
+        }
+        
+        let domain = "\(hostComponents[1]).\(hostComponents[2])"
+        
+        guard ["rvr.co", "rover.io"].contains(domain) else {
             return false
         }
         

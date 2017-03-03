@@ -28,7 +28,26 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "DB2BA9211DF5E38200C18878"
+               BuildableName = "RoverTests.xctest"
+               BlueprintName = "RoverTests"
+               ReferencedContainer = "container:Rover.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "DBD0A7BA1D9D707A00A091D7"
+            BuildableName = "Rover.framework"
+            BlueprintName = "Rover"
+            ReferencedContainer = "container:Rover.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </TestAction>

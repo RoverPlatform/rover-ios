@@ -244,7 +244,7 @@ extension Device : Serializable {
             "manufacturer": "Apple",
             "os-version": osVersionString,
             "model": self.platform(),
-            "sdk-version": "1.6.1",
+            "sdk-version": "1.6.2",
             "gimbal-mode": gimbalMode,
             "development": isDevelopment
         ]

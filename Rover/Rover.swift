@@ -49,7 +49,7 @@ open class Rover : NSObject {
     
     open static let customer = Customer.sharedCustomer
     
-    open static func identify(traits: Traits) {
+    open class func identify(traits: Traits) {
         if let identifier = traits.identifier {
             customer.identifier = identifier as? String
         }
@@ -101,7 +101,7 @@ open class Rover : NSObject {
         sharedInstance?.sendEvent(.deviceUpdate(date: Date()))
     }
     
-    open static func clearCustomer() {
+    open class func clearCustomer() {
         customer.identifier = nil
         customer.firstName = nil
         customer.lastName = nil

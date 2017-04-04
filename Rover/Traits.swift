@@ -179,6 +179,8 @@ extension Traits: ExpressibleByDictionaryLiteral {
     public typealias Value = Any
     
     public convenience init(dictionaryLiteral elements: (Traits.Key, Traits.Value)...) {
+        self.init()
+        
         for (key, value) in elements {
             switch key {
             case Traits.identifierKey, Traits.firstNameKey, Traits.lastNameKey, Traits.emailKey, Traits.phoneNumberKey:

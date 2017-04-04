@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct Traits {
+public final class Traits: NSObject {
     
     static let identifierKey = "identifier"
     static let firstNameKey = "first-name"
@@ -85,92 +85,90 @@ public struct Traits {
         return valueMap
     }
     
-    public mutating func set(identifier: String) {
+    public func set(identifier: String) {
         valueMap[Traits.identifierKey] = identifier
     }
     
-    public mutating func removeIdentifier() {
+    public func removeIdentifier() {
         valueMap[Traits.identifierKey] = NSNull()
     }
     
-    public mutating func set(firstName: String) {
+    public func set(firstName: String) {
         valueMap[Traits.firstNameKey] = firstName
     }
     
-    public mutating func removeFirstName() {
+    public func removeFirstName() {
         valueMap[Traits.firstNameKey] = NSNull()
     }
     
-    public mutating func set(lastName: String) {
+    public func set(lastName: String) {
         valueMap[Traits.lastNameKey] = lastName
     }
     
-    public mutating func removeLastName() {
+    public func removeLastName() {
         valueMap[Traits.lastNameKey] = NSNull()
     }
     
-    public mutating func set(email: String) {
+    public func set(email: String) {
         valueMap[Traits.emailKey] = email
     }
     
-    public mutating func removeEmail() {
+    public func removeEmail() {
         valueMap[Traits.emailKey] = NSNull()
     }
     
-    public mutating func set(phoneNumber: String) {
+    public func set(phoneNumber: String) {
         valueMap[Traits.phoneNumberKey] = phoneNumber
     }
     
-    public mutating func removePhoneNumber() {
+    public func removePhoneNumber() {
         valueMap[Traits.phoneNumberKey] = NSNull()
     }
     
-    public mutating func set(gender: Gender) {
+    public func set(gender: Gender) {
         valueMap[Traits.genderKey] = gender.rawValue
     }
     
-    public mutating func removeGender() {
+    public func removeGender() {
         valueMap[Traits.genderKey] = NSNull()
     }
     
-    public mutating func set(age: Int) {
+    public func set(age: Int) {
         valueMap[Traits.ageKey] = age
     }
     
-    public mutating func removeAge() {
+    public func removeAge() {
         valueMap[Traits.ageKey] = NSNull()
     }
     
-    public mutating func set(tags: [String]) {
+    public func set(tags: [String]) {
         valueMap[Traits.tagsKey] = tags
     }
     
-    public mutating func add(tag: String) {
+    public func add(tag: String) {
         var tags = valueMap[Traits.tagsToAddKey] as? [String] ?? [String]()
         tags.append(tag)
         valueMap[Traits.tagsToAddKey] = tags
     }
     
-    public mutating func remove(tag: String) {
+    public func remove(tag: String) {
         var tags = valueMap[Traits.tagsToRemoveKey] as? [String] ?? [String]()
         tags.append(tag)
         valueMap[Traits.tagsToRemoveKey] = tags
     }
     
-    public mutating func set(customValue: Any, forKey key: String) {
+    public func set(customValue: Any, forKey key: String) {
         valueMap[key] = customValue
     }
     
-    public mutating func removeCustomValue(forKey key: String) {
+    public func removeCustomValue(forKey key: String) {
         valueMap[key] = NSNull()
     }
-    
-    public init() { }
 }
 
-extension Traits: CustomStringConvertible {
+extension Traits {
     
-    public var description: String {
+    override public var description: String {
         return String(describing: valueMap)
     }
 }
@@ -180,7 +178,7 @@ extension Traits: ExpressibleByDictionaryLiteral {
     public typealias Key = String
     public typealias Value = Any
     
-    public init(dictionaryLiteral elements: (Traits.Key, Traits.Value)...) {
+    public convenience init(dictionaryLiteral elements: (Traits.Key, Traits.Value)...) {
         for (key, value) in elements {
             switch key {
             case Traits.identifierKey, Traits.firstNameKey, Traits.lastNameKey, Traits.emailKey, Traits.phoneNumberKey:

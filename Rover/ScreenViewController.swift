@@ -190,8 +190,12 @@ open class ScreenViewController: UICollectionViewController {
             // TODO: cancel any requests or images from the reused cell
             
             if let image = imageBlock.image {
-                let config = image.stretchConfiguration(forFrame: frame)
-                imageCell.imageView.rv_setImage(url: config.url, activityIndicatorStyle: .gray)
+                if let scheme = image.url.scheme, scheme == "data" {
+                    imageCell.imageView.rv_setImage(url: image.url, activityIndicatorStyle: .gray)
+                } else {
+                    let config = image.stretchConfiguration(forFrame: frame)
+                    imageCell.imageView.rv_setImage(url: config.url, activityIndicatorStyle: .gray)
+                }
             }
             
             cell = imageCell

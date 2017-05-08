@@ -43,7 +43,19 @@ extension UIImageView {
             
             guard let data = data else { return }
             
-            self.image = UIImage(data: data)
+            if let img = UIImage(data: data) {
+                self.image = img
+            } else {
+                // data uri image support
+                do {
+                    if let str = String(data:data, encoding: String.Encoding.utf8),
+                        let dataUrl = URL(string: str),
+                        let decodedData = try? Data(contentsOf: dataUrl),
+                        let img = UIImage(data: decodedData) {
+                        self.image = img
+                    }
+                }
+            }
         }
     }
 }

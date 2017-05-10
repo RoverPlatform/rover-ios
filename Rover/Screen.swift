@@ -34,6 +34,7 @@ open class Screen: NSObject {
     open var backgroundImage: Image?
     open var backgroundContentMode: ImageContentMode = .Original
     open var backgroundScale: CGFloat = 1
+    open var customKeys = [String: String]()
     
     init(rows: [Row]) {
         self.rows = rows

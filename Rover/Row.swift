@@ -16,6 +16,8 @@ open class Row: NSObject {
     
     open let backgroundBlock = Block()
     
+    open var customKeys = [String: String]()
+    
     init(blocks: [Block]) {
         backgroundBlock.position = .Floating
         backgroundBlock.alignment = Alignment(horizontal: .Fill, vertical: .Fill)

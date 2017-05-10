@@ -196,6 +196,11 @@ extension Experience : Mappable {
         
         let experience = Experience(screens: screens, homeScreenIdentifier: homeScreenId, identifier: identifier)
         experience.version = attributes["version-id"] as? String
+        
+        if let customKeys = JSON["custom-keys"] as? [String: String] {
+            experience.customKeys = customKeys
+        }
+        
         return experience
     }
 }
@@ -223,6 +228,10 @@ extension Screen : Mappable {
         screen.backgroundContentMode = ImageContentMode(rawValue: JSON["background-content-mode"] as? String ?? "") ?? screen.backgroundContentMode
         screen.backgroundScale = JSON["background-scale"] as? CGFloat ?? screen.backgroundScale
         
+        if let customKeys = JSON["custom-keys"] as? [String: String] {
+            screen.customKeys = customKeys
+        }
+        
         return screen
     }
 }
@@ -243,6 +252,10 @@ extension Row : Mappable {
         
         if let isAutoHeight = JSON["auto-height"] as? Bool , isAutoHeight {
             row.height = nil
+        }
+        
+        if let customKeys = JSON["custom-keys"] as? [String: String] {
+            row.customKeys = customKeys
         }
         
         return row
@@ -336,6 +349,12 @@ extension Block : Mappable {
         block.backgroundImage = Image.instance(JSON["background-image"] as? [String : AnyObject] ?? [:], included: nil)
         block.backgroundContentMode = ImageContentMode(rawValue: JSON["background-content-mode"] as? String ?? "") ?? block.backgroundContentMode
         block.backgroundScale = JSON["background-scale"] as? CGFloat ?? block.backgroundScale
+        
+        // Custom Keys
+        
+        if let customKeys = JSON["custom-keys"] as? [String: String] {
+            block.customKeys = customKeys
+        }
         
         return block
     }

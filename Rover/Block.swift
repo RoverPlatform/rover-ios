@@ -87,6 +87,7 @@ open class Block: NSObject {
     open var backgroundScale: CGFloat = 1
     
     open var action: Action?
+    open var customKeys = [String: String]()
 }
 
 class TextBlock: Block {

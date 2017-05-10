@@ -13,6 +13,7 @@ open class Experience : NSObject {
     open let screens: [Screen]
     open let homeScreenIdentifier: String
     open var version: String?
+    open var customKeys = [String: String]()
     
     var homeScreen: Screen? {
         return screens.filter { $0.identifier == self.homeScreenIdentifier }.first

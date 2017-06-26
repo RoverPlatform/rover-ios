@@ -519,7 +519,7 @@ extension Rover /*: RVRGimbalPlaceManagerDelegate*/ {
 extension Rover: ExperienceViewControllerDelegate {
     func experienceViewControllerDidLaunch(_ viewController: ExperienceViewController) {
         guard let experience = viewController.experience else { return }
-        sendEvent(.didLaunchExperience(experience, session: viewController.sessionID, date: Date()))
+        sendEvent(.didLaunchExperience(experience, session: viewController.sessionID, date: Date(), campaignID: nil))
         
         for observer in observers {
             observer.experienceViewControllerDidLaunch?(viewController)
@@ -528,7 +528,7 @@ extension Rover: ExperienceViewControllerDelegate {
     
     func experienceViewControllerDidDismiss(_ viewController: ExperienceViewController) {
         guard let experience = viewController.experience else { return }
-        sendEvent(.didDismissExperience(experience, session: viewController.sessionID, date: Date()))
+        sendEvent(.didDismissExperience(experience, session: viewController.sessionID, date: Date(), campaignID: nil))
         
         for observer in observers {
             observer.experienceViewControllerDidDismiss?(viewController)
@@ -537,7 +537,7 @@ extension Rover: ExperienceViewControllerDelegate {
     
     func experienceViewController(_ viewController: ExperienceViewController, didViewScreen screen: Screen, referrerScreen: Screen?, referrerBlock: Block?) {
         guard let experience = viewController.experience else { return }
-        sendEvent(.didViewScreen(screen, experience: experience, fromScreen: referrerScreen, fromBlock: referrerBlock, session: viewController.sessionID, date: Date()))
+        sendEvent(.didViewScreen(screen, experience: experience, fromScreen: referrerScreen, fromBlock: referrerBlock, session: viewController.sessionID, date: Date(), campaignID: nil))
         
         for observer in observers {
             observer.experienceViewController?(viewController, didViewScreen: screen, referrerScreen: referrerScreen, referrerBlock: referrerBlock)
@@ -546,7 +546,7 @@ extension Rover: ExperienceViewControllerDelegate {
     
     func experienceViewController(_ viewController: ExperienceViewController, didPressBlock block: Block, screen: Screen) {
         guard let experience = viewController.experience else { return }
-        sendEvent(.didPressBlock(block, screen: screen, experience: experience, session: viewController.sessionID, date: Date()))
+        sendEvent(.didPressBlock(block, screen: screen, experience: experience, session: viewController.sessionID, date: Date(), campaignID: nil))
         
         for observer in observers {
             observer.experienceViewController?(viewController, didPressBlock: block, screen: screen)

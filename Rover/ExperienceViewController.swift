@@ -21,13 +21,16 @@ open class ExperienceViewController: ModalViewController {
     internal(set) static weak var superDelegate: ExperienceViewControllerDelegate?
     
     var experience: Experience?
+    var campaignID: String?
     var operationQueue = OperationQueue()
     
     let sessionID = NSUUID().uuidString
     
-    required public init(identifier: String, useCurrentVersion: Bool = false) {
+    required public init(identifier: String, useCurrentVersion: Bool = false, campaignID: String? = nil) {
         super.init(rootViewController: LoadingViewController())
         view.backgroundColor = UIColor.white
+        
+        self.campaignID = campaignID
         
         let request = useCurrentVersion ? Router.getCurrentExperience(identifier).urlRequest : Router.getExperience(identifier).urlRequest
         

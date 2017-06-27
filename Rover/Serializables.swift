@@ -127,7 +127,7 @@ extension Event : Serializable {
                 "action": "exit",
                 "gimbal-place-id": gimbalPlaceId
             ]
-        case .didLaunchExperience(let experience, let session, let date):
+        case .didLaunchExperience(let experience, let session, let date, let campaignID):
             timestamp = date
             serializedAttributes = [
                 "object": "experience",
@@ -136,7 +136,11 @@ extension Event : Serializable {
                 "version-id": experience.version ?? NSNull() as Any,
                 "experience-session-id": session
             ]
-        case .didDismissExperience(let experience, let session, let date):
+            
+            if let campaignID = campaignID {
+                serializedAttributes["campaign-id"] = campaignID
+            }
+        case .didDismissExperience(let experience, let session, let date, let campaignID):
             timestamp = date
             serializedAttributes = [
                 "object": "experience",
@@ -145,7 +149,11 @@ extension Event : Serializable {
                 "version-id": experience.version ?? NSNull() as Any,
                 "experience-session-id": session
             ]
-        case .didViewScreen(let screen, let experience, let fromScreen, let fromBlock, let session, let date):
+            
+            if let campaignID = campaignID {
+                serializedAttributes["campaign-id"] = campaignID
+            }
+        case .didViewScreen(let screen, let experience, let fromScreen, let fromBlock, let session, let date, let campaignID):
             timestamp = date
             serializedAttributes = [
                 "object": "experience",
@@ -157,7 +165,11 @@ extension Event : Serializable {
                 "version-id": experience.version ?? NSNull() as Any,
                 "experience-session-id": session
             ]
-        case .didPressBlock(let block, let screen, let experience, let session, let date):
+            
+            if let campaignID = campaignID {
+                serializedAttributes["campaign-id"] = campaignID
+            }
+        case .didPressBlock(let block, let screen, let experience, let session, let date, let campaignID):
             timestamp = date
             serializedAttributes = [
                 "object": "experience",
@@ -169,6 +181,10 @@ extension Event : Serializable {
                 "version-id": experience.version ?? NSNull() as Any,
                 "experience-session-id": session
             ]
+            
+            if let campaignID = campaignID {
+                serializedAttributes["campaign-id"] = campaignID
+            }
         default:
             break
         }

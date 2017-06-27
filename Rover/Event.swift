@@ -28,10 +28,10 @@ public enum Event {
     case didEnterGimbalPlace(id: String, date: Date)
     case didExitGimbalPlace(id: String, date: Date)
     
-    case didLaunchExperience(Experience, session: String, date: Date)
-    case didDismissExperience(Experience, session: String, date: Date)
-    case didViewScreen(Screen, experience: Experience, fromScreen: Screen?, fromBlock: Block?, session: String, date: Date)
-    case didPressBlock(Block, screen: Screen, experience: Experience, session: String, date: Date)
+    case didLaunchExperience(Experience, session: String, date: Date, campaignID: String?)
+    case didDismissExperience(Experience, session: String, date: Date, campaignID: String?)
+    case didViewScreen(Screen, experience: Experience, fromScreen: Screen?, fromBlock: Block?, session: String, date: Date, campaignID: String?)
+    case didPressBlock(Block, screen: Screen, experience: Experience, session: String, date: Date, campaignID: String?)
     
     var properties: [String: Any] {
         switch self {

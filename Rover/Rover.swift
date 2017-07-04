@@ -120,7 +120,49 @@ open class Rover : NSObject {
         return sharedInstance?.locationManager?.isMonitoring ?? false
     }
     
-    open static var isDevelopment = false
+    open static var isDevelopment: Bool {
+        get {
+            guard let path = Bundle.main.path(forResource: "embedded", ofType: "mobileprovision") else {
+                print("Could not detect APS Environment: Provisioning profile not found")
+                return false
+            }
+            
+            guard let embeddedProfile = try? String(contentsOfFile: path, encoding: String.Encoding.ascii) else {
+                print("Could not detect APS Environment: Failed to read provisioning profile at \(path)")
+                return false
+            }
+            
+            let scanner = Scanner(string: embeddedProfile)
+            var string: NSString?
+            
+            guard scanner.scanUpTo("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", into: nil), scanner.scanUpTo("</plist>", into: &string) else {
+                print("Could not detect APS Environment: Unrecognized provisioning profile structure")
+                return false
+            }
+            
+            guard let data = string?.appending("</plist>").data(using: String.Encoding.utf8) else {
+                print("Could not detect APS Environment: Failed to decode provisioning profile")
+                return false
+            }
+            
+            guard let plist = (try? PropertyListSerialization.propertyList(from: data, options: [], format: nil)) as? [String: Any] else {
+                print("Could not detect APS Environment: Failed to serialize provisioning profile")
+                return false
+            }
+            
+            if let entitlements = plist["Entitlements"] as? [String: Any] {
+                guard let apsEnvironment = entitlements["aps-environment"] as? String else {
+                    return false
+                }
+                
+                return apsEnvironment == "development"
+            }
+            
+            return false
+        }
+        
+        set { }
+    }
     
     open class func setup(applicationToken: String) {
         let gimbalClass = NSClassFromString("GMBLPlaceManager")

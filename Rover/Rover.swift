@@ -8,6 +8,7 @@
 
 import Foundation
 import CoreLocation
+import UserNotifications
 
 @objc
 open class Rover : NSObject {
@@ -396,6 +397,22 @@ open class Rover : NSObject {
         sharedInstance?.operationQueue.addOperation(mappingOperation)
         
         return true
+    }
+    
+    @available(iOS 10.0, *)
+    open class func decodeMessage(fromNotification notification: UNNotification) -> Message? {
+        let userInfo = notification.request.content.userInfo
+        
+        guard let isRoverNotification = userInfo["_rover"] as? Bool, isRoverNotification, let data = notification.request.content.userInfo["data"] as? [String: AnyObject] else {
+            return nil
+        }
+        
+        return Message.instance(data, included: nil)
+    }
+    
+    open class func readMessage(_ message: Message) {
+        message.read = true
+        patchMessage(message)
     }
     
     // MARK: Instance Methods

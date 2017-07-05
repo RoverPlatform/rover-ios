@@ -168,8 +168,6 @@ The Rover SDK needs a few more hooks in your AppDelegate to fully enable notific
 
 NOTE: If you have `Remote notificaitons` enabled as a background mode in your iOS app, you should implement the `Rover.didReceiveRemoteNotification(_:fethCompletionHandler:)` method in the `application(_:didReceiveRemoteNotification:fetchCompletionHandler:)` equivilant instead, passing along the respective arguments.
 
-NOTE: Notifications by default are sent through Apple's production servers. This means they will only work in release builds. To have them work during development and debug builds you must set `Rover.isDevelopment = true` during initialization. A good approach would be set this flag conditionally based on DEBUG symbols like demonstrated [here](https://github.com/RoverPlatform/rover-ios/blob/master/Example/Rover/AppDelegate.swift). For more information on how to accomplish this in Swift see [this](http://stackoverflow.com/questions/24003291/ifdef-replacement-in-swift-language) stackoverflow post.
-
 ### Message Observers
 
 Rover implements callbacks you can implement in your RoverObservers to handle the receiving and opening of messages.

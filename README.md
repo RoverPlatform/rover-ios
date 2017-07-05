@@ -148,27 +148,100 @@ Using the [Rover Messages App](https://app.rover.io/messages/) you can create me
 
 In order to have notification working, Rover needs your apps APNS certificates. Use [this guide](https://github.com/RoverPlatform/rover-ios/wiki/APNS-Setup) to upload your certificate to Rover.
 
+#### Obtaining a Push Token
+
 Call the `Rover.registerForNotifications` method to enable your app to deliver notifications. Similar to the `Rover.startMonitoring` method this will also trigger an alert asking for permission the first time it is called. You can call this as part of your initialization logic or you may wish to call this at a later time.
 
 ```swift
 Rover.registerForNotifications()
 ```
 
-The Rover SDK needs a few more hooks in your AppDelegate to fully enable notifications, so make sure the following delegate methods are passed onto Rover.
+After the alert is displayed and the user accepts notifications, your AppDelegate will receive a call to the `application(_:didRegisterForRemoteNotificationsWithDeviceToken:)` method. Implement this method and pass the device token to Rover:
 
 ```swift
-  func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]) {
-      Rover.didReceiveRemoteNotification(userInfo, fetchCompletionHandler: nil)
-  }
-    
-  func application(application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData) {
-      Rover.didRegisterForRemoteNotification(deviceToken: deviceToken)
-  }
+func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+	Rover.didRegisterForRemoteNotification(deviceToken: deviceToken)
+}
 ```
 
-NOTE: If you have `Remote notificaitons` enabled as a background mode in your iOS app, you should implement the `Rover.didReceiveRemoteNotification(_:fethCompletionHandler:)` method in the `application(_:didReceiveRemoteNotification:fetchCompletionHandler:)` equivilant instead, passing along the respective arguments.
+#### Responding to Notification Swipes/Taps
+
+iOS 10 introduced the UserNotifications framework which simplifies the way notification swipes and taps are handled in your app. Because this is not available to users of your app that are not yet running iOS 10, we have to handle notifications in two separate ways.
+
+At the top of your AppDelegate import the UserNotifications framework:
+
+```swift
+import UserNotifications
+```
+
+Extend your AppDelegate to implement the UNUserNotificationCenterDelegate protocol:
+
+```swift
+extension AppDelegate: UNUserNotificationCenterDelegate {
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        if let message = Rover.decodeMessage(fromNotification: response.notification) {
+            Rover.readMessage(message)
+            Rover.followAction(message: message)
+        }
+    }
+}
+```
+
+The above method is called when the user swipes a notification from the lock screen or taps a notification from another screen. This default behaviour immediately marks a message as read and opens the message (displays the Experience or Landing Page). You can customize this method's behaviour to suit your needs.
+
+In order to tell Rover that you will handle notification behaviour through the UserNotification framework (for users running iOS 10) you must extend your AppDelegate to implement the RoverObserver protocol and implement the `shouldOpenMessage(_:)` method:
+
+```swift
+extension AppDelegate: RoverObserver {
+    
+    func shouldOpenMessage(_ message: Message) -> Bool {
+        if #available(iOS 10.0, *) {
+            return false
+        }
+        
+        return true
+    }
+}
+```
+
+In your `application(_:didFinishLaunchingWithOptions:)` method you need to set your AppDelegate to the delegate property of the shared UNUserNotificationCenter object:
+
+```swift
+if #available(iOS 10.0, *) {
+	UNUserNotificationCenter.current().delegate = self
+}
+```
+
+Also in your `application(_:didFinishLaunchingWithOptions:)` method you need to add your AppDelegate as a RoverObserver:
+
+```
+Rover.addObserver(self)
+```
+
+That takes care of iOS 10. For users running less than 10 there is one more step. Prior to iOS 10 swipes and taps were handled through the following methods called on your AppDelegate. For iOS 10 we'll be handling the swipes/taps through the UserNotifications framework outlined above so a conditional check is needed:
+
+```swift
+func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any]) {
+	if #available(iOS 10.0, *) {
+		return
+	}
+	
+	let _ = Rover.didReceiveRemoteNotification(userInfo, fetchCompletionHandler: nil)
+}
+
+func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+	if #available(iOS 10.0, *) {
+		return
+	}
+	
+	let _ = Rover.didReceiveRemoteNotification(userInfo, fetchCompletionHandler: completionHandler)
+}
+```
 
 ### Message Observers
+
+**NOTE:** The following methods are only useful for users running iOS 9. For users using iOS 10 and above you can customize the behaviour in the implementation of your UNUserNotificationCenterDelegate.
 
 Rover implements callbacks you can implement in your RoverObservers to handle the receiving and opening of messages.
 

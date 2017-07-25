@@ -184,6 +184,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             Rover.readMessage(message)
             Rover.followAction(message: message)
         }
+	completionHandler()
     }
 }
 ```

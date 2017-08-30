@@ -63,8 +63,6 @@ extension Alignment.HorizontalAlignment {
             return .right
         case .Fill:
             return .justified
-        default:
-            return .natural
         }
     }
 }
@@ -93,14 +91,14 @@ class TextView : UIView {
         switch textAlignment.vertical {
         case .Middle:
             x = rect.origin.x
-            y = rect.origin.y + ((rect.height - (textRect.height ?? 0)) / 2)
+            y = rect.origin.y + ((rect.height - (textRect.height)) / 2)
             width = insettedWidth
-            height = textRect.height ?? 0
+            height = textRect.height
         case .Bottom:
             x = rect.origin.x
-            y = rect.origin.y + (rect.height - (textRect.height ?? 0))
+            y = rect.origin.y + (rect.height - (textRect.height ))
             width = insettedWidth
-            height = textRect.height ?? 0
+            height = textRect.height
         default:
             x = rect.origin.x
             y = rect.origin.y

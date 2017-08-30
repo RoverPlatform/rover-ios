@@ -61,7 +61,7 @@ class LocatioManager: NSObject {
         if isMonitoring {
             locationManager.startMonitoringSignificantLocationChanges()
             
-            let beaconRegions = monitoredRegions.filter { $0 is CLBeaconRegion } as! [CLBeaconRegion]
+            let beaconRegions = monitoredRegions.flatMap({ $0 as? CLBeaconRegion })
             beaconRegions.forEach { region in
                 locationManager.startRangingBeacons(in: region)
             }

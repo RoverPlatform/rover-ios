@@ -287,15 +287,11 @@ extension Block : Mappable {
             if let alignment = Alignment.instance(JSON["text-alignment"] as? [String: AnyObject] ?? [:], included: nil) {
                 textBlock.textAlignment = alignment
             } else {
-                textBlock.textAlignment = Alignment(horizontal: Alignment.HorizontalAlignment(rawValue:JSON["text-alignment"] as? String ?? "left") ?? .Left, vertical: .Top) ?? textBlock.textAlignment
+                textBlock.textAlignment = Alignment(horizontal: Alignment.HorizontalAlignment(rawValue:JSON["text-alignment"] as? String ?? "left") ?? .Left, vertical: .Top)
             }
             
             textBlock.textOffset = Offset.instance(JSON["text-offset"] as? [String: AnyObject] ?? [:], included: nil) ?? textBlock.textOffset
             textBlock.textColor = UIColor.instance(JSON["text-color"] as? [String: AnyObject] ?? [:], included: nil) ?? textBlock.textColor
-            
-            let fontSize = JSON["text-font-size"] as? CGFloat
-            let fontWeight = JSON["text-font-weight"] as? CGFloat
-            
             textBlock.font = Font.instance(JSON["text-font"] as? [String: AnyObject] ?? [:], included: nil) ?? textBlock.font
             
         case "button-block":
@@ -474,18 +470,18 @@ extension UIFont : Mappable {
             let fontWeight = JSON["weight"] as? Int else { return UIFont.systemFont(ofSize: 12) }
         
         let weights = [
-            100: UIFontWeightUltraLight,
-            200: UIFontWeightThin,
-            300: UIFontWeightLight,
-            400: UIFontWeightRegular,
-            500: UIFontWeightMedium,
-            600: UIFontWeightSemibold,
-            700: UIFontWeightBold,
-            800: UIFontWeightHeavy,
-            900: UIFontWeightBlack
+            100: UIFont.Weight.ultraLight,
+            200: UIFont.Weight.thin,
+            300: UIFont.Weight.light,
+            400: UIFont.Weight.regular,
+            500: UIFont.Weight.medium,
+            600: UIFont.Weight.semibold,
+            700: UIFont.Weight.bold,
+            800: UIFont.Weight.heavy,
+            900: UIFont.Weight.black
         ]
         
-        return UIFont.systemFont(ofSize: fontSize, weight: weights[fontWeight] ?? UIFontWeightRegular)
+        return UIFont.systemFont(ofSize: fontSize, weight: weights[fontWeight] ?? UIFont.Weight.regular)
     }
 }
 

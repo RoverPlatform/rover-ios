@@ -64,7 +64,6 @@ extension Event : Serializable {
             ]
         case .didOpenMessage(let message, let source, let date):
             timestamp = date
-            let source: Any = source ?? NSNull()
             serializedAttributes = [
                 "object": "message",
                 "action": "open",
@@ -224,22 +223,6 @@ extension Device : Serializable {
         let bluetoothStatus = Device.bluetoothOn
         let isDevelopment = Rover.isDevelopment
         
-        
-        if let mobileProvisionURL = Bundle.main.url(forResource: "embedded", withExtension: "mobileprovision") {
-            do {
-                let mobileProvisionData = try Data(contentsOf: mobileProvisionURL)
-//            let mobileProvision = TCMobileProvision(data: mobileProvisionData)
-//            if let entitlements = mobileProvision.dict["Entitlements"],
-//                let apsEnvironment = entitlements["aps-environment"] as? String
-//                where apsEnvironment == "development" {
-//                return true
-//            }
-            } catch {
-                
-            }
-        }
-
-        
         return [
             "app-identifier": appIdentifier,
             "udid": udid,
@@ -278,7 +261,7 @@ extension Customer : Serializable {
         let tags: Any = self.tags ?? NSNull()
         let email: Any = self.email ?? NSNull()
         
-        var json = [
+        return [
             "first-name": firstName,
             "last-name": lastName,
             "email": email,
@@ -286,14 +269,9 @@ extension Customer : Serializable {
             "identifier": identifier,
             "gender": gender,
             "age": age,
-            "tags": tags
+            "tags": tags,
+            "traits": traits
         ]
-        
-        if let traits = self.traits as? [String: Any] {
-            json["traits"] = traits
-        }
-        
-        return json
     }
 }
 
@@ -313,8 +291,6 @@ extension Message : Serializable {
 
 extension Block.Action : Serializable {
     public func serialize() -> [String : Any] {
-        var type: String?
-        
         switch self {
         case .screen(let identifier):
             return [

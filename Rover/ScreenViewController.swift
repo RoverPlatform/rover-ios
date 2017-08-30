@@ -133,10 +133,10 @@ open class ScreenViewController: UICollectionViewController {
         }
         if let titleColor = screen?.titleColor {
             if self.navigationController?.navigationBar.titleTextAttributes != nil {
-                navTitleColor = self.navigationController?.navigationBar.titleTextAttributes![NSForegroundColorAttributeName] as? UIColor
-                self.navigationController?.navigationBar.titleTextAttributes![NSForegroundColorAttributeName] = titleColor
+                navTitleColor = self.navigationController?.navigationBar.titleTextAttributes![NSAttributedStringKey.foregroundColor] as? UIColor
+                self.navigationController?.navigationBar.titleTextAttributes![NSAttributedStringKey.foregroundColor] = titleColor
             } else {
-                self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: titleColor]
+                self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: titleColor]
             }
         }
         if let statusBarStyle = screen?.statusBarStyle {
@@ -235,8 +235,8 @@ open class ScreenViewController: UICollectionViewController {
         // Appearance
         
         if !(cell is ButtonBlockViewCell) {
-        	cell.backgroundColor = block?.backgroundColor
-        	cell.layer.borderColor = block?.borderColor.cgColor
+            cell.backgroundColor = block?.backgroundColor
+            cell.layer.borderColor = block?.borderColor.cgColor
             cell.layer.borderWidth = block?.borderWidth ?? cell.layer.borderWidth
             cell.layer.cornerRadius = min(block?.borderRadius ?? cell.layer.cornerRadius, maxCornerRadius)
         }
@@ -276,8 +276,6 @@ open class ScreenViewController: UICollectionViewController {
             imageConfiguration = backgroundImage.fillConfiguration(forFrame: frame)
         case .Fit:
             imageConfiguration = backgroundImage.fitConfiguration(forFrame: frame)
-        default:
-            break
         }
         
         let backgroundView = UIImageView()
@@ -330,12 +328,11 @@ open class ScreenViewController: UICollectionViewController {
     }
     */
     
-    open override func willRotate(to toInterfaceOrientation: UIInterfaceOrientation, duration: TimeInterval) {
-        super.willRotate(to: toInterfaceOrientation, duration: duration)
+    open override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
         layout.invalidateLayout()
         collectionView?.reloadData()
     }
-
 }
 
 extension ScreenViewController : BlockViewCellDelegate {

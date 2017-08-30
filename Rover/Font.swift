@@ -19,17 +19,17 @@ open class Font : NSObject {
     
     var systemFont: UIFont {
         let weights = [
-            100: UIFontWeightUltraLight,
-            200: UIFontWeightThin,
-            300: UIFontWeightLight,
-            400: UIFontWeightRegular,
-            500: UIFontWeightMedium,
-            600: UIFontWeightSemibold,
-            700: UIFontWeightBold,
-            800: UIFontWeightHeavy,
-            900: UIFontWeightBlack
+            100: UIFont.Weight.ultraLight,
+            200: UIFont.Weight.thin,
+            300: UIFont.Weight.light,
+            400: UIFont.Weight.regular,
+            500: UIFont.Weight.medium,
+            600: UIFont.Weight.semibold,
+            700: UIFont.Weight.bold,
+            800: UIFont.Weight.heavy,
+            900: UIFont.Weight.black
         ]
         
-        return UIFont.systemFont(ofSize: size, weight: weights[weight] ?? UIFontWeightRegular)
+        return UIFont.systemFont(ofSize: size, weight: weights[weight] ?? UIFont.Weight.regular)
     }
 }

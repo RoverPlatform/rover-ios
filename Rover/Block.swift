@@ -100,59 +100,54 @@ class TextBlock: Block {
     fileprivate var _attributedText: NSAttributedString?
     var attributedText: NSAttributedString? {
         if let data = text?.data(using: String.Encoding.unicode) {
-            do {
-                if let attrText = _attributedText { return attrText }
+            if let attrText = _attributedText { return attrText }
+            
+            guard let attributedString = try? NSMutableAttributedString(data: data, options: [NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.html], documentAttributes: nil) else { return nil }
+            
+            attributedString.enumerateAttribute(NSAttributedStringKey.font, in: NSMakeRange(0, attributedString.length), options: []) { (value, range, stop) in
+                guard let fontValue = value as? UIFont else {
+                    return
+                }
+                let traits = fontValue.fontDescriptor.symbolicTraits
+                var font: UIFont
                 
-                guard let attributedString = try? NSMutableAttributedString(data: data, options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil) else { return nil }
-                
-                attributedString.enumerateAttribute(NSFontAttributeName, in: NSMakeRange(0, attributedString.length), options: []) { (value, range, stop) in
-                    guard let fontValue = value as? UIFont else {
-                        return
-                    }
-                    let traits = fontValue.fontDescriptor.symbolicTraits
-                    var font: UIFont
-                    
-                    if traits.contains(.traitBold) {
-                        font = Font(size: self.font.size, weight: min(self.font.weight + 300, 900)).systemFont
-                    } else {
-                        font = self.font.systemFont
-                    }
-                    
-                    var descriptor = font.fontDescriptor
-                    
-                    if traits.contains(.traitItalic) {
-                        descriptor = descriptor.withSymbolicTraits(.traitItalic)!
-                    }
-                    
-                    let newFont = UIFont(descriptor: descriptor, size: font.pointSize)
-                    attributedString.removeAttribute(NSFontAttributeName, range: range)
-                    attributedString.addAttribute(NSFontAttributeName, value: newFont, range: range)
-                    
+                if traits.contains(.traitBold) {
+                    font = Font(size: self.font.size, weight: min(self.font.weight + 300, 900)).systemFont
+                } else {
+                    font = self.font.systemFont
                 }
                 
-                let paragraphStyle = NSMutableParagraphStyle()
-                paragraphStyle.alignment = textAlignment.horizontal.asNSTextAlignment
+                var descriptor = font.fontDescriptor
                 
-                let attributes = [
-                    NSForegroundColorAttributeName: textColor,
-                    NSParagraphStyleAttributeName: paragraphStyle
-                ] as [String : Any]
-                
-                attributedString.addAttributes(attributes, range: NSMakeRange(0, attributedString.length))
-                
-                let string = attributedString.string
-                
-                if attributedString.length > 0 && string.substring(from: string.characters.index(string.endIndex, offsetBy: -1)) == "\n" {
-                    attributedString.replaceCharacters(in: NSMakeRange(attributedString.length - 1, 1), with: "")
+                if traits.contains(.traitItalic) {
+                    descriptor = descriptor.withSymbolicTraits(.traitItalic)!
                 }
                 
-                _attributedText = attributedString
+                let newFont = UIFont(descriptor: descriptor, size: font.pointSize)
+                attributedString.removeAttribute(NSAttributedStringKey.font, range: range)
+                attributedString.addAttribute(NSAttributedStringKey.font, value: newFont, range: range)
                 
-                return attributedString
-            } catch {
-                rvLog("Bad HTML String", data: text, level: .error)
-                return nil
             }
+            
+            let paragraphStyle = NSMutableParagraphStyle()
+            paragraphStyle.alignment = textAlignment.horizontal.asNSTextAlignment
+            
+            let attributes: [NSAttributedStringKey: Any] = [
+                NSAttributedStringKey.foregroundColor: textColor,
+                NSAttributedStringKey.paragraphStyle: paragraphStyle
+            ]
+            
+            attributedString.addAttributes(attributes, range: NSMakeRange(0, attributedString.length))
+            
+            let string = attributedString.string
+            
+            if attributedString.length > 0 && string.substring(from: string.characters.index(string.endIndex, offsetBy: -1)) == "\n" {
+                attributedString.replaceCharacters(in: NSMakeRange(attributedString.length - 1, 1), with: "")
+            }
+            
+            _attributedText = attributedString
+            
+            return attributedString
         } else {
             return nil
         }
@@ -200,7 +195,7 @@ open class ButtonBlock: Block {
         public var borderWidth: CGFloat?
         
         var attributedTitle: NSAttributedString? {
-            if let data = title?.data(using: String.Encoding.unicode) {
+            if (title?.data(using: String.Encoding.unicode)) != nil {
                 guard let title = title else { return nil }
                 let attributedString = NSMutableAttributedString(string: title)
                 
@@ -208,9 +203,9 @@ open class ButtonBlock: Block {
                 paragraphStyle.alignment = titleAlignment.horizontal.asNSTextAlignment
                 
                 attributedString.addAttributes([
-                    NSFontAttributeName: titleFont,
-                    NSForegroundColorAttributeName: titleColor,
-                    NSParagraphStyleAttributeName: paragraphStyle
+                    NSAttributedStringKey.font: titleFont,
+                    NSAttributedStringKey.foregroundColor: titleColor,
+                    NSAttributedStringKey.paragraphStyle: paragraphStyle
                     ], range: NSMakeRange(0, attributedString.length))
                 return attributedString
             } else {

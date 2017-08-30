@@ -22,7 +22,7 @@ class TraitsTests: XCTestCase {
     }
     
     func testValueMap() {
-        var traits = Traits()
+        let traits = Traits()
         traits.set(identifier: "marieavgeropoulos")
         traits.set(firstName: "Marie")
         traits.set(lastName: "Avgeropoulos")
@@ -43,7 +43,7 @@ class TraitsTests: XCTestCase {
     }
     
     func testAddRemoveTags() {
-        var traits = Traits()
+        let traits = Traits()
         traits.add(tag: "actress")
         XCTAssertEqual(traits.tagsToAdd!, ["actress"])
         
@@ -55,7 +55,7 @@ class TraitsTests: XCTestCase {
     }
     
     func testNullValues() {
-        var traits = Traits()
+        let traits = Traits()
 
         traits.removeIdentifier()
         traits.removeFirstName()
@@ -87,7 +87,7 @@ class TraitsTests: XCTestCase {
     }
     
     func testCustomValues() {
-        var traits = Traits()
+        let traits = Traits()
         traits.set(customValue: "bar", forKey: "foo")
         
         XCTAssertEqual(traits.valueMap["foo"] as? String, "bar")

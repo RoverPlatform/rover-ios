@@ -47,7 +47,7 @@ open class NetworkOperation: ConcurrentOperation {
             if let payload = payload {
                 switch self.urlRequest.httpMethod {
                 case "GET"?:
-                    urlRequest.url = URL(string: "\(urlRequest.url?.absoluteString)?\(payloadAsQuery)")
+                    urlRequest.url = URL(string: "\(urlRequest.url?.absoluteString ?? "")?\(payloadAsQuery)")
                 default:
                     urlRequest.httpBody = try JSONSerialization.data(withJSONObject: payload, options: .prettyPrinted)
                 }

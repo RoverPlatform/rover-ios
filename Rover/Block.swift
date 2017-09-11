@@ -141,7 +141,7 @@ class TextBlock: Block {
             
             let string = attributedString.string
             
-            if attributedString.length > 0 && string.substring(from: string.characters.index(string.endIndex, offsetBy: -1)) == "\n" {
+            if attributedString.length > 0 && string.suffix(1) == "\n" {
                 attributedString.replaceCharacters(in: NSMakeRange(attributedString.length - 1, 1), with: "")
             }
             

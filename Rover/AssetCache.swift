@@ -106,7 +106,7 @@ class AssetCache {
     }
     
     func inMemoryCachedData(key: String) -> Data? {
-        if let data = memCache.object(forKey: key as NSString) as? Data {
+        if let data = memCache.object(forKey: key as NSString) as Data? {
             return data
         }
         return nil

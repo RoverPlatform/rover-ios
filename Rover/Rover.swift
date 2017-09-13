@@ -166,7 +166,7 @@ open class Rover : NSObject {
     }
     
     open class func setup(applicationToken: String) {
-        let gimbalClass = NSClassFromString("GMBLPlaceManager")
+        let gimbalClass: AnyClass? = NSClassFromString("GMBLPlaceManager")
         setup(applicationToken: applicationToken, gimbalMode: gimbalClass != nil)
     }
     
@@ -492,20 +492,20 @@ open class Rover : NSObject {
     
     // MARK: UIApplicationNotifications
     
-    func applicationDidOpen(_ note: Notification) {
+    @objc func applicationDidOpen(_ note: Notification) {
         if let userInfo = (note as NSNotification).userInfo?[UIApplicationLaunchOptionsKey.remoteNotification] as? [AnyHashable: Any] {
-            Rover.didReceiveRemoteNotification(userInfo, fetchCompletionHandler: nil, fromLaunch: true)
+            _ = Rover.didReceiveRemoteNotification(userInfo, fetchCompletionHandler: nil, fromLaunch: true)
         }
         self.sendEvent(.applicationOpen(date: Date()))
     }
     
     var applicationIsActive = false
     
-    func applicationDidEnterBackground(_ note: Notification) {
+    @objc func applicationDidEnterBackground(_ note: Notification) {
         applicationIsActive = false
     }
     
-    func applicationDidBecomeActive(_ note: Notification) {
+    @objc func applicationDidBecomeActive(_ note: Notification) {
         applicationIsActive = true
     }
     

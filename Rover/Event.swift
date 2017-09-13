@@ -38,17 +38,59 @@ public enum Event {
         case .didUpdateLocation(let location, let date):
             return ["location": location, "date": date]
         case .didEnterBeaconRegion(let region, let config, let location, let date):
-            return ["region": region, "config": config, "location": location, "date": date]
+            var props: [String: Any] = [
+                "region": region,
+                "date": date
+            ]
+            
+            if let config = config {
+                props["config"] = config
+            }
+            
+            if let location = location {
+                props["location"] = location
+            }
+            
+            return props
         case .didExitBeaconRegion(let region, let config, let location, let date):
-            return ["region": region, "config": config, "location": location, "date": date]
+            var props: [String: Any] = [
+                "region": region,
+                "date": date
+            ]
+            
+            if let config = config {
+                props["config"] = config
+            }
+            
+            if let location = location {
+                props["location"] = location
+            }
+            
+            return props
         case .didEnterCircularRegion(let region, let location, let date):
-            return ["region": region, "location": location, "date": date]
+            var props: [String: Any] = [
+                "region": region,
+                "date": date
+            ]
+            
+            if let location = location {
+                props["location"] = location
+            }
+            
+            return props
         case .didExitCircularRegion(let region, let location, let date):
-            return ["region": region, "location": location, "date": date]
+            var props: [String: Any] = [
+                "region": region,
+                "date": date
+            ]
+            
+            if let location = location {
+                props["location"] = location
+            }
+            
+            return props
         case .didOpenMessage(let message, let source, let date):
             return ["message": message, "source": source, "date": date]
-        case .didEnterGimbalPlace(let placeId, let date):
-            return ["gimbalPlaceId": placeId, "date": date]
         case .didEnterGimbalPlace(let placeId, let date):
             return ["gimbalPlaceId": placeId, "date": date]
         default:

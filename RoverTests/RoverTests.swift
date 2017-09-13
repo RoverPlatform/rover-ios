@@ -12,7 +12,7 @@ import XCTest
 class RoverTests: XCTestCase {
     
     func identifyAsMarie() {
-        var traits = Traits()
+        let traits = Traits()
         traits.set(identifier: "marieavgeropoulos")
         traits.set(firstName: "Marie")
         traits.set(lastName: "Avgeropoulos")

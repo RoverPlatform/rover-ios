@@ -48,7 +48,7 @@ class BlockViewCell: UICollectionViewCell {
         
     }
     
-    func gestureRecognized(_ recognizer: UILongPressGestureRecognizer) {
+    @objc func gestureRecognized(_ recognizer: UILongPressGestureRecognizer) {
         
         struct Static {
             static var touchCancelled = false

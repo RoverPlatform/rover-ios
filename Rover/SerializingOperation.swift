@@ -21,13 +21,10 @@ open class SerializingOperation : Operation {
     }
     
     override open func main() {
-        let JSON = model.serialize()
-        completion(JSON)
-//        if let JSON = model.serialize() {
-//            //completion(JSON: JSON)
-//        } else {
-//            rvLog("Serialization failed", data: self.model.dynamicType, level: .Error)
-//        }
+        DispatchQueue.main.async {
+            let JSON = self.model.serialize()
+            self.completion(JSON)
+        }
     }
 }
 

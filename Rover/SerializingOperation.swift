@@ -8,7 +8,7 @@
 
 import Foundation
 
-open class SerializingOperation : Operation {
+open class SerializingOperation : ConcurrentOperation {
     public typealias JSONSerializedCompletion = (_ JSON: [String: Any]) -> Void
     
     let model: Serializable
@@ -20,10 +20,11 @@ open class SerializingOperation : Operation {
         super.init()
     }
     
-    override open func main() {
+    override func execute() {
         DispatchQueue.main.async {
             let JSON = self.model.serialize()
             self.completion(JSON)
+            self.finish()
         }
     }
 }

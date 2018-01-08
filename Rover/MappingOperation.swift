@@ -31,7 +31,8 @@ open class MappingOperation<T> : Operation where T : Mappable {
     override open func main() {
         // TODO: each return statement should fire completion
         guard let json = json, let data = json["data"] else {
-            cancel()
+            // As per the above "TODO" this operation should call the completion handler even in cases where the JSON data is nil. Unfortunately we can only do this for collection MappingOperations as there is no way to instantiate a singular Mappable without any JSON data. This will be addressed properly in 2.0 but for now this should at least let reloadInbox calls return control even when the network request fails.
+            collectionCompletion?([T]())
             return
         }
         

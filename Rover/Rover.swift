@@ -249,12 +249,12 @@ open class Rover : NSObject {
         sharedInstance?.operationQueue.addOperation(mappingOperation)
     }
     
-    open class func deleteMessage(_ message: Message) {
-        let networkOperation = NetworkOperation(urlRequest: Router.deleteMessage(message).urlRequest as URLRequest, completion: nil)
+    open class func deleteMessage(_ message: Message, completionHandler: (([String: Any]?, Error?) -> Void)? = nil) {
+        let networkOperation = NetworkOperation(urlRequest: Router.deleteMessage(message).urlRequest as URLRequest, completion: completionHandler)
         sharedInstance?.operationQueue.addOperation(networkOperation)
     }
     
-    open class func patchMessage(_ message: Message) {
+    open class func patchMessage(_ message: Message, completionHandler: (([String: Any]?, Error?) -> Void)? = nil) {
         let networkOperation = NetworkOperation(urlRequest: Router.patchMessage(message).urlRequest as URLRequest, completion: nil)
         let serializingOperation = SerializingOperation(model: message) { JSON in
             networkOperation.payload = JSON

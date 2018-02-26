@@ -21,18 +21,18 @@ public enum Action : Int {
 @objc
 open class Message : NSObject {
     
-    open let identifier: String
-    open let title: String?
-    open let text: String
-    open let timestamp: Date
-    open let properties: [String: String]
-    open var read: Bool = false
+    @objc open let identifier: String
+    @objc open let title: String?
+    @objc open let text: String
+    @objc open let timestamp: Date
+    @objc open let properties: [String: String]
+    @objc open var read: Bool = false
     
-    open internal(set) var savedToInbox: Bool = false
-    open internal(set) var action: Action = .none
-    open internal(set) var url: URL?
-    open internal(set) var landingPage: Screen?
-    open internal(set) var experienceId: String?
+    @objc open internal(set) var savedToInbox: Bool = false
+    @objc open internal(set) var action: Action = .none
+    @objc open internal(set) var url: URL?
+    @objc open internal(set) var landingPage: Screen?
+    @objc open internal(set) var experienceId: String?
     
     init(title: String?, text: String, timestamp: Date, identifier: String, properties: [String: String]) {
         self.title = title

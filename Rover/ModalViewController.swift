@@ -12,11 +12,12 @@ protocol ModalViewControllerDelegate: class {
     func didDismissModalViewController(_ viewController: ModalViewController)
 }
 
+@objc
 open class ModalViewController: UINavigationController {
     
     weak var modalDelegate: ModalViewControllerDelegate?
     
-    override init(rootViewController: UIViewController) {
+    @objc override public init(rootViewController: UIViewController) {
         super.init(rootViewController: rootViewController)
         
         addCloseButtonToViewController(rootViewController)

@@ -8,15 +8,15 @@
 
 import Foundation
 
-protocol ExperienceViewControllerDelegate: class {
-    func experienceViewControllerDidLaunch(_ viewController: ExperienceViewController)
-    func experienceViewControllerDidDismiss(_ viewController: ExperienceViewController)
-    func experienceViewController(_ viewController: ExperienceViewController, didViewScreen screen: Screen, referrerScreen: Screen?, referrerBlock: Block?)
-    func experienceViewController(_ viewController: ExperienceViewController, didPressBlock block: Block, screen: Screen)
-    func experienceViewController(_ viewController: ExperienceViewController, willLoadExperience experience: Experience)
+@objc protocol ExperienceViewControllerDelegate: class {
+    @objc func experienceViewControllerDidLaunch(_ viewController: ExperienceViewController)
+    @objc func experienceViewControllerDidDismiss(_ viewController: ExperienceViewController)
+    @objc func experienceViewController(_ viewController: ExperienceViewController, didViewScreen screen: Screen, referrerScreen: Screen?, referrerBlock: Block?)
+    @objc func experienceViewController(_ viewController: ExperienceViewController, didPressBlock block: Block, screen: Screen)
+    @objc func experienceViewController(_ viewController: ExperienceViewController, willLoadExperience experience: Experience)
 }
 
-open class ExperienceViewController: ModalViewController {
+@objc open class ExperienceViewController: ModalViewController {
     
     internal(set) static weak var superDelegate: ExperienceViewControllerDelegate?
     
@@ -26,7 +26,7 @@ open class ExperienceViewController: ModalViewController {
     
     let sessionID = NSUUID().uuidString
     
-    required public init(identifier: String, useCurrentVersion: Bool = false, campaignID: String? = nil) {
+    @objc required public init(identifier: String, useCurrentVersion: Bool = false, campaignID: String? = nil) {
         super.init(rootViewController: LoadingViewController())
         view.backgroundColor = UIColor.white
         
@@ -45,7 +45,7 @@ open class ExperienceViewController: ModalViewController {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
     }
     
-    func fetchExperience(identifier: String, request: URLRequest) {
+    @objc func fetchExperience(identifier: String, request: URLRequest) {
         let mappingOperation = MappingOperation { (experience: Experience) in
             self.experience = experience
             DispatchQueue.main.async(execute: { 
@@ -68,7 +68,7 @@ open class ExperienceViewController: ModalViewController {
         operationQueue.addOperation(mappingOperation)
     }
     
-    func reloadExperience() {
+    @objc func reloadExperience() {
         guard let experience = experience else { return }
         
         ExperienceViewController.superDelegate?.experienceViewController(self, willLoadExperience: experience)
@@ -86,7 +86,7 @@ open class ExperienceViewController: ModalViewController {
         ExperienceViewController.superDelegate?.experienceViewController(self, didViewScreen: homeScreen, referrerScreen: nil, referrerBlock: nil)
     }
     
-    func viewController(screen: Screen) -> ScreenViewController {
+    @objc func viewController(screen: Screen) -> ScreenViewController {
         let screenViewController = ScreenViewController(screen: screen)
         screenViewController.delegate = self
         return screenViewController

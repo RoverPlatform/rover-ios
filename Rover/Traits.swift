@@ -8,6 +8,7 @@
 
 import Foundation
 
+@objc
 public final class Traits: NSObject {
     
     static let identifierKey = "identifier"
@@ -85,11 +86,11 @@ public final class Traits: NSObject {
         return valueMap
     }
     
-    public func set(identifier: String) {
+    @objc public func set(identifier: String) {
         valueMap[Traits.identifierKey] = identifier
     }
     
-    public func removeIdentifier() {
+    @objc public func removeIdentifier() {
         valueMap[Traits.identifierKey] = NSNull()
     }
     
@@ -141,27 +142,27 @@ public final class Traits: NSObject {
         valueMap[Traits.ageKey] = NSNull()
     }
     
-    public func set(tags: [String]) {
+    @objc public func set(tags: [String]) {
         valueMap[Traits.tagsKey] = tags
     }
     
-    public func add(tag: String) {
+    @objc public func add(tag: String) {
         var tags = valueMap[Traits.tagsToAddKey] as? [String] ?? [String]()
         tags.append(tag)
         valueMap[Traits.tagsToAddKey] = tags
     }
     
-    public func remove(tag: String) {
+    @objc public func remove(tag: String) {
         var tags = valueMap[Traits.tagsToRemoveKey] as? [String] ?? [String]()
         tags.append(tag)
         valueMap[Traits.tagsToRemoveKey] = tags
     }
     
-    public func set(customValue: Any, forKey key: String) {
+    @objc public func set(customValue: Any, forKey key: String) {
         valueMap[key] = customValue
     }
     
-    public func removeCustomValue(forKey key: String) {
+    @objc public func removeCustomValue(forKey key: String) {
         valueMap[key] = NSNull()
     }
 }

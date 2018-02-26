@@ -48,9 +48,9 @@ open class Rover : NSObject {
     
     // MARK: Class Methods
     
-    open static let customer = Customer.sharedCustomer
+    @objc open static let customer = Customer.sharedCustomer
     
-    open class func identify(traits: Traits) {
+    @objc open class func identify(traits: Traits) {
         if let identifier = traits.identifier {
             customer.identifier = identifier as? String
         }
@@ -102,7 +102,7 @@ open class Rover : NSObject {
         sharedInstance?.sendEvent(.deviceUpdate(date: Date()))
     }
     
-    open class func clearCustomer() {
+    @objc open class func clearCustomer() {
         customer.identifier = nil
         customer.firstName = nil
         customer.lastName = nil
@@ -117,11 +117,11 @@ open class Rover : NSObject {
         sharedInstance?.sendEvent(.deviceUpdate(date: Date()))
     }
     
-    open static var isMonitoring: Bool {
+    @objc open static var isMonitoring: Bool {
         return sharedInstance?.locationManager?.isMonitoring ?? false
     }
     
-    open static var isDevelopment: Bool {
+    @objc open static var isDevelopment: Bool {
         get {
             guard let path = Bundle.main.path(forResource: "embedded", ofType: "mobileprovision") else {
                 print("Could not detect APS Environment: Provisioning profile not found")
@@ -165,7 +165,7 @@ open class Rover : NSObject {
         set { }
     }
     
-    open class func setup(applicationToken: String) {
+    @objc open class func setup(applicationToken: String) {
         let gimbalClass: AnyClass? = NSClassFromString("GMBLPlaceManager")
         setup(applicationToken: applicationToken, gimbalMode: gimbalClass != nil)
     }
@@ -183,7 +183,7 @@ open class Rover : NSObject {
         }
     }
     
-    open class func startMonitoring() {
+    @objc open class func startMonitoring() {
         guard !_sharedInstance.gimbalMode else {
             rvLog("Use GMBLPlaceManager.startMonitoring() when in Gimbal mode.", data: nil, level: .error)
             return
@@ -200,7 +200,7 @@ open class Rover : NSObject {
         sharedInstance?.operationQueue.addOperation(locationAuthorizationOperation)
     }
     
-    open class func stopMonitoring() {
+    @objc open class func stopMonitoring() {
         guard !_sharedInstance.gimbalMode else {
             rvLog("Use GMBLPlaceManager.stopMonitoring() when in Gimbal mode", data: nil, level: .error)
             return
@@ -209,18 +209,18 @@ open class Rover : NSObject {
         sharedInstance?.locationManager?.stopMonitoring()
     }
     
-    open class func registerForNotifications() {
+    @objc open class func registerForNotifications() {
         UIApplication.shared.registerUserNotificationSettings(UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil))
         UIApplication.shared.registerForRemoteNotifications()
     }
     
     fileprivate(set) var observers = [RoverObserver]()
     
-    open class func addObserver(_ observer: RoverObserver) {
+    @objc open class func addObserver(_ observer: RoverObserver) {
         sharedInstance?.observers.append(observer)
     }
     
-    open class func removeObserver(_ observer: RoverObserver) {
+    @objc open class func removeObserver(_ observer: RoverObserver) {
         sharedInstance?.observers.remove(at: (sharedInstance!.observers.index(where: {$0 === observer})!))
     }
     
@@ -228,7 +228,7 @@ open class Rover : NSObject {
         sharedInstance?.sendEvent(event)
     }
     
-    open class func reloadInbox(_ completion: (([Message], Int) -> Void)?) {
+    @objc open class func reloadInbox(_ completion: (([Message], Int) -> Void)?) {
         var unreadMessagesCount: Int = 0
         
         let mappingOperation = MappingOperation { (messages: [Message]) in
@@ -249,12 +249,12 @@ open class Rover : NSObject {
         sharedInstance?.operationQueue.addOperation(mappingOperation)
     }
     
-    open class func deleteMessage(_ message: Message, completionHandler: (([String: Any]?, Error?) -> Void)? = nil) {
+    @objc open class func deleteMessage(_ message: Message, completionHandler: (([String: Any]?, Error?) -> Void)? = nil) {
         let networkOperation = NetworkOperation(urlRequest: Router.deleteMessage(message).urlRequest as URLRequest, completion: completionHandler)
         sharedInstance?.operationQueue.addOperation(networkOperation)
     }
     
-    open class func patchMessage(_ message: Message, completionHandler: (([String: Any]?, Error?) -> Void)? = nil) {
+    @objc open class func patchMessage(_ message: Message, completionHandler: (([String: Any]?, Error?) -> Void)? = nil) {
         let networkOperation = NetworkOperation(urlRequest: Router.patchMessage(message).urlRequest as URLRequest, completion: nil)
         let serializingOperation = SerializingOperation(model: message) { JSON in
             networkOperation.payload = JSON
@@ -266,15 +266,15 @@ open class Rover : NSObject {
         sharedInstance?.operationQueue.addOperation(networkOperation)
     }
     
-    open class func trackMessageOpenEvent(_ message: Message) {
+    @objc open class func trackMessageOpenEvent(_ message: Message) {
         sharedInstance?.sendEvent(.didOpenMessage(message, source: "inbox", date: Date()))
     }
     
-    open class func updateLocation(_ location: CLLocation) {
+    @objc open class func updateLocation(_ location: CLLocation) {
         sharedInstance?.sendEvent(.didUpdateLocation(location, date: Date()))
     }
     
-    open class func followAction(message: Message) {
+    @objc open class func followAction(message: Message) {
         switch message.action {
         case .website:
             fallthrough
@@ -296,7 +296,7 @@ open class Rover : NSObject {
         }
     }
     
-    open class func continueUserActivity(_ userActivity: NSUserActivity) -> Bool {
+    @objc open class func continueUserActivity(_ userActivity: NSUserActivity) -> Bool {
         guard userActivity.activityType == NSUserActivityTypeBrowsingWeb, let webpageURL = userActivity.webpageURL else {
             return false
         }
@@ -304,7 +304,7 @@ open class Rover : NSObject {
         return open(url: webpageURL)
     }
     
-    open class func open(url: URL) -> Bool {
+    @objc open class func open(url: URL) -> Bool {
         guard let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false), let host = urlComponents.host else {
             return false
         }
@@ -342,7 +342,7 @@ open class Rover : NSObject {
     
     // MARK: Application Hooks
     
-    open class func didRegisterForRemoteNotification(deviceToken: Data) {
+    @objc open class func didRegisterForRemoteNotification(deviceToken: Data) {
         let deviceTokenString = deviceToken.reduce("", {$0 + String(format: "%02X", $1)})
         guard Device.pushToken != deviceTokenString else {
             return
@@ -353,7 +353,7 @@ open class Rover : NSObject {
         sharedInstance?.sendEvent(Event.deviceUpdate(date: Date()))
     }
     
-    open class func didReceiveRemoteNotification(_ userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: ((UIBackgroundFetchResult) -> Void)?) -> Bool {
+    @objc open class func didReceiveRemoteNotification(_ userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: ((UIBackgroundFetchResult) -> Void)?) -> Bool {
         return didReceiveRemoteNotification(userInfo, fetchCompletionHandler: completionHandler, fromLaunch: false)
     }
     
@@ -400,7 +400,7 @@ open class Rover : NSObject {
     }
     
     @available(iOS 10.0, *)
-    open class func decodeMessage(fromNotification notification: UNNotification) -> Message? {
+    @objc open class func decodeMessage(fromNotification notification: UNNotification) -> Message? {
         let userInfo = notification.request.content.userInfo
         
         guard let isRoverNotification = userInfo["_rover"] as? Bool, isRoverNotification, let data = notification.request.content.userInfo["data"] as? [String: AnyObject] else {
@@ -410,7 +410,7 @@ open class Rover : NSObject {
         return Message.instance(data, included: nil)
     }
     
-    open class func readMessage(_ message: Message) {
+    @objc open class func readMessage(_ message: Message) {
         message.read = true
         patchMessage(message)
     }
@@ -423,7 +423,7 @@ open class Rover : NSObject {
         }
     }
     
-    open class func presentViewController(_ viewController: UIViewController) {
+    @objc open class func presentViewController(_ viewController: UIViewController) {
         presentViewController(viewController, includeNavigation: true)
     }
     
@@ -446,7 +446,7 @@ open class Rover : NSObject {
         }
     }
     
-    open class func viewController(message: Message) -> UIViewController? {
+    @objc open class func viewController(message: Message) -> UIViewController? {
         switch message.action {
         case .landingPage:
             let viewController = ScreenViewController()

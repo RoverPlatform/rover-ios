@@ -16,10 +16,10 @@ extension Event : Serializable {
     public func serialize() -> [String : Any] {
         let serializedCustomer = Customer.sharedCustomer.serialize()
         let serializedDevice = Device.currentDevice.serialize()
-        
+
         var timestamp: Date
         var serializedAttributes: [String : Any]
-        
+
         switch self {
         case .applicationOpen(let date):
             timestamp = date
@@ -74,13 +74,13 @@ extension Event : Serializable {
             timestamp = Date()
             serializedAttributes = [String : AnyObject]()
         }
-        
+
         _swiftBugWorkaround(serializedAttributes: &serializedAttributes , timestamp: &timestamp)
-        
+
         serializedAttributes["time"] = rvDateFormatter.string(from: timestamp)
         serializedAttributes["user"] = serializedCustomer
         serializedAttributes["device"] = serializedDevice
-        
+
         return [
             "data": [
                 "type": "events",
@@ -88,7 +88,7 @@ extension Event : Serializable {
             ]
         ]
     }
-    
+
     func _swiftBugWorkaround(serializedAttributes: inout [String: Any], timestamp: inout Date) {
         switch self {
         case .didEnterCircularRegion(let region, _, let date):
@@ -135,7 +135,7 @@ extension Event : Serializable {
                 "version-id": experience.version ?? NSNull() as Any,
                 "experience-session-id": session
             ]
-            
+
             if let campaignID = campaignID {
                 serializedAttributes["campaign-id"] = campaignID
             }
@@ -148,7 +148,7 @@ extension Event : Serializable {
                 "version-id": experience.version ?? NSNull() as Any,
                 "experience-session-id": session
             ]
-            
+
             if let campaignID = campaignID {
                 serializedAttributes["campaign-id"] = campaignID
             }
@@ -164,7 +164,7 @@ extension Event : Serializable {
                 "version-id": experience.version ?? NSNull() as Any,
                 "experience-session-id": session
             ]
-            
+
             if let campaignID = campaignID {
                 serializedAttributes["campaign-id"] = campaignID
             }
@@ -180,7 +180,7 @@ extension Event : Serializable {
                 "version-id": experience.version ?? NSNull() as Any,
                 "experience-session-id": session
             ]
-            
+
             if let campaignID = campaignID {
                 serializedAttributes["campaign-id"] = campaignID
             }
@@ -201,7 +201,7 @@ extension Device : Serializable {
         }
         return identifier
     }
-    
+
     func serialize() -> [String : Any] {
         let carrierName: Any = CTTelephonyNetworkInfo().subscriberCellularProvider?.carrierName ?? NSNull()
         let osVersion = ProcessInfo.processInfo.operatingSystemVersion
@@ -222,7 +222,7 @@ extension Device : Serializable {
         let remoteNotificationRegistered = UIApplication.shared.isRegisteredForRemoteNotifications
         let bluetoothStatus = Device.bluetoothOn
         let isDevelopment = Rover.isDevelopment
-        
+
         return [
             "app-identifier": appIdentifier,
             "udid": udid,
@@ -243,7 +243,7 @@ extension Device : Serializable {
             "manufacturer": "Apple",
             "os-version": osVersionString,
             "model": self.platform(),
-            "sdk-version": "1.10.2",
+            "sdk-version": "1.10.3",
             "gimbal-mode": gimbalMode,
             "development": isDevelopment
         ]
@@ -260,7 +260,7 @@ extension Customer : Serializable {
         let age: Any = self.age ?? NSNull()
         let tags: Any = self.tags ?? NSNull()
         let email: Any = self.email ?? NSNull()
-        
+
         return [
             "first-name": firstName,
             "last-name": lastName,

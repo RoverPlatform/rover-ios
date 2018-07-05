@@ -562,15 +562,15 @@ extension Rover : EventOperationDelegate {
 
 extension Rover /*: RVRGimbalPlaceManagerDelegate*/ {
     
-    public func placeManager(_ manager: RVRGimbalPlaceManager!, didUpdateLocation location: CLLocation!) {
+    @objc public func placeManager(_ manager: RVRGimbalPlaceManager!, didUpdateLocation location: CLLocation!) {
         sendEvent(.didUpdateLocation(location, date: Date()))
     }
     
-    public func placeManager(_ manager: RVRGimbalPlaceManager!, didEnterGimbalPlaceWithIdentifier identifier: String!) {
+    @objc public func placeManager(_ manager: RVRGimbalPlaceManager!, didEnterGimbalPlaceWithIdentifier identifier: String!) {
         sendEvent(.didEnterGimbalPlace(id: identifier, date: Date()))
     }
     
-    public func placeManager(_ manager: RVRGimbalPlaceManager!, didExitGimbalPlaceWithIdentifier identifier: String!) {
+    @objc public func placeManager(_ manager: RVRGimbalPlaceManager!, didExitGimbalPlaceWithIdentifier identifier: String!) {
         sendEvent(.didExitGimbalPlace(id: identifier, date: Date()))
     }
 }

@@ -73,7 +73,7 @@ extension Attributes: Collection {
         return rawValue.endIndex
     }
     
-    public subscript(index: Index) -> Iterator.Element {
+    public subscript(index: Index) -> Element {
         get {
             return rawValue[index]
         }

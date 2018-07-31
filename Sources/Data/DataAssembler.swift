@@ -47,11 +47,11 @@ public struct DataAssembler: Assembler {
             return AppContextProvider(bundle: Bundle.main, logger: logger)
         }
         
-        // MARK: ContextProvider (attributes)
+        // MARK: ContextProvider (userInfo)
         
-        container.register(ContextProvider.self, name: "attributes") { resolver in
-            let deviceAttributes = resolver.resolve(DeviceAttributes.self)!
-            return AttributesContextProvider(deviceAttributes: deviceAttributes)
+        container.register(ContextProvider.self, name: "userInfo") { resolver in
+            let userInfo = resolver.resolve(UserInfo.self)!
+            return UserInfoContextProvider(userInfo: userInfo)
         }
         
         // MARK: ContextProvider (device)
@@ -109,12 +109,12 @@ public struct DataAssembler: Assembler {
             return TimeZoneContextProvider(timeZone: timeZone)
         }
         
-        // MARK: DeviceAttributes
+        // MARK: UserInfo
         
-        container.register(DeviceAttributes.self) { resolver in
+        container.register(UserInfo.self) { resolver in
             let eventQueue = resolver.resolve(EventQueue.self)!
             let logger = resolver.resolve(Logger.self)!
-            return DeviceAttributesService(eventQueue: eventQueue, logger: logger, userDefaults: UserDefaults.standard)
+            return UserInfoService(eventQueue: eventQueue, logger: logger, userDefaults: UserDefaults.standard)
         }
         
         // MARK: EventQueue
@@ -150,13 +150,12 @@ public struct DataAssembler: Assembler {
     }
     
     public func containerDidAssemble(resolver: Resolver) {
-        let deviceAttributes = resolver.resolve(DeviceAttributes.self)!
-        deviceAttributes.restore()
+        let userInfo = resolver.resolve(UserInfo.self)!
+        userInfo.restore()
         
         let eventQueue = resolver.resolve(EventQueue.self)!
         let contextProviders = [
             resolver.resolve(ContextProvider.self, name: "app"),
-            resolver.resolve(ContextProvider.self, name: "attributes"),
             resolver.resolve(ContextProvider.self, name: "bluetooth"),
             resolver.resolve(ContextProvider.self, name: "debug"),
             resolver.resolve(ContextProvider.self, name: "device"),
@@ -169,7 +168,8 @@ public struct DataAssembler: Assembler {
             resolver.resolve(ContextProvider.self, name: "screen"),
             resolver.resolve(ContextProvider.self, name: "sdk"),
             resolver.resolve(ContextProvider.self, name: "telephony"),
-            resolver.resolve(ContextProvider.self, name: "timeZone")
+            resolver.resolve(ContextProvider.self, name: "timeZone"),
+            resolver.resolve(ContextProvider.self, name: "userInfo")
             ].compactMap { $0 }
         
         eventQueue.addContextProviders(contextProviders)

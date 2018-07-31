@@ -1,5 +1,5 @@
 //
-//  DeviceAttributesService.swift
+//  UserInfoService.swift
 //  RoverData
 //
 //  Created by Sean Rucker on 2017-10-17.
@@ -8,9 +8,9 @@
 
 import Foundation
 
-fileprivate let storageKey = "io.rover.deviceAttributes"
+fileprivate let storageKey = "io.rover.userInfo"
 
-class DeviceAttributesService: DeviceAttributes {
+class UserInfoService: UserInfo {
     let eventQueue: EventQueue
     let logger: Logger
     let userDefaults: UserDefaults
@@ -25,17 +25,17 @@ class DeviceAttributesService: DeviceAttributes {
     
     func restore() {
         guard let data = userDefaults.data(forKey: storageKey) else {
-            logger.debug("No device attributes to restore")
+            logger.debug("No user info to restore")
             return
         }
         
         guard let attributes = try? JSONDecoder().decode(Attributes.self, from: data) else {
-            logger.error("Failed to decode device attributes")
+            logger.error("Failed to decode user info")
             return
         }
         
         self.attributes = attributes
-        logger.debug("Device attributes restored from local storage")
+        logger.debug("User info restored from local storage")
     }
     
     func current() -> Attributes {
@@ -51,12 +51,12 @@ class DeviceAttributesService: DeviceAttributes {
         }
                 
         guard let data = try? JSONEncoder().encode(attributes) else {
-            logger.error("Failed to encode device attributes")
+            logger.error("Failed to encode user info")
             return
         }
         
         userDefaults.set(data, forKey: storageKey)
-        let event = EventInfo(name: "Device Attributes Updated", namespace: "rover")
+        let event = EventInfo(name: "User Info Updated", namespace: "rover")
         eventQueue.addEvent(event)
     }
     

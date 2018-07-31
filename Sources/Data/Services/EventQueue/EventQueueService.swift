@@ -119,7 +119,12 @@ class EventQueueService: EventQueue {
         }
         
         persistEvents()
-        flushEvents(minBatchSize: flushAt)
+        
+        if UIApplication.shared.applicationState == .active {
+            flushEvents(minBatchSize: flushAt)
+        } else {
+            flushEvents()
+        }
         
         observers.compactMap({ $0.value }).forEach { $0.eventQueue(self, didAddEvent: info) }
     }

@@ -53,3 +53,20 @@ extension Experience: Decodable {
         self.homeScreen = homeScreen
     }
 }
+
+// MARK: AttributeRepresentable
+
+extension Experience: AttributeRepresentable {
+    public var attributeValue: AttributeValue {
+        var attributes: Attributes = [
+            "id": id,
+            "tags": tags
+        ]
+        
+        if let campaignID = campaignID {
+            attributes["campaignID"] = campaignID
+        }
+        
+        return .object(attributes)
+    }
+}

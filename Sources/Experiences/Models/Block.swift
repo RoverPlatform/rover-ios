@@ -6,7 +6,7 @@
 //  Copyright © 2017 Rover Labs Inc. All rights reserved.
 //
 
-public protocol Block: Decodable {
+public protocol Block: AttributeRepresentable, Decodable {
     var background: Background { get }
     var border: Border { get }
     var id: ID { get }
@@ -16,4 +16,14 @@ public protocol Block: Decodable {
     var tapBehavior: BlockTapBehavior { get }
     var keys: [String: String] { get }
     var tags: [String] { get }
+}
+
+extension Block {
+    public var attributeValue: AttributeValue {
+        return [
+            "id": id,
+            "tapBehavior": tapBehavior,
+            "tags": tags
+        ]
+    }
 }

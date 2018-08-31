@@ -53,7 +53,7 @@ open class BlockCell: UICollectionViewCell {
             return
         }
         
-        backgroundColor = block.background.color.uiColor
+        backgroundColor = block.background.color.uiColor(dimmedBy: block.opacity)
     }
     
     open func configureBackgroundImage(imageStore: ImageStore) {
@@ -146,7 +146,7 @@ open class BlockCell: UICollectionViewCell {
             return
         }
         
-        layer.opacity = Float(block.opacity)
+        self.contentView.alpha = CGFloat(block.opacity)
     }
     
     open func configureContent() {

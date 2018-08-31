@@ -9,8 +9,19 @@
 import UIKit
 
 class ScreenLayoutAttributes: UICollectionViewLayoutAttributes {
+    /**
+     * Where in absolute space (both position and dimensions) for the entire screen view controller
+     * this item should be placed.
+     */
     var referenceFrame = CGRect.zero
+    
     var verticalAlignment = UIControlContentVerticalAlignment.top
+    
+    /**
+     * An optional clip area, in the coordinate space of the block view itself (ie., top left of the view
+     * is origin).
+     */
+    var clipRect: CGRect? = CGRect.zero
     
     override func copy(with zone: NSZone? = nil) -> Any {
         let copy = super.copy(with: zone)
@@ -21,6 +32,7 @@ class ScreenLayoutAttributes: UICollectionViewLayoutAttributes {
         
         attributes.referenceFrame = referenceFrame
         attributes.verticalAlignment = verticalAlignment
+        attributes.clipRect = clipRect
         return attributes
     }
     
@@ -29,6 +41,6 @@ class ScreenLayoutAttributes: UICollectionViewLayoutAttributes {
             return false
         }
         
-        return super.isEqual(object) && referenceFrame == rhs.referenceFrame && verticalAlignment == rhs.verticalAlignment
+        return super.isEqual(object) && referenceFrame == rhs.referenceFrame && verticalAlignment == rhs.verticalAlignment && clipRect == rhs.clipRect
     }
 }

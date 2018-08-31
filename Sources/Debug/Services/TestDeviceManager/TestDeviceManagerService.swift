@@ -30,12 +30,12 @@ class TestDeviceManagerService: TestDeviceManager {
             if _isTestDevice {
                 logger.debug("Enabled testing")
                 
-                let event = EventInfo(name: "Enabled Testing", namespace: "rover")
+                let event = EventInfo(name: "Testing Enabled", namespace: "rover")
                 eventQueue.addEvent(event)
             } else {
                 logger.debug("Disabled testing")
                 
-                let event = EventInfo(name: "Disabled Testing", namespace: "rover")
+                let event = EventInfo(name: "Testing Disabled", namespace: "rover")
                 eventQueue.addEvent(event)
             }
             

@@ -11,7 +11,13 @@ import UIKit
 open class BarcodeCell: BlockCell {
     open let imageView: UIImageView = {
         let imageView = UIImageView()
+
+        // Using stretch fit because we've ensured that the image will scale aspect-correct, so will always have the
+        // correct aspect ratio (because auto-height will be always on), and we also are using integer scaling to ensure
+        // a sharp scale of the pixels.  While we could use .scaleToFit, .scaleToFill will avoid the barcode
+        // leaving any unexpected gaps around the outside in case of lack of agreement.
         imageView.contentMode = .scaleToFill
+        imageView.layer.magnificationFilter = kCAFilterNearest
         return imageView
     }()
     
@@ -29,41 +35,14 @@ open class BarcodeCell: BlockCell {
         
         imageView.isHidden = false
         imageView.image = nil
-        
+
         let barcode = barcodeBlock.barcode
-        
-        guard let data = barcode.text.data(using: String.Encoding.ascii) else {
+
+        guard let barcodeImage = barcode.cgImage else {
+            imageView.image = nil
             return
         }
-        
-        let filterName: String
-        switch barcode.format {
-        case .aztecCode:
-            filterName = "CIAztecCodeGenerator"
-        case .code128:
-            filterName = "CICode128BarcodeGenerator"
-        case .pdf417:
-            filterName = "CIPDF417BarcodeGenerator"
-        case .qrCode:
-            filterName = "CIQRCodeGenerator"
-        }
-        
-        let filter = CIFilter(name: filterName)!
-        filter.setDefaults()
-        filter.setValue(data, forKey: "inputMessage")
-        
-        let scale = CGFloat(barcode.scale)
-        let transform = CGAffineTransform(scaleX: scale, y: scale)
-        
-        guard let outputImage = filter.outputImage?.transformed(by: transform) else {
-            return
-        }
-        
-        let context = CIContext.init(options: nil)
-        guard let cgImage = context.createCGImage(outputImage, from: outputImage.extent) else {
-            return
-        }
-        
-        imageView.image = UIImage.init(cgImage: cgImage)
+
+        imageView.image = UIImage.init(cgImage: barcodeImage)
     }
 }

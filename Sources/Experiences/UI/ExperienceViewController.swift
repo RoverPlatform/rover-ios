@@ -39,12 +39,7 @@ open class ExperienceViewController: UINavigationController {
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        var attributes: Attributes = ["experienceID": experience.id.rawValue]
-        
-        if let campaignID = experience.campaignID {
-            attributes["campaignID"] = campaignID.rawValue
-        }
-        
+        let attributes: Attributes = ["experience": experience]
         let event = EventInfo(name: "Experience Presented", namespace: "rover", attributes: attributes)
         eventQueue.addEvent(event)
         
@@ -58,12 +53,7 @@ open class ExperienceViewController: UINavigationController {
     override open func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
-        var attributes: Attributes = ["experienceID": experience.id.rawValue]
-        
-        if let campaignID = experience.campaignID {
-            attributes["campaignID"] = campaignID.rawValue
-        }
-        
+        let attributes: Attributes = ["experience": experience]
         let event = EventInfo(name: "Experience Dismissed", namespace: "rover", attributes: attributes)
         eventQueue.addEvent(event)
         

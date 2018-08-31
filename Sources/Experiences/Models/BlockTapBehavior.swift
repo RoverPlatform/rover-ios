@@ -15,6 +15,34 @@ public enum BlockTapBehavior {
     case presentWebsite(url: URL)
 }
 
+// MARK: AttributeRepresentable
+
+extension BlockTapBehavior: AttributeRepresentable {
+    public var attributeValue: AttributeValue {
+        switch self {
+        case .goToScreen(let screenID):
+            return [
+                "type": "goToScreen",
+                "screenID": screenID
+            ]
+        case .none:
+            return [
+                "type": "none"
+            ]
+        case .openURL(let url, _):
+            return [
+                "type": "openURL",
+                "url": url
+            ]
+        case .presentWebsite(let url):
+            return [
+                "type": "presentWebsite",
+                "url": url
+            ]
+        }
+    }
+}
+
 // MARK: Codable
 
 extension BlockTapBehavior: Codable {

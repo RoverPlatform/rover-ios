@@ -44,10 +44,17 @@ class InfluenceTrackerService: InfluenceTracker {
             return
         }
         
-        struct NotificationReceipt: Decodable {
+        struct NotificationReceipt: AttributeRepresentable, Decodable {
             var notificationID: ID
             var campaignID: ID
             var receivedAt: Date
+            
+            var attributeValue: AttributeValue {
+                return [
+                    "id": notificationID,
+                    "campaignID": campaignID
+                ]
+            }
         }
         
         guard let lastReceivedNotification = try? PropertyListDecoder().decode(NotificationReceipt.self, from: data) else {
@@ -67,8 +74,7 @@ class InfluenceTrackerService: InfluenceTracker {
         }
         
         let attributes: Attributes = [
-            "notificationID": lastReceivedNotification.notificationID.rawValue,
-            "campaignID": lastReceivedNotification.campaignID.rawValue,
+            "notification": lastReceivedNotification,
             "source": NotificationSource.influencedOpen.rawValue
         ]
         

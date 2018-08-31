@@ -111,18 +111,13 @@ class ScreenViewLayout: UICollectionViewLayout {
                 let intrinsicHeight: CGFloat? = {
                     switch block {
                     case let block as BarcodeBlock:
-                        let aspectRatio: CGFloat = {
-                            switch block.barcode.format {
-                            case .aztecCode:
-                                return CGFloat(1.0)
-                            case .code128:
-                                return CGFloat(2.26086956521739)
-                            case .pdf417:
-                                return CGFloat(2.25)
-                            case .qrCode:
-                                return CGFloat(1.0)
-                            }
-                        }()
+                        guard let renderedBitmap = block.barcode.cgImage else {
+                            // barcode was not renderable, so intrinsic height will be 0.
+                            return 0
+                        }
+
+                        let aspectRatio = CGFloat(renderedBitmap.width) / CGFloat(renderedBitmap.height)
+                        
                         return blockWidth / aspectRatio
                     case let block as ButtonBlock:
                         guard let attributedText = block.text.attributedText else {
@@ -229,10 +224,36 @@ class ScreenViewLayout: UICollectionViewLayout {
                 }()
                 
                 let blockFrame = CGRect(x: blockX, y: blockY, width: blockWidth, height: blockHeight)
+                
+                // if blockFrame exceeds the rowFrame, we need to clip it within the row, and in terms relative
+                // to blockFrame.
+                let clipRect: CGRect? = {
+                    if (!rowFrame.contains(blockFrame)) {
+                        // and find the intersection with blockFrame to find out what should be exposed and then
+                        // transform into coordinate space with origin of the blockframe in the top left corner:
+                        let intersection = rowFrame.intersection(blockFrame)
+                        
+                        // translate the clip to return the intersection, but if there is none that means the
+                        // block is *entirely* outside of the bounds.  An unlikely but not impossible situation.
+                        // Clip it entirely:
+                        if(intersection.isNull) {
+                            return CGRect(x: blockFrame.origin.x, y: blockFrame.origin.y, width: 0, height: 0)
+                        } else {
+                            // translate the rect into the terms of the containing rowframe:
+                            return intersection.offsetBy(dx: 0 - blockFrame.origin.x, dy: 0 - blockFrame.origin.y)
+                        }
+                    } else {
+                        // no clip is necessary because the blockFrame is contained entirely within the
+                        // surrounding block.
+                        return nil as CGRect?
+                    }
+                }()
+                
                 let blockAttributes = ScreenLayoutAttributes(forCellWith: blockIndex)
                 blockAttributes.frame = blockFrame
                 blockAttributes.referenceFrame = blockFrame
-                
+                blockAttributes.clipRect = clipRect
+
                 blockAttributes.verticalAlignment = {
                     switch block.position.verticalAlignment {
                     case .bottom:
@@ -257,13 +278,6 @@ class ScreenViewLayout: UICollectionViewLayout {
     }
     
     override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
-        let offset: CGFloat
-        if #available(iOS 11.0, *) {
-            offset = collectionView!.contentOffset.y + collectionView!.adjustedContentInset.top
-        } else {
-            offset = collectionView!.contentOffset.y + collectionView!.contentInset.top
-        }
-        
         let rowAttributes = rowAttributesMap.filter({ $0.1.frame.intersects(rect) }).map({ $0.1 })
         let blockAttributes = blockAttributesMap.filter({ $0.1.frame.intersects(rect) }).map({ $0.1 })
         
@@ -271,11 +285,24 @@ class ScreenViewLayout: UICollectionViewLayout {
             return rowAttributes + blockAttributes
         }
         
+        let offset: CGFloat
+        if #available(iOS 11.0, *) {
+            offset = collectionView!.contentOffset.y + collectionView!.adjustedContentInset.top
+        } else {
+            offset = collectionView!.contentOffset.y + collectionView!.contentInset.top
+        }
+        
         guard offset < 0 else {
             return rowAttributes + blockAttributes
         }
         
-        let deltaY = fabs(offset)
+        var deltaY = fabs(offset)
+        
+        // the UICollectionViewLayout may not query our shouldInvalidateLayout implementation when very
+        // nearly near the top of overscroll (particularly, within one logical pixel), so pin it to zero if so.
+        if deltaY < 1 {
+           deltaY = 0
+        }
         
         if let headerAttributes = rowAttributes.first(where: { $0.indexPath.section == 0 }) {
             var frame = headerAttributes.referenceFrame
@@ -325,4 +352,3 @@ class ScreenViewLayout: UICollectionViewLayout {
         return newBounds.origin.y < 0 - collectionView!.contentInset.top
     }
 }
-

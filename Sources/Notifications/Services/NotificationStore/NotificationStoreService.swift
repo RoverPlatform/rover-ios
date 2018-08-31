@@ -206,8 +206,12 @@ class NotificationStoreService: NotificationStore {
     // MARK: Updating Notifications
     
     func markNotificationDeleted(_ notificationID: ID) {
+        guard let notification = notifications.first(where: { $0.id == notificationID }) else {
+            return
+        }
+        
         notifications = notifications.map({
-            if $0.id != notificationID {
+            if $0.id != notification.id {
                 return $0
             }
             
@@ -222,14 +226,18 @@ class NotificationStoreService: NotificationStore {
             return
         }
         
-        let attributes: Attributes = ["notificationID": notificationID.rawValue]
+        let attributes: Attributes = ["notification": notification]
         let event = EventInfo(name: "Notification Marked Deleted", namespace: "rover", attributes: attributes)
         eventQueue.addEvent(event)
     }
     
     func markNotificationRead(_ notificationID: ID) {
-        self.notifications = notifications.map({
-            if $0.id != notificationID {
+        guard let notification = notifications.first(where: { $0.id == notificationID }) else {
+            return
+        }
+        
+        notifications = notifications.map({
+            if $0.id != notification.id {
                 return $0
             }
             
@@ -244,7 +252,7 @@ class NotificationStoreService: NotificationStore {
             return
         }
         
-        let attributes: Attributes = ["notificationID": notificationID.rawValue]
+        let attributes: Attributes = ["notification": notification]
         let event = EventInfo(name: "Notification Marked Read", namespace: "rover", attributes: attributes)
         eventQueue.addEvent(event)
     }

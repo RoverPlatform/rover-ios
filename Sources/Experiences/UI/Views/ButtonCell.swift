@@ -26,7 +26,7 @@ open class ButtonCell: BlockCell {
         label.isHidden = false
         
         let text = buttonBlock.text
-        label.highlightedTextColor = text.color.uiColor.withAlphaComponent(0.5)
+        label.highlightedTextColor = text.color.uiColor.withAlphaComponent(0.5 * text.color.uiColor.cgColor.alpha)
         label.text = text.rawValue
         label.textColor = text.color.uiColor
         label.textAlignment = text.alignment.textAlignment

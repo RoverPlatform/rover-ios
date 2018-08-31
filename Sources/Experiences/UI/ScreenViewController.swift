@@ -80,14 +80,10 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        var attributes: Attributes = [
-            "experienceID": experience.id.rawValue,
-            "screenID": screen.id.rawValue
+        let attributes: Attributes = [
+            "experience": experience,
+            "screen": screen
         ]
-        
-        if let campaignID = experience.campaignID {
-            attributes["campaignID"] = campaignID.rawValue
-        }
         
         let event = EventInfo(name: "Screen Presented", namespace: "rover", attributes: attributes)
         eventQueue.addEvent(event)
@@ -102,14 +98,10 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     override open func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
-        var attributes: Attributes = [
-            "experienceID": experience.id.rawValue,
-            "screenID": screen.id.rawValue
+        let attributes: Attributes = [
+            "experience": experience,
+            "screen": screen
         ]
-        
-        if let campaignID = experience.campaignID {
-            attributes["campaignID"] = campaignID.rawValue
-        }
         
         let event = EventInfo(name: "Screen Dismissed", namespace: "rover", attributes: attributes)
         eventQueue.addEvent(event)
@@ -309,6 +301,14 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         let reuseIdentifier = cellReuseIdentifier(at: indexPath)
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath)
         
+        if let attributes = collectionViewLayout.layoutAttributesForItem(at: indexPath) as? ScreenLayoutAttributes, let clipRect = attributes.clipRect {
+            let maskLayer = CAShapeLayer()
+            maskLayer.path = CGPath(rect: clipRect, transform: nil)
+            cell.layer.mask = maskLayer
+        } else {
+            cell.layer.mask = nil
+        }
+        
         guard let blockCell = cell as? BlockCell else {
             return cell
         }
@@ -372,16 +372,11 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         
         let block = screen.rows[indexPath.section].blocks[indexPath.row]
         
-        var attributes: Attributes = [
-            "experienceID": experience.id.rawValue,
-            "screenID": screen.id.rawValue,
-            "blockID": block.id.rawValue
+        let attributes: Attributes = [
+            "experience": experience,
+            "screen": screen,
+            "block": block
         ]
-        
-        if let campaignID = experience.campaignID {
-            attributes["campaignID"] = campaignID.rawValue
-        }
-        
         
         switch block.tapBehavior {
         case .goToScreen(let screenID):

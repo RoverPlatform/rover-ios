@@ -22,8 +22,18 @@ public struct ID: Codable, Equatable, Hashable, RawRepresentable {
     }
 }
 
+// MARK: ExpressibleByStringLiteral
+
 extension ID: ExpressibleByStringLiteral {
     public init(stringLiteral value: String) {
         self.rawValue = value
+    }
+}
+
+// MARK: ScalarRepresentable
+
+extension ID: ScalarRepresentable {
+    public var scalarValue: Scalar {
+        return .string(rawValue)
     }
 }

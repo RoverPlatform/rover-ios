@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4980D66521307738007267D3 /* Barcode+cgImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4980D66421307738007267D3 /* Barcode+cgImage.swift */; };
 		DB0C8E3E2055C62800E0D860 /* InfluenceTrackerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0C8E3D2055C62800E0D860 /* InfluenceTrackerService.swift */; };
 		DB0C8E402055CCBD00E0D860 /* InfluenceTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0C8E3F2055CCBD00E0D860 /* InfluenceTracker.swift */; };
 		DB0C8F2A20583A5600E0D860 /* RoverAppExtensions.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB0C8F2120583A5600E0D860 /* RoverAppExtensions.framework */; };
@@ -84,6 +85,10 @@
 		DBB89C4920D07F6600DD797A /* RoverData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD88A7320C1B21700085AE0 /* RoverData.framework */; };
 		DBB89C4C20D084D600DD797A /* RoverFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = DBB89C4A20D083AF00DD797A /* RoverFoundation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DBC9544A20EA86E600AA3AD9 /* NotificationSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB496F5220DBECD800DF5949 /* NotificationSource.swift */; };
+		DBD22D63212CBB2D0088DE52 /* CLVisit.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD22D5C212CBA9A0088DE52 /* CLVisit.swift */; };
+		DBD22D64212CBB2D0088DE52 /* CLLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD22D5E212CBAC10088DE52 /* CLLocation.swift */; };
+		DBD22D65212CBB2D0088DE52 /* CLBeaconRegion.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD22D60212CBB040088DE52 /* CLBeaconRegion.swift */; };
+		DBD22D67212CBB5F0088DE52 /* CLCircularRegion.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD22D66212CBB5F0088DE52 /* CLCircularRegion.swift */; };
 		DBD88A7C20C1B21700085AE0 /* RoverData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD88A7320C1B21700085AE0 /* RoverData.framework */; };
 		DBD88A8120C1B21700085AE0 /* RoverDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD88A8020C1B21700085AE0 /* RoverDataTests.swift */; };
 		DBD88A8320C1B21700085AE0 /* RoverData.h in Headers */ = {isa = PBXBuildFile; fileRef = DBD88A7520C1B21700085AE0 /* RoverData.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -282,6 +287,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4980D66421307738007267D3 /* Barcode+cgImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Barcode+cgImage.swift"; sourceTree = "<group>"; };
 		DB00FDC82083A010008D1A57 /* ExperienceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperienceTests.swift; sourceTree = "<group>"; };
 		DB00FDCA2083A14E008D1A57 /* experience.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = experience.json; sourceTree = "<group>"; };
 		DB00FDCE2084EF06008D1A57 /* ScreenViewLayoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenViewLayoutTests.swift; sourceTree = "<group>"; };
@@ -385,6 +391,10 @@
 		DBB89B9C20D0160100DD797A /* LifeCycleTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LifeCycleTracker.swift; sourceTree = "<group>"; };
 		DBB89B9F20D01CC500DD797A /* LifeCycleTrackerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LifeCycleTrackerService.swift; sourceTree = "<group>"; };
 		DBB89C4A20D083AF00DD797A /* RoverFoundation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RoverFoundation.h; sourceTree = "<group>"; };
+		DBD22D5C212CBA9A0088DE52 /* CLVisit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CLVisit.swift; sourceTree = "<group>"; };
+		DBD22D5E212CBAC10088DE52 /* CLLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CLLocation.swift; sourceTree = "<group>"; };
+		DBD22D60212CBB040088DE52 /* CLBeaconRegion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CLBeaconRegion.swift; sourceTree = "<group>"; };
+		DBD22D66212CBB5F0088DE52 /* CLCircularRegion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CLCircularRegion.swift; sourceTree = "<group>"; };
 		DBD88A7320C1B21700085AE0 /* RoverData.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RoverData.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBD88A7520C1B21700085AE0 /* RoverData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RoverData.h; sourceTree = "<group>"; };
 		DBD88A7620C1B21700085AE0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -1310,7 +1320,11 @@
 		DBFB1AD3209C9A8F00E99F9F /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				DBD22D60212CBB040088DE52 /* CLBeaconRegion.swift */,
+				DBD22D5E212CBAC10088DE52 /* CLLocation.swift */,
 				DBFB1AD4209C9AA600E99F9F /* CLLocationManager.swift */,
+				DBD22D5C212CBA9A0088DE52 /* CLVisit.swift */,
+				DBD22D66212CBB5F0088DE52 /* CLCircularRegion.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -1357,6 +1371,7 @@
 				DBFB1B66209CD89400E99F9F /* Color+uiColor.swift */,
 				DBFB1B68209CD8D600E99F9F /* Text+attributedText.swift */,
 				DBFDF48320AC858A0031EF47 /* ImageConfiguration+initWithModel.swift */,
+				4980D66421307738007267D3 /* Barcode+cgImage.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -2261,8 +2276,11 @@
 			files = (
 				DBFB1AD2209C9A7500E99F9F /* LocationManagerService.swift in Sources */,
 				DBFB1AD6209C9ABF00E99F9F /* CLLocationManager.swift in Sources */,
+				DBD22D64212CBB2D0088DE52 /* CLLocation.swift in Sources */,
 				DBFDF43A20AC827F0031EF47 /* RegionStoreService.swift in Sources */,
 				DBFDF43C20AC82CE0031EF47 /* Region.swift in Sources */,
+				DBD22D63212CBB2D0088DE52 /* CLVisit.swift in Sources */,
+				DBD22D65212CBB2D0088DE52 /* CLBeaconRegion.swift in Sources */,
 				DB9DBFDE2055983700E5C77F /* LocationAssembler.swift in Sources */,
 				DBFDF43820AC827F0031EF47 /* FetchRegionsResult.swift in Sources */,
 				DBFDF43920AC827F0031EF47 /* RegionStore.swift in Sources */,
@@ -2368,6 +2386,7 @@
 				DBADA80320A4F37C00225C80 /* Dispatcher.swift in Sources */,
 				DB1D5DC121079ED70071928F /* AttributeKey.swift in Sources */,
 				DBFDF52420AE2B1C0031EF47 /* DateFormatter.swift in Sources */,
+				DBD22D67212CBB5F0088DE52 /* CLCircularRegion.swift in Sources */,
 				DBADA7FD20A4F32500225C80 /* BlockObserver.swift in Sources */,
 				DBF49E00203DE1DE00B54652 /* Resolver.swift in Sources */,
 				DBF49E04203DE1DE00B54652 /* Container.swift in Sources */,
@@ -2411,6 +2430,7 @@
 				DBFDF46B20AC85430031EF47 /* Insets.swift in Sources */,
 				DBFDF47820AC85560031EF47 /* ExperienceViewController.swift in Sources */,
 				DBFDF45A20AC84B30031EF47 /* ExperiencesAssembler.swift in Sources */,
+				4980D66521307738007267D3 /* Barcode+cgImage.swift in Sources */,
 				DBFDF46120AC85430031EF47 /* Background.swift in Sources */,
 				DBFDF46020AC85430031EF47 /* RectangleBlock.swift in Sources */,
 				DBFDF47B20AC855E0031EF47 /* ButtonCell.swift in Sources */,

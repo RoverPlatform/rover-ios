@@ -13,13 +13,11 @@ public struct Barcode: Decodable {
         case pdf417 = "PDF417"
         case code128 = "CODE_128"
     }
-    
-    public var scale: Int
+
     public var text: String
     public var format: Format
     
-    public init(scale: Int, text: String, format: Format) {
-        self.scale = scale
+    public init(text: String, format: Format) {
         self.text = text
         self.format = format
     }

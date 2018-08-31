@@ -66,3 +66,16 @@ public struct Screen: Decodable {
         self.tags = tags
     }
 }
+
+// MARK: AttributeRepresentable
+
+extension Screen: AttributeRepresentable {
+    public var attributeValue: AttributeValue {
+        let attributes: Attributes = [
+            "id": id,
+            "tags": tags
+        ]
+        
+        return .object(attributes)
+    }
+}

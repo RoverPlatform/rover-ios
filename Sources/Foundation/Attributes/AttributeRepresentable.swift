@@ -12,6 +12,14 @@ public protocol AttributeRepresentable {
     var attributeValue: AttributeValue { get }
 }
 
+// MARK: Attributes
+
+extension Attributes: AttributeRepresentable {
+    public var attributeValue: AttributeValue {
+        return .object(self)
+    }
+}
+
 // MARK: AttributeValue
 
 extension AttributeValue: AttributeRepresentable {
@@ -30,8 +38,6 @@ extension Array: AttributeRepresentable where Element: ScalarRepresentable {
 }
 
 // MARK: Dictionary
-
-// TODO: A Swift 4.1 bug prevents dictionary literals from conforming to AttributeRepresentable, however this has been fixed in 4.2 so the following extension is left as-is.
 
 extension Dictionary: AttributeRepresentable where Key == AttributeKey, Value: AttributeRepresentable {
     public var attributeValue: AttributeValue {

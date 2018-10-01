@@ -15,6 +15,7 @@ open class NotificationCenterViewController: UIViewController {
     public let notificationStore: NotificationStore
     public let router: Router
     public let sessionController: SessionController
+    public let syncCoordinator: SyncCoordinator
     public let presentWebsiteActionProvider: (URL) -> Action
     
     public private(set) var navigationBar: UINavigationBar?
@@ -54,13 +55,23 @@ open class NotificationCenterViewController: UIViewController {
         })
     }
     
-    public init(dispatcher: Dispatcher, eventQueue: EventQueue, imageStore: ImageStore, notificationStore: NotificationStore, router: Router, sessionController: SessionController, presentWebsiteActionProvider: @escaping (URL) -> Action) {
+    public init(
+        dispatcher: Dispatcher,
+        eventQueue: EventQueue,
+        imageStore: ImageStore,
+        notificationStore: NotificationStore,
+        router: Router,
+        sessionController: SessionController,
+        syncCoordinator: SyncCoordinator,
+        presentWebsiteActionProvider: @escaping (URL) -> Action) {
+        
         self.dispatcher = dispatcher
         self.eventQueue = eventQueue
         self.imageStore = imageStore
         self.notificationStore = notificationStore
         self.router = router
         self.sessionController = sessionController
+        self.syncCoordinator = syncCoordinator
         self.presentWebsiteActionProvider = presentWebsiteActionProvider
         
         super.init(nibName: nil, bundle: nil)
@@ -99,12 +110,20 @@ open class NotificationCenterViewController: UIViewController {
         tableView.dataSource = self
         
         registerReusableViews()
-        
+
+        #if swift(>=4.2)
+        applicationDidBecomeActiveToken = NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: OperationQueue.main) { [weak self] _ in
+            if self?.viewIfLoaded?.window != nil {
+                self?.resetApplicationIconBadgeNumber()
+            }
+        }
+        #else
         applicationDidBecomeActiveToken = NotificationCenter.default.addObserver(forName: .UIApplicationDidBecomeActive, object: nil, queue: OperationQueue.main) { [weak self] _ in
             if self?.viewIfLoaded?.window != nil {
                 self?.resetApplicationIconBadgeNumber()
             }
         }
+        #endif
     }
     
     /// Reset the application icon badge number to 0 any time the notification center is viewed, regardless of the number of unread messages
@@ -223,10 +242,8 @@ open class NotificationCenterViewController: UIViewController {
     }
     
     @objc func refresh(_ sender: Any) {
-        notificationStore.fetchNotifications { _ in
-            DispatchQueue.main.async {
-                self.refreshControl.endRefreshing()
-            }
+        self.syncCoordinator.sync { _ in
+            self.refreshControl.endRefreshing()
         }
     }
     

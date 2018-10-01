@@ -11,9 +11,15 @@ import UIKit
 open class NotificationCell: UITableViewCell {
     public var notification: Notification?
     
+    #if swift(>=4.2)
+    public override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
+    }
+    #else
     public override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
     }
+    #endif
     
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)

@@ -22,14 +22,17 @@ extension Scalar: Decodable {
         
         if let value = try? container.decode(String.self) {
             self = .string(value)
+            return
         }
         
         if let value = try? container.decode(Double.self) {
             self = .number(value)
+            return
         }
         
         if let value = try? container.decode(Bool.self) {
             self = .boolean(value)
+            return
         }
         
         throw DecodingError.dataCorruptedError(in: container, debugDescription: "Scalar must be a string, number or boolean")

@@ -9,7 +9,7 @@
 import UIKit
 
 open class ButtonCell: BlockCell {
-    open let label = UILabel()
+    public let label = UILabel()
     
     open override var content: UIView? {
         return label

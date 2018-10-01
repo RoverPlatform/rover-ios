@@ -9,7 +9,7 @@
 import UIKit
 
 open class TextCell: BlockCell {
-    open let textView: UITextView = {
+    public let textView: UITextView = {
         let textView = UITextView()
         textView.backgroundColor = UIColor.clear
         textView.isUserInteractionEnabled = false

@@ -7,25 +7,11 @@
 //
 
 public struct FoundationAssembler: Assembler {
-    public var loggerThreshold: LogLevel
-    
-    public init(loggerThreshold: LogLevel = .warn) {
-        self.loggerThreshold = loggerThreshold
-    }
+    public init() { }
 
     public func assemble(container: Container) {
-        
-        // MARK: Dispatcher
-        
         container.register(Dispatcher.self) { resolver in
-            let logger = resolver.resolve(Logger.self)!
-            return DispatcherService(logger: logger)
-        }
-        
-        // MARK: Logger
-        
-        container.register(Logger.self) { _ in
-            return LoggerService(threshold: self.loggerThreshold)
+            return DispatcherService()
         }
     }
 }

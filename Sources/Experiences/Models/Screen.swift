@@ -48,6 +48,7 @@ public struct Screen: Decodable {
     
     public var background: Background
     public var id: ID
+    public var name: String
     public var isStretchyHeaderEnabled: Bool
     public var rows: [Row]
     public var statusBar: StatusBar
@@ -55,9 +56,10 @@ public struct Screen: Decodable {
     public var keys: [String: String]
     public var tags: [String]
     
-    public init(background: Background, id: ID, isStretchyHeaderEnabled: Bool, rows: [Row], statusBar: StatusBar, titleBar: TitleBar, keys: [String: String], tags: [String]) {
+    public init(background: Background, id: ID, name: String, isStretchyHeaderEnabled: Bool, rows: [Row], statusBar: StatusBar, titleBar: TitleBar, keys: [String: String], tags: [String]) {
         self.background = background
         self.id = id
+        self.name = name
         self.isStretchyHeaderEnabled = isStretchyHeaderEnabled
         self.rows = rows
         self.statusBar = statusBar
@@ -71,11 +73,12 @@ public struct Screen: Decodable {
 
 extension Screen: AttributeRepresentable {
     public var attributeValue: AttributeValue {
-        let attributes: Attributes = [
+        let keys = self.keys.reduce(into: Attributes()) { $0[$1.0] = $1.1 }
+        return [
             "id": id,
+            "name": name,
+            "keys": AttributeValue.object(keys),
             "tags": tags
         ]
-        
-        return .object(attributes)
     }
 }

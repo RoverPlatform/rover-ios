@@ -6,44 +6,83 @@
 //  Copyright © 2017 Rover Labs Inc. All rights reserved.
 //
 
+import CoreData
 import CoreLocation
+import os
 
-public struct LocationAssembler: Assembler {
-    let isAutomaticLocationEventTrackingEnabled: Bool
-    let isAutomaticRegionManagementEnabled: Bool
-    let isSignificantLocationMonitoringEnabled: Bool
-    
-    public init(isAutomaticLocationEventTrackingEnabled: Bool = true, isAutomaticRegionManagementEnabled: Bool = true, isSignificantLocationMonitoringEnabled: Bool = true) {
-        self.isAutomaticLocationEventTrackingEnabled = isAutomaticLocationEventTrackingEnabled
-        self.isAutomaticRegionManagementEnabled = isAutomaticRegionManagementEnabled
-        self.isSignificantLocationMonitoringEnabled = isSignificantLocationMonitoringEnabled
+public class LocationAssembler: Assembler {
+    public init() {
+        
     }
     
     public func assemble(container: Container) {
-        container.register(CLLocationManager.self) { _ in CLLocationManager() }
         
-        container.register(ContextProvider.self, name: "location") { _ in LocationContextProvider() }
+        // MARK: Core Data
         
-        container.register(LocationManager.self) { resolver in
-            let eventQueue = resolver.resolve(EventQueue.self)!
-            let locationManager = resolver.resolve(CLLocationManager.self)!
-            let regionStore = resolver.resolve(RegionStore.self)!
-            return LocationManagerService(eventQueue: eventQueue, locationManager: locationManager, regionStore: regionStore)
+        container.register(NSManagedObjectContext.self, name: "location.backgroundContext") { resolver in
+            let container = resolver.resolve(NSPersistentContainer.self, name: "location")!
+            let context = container.newBackgroundContext()
+            context.mergePolicy = NSOverwriteMergePolicy
+            return context
         }
         
-        container.register(RegionStore.self) { resolver in
-            let client = resolver.resolve(GraphQLClient.self)!
-            let logger = resolver.resolve(Logger.self)!
-            let stateFetcher = resolver.resolve(StateFetcher.self)!
-            return RegionStoreService(client: client, logger: logger, stateFetcher: stateFetcher)
+        container.register(NSManagedObjectContext.self, name: "location.viewContext") { resolver in
+            let container = resolver.resolve(NSPersistentContainer.self, name: "location")!
+            return container.viewContext
+        }
+        
+        container.register(NSPersistentContainer.self, name: "location") { resolver in
+            let bundles = [Bundle(for: LocationAssembler.self)]
+            guard let model = NSManagedObjectModel.mergedModel(from: bundles) else {
+                fatalError("Model not found")
+            }
+            
+            let container = NSPersistentContainer(name: "RoverLocation", managedObjectModel: model)
+            container.loadPersistentStores { _, error in
+                guard error == nil else {
+                    fatalError("Failed to load store: \(error!)")
+                }
+            }
+            
+            return container
+        }
+        
+        // MARK: Services
+        
+        container.register(LocationContextProvider.self) { resolver in
+            return resolver.resolve(LocationManager.self)!
+        }
+        
+        container.register(LocationManager.self) { resolver in
+            return LocationManager(
+                context: resolver.resolve(NSManagedObjectContext.self, name: "location.viewContext")!,
+                eventQueue: resolver.resolve(EventQueue.self)!
+            )
+        }
+        
+        container.register(RegionManager.self) { resolver in
+            return resolver.resolve(LocationManager.self)!
+        }
+        
+        container.register(SyncParticipant.self, name: "location.beacons") { resolver in
+            return BeaconsSyncParticipant(
+                context: resolver.resolve(NSManagedObjectContext.self, name: "location.backgroundContext")!,
+                userDefaults: UserDefaults.standard
+            )
+        }
+        
+        container.register(SyncParticipant.self, name: "location.geofences") { resolver in
+            return GeofencesSyncParticipant(
+                context: resolver.resolve(NSManagedObjectContext.self, name: "location.backgroundContext")!,
+                userDefaults: UserDefaults.standard
+            )
         }
     }
     
     public func containerDidAssemble(resolver: Resolver) {
-        var locationManager = resolver.resolve(LocationManager.self)!
-        locationManager.isAutomaticLocationEventTrackingEnabled = isAutomaticLocationEventTrackingEnabled
-        locationManager.isAutomaticRegionManagementEnabled = isAutomaticRegionManagementEnabled
-        locationManager.isSignificantLocationMonitoringEnabled = isSignificantLocationMonitoringEnabled
+        resolver.resolve(SyncCoordinator.self)!.participants.append(contentsOf: [
+            resolver.resolve(SyncParticipant.self, name: "location.beacons")!,
+            resolver.resolve(SyncParticipant.self, name: "location.geofences")!
+        ])
     }
 }
-

@@ -31,6 +31,19 @@ class SessionControllerService: SessionController {
         self.eventQueue = eventQueue
         self.keepAliveTime = keepAliveTime
         
+        #if swift(>=4.2)
+        applicationDidBecomeActiveToken = NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: OperationQueue.main) { [weak self] _ in
+            self?.sessions.forEach {
+                $0.value.session.start()
+            }
+        }
+        
+        applicationWillResignActiveToken = NotificationCenter.default.addObserver(forName: UIApplication.willResignActiveNotification, object: nil, queue: OperationQueue.main) { [weak self] _ in
+            self?.sessions.forEach {
+                $0.value.session.end()
+            }
+        }
+        #else
         applicationDidBecomeActiveToken = NotificationCenter.default.addObserver(forName: .UIApplicationDidBecomeActive, object: nil, queue: OperationQueue.main) { [weak self] _ in
             self?.sessions.forEach {
                 $0.value.session.start()
@@ -42,6 +55,7 @@ class SessionControllerService: SessionController {
                 $0.value.session.end()
             }
         }
+        #endif
     }
     
     deinit {

@@ -31,9 +31,6 @@ class NotificationHandlerService: NotificationHandler {
             return nil
         }
         
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .formatted(DateFormatter.rfc3339)
-        
         struct Payload: Decodable {
             struct Rover: Decodable {
                 var notification: Notification
@@ -43,7 +40,7 @@ class NotificationHandlerService: NotificationHandler {
         }
         
         do {
-            let payload = try decoder.decode(Payload.self, from: data)
+            let payload = try JSONDecoder.default.decode(Payload.self, from: data)
             return actionProvider(payload.rover.notification)
         } catch {
             return nil

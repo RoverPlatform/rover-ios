@@ -7,27 +7,24 @@
 //
 
 import Foundation
+import os.log
 
 class VersionTrackerService: VersionTracker {
     let bundle: Bundle
     let eventQueue: EventQueue
-    let logger: Logger
     let userDefaults: UserDefaults
     
-    init(bundle: Bundle, eventQueue: EventQueue, logger: Logger, userDefaults: UserDefaults) {
+    init(bundle: Bundle, eventQueue: EventQueue, userDefaults: UserDefaults) {
         self.bundle = bundle
         self.eventQueue = eventQueue
-        self.logger = logger
         self.userDefaults = userDefaults
     }
     
     func checkAppVersion() {
         guard let info = bundle.infoDictionary else {
-            logger.error("Failed to check app version – missing bundle info")
+            os_log("Failed to check app version – missing bundle info", log: .general, type: .error)
             return
         }
-        
-        logger.debug("Checking app version")
         
         let currentVersion = info["CFBundleShortVersionString"] as? String
         let currentBuild = info["CFBundleVersion"] as? String
@@ -45,22 +42,22 @@ class VersionTrackerService: VersionTracker {
         }
         
         let currentVersionString = versionString(currentVersion, currentBuild)
-        logger.debug("Current version: \(currentVersionString)")
+        os_log("Current version: %@", log: .general, type: .debug, currentVersionString)
         
         let previousVersion = userDefaults.string(forKey: "io.rover.appVersion")
         let previousBuild = userDefaults.string(forKey: "io.rover.appBuild")
         
         let previousVersionString = versionString(previousVersion, previousBuild)
-        logger.debug("Previous version: \(previousVersionString)")
+        os_log("Previous version: %@", log: .general, type: .debug, previousVersionString)
         
         if previousVersion == nil || previousBuild == nil {
-            logger.debug("Previous version not found – first time running app with Rover")
+            os_log("Previous version not found – first time running app with Rover", log: .general, type: .debug)
             trackAppInstalled()
         } else if currentVersion != previousVersion || currentBuild != previousBuild {
-            logger.debug("Current and previous versions do not match – app has been updated")
+            os_log("Current and previous versions do not match – app has been updated", log: .general, type: .debug)
             trackAppUpdated(fromVersion: previousVersion, build: previousBuild)
         } else {
-            logger.debug("Current and previous versions match – nothing to track")
+            os_log("Current and previous versions match – nothing to track", log: .general, type: .debug)
         }
         
         userDefaults.set(currentVersion, forKey: "io.rover.appVersion")

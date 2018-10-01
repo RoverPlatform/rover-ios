@@ -11,6 +11,7 @@ public struct BarcodeBlock: Block {
     public var barcode: Barcode
     public var border: Border
     public var id: ID
+    public var name: String
     public var insets: Insets
     public var opacity: Double
     public var position: Position
@@ -18,11 +19,12 @@ public struct BarcodeBlock: Block {
     public var keys: [String: String]
     public var tags: [String]
     
-    public init(background: Background, barcode: Barcode, border: Border, id: ID, insets: Insets, opacity: Double, position: Position, tapBehavior: BlockTapBehavior, keys: [String: String], tags: [String]) {
+    public init(background: Background, barcode: Barcode, border: Border, id: ID, name: String, insets: Insets, opacity: Double, position: Position, tapBehavior: BlockTapBehavior, keys: [String: String], tags: [String]) {
         self.background = background
         self.barcode = barcode
         self.border = border
         self.id = id
+        self.name = name
         self.insets = insets
         self.opacity = opacity
         self.position = position

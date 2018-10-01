@@ -23,14 +23,17 @@ extension AttributeValue: Decodable {
 
         if let value = try? container.decode(Scalar.self) {
             self = .scalar(value)
+            return
         }
 
         if let value = try? container.decode([Scalar].self) {
             self = .array(value)
+            return
         }
 
         if let value = try? container.decode(Attributes.self) {
             self = .object(value)
+            return
         }
 
         self = .null

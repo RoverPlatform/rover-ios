@@ -35,6 +35,34 @@ extension Int: ScalarRepresentable {
     }
 }
 
+extension Int8: ScalarRepresentable {
+    public var scalarValue: Scalar {
+        let value = Double(self)
+        return .number(value)
+    }
+}
+
+extension Int16: ScalarRepresentable {
+    public var scalarValue: Scalar {
+        let value = Double(self)
+        return .number(value)
+    }
+}
+
+extension Int32: ScalarRepresentable {
+    public var scalarValue: Scalar {
+        let value = Double(self)
+        return .number(value)
+    }
+}
+
+extension Int64: ScalarRepresentable {
+    public var scalarValue: Scalar {
+        let value = Double(self)
+        return .number(value)
+    }
+}
+
 // MARK: Double
 
 extension Double: ScalarRepresentable {

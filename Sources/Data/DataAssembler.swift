@@ -17,9 +17,8 @@ public struct DataAssembler: Assembler {
     public var maxEventBatchSize: Int
     public var maxEventQueueSize: Int
     
-    public var isAutoFetchEnabled: Bool
-    
-    public init(accountToken: String, endpoint: URL = URL(string: "https://api.rover.io/graphql")!, flushEventsAt: Int = 20, flushEventsInterval: Double = 30.0, maxEventBatchSize: Int = 100, maxEventQueueSize: Int = 1000, isAutoFetchEnabled: Bool = true) {
+    public init(accountToken: String, endpoint: URL = URL(string: "https://api.rover.io/graphql")!, flushEventsAt: Int = 20, flushEventsInterval: Double = 30.0, maxEventBatchSize: Int = 100, maxEventQueueSize: Int = 1000) {
+        
         self.accountToken = accountToken
         self.endpoint = endpoint
         
@@ -27,155 +26,135 @@ public struct DataAssembler: Assembler {
         self.flushEventsInterval = flushEventsInterval
         self.maxEventBatchSize = maxEventBatchSize
         self.maxEventQueueSize = maxEventQueueSize
-        
-        self.isAutoFetchEnabled = isAutoFetchEnabled
     }
     
     public func assemble(container: Container) {
         
-        // MARK: GraphQLClient
+        // MARK: ContextManager
         
-        container.register(GraphQLClient.self) { [accountToken, endpoint] resolver in
-            let session = URLSession(configuration: URLSessionConfiguration.default)
-            return GraphQLClientService(accountToken: accountToken, endpoint: endpoint, session: session)
+        container.register(ContextManager.self) { resolver in
+            return ContextManager()
         }
         
-        // MARK: ContextProvider (app)
+        // MARK: ContextProvider
         
-        container.register(ContextProvider.self, name: "app") { resolver in
-            let logger = resolver.resolve(Logger.self)!
-            return AppContextProvider(bundle: Bundle.main, logger: logger)
+        container.register(ContextProvider.self) { resolver in
+            return ModularContextProvider(
+                bluetoothContextProvider: resolver.resolve(BluetoothContextProvider.self),
+                debugContextProvider: resolver.resolve(DebugContextProvider.self),
+                locationContextProvider: resolver.resolve(LocationContextProvider.self),
+                localeContextProvider: resolver.resolve(LocaleContextProvider.self),
+                notificationsContextProvider: resolver.resolve(NotificationsContextProvider.self),
+                pushTokenContextProvider: resolver.resolve(PushTokenContextProvider.self),
+                reachabilityContextProvider: resolver.resolve(ReachabilityContextProvider.self),
+                staticContextProvider: resolver.resolve(StaticContextProvider.self)!,
+                telephonyContextProvider: resolver.resolve(TelephonyContextProvider.self),
+                timeZoneContextProvider: resolver.resolve(TimeZoneContextProvider.self),
+                userInfoContextProvider: resolver.resolve(UserInfoContextProvider.self)
+            )
         }
         
-        // MARK: ContextProvider (userInfo)
+        // MARK: EventsClient
         
-        container.register(ContextProvider.self, name: "userInfo") { resolver in
-            let userInfo = resolver.resolve(UserInfo.self)!
-            return UserInfoContextProvider(userInfo: userInfo)
-        }
-        
-        // MARK: ContextProvider (device)
-        
-        container.register(ContextProvider.self, name: "device") { resolver in
-            let logger = resolver.resolve(Logger.self)!
-            return DeviceContextProvider(device: UIDevice.current, logger: logger)
-        }
-        
-        // MARK: ContextProvider (locale)
-        
-        container.register(ContextProvider.self, name: "locale") { resolver in
-            let logger = resolver.resolve(Logger.self)!
-            return LocaleContextProvider(locale: Locale.current, logger: logger)
-        }
-        
-        // MARK: ContextProvider (pushEnvironment)
-        
-        container.register(ContextProvider.self, name: "pushEnvironment") { resolver in
-            let logger = resolver.resolve(Logger.self)!
-            return PushEnvironmentContextProvider(bundle: Bundle.main, logger: logger)
-        }
-        
-        // MARK: ContextProvider (pushToken)
-        
-        container.register(ContextProvider.self, name: "pushToken") { resolver in
-            let tokenManager = resolver.resolve(TokenManager.self)!
-            return PushTokenContextProvider(tokenManager: tokenManager)
-        }
-        
-        // MARK: ContextProvider (reachability)
-        
-        container.register(ContextProvider.self, name: "reachability") { resolver in
-            let logger = resolver.resolve(Logger.self)!
-            return ReachabilityContextProvider(logger: logger)
-        }
-        
-        // MARK: ContextProvider (screen)
-        
-        container.register(ContextProvider.self, name: "screen") { resolver in
-            return ScreenContextProvider(screen: UIScreen.main)
-        }
-        
-        // MARK: ContextProvider (sdk)
-        
-        container.register(ContextProvider.self, name: "sdk") { resolver in
-            let logger = resolver.resolve(Logger.self)!
-            return SDKContextProvider(logger: logger)
-        }
-        
-        // MARK: ContextProvider (timeZone)
-        
-        container.register(ContextProvider.self, name: "timeZone") { resolver in
-            let timeZone = NSTimeZone.local as NSTimeZone
-            return TimeZoneContextProvider(timeZone: timeZone)
-        }
-        
-        // MARK: UserInfo
-        
-        container.register(UserInfo.self) { resolver in
-            let eventQueue = resolver.resolve(EventQueue.self)!
-            let logger = resolver.resolve(Logger.self)!
-            return UserInfoService(eventQueue: eventQueue, logger: logger, userDefaults: UserDefaults.standard)
+        container.register(EventsClient.self) { resolver in
+            return resolver.resolve(HTTPClient.self)!
         }
         
         // MARK: EventQueue
         
         container.register(EventQueue.self) { [flushEventsAt, flushEventsInterval, maxEventBatchSize, maxEventQueueSize] resolver in
-            return EventQueueService(
-                client: resolver.resolve(GraphQLClient.self)!,
+            return EventQueue(
+                client: resolver.resolve(EventsClient.self)!,
                 flushAt: flushEventsAt,
                 flushInterval: flushEventsInterval,
-                logger: resolver.resolve(Logger.self)!,
                 maxBatchSize: maxEventBatchSize,
                 maxQueueSize: maxEventQueueSize
             )
         }
         
-        // MARK: StateFetcher
+        // MARK: HTTPClient
         
-        container.register(StateFetcher.self) { resolver in
-            let client = resolver.resolve(GraphQLClient.self)!
-            let logger = resolver.resolve(Logger.self)!
-            return StateFetcherService(client: client, logger: logger)
+        container.register(HTTPClient.self) { [accountToken, endpoint] _ in
+            return HTTPClient(
+                accountToken: accountToken,
+                endpoint: endpoint,
+                session: URLSession(configuration: URLSessionConfiguration.default)
+            )
+        }
+        
+        // MARK: LocaleContextProvider
+        
+        container.register(LocaleContextProvider.self) { resolver in
+            return resolver.resolve(ContextManager.self)!
+        }
+        
+        // MARK: PushTokenContextProvider
+        
+        container.register(PushTokenContextProvider.self) { resolver in
+            return resolver.resolve(ContextManager.self)!
+        }
+        
+        // MARK: ReachabilityContextProvider
+        
+        container.register(ReachabilityContextProvider.self) { resolver in
+            return resolver.resolve(ContextManager.self)!
+        }
+        
+        // MARK: StaticContextProvider
+        
+        container.register(StaticContextProvider.self) { resolver in
+            return resolver.resolve(ContextManager.self)!
+        }
+        
+        // MARK: SyncClient
+        
+        container.register(SyncClient.self) {  resolver in
+            return resolver.resolve(HTTPClient.self)!
+        }
+        
+        // MARK: SyncCoordinator
+        
+        container.register(SyncCoordinator.self) { resolver in
+            let client = resolver.resolve(SyncClient.self)!
+            return SyncCoordinatorService(client: client)
+        }
+        
+        // MARK: TimeZoneContextProvider
+        
+        container.register(TimeZoneContextProvider.self) { resolver in
+            return resolver.resolve(ContextManager.self)!
         }
         
         // MARK: TokenManager
         
         container.register(TokenManager.self) { resolver in
-            return TokenManagerService(
-                eventQueue: resolver.resolve(EventQueue.self)!,
-                logger: resolver.resolve(Logger.self)!,
-                userDefaults: UserDefaults.standard
-            )
+            return resolver.resolve(ContextManager.self)!
+        }
+        
+        // MARK: URLSession
+        
+        container.register(URLSession.self) { _ in
+            return URLSession(configuration: URLSessionConfiguration.default)
+        }
+        
+        // MARK: UserInfoManager
+        
+        container.register(UserInfoManager.self) { resolver in
+            return resolver.resolve(ContextManager.self)!
+        }
+        
+        // MARK: UserInfoContextProvider
+        
+        container.register(UserInfoContextProvider.self) { resolver in
+            return resolver.resolve(ContextManager.self)!
         }
     }
     
     public func containerDidAssemble(resolver: Resolver) {
-        let userInfo = resolver.resolve(UserInfo.self)!
-        userInfo.restore()
-        
         let eventQueue = resolver.resolve(EventQueue.self)!
-        let contextProviders = [
-            resolver.resolve(ContextProvider.self, name: "app"),
-            resolver.resolve(ContextProvider.self, name: "bluetooth"),
-            resolver.resolve(ContextProvider.self, name: "debug"),
-            resolver.resolve(ContextProvider.self, name: "device"),
-            resolver.resolve(ContextProvider.self, name: "locale"),
-            resolver.resolve(ContextProvider.self, name: "location"),
-            resolver.resolve(ContextProvider.self, name: "notificationAuthorization"),
-            resolver.resolve(ContextProvider.self, name: "pushEnvironment"),
-            resolver.resolve(ContextProvider.self, name: "pushToken"),
-            resolver.resolve(ContextProvider.self, name: "reachability"),
-            resolver.resolve(ContextProvider.self, name: "screen"),
-            resolver.resolve(ContextProvider.self, name: "sdk"),
-            resolver.resolve(ContextProvider.self, name: "telephony"),
-            resolver.resolve(ContextProvider.self, name: "timeZone"),
-            resolver.resolve(ContextProvider.self, name: "userInfo")
-            ].compactMap { $0 }
-        
-        eventQueue.addContextProviders(contextProviders)
         eventQueue.restore()
         
-        var stateFetcher = resolver.resolve(StateFetcher.self)!
-        stateFetcher.isAutoFetchEnabled = isAutoFetchEnabled
+        // Set the eventQueue on the LocationManager after assembly to avoid circular dependency
+        eventQueue.contextProvider = resolver.resolve(ContextProvider.self)!
     }
 }

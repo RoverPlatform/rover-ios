@@ -15,8 +15,13 @@ public protocol NotificationStore {
     func removeObserver(_ token: NSObjectProtocol)
     
     func restore()
-    func fetchNotifications(completionHandler: ((FetchNotificationsResult) -> Void)?)
-    func addNotification(_ notification: Notification)
+    func addNotifications(_ notifications: [Notification])
     func markNotificationDeleted(_ notificationID: ID)
     func markNotificationRead(_ notificationID: ID)
+}
+
+extension NotificationStore {
+    public func addNotification(_ notification: Notification) {
+        addNotifications([notification])
+    }
 }

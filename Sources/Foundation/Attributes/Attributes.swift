@@ -89,6 +89,24 @@ extension Attributes: Collection {
         }
     }
     
+    public subscript(string: String) -> AttributeRepresentable? {
+        get {
+            guard let key = AttributeKey(rawValue: string) else {
+                fatalError("Invalid attribute key: \(string)")
+            }
+            
+            return rawValue[key]
+        }
+        
+        set {
+            guard let key = AttributeKey(rawValue: string) else {
+                fatalError("Invalid attribute key: \(string)")
+            }
+            
+            rawValue[key] = newValue?.attributeValue
+        }
+    }
+    
     public func index(after i: Index) -> Index {
         return rawValue.index(after: i)
     }

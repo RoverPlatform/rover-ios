@@ -9,7 +9,7 @@
 import UIKit
 
 open class ImageCell: BlockCell {
-    open let imageView: UIImageView = {
+    public let imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleToFill
         return imageView

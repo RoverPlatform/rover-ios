@@ -28,9 +28,14 @@ public struct ExperiencesAssembler: Assembler {
         // MARK: ExperienceStore
         
         container.register(ExperienceStore.self) { resolver in
-            let client = resolver.resolve(GraphQLClient.self)!
-            let logger = resolver.resolve(Logger.self)!
-            return ExperienceStoreService(client: client, logger: logger)
+            let client = resolver.resolve(FetchExperienceClient.self)!
+            return ExperienceStoreService(client: client)
+        }
+        
+        // MARK: FetchExperienceClient
+        
+        container.register(FetchExperienceClient.self) { resolver in
+            return resolver.resolve(HTTPClient.self)!
         }
         
         // MARK: RouteHandler (experience)

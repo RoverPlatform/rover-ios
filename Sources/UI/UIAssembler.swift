@@ -40,8 +40,10 @@ extension UIAssembler: Assembler {
         // MARK: Action (presentView)
         
         container.register(Action.self, name: "presentView", scope: .transient) { (resolver, viewControllerToPresent: UIViewController) in
-            let logger = resolver.resolve(Logger.self)!
-            return PresentViewAction(viewControllerToPresent: viewControllerToPresent, animated: true, logger: logger)
+            return PresentViewAction(
+                viewControllerToPresent: viewControllerToPresent,
+                animated: true
+            )
         }
         
         // MARK: Action (presentWebsite)
@@ -54,9 +56,8 @@ extension UIAssembler: Assembler {
         // MARK: ImageStore
         
         container.register(ImageStore.self) { resolver in
-            let logger: Logger = resolver.resolve(Logger.self)!
             let session = URLSession(configuration: URLSessionConfiguration.ephemeral)
-            return ImageStoreService(logger: logger, session: session)
+            return ImageStoreService(session: session)
         }
         
         // MARK: LifeCycleTracker
@@ -90,9 +91,11 @@ extension UIAssembler: Assembler {
         // MARK: VersionTracker
         
         container.register(VersionTracker.self) { resolver in
-            let eventQueue = resolver.resolve(EventQueue.self)!
-            let logger = resolver.resolve(Logger.self)!
-            return VersionTrackerService(bundle: Bundle.main, eventQueue: eventQueue, logger: logger, userDefaults: UserDefaults.standard)
+            return VersionTrackerService(
+                bundle: Bundle.main,
+                eventQueue: resolver.resolve(EventQueue.self)!,
+                userDefaults: UserDefaults.standard
+            )
         }
     }
     

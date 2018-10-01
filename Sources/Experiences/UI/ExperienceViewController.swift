@@ -60,7 +60,13 @@ open class ExperienceViewController: UINavigationController {
         sessionController.unregisterSession(identifier: sessionIdentifier)
     }
     
-    override open var childViewControllerForStatusBarStyle: UIViewController? {
+    #if swift(>=4.2)
+    open override var childForStatusBarStyle: UIViewController? {
         return self.topViewController
     }
+    #else
+    open override var childViewControllerForStatusBarStyle: UIViewController? {
+        return self.topViewController
+    }
+    #endif
 }

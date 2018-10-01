@@ -9,7 +9,7 @@
 import WebKit
 
 open class WebViewCell: BlockCell {
-    open let webView = WKWebView()
+    public let webView = WKWebView()
     
     open override var content: UIView? {
         return webView

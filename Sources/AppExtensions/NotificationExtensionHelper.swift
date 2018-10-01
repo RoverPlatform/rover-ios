@@ -44,10 +44,7 @@ public class NotificationExtensionHelper {
             var rover: Rover
         }
         
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .formatted(DateFormatter.rfc3339)
-        
-        guard let payload = try? decoder.decode(Payload.self, from: data) else {
+        guard let payload = try? JSONDecoder.default.decode(Payload.self, from: data) else {
             
             // This is not a Rover notification – clear the last received notification so we're not taking credit for an influenced open.
             clearLastReceivedNotification()

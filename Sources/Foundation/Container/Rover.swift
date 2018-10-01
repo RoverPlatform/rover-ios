@@ -6,6 +6,9 @@
 //  Copyright © 2017 Rover Labs Inc. All rights reserved.
 //
 
+import Foundation
+import os.log
+
 public class Rover {
     static var sharedInstance: Rover?
     
@@ -14,10 +17,8 @@ public class Rover {
     }
     
     public static func initialize(assemblers: [Assembler]) {
-        if let sharedInstance = sharedInstance {
-            if let logger = sharedInstance.resolve(Logger.self) {
-                logger.warn("Rover already initialized")
-            }
+        guard sharedInstance == nil else {
+            os_log("Rover already initialized", log: .general, type: .default)
             return
         }
         
@@ -26,8 +27,8 @@ public class Rover {
         assemblers.forEach { $0.assemble(container: rover) }
         assemblers.forEach { $0.containerDidAssemble(resolver: rover) }
         
-        if let logger = rover.resolve(Logger.self) {
-            logger.warnUnlessMainThread("Rover must be initialized on the main thread")
+        if !Thread.isMainThread {
+            os_log("Rover must be initialized on the main thread", log: .general, type: .default)
         }
         
         sharedInstance = rover

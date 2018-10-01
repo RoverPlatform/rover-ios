@@ -41,19 +41,27 @@ public struct NotificationsAssembler: Assembler {
             return resolver.resolve(Action.self, name: "presentView", arguments: viewControllerToPresent)!
         }
         
-        // MARK: ContextProvider (notificationAuthorization)
-        
-        container.register(ContextProvider.self, name: "notificationAuthorization") { resolver in
-            return NotificationAuthorizationContextProvider(userNotificationCenter: UNUserNotificationCenter.current())
-        }
-        
         // MARK: InfluenceTracker
         
         container.register(InfluenceTracker.self) { resolver in
-            let eventQueue = resolver.resolve(EventQueue.self)
-            let logger = resolver.resolve(Logger.self)!
-            let userDefaults = UserDefaults(suiteName: self.appGroup)!
-            return InfluenceTrackerService(influenceTime: self.influenceTime, eventQueue: eventQueue, logger: logger, notificationCenter: NotificationCenter.default, userDefaults: userDefaults)
+            return InfluenceTrackerService(
+                influenceTime: self.influenceTime,
+                eventQueue: resolver.resolve(EventQueue.self),
+                notificationCenter: NotificationCenter.default,
+                userDefaults: UserDefaults(suiteName: self.appGroup)!
+            )
+        }
+        
+        // MARK: NotificationAuthorizationManager
+        
+        container.register(NotificationAuthorizationManager.self) { resolver in
+            return NotificationAuthorizationManager()
+        }
+        
+        // MARK: NotificationContextProvider
+        
+        container.register(NotificationsContextProvider.self) { resolver in
+            return resolver.resolve(NotificationAuthorizationManager.self)!
         }
         
         // MARK: NotificationHandler
@@ -68,11 +76,10 @@ public struct NotificationsAssembler: Assembler {
         // MARK: NotificationStore
         
         container.register(NotificationStore.self) { [maxNotifications] resolver in
-            let client = resolver.resolve(GraphQLClient.self)!
-            let eventQueue = resolver.resolve(EventQueue.self)
-            let logger = resolver.resolve(Logger.self)!
-            let stateFetcher = resolver.resolve(StateFetcher.self)!
-            return NotificationStoreService(maxSize: maxNotifications, client: client, eventQueue: eventQueue, logger: logger, stateFetcher: stateFetcher)
+            return NotificationStoreService(
+                maxSize: maxNotifications,
+                eventQueue: resolver.resolve(EventQueue.self)
+            )
         }
         
         // MARK: RouteHandler (notificationCenter)
@@ -83,18 +90,29 @@ public struct NotificationsAssembler: Assembler {
             })
         }
         
+        // MARK: SyncParticipant (notifications)
+        
+        container.register(SyncParticipant.self, name: "notifications") { resolver in
+            return NotificationsSyncParticipant(
+                store: resolver.resolve(NotificationStore.self)!
+            )
+        }
+        
         // MARK: UIViewController (notificationCenter)
         
         container.register(UIViewController.self, name: "notificationCenter") { resolver in
-            let dispatcher = resolver.resolve(Dispatcher.self)!
-            let eventQueue = resolver.resolve(EventQueue.self)!
-            let imageStore = resolver.resolve(ImageStore.self)!
-            let notificationStore = resolver.resolve(NotificationStore.self)!
-            let router = resolver.resolve(Router.self)!
-            let sessionController = resolver.resolve(SessionController.self)!
-            return NotificationCenterViewController(dispatcher: dispatcher, eventQueue: eventQueue, imageStore: imageStore, notificationStore: notificationStore, router: router, sessionController: sessionController, presentWebsiteActionProvider: { url in
-                return resolver.resolve(Action.self, name: "presentWebsite", arguments: url)!
-            })
+            return NotificationCenterViewController(
+                dispatcher: resolver.resolve(Dispatcher.self)!,
+                eventQueue: resolver.resolve(EventQueue.self)!,
+                imageStore: resolver.resolve(ImageStore.self)!,
+                notificationStore: resolver.resolve(NotificationStore.self)!,
+                router: resolver.resolve(Router.self)!,
+                sessionController: resolver.resolve(SessionController.self)!,
+                syncCoordinator: resolver.resolve(SyncCoordinator.self)!,
+                presentWebsiteActionProvider: { url in
+                    return resolver.resolve(Action.self, name: "presentWebsite", arguments: url)!
+                }
+            )
         }
     }
     
@@ -111,5 +129,8 @@ public struct NotificationsAssembler: Assembler {
         
         let store = resolver.resolve(NotificationStore.self)!
         store.restore()
+        
+        let syncParticipant = resolver.resolve(SyncParticipant.self, name: "notifications")!
+        resolver.resolve(SyncCoordinator.self)!.participants.append(syncParticipant)
     }
 }

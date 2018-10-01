@@ -296,7 +296,7 @@ class ScreenViewLayout: UICollectionViewLayout {
             return rowAttributes + blockAttributes
         }
         
-        var deltaY = fabs(offset)
+        var deltaY = abs(offset)
         
         // the UICollectionViewLayout may not query our shouldInvalidateLayout implementation when very
         // nearly near the top of overscroll (particularly, within one logical pixel), so pin it to zero if so.

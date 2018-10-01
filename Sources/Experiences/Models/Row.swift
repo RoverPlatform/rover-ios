@@ -11,14 +11,16 @@ public struct Row {
     public var blocks: [Block]
     public var height: Height
     public var id: ID
+    public var name: String
     public var keys: [String: String]
     public var tags: [String]
     
-    public init(background: Background, blocks: [Block], height: Height, id: ID, keys: [String: String], tags: [String]) {
+    public init(background: Background, blocks: [Block], height: Height, id: ID, name: String, keys: [String: String], tags: [String]) {
         self.background = background
         self.blocks = blocks
         self.height = height
         self.id = id
+        self.name = name
         self.keys = keys
         self.tags = tags
     }
@@ -32,6 +34,7 @@ extension Row: Decodable {
         case blocks
         case height
         case id
+        case name
         case keys
         case tags
     }
@@ -75,6 +78,7 @@ extension Row: Decodable {
         background = try container.decode(Background.self, forKey: .background)
         height = try container.decode(Height.self, forKey: .height)
         id = try container.decode(ID.self, forKey: .id)
+        name = try container.decode(String.self, forKey: .name)
         keys = try container.decode([String: String].self, forKey: .keys)
         tags = try container.decode([String].self, forKey: .tags)
         
@@ -100,5 +104,17 @@ extension Row: Decodable {
             }
             blocks.append(block)
         }
+    }
+}
+
+extension Row: AttributeRepresentable {
+    public var attributeValue: AttributeValue {
+        let keys = self.keys.reduce(into: Attributes()) { $0[$1.0] = $1.1 }
+        return [
+            "id": id,
+            "name": name,
+            "keys": AttributeValue.object(keys),
+            "tags": tags
+        ]
     }
 }

@@ -6,17 +6,15 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
+import os.log
 import UIKit
 
 open class PresentViewAction: Action {
-    public let logger: Logger
-    
     public var viewControllerToPresent: UIViewController
     public var animated: Bool
     
-    public init(viewControllerToPresent: UIViewController, animated: Bool, logger: Logger) {
+    public init(viewControllerToPresent: UIViewController, animated: Bool) {
         self.animated = animated
-        self.logger = logger
         self.viewControllerToPresent = viewControllerToPresent
         super.init()
         name = "Present View"
@@ -24,17 +22,16 @@ open class PresentViewAction: Action {
     
     override open func execute() {
         DispatchQueue.main.async { [weak self] in
-            guard let operation = self else {
+            guard let _self = self else {
                 return
             }
             
-            let logger = operation.logger
-            let viewControllerToPresent = operation.viewControllerToPresent
+            let viewControllerToPresent = _self.viewControllerToPresent
             
             // Check if `viewControllerToPresent` is already presented
             
             if viewControllerToPresent.isBeingPresented || viewControllerToPresent.presentingViewController != nil {
-                operation.finish()
+                _self.finish()
                 return
             }
             
@@ -42,15 +39,17 @@ open class PresentViewAction: Action {
             
             if let tabBarController = viewControllerToPresent.tabBarController {
                 tabBarController.selectedViewController = viewControllerToPresent
-                operation.finish()
+                _self.finish()
                 return
             }
             
             // Presenting `viewControllerToPresent` inside a container other than `UITabBarController` is not supported at this time
             
+            
+            
             if viewControllerToPresent.parent != nil {
-                logger.warn("Failed to present viewControllerToPresent - already presented in an unsupported container")
-                operation.finish()
+                os_log("Failed to present viewControllerToPresent - already presented in an unsupported container", log: .dispatching, type: .default)
+                _self.finish()
                 return
             }
             
@@ -59,8 +58,8 @@ open class PresentViewAction: Action {
             // Find the currently visible view controller and use it as the presenter
             
             guard let rootViewController = UIApplication.shared.keyWindow?.rootViewController else {
-                logger.error("Failed to present viewControllerToPresent - rootViewController not found")
-                operation.finish()
+                os_log("Failed to present viewControllerToPresent - rootViewController not found", log: .dispatching, type: .error)
+                _self.finish()
                 return
             }
             
@@ -82,13 +81,13 @@ open class PresentViewAction: Action {
             }
             
             guard let visibleViewController = findVisibleViewController(rootViewController) else {
-                logger.error("Failed to present `viewControllerToPresent` - visible view controller not found")
-                operation.finish()
+                os_log("Failed to present `viewControllerToPresent` - visible view controller not found", log: .dispatching, type: .error)
+                _self.finish()
                 return
             }
             
-            visibleViewController.present(viewControllerToPresent, animated: operation.animated) {
-                operation.finish()
+            visibleViewController.present(viewControllerToPresent, animated: _self.animated) {
+                _self.finish()
             }
         }
     }

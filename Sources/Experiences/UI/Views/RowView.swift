@@ -9,7 +9,7 @@
 import UIKit
 
 open class RowView: UICollectionReusableView {
-    open let backgroundImageView = UIImageView()
+    public let backgroundImageView = UIImageView()
     
     public var row: Row?
     

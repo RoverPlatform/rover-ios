@@ -6,29 +6,33 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 class InfluenceTrackerService: InfluenceTracker {
     let influenceTime: Int
     let eventQueue: EventQueue?
-    let logger: Logger
     let notificationCenter: NotificationCenter
     let userDefaults: UserDefaults
     
     var didBecomeActiveObserver: NSObjectProtocol?
     
-    init(influenceTime: Int, eventQueue: EventQueue?, logger: Logger, notificationCenter: NotificationCenter, userDefaults: UserDefaults) {
+    init(influenceTime: Int, eventQueue: EventQueue?, notificationCenter: NotificationCenter, userDefaults: UserDefaults) {
         self.influenceTime = influenceTime
         self.eventQueue = eventQueue
-        self.logger = logger
         self.notificationCenter = notificationCenter
         self.userDefaults = userDefaults
     }
     
     func startMonitoring() {
+        #if swift(>=4.2)
+        didBecomeActiveObserver = notificationCenter.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: nil) { _ in
+            self.trackInfluencedOpen()
+        }
+        #else
         didBecomeActiveObserver = notificationCenter.addObserver(forName: .UIApplicationDidBecomeActive, object: nil, queue: nil) { _ in
             self.trackInfluencedOpen()
         }
+        #endif
     }
     
     func stopMonitoring() {

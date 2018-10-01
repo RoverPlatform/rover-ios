@@ -6,10 +6,10 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
+import os.log
 import UIKit
 
 class ImageStoreService: ImageStore {
-    let logger: Logger
     let session: URLSession
     
     var tasks = [ImageConfiguration: URLSessionTask]()
@@ -38,13 +38,14 @@ class ImageStoreService: ImageStore {
     
     var cache = NSCache<CacheKey, UIImage>()
     
-    init(logger: Logger, session: URLSession) {
+    init(session: URLSession) {
         self.session = session
-        self.logger = logger
     }
     
     func fetchImage(for configuration: ImageConfiguration, completionHandler: ((UIImage?) -> Void)?) {
-        logger.warnUnlessMainThread("ImageStoreService is not thread-safe – fetchImage only be called from main thread.")
+        if !Thread.isMainThread {
+            os_log("ImageStoreService is not thread-safe – fetchImage only be called from main thread", log: .general, type: .default)
+        }
         
         if let newHandler = completionHandler {
             let existingHandlers = self.completionHandlers[configuration, default: []]

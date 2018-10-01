@@ -18,17 +18,14 @@ public struct DebugAssembler: Assembler {
         container.register(Action.self, name: "settings", scope: .transient) { resolver in
             return PresentViewAction(
                 viewControllerToPresent: resolver.resolve(UIViewController.self, name: "settings")!,
-                animated: true,
-                logger: resolver.resolve(Logger.self)!
+                animated: true
             )
         }
         
-        // MARK: ContextProvider (debug)
+        // MARK: DebugContextProvider
         
-        container.register(ContextProvider.self, name: "debug") { resolver in
-            return DebugContextProvider(
-                testDeviceManager: resolver.resolve(TestDeviceManager.self)!
-            )
+        container.register(DebugContextProvider.self) { resolver in
+            return DebugContextManager()
         }
         
         // MARK: RouteHandler (settings)
@@ -41,22 +38,10 @@ public struct DebugAssembler: Assembler {
             )
         }
         
-        // MARK: TestDeviceManager
-        
-        container.register(TestDeviceManager.self) { resolver in
-            return TestDeviceManagerService(
-                eventQueue: resolver.resolve(EventQueue.self)!,
-                logger: resolver.resolve(Logger.self)!,
-                userDefaults: UserDefaults.standard
-            )
-        }
-        
         // MARK: UIViewController (settings)
         
         container.register(UIViewController.self, name: "settings", scope: .transient) { resolver in
-            return SettingsViewController(
-                testDeviceManager: resolver.resolve(TestDeviceManager.self)!
-            )
+            return SettingsViewController()
         }
     }
     

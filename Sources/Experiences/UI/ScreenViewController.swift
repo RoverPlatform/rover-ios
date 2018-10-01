@@ -158,6 +158,24 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         
         // Title color
         
+        #if swift(>=4.2)
+        var nextAttributes = navigationBar.titleTextAttributes ?? [NSAttributedString.Key: Any]()
+        nextAttributes[NSAttributedString.Key.foregroundColor] = {
+            if !screen.titleBar.useDefaultStyle {
+                return screen.titleBar.textColor.uiColor
+            }
+            
+            if let appearanceColor = UINavigationBar.appearance().titleTextAttributes?[NSAttributedString.Key.foregroundColor] as? UIColor {
+                return appearanceColor
+            }
+            
+            if let defaultColor = UINavigationBar().titleTextAttributes?[NSAttributedString.Key.foregroundColor] as? UIColor {
+                return defaultColor
+            }
+            
+            return UIColor.black
+        }()
+        #else
         var nextAttributes = navigationBar.titleTextAttributes ?? [NSAttributedStringKey: Any]()
         nextAttributes[NSAttributedStringKey.foregroundColor] = {
             if !screen.titleBar.useDefaultStyle {
@@ -174,6 +192,8 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
             
             return UIColor.black
         }()
+        #endif
+        
         navigationBar.titleTextAttributes = nextAttributes
     }
     
@@ -370,11 +390,13 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
             collectionView.deselectItem(at: indexPath, animated: true)
         }
         
-        let block = screen.rows[indexPath.section].blocks[indexPath.row]
+        let row = screen.rows[indexPath.section]
+        let block = row.blocks[indexPath.row]
         
         let attributes: Attributes = [
             "experience": experience,
             "screen": screen,
+            "row": row,
             "block": block
         ]
         

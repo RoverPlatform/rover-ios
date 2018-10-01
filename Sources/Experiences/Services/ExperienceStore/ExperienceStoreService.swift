@@ -7,14 +7,13 @@
 //
 
 import Foundation
+import os.log
 
 class ExperienceStoreService: ExperienceStore {
-    let client: GraphQLClient
-    let logger: Logger
+    let client: FetchExperienceClient
     
-    init(client: GraphQLClient, logger: Logger) {
+    init(client: FetchExperienceClient) {
         self.client = client
-        self.logger = logger
     }
     
     func experience(for identifier: ExperienceIdentifier) -> Experience? {
@@ -57,82 +56,13 @@ class ExperienceStoreService: ExperienceStore {
     
     // MARK: Fetching Experiences
     
-    struct FetchQuery: GraphQLOperation {
-        struct Variables: Encodable {
-            var identifier: ExperienceIdentifier
-            
-            private enum CodingKeys: String, CodingKey {
-                case campaignID
-                case campaignURL
-                case id
-            }
-            
-            func encode(to encoder: Encoder) throws {
-                var container = encoder.container(keyedBy: CodingKeys.self)
-                switch identifier {
-                case .campaignID(let id):
-                    try container.encode(id, forKey: .campaignID)
-                case .campaignURL(let url):
-                    try container.encode(url, forKey: .campaignURL)
-                case .experienceID(let id):
-                    try container.encode(id, forKey: .id)
-                }
-            }
-        }
-        
-        var query: String {
-            switch variables!.identifier {
-            case .campaignID:
-                return """
-                    query FetchExperienceByCampaignID($campaignID: ID!) {
-                        experience(campaignID: $campaignID) {
-                            ...experienceFields
-                        }
-                    }
-                    """
-            case .campaignURL:
-                return """
-                    query FetchExperienceByCampaignURL($campaignURL: String!) {
-                        experience(campaignURL: $campaignURL) {
-                            ...experienceFields
-                        }
-                    }
-                    """
-            case .experienceID:
-                return """
-                    query FetchExperienceByID($id: ID!) {
-                        experience(id: $id) {
-                        ...experienceFields
-                        }
-                    }
-                    """
-            }
-        }
-        
-        var variables: Variables?
-        
-        var fragments: [String]? {
-            return ["experienceFields"]
-        }
-        
-        init(identifier: ExperienceIdentifier) {
-            variables = Variables(identifier: identifier)
-        }
-    }
-    
-    struct FetchResponse: Decodable {
-        struct Data: Decodable {
-            var experience: Experience
-        }
-        
-        var data: Data
-    }
-    
     var tasks = [ExperienceIdentifier: URLSessionTask]()
     var completionHandlers = [ExperienceIdentifier: [(FetchExperienceResult) -> Void]]()
     
     func fetchExperience(for identifier: ExperienceIdentifier, completionHandler: ((FetchExperienceResult) -> Void)?) {
-        logger.warnUnlessMainThread("ExperienceStore is not thread-safe – fetchExperience should only be called from main thread.")
+        if !Thread.isMainThread {
+            os_log("ExperienceStore is not thread-safe – fetchExperience should only be called from main thread.", log: .general, type: .default)
+        }
         
         if let newHandler = completionHandler {
             let existingHandlers = self.completionHandlers[identifier, default: []]
@@ -148,39 +78,20 @@ class ExperienceStoreService: ExperienceStore {
             invokeCompletionHandlers(for: identifier, with: result)
         }
         
-        let operation = FetchQuery(identifier: identifier)
-        let task = client.task(with: operation) {
+        let task = client.task(with: identifier) { result in
             self.tasks[identifier] = nil
-            let result: FetchExperienceResult
             
             defer {
                 self.invokeCompletionHandlers(for: identifier, with: result)
             }
             
-            switch $0 {
-            case .error(let error, let isRetryable):
-                self.logger.error("Failed to fetch experience")
-                if let error = error {
-                    self.logger.error(error.localizedDescription)
-                }
-                
-                result = FetchExperienceResult.error(error: error, isRetryable: isRetryable)
-            case .success(let data):
-                do {
-                    let decoder = JSONDecoder()
-                    decoder.dateDecodingStrategy = .formatted(DateFormatter.rfc3339)
-                    let response = try decoder.decode(FetchResponse.self, from: data)
-                    let experience = response.data.experience
-                    let key = CacheKey(experienceIdentifier: identifier)
-                    let value = CacheValue(experience: experience)
-                    self.cache.setObject(value, forKey: key)
-                    result = FetchExperienceResult.success(experience: experience)
-                } catch {
-                    self.logger.error("Failed to decode experience from GraphQL response")
-                    self.logger.error(error.localizedDescription)
-                    result = FetchExperienceResult.error(error: error, isRetryable: false)
-                }
+            guard case .success(let experience) = result else {
+                return
             }
+            
+            let key = CacheKey(experienceIdentifier: identifier)
+            let value = CacheValue(experience: experience)
+            self.cache.setObject(value, forKey: key)
         }
         
         tasks[identifier] = task

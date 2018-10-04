@@ -48,6 +48,10 @@ class InfluenceTrackerService: InfluenceTracker {
             return
         }
         
+        defer {
+            clearLastReceivedNotification()
+        }
+        
         struct NotificationReceipt: AttributeRepresentable, Decodable {
             var notificationID: ID
             var campaignID: ID
@@ -84,5 +88,9 @@ class InfluenceTrackerService: InfluenceTracker {
         
         let event = EventInfo(name: "Notification Opened", namespace: "rover", attributes: attributes)
         eventQueue.addEvent(event)
+    }
+    
+    func clearLastReceivedNotification() {
+        userDefaults.removeObject(forKey: "io.rover.lastReceivedNotification")
     }
 }

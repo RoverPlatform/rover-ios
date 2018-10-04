@@ -1,11 +1,9 @@
 # Rover iOS SDK
 
-If you are currently using Rover SDK 1.x, please see the latest [1.x release
+NOTE: If you are currently using Rover SDK 1.x, please see the latest [1.x release
 README](https://github.com/RoverPlatform/rover-ios/tree/f7b585f1bc3019da162522c5244a86fd93b2d8e9).
 
 <hr />
-
-## Rover iOS SDK 2.0
 
 The Rover SDK is a collection of Cocoa Touch Frameworks written in Swift. Instead of a single monolithic framework, the Rover SDK takes a modular approach, allowing you to include only the functionality relevant to your application. The SDK is 100% open-source and available on [GitHub](https://github.com/RoverPlatform/rover-ios).
 
@@ -40,4 +38,4 @@ target 'MyAppTarget' do
 end
 ```
 
-Please continue onwards from https://www.rover.io/docs/ios/.
+Please continue onwards from https://developer.rover.io/ios/.

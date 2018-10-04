@@ -9,4 +9,5 @@
 public protocol InfluenceTracker {
     func startMonitoring()
     func stopMonitoring()
+    func clearLastReceivedNotification()
 }

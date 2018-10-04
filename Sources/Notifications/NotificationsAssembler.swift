@@ -68,7 +68,7 @@ public struct NotificationsAssembler: Assembler {
         
         container.register(NotificationHandler.self) { resolver in
             let dispatcher = resolver.resolve(Dispatcher.self)!
-            return NotificationHandlerService(dispatcher: dispatcher, actionProvider: { notification in
+            return NotificationHandlerService(dispatcher: dispatcher, influenceTracker: resolver.resolve(InfluenceTracker.self)!, actionProvider: { notification in
                 return resolver.resolve(Action.self, name: "openNotification", arguments: notification)!
             })
         }

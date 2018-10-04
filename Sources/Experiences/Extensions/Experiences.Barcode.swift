@@ -42,7 +42,8 @@ extension Barcode {
                 ]
             case .qrCode:
                 return [
-                    "inputQuietSpace": 1.0,
+                    // // we want a quiet space of 1, however it's not configurable. Thankfully, 1 is the default.
+                    // "inputQuietSpace": 1.0,
                     "inputCorrectionLevel": "M"
                 ]
             case .code128:

@@ -23,6 +23,7 @@ open class BlockCell: UICollectionViewCell {
         
         if let content = content {
             contentView.addSubview(content)
+            content.translatesAutoresizingMaskIntoConstraints = false
         }
     }
     
@@ -34,6 +35,7 @@ open class BlockCell: UICollectionViewCell {
         
         if let content = content {
             contentView.addSubview(content)
+            content.translatesAutoresizingMaskIntoConstraints = false
         }
     }
     
@@ -150,10 +152,13 @@ open class BlockCell: UICollectionViewCell {
     }
     
     open func configureContent() {
-        guard let block = block, let contentView = content else {
+        guard let block = block, let content = content else {
             return
         }
         
+        NSLayoutConstraint.deactivate(contentView.constraints)
+        contentView.removeConstraints(contentView.constraints)
+
         let insets: UIEdgeInsets = {
             let top = CGFloat(block.insets.top)
             let left = CGFloat(block.insets.left)
@@ -162,10 +167,9 @@ open class BlockCell: UICollectionViewCell {
             return UIEdgeInsets(top: top, left: left, bottom: bottom, right: right)
         }()
         
-        contentView.translatesAutoresizingMaskIntoConstraints = false
-        contentView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: insets.bottom).isActive = true
-        contentView.leftAnchor.constraint(equalTo: self.contentView.leftAnchor, constant: insets.left).isActive = true
-        contentView.rightAnchor.constraint(equalTo: self.contentView.rightAnchor, constant: insets.right).isActive = true
-        contentView.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: insets.top).isActive = true
+        content.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: insets.bottom).isActive = true
+        content.leftAnchor.constraint(equalTo: self.contentView.leftAnchor, constant: insets.left).isActive = true
+        content.rightAnchor.constraint(equalTo: self.contentView.rightAnchor, constant: insets.right).isActive = true
+        content.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: insets.top).isActive = true
     }
 }

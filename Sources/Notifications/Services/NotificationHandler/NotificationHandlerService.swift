@@ -10,14 +10,20 @@ import UserNotifications
 
 class NotificationHandlerService: NotificationHandler {
     let dispatcher: Dispatcher
+    let influenceTracker: InfluenceTracker
     let actionProvider: (Notification) -> Action
     
-    init(dispatcher: Dispatcher, actionProvider: @escaping (Notification) -> Action) {
+    init(dispatcher: Dispatcher, influenceTracker: InfluenceTracker, actionProvider: @escaping (Notification) -> Action) {
         self.dispatcher = dispatcher
         self.actionProvider = actionProvider
+        self.influenceTracker = influenceTracker
     }
     
     func handle(_ response: UNNotificationResponse, completionHandler: (() -> Void)?) -> Bool {
+        // The app was opened directly from a push notification. Clear the last received
+        // notification from the influence tracker so we don't erroneously track an influenced open.
+        influenceTracker.clearLastReceivedNotification()
+        
         guard let action = action(for: response) else {
             return false
         }

@@ -83,26 +83,31 @@ extension ContextManager: StaticContextProvider {
         return .simulator
         #else
         guard let path = Bundle.main.path(forResource: "embedded", ofType: "mobileprovision") else {
-            fatalError("Provisioning profile not found")
+            os_log("Provisioning profile not found", log: .context, type: .error)
+            return .production
         }
         
         guard let embeddedProfile = try? String(contentsOfFile: path, encoding: String.Encoding.ascii) else {
-            fatalError("Failed to read provisioning profile at path: \(path)")
+            os_log("Failed to read provisioning profile at path: %@", log: .context, type: .error, path)
+            return .production
         }
         
         let scanner = Scanner(string: embeddedProfile)
         var string: NSString?
         
         guard scanner.scanUpTo("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", into: nil), scanner.scanUpTo("</plist>", into: &string) else {
-            fatalError("Unrecognized provisioning profile structure")
+            os_log("Unrecognized provisioning profile structure", log: .context, type: .error)
+            return .production
         }
         
         guard let data = string?.appending("</plist>").data(using: String.Encoding.utf8) else {
-            fatalError("Failed to decode provisioning profile")
+            os_log("Failed to decode provisioning profile", log: .context, type: .error)
+            return .production
         }
         
         guard let plist = (try? PropertyListSerialization.propertyList(from: data, options: [], format: nil)) as? [String: Any] else {
-            fatalError("Failed to serialize provisioning profile")
+            os_log("Failed to serialize provisioning profile", log: .context, type: .error)
+            return .production
         }
         
         guard let entitlements = plist["Entitlements"] as? [String: Any], let apsEnvironment = entitlements["aps-environment"] as? String else {
@@ -116,7 +121,8 @@ extension ContextManager: StaticContextProvider {
         case "development":
             return .development
         default:
-            fatalError("Unrecognized value for aps-environment")
+            os_log("Unrecognized value for aps-environment: %@", log: .context, type: .error, apsEnvironment)
+            return .production
         }
         #endif
     }

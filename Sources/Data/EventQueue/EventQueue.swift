@@ -143,10 +143,22 @@ public class EventQueue {
         
         persistEvents()
         
-        if UIApplication.shared.applicationState == .active {
-            flushEvents(minBatchSize: flushAt)
-        } else {
-            flushEvents()
+        let onMainThread: (() -> Void) -> Void = { block in
+            if Thread.isMainThread {
+                block()
+            } else {
+                DispatchQueue.main.sync {
+                    block()
+                }
+            }
+        }
+        
+        onMainThread {
+            if UIApplication.shared.applicationState == .active {
+                flushEvents(minBatchSize: flushAt)
+            } else {
+                flushEvents()
+            }
         }
         
         observers.compactMap({ $0.value }).forEach { $0.eventQueue(self, didAddEvent: info) }

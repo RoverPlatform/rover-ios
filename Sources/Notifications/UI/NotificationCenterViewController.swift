@@ -243,7 +243,9 @@ open class NotificationCenterViewController: UIViewController {
     
     @objc func refresh(_ sender: Any) {
         self.syncCoordinator.sync { _ in
-            self.refreshControl.endRefreshing()
+            DispatchQueue.main.async {
+                self.refreshControl.endRefreshing()
+            }
         }
     }
     

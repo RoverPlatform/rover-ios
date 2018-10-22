@@ -10,6 +10,10 @@ import Foundation
 
 public struct Context: Codable, Equatable {
     
+    // MARK: AdSupport
+    
+    public var advertisingIdentifier: String?
+    
     // MARK: Bluetooth
     
     public var isBluetoothEnabled: Bool?
@@ -164,6 +168,7 @@ public struct Context: Codable, Equatable {
     public var userInfo: Attributes?
     
     public init(
+        advertisingIdentifier: String?,
         isBluetoothEnabled: Bool?,
         localeLanguage: String?,
         localeRegion: String?,
@@ -195,6 +200,7 @@ public struct Context: Codable, Equatable {
         timeZone: String?,
         userInfo: Attributes?
     ) {
+        self.advertisingIdentifier = advertisingIdentifier
         self.isBluetoothEnabled = isBluetoothEnabled
         self.localeLanguage = localeLanguage
         self.localeRegion = localeRegion

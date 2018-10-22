@@ -48,7 +48,7 @@ extension NotificationAuthorizationManager: NotificationsContextProvider {
             return "authorized"
         case .denied:
             return "denied"
-        case .notDetermined:
+        default:
             return "notDetermined"
         }
         #endif

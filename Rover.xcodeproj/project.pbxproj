@@ -104,6 +104,9 @@
 		DBA0160B217E71E900268822 /* RoverAdSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = DBA015FD217E71E900268822 /* RoverAdSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DBA01612217E724300268822 /* RoverData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD88A7320C1B21700085AE0 /* RoverData.framework */; };
 		DBA01613217E724300268822 /* RoverFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF49DD3203DE00F00B54652 /* RoverFoundation.framework */; };
+		DBA01616217E773900268822 /* AdSupportContextProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA01615217E773900268822 /* AdSupportContextProvider.swift */; };
+		DBA0161A217E78D200268822 /* AdSupportManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA01619217E78D200268822 /* AdSupportManager.swift */; };
+		DBA0161C217E7B8400268822 /* AdSupportAssembler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA0161B217E7B8400268822 /* AdSupportAssembler.swift */; };
 		DBAA1E9B2154226700E27982 /* Location.CLPlacemark.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAA1E9A2154226700E27982 /* Location.CLPlacemark.swift */; };
 		DBAA1E9F215425EE00E27982 /* Location.EventInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAA1E9E215425EE00E27982 /* Location.EventInfo.swift */; };
 		DBADA7FB20A4F32500225C80 /* Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBADA7F220A4F32500225C80 /* Action.swift */; };
@@ -464,6 +467,9 @@
 		DBA01603217E71E900268822 /* RoverAdSupportTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RoverAdSupportTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBA01608217E71E900268822 /* RoverAdSupportTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoverAdSupportTests.swift; sourceTree = "<group>"; };
 		DBA0160A217E71E900268822 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DBA01615217E773900268822 /* AdSupportContextProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdSupportContextProvider.swift; sourceTree = "<group>"; };
+		DBA01619217E78D200268822 /* AdSupportManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdSupportManager.swift; sourceTree = "<group>"; };
+		DBA0161B217E7B8400268822 /* AdSupportAssembler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdSupportAssembler.swift; sourceTree = "<group>"; };
 		DBAA1E9A2154226700E27982 /* Location.CLPlacemark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.CLPlacemark.swift; sourceTree = "<group>"; };
 		DBAA1E9E215425EE00E27982 /* Location.EventInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.EventInfo.swift; sourceTree = "<group>"; };
 		DBADA7F220A4F32500225C80 /* Action.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Action.swift; sourceTree = "<group>"; };
@@ -865,6 +871,7 @@
 				DBF31B1720E17176005D7C34 /* Debug */,
 				DBA015D1217E6DE700268822 /* Telephony */,
 				DBA015FC217E71E900268822 /* AdSupport */,
+				DBA01619217E78D200268822 /* AdSupportManager.swift */,
 				DB8C0757215FC4D2000DDD56 /* Ticketmaster */,
 			);
 			path = Sources;
@@ -1175,7 +1182,9 @@
 		DBA015FC217E71E900268822 /* AdSupport */ = {
 			isa = PBXGroup;
 			children = (
+				DBA01618217E788D00268822 /* Extensions */,
 				DBA01614217E72A000268822 /* Supporting Files */,
+				DBA0161B217E7B8400268822 /* AdSupportAssembler.swift */,
 			);
 			path = AdSupport;
 			sourceTree = "<group>";
@@ -1196,6 +1205,13 @@
 				DBA015FE217E71E900268822 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		DBA01618217E788D00268822 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 		DBADA80020A4F37C00225C80 /* Dispatcher */ = {
@@ -1284,6 +1300,7 @@
 		DBCBE09C21614F83001C7A96 /* Providers */ = {
 			isa = PBXGroup;
 			children = (
+				DBA01615217E773900268822 /* AdSupportContextProvider.swift */,
 				DBCBE09221614E64001C7A96 /* BluetoothContextProvider.swift */,
 				DBCBE09A21614EC9001C7A96 /* DebugContextProvider.swift */,
 				DBCBE09F21615031001C7A96 /* LocaleContextProvider.swift */,
@@ -2258,6 +2275,7 @@
 					};
 					DBA015FA217E71E900268822 = {
 						CreatedOnToolsVersion = 10.0;
+						LastSwiftMigration = 1000;
 						ProvisioningStyle = Automatic;
 					};
 					DBA01602217E71E900268822 = {
@@ -2692,6 +2710,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DBA0161A217E78D200268822 /* AdSupportManager.swift in Sources */,
+				DBA0161C217E7B8400268822 /* AdSupportAssembler.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2736,6 +2756,7 @@
 				DB496E4221486E3D0026DE6A /* EventsClient.swift in Sources */,
 				DBD73F6321359C8800E7F322 /* SyncParticipant.swift in Sources */,
 				DB496E40214854CF0026DE6A /* HTTPError.swift in Sources */,
+				DBA01616217E773900268822 /* AdSupportContextProvider.swift in Sources */,
 				DBD88A9920C1B58E00085AE0 /* EventQueueObserver.swift in Sources */,
 				DBD73F6021359C8800E7F322 /* SyncQuery.swift in Sources */,
 				DBD73F5E21359C8800E7F322 /* SyncResult.swift in Sources */,
@@ -3504,6 +3525,7 @@
 		DBA0160C217E71E900268822 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
@@ -3521,6 +3543,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.rover.RoverAdSupport;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -3529,6 +3552,7 @@
 		DBA0160D217E71E900268822 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
@@ -3553,6 +3577,7 @@
 		DBA0160E217E71E900268822 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = WDEZX8QD47;
@@ -3571,6 +3596,7 @@
 		DBA0160F217E71E900268822 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = WDEZX8QD47;

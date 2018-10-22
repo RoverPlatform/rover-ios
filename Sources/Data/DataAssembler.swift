@@ -40,6 +40,7 @@ public struct DataAssembler: Assembler {
         
         container.register(ContextProvider.self) { resolver in
             return ModularContextProvider(
+                adSupportContextProvider: resolver.resolve(AdSupportContextProvider.self),
                 bluetoothContextProvider: resolver.resolve(BluetoothContextProvider.self),
                 debugContextProvider: resolver.resolve(DebugContextProvider.self),
                 locationContextProvider: resolver.resolve(LocationContextProvider.self),

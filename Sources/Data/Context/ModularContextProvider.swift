@@ -7,6 +7,7 @@
 //
 
 class ModularContextProvider {
+    let adSupportContextProvider: AdSupportContextProvider?
     let bluetoothContextProvider: BluetoothContextProvider?
     let debugContextProvider: DebugContextProvider?
     let localeContextProvider: LocaleContextProvider?
@@ -20,6 +21,7 @@ class ModularContextProvider {
     let userInfoContextProvider: UserInfoContextProvider?
     
     init(
+        adSupportContextProvider: AdSupportContextProvider?,
         bluetoothContextProvider: BluetoothContextProvider?,
         debugContextProvider: DebugContextProvider?,
         locationContextProvider: LocationContextProvider?,
@@ -32,6 +34,7 @@ class ModularContextProvider {
         timeZoneContextProvider: TimeZoneContextProvider?,
         userInfoContextProvider: UserInfoContextProvider?) {
         
+        self.adSupportContextProvider = adSupportContextProvider
         self.bluetoothContextProvider = bluetoothContextProvider
         self.debugContextProvider = debugContextProvider
         self.localeContextProvider = localeContextProvider
@@ -49,6 +52,7 @@ class ModularContextProvider {
 extension ModularContextProvider: ContextProvider {
     var context: Context {
         return Context(
+            advertisingIdentifier: self.adSupportContextProvider?.advertisingIdentifier,
             isBluetoothEnabled: self.bluetoothContextProvider?.isBluetoothEnabled,
             localeLanguage: self.localeContextProvider?.localeLanguage,
             localeRegion: self.localeContextProvider?.localeRegion,

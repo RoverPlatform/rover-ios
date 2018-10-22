@@ -96,6 +96,9 @@
 		DBA015E0217E6DE700268822 /* RoverTelephony.h in Headers */ = {isa = PBXBuildFile; fileRef = DBA015D2217E6DE700268822 /* RoverTelephony.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DBA015E7217E6E5C00268822 /* RoverData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD88A7320C1B21700085AE0 /* RoverData.framework */; };
 		DBA015E8217E6E5C00268822 /* RoverFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF49DD3203DE00F00B54652 /* RoverFoundation.framework */; };
+		DBA015EB217E6F0200268822 /* TelephonyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA015EA217E6F0200268822 /* TelephonyManager.swift */; };
+		DBA015F0217E6F8100268822 /* Telephony.OSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA015EF217E6F8100268822 /* Telephony.OSLog.swift */; };
+		DBA015F2217E706900268822 /* TelephonyAssembler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA015F1217E706900268822 /* TelephonyAssembler.swift */; };
 		DBAA1E9B2154226700E27982 /* Location.CLPlacemark.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAA1E9A2154226700E27982 /* Location.CLPlacemark.swift */; };
 		DBAA1E9F215425EE00E27982 /* Location.EventInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAA1E9E215425EE00E27982 /* Location.EventInfo.swift */; };
 		DBADA7FB20A4F32500225C80 /* Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBADA7F220A4F32500225C80 /* Action.swift */; };
@@ -440,6 +443,9 @@
 		DBA015D8217E6DE700268822 /* RoverTelephonyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RoverTelephonyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBA015DD217E6DE700268822 /* RoverTelephonyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoverTelephonyTests.swift; sourceTree = "<group>"; };
 		DBA015DF217E6DE700268822 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DBA015EA217E6F0200268822 /* TelephonyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelephonyManager.swift; sourceTree = "<group>"; };
+		DBA015EF217E6F8100268822 /* Telephony.OSLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Telephony.OSLog.swift; sourceTree = "<group>"; };
+		DBA015F1217E706900268822 /* TelephonyAssembler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelephonyAssembler.swift; sourceTree = "<group>"; };
 		DBAA1E9A2154226700E27982 /* Location.CLPlacemark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.CLPlacemark.swift; sourceTree = "<group>"; };
 		DBAA1E9E215425EE00E27982 /* Location.EventInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.EventInfo.swift; sourceTree = "<group>"; };
 		DBADA7F220A4F32500225C80 /* Action.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Action.swift; sourceTree = "<group>"; };
@@ -1095,7 +1101,10 @@
 		DBA015D1217E6DE700268822 /* Telephony */ = {
 			isa = PBXGroup;
 			children = (
+				DBA015EE217E6F6D00268822 /* Extensions */,
 				DBA015E9217E6E8B00268822 /* Supporting Files */,
+				DBA015EA217E6F0200268822 /* TelephonyManager.swift */,
+				DBA015F1217E706900268822 /* TelephonyAssembler.swift */,
 			);
 			path = Telephony;
 			sourceTree = "<group>";
@@ -1116,6 +1125,14 @@
 				DBA015D3217E6DE700268822 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		DBA015EE217E6F6D00268822 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				DBA015EF217E6F8100268822 /* Telephony.OSLog.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 		DBADA80020A4F37C00225C80 /* Dispatcher */ = {
@@ -2123,6 +2140,7 @@
 					};
 					DBA015CF217E6DE600268822 = {
 						CreatedOnToolsVersion = 10.0;
+						LastSwiftMigration = 1000;
 						ProvisioningStyle = Automatic;
 					};
 					DBA015D7217E6DE700268822 = {
@@ -2523,6 +2541,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DBA015F0217E6F8100268822 /* Telephony.OSLog.swift in Sources */,
+				DBA015EB217E6F0200268822 /* TelephonyManager.swift in Sources */,
+				DBA015F2217E706900268822 /* TelephonyAssembler.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3241,6 +3262,7 @@
 		DBA015E2217E6DE700268822 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
@@ -3258,6 +3280,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.rover.RoverTelephony;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -3266,6 +3289,7 @@
 		DBA015E3217E6DE700268822 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
@@ -3290,6 +3314,7 @@
 		DBA015E5217E6DE700268822 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = WDEZX8QD47;
@@ -3308,6 +3333,7 @@
 		DBA015E6217E6DE700268822 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = WDEZX8QD47;

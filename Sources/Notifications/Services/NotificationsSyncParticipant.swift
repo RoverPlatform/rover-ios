@@ -17,10 +17,16 @@ class NotificationsSyncParticipant: SyncParticipant {
     }
     
     func initialRequest() -> SyncRequest? {
+        let orderBy: Attributes = [
+            "field": "CREATED_AT",
+            "direction": "DESC"
+        ]
+        
         return SyncRequest(
             query: SyncQuery.notifications,
             values: [
                 "last": 500,
+                "orderBy": orderBy,
                 "deviceIdentifier": UIDevice.current.identifierForVendor!.uuidString
             ]
         )

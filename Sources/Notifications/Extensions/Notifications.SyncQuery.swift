@@ -16,6 +16,7 @@ extension SyncQuery {
             """,
         arguments: [
             SyncQuery.Argument(name: "last", type: "Int"),
+            SyncQuery.Argument(name: "orderBy", type: "NotificationOrder"),
             SyncQuery.Argument(name: "deviceIdentifier", type: "String!")
         ],
         fragments: ["notificationFields"]

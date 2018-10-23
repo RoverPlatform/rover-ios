@@ -10,18 +10,10 @@ public struct SyncRequest {
     public var query: SyncQuery
     public var variables: Attributes
     
-    public init?(query: SyncQuery, values: [SyncQuery.Argument: Any]) {
-        var variables = Attributes()
-        for argument in query.arguments {
-            // TODO: Make sure value is of type argument.style.valueType
-            if let value = values[argument] as? AttributeRepresentable {
-                variables[argument.name] = value
-            } else if argument.isRequired {
-                return nil
-            }
-        }
-        
+    public init(query: SyncQuery, values: [String: AttributeRepresentable]) {
         self.query = query
-        self.variables = variables
+        self.variables = query.arguments.reduce(into: Attributes(), { (result, argument) in
+            result[argument.name] = values[argument.name]
+        })
     }
 }

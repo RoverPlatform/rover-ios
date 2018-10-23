@@ -15,17 +15,9 @@ extension SyncQuery {
             }
             """,
         arguments: [
-            SyncQuery.Argument.last,
-            SyncQuery.Argument.deviceIdentifier
+            SyncQuery.Argument(name: "last", type: "Int"),
+            SyncQuery.Argument(name: "deviceIdentifier", type: "String!")
         ],
         fragments: ["notificationFields"]
-    )
-}
-
-extension SyncQuery.Argument {
-    static let deviceIdentifier = SyncQuery.Argument(
-        name: "deviceIdentifier",
-        style: .string,
-        isRequired: true
     )
 }

@@ -27,7 +27,15 @@ class BeaconsSyncParticipant: PagingSyncParticipant {
     }
     
     func nextRequest(cursor: String?) -> SyncRequest {
-        var values: [String: AttributeRepresentable] = ["first": 500]
+        let orderBy: Attributes = [
+            "field": "UPDATED_AT",
+            "direction": "ASC"
+        ]
+        
+        var values: [String: AttributeRepresentable] = [
+            "first": 500,
+            "orderBy": orderBy
+        ]
         
         if let cursor = cursor {
             values["after"] = cursor

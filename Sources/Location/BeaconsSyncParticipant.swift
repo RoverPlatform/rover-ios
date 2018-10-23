@@ -27,13 +27,13 @@ class BeaconsSyncParticipant: PagingSyncParticipant {
     }
     
     func nextRequest(cursor: String?) -> SyncRequest {
-        var values: [SyncQuery.Argument: Any] = [SyncQuery.Argument.first: 500]
+        var values: [String: AttributeRepresentable] = ["first": 500]
         
         if let cursor = cursor {
-            values[SyncQuery.Argument.after] = cursor
+            values["after"] = cursor
         }
         
-        return SyncRequest(query: SyncQuery.beacons, values: values)!
+        return SyncRequest(query: SyncQuery.beacons, values: values)
     }
     
     func insertObject(from node: BeaconsSyncResponse.Data.Beacons.Node) {

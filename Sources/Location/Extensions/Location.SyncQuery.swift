@@ -19,8 +19,8 @@ extension SyncQuery {
             }
             """,
         arguments: [
-            SyncQuery.Argument.first,
-            SyncQuery.Argument.after
+            SyncQuery.Argument(name: "first", type: "Int"),
+            SyncQuery.Argument(name: "after", type: "String")
         ],
         fragments: ["beaconFields"]
     )
@@ -37,8 +37,8 @@ extension SyncQuery {
             }
             """,
         arguments: [
-            SyncQuery.Argument.first,
-            SyncQuery.Argument.after
+            SyncQuery.Argument(name: "first", type: "Int"),
+            SyncQuery.Argument(name: "after", type: "String")
         ],
         fragments: ["geofenceFields"]
     )

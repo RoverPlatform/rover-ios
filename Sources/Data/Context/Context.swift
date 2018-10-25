@@ -135,20 +135,20 @@ public struct Context: Codable, Equatable {
         case simulator = "SIMULATOR"
     }
     
-    public var appBadgeNumber: Int
-    public var appBuild: String
-    public var appIdentifier: String
-    public var appVersion: String
-    public var buildEnvironment: BuildEnvironment
-    public var deviceIdentifier: String
-    public var deviceManufacturer: String
-    public var deviceModel: String
-    public var deviceName: String
-    public var operatingSystemName: String
-    public var operatingSystemVersion: String
-    public var screenHeight: Int
-    public var screenWidth: Int
-    public var sdkVersion: String
+    public var appBadgeNumber: Int?
+    public var appBuild: String?
+    public var appIdentifier: String?
+    public var appVersion: String?
+    public var buildEnvironment: BuildEnvironment?
+    public var deviceIdentifier: String?
+    public var deviceManufacturer: String?
+    public var deviceModel: String?
+    public var deviceName: String?
+    public var operatingSystemName: String?
+    public var operatingSystemVersion: String?
+    public var screenHeight: Int?
+    public var screenWidth: Int?
+    public var sdkVersion: String?
     
     // MARK: Telephony
     
@@ -180,20 +180,20 @@ public struct Context: Codable, Equatable {
         pushToken: PushToken?,
         isCellularEnabled: Bool?,
         isWifiEnabled: Bool?,
-        appBadgeNumber: Int,
-        appBuild: String,
-        appIdentifier: String,
-        appVersion: String,
-        buildEnvironment: BuildEnvironment,
-        deviceIdentifier: String,
-        deviceManufacturer: String,
-        deviceModel: String,
-        deviceName: String,
-        operatingSystemName: String,
-        operatingSystemVersion: String,
-        screenHeight: Int,
-        screenWidth: Int,
-        sdkVersion: String,
+        appBadgeNumber: Int?,
+        appBuild: String?,
+        appIdentifier: String?,
+        appVersion: String?,
+        buildEnvironment: BuildEnvironment?,
+        deviceIdentifier: String?,
+        deviceManufacturer: String?,
+        deviceModel: String?,
+        deviceName: String?,
+        operatingSystemName: String?,
+        operatingSystemVersion: String?,
+        screenHeight: Int?,
+        screenWidth: Int?,
+        sdkVersion: String?,
         carrierName: String?,
         radio: String?,
         isTestDevice: Bool?,

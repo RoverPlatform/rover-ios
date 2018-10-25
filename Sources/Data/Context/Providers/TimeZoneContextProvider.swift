@@ -6,6 +6,6 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-public protocol TimeZoneContextProvider {
+public protocol TimeZoneContextProvider: class {
     var timeZone: String { get }
 }

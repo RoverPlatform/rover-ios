@@ -8,7 +8,7 @@
 
 import Foundation
 
-public protocol StaticContextProvider {
+public protocol StaticContextProvider: class {
     var appBadgeNumber: Int { get }
     var appBuild: String { get }
     var appIdentifier: String { get }

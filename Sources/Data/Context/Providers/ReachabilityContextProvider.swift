@@ -6,7 +6,7 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-public protocol ReachabilityContextProvider {
+public protocol ReachabilityContextProvider: class {
     var isCellularEnabled: Bool { get }
     var isWifiEnabled: Bool { get }
 }

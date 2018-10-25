@@ -16,7 +16,7 @@ public class EventQueue {
     let maxBatchSize: Int
     let maxQueueSize: Int
     
-    // Use an implicitly unwrapped optional to avoid a circular dependency during injection
+    // Use an implicitly unwrapped optional to allow circular dependency injection
     var contextProvider: ContextProvider!
     
     let serialQueue: Foundation.OperationQueue = {

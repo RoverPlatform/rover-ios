@@ -155,7 +155,7 @@ public struct DataAssembler: Assembler {
         let eventQueue = resolver.resolve(EventQueue.self)!
         eventQueue.restore()
         
-        // Set the eventQueue on the LocationManager after assembly to avoid circular dependency
+        // Set the context provider on the event queue after assembly to allow circular dependency injection
         eventQueue.contextProvider = resolver.resolve(ContextProvider.self)!
     }
 }

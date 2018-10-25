@@ -19,8 +19,11 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     public let imageStore: ImageStore
     public let sessionController: SessionController
     
-    public let viewControllerProvider: (Experience, Screen) -> UIViewController
-    public let presentWebsiteActionProvider: (URL) -> Action
+    public typealias ViewControllerProvider = (Experience, Screen) -> UIViewController?
+    public let viewControllerProvider: ViewControllerProvider
+    
+    public typealias ActionProvider = (URL) -> Action?
+    public let presentWebsiteActionProvider: ActionProvider
     
     override open var preferredStatusBarStyle: UIStatusBarStyle {
         switch screen.statusBar.style {
@@ -31,7 +34,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         }
     }
     
-    public init(collectionViewLayout: UICollectionViewLayout, experience: Experience, screen: Screen, dispatcher: Dispatcher, eventQueue: EventQueue, imageStore: ImageStore, sessionController: SessionController, viewControllerProvider: @escaping (Experience, Screen) -> UIViewController, presentWebsiteActionProvider: @escaping (URL) -> Action) {
+    public init(collectionViewLayout: UICollectionViewLayout, experience: Experience, screen: Screen, dispatcher: Dispatcher, eventQueue: EventQueue, imageStore: ImageStore, sessionController: SessionController, viewControllerProvider: @escaping ViewControllerProvider, presentWebsiteActionProvider: @escaping ActionProvider) {
         self.experience = experience
         self.screen = screen
         self.dispatcher = dispatcher
@@ -403,8 +406,9 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         switch block.tapBehavior {
         case .goToScreen(let screenID):
             if let nextScreen = experience.screens.first(where: { $0.id == screenID }), let navigationController = navigationController {
-                let viewController = viewControllerProvider(experience, nextScreen)
-                navigationController.pushViewController(viewController, animated: true)
+                if let viewController = viewControllerProvider(experience, nextScreen) {
+                    navigationController.pushViewController(viewController, animated: true)
+                }
             }
         case .none:
             break
@@ -415,8 +419,9 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
                 self.dismiss(animated: true, completion: nil)
             }
         case .presentWebsite(let url):
-            let action = presentWebsiteActionProvider(url)
-            dispatcher.dispatch(action, completionHandler: nil)
+            if let action = presentWebsiteActionProvider(url) {
+                dispatcher.dispatch(action, completionHandler: nil)
+            }
         }
         
         let event = EventInfo(name: "Block Tapped", namespace: "rover", attributes: attributes)

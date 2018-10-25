@@ -871,7 +871,6 @@
 				DBF31B1720E17176005D7C34 /* Debug */,
 				DBA015D1217E6DE700268822 /* Telephony */,
 				DBA015FC217E71E900268822 /* AdSupport */,
-				DBA01619217E78D200268822 /* AdSupportManager.swift */,
 				DB8C0757215FC4D2000DDD56 /* Ticketmaster */,
 			);
 			path = Sources;
@@ -1182,9 +1181,9 @@
 		DBA015FC217E71E900268822 /* AdSupport */ = {
 			isa = PBXGroup;
 			children = (
-				DBA01618217E788D00268822 /* Extensions */,
 				DBA01614217E72A000268822 /* Supporting Files */,
 				DBA0161B217E7B8400268822 /* AdSupportAssembler.swift */,
+				DBA01619217E78D200268822 /* AdSupportManager.swift */,
 			);
 			path = AdSupport;
 			sourceTree = "<group>";
@@ -1205,13 +1204,6 @@
 				DBA015FE217E71E900268822 /* Info.plist */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		DBA01618217E788D00268822 /* Extensions */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Extensions;
 			sourceTree = "<group>";
 		};
 		DBADA80020A4F37C00225C80 /* Dispatcher */ = {

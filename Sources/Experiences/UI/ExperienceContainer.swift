@@ -11,7 +11,9 @@ import UIKit
 open class ExperienceContainer: UIViewController {
     public let identifier: ExperienceIdentifier
     public let store: ExperienceStore
-    public let viewControllerProvider: (Experience) -> UIViewController
+    
+    public typealias ViewControllerProvider = (Experience) -> UIViewController?
+    public let viewControllerProvider: ViewControllerProvider
     
     #if swift(>=4.2)
     open override var childForStatusBarStyle: UIViewController? {
@@ -45,7 +47,7 @@ open class ExperienceContainer: UIViewController {
         return cancelButton
     }()
     
-    public init(identifier: ExperienceIdentifier, store: ExperienceStore, viewControllerProvider: @escaping (Experience) -> UIViewController) {
+    public init(identifier: ExperienceIdentifier, store: ExperienceStore, viewControllerProvider: @escaping ViewControllerProvider) {
         self.store = store
         self.identifier = identifier
         self.viewControllerProvider = viewControllerProvider
@@ -117,7 +119,9 @@ open class ExperienceContainer: UIViewController {
     }
     
     open func didFetchExperience(_ experience: Experience) {
-        let viewController = viewControllerProvider(experience)
+        guard let viewController = viewControllerProvider(experience) else {
+            return
+        }
         
         #if swift(>=4.2)
         addChild(viewController)

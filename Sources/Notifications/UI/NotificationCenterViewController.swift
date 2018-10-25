@@ -16,7 +16,9 @@ open class NotificationCenterViewController: UIViewController {
     public let router: Router
     public let sessionController: SessionController
     public let syncCoordinator: SyncCoordinator
-    public let presentWebsiteActionProvider: (URL) -> Action
+    
+    public typealias ActionProvider = (URL) -> Action?
+    public let presentWebsiteActionProvider: ActionProvider
     
     public private(set) var navigationBar: UINavigationBar?
     public private(set) var refreshControl = UIRefreshControl()
@@ -63,7 +65,7 @@ open class NotificationCenterViewController: UIViewController {
         router: Router,
         sessionController: SessionController,
         syncCoordinator: SyncCoordinator,
-        presentWebsiteActionProvider: @escaping (URL) -> Action) {
+        presentWebsiteActionProvider: @escaping ActionProvider) {
         
         self.dispatcher = dispatcher
         self.eventQueue = eventQueue
@@ -334,11 +336,13 @@ extension NotificationCenterViewController: UITableViewDelegate {
                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
             }
         case .presentWebsite(let url):
-            let action = presentWebsiteActionProvider(url)
-            if let presentViewAction = action as? PresentViewAction {
-                presentViewAction.viewControllerToPresent.transitioningDelegate = self
+            if let action = presentWebsiteActionProvider(url) {
+                if let presentViewAction = action as? PresentViewAction {
+                    presentViewAction.viewControllerToPresent.transitioningDelegate = self
+                }
+                
+                dispatcher.dispatch(action, completionHandler: nil)
             }
-            dispatcher.dispatch(action, completionHandler: nil)
         }
         
         let eventInfo = notification.openedEvent(source: .notificationCenter)

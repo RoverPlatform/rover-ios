@@ -31,11 +31,11 @@ public struct DebugAssembler: Assembler {
         // MARK: RouteHandler (settings)
         
         container.register(RouteHandler.self, name: "settings") { resolver in
-            return SettingsRouteHandler(
-                actionProvider: {
-                    return resolver.resolve(Action.self, name: "settings")!
-                }
-            )
+            let actionProvider: SettingsRouteHandler.ActionProvider = { [weak resolver] in
+                return resolver?.resolve(Action.self, name: "settings")
+            }
+            
+            return SettingsRouteHandler(actionProvider: actionProvider)
         }
         
         // MARK: UIViewController (settings)

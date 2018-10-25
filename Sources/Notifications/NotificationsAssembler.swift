@@ -27,11 +27,16 @@ public struct NotificationsAssembler: Assembler {
         // MARK: Action (openNotification)
         
         container.register(Action.self, name: "openNotification", scope: .transient) { (resolver, notification: Notification) in
-            let eventQueue = resolver.resolve(EventQueue.self)!
-            let notificationStore = resolver.resolve(NotificationStore.self)!
-            return OpenNotificationAction(eventQueue: eventQueue, notification: notification, notificationStore: notificationStore, presentWebsiteActionProvider: { url in
-                return resolver.resolve(Action.self, name: "presentWebsite", arguments: url)!
-            })
+            let presentWebsiteActionProvider: OpenNotificationAction.ActionProvider = { [weak resolver] url in
+                return resolver?.resolve(Action.self, name: "presentWebsite", arguments: url)!
+            }
+            
+            return OpenNotificationAction(
+                eventQueue: resolver.resolve(EventQueue.self)!,
+                notification: notification,
+                notificationStore: resolver.resolve(NotificationStore.self)!,
+                presentWebsiteActionProvider: presentWebsiteActionProvider
+            )
         }
         
         // MARK: Action (presentNotificationCenter)
@@ -67,10 +72,15 @@ public struct NotificationsAssembler: Assembler {
         // MARK: NotificationHandler
         
         container.register(NotificationHandler.self) { resolver in
-            let dispatcher = resolver.resolve(Dispatcher.self)!
-            return NotificationHandlerService(dispatcher: dispatcher, influenceTracker: resolver.resolve(InfluenceTracker.self)!, actionProvider: { notification in
-                return resolver.resolve(Action.self, name: "openNotification", arguments: notification)!
-            })
+            let actionProvider: NotificationHandlerService.ActionProvider = { [weak resolver] notification in
+                return resolver?.resolve(Action.self, name: "openNotification", arguments: notification)
+            }
+            
+            return NotificationHandlerService(
+                dispatcher: resolver.resolve(Dispatcher.self)!,
+                influenceTracker: resolver.resolve(InfluenceTracker.self)!,
+                actionProvider: actionProvider
+            )
         }
         
         // MARK: NotificationStore
@@ -85,9 +95,11 @@ public struct NotificationsAssembler: Assembler {
         // MARK: RouteHandler (notificationCenter)
         
         container.register(RouteHandler.self, name: "notificationCenter") { resolver in
-            return NotificationCenterRouteHandler(actionProvider: {
-                return resolver.resolve(Action.self, name: "presentNotificationCenter")!
-            })
+            let actionProvider: NotificationCenterRouteHandler.ActionProvider = { [weak resolver] in
+                return resolver?.resolve(Action.self, name: "presentNotificationCenter")
+            }
+            
+            return NotificationCenterRouteHandler(actionProvider: actionProvider)
         }
         
         // MARK: SyncParticipant (notifications)
@@ -101,6 +113,10 @@ public struct NotificationsAssembler: Assembler {
         // MARK: UIViewController (notificationCenter)
         
         container.register(UIViewController.self, name: "notificationCenter") { resolver in
+            let presentWebsiteActionProvider: NotificationCenterViewController.ActionProvider = { [weak resolver] url in
+                return resolver?.resolve(Action.self, name: "presentWebsite", arguments: url)
+            }
+            
             return NotificationCenterViewController(
                 dispatcher: resolver.resolve(Dispatcher.self)!,
                 eventQueue: resolver.resolve(EventQueue.self)!,
@@ -109,9 +125,7 @@ public struct NotificationsAssembler: Assembler {
                 router: resolver.resolve(Router.self)!,
                 sessionController: resolver.resolve(SessionController.self)!,
                 syncCoordinator: resolver.resolve(SyncCoordinator.self)!,
-                presentWebsiteActionProvider: { url in
-                    return resolver.resolve(Action.self, name: "presentWebsite", arguments: url)!
-                }
+                presentWebsiteActionProvider: presentWebsiteActionProvider
             )
         }
     }

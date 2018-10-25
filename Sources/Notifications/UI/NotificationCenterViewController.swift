@@ -16,7 +16,9 @@ open class NotificationCenterViewController: UIViewController {
     public let router: Router
     public let sessionController: SessionController
     public let syncCoordinator: SyncCoordinator
-    public let presentWebsiteActionProvider: (URL) -> Action
+    
+    public typealias ActionProvider = (URL) -> Action?
+    public let presentWebsiteActionProvider: ActionProvider
     
     public private(set) var navigationBar: UINavigationBar?
     public private(set) var refreshControl = UIRefreshControl()
@@ -24,7 +26,7 @@ open class NotificationCenterViewController: UIViewController {
     
     private var cache: [Notification]?
     private var notificationsObservation: NSObjectProtocol?
-    private var applicationDidBecomeActiveToken: NSObjectProtocol?
+    private var didBecomeActiveObserver: NSObjectProtocol?
     
     public var notifications: [Notification] {
         if let cache = cache {
@@ -63,7 +65,7 @@ open class NotificationCenterViewController: UIViewController {
         router: Router,
         sessionController: SessionController,
         syncCoordinator: SyncCoordinator,
-        presentWebsiteActionProvider: @escaping (URL) -> Action) {
+        presentWebsiteActionProvider: @escaping ActionProvider) {
         
         self.dispatcher = dispatcher
         self.eventQueue = eventQueue
@@ -89,8 +91,8 @@ open class NotificationCenterViewController: UIViewController {
     }
     
     deinit {
-        if let applicationDidBecomeActiveToken = applicationDidBecomeActiveToken {
-            NotificationCenter.default.removeObserver(applicationDidBecomeActiveToken)
+        if let didBecomeActiveObserver = self.didBecomeActiveObserver {
+            NotificationCenter.default.removeObserver(didBecomeActiveObserver)
         }
     }
     
@@ -112,13 +114,13 @@ open class NotificationCenterViewController: UIViewController {
         registerReusableViews()
 
         #if swift(>=4.2)
-        applicationDidBecomeActiveToken = NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: OperationQueue.main) { [weak self] _ in
+        self.didBecomeActiveObserver = NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: OperationQueue.main) { [weak self] _ in
             if self?.viewIfLoaded?.window != nil {
                 self?.resetApplicationIconBadgeNumber()
             }
         }
         #else
-        applicationDidBecomeActiveToken = NotificationCenter.default.addObserver(forName: .UIApplicationDidBecomeActive, object: nil, queue: OperationQueue.main) { [weak self] _ in
+        self.didBecomeActiveObserver = NotificationCenter.default.addObserver(forName: .UIApplicationDidBecomeActive, object: nil, queue: OperationQueue.main) { [weak self] _ in
             if self?.viewIfLoaded?.window != nil {
                 self?.resetApplicationIconBadgeNumber()
             }
@@ -334,11 +336,13 @@ extension NotificationCenterViewController: UITableViewDelegate {
                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
             }
         case .presentWebsite(let url):
-            let action = presentWebsiteActionProvider(url)
-            if let presentViewAction = action as? PresentViewAction {
-                presentViewAction.viewControllerToPresent.transitioningDelegate = self
+            if let action = presentWebsiteActionProvider(url) {
+                if let presentViewAction = action as? PresentViewAction {
+                    presentViewAction.viewControllerToPresent.transitioningDelegate = self
+                }
+                
+                dispatcher.dispatch(action, completionHandler: nil)
             }
-            dispatcher.dispatch(action, completionHandler: nil)
         }
         
         let eventInfo = notification.openedEvent(source: .notificationCenter)

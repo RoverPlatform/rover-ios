@@ -11,9 +11,11 @@ import UserNotifications
 class NotificationHandlerService: NotificationHandler {
     let dispatcher: Dispatcher
     let influenceTracker: InfluenceTracker
-    let actionProvider: (Notification) -> Action
     
-    init(dispatcher: Dispatcher, influenceTracker: InfluenceTracker, actionProvider: @escaping (Notification) -> Action) {
+    typealias ActionProvider = (Notification) -> Action?
+    let actionProvider: ActionProvider
+    
+    init(dispatcher: Dispatcher, influenceTracker: InfluenceTracker, actionProvider: @escaping ActionProvider) {
         self.dispatcher = dispatcher
         self.actionProvider = actionProvider
         self.influenceTracker = influenceTracker

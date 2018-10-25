@@ -45,59 +45,61 @@ class SyncCoordinatorService: SyncCoordinator {
             return
         }
         
-        var newData = false
+        self.recursiveSync(participants: participants, requests: requests)
+    }
+    
+    func recursiveSync(participants: [SyncParticipant], requests: [SyncRequest], newData: Bool = false) {
+        if participants.isEmpty || requests.isEmpty {
+            if newData {
+                self.invokeCompletionHandlers(.newData)
+            } else {
+                self.invokeCompletionHandlers(.noData)
+            }
+            
+            return
+        }
         
-        var recursiveSync: (([SyncParticipant], [SyncRequest]) -> Void)!
-        recursiveSync = { (participants, requests) in
-            if participants.isEmpty || requests.isEmpty {
-                if newData {
-                    self.invokeCompletionHandlers(.newData)
-                } else {
-                    self.invokeCompletionHandlers(.noData)
-                }
-                
+        let task = self.client.task(with: requests) { [weak self] result in
+            guard let _self = self else {
                 return
             }
             
-            let task = self.client.task(with: requests) { result in
-                self.syncTask = nil
+            _self.syncTask = nil
+            
+            switch result {
+            case .error(let error, _):
+                if let error = error {
+                    os_log("Sync task failed: %@", log: .sync, type: .error, error.localizedDescription)
+                } else {
+                    os_log("Sync task failed", log: .sync, type: .error)
+                }
                 
-                switch result {
-                case .error(let error, _):
-                    if let error = error {
-                        os_log("Sync task failed: %@", log: .sync, type: .error, error.localizedDescription)
-                    } else {
-                        os_log("Sync task failed", log: .sync, type: .error)
-                    }
+                _self.invokeCompletionHandlers(.failed)
+            case .success(let data):
+                var results = [SyncResult]()
+                var nextParticipants = [SyncParticipant]()
+                var nextRequests = [SyncRequest]()
+                var newData = newData
+                
+                for participant in participants {
+                    let result = participant.saveResponse(data)
+                    results.append(result)
                     
-                    self.invokeCompletionHandlers(.failed)
-                case .success(let data):
-                    var results = [SyncResult]()
-                    var nextParticipants = [SyncParticipant]()
-                    var nextRequests = [SyncRequest]()
-                    
-                    for participant in participants {
-                        let result = participant.saveResponse(data)
-                        results.append(result)
-                        
-                        if case .newData(let nextRequest) = result {
-                            newData = true
-                            if let nextRequest = nextRequest {
-                                nextParticipants.append(participant)
-                                nextRequests.append(nextRequest)
-                            }
+                    if case .newData(let nextRequest) = result {
+                        newData = true
+                        if let nextRequest = nextRequest {
+                            nextParticipants.append(participant)
+                            nextRequests.append(nextRequest)
                         }
                     }
-                    
-                    recursiveSync(nextParticipants, nextRequests)
                 }
+                
+                _self.recursiveSync(participants: nextParticipants, requests: nextRequests, newData: newData)
             }
-            
-            task.resume()
-            self.syncTask = task
         }
         
-        recursiveSync(participants, requests)
+        task.resume()
+        self.syncTask = task
     }
     
     func invokeCompletionHandlers(_ result: UIBackgroundFetchResult) {

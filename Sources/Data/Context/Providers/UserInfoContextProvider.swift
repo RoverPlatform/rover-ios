@@ -6,6 +6,6 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-public protocol UserInfoContextProvider {
+public protocol UserInfoContextProvider: class {
     var userInfo: Attributes? { get }
 }

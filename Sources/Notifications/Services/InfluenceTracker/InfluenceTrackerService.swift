@@ -23,24 +23,26 @@ class InfluenceTrackerService: InfluenceTracker {
         self.userDefaults = userDefaults
     }
     
+    deinit {
+        self.stopMonitoring()
+    }
+    
     func startMonitoring() {
         #if swift(>=4.2)
-        didBecomeActiveObserver = notificationCenter.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: nil) { [weak self] _ in
+        self.didBecomeActiveObserver = notificationCenter.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: OperationQueue.main) { [weak self] _ in
             self?.trackInfluencedOpen()
         }
         #else
-        didBecomeActiveObserver = notificationCenter.addObserver(forName: .UIApplicationDidBecomeActive, object: nil, queue: nil) { [weak self] _ in
+        self.didBecomeActiveObserver = notificationCenter.addObserver(forName: .UIApplicationDidBecomeActive, object: nil, queue: OperationQueue.main) { [weak self] _ in
             self?.trackInfluencedOpen()
         }
         #endif
     }
     
     func stopMonitoring() {
-        guard let didBecomeActiveObserver = didBecomeActiveObserver else {
-            return
+        if let didBecomeActiveObserver = self.didBecomeActiveObserver {
+            notificationCenter.removeObserver(didBecomeActiveObserver)
         }
-        
-        notificationCenter.removeObserver(didBecomeActiveObserver)
     }
     
     func trackInfluencedOpen() {

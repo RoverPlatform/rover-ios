@@ -26,7 +26,7 @@ open class NotificationCenterViewController: UIViewController {
     
     private var cache: [Notification]?
     private var notificationsObservation: NSObjectProtocol?
-    private var applicationDidBecomeActiveToken: NSObjectProtocol?
+    private var didBecomeActiveObserver: NSObjectProtocol?
     
     public var notifications: [Notification] {
         if let cache = cache {
@@ -91,8 +91,8 @@ open class NotificationCenterViewController: UIViewController {
     }
     
     deinit {
-        if let applicationDidBecomeActiveToken = applicationDidBecomeActiveToken {
-            NotificationCenter.default.removeObserver(applicationDidBecomeActiveToken)
+        if let didBecomeActiveObserver = self.didBecomeActiveObserver {
+            NotificationCenter.default.removeObserver(didBecomeActiveObserver)
         }
     }
     
@@ -114,13 +114,13 @@ open class NotificationCenterViewController: UIViewController {
         registerReusableViews()
 
         #if swift(>=4.2)
-        applicationDidBecomeActiveToken = NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: OperationQueue.main) { [weak self] _ in
+        self.didBecomeActiveObserver = NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: OperationQueue.main) { [weak self] _ in
             if self?.viewIfLoaded?.window != nil {
                 self?.resetApplicationIconBadgeNumber()
             }
         }
         #else
-        applicationDidBecomeActiveToken = NotificationCenter.default.addObserver(forName: .UIApplicationDidBecomeActive, object: nil, queue: OperationQueue.main) { [weak self] _ in
+        self.didBecomeActiveObserver = NotificationCenter.default.addObserver(forName: .UIApplicationDidBecomeActive, object: nil, queue: OperationQueue.main) { [weak self] _ in
             if self?.viewIfLoaded?.window != nil {
                 self?.resetApplicationIconBadgeNumber()
             }

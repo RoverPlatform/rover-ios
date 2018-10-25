@@ -24,33 +24,33 @@ class SessionControllerService: SessionController {
     
     var sessions = [String: SessionEntry]()
     
-    var applicationDidBecomeActiveToken: NSObjectProtocol!
-    var applicationWillResignActiveToken: NSObjectProtocol!
+    var didBecomeActiveObserver: NSObjectProtocol!
+    var willResignActiveObserver: NSObjectProtocol!
     
     init(eventQueue: EventQueue, keepAliveTime: Int) {
         self.eventQueue = eventQueue
         self.keepAliveTime = keepAliveTime
         
         #if swift(>=4.2)
-        applicationDidBecomeActiveToken = NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: OperationQueue.main) { [weak self] _ in
+        self.didBecomeActiveObserver = NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: OperationQueue.main) { [weak self] _ in
             self?.sessions.forEach {
                 $0.value.session.start()
             }
         }
         
-        applicationWillResignActiveToken = NotificationCenter.default.addObserver(forName: UIApplication.willResignActiveNotification, object: nil, queue: OperationQueue.main) { [weak self] _ in
+        self.willResignActiveObserver = NotificationCenter.default.addObserver(forName: UIApplication.willResignActiveNotification, object: nil, queue: OperationQueue.main) { [weak self] _ in
             self?.sessions.forEach {
                 $0.value.session.end()
             }
         }
         #else
-        applicationDidBecomeActiveToken = NotificationCenter.default.addObserver(forName: .UIApplicationDidBecomeActive, object: nil, queue: OperationQueue.main) { [weak self] _ in
+        self.didBecomeActiveObserver = NotificationCenter.default.addObserver(forName: .UIApplicationDidBecomeActive, object: nil, queue: OperationQueue.main) { [weak self] _ in
             self?.sessions.forEach {
                 $0.value.session.start()
             }
         }
         
-        applicationWillResignActiveToken = NotificationCenter.default.addObserver(forName: .UIApplicationWillResignActive, object: nil, queue: OperationQueue.main) { [weak self] _ in
+        self.willResignActiveObserver = NotificationCenter.default.addObserver(forName: .UIApplicationWillResignActive, object: nil, queue: OperationQueue.main) { [weak self] _ in
             self?.sessions.forEach {
                 $0.value.session.end()
             }
@@ -59,8 +59,8 @@ class SessionControllerService: SessionController {
     }
     
     deinit {
-        NotificationCenter.default.removeObserver(applicationDidBecomeActiveToken)
-        NotificationCenter.default.removeObserver(applicationWillResignActiveToken)
+        NotificationCenter.default.removeObserver(didBecomeActiveObserver)
+        NotificationCenter.default.removeObserver(willResignActiveObserver)
     }
     
     func registerSession(identifier: String, completionHandler: @escaping (Double) -> EventInfo) {

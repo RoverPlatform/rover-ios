@@ -51,6 +51,10 @@ public class EventQueue {
         return FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first?.appendingPathComponent("events").appendingPathExtension("plist")
     }
     
+    var didBecomeActiveObserver: NSObjectProtocol?
+    var willResignActiveObserver: NSObjectProtocol?
+    var didEnterBackgroundObserver: NSObjectProtocol?
+    
     init(client: EventsClient, flushAt: Int, flushInterval: Double, maxBatchSize: Int, maxQueueSize: Int) {
         self.client = client
         self.flushAt = flushAt
@@ -63,36 +67,42 @@ public class EventQueue {
         restoreEvents()
         
         #if swift(>=4.2)
-        NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: nil) { _ in
-            self.startTimer()
+        self.didBecomeActiveObserver = NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: OperationQueue.main) { [weak self] _ in
+            self?.startTimer()
         }
         
-        NotificationCenter.default.addObserver(forName: UIApplication.willResignActiveNotification, object: nil, queue: nil) { _ in
-            self.stopTimer()
+        self.willResignActiveObserver = NotificationCenter.default.addObserver(forName: UIApplication.willResignActiveNotification, object: nil, queue: OperationQueue.main) { [weak self] _ in
+            self?.stopTimer()
         }
         
-        NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: nil) { _ in
-            self.beginBackgroundTask()
-            self.flushEvents()
+        self.didEnterBackgroundObserver = NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: OperationQueue.main) { [weak self] _ in
+            self?.beginBackgroundTask()
+            self?.flushEvents()
         }
         #else
-        NotificationCenter.default.addObserver(forName: .UIApplicationDidBecomeActive, object: nil, queue: nil) { _ in
-            self.startTimer()
+        self.didBecomeActiveObserver = NotificationCenter.default.addObserver(forName: .UIApplicationDidBecomeActive, object: nil, queue: nil) { [weak OperationQueue.main] _ in
+            self?.startTimer()
         }
         
-        NotificationCenter.default.addObserver(forName: .UIApplicationWillResignActive, object: nil, queue: nil) { _ in
-            self.stopTimer()
+        self.willResignActiveObserver = NotificationCenter.default.addObserver(forName: .UIApplicationWillResignActive, object: nil, queue: nil) { [weak OperationQueue.main] _ in
+            self?.stopTimer()
         }
         
-        NotificationCenter.default.addObserver(forName: .UIApplicationDidEnterBackground, object: nil, queue: nil) { _ in
-            self.beginBackgroundTask()
-            self.flushEvents()
+        self.didEnterBackgroundObserver = NotificationCenter.default.addObserver(forName: .UIApplicationDidEnterBackground, object: nil, queue: nil) { [weak OperationQueue.main] _ in
+            self?.beginBackgroundTask()
+            self?.flushEvents()
         }
         #endif
         
         if (UIApplication.shared.applicationState == .active) {
-            startTimer()
+            self.startTimer()
         }
+    }
+    
+    deinit {
+        [self.didBecomeActiveObserver,
+         self.willResignActiveObserver,
+         self.didEnterBackgroundObserver].compactMap({ $0 }).forEach(NotificationCenter.default.removeObserver)
     }
     
     func restoreEvents() {
@@ -272,41 +282,26 @@ public class EventQueue {
 
 extension EventQueue {
     func startTimer() {
-        stopTimer()
-        
-        serialQueue.addOperation {
-            guard self.flushInterval > 0.0 else {
-                return
-            }
+        return
             
-            let timer = Timer(timeInterval: self.flushInterval, repeats: true) { _ in
-                self.flushEvents()
-            }
-            
-            DispatchQueue.main.async {
-                #if swift(>=4.2)
-                RunLoop.main.add(timer, forMode: RunLoop.Mode.default)
-                #else
-                RunLoop.main.add(timer, forMode: .defaultRunLoopMode)
-                #endif
-            }
-            
-            self.timer = timer
-        }
+//        self.stopTimer()
+//        
+//        guard self.flushInterval > 0.0 else {
+//            return
+//        }
+//        
+//        self.timer = Timer.scheduledTimer(withTimeInterval: self.flushInterval, repeats: true) { [weak self] _ in
+//            self?.flushEvents()
+//        }
     }
     
     func stopTimer() {
-        serialQueue.addOperation {
-            guard let timer = self.timer else {
-                return
-            }
-            
-            DispatchQueue.main.async {
-                timer.invalidate()
-            }
-            
-            self.timer = nil
+        guard let timer = self.timer else {
+            return
         }
+        
+        timer.invalidate()
+        self.timer = nil
     }
 }
 

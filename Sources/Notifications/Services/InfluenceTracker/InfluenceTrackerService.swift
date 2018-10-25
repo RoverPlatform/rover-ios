@@ -25,12 +25,12 @@ class InfluenceTrackerService: InfluenceTracker {
     
     func startMonitoring() {
         #if swift(>=4.2)
-        didBecomeActiveObserver = notificationCenter.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: nil) { _ in
-            self.trackInfluencedOpen()
+        didBecomeActiveObserver = notificationCenter.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: nil) { [weak self] _ in
+            self?.trackInfluencedOpen()
         }
         #else
-        didBecomeActiveObserver = notificationCenter.addObserver(forName: .UIApplicationDidBecomeActive, object: nil, queue: nil) { _ in
-            self.trackInfluencedOpen()
+        didBecomeActiveObserver = notificationCenter.addObserver(forName: .UIApplicationDidBecomeActive, object: nil, queue: nil) { [weak self] _ in
+            self?.trackInfluencedOpen()
         }
         #endif
     }

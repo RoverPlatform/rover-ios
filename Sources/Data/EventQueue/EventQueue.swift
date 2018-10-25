@@ -100,9 +100,19 @@ public class EventQueue {
     }
     
     deinit {
-        [self.didBecomeActiveObserver,
-         self.willResignActiveObserver,
-         self.didEnterBackgroundObserver].compactMap({ $0 }).forEach(NotificationCenter.default.removeObserver)
+        self.stopTimer()
+        
+        if let didBecomeActiveObserver = self.didBecomeActiveObserver {
+            NotificationCenter.default.removeObserver(didBecomeActiveObserver)
+        }
+        
+        if let willResignActiveObserver = self.willResignActiveObserver {
+            NotificationCenter.default.removeObserver(willResignActiveObserver)
+        }
+        
+        if let didEnterBackgroundObserver = self.didEnterBackgroundObserver {
+            NotificationCenter.default.removeObserver(didEnterBackgroundObserver)
+        }
     }
     
     func restoreEvents() {
@@ -282,17 +292,15 @@ public class EventQueue {
 
 extension EventQueue {
     func startTimer() {
-        return
-            
-//        self.stopTimer()
-//        
-//        guard self.flushInterval > 0.0 else {
-//            return
-//        }
-//        
-//        self.timer = Timer.scheduledTimer(withTimeInterval: self.flushInterval, repeats: true) { [weak self] _ in
-//            self?.flushEvents()
-//        }
+        self.stopTimer()
+        
+        guard self.flushInterval > 0.0 else {
+            return
+        }
+        
+        self.timer = Timer.scheduledTimer(withTimeInterval: self.flushInterval, repeats: true) { [weak self] _ in
+            self?.flushEvents()
+        }
     }
     
     func stopTimer() {

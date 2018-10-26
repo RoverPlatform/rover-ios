@@ -17,14 +17,19 @@ class NotificationsSyncParticipant: SyncParticipant {
     }
     
     func initialRequest() -> SyncRequest? {
-        let deviceIdentifier = UIDevice.current.identifierForVendor!.uuidString
+        let orderBy: Attributes = [
+            "field": "CREATED_AT",
+            "direction": "DESC"
+        ]
+        
         return SyncRequest(
             query: SyncQuery.notifications,
             values: [
-                SyncQuery.Argument.last: 500,
-                SyncQuery.Argument.deviceIdentifier: deviceIdentifier
+                "last": 500,
+                "orderBy": orderBy,
+                "deviceIdentifier": UIDevice.current.identifierForVendor!.uuidString
             ]
-        )!
+        )
     }
     
     func saveResponse(_ data: Data) -> SyncResult {

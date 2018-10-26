@@ -6,6 +6,6 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-public protocol DebugContextProvider {
+public protocol DebugContextProvider: class {
     var isTestDevice: Bool { get }
 }

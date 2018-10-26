@@ -7,19 +7,21 @@
 //
 
 class ModularContextProvider {
-    let bluetoothContextProvider: BluetoothContextProvider?
-    let debugContextProvider: DebugContextProvider?
-    let localeContextProvider: LocaleContextProvider?
-    let locationContextProvider: LocationContextProvider?
-    let notificationsContextProvider: NotificationsContextProvider?
-    let pushTokenContextProvider: PushTokenContextProvider?
-    let reachabilityContextProvider: ReachabilityContextProvider?
-    let staticContextProvider: StaticContextProvider
-    let telephonyContextProvider: TelephonyContextProvider?
-    let timeZoneContextProvider: TimeZoneContextProvider?
-    let userInfoContextProvider: UserInfoContextProvider?
+    weak var adSupportContextProvider: AdSupportContextProvider?
+    weak var bluetoothContextProvider: BluetoothContextProvider?
+    weak var debugContextProvider: DebugContextProvider?
+    weak var localeContextProvider: LocaleContextProvider?
+    weak var locationContextProvider: LocationContextProvider?
+    weak var notificationsContextProvider: NotificationsContextProvider?
+    weak var pushTokenContextProvider: PushTokenContextProvider?
+    weak var reachabilityContextProvider: ReachabilityContextProvider?
+    weak var staticContextProvider: StaticContextProvider?
+    weak var telephonyContextProvider: TelephonyContextProvider?
+    weak var timeZoneContextProvider: TimeZoneContextProvider?
+    weak var userInfoContextProvider: UserInfoContextProvider?
     
     init(
+        adSupportContextProvider: AdSupportContextProvider?,
         bluetoothContextProvider: BluetoothContextProvider?,
         debugContextProvider: DebugContextProvider?,
         locationContextProvider: LocationContextProvider?,
@@ -32,6 +34,7 @@ class ModularContextProvider {
         timeZoneContextProvider: TimeZoneContextProvider?,
         userInfoContextProvider: UserInfoContextProvider?) {
         
+        self.adSupportContextProvider = adSupportContextProvider
         self.bluetoothContextProvider = bluetoothContextProvider
         self.debugContextProvider = debugContextProvider
         self.localeContextProvider = localeContextProvider
@@ -49,6 +52,7 @@ class ModularContextProvider {
 extension ModularContextProvider: ContextProvider {
     var context: Context {
         return Context(
+            advertisingIdentifier: self.adSupportContextProvider?.advertisingIdentifier,
             isBluetoothEnabled: self.bluetoothContextProvider?.isBluetoothEnabled,
             localeLanguage: self.localeContextProvider?.localeLanguage,
             localeRegion: self.localeContextProvider?.localeRegion,
@@ -60,20 +64,20 @@ extension ModularContextProvider: ContextProvider {
             pushToken: self.pushTokenContextProvider?.pushToken,
             isCellularEnabled: self.reachabilityContextProvider?.isCellularEnabled,
             isWifiEnabled: self.reachabilityContextProvider?.isWifiEnabled,
-            appBadgeNumber: self.staticContextProvider.appBadgeNumber,
-            appBuild: self.staticContextProvider.appBuild,
-            appIdentifier: self.staticContextProvider.appIdentifier,
-            appVersion: self.staticContextProvider.appVersion,
-            buildEnvironment: self.staticContextProvider.buildEnvironment,
-            deviceIdentifier: self.staticContextProvider.deviceIdentifier,
-            deviceManufacturer: self.staticContextProvider.deviceManufacturer,
-            deviceModel: self.staticContextProvider.deviceModel,
-            deviceName: self.staticContextProvider.deviceName,
-            operatingSystemName: self.staticContextProvider.operatingSystemName,
-            operatingSystemVersion: self.staticContextProvider.operatingSystemVersion,
-            screenHeight: self.staticContextProvider.screenHeight,
-            screenWidth: self.staticContextProvider.screenWidth,
-            sdkVersion: self.staticContextProvider.sdkVersion,
+            appBadgeNumber: self.staticContextProvider?.appBadgeNumber,
+            appBuild: self.staticContextProvider?.appBuild,
+            appIdentifier: self.staticContextProvider?.appIdentifier,
+            appVersion: self.staticContextProvider?.appVersion,
+            buildEnvironment: self.staticContextProvider?.buildEnvironment,
+            deviceIdentifier: self.staticContextProvider?.deviceIdentifier,
+            deviceManufacturer: self.staticContextProvider?.deviceManufacturer,
+            deviceModel: self.staticContextProvider?.deviceModel,
+            deviceName: self.staticContextProvider?.deviceName,
+            operatingSystemName: self.staticContextProvider?.operatingSystemName,
+            operatingSystemVersion: self.staticContextProvider?.operatingSystemVersion,
+            screenHeight: self.staticContextProvider?.screenHeight,
+            screenWidth: self.staticContextProvider?.screenWidth,
+            sdkVersion: self.staticContextProvider?.sdkVersion,
             carrierName: self.telephonyContextProvider?.carrierName,
             radio: self.telephonyContextProvider?.radio,
             isTestDevice: self.debugContextProvider?.isTestDevice,

@@ -86,7 +86,7 @@ extension Beacon {
     }
 }
 
-// MARK: Fetch Requests
+// MARK: Store Requests
 
 extension Beacon {
     public static func fetchAll(in context: NSManagedObjectContext) -> Set<Beacon> {
@@ -115,7 +115,19 @@ extension Beacon {
             return []
         }
     }
+
+    public static func deleteAll(in context: NSManagedObjectContext) {
+        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = Beacon.fetchRequest()
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+        do {
+            try context.execute(deleteRequest)
+        } catch {
+            os_log("Failed to delete beacons: %@", log: .persistence, type: .error, error.localizedDescription)
+        }
+    }
 }
+
+// MARK: Collection
 
 extension Collection where Element == Beacon {
     public func wildCardRegions(maxLength: Int) -> Set<CLBeaconRegion> {

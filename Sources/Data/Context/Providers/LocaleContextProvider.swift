@@ -6,7 +6,7 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-public protocol LocaleContextProvider {
+public protocol LocaleContextProvider: class {
     var localeLanguage: String? { get }
     var localeRegion: String? { get }
     var localeScript: String? { get }

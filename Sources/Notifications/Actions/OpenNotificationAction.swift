@@ -12,9 +12,11 @@ class OpenNotificationAction: Action {
     let eventQueue: EventQueue
     let notification: Notification
     let notificationStore: NotificationStore
-    let presentWebsiteActionProvider: (URL) -> Action
     
-    init(eventQueue: EventQueue, notification: Notification, notificationStore: NotificationStore, presentWebsiteActionProvider: @escaping (URL) -> Action) {
+    typealias ActionProvider = (URL) -> Action?
+    let presentWebsiteActionProvider: ActionProvider
+    
+    init(eventQueue: EventQueue, notification: Notification, notificationStore: NotificationStore, presentWebsiteActionProvider: @escaping ActionProvider) {
         self.eventQueue = eventQueue
         self.notification = notification
         self.notificationStore = notificationStore
@@ -39,8 +41,9 @@ class OpenNotificationAction: Action {
                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
             }
         case .presentWebsite(let url):
-            let action = presentWebsiteActionProvider(url)
-            produceAction(action)
+            if let action = presentWebsiteActionProvider(url) {
+                produceAction(action)
+            }
         }
         
         let eventInfo = notification.openedEvent(source: .pushNotification)

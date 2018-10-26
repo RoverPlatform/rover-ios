@@ -41,9 +41,11 @@ public struct ExperiencesAssembler: Assembler {
         // MARK: RouteHandler (experience)
         
         container.register(RouteHandler.self, name: "experience") { resolver in
-            return ExperienceRouteHandler(actionProvider: { identifier in
-                return resolver.resolve(Action.self, name: "presentExperience", arguments: identifier)!
-            })
+            let actionProvider: ExperienceRouteHandler.ActionProvider = { [weak resolver] identifier in
+                return resolver?.resolve(Action.self, name: "presentExperience", arguments: identifier)
+            }
+            
+            return ExperienceRouteHandler(actionProvider: actionProvider)
         }
         
         // MARK: UICollectionViewLayout (screen)
@@ -55,12 +57,14 @@ public struct ExperiencesAssembler: Assembler {
         // MARK: UIViewController (experience)
         
         container.register(UIViewController.self, name: "experience", scope: .transient) { (resolver, identifier: ExperienceIdentifier) in
+            let viewControllerProvider: ExperienceContainer.ViewControllerProvider = { [weak resolver] experience in
+                return resolver?.resolve(UIViewController.self, name: "experience", arguments: experience)
+            }
+            
             return ExperienceContainer(
                 identifier: identifier,
                 store: resolver.resolve(ExperienceStore.self)!,
-                viewControllerProvider: { experience in
-                    return resolver.resolve(UIViewController.self, name: "experience", arguments: experience)!
-                }
+                viewControllerProvider: viewControllerProvider
             )
         }
         
@@ -76,6 +80,14 @@ public struct ExperiencesAssembler: Assembler {
         // MARK: UIViewController (screen)
         
         container.register(UIViewController.self, name: "screen", scope: .transient) { (resolver, experience: Experience, screen: Screen) in
+            let viewControllerProvider: ScreenViewController.ViewControllerProvider = { [weak resolver] (experience, screen) in
+                return resolver?.resolve(UIViewController.self, name: "screen", arguments: experience, screen)
+            }
+            
+            let presentWebsiteActionProvider: ScreenViewController.ActionProvider = { [weak resolver] url in
+                return resolver?.resolve(Action.self, name: "presentWebsite", arguments: url)
+            }
+            
             return ScreenViewController(
                 collectionViewLayout: resolver.resolve(UICollectionViewLayout.self, name: "screen", arguments: screen)!,
                 experience: experience,
@@ -84,12 +96,8 @@ public struct ExperiencesAssembler: Assembler {
                 eventQueue: resolver.resolve(EventQueue.self)!,
                 imageStore: resolver.resolve(ImageStore.self)!,
                 sessionController: resolver.resolve(SessionController.self)!,
-                viewControllerProvider: { (experience, screen) in
-                    return resolver.resolve(UIViewController.self, name: "screen", arguments: experience, screen)!
-                },
-                presentWebsiteActionProvider: { url in
-                    return resolver.resolve(Action.self, name: "presentWebsite", arguments: url)!
-                }
+                viewControllerProvider: viewControllerProvider,
+                presentWebsiteActionProvider: presentWebsiteActionProvider
             )
         }
     }

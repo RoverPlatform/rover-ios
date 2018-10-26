@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.name              = "Rover"
   s.module_name       = "RoverKit"
-  s.version           = "2.1.2"
+  s.version           = "2.2.0-beta.1"
   s.summary           = "iOS framework for the Rover platform"
   s.homepage          = "https://www.rover.io"
   s.license           = "Apache License, Version 2.0"
@@ -63,6 +63,18 @@ Pod::Spec.new do |s|
   s.subspec "Debug" do |ss|
     ss.source_files = "Sources/Debug/**/*.swift"
     ss.dependency "Rover/UI"
+  end
+
+  s.subspec "Telephony" do |ss|
+    ss.source_files = "Sources/Telephony/**/*.swift"
+    ss.dependency "Rover/Data"
+    ss.frameworks = "CoreTelephony"
+  end
+
+  s.subspec "AdSupport" do |ss|
+    ss.source_files = "Sources/AdSupport/**/*.swift"
+    ss.dependency "Rover/Data"
+    ss.frameworks = "AdSupport"
   end
 
   s.subspec "Ticketmaster" do |ss|

@@ -90,7 +90,7 @@ extension Geofence {
     }
 }
 
-// MARK: Fetch Requests
+// MARK: Store Requests
 
 extension Geofence {
     public static func fetchAll(in context: NSManagedObjectContext) -> Set<Geofence> {
@@ -157,6 +157,16 @@ extension Geofence {
         
         os_log("Successfully fetched geofence: %{public}", log: .persistence, type: .debug, geofence)
         return geofence
+    }
+
+    public static func deleteAll(in context: NSManagedObjectContext) {
+        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = Geofence.fetchRequest()
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+        do {
+            try context.execute(deleteRequest)
+        } catch {
+            os_log("Failed to delete geofences: %@", log: .persistence, type: .error, error.localizedDescription)
+        }
     }
 }
 

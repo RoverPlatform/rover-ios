@@ -47,22 +47,11 @@ extension SyncQuery {
         body: """
             attributes
             """,
-        arguments: [.hostMemberID, .teamMemberID],
+        arguments: [
+            SyncQuery.Argument(name: "hostMemberID", type: "String"),
+            SyncQuery.Argument(name: "teamMemberID", type: "String")
+        ],
         fragments: []
-    )
-}
-
-extension SyncQuery.Argument {
-    static let hostMemberID = SyncQuery.Argument(
-        name: "hostMemberID",
-        style: .string,
-        isRequired: false
-    )
-    
-    static let teamMemberID = SyncQuery.Argument(
-        name: "teamMemberID",
-        style: .string,
-        isRequired: false
     )
 }
 
@@ -75,10 +64,10 @@ extension TicketmasterManager: SyncParticipant {
         return SyncRequest(
             query: .ticketmaster,
             values: [
-                .hostMemberID: member.hostID,
-                .teamMemberID: member.teamID
+                "hostMemberID": member.hostID,
+                "teamMemberID": member.teamID
             ]
-        )!
+        )
     }
     
     struct Response: Decodable {

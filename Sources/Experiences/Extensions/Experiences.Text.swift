@@ -13,37 +13,37 @@ extension Text {
         guard let data = rawValue.data(using: String.Encoding.unicode) else {
             return nil
         }
-        
+
         let options = [NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.html]
-        
+
         guard let attributedString = try? NSMutableAttributedString(data: data, options: options, documentAttributes: nil) else {
             return nil
         }
-        
+
         let range = NSMakeRange(0, attributedString.length)
-        
+
         // Bold and italicize
-        
+
         #if swift(>=4.2)
         attributedString.enumerateAttribute(NSAttributedString.Key.font, in: range, options: []) { (value, range, stop) in
             guard let value = value as? UIFont else {
                 return
             }
-            
+
             let traits = value.fontDescriptor.symbolicTraits
             let fontSize = CGFloat(self.font.size)
             let fontWeight = traits.contains(.traitBold) ? self.font.weight.uiFontWeightBold : self.font.weight.uiFontWeight
             var font = UIFont.systemFont(ofSize: fontSize, weight: fontWeight)
-            
+
             if traits.contains(.traitItalic) {
                 let descriptor = font.fontDescriptor.withSymbolicTraits(.traitItalic)!
                 font = UIFont(descriptor: descriptor, size: fontSize)
             }
-            
+
             attributedString.removeAttribute(NSAttributedString.Key.font, range: range)
             attributedString.addAttribute(NSAttributedString.Key.font, value: font, range: range)
         }
-        
+
         let attributes = [NSAttributedString.Key.foregroundColor: color.uiColor,
                           NSAttributedString.Key.paragraphStyle: alignment.paragraphStyle]
         #else
@@ -51,34 +51,34 @@ extension Text {
             guard let value = value as? UIFont else {
                 return
             }
-            
+
             let traits = value.fontDescriptor.symbolicTraits
             let fontSize = CGFloat(self.font.size)
             let fontWeight = traits.contains(.traitBold) ? self.font.weight.uiFontWeightBold : self.font.weight.uiFontWeight
             var font = UIFont.systemFont(ofSize: fontSize, weight: fontWeight)
-            
+
             if traits.contains(.traitItalic) {
                 let descriptor = font.fontDescriptor.withSymbolicTraits(.traitItalic)!
                 font = UIFont(descriptor: descriptor, size: fontSize)
             }
-            
+
             attributedString.removeAttribute(NSAttributedStringKey.font, range: range)
             attributedString.addAttribute(NSAttributedStringKey.font, value: font, range: range)
         }
-        
+
         let attributes = [NSAttributedStringKey.foregroundColor: color.uiColor,
                           NSAttributedStringKey.paragraphStyle: alignment.paragraphStyle]
         #endif
-        
+
         attributedString.addAttributes(attributes, range: range)
-        
+
         // Remove double newlines at end of string
-        
+
         let string = attributedString.string
         if attributedString.length > 0 && string.suffix(1) == "\n" {
             attributedString.replaceCharacters(in: NSMakeRange(attributedString.length - 1, 1), with: "")
         }
-        
+
         return attributedString
     }
 }
@@ -96,10 +96,13 @@ extension Text.Alignment {
             return .right
         }
     }
-    
+
     var paragraphStyle: NSParagraphStyle {
         let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.alignment = textAlignment
+        paragraphStyle.paragraphSpacing = 0
+        paragraphStyle.paragraphSpacingBefore = 0
+        paragraphStyle.lineHeightMultiple = 0
+        paragraphStyle.lineSpacing = 0
         return paragraphStyle
     }
 }
@@ -138,7 +141,7 @@ extension Text.Font.Weight {
             return UIFont.Weight.black
         }
     }
-    
+
     var uiFontWeightBold: UIFont.Weight {
         switch self {
         case .ultraLight:

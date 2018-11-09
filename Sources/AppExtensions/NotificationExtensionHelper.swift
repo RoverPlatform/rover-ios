@@ -120,7 +120,20 @@ public class NotificationExtensionHelper {
         }
         
         let utiFromURL: (URL) -> CFString? = { url in
-            return UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, url.pathExtension as CFString, nil)?.takeRetainedValue()
+            let ext = url.pathExtension
+            if ext.isEmpty {
+                return nil
+            }
+            let uti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, ext as CFString, nil)?.takeRetainedValue()
+            
+            if let uti = uti {
+                // return nil if dynamic UTI is assigned, which means the platform could not infer a type from the path extension.
+                if String(uti).starts(with: "dyn") {
+                    return nil
+                }
+            }
+            
+            return uti
         }
         
         let utiFromResponse: (URLResponse?) -> CFString? = { response in

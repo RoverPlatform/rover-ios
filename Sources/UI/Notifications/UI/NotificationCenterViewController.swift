@@ -17,8 +17,8 @@ open class NotificationCenterViewController: UIViewController {
     public let sessionController: SessionController
     public let syncCoordinator: SyncCoordinator
     
-    public typealias ActionProvider = (URL) -> Action?
-    public let presentWebsiteActionProvider: ActionProvider
+    public typealias WebsiteViewControllerProvider = (URL) -> UIViewController?
+    public let websiteViewControllerProvider: WebsiteViewControllerProvider
     
     public private(set) var navigationBar: UINavigationBar?
     public private(set) var refreshControl = UIRefreshControl()
@@ -65,8 +65,7 @@ open class NotificationCenterViewController: UIViewController {
         router: Router,
         sessionController: SessionController,
         syncCoordinator: SyncCoordinator,
-        presentWebsiteActionProvider: @escaping ActionProvider) {
-        
+        websiteViewControllerProvider: @escaping WebsiteViewControllerProvider) {
         self.dispatcher = dispatcher
         self.eventQueue = eventQueue
         self.imageStore = imageStore
@@ -74,7 +73,7 @@ open class NotificationCenterViewController: UIViewController {
         self.router = router
         self.sessionController = sessionController
         self.syncCoordinator = syncCoordinator
-        self.presentWebsiteActionProvider = presentWebsiteActionProvider
+        self.websiteViewControllerProvider = websiteViewControllerProvider
         
         super.init(nibName: nil, bundle: nil)
         
@@ -329,19 +328,10 @@ extension NotificationCenterViewController: UITableViewDelegate {
         case .openApp:
             break
         case .openURL(let url):
-//            if let action = router.action(for: url) as? PresentViewAction {
-//                action.viewControllerToPresent.transitioningDelegate = self
-//                dispatcher.dispatch(action, completionHandler: nil)
-//            } else {
                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
-//            }
         case .presentWebsite(let url):
-            if let action = presentWebsiteActionProvider(url) {
-//                if let presentViewAction = action as? PresentViewAction {
-//                    presentViewAction.viewControllerToPresent.transitioningDelegate = self
-//                }
-                
-                dispatcher.dispatch(action, completionHandler: nil)
+            if let websiteViewController = websiteViewControllerProvider(url) {
+                UIApplication.shared.present(websiteViewController, animated: true)
             }
         }
         

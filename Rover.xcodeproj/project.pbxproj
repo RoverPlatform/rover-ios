@@ -52,7 +52,6 @@
 		4962FB5D219B50AA00C7F678 /* RoverUI.h in Sources */ = {isa = PBXBuildFile; fileRef = DB6ADD5C20B33EC0002F226C /* RoverUI.h */; };
 		4962FB5F219B51AD00C7F678 /* Notifications.OSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6BE8B6215D4B2A000A1FDA /* Notifications.OSLog.swift */; };
 		4962FB60219B51AD00C7F678 /* Notifications.SyncQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB496E472148717C0026DE6A /* Notifications.SyncQuery.swift */; };
-		4962FB61219B51AD00C7F678 /* OpenNotificationAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7BA92520D9729600968A30 /* OpenNotificationAction.swift */; };
 		4962FB62219B51AD00C7F678 /* Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A7C209B8CC500E99F9F /* Notification.swift */; };
 		4962FB63219B51AD00C7F678 /* NotificationAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB78A3120DAD88900AF1A00 /* NotificationAttachment.swift */; };
 		4962FB64219B51AD00C7F678 /* NotificationSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB496F5220DBECD800DF5949 /* NotificationSource.swift */; };
@@ -370,7 +369,6 @@
 		DB7BA91A20D9594500968A30 /* RouteHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteHandler.swift; sourceTree = "<group>"; };
 		DB7BA91D20D96C9900968A30 /* ExperienceRouteHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperienceRouteHandler.swift; sourceTree = "<group>"; };
 		DB7BA92120D970A100968A30 /* NotificationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationHandler.swift; sourceTree = "<group>"; };
-		DB7BA92520D9729600968A30 /* OpenNotificationAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenNotificationAction.swift; sourceTree = "<group>"; };
 		DB7BA92A20D9811100968A30 /* NotificationHandlerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationHandlerService.swift; sourceTree = "<group>"; };
 		DB7BA92E20D982BE00968A30 /* NotificationCenterRouteHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCenterRouteHandler.swift; sourceTree = "<group>"; };
 		DB8C0756215FC4D2000DDD56 /* RoverTicketmaster.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RoverTicketmaster.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -936,7 +934,6 @@
 		DB7BA92420D9725E00968A30 /* Actions */ = {
 			isa = PBXGroup;
 			children = (
-				DB7BA92520D9729600968A30 /* OpenNotificationAction.swift */,
 			);
 			path = Actions;
 			sourceTree = "<group>";
@@ -2236,7 +2233,6 @@
 				4962FB79219B52BE00C7F678 /* SettingsViewController.swift in Sources */,
 				4962FB5F219B51AD00C7F678 /* Notifications.OSLog.swift in Sources */,
 				4962FB60219B51AD00C7F678 /* Notifications.SyncQuery.swift in Sources */,
-				4962FB61219B51AD00C7F678 /* OpenNotificationAction.swift in Sources */,
 				4962FB62219B51AD00C7F678 /* Notification.swift in Sources */,
 				4962FB63219B51AD00C7F678 /* NotificationAttachment.swift in Sources */,
 				4962FB64219B51AD00C7F678 /* NotificationSource.swift in Sources */,

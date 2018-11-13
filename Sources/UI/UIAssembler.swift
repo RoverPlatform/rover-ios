@@ -46,14 +46,6 @@ extension UIAssembler: Assembler {
             return OpenURLAction(url: url)
         }
         
-        // MARK: Action (presentView)
-        
-        container.register(Action.self, name: "presentView", scope: .transient) { (resolver, viewControllerToPresent: UIViewController) in
-            return PresentViewAction(
-                viewControllerToPresent: viewControllerToPresent,
-                animated: true
-            )
-        }
         
         // MARK: Action (presentWebsite)
         
@@ -297,15 +289,6 @@ extension UIAssembler: Assembler {
                 sessionController: resolver.resolve(SessionController.self)!,
                 syncCoordinator: resolver.resolve(SyncCoordinator.self)!,
                 presentWebsiteActionProvider: presentWebsiteActionProvider
-            )
-        }
-        
-        // MARK: Action (settings)
-        
-        container.register(Action.self, name: "settings", scope: .transient) { resolver in
-            return PresentViewAction(
-                viewControllerToPresent: resolver.resolve(UIViewController.self, name: "settings")!,
-                animated: true
             )
         }
         

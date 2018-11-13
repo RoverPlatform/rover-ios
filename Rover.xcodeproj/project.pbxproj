@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		491C9710219B6C580065BAB8 /* UIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 491C970F219B6C580065BAB8 /* UIApplication.swift */; };
 		4962FB31219B506B00C7F678 /* Experiences.Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1B66209CD89400E99F9F /* Experiences.Color.swift */; };
 		4962FB32219B506B00C7F678 /* Experiences.Text.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1B68209CD8D600E99F9F /* Experiences.Text.swift */; };
 		4962FB33219B506B00C7F678 /* Experiences.ImageConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFDF48320AC858A0031EF47 /* Experiences.ImageConfiguration.swift */; };
@@ -111,7 +112,6 @@
 		DB6ADD8020B344BC002F226C /* SessionControllerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6ADD7E20B3449E002F226C /* SessionControllerService.swift */; };
 		DB6ADD8920B34F86002F226C /* SessionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6ADD8720B34F81002F226C /* SessionController.swift */; };
 		DB6ADD8A20B351B6002F226C /* OpenURLAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF2585920A36DF400400EA2 /* OpenURLAction.swift */; };
-		DB6ADD8B20B351B6002F226C /* PresentViewAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF2585D20A37BF300400EA2 /* PresentViewAction.swift */; };
 		DB6BE8AE215D41F7000A1FDA /* Foundation.OSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6BE8AD215D41F7000A1FDA /* Foundation.OSLog.swift */; };
 		DB6BE8B0215D433B000A1FDA /* Data.OSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6BE8AF215D433B000A1FDA /* Data.OSLog.swift */; };
 		DB6BE8B9215D4B87000A1FDA /* Location.OSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6BE8B8215D4B87000A1FDA /* Location.OSLog.swift */; };
@@ -297,6 +297,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		491C970F219B6C580065BAB8 /* UIApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplication.swift; sourceTree = "<group>"; };
 		4980D66421307738007267D3 /* Experiences.Barcode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Experiences.Barcode.swift; sourceTree = "<group>"; };
 		DB00FDD92087E09F008D1A57 /* ScreenViewLayoutAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenViewLayoutAttributes.swift; sourceTree = "<group>"; };
 		DB00FDDB20891153008D1A57 /* ImageConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageConfiguration.swift; sourceTree = "<group>"; };
@@ -478,7 +479,6 @@
 		DBF2584020A107BD00400EA2 /* ObserverSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObserverSet.swift; sourceTree = "<group>"; };
 		DBF2584220A1090100400EA2 /* NotificationStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationStore.swift; sourceTree = "<group>"; };
 		DBF2585920A36DF400400EA2 /* OpenURLAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenURLAction.swift; sourceTree = "<group>"; };
-		DBF2585D20A37BF300400EA2 /* PresentViewAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PresentViewAction.swift; sourceTree = "<group>"; };
 		DBF31B2320E17176005D7C34 /* RoverDebugTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoverDebugTests.swift; sourceTree = "<group>"; };
 		DBF31B2520E17176005D7C34 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DBF31B4020E17CD1005D7C34 /* DebugContextManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugContextManager.swift; sourceTree = "<group>"; };
@@ -691,6 +691,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		491C970E219B6C2A0065BAB8 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				491C970F219B6C580065BAB8 /* UIApplication.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 		DB00FDF6208D099F008D1A57 /* Router */ = {
 			isa = PBXGroup;
 			children = (
@@ -853,6 +861,7 @@
 		DB6ADD5B20B33EC0002F226C /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				491C970E219B6C2A0065BAB8 /* Extensions */,
 				DBF31B1720E17176005D7C34 /* Debug */,
 				DB9DBF772055974B00E5C77F /* Notifications */,
 				DBFDF44320AC84430031EF47 /* Experiences */,
@@ -1504,7 +1513,6 @@
 			isa = PBXGroup;
 			children = (
 				DBF2585920A36DF400400EA2 /* OpenURLAction.swift */,
-				DBF2585D20A37BF300400EA2 /* PresentViewAction.swift */,
 			);
 			path = Actions;
 			sourceTree = "<group>";
@@ -2241,6 +2249,7 @@
 				4962FB6B219B51AD00C7F678 /* NotificationHandler.swift in Sources */,
 				4962FB6C219B51AD00C7F678 /* NotificationHandlerService.swift in Sources */,
 				4962FB6D219B51AD00C7F678 /* NotificationStore.swift in Sources */,
+				491C9710219B6C580065BAB8 /* UIApplication.swift in Sources */,
 				4962FB6E219B51AD00C7F678 /* NotificationStoreService.swift in Sources */,
 				4962FB6F219B51AD00C7F678 /* NotificationCell.swift in Sources */,
 				4962FB70219B51AD00C7F678 /* NotificationCenterViewController.swift in Sources */,
@@ -2297,7 +2306,6 @@
 				DBB89BA120D01CD700DD797A /* LifeCycleTrackerService.swift in Sources */,
 				DB6ADD7420B33F3A002F226C /* ImageStore.swift in Sources */,
 				DB4831B620DC38D8003DBF1B /* VersionTrackerService.swift in Sources */,
-				DB6ADD8B20B351B6002F226C /* PresentViewAction.swift in Sources */,
 				DB7BA93420D98F7E00968A30 /* RouteHandler.swift in Sources */,
 				DB6ADD7820B33F68002F226C /* UIAssembler.swift in Sources */,
 				DB6ADD8020B344BC002F226C /* SessionControllerService.swift in Sources */,

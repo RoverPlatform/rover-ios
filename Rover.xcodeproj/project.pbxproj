@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		491C9710219B6C580065BAB8 /* UIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 491C970F219B6C580065BAB8 /* UIApplication.swift */; };
+		491C9710219B6C580065BAB8 /* UI.UIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 491C970F219B6C580065BAB8 /* UI.UIApplication.swift */; };
 		4962FB31219B506B00C7F678 /* Experiences.Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1B66209CD89400E99F9F /* Experiences.Color.swift */; };
 		4962FB32219B506B00C7F678 /* Experiences.Text.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1B68209CD8D600E99F9F /* Experiences.Text.swift */; };
 		4962FB33219B506B00C7F678 /* Experiences.ImageConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFDF48320AC858A0031EF47 /* Experiences.ImageConfiguration.swift */; };
@@ -297,7 +297,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		491C970F219B6C580065BAB8 /* UIApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplication.swift; sourceTree = "<group>"; };
+		491C970F219B6C580065BAB8 /* UI.UIApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UI.UIApplication.swift; sourceTree = "<group>"; };
 		4980D66421307738007267D3 /* Experiences.Barcode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Experiences.Barcode.swift; sourceTree = "<group>"; };
 		DB00FDD92087E09F008D1A57 /* ScreenViewLayoutAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenViewLayoutAttributes.swift; sourceTree = "<group>"; };
 		DB00FDDB20891153008D1A57 /* ImageConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageConfiguration.swift; sourceTree = "<group>"; };
@@ -694,7 +694,7 @@
 		491C970E219B6C2A0065BAB8 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				491C970F219B6C580065BAB8 /* UIApplication.swift */,
+				491C970F219B6C580065BAB8 /* UI.UIApplication.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -2249,7 +2249,7 @@
 				4962FB6B219B51AD00C7F678 /* NotificationHandler.swift in Sources */,
 				4962FB6C219B51AD00C7F678 /* NotificationHandlerService.swift in Sources */,
 				4962FB6D219B51AD00C7F678 /* NotificationStore.swift in Sources */,
-				491C9710219B6C580065BAB8 /* UIApplication.swift in Sources */,
+				491C9710219B6C580065BAB8 /* UI.UIApplication.swift in Sources */,
 				4962FB6E219B51AD00C7F678 /* NotificationStoreService.swift in Sources */,
 				4962FB6F219B51AD00C7F678 /* NotificationCell.swift in Sources */,
 				4962FB70219B51AD00C7F678 /* NotificationCenterViewController.swift in Sources */,

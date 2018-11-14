@@ -187,21 +187,6 @@ extension UIAssembler: Assembler {
             )
         }
         
-        // MARK: Action (openNotification)
-        
-        container.register(Action.self, name: "openNotification", scope: .transient) { (resolver, notification: Notification) in
-            let presentWebsiteActionProvider: OpenNotificationAction.ActionProvider = { [weak resolver] url in
-                return resolver?.resolve(Action.self, name: "presentWebsite", arguments: url)!
-            }
-            
-            return OpenNotificationAction(
-                eventQueue: resolver.resolve(EventQueue.self)!,
-                notification: notification,
-                notificationStore: resolver.resolve(NotificationStore.self)!,
-                presentWebsiteActionProvider: presentWebsiteActionProvider
-            )
-        }
-        
         // MARK: Action (presentNotificationCenter)
         
         container.register(Action.self, name: "presentNotificationCenter", scope: .transient) { resolver in
@@ -235,14 +220,10 @@ extension UIAssembler: Assembler {
         // MARK: NotificationHandler
         
         container.register(NotificationHandler.self) { resolver in
-            let actionProvider: NotificationHandlerService.ActionProvider = { [weak resolver] notification in
-                return resolver?.resolve(Action.self, name: "openNotification", arguments: notification)
-            }
-            
             return NotificationHandlerService(
-                dispatcher: resolver.resolve(Dispatcher.self)!,
                 influenceTracker: resolver.resolve(InfluenceTracker.self)!,
-                actionProvider: actionProvider
+                notificationStore: resolver.resolve(NotificationStore.self)!,
+                eventQueue: resolver.resolve(EventQueue.self)!
             )
         }
         

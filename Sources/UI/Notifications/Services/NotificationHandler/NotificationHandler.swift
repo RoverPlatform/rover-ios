@@ -9,6 +9,5 @@
 import UserNotifications
 
 public protocol NotificationHandler {
-    @discardableResult func handle(_ response: UNNotificationResponse, completionHandler: (() -> Void)?) -> Bool
-    func action(for response: UNNotificationResponse) -> Action?
+    @discardableResult func handle(_ response: UNNotificationResponse) -> Bool
 }

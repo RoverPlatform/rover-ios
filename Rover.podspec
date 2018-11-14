@@ -13,6 +13,7 @@ Pod::Spec.new do |s|
 
   s.subspec "Core" do |ss|
     ss.dependency "Rover/Location"
+    ss.dependency "Rover/UI"
   end
 
   s.subspec "Foundation" do |ss|

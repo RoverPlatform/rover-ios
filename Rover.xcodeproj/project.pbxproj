@@ -7,14 +7,74 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4980D66521307738007267D3 /* Experiences.Barcode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4980D66421307738007267D3 /* Experiences.Barcode.swift */; };
+		4962FB31219B506B00C7F678 /* Experiences.Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1B66209CD89400E99F9F /* Experiences.Color.swift */; };
+		4962FB32219B506B00C7F678 /* Experiences.Text.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1B68209CD8D600E99F9F /* Experiences.Text.swift */; };
+		4962FB33219B506B00C7F678 /* Experiences.ImageConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFDF48320AC858A0031EF47 /* Experiences.ImageConfiguration.swift */; };
+		4962FB34219B506B00C7F678 /* Experiences.Barcode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4980D66421307738007267D3 /* Experiences.Barcode.swift */; };
+		4962FB35219B507D00C7F678 /* Background.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A69209B8CC500E99F9F /* Background.swift */; };
+		4962FB36219B507D00C7F678 /* Barcode.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A65209B8CC500E99F9F /* Barcode.swift */; };
+		4962FB37219B507D00C7F678 /* BarcodeBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A74209B8CC500E99F9F /* BarcodeBlock.swift */; };
+		4962FB38219B507D00C7F678 /* Block.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A6A209B8CC500E99F9F /* Block.swift */; };
+		4962FB39219B507D00C7F678 /* Border.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A71209B8CC500E99F9F /* Border.swift */; };
+		4962FB3A219B507D00C7F678 /* ButtonBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A67209B8CC500E99F9F /* ButtonBlock.swift */; };
+		4962FB3B219B507D00C7F678 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A77209B8CC500E99F9F /* Color.swift */; };
+		4962FB3C219B507D00C7F678 /* Experience.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A66209B8CC500E99F9F /* Experience.swift */; };
+		4962FB3D219B507D00C7F678 /* Height.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A73209B8CC500E99F9F /* Height.swift */; };
+		4962FB3E219B507D00C7F678 /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A6B209B8CC500E99F9F /* Image.swift */; };
+		4962FB3F219B507D00C7F678 /* ImageBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A78209B8CC500E99F9F /* ImageBlock.swift */; };
+		4962FB40219B507D00C7F678 /* Insets.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A72209B8CC500E99F9F /* Insets.swift */; };
+		4962FB41219B507D00C7F678 /* Position.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A75209B8CC500E99F9F /* Position.swift */; };
+		4962FB42219B507D00C7F678 /* RectangleBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A68209B8CC500E99F9F /* RectangleBlock.swift */; };
+		4962FB43219B507D00C7F678 /* Row.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A70209B8CC500E99F9F /* Row.swift */; };
+		4962FB44219B507D00C7F678 /* Screen.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A6C209B8CC500E99F9F /* Screen.swift */; };
+		4962FB45219B507D00C7F678 /* BlockTapBehavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBADA83120AA03B900225C80 /* BlockTapBehavior.swift */; };
+		4962FB46219B507D00C7F678 /* Text.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A76209B8CC500E99F9F /* Text.swift */; };
+		4962FB47219B507D00C7F678 /* TextBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A6F209B8CC500E99F9F /* TextBlock.swift */; };
+		4962FB48219B507D00C7F678 /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A6E209B8CC500E99F9F /* WebView.swift */; };
+		4962FB49219B507D00C7F678 /* WebViewBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A6D209B8CC500E99F9F /* WebViewBlock.swift */; };
+		4962FB4A219B507D00C7F678 /* ExperienceRouteHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7BA91D20D96C9900968A30 /* ExperienceRouteHandler.swift */; };
+		4962FB4B219B507D00C7F678 /* FetchExperienceClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC3B42C2148B08D0096C74E /* FetchExperienceClient.swift */; };
+		4962FB4C219B507D00C7F678 /* ExperienceStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1B0E209CAD9600E99F9F /* ExperienceStore.swift */; };
+		4962FB4D219B507D00C7F678 /* ExperienceStoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1ACB209BB3D200E99F9F /* ExperienceStoreService.swift */; };
+		4962FB4E219B50AA00C7F678 /* BarcodeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FDDF208A4961008D1A57 /* BarcodeCell.swift */; };
+		4962FB4F219B50AA00C7F678 /* BlockCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEEE2055964E00E5C77F /* BlockCell.swift */; };
+		4962FB50219B50AA00C7F678 /* ButtonCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEED2055964E00E5C77F /* ButtonCell.swift */; };
+		4962FB51219B50AA00C7F678 /* ImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEE72055964E00E5C77F /* ImageCell.swift */; };
+		4962FB52219B50AA00C7F678 /* RowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEEB2055964E00E5C77F /* RowView.swift */; };
+		4962FB53219B50AA00C7F678 /* TextCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEE62055964E00E5C77F /* TextCell.swift */; };
+		4962FB54219B50AA00C7F678 /* WebViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEEF2055964E00E5C77F /* WebViewCell.swift */; };
+		4962FB55219B50AA00C7F678 /* ExperienceContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEDF2055964E00E5C77F /* ExperienceContainer.swift */; };
+		4962FB56219B50AA00C7F678 /* ExperienceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEDE2055964E00E5C77F /* ExperienceViewController.swift */; };
+		4962FB57219B50AA00C7F678 /* ScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEE02055964E00E5C77F /* ScreenViewController.swift */; };
+		4962FB58219B50AA00C7F678 /* ScreenViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEE32055964E00E5C77F /* ScreenViewLayout.swift */; };
+		4962FB59219B50AA00C7F678 /* ScreenViewLayoutAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FDD92087E09F008D1A57 /* ScreenViewLayoutAttributes.swift */; };
+		4962FB5D219B50AA00C7F678 /* RoverUI.h in Sources */ = {isa = PBXBuildFile; fileRef = DB6ADD5C20B33EC0002F226C /* RoverUI.h */; };
+		4962FB5F219B51AD00C7F678 /* Notifications.OSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6BE8B6215D4B2A000A1FDA /* Notifications.OSLog.swift */; };
+		4962FB60219B51AD00C7F678 /* Notifications.SyncQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB496E472148717C0026DE6A /* Notifications.SyncQuery.swift */; };
+		4962FB61219B51AD00C7F678 /* OpenNotificationAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7BA92520D9729600968A30 /* OpenNotificationAction.swift */; };
+		4962FB62219B51AD00C7F678 /* Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A7C209B8CC500E99F9F /* Notification.swift */; };
+		4962FB63219B51AD00C7F678 /* NotificationAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB78A3120DAD88900AF1A00 /* NotificationAttachment.swift */; };
+		4962FB64219B51AD00C7F678 /* NotificationSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB496F5220DBECD800DF5949 /* NotificationSource.swift */; };
+		4962FB65219B51AD00C7F678 /* NotificationTapBehavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB78A2F20DAD7B400AF1A00 /* NotificationTapBehavior.swift */; };
+		4962FB66219B51AD00C7F678 /* NotificationCenterRouteHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7BA92E20D982BE00968A30 /* NotificationCenterRouteHandler.swift */; };
+		4962FB67219B51AD00C7F678 /* NotificationsSyncParticipant.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB496E44214871410026DE6A /* NotificationsSyncParticipant.swift */; };
+		4962FB68219B51AD00C7F678 /* NotificationAuthorizationContextProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBF98205597C300E5C77F /* NotificationAuthorizationContextProvider.swift */; };
+		4962FB69219B51AD00C7F678 /* InfluenceTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0C8E3F2055CCBD00E0D860 /* InfluenceTracker.swift */; };
+		4962FB6A219B51AD00C7F678 /* InfluenceTrackerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0C8E3D2055C62800E0D860 /* InfluenceTrackerService.swift */; };
+		4962FB6B219B51AD00C7F678 /* NotificationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7BA92120D970A100968A30 /* NotificationHandler.swift */; };
+		4962FB6C219B51AD00C7F678 /* NotificationHandlerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7BA92A20D9811100968A30 /* NotificationHandlerService.swift */; };
+		4962FB6D219B51AD00C7F678 /* NotificationStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF2584220A1090100400EA2 /* NotificationStore.swift */; };
+		4962FB6E219B51AD00C7F678 /* NotificationStoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBF9B205597C300E5C77F /* NotificationStoreService.swift */; };
+		4962FB6F219B51AD00C7F678 /* NotificationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FE2F208FB285008D1A57 /* NotificationCell.swift */; };
+		4962FB70219B51AD00C7F678 /* NotificationCenterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBF90205597C300E5C77F /* NotificationCenterViewController.swift */; };
+		4962FB77219B52BE00C7F678 /* DebugContextManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF31B4020E17CD1005D7C34 /* DebugContextManager.swift */; };
+		4962FB78219B52BE00C7F678 /* SettingsRouteHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF31B4C20E19678005D7C34 /* SettingsRouteHandler.swift */; };
+		4962FB79219B52BE00C7F678 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF31B4820E193BA005D7C34 /* SettingsViewController.swift */; };
 		DB026279214C300E00893E53 /* Location.CLBeaconRegion.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB026272214C2F5200893E53 /* Location.CLBeaconRegion.swift */; };
 		DB02627A214C301600893E53 /* Location.CLCircularRegion.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB026274214C2F8900893E53 /* Location.CLCircularRegion.swift */; };
 		DB03F9B2214A98A900CBFE11 /* Location.CLLocationCoordinate2D.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB03F9B1214A98A900CBFE11 /* Location.CLLocationCoordinate2D.swift */; };
 		DB03F9B5214BEDBD00CBFE11 /* Location.SyncQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB03F9B4214BEDBD00CBFE11 /* Location.SyncQuery.swift */; };
 		DB03F9B7214BF7B900CBFE11 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB03F9B6214BF7B900CBFE11 /* LocationManager.swift */; };
-		DB0C8E3E2055C62800E0D860 /* InfluenceTrackerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0C8E3D2055C62800E0D860 /* InfluenceTrackerService.swift */; };
-		DB0C8E402055CCBD00E0D860 /* InfluenceTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0C8E3F2055CCBD00E0D860 /* InfluenceTracker.swift */; };
 		DB0C8F2A20583A5600E0D860 /* RoverAppExtensions.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB0C8F2120583A5600E0D860 /* RoverAppExtensions.framework */; };
 		DB0C8F2F20583A5600E0D860 /* RoverAppExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0C8F2E20583A5600E0D860 /* RoverAppExtensionsTests.swift */; };
 		DB0C8F3120583A5600E0D860 /* RoverAppExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = DB0C8F2320583A5600E0D860 /* RoverAppExtensions.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -37,8 +97,6 @@
 		DB496E3E214854C50026DE6A /* HTTPResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB496E3D214854C50026DE6A /* HTTPResult.swift */; };
 		DB496E40214854CF0026DE6A /* HTTPError.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB496E3F214854CF0026DE6A /* HTTPError.swift */; };
 		DB496E4221486E3D0026DE6A /* EventsClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB496E4121486E3D0026DE6A /* EventsClient.swift */; };
-		DB496E45214871410026DE6A /* NotificationsSyncParticipant.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB496E44214871410026DE6A /* NotificationsSyncParticipant.swift */; };
-		DB496E482148717C0026DE6A /* Notifications.SyncQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB496E472148717C0026DE6A /* Notifications.SyncQuery.swift */; };
 		DB496E4C214989CA0026DE6A /* Geofences.plist in Resources */ = {isa = PBXBuildFile; fileRef = DB496E4B214989CA0026DE6A /* Geofences.plist */; };
 		DB666AA12150201A00B503E9 /* Location.CLBeacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB666AA02150201A00B503E9 /* Location.CLBeacon.swift */; };
 		DB6ADD6320B33EC0002F226C /* RoverUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB6ADD5A20B33EC0002F226C /* RoverUI.framework */; };
@@ -56,7 +114,6 @@
 		DB6ADD8B20B351B6002F226C /* PresentViewAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF2585D20A37BF300400EA2 /* PresentViewAction.swift */; };
 		DB6BE8AE215D41F7000A1FDA /* Foundation.OSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6BE8AD215D41F7000A1FDA /* Foundation.OSLog.swift */; };
 		DB6BE8B0215D433B000A1FDA /* Data.OSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6BE8AF215D433B000A1FDA /* Data.OSLog.swift */; };
-		DB6BE8B7215D4B2A000A1FDA /* Notifications.OSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6BE8B6215D4B2A000A1FDA /* Notifications.OSLog.swift */; };
 		DB6BE8B9215D4B87000A1FDA /* Location.OSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6BE8B8215D4B87000A1FDA /* Location.OSLog.swift */; };
 		DB71B7D72145A60200FF5034 /* SyncRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB71B7D62145A60200FF5034 /* SyncRequest.swift */; };
 		DB71B7D92145A77D00FF5034 /* PageInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB71B7D82145A77D00FF5034 /* PageInfo.swift */; };
@@ -66,11 +123,6 @@
 		DB71C62E21092B970079EDFF /* ScalarRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB71C62D21092B970079EDFF /* ScalarRepresentable.swift */; };
 		DB71C63021092C120079EDFF /* Scalar.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB71C62F21092C120079EDFF /* Scalar.swift */; };
 		DB75358621595F1000CB5654 /* SyncCoordinatorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB75358421595F0A00CB5654 /* SyncCoordinatorService.swift */; };
-		DB7BA91F20D96CA600968A30 /* ExperienceRouteHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7BA91D20D96C9900968A30 /* ExperienceRouteHandler.swift */; };
-		DB7BA92320D970E500968A30 /* NotificationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7BA92120D970A100968A30 /* NotificationHandler.swift */; };
-		DB7BA92720D972A700968A30 /* OpenNotificationAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7BA92520D9729600968A30 /* OpenNotificationAction.swift */; };
-		DB7BA92C20D9811B00968A30 /* NotificationHandlerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7BA92A20D9811100968A30 /* NotificationHandlerService.swift */; };
-		DB7BA93020D982C200968A30 /* NotificationCenterRouteHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7BA92E20D982BE00968A30 /* NotificationCenterRouteHandler.swift */; };
 		DB7BA93420D98F7E00968A30 /* RouteHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7BA91A20D9594500968A30 /* RouteHandler.swift */; };
 		DB8C075F215FC4D2000DDD56 /* RoverTicketmaster.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB8C0756215FC4D2000DDD56 /* RoverTicketmaster.framework */; };
 		DB8C0764215FC4D2000DDD56 /* RoverTicketmasterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8C0763215FC4D2000DDD56 /* RoverTicketmasterTests.swift */; };
@@ -82,11 +134,6 @@
 		DB8C0783215FE043000DDD56 /* TicketmasterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8C076E215FC56B000DDD56 /* TicketmasterManager.swift */; };
 		DB8C0785215FEC0E000DDD56 /* UserInfoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8C0784215FEC0E000DDD56 /* UserInfoManager.swift */; };
 		DB8C0787215FEE46000DDD56 /* TokenManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8C0786215FEE46000DDD56 /* TokenManager.swift */; };
-		DB9DBF7F2055974B00E5C77F /* RoverNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB9DBF762055974B00E5C77F /* RoverNotifications.framework */; };
-		DB9DBF842055974B00E5C77F /* RoverNotificationsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBF832055974B00E5C77F /* RoverNotificationsTests.swift */; };
-		DB9DBF862055974B00E5C77F /* RoverNotifications.h in Headers */ = {isa = PBXBuildFile; fileRef = DB9DBF782055974B00E5C77F /* RoverNotifications.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DB9DBFA2205597C300E5C77F /* NotificationsAssembler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBF8E205597C300E5C77F /* NotificationsAssembler.swift */; };
-		DB9DBFA8205597C300E5C77F /* NotificationAuthorizationContextProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBF98205597C300E5C77F /* NotificationAuthorizationContextProvider.swift */; };
 		DB9DBFBE2055980800E5C77F /* RoverLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB9DBFB52055980800E5C77F /* RoverLocation.framework */; };
 		DB9DBFC32055980800E5C77F /* RoverLocationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBFC22055980800E5C77F /* RoverLocationTests.swift */; };
 		DB9DBFC52055980800E5C77F /* RoverLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = DB9DBFB72055980800E5C77F /* RoverLocation.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -114,34 +161,23 @@
 		DBADA7FD20A4F32500225C80 /* BlockObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBADA7F520A4F32500225C80 /* BlockObserver.swift */; };
 		DBADA80320A4F37C00225C80 /* Dispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBADA80120A4F37C00225C80 /* Dispatcher.swift */; };
 		DBADA80420A4F37C00225C80 /* DispatcherService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBADA80220A4F37C00225C80 /* DispatcherService.swift */; };
-		DBB78A3320DAD88F00AF1A00 /* NotificationAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB78A3120DAD88900AF1A00 /* NotificationAttachment.swift */; };
-		DBB78A3420DAD89400AF1A00 /* NotificationTapBehavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB78A2F20DAD7B400AF1A00 /* NotificationTapBehavior.swift */; };
 		DBB89B9920D014C700DD797A /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FDF7208D09AE008D1A57 /* Router.swift */; };
 		DBB89B9A20D014C700DD797A /* RouterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FDF9208D0A0A008D1A57 /* RouterService.swift */; };
 		DBB89B9E20D0167B00DD797A /* LifeCycleTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB89B9C20D0160100DD797A /* LifeCycleTracker.swift */; };
 		DBB89BA120D01CD700DD797A /* LifeCycleTrackerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB89B9F20D01CC500DD797A /* LifeCycleTrackerService.swift */; };
 		DBB89BC820D03E7900DD797A /* RoverData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD88A7320C1B21700085AE0 /* RoverData.framework */; };
 		DBB89BC920D03E7900DD797A /* RoverFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF49DD3203DE00F00B54652 /* RoverFoundation.framework */; };
-		DBB89BCA20D03E8600DD797A /* RoverData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD88A7320C1B21700085AE0 /* RoverData.framework */; };
-		DBB89BCB20D03E8600DD797A /* RoverFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF49DD3203DE00F00B54652 /* RoverFoundation.framework */; };
-		DBB89BCC20D03E8600DD797A /* RoverUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB6ADD5A20B33EC0002F226C /* RoverUI.framework */; };
-		DBB89BCD20D03E9000DD797A /* RoverData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD88A7320C1B21700085AE0 /* RoverData.framework */; };
-		DBB89BCE20D03E9000DD797A /* RoverFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF49DD3203DE00F00B54652 /* RoverFoundation.framework */; };
-		DBB89BCF20D03E9000DD797A /* RoverUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB6ADD5A20B33EC0002F226C /* RoverUI.framework */; };
 		DBB89BE820D0415600DD797A /* Rover.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF49DF2203DE18500B54652 /* Rover.swift */; };
 		DBB89C4920D07F6600DD797A /* RoverData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD88A7320C1B21700085AE0 /* RoverData.framework */; };
 		DBB89C4C20D084D600DD797A /* RoverFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = DBB89C4A20D083AF00DD797A /* RoverFoundation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DBC3B4112145C11A0096C74E /* Beacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC3B40F2145C1100096C74E /* Beacon.swift */; };
 		DBC3B42721476A6A0096C74E /* Location.UUID.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC3B42621476A6A0096C74E /* Location.UUID.swift */; };
 		DBC3B42B2148A7D10096C74E /* HTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC3B42A2148A7D10096C74E /* HTTPClient.swift */; };
-		DBC3B42D2148B08D0096C74E /* FetchExperienceClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC3B42C2148B08D0096C74E /* FetchExperienceClient.swift */; };
 		DBC3FBE82154680600372A65 /* Context.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC3FBE6215467FA00372A65 /* Context.swift */; };
 		DBC3FBF32155375D00372A65 /* PersistedValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC3FBF22155375D00372A65 /* PersistedValue.swift */; };
 		DBC3FBF8215581E500372A65 /* DeviceModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC3FBF7215581E500372A65 /* DeviceModel.swift */; };
-		DBC9544A20EA86E600AA3AD9 /* NotificationSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB496F5220DBECD800DF5949 /* NotificationSource.swift */; };
 		DBCBE086216140E6001C7A96 /* Foundation.JSONEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCBE085216140E6001C7A96 /* Foundation.JSONEncoder.swift */; };
 		DBCBE088216140F1001C7A96 /* Foundation.JSONDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCBE087216140F1001C7A96 /* Foundation.JSONDecoder.swift */; };
-		DBCBE08A216148B8001C7A96 /* DebugAssembler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF31B2F20E17216005D7C34 /* DebugAssembler.swift */; };
 		DBCBE09121614D88001C7A96 /* StaticContextProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCBE09021614D88001C7A96 /* StaticContextProvider.swift */; };
 		DBCBE09321614E64001C7A96 /* BluetoothContextProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCBE09221614E64001C7A96 /* BluetoothContextProvider.swift */; };
 		DBCBE09521614E85001C7A96 /* TelephonyContextProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCBE09421614E85001C7A96 /* TelephonyContextProvider.swift */; };
@@ -179,15 +215,6 @@
 		DBD88AC620C1BE1C00085AE0 /* RoverData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD88A7320C1B21700085AE0 /* RoverData.framework */; };
 		DBE03B3B20AF162700F3CE95 /* RoverFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF49DD3203DE00F00B54652 /* RoverFoundation.framework */; };
 		DBF2584120A107BD00400EA2 /* ObserverSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF2584020A107BD00400EA2 /* ObserverSet.swift */; };
-		DBF31B1F20E17176005D7C34 /* RoverDebug.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF31B1620E17176005D7C34 /* RoverDebug.framework */; };
-		DBF31B2420E17176005D7C34 /* RoverDebugTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF31B2320E17176005D7C34 /* RoverDebugTests.swift */; };
-		DBF31B2620E17176005D7C34 /* RoverDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = DBF31B1820E17176005D7C34 /* RoverDebug.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DBF31B2D20E171C8005D7C34 /* RoverData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD88A7320C1B21700085AE0 /* RoverData.framework */; };
-		DBF31B2E20E171C8005D7C34 /* RoverFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF49DD3203DE00F00B54652 /* RoverFoundation.framework */; };
-		DBF31B4220E17CD9005D7C34 /* DebugContextManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF31B4020E17CD1005D7C34 /* DebugContextManager.swift */; };
-		DBF31B4A20E193C5005D7C34 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF31B4820E193BA005D7C34 /* SettingsViewController.swift */; };
-		DBF31B4E20E19696005D7C34 /* RoverUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB6ADD5A20B33EC0002F226C /* RoverUI.framework */; };
-		DBF31B4F20E196BB005D7C34 /* SettingsRouteHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF31B4C20E19678005D7C34 /* SettingsRouteHandler.swift */; };
 		DBF49DDD203DE00F00B54652 /* RoverFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF49DD3203DE00F00B54652 /* RoverFoundation.framework */; };
 		DBF49DE2203DE00F00B54652 /* RoverFoundationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF49DE1203DE00F00B54652 /* RoverFoundationTests.swift */; };
 		DBF49DF6203DE18500B54652 /* FoundationAssembler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF49DF3203DE18500B54652 /* FoundationAssembler.swift */; };
@@ -200,53 +227,6 @@
 		DBF49E07203DE1DE00B54652 /* ServiceScope.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF49DFF203DE1DE00B54652 /* ServiceScope.swift */; };
 		DBFB1AD6209C9ABF00E99F9F /* Location.CLLocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1AD4209C9AA600E99F9F /* Location.CLLocationManager.swift */; };
 		DBFB1AF3209CA82800E99F9F /* ID.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A79209B8CC500E99F9F /* ID.swift */; };
-		DBFDF42920AC7A7C0031EF47 /* Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A7C209B8CC500E99F9F /* Notification.swift */; };
-		DBFDF42C20AC7B1E0031EF47 /* NotificationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FE2F208FB285008D1A57 /* NotificationCell.swift */; };
-		DBFDF42D20AC7B1E0031EF47 /* NotificationCenterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBF90205597C300E5C77F /* NotificationCenterViewController.swift */; };
-		DBFDF43120AC7BA10031EF47 /* NotificationStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF2584220A1090100400EA2 /* NotificationStore.swift */; };
-		DBFDF43220AC7BA10031EF47 /* NotificationStoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBF9B205597C300E5C77F /* NotificationStoreService.swift */; };
-		DBFDF44B20AC84430031EF47 /* RoverExperiences.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBFDF44220AC84430031EF47 /* RoverExperiences.framework */; };
-		DBFDF45020AC84430031EF47 /* RoverExperiencesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFDF44F20AC84430031EF47 /* RoverExperiencesTests.swift */; };
-		DBFDF45220AC84430031EF47 /* RoverExperiences.h in Headers */ = {isa = PBXBuildFile; fileRef = DBFDF44420AC84430031EF47 /* RoverExperiences.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DBFDF45A20AC84B30031EF47 /* ExperiencesAssembler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1B62209CD46200E99F9F /* ExperiencesAssembler.swift */; };
-		DBFDF45B20AC853B0031EF47 /* Experiences.Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1B66209CD89400E99F9F /* Experiences.Color.swift */; };
-		DBFDF45C20AC853B0031EF47 /* Experiences.Text.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1B68209CD8D600E99F9F /* Experiences.Text.swift */; };
-		DBFDF45D20AC85430031EF47 /* Barcode.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A65209B8CC500E99F9F /* Barcode.swift */; };
-		DBFDF45E20AC85430031EF47 /* Experience.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A66209B8CC500E99F9F /* Experience.swift */; };
-		DBFDF45F20AC85430031EF47 /* ButtonBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A67209B8CC500E99F9F /* ButtonBlock.swift */; };
-		DBFDF46020AC85430031EF47 /* RectangleBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A68209B8CC500E99F9F /* RectangleBlock.swift */; };
-		DBFDF46120AC85430031EF47 /* Background.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A69209B8CC500E99F9F /* Background.swift */; };
-		DBFDF46220AC85430031EF47 /* Block.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A6A209B8CC500E99F9F /* Block.swift */; };
-		DBFDF46320AC85430031EF47 /* BlockTapBehavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBADA83120AA03B900225C80 /* BlockTapBehavior.swift */; };
-		DBFDF46420AC85430031EF47 /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A6B209B8CC500E99F9F /* Image.swift */; };
-		DBFDF46520AC85430031EF47 /* Screen.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A6C209B8CC500E99F9F /* Screen.swift */; };
-		DBFDF46620AC85430031EF47 /* WebViewBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A6D209B8CC500E99F9F /* WebViewBlock.swift */; };
-		DBFDF46720AC85430031EF47 /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A6E209B8CC500E99F9F /* WebView.swift */; };
-		DBFDF46820AC85430031EF47 /* TextBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A6F209B8CC500E99F9F /* TextBlock.swift */; };
-		DBFDF46920AC85430031EF47 /* Row.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A70209B8CC500E99F9F /* Row.swift */; };
-		DBFDF46A20AC85430031EF47 /* Border.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A71209B8CC500E99F9F /* Border.swift */; };
-		DBFDF46B20AC85430031EF47 /* Insets.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A72209B8CC500E99F9F /* Insets.swift */; };
-		DBFDF46C20AC85430031EF47 /* Height.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A73209B8CC500E99F9F /* Height.swift */; };
-		DBFDF46D20AC85430031EF47 /* BarcodeBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A74209B8CC500E99F9F /* BarcodeBlock.swift */; };
-		DBFDF46E20AC85430031EF47 /* Position.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A75209B8CC500E99F9F /* Position.swift */; };
-		DBFDF46F20AC85430031EF47 /* Text.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A76209B8CC500E99F9F /* Text.swift */; };
-		DBFDF47020AC85430031EF47 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A77209B8CC500E99F9F /* Color.swift */; };
-		DBFDF47120AC85430031EF47 /* ImageBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A78209B8CC500E99F9F /* ImageBlock.swift */; };
-		DBFDF47520AC854F0031EF47 /* ExperienceStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1B0E209CAD9600E99F9F /* ExperienceStore.swift */; };
-		DBFDF47620AC854F0031EF47 /* ExperienceStoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1ACB209BB3D200E99F9F /* ExperienceStoreService.swift */; };
-		DBFDF47720AC85560031EF47 /* ExperienceContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEDF2055964E00E5C77F /* ExperienceContainer.swift */; };
-		DBFDF47820AC85560031EF47 /* ExperienceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEDE2055964E00E5C77F /* ExperienceViewController.swift */; };
-		DBFDF47920AC855E0031EF47 /* BarcodeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FDDF208A4961008D1A57 /* BarcodeCell.swift */; };
-		DBFDF47A20AC855E0031EF47 /* BlockCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEEE2055964E00E5C77F /* BlockCell.swift */; };
-		DBFDF47B20AC855E0031EF47 /* ButtonCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEED2055964E00E5C77F /* ButtonCell.swift */; };
-		DBFDF47C20AC855E0031EF47 /* ImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEE72055964E00E5C77F /* ImageCell.swift */; };
-		DBFDF47D20AC855E0031EF47 /* RowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEEB2055964E00E5C77F /* RowView.swift */; };
-		DBFDF47E20AC855E0031EF47 /* TextCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEE62055964E00E5C77F /* TextCell.swift */; };
-		DBFDF47F20AC855E0031EF47 /* WebViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEEF2055964E00E5C77F /* WebViewCell.swift */; };
-		DBFDF48020AC85650031EF47 /* ScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEE02055964E00E5C77F /* ScreenViewController.swift */; };
-		DBFDF48120AC85650031EF47 /* ScreenViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEE32055964E00E5C77F /* ScreenViewLayout.swift */; };
-		DBFDF48220AC85650031EF47 /* ScreenViewLayoutAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FDD92087E09F008D1A57 /* ScreenViewLayoutAttributes.swift */; };
-		DBFDF48520AC85920031EF47 /* Experiences.ImageConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFDF48320AC858A0031EF47 /* Experiences.ImageConfiguration.swift */; };
 		DBFDF52420AE2B1C0031EF47 /* Foundation.DateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFDF52320AE2B1C0031EF47 /* Foundation.DateFormatter.swift */; };
 /* End PBXBuildFile section */
 
@@ -279,13 +259,6 @@
 			remoteGlobalIDString = DB8C0755215FC4D2000DDD56;
 			remoteInfo = RoverTicketmaster;
 		};
-		DB9DBF802055974B00E5C77F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = DBF49DCA203DE00F00B54652 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = DB9DBF752055974B00E5C77F;
-			remoteInfo = RoverNotifications;
-		};
 		DB9DBFBF2055980800E5C77F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = DBF49DCA203DE00F00B54652 /* Project object */;
@@ -314,26 +287,12 @@
 			remoteGlobalIDString = DBD88A7220C1B21700085AE0;
 			remoteInfo = RoverData;
 		};
-		DBF31B2020E17176005D7C34 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = DBF49DCA203DE00F00B54652 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = DBF31B1520E17176005D7C34;
-			remoteInfo = RoverDebug;
-		};
 		DBF49DDE203DE00F00B54652 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = DBF49DCA203DE00F00B54652 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = DBF49DD2203DE00F00B54652;
 			remoteInfo = RoverFoundation;
-		};
-		DBFDF44C20AC84430031EF47 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = DBF49DCA203DE00F00B54652 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = DBFDF44120AC84430031EF47;
-			remoteInfo = RoverExperiences;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -434,13 +393,8 @@
 		DB9DBEED2055964E00E5C77F /* ButtonCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ButtonCell.swift; sourceTree = "<group>"; };
 		DB9DBEEE2055964E00E5C77F /* BlockCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlockCell.swift; sourceTree = "<group>"; };
 		DB9DBEEF2055964E00E5C77F /* WebViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebViewCell.swift; sourceTree = "<group>"; };
-		DB9DBF762055974B00E5C77F /* RoverNotifications.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RoverNotifications.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		DB9DBF782055974B00E5C77F /* RoverNotifications.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RoverNotifications.h; sourceTree = "<group>"; };
-		DB9DBF792055974B00E5C77F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		DB9DBF7E2055974B00E5C77F /* RoverNotificationsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RoverNotificationsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB9DBF832055974B00E5C77F /* RoverNotificationsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoverNotificationsTests.swift; sourceTree = "<group>"; };
 		DB9DBF852055974B00E5C77F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		DB9DBF8E205597C300E5C77F /* NotificationsAssembler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationsAssembler.swift; sourceTree = "<group>"; };
 		DB9DBF90205597C300E5C77F /* NotificationCenterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationCenterViewController.swift; sourceTree = "<group>"; };
 		DB9DBF98205597C300E5C77F /* NotificationAuthorizationContextProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationAuthorizationContextProvider.swift; sourceTree = "<group>"; };
 		DB9DBF9B205597C300E5C77F /* NotificationStoreService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationStoreService.swift; sourceTree = "<group>"; };
@@ -525,13 +479,8 @@
 		DBF2584220A1090100400EA2 /* NotificationStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationStore.swift; sourceTree = "<group>"; };
 		DBF2585920A36DF400400EA2 /* OpenURLAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenURLAction.swift; sourceTree = "<group>"; };
 		DBF2585D20A37BF300400EA2 /* PresentViewAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PresentViewAction.swift; sourceTree = "<group>"; };
-		DBF31B1620E17176005D7C34 /* RoverDebug.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RoverDebug.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		DBF31B1820E17176005D7C34 /* RoverDebug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RoverDebug.h; sourceTree = "<group>"; };
-		DBF31B1920E17176005D7C34 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		DBF31B1E20E17176005D7C34 /* RoverDebugTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RoverDebugTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBF31B2320E17176005D7C34 /* RoverDebugTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoverDebugTests.swift; sourceTree = "<group>"; };
 		DBF31B2520E17176005D7C34 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		DBF31B2F20E17216005D7C34 /* DebugAssembler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugAssembler.swift; sourceTree = "<group>"; };
 		DBF31B4020E17CD1005D7C34 /* DebugContextManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugContextManager.swift; sourceTree = "<group>"; };
 		DBF31B4820E193BA005D7C34 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		DBF31B4C20E19678005D7C34 /* SettingsRouteHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRouteHandler.swift; sourceTree = "<group>"; };
@@ -581,13 +530,8 @@
 		DBFB1ACB209BB3D200E99F9F /* ExperienceStoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperienceStoreService.swift; sourceTree = "<group>"; };
 		DBFB1AD4209C9AA600E99F9F /* Location.CLLocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.CLLocationManager.swift; sourceTree = "<group>"; };
 		DBFB1B0E209CAD9600E99F9F /* ExperienceStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperienceStore.swift; sourceTree = "<group>"; };
-		DBFB1B62209CD46200E99F9F /* ExperiencesAssembler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperiencesAssembler.swift; sourceTree = "<group>"; };
 		DBFB1B66209CD89400E99F9F /* Experiences.Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Experiences.Color.swift; sourceTree = "<group>"; };
 		DBFB1B68209CD8D600E99F9F /* Experiences.Text.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Experiences.Text.swift; sourceTree = "<group>"; };
-		DBFDF44220AC84430031EF47 /* RoverExperiences.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RoverExperiences.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		DBFDF44420AC84430031EF47 /* RoverExperiences.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RoverExperiences.h; sourceTree = "<group>"; };
-		DBFDF44520AC84430031EF47 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		DBFDF44A20AC84430031EF47 /* RoverExperiencesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RoverExperiencesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBFDF44F20AC84430031EF47 /* RoverExperiencesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoverExperiencesTests.swift; sourceTree = "<group>"; };
 		DBFDF45120AC84430031EF47 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DBFDF48320AC858A0031EF47 /* Experiences.ImageConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Experiences.ImageConfiguration.swift; sourceTree = "<group>"; };
@@ -662,24 +606,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		DB9DBF722055974B00E5C77F /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				DBB89BCA20D03E8600DD797A /* RoverData.framework in Frameworks */,
-				DBB89BCB20D03E8600DD797A /* RoverFoundation.framework in Frameworks */,
-				DBB89BCC20D03E8600DD797A /* RoverUI.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		DB9DBF7B2055974B00E5C77F /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				DB9DBF7F2055974B00E5C77F /* RoverNotifications.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		DB9DBFB12055980800E5C77F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -747,24 +673,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		DBF31B1220E17176005D7C34 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				DBF31B4E20E19696005D7C34 /* RoverUI.framework in Frameworks */,
-				DBF31B2D20E171C8005D7C34 /* RoverData.framework in Frameworks */,
-				DBF31B2E20E171C8005D7C34 /* RoverFoundation.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		DBF31B1B20E17176005D7C34 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				DBF31B1F20E17176005D7C34 /* RoverDebug.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		DBF49DCF203DE00F00B54652 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -777,24 +685,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				DBF49DDD203DE00F00B54652 /* RoverFoundation.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		DBFDF43E20AC84430031EF47 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				DBB89BCD20D03E9000DD797A /* RoverData.framework in Frameworks */,
-				DBB89BCE20D03E9000DD797A /* RoverFoundation.framework in Frameworks */,
-				DBB89BCF20D03E9000DD797A /* RoverUI.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		DBFDF44720AC84430031EF47 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				DBFDF44B20AC84430031EF47 /* RoverExperiences.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -863,12 +753,9 @@
 				DBF49DD5203DE00F00B54652 /* Foundation */,
 				DBD88A7420C1B21700085AE0 /* Data */,
 				DB6ADD5B20B33EC0002F226C /* UI */,
-				DBFDF44320AC84430031EF47 /* Experiences */,
-				DB9DBF772055974B00E5C77F /* Notifications */,
 				DB0C8F2220583A5600E0D860 /* AppExtensions */,
 				DB9DBFB62055980800E5C77F /* Location */,
 				DB1FBEDF2062C0B600850D59 /* Bluetooth */,
-				DBF31B1720E17176005D7C34 /* Debug */,
 				DBA015D1217E6DE700268822 /* Telephony */,
 				DBA015FC217E71E900268822 /* AdSupport */,
 				DB8C0757215FC4D2000DDD56 /* Ticketmaster */,
@@ -966,6 +853,9 @@
 		DB6ADD5B20B33EC0002F226C /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				DBF31B1720E17176005D7C34 /* Debug */,
+				DB9DBF772055974B00E5C77F /* Notifications */,
+				DBFDF44320AC84430031EF47 /* Experiences */,
 				DBFDF4EC20ACA0140031EF47 /* Actions */,
 				DB6ADD7D20B3446D002F226C /* Services */,
 				DB6ADD7620B33F5D002F226C /* UIAssembler.swift */,
@@ -1100,9 +990,6 @@
 				DB7BA92D20D9829D00968A30 /* RouteHandlers */,
 				DBF31B5620E41A90005D7C34 /* Services */,
 				DBF31B5920E41C35005D7C34 /* UI */,
-				DB9DBF8E205597C300E5C77F /* NotificationsAssembler.swift */,
-				DB9DBF782055974B00E5C77F /* RoverNotifications.h */,
-				DB9DBF792055974B00E5C77F /* Info.plist */,
 			);
 			path = Notifications;
 			sourceTree = "<group>";
@@ -1253,15 +1140,6 @@
 			path = Context;
 			sourceTree = "<group>";
 		};
-		DBCBE08B216148CF001C7A96 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				DBF31B1820E17176005D7C34 /* RoverDebug.h */,
-				DBF31B1920E17176005D7C34 /* Info.plist */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
 		DBCBE08D216149E2001C7A96 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
@@ -1361,8 +1239,6 @@
 		DBF31B1720E17176005D7C34 /* Debug */ = {
 			isa = PBXGroup;
 			children = (
-				DBCBE08B216148CF001C7A96 /* Supporting Files */,
-				DBF31B2F20E17216005D7C34 /* DebugAssembler.swift */,
 				DBF31B4020E17CD1005D7C34 /* DebugContextManager.swift */,
 				DBF31B4C20E19678005D7C34 /* SettingsRouteHandler.swift */,
 				DBF31B4820E193BA005D7C34 /* SettingsViewController.swift */,
@@ -1436,22 +1312,16 @@
 			children = (
 				DBF49DD3203DE00F00B54652 /* RoverFoundation.framework */,
 				DBF49DDC203DE00F00B54652 /* RoverFoundationTests.xctest */,
-				DB9DBF762055974B00E5C77F /* RoverNotifications.framework */,
-				DB9DBF7E2055974B00E5C77F /* RoverNotificationsTests.xctest */,
 				DB9DBFB52055980800E5C77F /* RoverLocation.framework */,
 				DB9DBFBD2055980800E5C77F /* RoverLocationTests.xctest */,
 				DB0C8F2120583A5600E0D860 /* RoverAppExtensions.framework */,
 				DB0C8F2920583A5600E0D860 /* RoverAppExtensionsTests.xctest */,
 				DB1FBEDE2062C0B600850D59 /* RoverBluetooth.framework */,
 				DB1FBEE62062C0B600850D59 /* RoverBluetoothTests.xctest */,
-				DBFDF44220AC84430031EF47 /* RoverExperiences.framework */,
-				DBFDF44A20AC84430031EF47 /* RoverExperiencesTests.xctest */,
 				DB6ADD5A20B33EC0002F226C /* RoverUI.framework */,
 				DB6ADD6220B33EC0002F226C /* RoverUITests.xctest */,
 				DBD88A7320C1B21700085AE0 /* RoverData.framework */,
 				DBD88A7B20C1B21700085AE0 /* RoverDataTests.xctest */,
-				DBF31B1620E17176005D7C34 /* RoverDebug.framework */,
-				DBF31B1E20E17176005D7C34 /* RoverDebugTests.xctest */,
 				DB8C0756215FC4D2000DDD56 /* RoverTicketmaster.framework */,
 				DB8C075E215FC4D2000DDD56 /* RoverTicketmasterTests.xctest */,
 				DBA015D0217E6DE600268822 /* RoverTelephony.framework */,
@@ -1608,9 +1478,6 @@
 				DB7BA91C20D96C8B00968A30 /* RouteHandlers */,
 				DBF31B5420E41A38005D7C34 /* Services */,
 				DBF31B5A20E41C5A005D7C34 /* UI */,
-				DBFB1B62209CD46200E99F9F /* ExperiencesAssembler.swift */,
-				DBFDF44420AC84430031EF47 /* RoverExperiences.h */,
-				DBFDF44520AC84430031EF47 /* Info.plist */,
 			);
 			path = Experiences;
 			sourceTree = "<group>";
@@ -1688,14 +1555,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		DB9DBF732055974B00E5C77F /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				DB9DBF862055974B00E5C77F /* RoverNotifications.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		DB9DBFB22055980800E5C77F /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -1728,27 +1587,11 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		DBF31B1320E17176005D7C34 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				DBF31B2620E17176005D7C34 /* RoverDebug.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		DBF49DD0203DE00F00B54652 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				DBB89C4C20D084D600DD797A /* RoverFoundation.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		DBFDF43F20AC84430031EF47 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				DBFDF45220AC84430031EF47 /* RoverExperiences.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1899,42 +1742,6 @@
 			productReference = DB8C075E215FC4D2000DDD56 /* RoverTicketmasterTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		DB9DBF752055974B00E5C77F /* RoverNotifications */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = DB9DBF8B2055974B00E5C77F /* Build configuration list for PBXNativeTarget "RoverNotifications" */;
-			buildPhases = (
-				DB9DBF712055974B00E5C77F /* Sources */,
-				DB9DBF722055974B00E5C77F /* Frameworks */,
-				DB9DBF732055974B00E5C77F /* Headers */,
-				DB9DBF742055974B00E5C77F /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = RoverNotifications;
-			productName = RoverNotifications;
-			productReference = DB9DBF762055974B00E5C77F /* RoverNotifications.framework */;
-			productType = "com.apple.product-type.framework";
-		};
-		DB9DBF7D2055974B00E5C77F /* RoverNotificationsTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = DB9DBF8C2055974B00E5C77F /* Build configuration list for PBXNativeTarget "RoverNotificationsTests" */;
-			buildPhases = (
-				DB9DBF7A2055974B00E5C77F /* Sources */,
-				DB9DBF7B2055974B00E5C77F /* Frameworks */,
-				DB9DBF7C2055974B00E5C77F /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				DB9DBF812055974B00E5C77F /* PBXTargetDependency */,
-			);
-			name = RoverNotificationsTests;
-			productName = RoverNotificationsTests;
-			productReference = DB9DBF7E2055974B00E5C77F /* RoverNotificationsTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 		DB9DBFB42055980800E5C77F /* RoverLocation */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = DB9DBFC62055980800E5C77F /* Build configuration list for PBXNativeTarget "RoverLocation" */;
@@ -2079,42 +1886,6 @@
 			productReference = DBD88A7B20C1B21700085AE0 /* RoverDataTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		DBF31B1520E17176005D7C34 /* RoverDebug */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = DBF31B2B20E17176005D7C34 /* Build configuration list for PBXNativeTarget "RoverDebug" */;
-			buildPhases = (
-				DBF31B1120E17176005D7C34 /* Sources */,
-				DBF31B1220E17176005D7C34 /* Frameworks */,
-				DBF31B1320E17176005D7C34 /* Headers */,
-				DBF31B1420E17176005D7C34 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = RoverDebug;
-			productName = RoverDebug;
-			productReference = DBF31B1620E17176005D7C34 /* RoverDebug.framework */;
-			productType = "com.apple.product-type.framework";
-		};
-		DBF31B1D20E17176005D7C34 /* RoverDebugTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = DBF31B2C20E17176005D7C34 /* Build configuration list for PBXNativeTarget "RoverDebugTests" */;
-			buildPhases = (
-				DBF31B1A20E17176005D7C34 /* Sources */,
-				DBF31B1B20E17176005D7C34 /* Frameworks */,
-				DBF31B1C20E17176005D7C34 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				DBF31B2120E17176005D7C34 /* PBXTargetDependency */,
-			);
-			name = RoverDebugTests;
-			productName = RoverDebugTests;
-			productReference = DBF31B1E20E17176005D7C34 /* RoverDebugTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 		DBF49DD2203DE00F00B54652 /* RoverFoundation */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = DBF49DE7203DE00F00B54652 /* Build configuration list for PBXNativeTarget "RoverFoundation" */;
@@ -2149,42 +1920,6 @@
 			name = RoverFoundationTests;
 			productName = RoverFoundationTests;
 			productReference = DBF49DDC203DE00F00B54652 /* RoverFoundationTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		DBFDF44120AC84430031EF47 /* RoverExperiences */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = DBFDF45320AC84430031EF47 /* Build configuration list for PBXNativeTarget "RoverExperiences" */;
-			buildPhases = (
-				DBFDF43D20AC84430031EF47 /* Sources */,
-				DBFDF43E20AC84430031EF47 /* Frameworks */,
-				DBFDF43F20AC84430031EF47 /* Headers */,
-				DBFDF44020AC84430031EF47 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = RoverExperiences;
-			productName = RoverExperiences;
-			productReference = DBFDF44220AC84430031EF47 /* RoverExperiences.framework */;
-			productType = "com.apple.product-type.framework";
-		};
-		DBFDF44920AC84430031EF47 /* RoverExperiencesTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = DBFDF45620AC84430031EF47 /* Build configuration list for PBXNativeTarget "RoverExperiencesTests" */;
-			buildPhases = (
-				DBFDF44620AC84430031EF47 /* Sources */,
-				DBFDF44720AC84430031EF47 /* Frameworks */,
-				DBFDF44820AC84430031EF47 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				DBFDF44D20AC84430031EF47 /* PBXTargetDependency */,
-			);
-			name = RoverExperiencesTests;
-			productName = RoverExperiencesTests;
-			productReference = DBFDF44A20AC84430031EF47 /* RoverExperiencesTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -2236,16 +1971,6 @@
 						CreatedOnToolsVersion = 9.4.1;
 						ProvisioningStyle = Automatic;
 					};
-					DB9DBF752055974B00E5C77F = {
-						CreatedOnToolsVersion = 9.2;
-						LastSwiftMigration = 1000;
-						ProvisioningStyle = Automatic;
-					};
-					DB9DBF7D2055974B00E5C77F = {
-						CreatedOnToolsVersion = 9.2;
-						LastSwiftMigration = 1000;
-						ProvisioningStyle = Automatic;
-					};
 					DB9DBFB42055980800E5C77F = {
 						CreatedOnToolsVersion = 9.2;
 						LastSwiftMigration = 1000;
@@ -2284,16 +2009,6 @@
 						LastSwiftMigration = 1000;
 						ProvisioningStyle = Automatic;
 					};
-					DBF31B1520E17176005D7C34 = {
-						CreatedOnToolsVersion = 9.4.1;
-						LastSwiftMigration = 1000;
-						ProvisioningStyle = Automatic;
-					};
-					DBF31B1D20E17176005D7C34 = {
-						CreatedOnToolsVersion = 9.4.1;
-						LastSwiftMigration = 1000;
-						ProvisioningStyle = Automatic;
-					};
 					DBF49DD2203DE00F00B54652 = {
 						CreatedOnToolsVersion = 9.2;
 						LastSwiftMigration = 1000;
@@ -2301,16 +2016,6 @@
 					};
 					DBF49DDB203DE00F00B54652 = {
 						CreatedOnToolsVersion = 9.2;
-						LastSwiftMigration = 1000;
-						ProvisioningStyle = Automatic;
-					};
-					DBFDF44120AC84430031EF47 = {
-						CreatedOnToolsVersion = 9.3.1;
-						LastSwiftMigration = 1000;
-						ProvisioningStyle = Automatic;
-					};
-					DBFDF44920AC84430031EF47 = {
-						CreatedOnToolsVersion = 9.3.1;
 						LastSwiftMigration = 1000;
 						ProvisioningStyle = Automatic;
 					};
@@ -2334,18 +2039,12 @@
 				DBD88A7A20C1B21700085AE0 /* RoverDataTests */,
 				DB6ADD5920B33EC0002F226C /* RoverUI */,
 				DB6ADD6120B33EC0002F226C /* RoverUITests */,
-				DBFDF44120AC84430031EF47 /* RoverExperiences */,
-				DBFDF44920AC84430031EF47 /* RoverExperiencesTests */,
-				DB9DBF752055974B00E5C77F /* RoverNotifications */,
-				DB9DBF7D2055974B00E5C77F /* RoverNotificationsTests */,
 				DB0C8F2020583A5600E0D860 /* RoverAppExtensions */,
 				DB0C8F2820583A5600E0D860 /* RoverAppExtensionsTests */,
 				DB9DBFB42055980800E5C77F /* RoverLocation */,
 				DB9DBFBC2055980800E5C77F /* RoverLocationTests */,
 				DB1FBEDD2062C0B600850D59 /* RoverBluetooth */,
 				DB1FBEE52062C0B600850D59 /* RoverBluetoothTests */,
-				DBF31B1520E17176005D7C34 /* RoverDebug */,
-				DBF31B1D20E17176005D7C34 /* RoverDebugTests */,
 				DB8C0755215FC4D2000DDD56 /* RoverTicketmaster */,
 				DB8C075D215FC4D2000DDD56 /* RoverTicketmasterTests */,
 				DBA015CF217E6DE600268822 /* RoverTelephony */,
@@ -2413,20 +2112,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		DB9DBF742055974B00E5C77F /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		DB9DBF7C2055974B00E5C77F /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		DB9DBFB32055980800E5C77F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2484,20 +2169,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		DBF31B1420E17176005D7C34 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		DBF31B1C20E17176005D7C34 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		DBF49DD1203DE00F00B54652 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2506,20 +2177,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		DBF49DDA203DE00F00B54652 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		DBFDF44020AC84430031EF47 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		DBFDF44820AC84430031EF47 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2566,6 +2223,69 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4962FB77219B52BE00C7F678 /* DebugContextManager.swift in Sources */,
+				4962FB78219B52BE00C7F678 /* SettingsRouteHandler.swift in Sources */,
+				4962FB79219B52BE00C7F678 /* SettingsViewController.swift in Sources */,
+				4962FB5F219B51AD00C7F678 /* Notifications.OSLog.swift in Sources */,
+				4962FB60219B51AD00C7F678 /* Notifications.SyncQuery.swift in Sources */,
+				4962FB61219B51AD00C7F678 /* OpenNotificationAction.swift in Sources */,
+				4962FB62219B51AD00C7F678 /* Notification.swift in Sources */,
+				4962FB63219B51AD00C7F678 /* NotificationAttachment.swift in Sources */,
+				4962FB64219B51AD00C7F678 /* NotificationSource.swift in Sources */,
+				4962FB65219B51AD00C7F678 /* NotificationTapBehavior.swift in Sources */,
+				4962FB66219B51AD00C7F678 /* NotificationCenterRouteHandler.swift in Sources */,
+				4962FB67219B51AD00C7F678 /* NotificationsSyncParticipant.swift in Sources */,
+				4962FB68219B51AD00C7F678 /* NotificationAuthorizationContextProvider.swift in Sources */,
+				4962FB69219B51AD00C7F678 /* InfluenceTracker.swift in Sources */,
+				4962FB6A219B51AD00C7F678 /* InfluenceTrackerService.swift in Sources */,
+				4962FB6B219B51AD00C7F678 /* NotificationHandler.swift in Sources */,
+				4962FB6C219B51AD00C7F678 /* NotificationHandlerService.swift in Sources */,
+				4962FB6D219B51AD00C7F678 /* NotificationStore.swift in Sources */,
+				4962FB6E219B51AD00C7F678 /* NotificationStoreService.swift in Sources */,
+				4962FB6F219B51AD00C7F678 /* NotificationCell.swift in Sources */,
+				4962FB70219B51AD00C7F678 /* NotificationCenterViewController.swift in Sources */,
+				4962FB4E219B50AA00C7F678 /* BarcodeCell.swift in Sources */,
+				4962FB4F219B50AA00C7F678 /* BlockCell.swift in Sources */,
+				4962FB50219B50AA00C7F678 /* ButtonCell.swift in Sources */,
+				4962FB51219B50AA00C7F678 /* ImageCell.swift in Sources */,
+				4962FB52219B50AA00C7F678 /* RowView.swift in Sources */,
+				4962FB53219B50AA00C7F678 /* TextCell.swift in Sources */,
+				4962FB54219B50AA00C7F678 /* WebViewCell.swift in Sources */,
+				4962FB55219B50AA00C7F678 /* ExperienceContainer.swift in Sources */,
+				4962FB56219B50AA00C7F678 /* ExperienceViewController.swift in Sources */,
+				4962FB57219B50AA00C7F678 /* ScreenViewController.swift in Sources */,
+				4962FB58219B50AA00C7F678 /* ScreenViewLayout.swift in Sources */,
+				4962FB59219B50AA00C7F678 /* ScreenViewLayoutAttributes.swift in Sources */,
+				4962FB5D219B50AA00C7F678 /* RoverUI.h in Sources */,
+				4962FB35219B507D00C7F678 /* Background.swift in Sources */,
+				4962FB36219B507D00C7F678 /* Barcode.swift in Sources */,
+				4962FB37219B507D00C7F678 /* BarcodeBlock.swift in Sources */,
+				4962FB38219B507D00C7F678 /* Block.swift in Sources */,
+				4962FB39219B507D00C7F678 /* Border.swift in Sources */,
+				4962FB3A219B507D00C7F678 /* ButtonBlock.swift in Sources */,
+				4962FB3B219B507D00C7F678 /* Color.swift in Sources */,
+				4962FB3C219B507D00C7F678 /* Experience.swift in Sources */,
+				4962FB3D219B507D00C7F678 /* Height.swift in Sources */,
+				4962FB3E219B507D00C7F678 /* Image.swift in Sources */,
+				4962FB3F219B507D00C7F678 /* ImageBlock.swift in Sources */,
+				4962FB40219B507D00C7F678 /* Insets.swift in Sources */,
+				4962FB41219B507D00C7F678 /* Position.swift in Sources */,
+				4962FB42219B507D00C7F678 /* RectangleBlock.swift in Sources */,
+				4962FB43219B507D00C7F678 /* Row.swift in Sources */,
+				4962FB44219B507D00C7F678 /* Screen.swift in Sources */,
+				4962FB45219B507D00C7F678 /* BlockTapBehavior.swift in Sources */,
+				4962FB46219B507D00C7F678 /* Text.swift in Sources */,
+				4962FB47219B507D00C7F678 /* TextBlock.swift in Sources */,
+				4962FB48219B507D00C7F678 /* WebView.swift in Sources */,
+				4962FB49219B507D00C7F678 /* WebViewBlock.swift in Sources */,
+				4962FB4A219B507D00C7F678 /* ExperienceRouteHandler.swift in Sources */,
+				4962FB4B219B507D00C7F678 /* FetchExperienceClient.swift in Sources */,
+				4962FB4C219B507D00C7F678 /* ExperienceStore.swift in Sources */,
+				4962FB4D219B507D00C7F678 /* ExperienceStoreService.swift in Sources */,
+				4962FB31219B506B00C7F678 /* Experiences.Color.swift in Sources */,
+				4962FB32219B506B00C7F678 /* Experiences.Text.swift in Sources */,
+				4962FB33219B506B00C7F678 /* Experiences.ImageConfiguration.swift in Sources */,
+				4962FB34219B506B00C7F678 /* Experiences.Barcode.swift in Sources */,
 				DBB89B9A20D014C700DD797A /* RouterService.swift in Sources */,
 				DB6ADD7320B33F3A002F226C /* ImageOptimization.swift in Sources */,
 				DBB89B9E20D0167B00DD797A /* LifeCycleTracker.swift in Sources */,
@@ -2609,40 +2329,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				DB8C0764215FC4D2000DDD56 /* RoverTicketmasterTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		DB9DBF712055974B00E5C77F /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				DBC9544A20EA86E600AA3AD9 /* NotificationSource.swift in Sources */,
-				DB9DBFA2205597C300E5C77F /* NotificationsAssembler.swift in Sources */,
-				DB7BA93020D982C200968A30 /* NotificationCenterRouteHandler.swift in Sources */,
-				DBFDF42D20AC7B1E0031EF47 /* NotificationCenterViewController.swift in Sources */,
-				DBFDF42C20AC7B1E0031EF47 /* NotificationCell.swift in Sources */,
-				DB6BE8B7215D4B2A000A1FDA /* Notifications.OSLog.swift in Sources */,
-				DB496E45214871410026DE6A /* NotificationsSyncParticipant.swift in Sources */,
-				DBB78A3420DAD89400AF1A00 /* NotificationTapBehavior.swift in Sources */,
-				DBFDF43120AC7BA10031EF47 /* NotificationStore.swift in Sources */,
-				DB7BA92C20D9811B00968A30 /* NotificationHandlerService.swift in Sources */,
-				DB496E482148717C0026DE6A /* Notifications.SyncQuery.swift in Sources */,
-				DBB78A3320DAD88F00AF1A00 /* NotificationAttachment.swift in Sources */,
-				DBFDF43220AC7BA10031EF47 /* NotificationStoreService.swift in Sources */,
-				DB7BA92720D972A700968A30 /* OpenNotificationAction.swift in Sources */,
-				DB0C8E402055CCBD00E0D860 /* InfluenceTracker.swift in Sources */,
-				DB9DBFA8205597C300E5C77F /* NotificationAuthorizationContextProvider.swift in Sources */,
-				DB7BA92320D970E500968A30 /* NotificationHandler.swift in Sources */,
-				DBFDF42920AC7A7C0031EF47 /* Notification.swift in Sources */,
-				DB0C8E3E2055C62800E0D860 /* InfluenceTrackerService.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		DB9DBF7A2055974B00E5C77F /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				DB9DBF842055974B00E5C77F /* RoverNotificationsTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2772,25 +2458,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		DBF31B1120E17176005D7C34 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				DBCBE08A216148B8001C7A96 /* DebugAssembler.swift in Sources */,
-				DBF31B4A20E193C5005D7C34 /* SettingsViewController.swift in Sources */,
-				DBF31B4F20E196BB005D7C34 /* SettingsRouteHandler.swift in Sources */,
-				DBF31B4220E17CD9005D7C34 /* DebugContextManager.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		DBF31B1A20E17176005D7C34 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				DBF31B2420E17176005D7C34 /* RoverDebugTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		DBF49DCE203DE00F00B54652 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2833,63 +2500,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		DBFDF43D20AC84430031EF47 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				DBFDF48220AC85650031EF47 /* ScreenViewLayoutAttributes.swift in Sources */,
-				DBFDF46D20AC85430031EF47 /* BarcodeBlock.swift in Sources */,
-				DBFDF45D20AC85430031EF47 /* Barcode.swift in Sources */,
-				DBFDF47020AC85430031EF47 /* Color.swift in Sources */,
-				DBFDF45C20AC853B0031EF47 /* Experiences.Text.swift in Sources */,
-				DBFDF47620AC854F0031EF47 /* ExperienceStoreService.swift in Sources */,
-				DBFDF47F20AC855E0031EF47 /* WebViewCell.swift in Sources */,
-				DBFDF46820AC85430031EF47 /* TextBlock.swift in Sources */,
-				DBFDF46B20AC85430031EF47 /* Insets.swift in Sources */,
-				DBFDF47820AC85560031EF47 /* ExperienceViewController.swift in Sources */,
-				DBFDF45A20AC84B30031EF47 /* ExperiencesAssembler.swift in Sources */,
-				4980D66521307738007267D3 /* Experiences.Barcode.swift in Sources */,
-				DBFDF46120AC85430031EF47 /* Background.swift in Sources */,
-				DBFDF46020AC85430031EF47 /* RectangleBlock.swift in Sources */,
-				DBFDF47B20AC855E0031EF47 /* ButtonCell.swift in Sources */,
-				DBFDF46C20AC85430031EF47 /* Height.swift in Sources */,
-				DBFDF47720AC85560031EF47 /* ExperienceContainer.swift in Sources */,
-				DBFDF48520AC85920031EF47 /* Experiences.ImageConfiguration.swift in Sources */,
-				DBFDF45E20AC85430031EF47 /* Experience.swift in Sources */,
-				DBFDF47520AC854F0031EF47 /* ExperienceStore.swift in Sources */,
-				DBFDF47A20AC855E0031EF47 /* BlockCell.swift in Sources */,
-				DBFDF47E20AC855E0031EF47 /* TextCell.swift in Sources */,
-				DBFDF47C20AC855E0031EF47 /* ImageCell.swift in Sources */,
-				DBFDF46220AC85430031EF47 /* Block.swift in Sources */,
-				DBFDF48020AC85650031EF47 /* ScreenViewController.swift in Sources */,
-				DBFDF46620AC85430031EF47 /* WebViewBlock.swift in Sources */,
-				DBFDF46A20AC85430031EF47 /* Border.swift in Sources */,
-				DBFDF46320AC85430031EF47 /* BlockTapBehavior.swift in Sources */,
-				DBFDF46E20AC85430031EF47 /* Position.swift in Sources */,
-				DB7BA91F20D96CA600968A30 /* ExperienceRouteHandler.swift in Sources */,
-				DBFDF45B20AC853B0031EF47 /* Experiences.Color.swift in Sources */,
-				DBFDF47120AC85430031EF47 /* ImageBlock.swift in Sources */,
-				DBFDF46420AC85430031EF47 /* Image.swift in Sources */,
-				DBFDF46920AC85430031EF47 /* Row.swift in Sources */,
-				DBC3B42D2148B08D0096C74E /* FetchExperienceClient.swift in Sources */,
-				DBFDF45F20AC85430031EF47 /* ButtonBlock.swift in Sources */,
-				DBFDF48120AC85650031EF47 /* ScreenViewLayout.swift in Sources */,
-				DBFDF47D20AC855E0031EF47 /* RowView.swift in Sources */,
-				DBFDF47920AC855E0031EF47 /* BarcodeCell.swift in Sources */,
-				DBFDF46520AC85430031EF47 /* Screen.swift in Sources */,
-				DBFDF46F20AC85430031EF47 /* Text.swift in Sources */,
-				DBFDF46720AC85430031EF47 /* WebView.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		DBFDF44620AC84430031EF47 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				DBFDF45020AC84430031EF47 /* RoverExperiencesTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -2913,11 +2523,6 @@
 			target = DB8C0755215FC4D2000DDD56 /* RoverTicketmaster */;
 			targetProxy = DB8C0760215FC4D2000DDD56 /* PBXContainerItemProxy */;
 		};
-		DB9DBF812055974B00E5C77F /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = DB9DBF752055974B00E5C77F /* RoverNotifications */;
-			targetProxy = DB9DBF802055974B00E5C77F /* PBXContainerItemProxy */;
-		};
 		DB9DBFC02055980800E5C77F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = DB9DBFB42055980800E5C77F /* RoverLocation */;
@@ -2938,20 +2543,10 @@
 			target = DBD88A7220C1B21700085AE0 /* RoverData */;
 			targetProxy = DBD88A7D20C1B21700085AE0 /* PBXContainerItemProxy */;
 		};
-		DBF31B2120E17176005D7C34 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = DBF31B1520E17176005D7C34 /* RoverDebug */;
-			targetProxy = DBF31B2020E17176005D7C34 /* PBXContainerItemProxy */;
-		};
 		DBF49DDF203DE00F00B54652 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = DBF49DD2203DE00F00B54652 /* RoverFoundation */;
 			targetProxy = DBF49DDE203DE00F00B54652 /* PBXContainerItemProxy */;
-		};
-		DBFDF44D20AC84430031EF47 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = DBFDF44120AC84430031EF47 /* RoverExperiences */;
-			targetProxy = DBFDF44C20AC84430031EF47 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -3263,85 +2858,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = io.rover.RoverTicketmasterTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
-		DB9DBF872055974B00E5C77F /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = NO;
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = WDEZX8QD47;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Sources/Notifications/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = io.rover.RoverNotifications;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = YES;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 4.2;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		DB9DBF882055974B00E5C77F /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = NO;
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = WDEZX8QD47;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Sources/Notifications/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = io.rover.RoverNotifications;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 4.2;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
-		DB9DBF892055974B00E5C77F /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = WDEZX8QD47;
-				INFOPLIST_FILE = Tests/NotificationsTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = io.rover.RoverNotificationsTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		DB9DBF8A2055974B00E5C77F /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = WDEZX8QD47;
-				INFOPLIST_FILE = Tests/NotificationsTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = io.rover.RoverNotificationsTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -3683,86 +3199,6 @@
 			};
 			name = Release;
 		};
-		DBF31B2720E17176005D7C34 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = WDEZX8QD47;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Sources/Debug/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = io.rover.RoverDebug;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 4.2;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		DBF31B2820E17176005D7C34 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = WDEZX8QD47;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Sources/Debug/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = io.rover.RoverDebug;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 4.2;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
-		DBF31B2920E17176005D7C34 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = WDEZX8QD47;
-				INFOPLIST_FILE = Tests/DebugTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = io.rover.RoverDebugTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		DBF31B2A20E17176005D7C34 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = WDEZX8QD47;
-				INFOPLIST_FILE = Tests/DebugTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = io.rover.RoverDebugTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
 		DBF49DE5203DE00F00B54652 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3959,86 +3395,6 @@
 			};
 			name = Release;
 		};
-		DBFDF45420AC84430031EF47 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = WDEZX8QD47;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Sources/Experiences/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = io.rover.RoverExperiences;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 4.2;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		DBFDF45520AC84430031EF47 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = WDEZX8QD47;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Sources/Experiences/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = io.rover.RoverExperiences;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 4.2;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
-		DBFDF45720AC84430031EF47 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = WDEZX8QD47;
-				INFOPLIST_FILE = Tests/ExperiencesTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = io.rover.RoverExperiencesTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		DBFDF45820AC84430031EF47 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = WDEZX8QD47;
-				INFOPLIST_FILE = Tests/ExperiencesTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = io.rover.RoverExperiencesTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -4110,24 +3466,6 @@
 			buildConfigurations = (
 				DB8C0769215FC4D2000DDD56 /* Debug */,
 				DB8C076A215FC4D2000DDD56 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		DB9DBF8B2055974B00E5C77F /* Build configuration list for PBXNativeTarget "RoverNotifications" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				DB9DBF872055974B00E5C77F /* Debug */,
-				DB9DBF882055974B00E5C77F /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		DB9DBF8C2055974B00E5C77F /* Build configuration list for PBXNativeTarget "RoverNotificationsTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				DB9DBF892055974B00E5C77F /* Debug */,
-				DB9DBF8A2055974B00E5C77F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -4204,24 +3542,6 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DBF31B2B20E17176005D7C34 /* Build configuration list for PBXNativeTarget "RoverDebug" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				DBF31B2720E17176005D7C34 /* Debug */,
-				DBF31B2820E17176005D7C34 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		DBF31B2C20E17176005D7C34 /* Build configuration list for PBXNativeTarget "RoverDebugTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				DBF31B2920E17176005D7C34 /* Debug */,
-				DBF31B2A20E17176005D7C34 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		DBF49DCD203DE00F00B54652 /* Build configuration list for PBXProject "Rover" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -4245,24 +3565,6 @@
 			buildConfigurations = (
 				DBF49DEB203DE00F00B54652 /* Debug */,
 				DBF49DEC203DE00F00B54652 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		DBFDF45320AC84430031EF47 /* Build configuration list for PBXNativeTarget "RoverExperiences" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				DBFDF45420AC84430031EF47 /* Debug */,
-				DBFDF45520AC84430031EF47 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		DBFDF45620AC84430031EF47 /* Build configuration list for PBXNativeTarget "RoverExperiencesTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				DBFDF45720AC84430031EF47 /* Debug */,
-				DBFDF45820AC84430031EF47 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

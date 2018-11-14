@@ -12,10 +12,8 @@ Pod::Spec.new do |s|
   s.default_subspec   = "Core"
 
   s.subspec "Core" do |ss|
-    ss.dependency "Rover/Experiences"
-    ss.dependency "Rover/Notifications"
     ss.dependency "Rover/Location"
-    ss.dependency "Rover/Debug"
+    ss.dependency "Rover/UI"
   end
 
   s.subspec "Foundation" do |ss|
@@ -32,19 +30,7 @@ Pod::Spec.new do |s|
   s.subspec "UI" do |ss|
     ss.source_files = "Sources/UI/**/*.swift"
     ss.dependency "Rover/Data"
-    ss.frameworks = "SafariServices"
-  end
-
-  s.subspec "Experiences" do |ss|
-    ss.source_files = "Sources/Experiences/**/*.swift"
-    ss.dependency "Rover/UI"
-    ss.frameworks = "WebKit"
-  end
-
-  s.subspec "Notifications" do |ss|
-    ss.source_files = "Sources/Notifications/**/*.swift"
-    ss.dependency "Rover/UI"
-    ss.frameworks = "UserNotifications"
+    ss.frameworks = "SafariServices", "WebKit", "UserNotifications"
   end
 
   s.subspec "Location" do |ss|
@@ -58,11 +44,6 @@ Pod::Spec.new do |s|
     ss.source_files = "Sources/Bluetooth/**/*.swift"
     ss.dependency "Rover/Data"
     ss.frameworks = "CoreBluetooth"
-  end
-
-  s.subspec "Debug" do |ss|
-    ss.source_files = "Sources/Debug/**/*.swift"
-    ss.dependency "Rover/UI"
   end
 
   s.subspec "Telephony" do |ss|

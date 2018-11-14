@@ -420,7 +420,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
             }
         case .presentWebsite(let url):
             if let websiteViewController = websiteViewControllerProvider(url) {
-                UIApplication.shared.present(websiteViewController, animated: true)
+                self.present(websiteViewController, animated: true)
             }
         }
         

@@ -40,10 +40,7 @@ class NotificationHandlerService: NotificationHandler {
         case .openApp:
             break
         case .openURL(let url):
-            DispatchQueue.main.sync {
-                UIApplication.shared.open(url, options: [:], completionHandler: nil)
-            }
-        
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
         case .presentWebsite(let url):
             // TODO
             os_log("TODO .presentWebsite currently NOT IMPLEMENTED.", log: .general, type: .error)

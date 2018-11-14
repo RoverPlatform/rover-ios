@@ -220,14 +220,8 @@ extension UIAssembler: Assembler {
         // MARK: NotificationHandler
         
         container.register(NotificationHandler.self) { resolver in
-            let actionProvider: NotificationHandlerService.ActionProvider = { [weak resolver] notification in
-                return resolver?.resolve(Action.self, name: "openNotification", arguments: notification)
-            }
-            
             return NotificationHandlerService(
-                dispatcher: resolver.resolve(Dispatcher.self)!,
                 influenceTracker: resolver.resolve(InfluenceTracker.self)!,
-                actionProvider: actionProvider,
                 notificationStore: resolver.resolve(NotificationStore.self)!,
                 eventQueue: resolver.resolve(EventQueue.self)!
             )

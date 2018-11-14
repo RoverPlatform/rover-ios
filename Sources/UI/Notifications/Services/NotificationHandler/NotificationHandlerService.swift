@@ -11,30 +11,22 @@ import UIKit
 import os
 
 class NotificationHandlerService: NotificationHandler {
-    let dispatcher: Dispatcher
     let influenceTracker: InfluenceTracker
-    
-    typealias ActionProvider = (Notification) -> Action?
-    let actionProvider: ActionProvider
     let notificationStore: NotificationStore
     let eventQueue: EventQueue
     
-    init(dispatcher: Dispatcher, influenceTracker: InfluenceTracker, actionProvider: @escaping ActionProvider, notificationStore: NotificationStore, eventQueue: EventQueue) {
-        self.dispatcher = dispatcher
-        self.actionProvider = actionProvider
+    init(influenceTracker: InfluenceTracker, notificationStore: NotificationStore, eventQueue: EventQueue) {
         self.influenceTracker = influenceTracker
         self.notificationStore = notificationStore
         self.eventQueue = eventQueue
     }
     
-    
-    
-    func handle(_ response: UNNotificationResponse, completionHandler: (() -> Void)?) -> Bool {
+    func handle(_ response: UNNotificationResponse) -> Bool {
         // The app was opened directly from a push notification. Clear the last received
         // notification from the influence tracker so we don't erroneously track an influenced open.
         influenceTracker.clearLastReceivedNotification()
         
-        guard let notification = notification(for: response) else {
+        guard let notification = response.roverNotification else {
             return false
         }
         
@@ -62,29 +54,7 @@ class NotificationHandlerService: NotificationHandler {
         
         let eventInfo = notification.openedEvent(source: .pushNotification)
         eventQueue.addEvent(eventInfo)
-        completionHandler?()
         
         return true
-    }
-    
-    func notification(for response: UNNotificationResponse) -> Notification? {
-        guard let data = try? JSONSerialization.data(withJSONObject: response.notification.request.content.userInfo, options: []) else {
-            return nil
-        }
-        
-        struct Payload: Decodable {
-            struct Rover: Decodable {
-                var notification: Notification
-            }
-            
-            var rover: Rover
-        }
-        
-        do {
-            let payload = try JSONDecoder.default.decode(Payload.self, from: data)
-            return payload.rover.notification
-        } catch {
-            return nil
-        }
     }
 }

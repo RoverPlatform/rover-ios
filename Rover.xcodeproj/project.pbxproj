@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		491C9710219B6C580065BAB8 /* UI.UIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 491C970F219B6C580065BAB8 /* UI.UIApplication.swift */; };
+		491C9713219C9D480065BAB8 /* UI.UNNotificationResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 491C9711219C9C8A0065BAB8 /* UI.UNNotificationResponse.swift */; };
 		4962FB31219B506B00C7F678 /* Experiences.Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1B66209CD89400E99F9F /* Experiences.Color.swift */; };
 		4962FB32219B506B00C7F678 /* Experiences.Text.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1B68209CD8D600E99F9F /* Experiences.Text.swift */; };
 		4962FB33219B506B00C7F678 /* Experiences.ImageConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFDF48320AC858A0031EF47 /* Experiences.ImageConfiguration.swift */; };
@@ -297,6 +298,7 @@
 
 /* Begin PBXFileReference section */
 		491C970F219B6C580065BAB8 /* UI.UIApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UI.UIApplication.swift; sourceTree = "<group>"; };
+		491C9711219C9C8A0065BAB8 /* UI.UNNotificationResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UI.UNNotificationResponse.swift; sourceTree = "<group>"; };
 		4980D66421307738007267D3 /* Experiences.Barcode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Experiences.Barcode.swift; sourceTree = "<group>"; };
 		DB00FDD92087E09F008D1A57 /* ScreenViewLayoutAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenViewLayoutAttributes.swift; sourceTree = "<group>"; };
 		DB00FDDB20891153008D1A57 /* ImageConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageConfiguration.swift; sourceTree = "<group>"; };
@@ -693,6 +695,7 @@
 			isa = PBXGroup;
 			children = (
 				491C970F219B6C580065BAB8 /* UI.UIApplication.swift */,
+				491C9711219C9C8A0065BAB8 /* UI.UNNotificationResponse.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -931,13 +934,6 @@
 			path = NotificationHandler;
 			sourceTree = "<group>";
 		};
-		DB7BA92420D9725E00968A30 /* Actions */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Actions;
-			sourceTree = "<group>";
-		};
 		DB7BA92D20D9829D00968A30 /* RouteHandlers */ = {
 			isa = PBXGroup;
 			children = (
@@ -991,7 +987,6 @@
 			isa = PBXGroup;
 			children = (
 				DB496E46214871710026DE6A /* Extensions */,
-				DB7BA92420D9725E00968A30 /* Actions */,
 				DBADA82920A9EE9700225C80 /* Models */,
 				DB7BA92D20D9829D00968A30 /* RouteHandlers */,
 				DBF31B5620E41A90005D7C34 /* Services */,
@@ -2259,6 +2254,7 @@
 				4962FB55219B50AA00C7F678 /* ExperienceContainer.swift in Sources */,
 				4962FB56219B50AA00C7F678 /* ExperienceViewController.swift in Sources */,
 				4962FB57219B50AA00C7F678 /* ScreenViewController.swift in Sources */,
+				491C9713219C9D480065BAB8 /* UI.UNNotificationResponse.swift in Sources */,
 				4962FB58219B50AA00C7F678 /* ScreenViewLayout.swift in Sources */,
 				4962FB59219B50AA00C7F678 /* ScreenViewLayoutAttributes.swift in Sources */,
 				4962FB5D219B50AA00C7F678 /* RoverUI.h in Sources */,

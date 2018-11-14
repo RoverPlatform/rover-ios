@@ -29,7 +29,7 @@ extension UIApplication {
             completion?()
             return
         }
-        
+
         // Presenting `viewControllerToPresent` inside a container other than `UITabBarController` is not supported at this time
         
         

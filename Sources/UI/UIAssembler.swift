@@ -46,14 +46,6 @@ extension UIAssembler: Assembler {
             return OpenURLAction(url: url)
         }
         
-        
-        // MARK: Action (presentWebsite)
-        
-        container.register(Action.self, name: "presentWebsite", scope: .transient) { (resolver, url: URL) in
-            let viewControllerToPresent = resolver.resolve(UIViewController.self, name: "website", arguments: url)!
-            return resolver.resolve(Action.self, name: "presentView", arguments: viewControllerToPresent)!
-        }
-        
         // MARK: ImageStore
         
         container.register(ImageStore.self) { resolver in
@@ -170,8 +162,8 @@ extension UIAssembler: Assembler {
                 return resolver?.resolve(UIViewController.self, name: "screen", arguments: experience, screen)
             }
             
-            let presentWebsiteActionProvider: ScreenViewController.ActionProvider = { [weak resolver] url in
-                return resolver?.resolve(Action.self, name: "presentWebsite", arguments: url)
+            let websiteViewControllerProvider: ScreenViewController.WebsiteViewControllerProvider = { [weak resolver] url in
+                resolver?.resolve(UIViewController.self, name: "website", arguments: url)!
             }
             
             return ScreenViewController(
@@ -183,7 +175,7 @@ extension UIAssembler: Assembler {
                 imageStore: resolver.resolve(ImageStore.self)!,
                 sessionController: resolver.resolve(SessionController.self)!,
                 viewControllerProvider: viewControllerProvider,
-                presentWebsiteActionProvider: presentWebsiteActionProvider
+                websiteViewControllerProvider: websiteViewControllerProvider
             )
         }
         
@@ -219,11 +211,16 @@ extension UIAssembler: Assembler {
         
         // MARK: NotificationHandler
         
-        container.register(NotificationHandler.self) { resolver in
+        container.register(NotificationHandler.self) { resolver in            
+            let websiteViewControllerProvider: NotificationCenterViewController.WebsiteViewControllerProvider = { [weak resolver] url in
+                return resolver?.resolve(UIViewController.self, name: "website", arguments: url)!
+            }
+            
             return NotificationHandlerService(
                 influenceTracker: resolver.resolve(InfluenceTracker.self)!,
                 notificationStore: resolver.resolve(NotificationStore.self)!,
-                eventQueue: resolver.resolve(EventQueue.self)!
+                eventQueue: resolver.resolve(EventQueue.self)!,
+                websiteViewControllerProvider: websiteViewControllerProvider
             )
         }
         
@@ -257,8 +254,8 @@ extension UIAssembler: Assembler {
         // MARK: UIViewController (notificationCenter)
         
         container.register(UIViewController.self, name: "notificationCenter") { resolver in
-            let presentWebsiteActionProvider: NotificationCenterViewController.ActionProvider = { [weak resolver] url in
-                return resolver?.resolve(Action.self, name: "presentWebsite", arguments: url)
+            let websiteViewControllerProvider: NotificationCenterViewController.WebsiteViewControllerProvider = { [weak resolver] url in
+                return resolver?.resolve(UIViewController.self, name: "website", arguments: url)!
             }
             
             return NotificationCenterViewController(
@@ -269,7 +266,7 @@ extension UIAssembler: Assembler {
                 router: resolver.resolve(Router.self)!,
                 sessionController: resolver.resolve(SessionController.self)!,
                 syncCoordinator: resolver.resolve(SyncCoordinator.self)!,
-                presentWebsiteActionProvider: presentWebsiteActionProvider
+                websiteViewControllerProvider: websiteViewControllerProvider
             )
         }
         

@@ -12,13 +12,18 @@ import os
 
 class NotificationHandlerService: NotificationHandler {
     let influenceTracker: InfluenceTracker
+    
+    public typealias WebsiteViewControllerProvider = (URL) -> UIViewController?
+    public let websiteViewControllerProvider: WebsiteViewControllerProvider
+    
     let notificationStore: NotificationStore
     let eventQueue: EventQueue
     
-    init(influenceTracker: InfluenceTracker, notificationStore: NotificationStore, eventQueue: EventQueue) {
+    init(influenceTracker: InfluenceTracker, notificationStore: NotificationStore, eventQueue: EventQueue, websiteViewControllerProvider: @escaping WebsiteViewControllerProvider) {
         self.influenceTracker = influenceTracker
         self.notificationStore = notificationStore
         self.eventQueue = eventQueue
+        self.websiteViewControllerProvider = websiteViewControllerProvider
     }
     
     func handle(_ response: UNNotificationResponse) -> Bool {
@@ -42,11 +47,9 @@ class NotificationHandlerService: NotificationHandler {
         case .openURL(let url):
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
         case .presentWebsite(let url):
-            // TODO
-            os_log("TODO .presentWebsite currently NOT IMPLEMENTED.", log: .general, type: .error)
-//            if let action = presentWebsiteActionProvider(url) {
-//                produceAction(action)
-//            }
+            if let websiteViewController = websiteViewControllerProvider(url) {
+                UIApplication.shared.present(websiteViewController, animated: false)
+            }
         }
         
         let eventInfo = notification.openedEvent(source: .pushNotification)

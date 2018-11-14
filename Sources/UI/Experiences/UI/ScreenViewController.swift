@@ -22,8 +22,8 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     public typealias ViewControllerProvider = (Experience, Screen) -> UIViewController?
     public let viewControllerProvider: ViewControllerProvider
     
-    public typealias ActionProvider = (URL) -> Action?
-    public let presentWebsiteActionProvider: ActionProvider
+    public typealias WebsiteViewControllerProvider = (URL) -> UIViewController?
+    public let websiteViewControllerProvider: WebsiteViewControllerProvider
     
     override open var preferredStatusBarStyle: UIStatusBarStyle {
         switch screen.statusBar.style {
@@ -34,7 +34,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         }
     }
     
-    public init(collectionViewLayout: UICollectionViewLayout, experience: Experience, screen: Screen, dispatcher: Dispatcher, eventQueue: EventQueue, imageStore: ImageStore, sessionController: SessionController, viewControllerProvider: @escaping ViewControllerProvider, presentWebsiteActionProvider: @escaping ActionProvider) {
+    public init(collectionViewLayout: UICollectionViewLayout, experience: Experience, screen: Screen, dispatcher: Dispatcher, eventQueue: EventQueue, imageStore: ImageStore, sessionController: SessionController, viewControllerProvider: @escaping ViewControllerProvider, websiteViewControllerProvider: @escaping WebsiteViewControllerProvider) {
         self.experience = experience
         self.screen = screen
         self.dispatcher = dispatcher
@@ -42,7 +42,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         self.imageStore = imageStore
         self.sessionController = sessionController
         self.viewControllerProvider = viewControllerProvider
-        self.presentWebsiteActionProvider = presentWebsiteActionProvider
+        self.websiteViewControllerProvider = websiteViewControllerProvider
         
         super.init(collectionViewLayout: collectionViewLayout)
         collectionView?.prefetchDataSource = self
@@ -419,8 +419,8 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
                 self.dismiss(animated: true, completion: nil)
             }
         case .presentWebsite(let url):
-            if let action = presentWebsiteActionProvider(url) {
-                dispatcher.dispatch(action, completionHandler: nil)
+            if let websiteViewController = websiteViewControllerProvider(url) {
+                self.present(websiteViewController, animated: true)
             }
         }
         

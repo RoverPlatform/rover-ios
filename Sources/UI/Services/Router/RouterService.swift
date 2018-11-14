@@ -7,66 +7,108 @@
 //
 
 import Foundation
+import UIKit
 
-class RouterService: Router {
+public final class Router {
     let associatedDomains: [String]
     let urlSchemes: [String]
-    let dispatcher: Dispatcher
     
-    var handlers = [RouteHandler]()
+    let experienceViewControllerProvider: (ExperienceIdentifier) -> UIViewController
+    let settingsViewControllerProvider: () -> UIViewController
+    let notificationCenterViewControllerProvider: () -> UIViewController
     
-    init(associatedDomains: [String], urlSchemes: [String], dispatcher: Dispatcher) {
+    init(associatedDomains: [String], urlSchemes: [String],  experienceViewControllerProvider: @escaping (ExperienceIdentifier) -> UIViewController, settingsViewControllerProvider: @escaping () -> UIViewController, notificationCenterViewControllerProvider: @escaping () -> UIViewController) {
         self.associatedDomains = associatedDomains
         self.urlSchemes = urlSchemes
-        self.dispatcher = dispatcher
+        self.experienceViewControllerProvider = experienceViewControllerProvider
+        self.settingsViewControllerProvider = settingsViewControllerProvider
+        self.notificationCenterViewControllerProvider = notificationCenterViewControllerProvider
+    }
+
+    public func viewController(for url: URL) -> UIViewController? {
+        return viewControllerFor(possibleSettingsURL: url) ?? viewControllerFor(possibleExperienceURL: url) ?? viewControllerFor(possibleNotificationCenterURL: url)
     }
     
-    func addHandler(_ handler: RouteHandler) {
-        handlers.append(handler)
-    }
-    
-    func handle(_ userActivity: NSUserActivity) -> Bool {
-        guard let action = action(for: userActivity) else {
-            return false
-        }
-        
-        dispatcher.dispatch(action, completionHandler: nil)
-        return true
-    }
-    
-    func action(for userActivity: NSUserActivity) -> Action? {
+    public func viewController(for userActivity: NSUserActivity) -> UIViewController? {
         guard userActivity.activityType == NSUserActivityTypeBrowsingWeb, let url = userActivity.webpageURL else {
             return nil
         }
-        
-        return action(for: url)
+        return viewController(for: url)
     }
     
-    func handle(_ url: URL) -> Bool {
-        guard let action = action(for: url) else {
-            return false
+    func viewControllerFor(possibleExperienceURL: URL) -> UIViewController? {
+        if isDeepLink(url: possibleExperienceURL) {
+            guard let host = possibleExperienceURL.host else {
+                return nil
+            }
+            
+            if host != "presentExperience" {
+                return nil
+            }
+            
+            guard let components = URLComponents(url: possibleExperienceURL, resolvingAgainstBaseURL: false) else {
+                return nil
+            }
+            
+            let identifier: ExperienceIdentifier
+            if let queryItem = components.queryItems?.first(where: { $0.name == "id" }) {
+                guard let value = queryItem.value else {
+                    return nil
+                }
+                
+                let experienceID = ID(rawValue: value)
+                identifier = ExperienceIdentifier.experienceID(id: experienceID)
+            } else if let queryItem = components.queryItems?.first(where: { $0.name == "campaignID" }) {
+                guard let value = queryItem.value else {
+                    return nil
+                }
+                
+                let campaignID = ID(rawValue: value)
+                identifier = ExperienceIdentifier.campaignID(id: campaignID)
+            } else {
+                return nil
+            }
+            
+            return experienceViewControllerProvider(identifier)
+        } else {
+            // universal link.
+            let identifier = ExperienceIdentifier.campaignURL(url: possibleExperienceURL)
+            return experienceViewControllerProvider(identifier)
         }
-        
-        dispatcher.dispatch(action, completionHandler: nil)
-        return true
     }
     
-    func action(for url: URL) -> Action? {
-        if isUniversalLink(url: url) {
-            for handler in handlers {
-                if let action = handler.universalLinkAction(url: url) {
-                    return action
-                }
-            }
-        } else if isDeepLink(url: url) {
-            for handler in handlers {
-                if let action = handler.deepLinkAction(url: url) {
-                    return action
-                }
-            }
+    func viewControllerFor(possibleSettingsURL: URL) -> UIViewController? {
+        if !isDeepLink(url: possibleSettingsURL) {
+            // Rover notification center may only be opened via a deep link, not a universal link.
+            return nil
         }
         
-        return nil
+        guard let host = possibleSettingsURL.host else {
+            return nil
+        }
+        
+        if host != "presentSettings" {
+            return nil
+        }
+        
+        return settingsViewControllerProvider()
+    }
+    
+    func viewControllerFor(possibleNotificationCenterURL: URL) -> UIViewController? {
+        if !isDeepLink(url: possibleNotificationCenterURL) {
+            // Rover notification center may only be opened via a deep link, not a universal link.
+            return nil
+        }
+        
+        guard let host = possibleNotificationCenterURL.host else {
+            return nil
+        }
+        
+        if host != "presentNotificationCenter" {
+            return nil
+        }
+        
+        return notificationCenterViewControllerProvider()
     }
     
     func isUniversalLink(url: URL) -> Bool {

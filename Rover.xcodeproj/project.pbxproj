@@ -34,7 +34,6 @@
 		4962FB47219B507D00C7F678 /* TextBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A6F209B8CC500E99F9F /* TextBlock.swift */; };
 		4962FB48219B507D00C7F678 /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A6E209B8CC500E99F9F /* WebView.swift */; };
 		4962FB49219B507D00C7F678 /* WebViewBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A6D209B8CC500E99F9F /* WebViewBlock.swift */; };
-		4962FB4A219B507D00C7F678 /* ExperienceRouteHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7BA91D20D96C9900968A30 /* ExperienceRouteHandler.swift */; };
 		4962FB4B219B507D00C7F678 /* FetchExperienceClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC3B42C2148B08D0096C74E /* FetchExperienceClient.swift */; };
 		4962FB4C219B507D00C7F678 /* ExperienceStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1B0E209CAD9600E99F9F /* ExperienceStore.swift */; };
 		4962FB4D219B507D00C7F678 /* ExperienceStoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1ACB209BB3D200E99F9F /* ExperienceStoreService.swift */; };
@@ -57,7 +56,6 @@
 		4962FB63219B51AD00C7F678 /* NotificationAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB78A3120DAD88900AF1A00 /* NotificationAttachment.swift */; };
 		4962FB64219B51AD00C7F678 /* NotificationSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB496F5220DBECD800DF5949 /* NotificationSource.swift */; };
 		4962FB65219B51AD00C7F678 /* NotificationTapBehavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB78A2F20DAD7B400AF1A00 /* NotificationTapBehavior.swift */; };
-		4962FB66219B51AD00C7F678 /* NotificationCenterRouteHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7BA92E20D982BE00968A30 /* NotificationCenterRouteHandler.swift */; };
 		4962FB67219B51AD00C7F678 /* NotificationsSyncParticipant.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB496E44214871410026DE6A /* NotificationsSyncParticipant.swift */; };
 		4962FB68219B51AD00C7F678 /* NotificationAuthorizationContextProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBF98205597C300E5C77F /* NotificationAuthorizationContextProvider.swift */; };
 		4962FB69219B51AD00C7F678 /* InfluenceTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0C8E3F2055CCBD00E0D860 /* InfluenceTracker.swift */; };
@@ -69,7 +67,6 @@
 		4962FB6F219B51AD00C7F678 /* NotificationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FE2F208FB285008D1A57 /* NotificationCell.swift */; };
 		4962FB70219B51AD00C7F678 /* NotificationCenterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBF90205597C300E5C77F /* NotificationCenterViewController.swift */; };
 		4962FB77219B52BE00C7F678 /* DebugContextManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF31B4020E17CD1005D7C34 /* DebugContextManager.swift */; };
-		4962FB78219B52BE00C7F678 /* SettingsRouteHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF31B4C20E19678005D7C34 /* SettingsRouteHandler.swift */; };
 		4962FB79219B52BE00C7F678 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF31B4820E193BA005D7C34 /* SettingsViewController.swift */; };
 		DB026279214C300E00893E53 /* Location.CLBeaconRegion.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB026272214C2F5200893E53 /* Location.CLBeaconRegion.swift */; };
 		DB02627A214C301600893E53 /* Location.CLCircularRegion.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB026274214C2F8900893E53 /* Location.CLCircularRegion.swift */; };
@@ -123,7 +120,6 @@
 		DB71C62E21092B970079EDFF /* ScalarRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB71C62D21092B970079EDFF /* ScalarRepresentable.swift */; };
 		DB71C63021092C120079EDFF /* Scalar.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB71C62F21092C120079EDFF /* Scalar.swift */; };
 		DB75358621595F1000CB5654 /* SyncCoordinatorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB75358421595F0A00CB5654 /* SyncCoordinatorService.swift */; };
-		DB7BA93420D98F7E00968A30 /* RouteHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7BA91A20D9594500968A30 /* RouteHandler.swift */; };
 		DB8C075F215FC4D2000DDD56 /* RoverTicketmaster.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB8C0756215FC4D2000DDD56 /* RoverTicketmaster.framework */; };
 		DB8C0764215FC4D2000DDD56 /* RoverTicketmasterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8C0763215FC4D2000DDD56 /* RoverTicketmasterTests.swift */; };
 		DB8C0766215FC4D2000DDD56 /* RoverTicketmaster.h in Headers */ = {isa = PBXBuildFile; fileRef = DB8C0758215FC4D2000DDD56 /* RoverTicketmaster.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -161,7 +157,6 @@
 		DBADA7FD20A4F32500225C80 /* BlockObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBADA7F520A4F32500225C80 /* BlockObserver.swift */; };
 		DBADA80320A4F37C00225C80 /* Dispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBADA80120A4F37C00225C80 /* Dispatcher.swift */; };
 		DBADA80420A4F37C00225C80 /* DispatcherService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBADA80220A4F37C00225C80 /* DispatcherService.swift */; };
-		DBB89B9920D014C700DD797A /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FDF7208D09AE008D1A57 /* Router.swift */; };
 		DBB89B9A20D014C700DD797A /* RouterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FDF9208D0A0A008D1A57 /* RouterService.swift */; };
 		DBB89B9E20D0167B00DD797A /* LifeCycleTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB89B9C20D0160100DD797A /* LifeCycleTracker.swift */; };
 		DBB89BA120D01CD700DD797A /* LifeCycleTrackerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB89B9F20D01CC500DD797A /* LifeCycleTrackerService.swift */; };
@@ -303,7 +298,6 @@
 		DB00FDD92087E09F008D1A57 /* ScreenViewLayoutAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenViewLayoutAttributes.swift; sourceTree = "<group>"; };
 		DB00FDDB20891153008D1A57 /* ImageConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageConfiguration.swift; sourceTree = "<group>"; };
 		DB00FDDF208A4961008D1A57 /* BarcodeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarcodeCell.swift; sourceTree = "<group>"; };
-		DB00FDF7208D09AE008D1A57 /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 		DB00FDF9208D0A0A008D1A57 /* RouterService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouterService.swift; sourceTree = "<group>"; };
 		DB00FE2F208FB285008D1A57 /* NotificationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCell.swift; sourceTree = "<group>"; };
 		DB026272214C2F5200893E53 /* Location.CLBeaconRegion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.CLBeaconRegion.swift; sourceTree = "<group>"; };
@@ -368,11 +362,8 @@
 		DB71C62D21092B970079EDFF /* ScalarRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalarRepresentable.swift; sourceTree = "<group>"; };
 		DB71C62F21092C120079EDFF /* Scalar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scalar.swift; sourceTree = "<group>"; };
 		DB75358421595F0A00CB5654 /* SyncCoordinatorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncCoordinatorService.swift; sourceTree = "<group>"; };
-		DB7BA91A20D9594500968A30 /* RouteHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteHandler.swift; sourceTree = "<group>"; };
-		DB7BA91D20D96C9900968A30 /* ExperienceRouteHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperienceRouteHandler.swift; sourceTree = "<group>"; };
 		DB7BA92120D970A100968A30 /* NotificationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationHandler.swift; sourceTree = "<group>"; };
 		DB7BA92A20D9811100968A30 /* NotificationHandlerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationHandlerService.swift; sourceTree = "<group>"; };
-		DB7BA92E20D982BE00968A30 /* NotificationCenterRouteHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCenterRouteHandler.swift; sourceTree = "<group>"; };
 		DB8C0756215FC4D2000DDD56 /* RoverTicketmaster.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RoverTicketmaster.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB8C0758215FC4D2000DDD56 /* RoverTicketmaster.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RoverTicketmaster.h; sourceTree = "<group>"; };
 		DB8C0759215FC4D2000DDD56 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -483,7 +474,6 @@
 		DBF31B2520E17176005D7C34 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DBF31B4020E17CD1005D7C34 /* DebugContextManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugContextManager.swift; sourceTree = "<group>"; };
 		DBF31B4820E193BA005D7C34 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
-		DBF31B4C20E19678005D7C34 /* SettingsRouteHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRouteHandler.swift; sourceTree = "<group>"; };
 		DBF49DD3203DE00F00B54652 /* RoverFoundation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RoverFoundation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBF49DD7203DE00F00B54652 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DBF49DDC203DE00F00B54652 /* RoverFoundationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RoverFoundationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -703,9 +693,7 @@
 		DB00FDF6208D099F008D1A57 /* Router */ = {
 			isa = PBXGroup;
 			children = (
-				DB00FDF7208D09AE008D1A57 /* Router.swift */,
 				DB00FDF9208D0A0A008D1A57 /* RouterService.swift */,
-				DB7BA91A20D9594500968A30 /* RouteHandler.swift */,
 			);
 			path = Router;
 			sourceTree = "<group>";
@@ -917,14 +905,6 @@
 			path = ImageStore;
 			sourceTree = "<group>";
 		};
-		DB7BA91C20D96C8B00968A30 /* RouteHandlers */ = {
-			isa = PBXGroup;
-			children = (
-				DB7BA91D20D96C9900968A30 /* ExperienceRouteHandler.swift */,
-			);
-			path = RouteHandlers;
-			sourceTree = "<group>";
-		};
 		DB7BA92020D9703300968A30 /* NotificationHandler */ = {
 			isa = PBXGroup;
 			children = (
@@ -932,14 +912,6 @@
 				DB7BA92A20D9811100968A30 /* NotificationHandlerService.swift */,
 			);
 			path = NotificationHandler;
-			sourceTree = "<group>";
-		};
-		DB7BA92D20D9829D00968A30 /* RouteHandlers */ = {
-			isa = PBXGroup;
-			children = (
-				DB7BA92E20D982BE00968A30 /* NotificationCenterRouteHandler.swift */,
-			);
-			path = RouteHandlers;
 			sourceTree = "<group>";
 		};
 		DB8C0757215FC4D2000DDD56 /* Ticketmaster */ = {
@@ -988,7 +960,6 @@
 			children = (
 				DB496E46214871710026DE6A /* Extensions */,
 				DBADA82920A9EE9700225C80 /* Models */,
-				DB7BA92D20D9829D00968A30 /* RouteHandlers */,
 				DBF31B5620E41A90005D7C34 /* Services */,
 				DBF31B5920E41C35005D7C34 /* UI */,
 			);
@@ -1241,7 +1212,6 @@
 			isa = PBXGroup;
 			children = (
 				DBF31B4020E17CD1005D7C34 /* DebugContextManager.swift */,
-				DBF31B4C20E19678005D7C34 /* SettingsRouteHandler.swift */,
 				DBF31B4820E193BA005D7C34 /* SettingsViewController.swift */,
 			);
 			path = Debug;
@@ -1476,7 +1446,6 @@
 			children = (
 				DBFB1B64209CD7E400E99F9F /* Extensions */,
 				DBFDF43520AC81CD0031EF47 /* Models */,
-				DB7BA91C20D96C8B00968A30 /* RouteHandlers */,
 				DBF31B5420E41A38005D7C34 /* Services */,
 				DBF31B5A20E41C5A005D7C34 /* UI */,
 			);
@@ -2224,7 +2193,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				4962FB77219B52BE00C7F678 /* DebugContextManager.swift in Sources */,
-				4962FB78219B52BE00C7F678 /* SettingsRouteHandler.swift in Sources */,
 				4962FB79219B52BE00C7F678 /* SettingsViewController.swift in Sources */,
 				4962FB5F219B51AD00C7F678 /* Notifications.OSLog.swift in Sources */,
 				4962FB60219B51AD00C7F678 /* Notifications.SyncQuery.swift in Sources */,
@@ -2232,7 +2200,6 @@
 				4962FB63219B51AD00C7F678 /* NotificationAttachment.swift in Sources */,
 				4962FB64219B51AD00C7F678 /* NotificationSource.swift in Sources */,
 				4962FB65219B51AD00C7F678 /* NotificationTapBehavior.swift in Sources */,
-				4962FB66219B51AD00C7F678 /* NotificationCenterRouteHandler.swift in Sources */,
 				4962FB67219B51AD00C7F678 /* NotificationsSyncParticipant.swift in Sources */,
 				4962FB68219B51AD00C7F678 /* NotificationAuthorizationContextProvider.swift in Sources */,
 				4962FB69219B51AD00C7F678 /* InfluenceTracker.swift in Sources */,
@@ -2279,7 +2246,6 @@
 				4962FB47219B507D00C7F678 /* TextBlock.swift in Sources */,
 				4962FB48219B507D00C7F678 /* WebView.swift in Sources */,
 				4962FB49219B507D00C7F678 /* WebViewBlock.swift in Sources */,
-				4962FB4A219B507D00C7F678 /* ExperienceRouteHandler.swift in Sources */,
 				4962FB4B219B507D00C7F678 /* FetchExperienceClient.swift in Sources */,
 				4962FB4C219B507D00C7F678 /* ExperienceStore.swift in Sources */,
 				4962FB4D219B507D00C7F678 /* ExperienceStoreService.swift in Sources */,
@@ -2298,11 +2264,9 @@
 				DBB89BA120D01CD700DD797A /* LifeCycleTrackerService.swift in Sources */,
 				DB6ADD7420B33F3A002F226C /* ImageStore.swift in Sources */,
 				DB4831B620DC38D8003DBF1B /* VersionTrackerService.swift in Sources */,
-				DB7BA93420D98F7E00968A30 /* RouteHandler.swift in Sources */,
 				DB6ADD7820B33F68002F226C /* UIAssembler.swift in Sources */,
 				DB6ADD8020B344BC002F226C /* SessionControllerService.swift in Sources */,
 				DB6ADD7520B33F3A002F226C /* ImageStoreService.swift in Sources */,
-				DBB89B9920D014C700DD797A /* Router.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

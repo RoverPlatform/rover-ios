@@ -328,12 +328,13 @@ extension NotificationCenterViewController: UITableViewDelegate {
         case .openApp:
             break
         case .openURL(let url):
-//            if let action = router.action(for: url) as? PresentViewAction {
-//                action.viewControllerToPresent.transitioningDelegate = self
-//                dispatcher.dispatch(action, completionHandler: nil)
-//            } else {
+            if let viewController = router.viewController(for: url) {
+                viewController.transitioningDelegate = self
+                self.present(viewController, animated: true)
+            } else {
+                // non-Rover URI
                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
-//            }
+            }
         case .presentWebsite(let url):
             if let websiteViewController = websiteViewControllerProvider(url) {
                 websiteViewController.transitioningDelegate = self

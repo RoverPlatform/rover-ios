@@ -207,7 +207,6 @@
 		DBF2584120A107BD00400EA2 /* ObserverSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF2584020A107BD00400EA2 /* ObserverSet.swift */; };
 		DBF49DDD203DE00F00B54652 /* RoverFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF49DD3203DE00F00B54652 /* RoverFoundation.framework */; };
 		DBF49DE2203DE00F00B54652 /* RoverFoundationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF49DE1203DE00F00B54652 /* RoverFoundationTests.swift */; };
-		DBF49DF6203DE18500B54652 /* FoundationAssembler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF49DF3203DE18500B54652 /* FoundationAssembler.swift */; };
 		DBF49E00203DE1DE00B54652 /* Resolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF49DF8203DE1DE00B54652 /* Resolver.swift */; };
 		DBF49E02203DE1DE00B54652 /* Assembler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF49DFA203DE1DE00B54652 /* Assembler.swift */; };
 		DBF49E03203DE1DE00B54652 /* ServiceEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF49DFB203DE1DE00B54652 /* ServiceEntry.swift */; };
@@ -470,7 +469,6 @@
 		DBF49DE1203DE00F00B54652 /* RoverFoundationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoverFoundationTests.swift; sourceTree = "<group>"; };
 		DBF49DE3203DE00F00B54652 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DBF49DF2203DE18500B54652 /* Rover.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Rover.swift; sourceTree = "<group>"; };
-		DBF49DF3203DE18500B54652 /* FoundationAssembler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FoundationAssembler.swift; sourceTree = "<group>"; };
 		DBF49DF8203DE1DE00B54652 /* Resolver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Resolver.swift; sourceTree = "<group>"; };
 		DBF49DFA203DE1DE00B54652 /* Assembler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Assembler.swift; sourceTree = "<group>"; };
 		DBF49DFB203DE1DE00B54652 /* ServiceEntry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceEntry.swift; sourceTree = "<group>"; };
@@ -1288,7 +1286,6 @@
 				DB1D5DBF21079ECB0071928F /* Attributes */,
 				DBFDF52220AE2B0B0031EF47 /* Extensions */,
 				DBF49DF7203DE1CF00B54652 /* Container */,
-				DBF49DF3203DE18500B54652 /* FoundationAssembler.swift */,
 				DBFB1A79209B8CC500E99F9F /* ID.swift */,
 				DBF2584020A107BD00400EA2 /* ObserverSet.swift */,
 				DBC3FBF22155375D00372A65 /* PersistedValue.swift */,
@@ -2414,7 +2411,6 @@
 				DBCBE086216140E6001C7A96 /* Foundation.JSONEncoder.swift in Sources */,
 				DBCBE088216140F1001C7A96 /* Foundation.JSONDecoder.swift in Sources */,
 				DBB89BE820D0415600DD797A /* Rover.swift in Sources */,
-				DBF49DF6203DE18500B54652 /* FoundationAssembler.swift in Sources */,
 				DBF49E07203DE1DE00B54652 /* ServiceScope.swift in Sources */,
 				DB1D5DC32107C9850071928F /* AttributeValue.swift in Sources */,
 			);

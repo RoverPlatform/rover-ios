@@ -64,8 +64,6 @@ extension UIAssembler: Assembler {
         // MARK: Router
         
         container.register(Router.self) { resolver in
-            let dispatcher = resolver.resolve(Dispatcher.self)!
-            
             let experienceViewControllerProvider: (ExperienceIdentifier) -> UIViewController = { experienceIdentifier in
                 resolver.resolve(UIViewController.self, name: "experience", arguments: experienceIdentifier)!
             }

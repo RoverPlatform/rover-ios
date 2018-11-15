@@ -78,6 +78,7 @@
 		DB0C8F3120583A5600E0D860 /* RoverAppExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = DB0C8F2320583A5600E0D860 /* RoverAppExtensions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DB0C8F3820583A7A00E0D860 /* NotificationExtensionHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DC0AD2055B82B00E5C77F /* NotificationExtensionHelper.swift */; };
 		DB1689EF2141A7060012DA01 /* BeaconsSyncParticipant.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1689ED2141A6F90012DA01 /* BeaconsSyncParticipant.swift */; };
+		DB1AB419219DD5970071EAA0 /* RouterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1AB418219DD5970071EAA0 /* RouterTests.swift */; };
 		DB1D5DC121079ED70071928F /* AttributeKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1D5DC021079ED70071928F /* AttributeKey.swift */; };
 		DB1D5DC32107C9850071928F /* AttributeValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1D5DC22107C9850071928F /* AttributeValue.swift */; };
 		DB1D5DC52107D32C0071928F /* Attributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1D5DC42107D32C0071928F /* Attributes.swift */; };
@@ -314,6 +315,7 @@
 		DB0C8F2E20583A5600E0D860 /* RoverAppExtensionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoverAppExtensionsTests.swift; sourceTree = "<group>"; };
 		DB0C8F3020583A5600E0D860 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DB1689ED2141A6F90012DA01 /* BeaconsSyncParticipant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeaconsSyncParticipant.swift; sourceTree = "<group>"; };
+		DB1AB418219DD5970071EAA0 /* RouterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouterTests.swift; sourceTree = "<group>"; };
 		DB1D5DC021079ED70071928F /* AttributeKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributeKey.swift; sourceTree = "<group>"; };
 		DB1D5DC22107C9850071928F /* AttributeValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributeValue.swift; sourceTree = "<group>"; };
 		DB1D5DC42107D32C0071928F /* Attributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Attributes.swift; sourceTree = "<group>"; };
@@ -868,6 +870,7 @@
 			children = (
 				DB6ADD6720B33EC0002F226C /* RoverUITests.swift */,
 				DB6ADD6920B33EC0002F226C /* Info.plist */,
+				DB1AB418219DD5970071EAA0 /* RouterTests.swift */,
 			);
 			path = UITests;
 			sourceTree = "<group>";
@@ -2274,6 +2277,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DB1AB419219DD5970071EAA0 /* RouterTests.swift in Sources */,
 				DB6ADD6820B33EC0002F226C /* RoverUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

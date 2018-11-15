@@ -75,7 +75,7 @@ extension UIAssembler: Assembler {
             }
             
             let notificationCenterViewControllerProvider: () -> UIViewController = {
-                resolver.resolve(UIViewController.self, name: "notificationsCenter")!
+                resolver.resolve(UIViewController.self, name: "notificationCenter")!
             }
             
             return Router(associatedDomains: self.associatedDomains, urlSchemes: self.urlSchemes, experienceViewControllerProvider: experienceViewControllerProvider, settingsViewControllerProvider: settingsViewControllerProvider, notificationCenterViewControllerProvider: notificationCenterViewControllerProvider)

@@ -157,7 +157,7 @@
 		DBADA7FD20A4F32500225C80 /* BlockObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBADA7F520A4F32500225C80 /* BlockObserver.swift */; };
 		DBADA80320A4F37C00225C80 /* Dispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBADA80120A4F37C00225C80 /* Dispatcher.swift */; };
 		DBADA80420A4F37C00225C80 /* DispatcherService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBADA80220A4F37C00225C80 /* DispatcherService.swift */; };
-		DBB89B9A20D014C700DD797A /* RouterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FDF9208D0A0A008D1A57 /* RouterService.swift */; };
+		DBB89B9A20D014C700DD797A /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FDF9208D0A0A008D1A57 /* Router.swift */; };
 		DBB89B9E20D0167B00DD797A /* LifeCycleTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB89B9C20D0160100DD797A /* LifeCycleTracker.swift */; };
 		DBB89BA120D01CD700DD797A /* LifeCycleTrackerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB89B9F20D01CC500DD797A /* LifeCycleTrackerService.swift */; };
 		DBB89BC820D03E7900DD797A /* RoverData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD88A7320C1B21700085AE0 /* RoverData.framework */; };
@@ -298,7 +298,7 @@
 		DB00FDD92087E09F008D1A57 /* ScreenViewLayoutAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenViewLayoutAttributes.swift; sourceTree = "<group>"; };
 		DB00FDDB20891153008D1A57 /* ImageConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageConfiguration.swift; sourceTree = "<group>"; };
 		DB00FDDF208A4961008D1A57 /* BarcodeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarcodeCell.swift; sourceTree = "<group>"; };
-		DB00FDF9208D0A0A008D1A57 /* RouterService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouterService.swift; sourceTree = "<group>"; };
+		DB00FDF9208D0A0A008D1A57 /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 		DB00FE2F208FB285008D1A57 /* NotificationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCell.swift; sourceTree = "<group>"; };
 		DB026272214C2F5200893E53 /* Location.CLBeaconRegion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.CLBeaconRegion.swift; sourceTree = "<group>"; };
 		DB026274214C2F8900893E53 /* Location.CLCircularRegion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.CLCircularRegion.swift; sourceTree = "<group>"; };
@@ -693,7 +693,7 @@
 		DB00FDF6208D099F008D1A57 /* Router */ = {
 			isa = PBXGroup;
 			children = (
-				DB00FDF9208D0A0A008D1A57 /* RouterService.swift */,
+				DB00FDF9208D0A0A008D1A57 /* Router.swift */,
 			);
 			path = Router;
 			sourceTree = "<group>";
@@ -2253,7 +2253,7 @@
 				4962FB32219B506B00C7F678 /* Experiences.Text.swift in Sources */,
 				4962FB33219B506B00C7F678 /* Experiences.ImageConfiguration.swift in Sources */,
 				4962FB34219B506B00C7F678 /* Experiences.Barcode.swift in Sources */,
-				DBB89B9A20D014C700DD797A /* RouterService.swift in Sources */,
+				DBB89B9A20D014C700DD797A /* Router.swift in Sources */,
 				DB6ADD7320B33F3A002F226C /* ImageOptimization.swift in Sources */,
 				DBB89B9E20D0167B00DD797A /* LifeCycleTracker.swift in Sources */,
 				DB6ADD8A20B351B6002F226C /* OpenURLAction.swift in Sources */,

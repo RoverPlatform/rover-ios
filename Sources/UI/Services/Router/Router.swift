@@ -42,7 +42,7 @@ public final class Router {
                 return nil
             }
             
-            if host != "presentExperience" {
+            if host != "presentExperience" && host != "experience" {
                 return nil
             }
             
@@ -87,7 +87,7 @@ public final class Router {
             return nil
         }
         
-        if host != "presentSettings" {
+        if host != "presentSettings" && host != "settings" {
             return nil
         }
         
@@ -104,7 +104,7 @@ public final class Router {
             return nil
         }
         
-        if host != "presentNotificationCenter" {
+        if host != "presentNotificationCenter" && host != "notificationCenter" {
             return nil
         }
         

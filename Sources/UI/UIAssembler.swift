@@ -64,8 +64,19 @@ extension UIAssembler: Assembler {
         // MARK: Router
         
         container.register(Router.self) { resolver in
-            let dispatcher = resolver.resolve(Dispatcher.self)!
-            return RouterService(associatedDomains: self.associatedDomains, urlSchemes: self.urlSchemes, dispatcher: dispatcher)
+            let experienceViewControllerProvider: (ExperienceIdentifier) -> UIViewController = { experienceIdentifier in
+                resolver.resolve(UIViewController.self, name: "experience", arguments: experienceIdentifier)!
+            }
+            
+            let settingsViewControllerProvider: () -> UIViewController = {
+                resolver.resolve(UIViewController.self, name: "settings")!
+            }
+            
+            let notificationCenterViewControllerProvider: () -> UIViewController = {
+                resolver.resolve(UIViewController.self, name: "notificationCenter")!
+            }
+            
+            return Router(associatedDomains: self.associatedDomains, urlSchemes: self.urlSchemes, experienceViewControllerProvider: experienceViewControllerProvider, settingsViewControllerProvider: settingsViewControllerProvider, notificationCenterViewControllerProvider: notificationCenterViewControllerProvider)
         }
         
         // MARK: SessionController
@@ -114,16 +125,6 @@ extension UIAssembler: Assembler {
         
         container.register(FetchExperienceClient.self) { resolver in
             return resolver.resolve(HTTPClient.self)!
-        }
-        
-        // MARK: RouteHandler (experience)
-        
-        container.register(RouteHandler.self, name: "experience") { resolver in
-            let actionProvider: ExperienceRouteHandler.ActionProvider = { [weak resolver] identifier in
-                return resolver?.resolve(Action.self, name: "presentExperience", arguments: identifier)
-            }
-            
-            return ExperienceRouteHandler(actionProvider: actionProvider)
         }
         
         // MARK: UICollectionViewLayout (screen)
@@ -233,16 +234,6 @@ extension UIAssembler: Assembler {
             )
         }
         
-        // MARK: RouteHandler (notificationCenter)
-        
-        container.register(RouteHandler.self, name: "notificationCenter") { resolver in
-            let actionProvider: NotificationCenterRouteHandler.ActionProvider = { [weak resolver] in
-                return resolver?.resolve(Action.self, name: "presentNotificationCenter")
-            }
-            
-            return NotificationCenterRouteHandler(actionProvider: actionProvider)
-        }
-        
         // MARK: SyncParticipant (notifications)
         
         container.register(SyncParticipant.self, name: "notifications") { resolver in
@@ -276,16 +267,6 @@ extension UIAssembler: Assembler {
             return DebugContextManager()
         }
         
-        // MARK: RouteHandler (settings)
-        
-        container.register(RouteHandler.self, name: "settings") { resolver in
-            let actionProvider: SettingsRouteHandler.ActionProvider = { [weak resolver] in
-                return resolver?.resolve(Action.self, name: "settings")
-            }
-            
-            return SettingsRouteHandler(actionProvider: actionProvider)
-        }
-        
         // MARK: UIViewController (settings)
         
         container.register(UIViewController.self, name: "settings", scope: .transient) { resolver in
@@ -302,19 +283,9 @@ extension UIAssembler: Assembler {
             resolver.resolve(LifeCycleTracker.self)!.enable()
         }
         
-        if let router = resolver.resolve(Router.self) {
-            let handler = resolver.resolve(RouteHandler.self, name: "experience")!
-            router.addHandler(handler)
-        }
-        
         if isInfluenceTrackingEnabled {
             let influenceTracker = resolver.resolve(InfluenceTracker.self)!
             influenceTracker.startMonitoring()
-        }
-        
-        if let router = resolver.resolve(Router.self) {
-            let handler = resolver.resolve(RouteHandler.self, name: "notificationCenter")!
-            router.addHandler(handler)
         }
         
         let store = resolver.resolve(NotificationStore.self)!
@@ -322,8 +293,5 @@ extension UIAssembler: Assembler {
         
         let syncParticipant = resolver.resolve(SyncParticipant.self, name: "notifications")!
         resolver.resolve(SyncCoordinator.self)!.participants.append(syncParticipant)
-        
-        let handler = resolver.resolve(RouteHandler.self, name: "settings")!
-        resolver.resolve(Router.self)!.addHandler(handler)
     }
 }

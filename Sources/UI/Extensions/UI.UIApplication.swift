@@ -11,7 +11,7 @@ import UIKit
 import os
 
 extension UIApplication {
-    func present(_ viewControllerToPresent: UIViewController,
+    public func present(_ viewControllerToPresent: UIViewController,
                  animated flag: Bool,
                  completion: (() -> Void)? = nil) {
         

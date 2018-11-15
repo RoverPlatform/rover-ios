@@ -10,39 +10,90 @@ import XCTest
 @testable import RoverUI
 
 class RouterTests: XCTestCase {
-    let router: Router = {
-        let experienceViewControllerProvider: (ExperienceIdentifier) -> UIViewController = { _ in
-            return UIViewController()
+    let settingsViewController = UIViewController()
+    let notificationCenterViewController = UIViewController()
+    
+    lazy var router: Router = {
+        let experienceViewControllerProvider: (ExperienceIdentifier) -> UIViewController = { [weak self] identifier in
+            DummyExperienceViewController(experienceIdentifier: identifier)
         }
-        
-        let settingsViewControllerProvider: () -> UIViewController = {
-            UIViewController()
+
+        let settingsViewControllerProvider: () -> UIViewController = { [weak self] in
+            self!.settingsViewController
         }
-        
-        let notificationCenterViewControllerProvider: () -> UIViewController = {
-            UIViewController()
+
+        let notificationCenterViewControllerProvider: () -> UIViewController = { [weak self] in
+            self!.notificationCenterViewController
         }
         
         return Router(
             associatedDomains: ["www.example.com"],
-            urlSchemes: [], 
+            urlSchemes: ["rv-test-suite"],
             experienceViewControllerProvider: experienceViewControllerProvider,
             settingsViewControllerProvider: settingsViewControllerProvider,
             notificationCenterViewControllerProvider: notificationCenterViewControllerProvider
         )
     }()
     
-    func testValidUniversalLink() {
+    func testLinkThroughUserActivity() {
         let userActivity = NSUserActivity(activityType: NSUserActivityTypeBrowsingWeb)
         userActivity.webpageURL = URL(string: "https://www.example.com/my-experience")!
         let viewController = self.router.viewController(for: userActivity)
         XCTAssertNotNil(viewController)
     }
     
-    func testInvalidUniversalLink() {
+    func testValidUniversalLink() {
         let userActivity = NSUserActivity(activityType: NSUserActivityTypeBrowsingWeb)
-        userActivity.webpageURL = URL(string: "https://www.invalid.com/my-experience")!
-        let viewController = self.router.viewController(for: userActivity)
+        userActivity.webpageURL = URL(string: "https://www.example.com/my-experience")!
+        let viewController = self.router.viewController(for: userActivity) as! DummyExperienceViewController
+        XCTAssertEqual(viewController.experienceIdentifier, ExperienceIdentifier.campaignURL(url: URL(string: "https://www.example.com/my-experience")!))
+    }
+    
+    func testInvalidUniversalLink() {
+        let viewController = self.router.viewController(for: URL(string: "https://www.invalid.com/my-experience")!)
         XCTAssertNil(viewController)
+    }
+    
+    func testValidSettingsDeepLink() {
+        let viewController = self.router.viewController(for: URL(string: "rv-test-suite://settings")!)
+        XCTAssertEqual(viewController, settingsViewController)
+    }
+    
+    func testValidLegacySettingsDeepLink() {
+        let viewController = self.router.viewController(for: URL(string: "rv-test-suite://presentSettings")!)
+        XCTAssertEqual(viewController, settingsViewController)
+    }
+    
+    func testValidExperienceDeepLink() {
+        let viewController = self.router.viewController(for: URL(string: "rv-test-suite://experience?id=deadbeef")!) as! DummyExperienceViewController
+        XCTAssertEqual(viewController.experienceIdentifier, ExperienceIdentifier.experienceID(id: "deadbeef"))
+    }
+    
+    func testValidLegacyExperienceDeepLink() {
+        let viewController = self.router.viewController(for: URL(string: "rv-test-suite://presentExperience?id=deadbeef")!)  as! DummyExperienceViewController
+        XCTAssertEqual(viewController.experienceIdentifier, ExperienceIdentifier.experienceID(id: "deadbeef"))
+    }
+    
+    func testValidNotificationCenterDeepLink() {
+        let viewController = self.router.viewController(for: URL(string: "rv-test-suite://notificationCenter")!)
+        XCTAssertEqual(viewController, notificationCenterViewController)
+    }
+    
+    func testValidNotificationCenterSettingsDeepLink() {
+        let viewController = self.router.viewController(for: URL(string: "rv-test-suite://presentNotificationCenter")!)
+        XCTAssertEqual(viewController, notificationCenterViewController)
+    }
+    
+    class DummyExperienceViewController: UIViewController {
+        let experienceIdentifier: ExperienceIdentifier
+        
+        required init?(coder aDecoder: NSCoder) {
+            fatalError()
+        }
+        
+        init(experienceIdentifier: ExperienceIdentifier) {
+            self.experienceIdentifier = experienceIdentifier
+            super.init(nibName: nil, bundle: nil)
+        }
     }
 }

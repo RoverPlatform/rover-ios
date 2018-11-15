@@ -70,10 +70,18 @@ public final class Router {
             }
             
             return experienceViewControllerProvider(identifier)
-        } else {
+        } else if let host = possibleExperienceURL.host {
             // universal link.
-            let identifier = ExperienceIdentifier.campaignURL(url: possibleExperienceURL)
-            return experienceViewControllerProvider(identifier)
+            if associatedDomains.contains(host) {
+                let identifier = ExperienceIdentifier.campaignURL(url: possibleExperienceURL)
+                return experienceViewControllerProvider(identifier)
+            } else {
+                // unmatched universal link.
+                return nil
+            }
+        } else {
+            // unmatched, with an empty host.
+            return nil
         }
     }
     

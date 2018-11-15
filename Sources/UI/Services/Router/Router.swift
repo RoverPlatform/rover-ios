@@ -70,14 +70,9 @@ public final class Router {
             }
             
             return experienceViewControllerProvider(identifier)
-        } else if let host = url.host {
-            // universal link.
-            if isUniversalLink(url: url) && associatedDomains.contains(host) {
-                let identifier = ExperienceIdentifier.campaignURL(url: url)
-                return experienceViewControllerProvider(identifier)
-            } else {
-                return nil
-            }
+        } else if isUniversalLink(url: url) {
+            let identifier = ExperienceIdentifier.campaignURL(url: url)
+            return experienceViewControllerProvider(identifier)
         } else {
             return nil
         }

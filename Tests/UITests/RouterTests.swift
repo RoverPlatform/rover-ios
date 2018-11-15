@@ -69,6 +69,16 @@ class RouterTests: XCTestCase {
         XCTAssertEqual(viewController.experienceIdentifier, ExperienceIdentifier.experienceID(id: "deadbeef"))
     }
     
+    func testValidCampaignDeepLink() {
+        let viewController = self.router.viewController(for: URL(string: "rv-test-suite://experience?campaignID=deadbeef")!) as! DummyExperienceViewController
+        XCTAssertEqual(viewController.experienceIdentifier, ExperienceIdentifier.campaignID(id: "deadbeef"))
+    }
+    
+    func testInvalidCampaignDeepLink() {
+        let viewController = self.router.viewController(for: URL(string: "rv-test-suite://experience?foo=bar")!) as? DummyExperienceViewController
+        XCTAssertNil(viewController)
+    }
+    
     func testValidLegacyExperienceDeepLink() {
         let viewController = self.router.viewController(for: URL(string: "rv-test-suite://presentExperience?id=deadbeef")!)  as! DummyExperienceViewController
         XCTAssertEqual(viewController.experienceIdentifier, ExperienceIdentifier.experienceID(id: "deadbeef"))

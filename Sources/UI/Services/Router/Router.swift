@@ -36,9 +36,9 @@ public final class Router {
         return viewController(for: url)
     }
     
-    func viewControllerFor(possibleExperienceURL: URL) -> UIViewController? {
-        if isDeepLink(url: possibleExperienceURL) {
-            guard let host = possibleExperienceURL.host else {
+    func viewControllerFor(possibleExperienceURL url: URL) -> UIViewController? {
+        if isDeepLink(url: url) {
+            guard let host = url.host else {
                 return nil
             }
             
@@ -46,7 +46,7 @@ public final class Router {
                 return nil
             }
             
-            guard let components = URLComponents(url: possibleExperienceURL, resolvingAgainstBaseURL: false) else {
+            guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
                 return nil
             }
             
@@ -70,28 +70,26 @@ public final class Router {
             }
             
             return experienceViewControllerProvider(identifier)
-        } else if let host = possibleExperienceURL.host {
+        } else if let host = url.host {
             // universal link.
-            if associatedDomains.contains(host) {
-                let identifier = ExperienceIdentifier.campaignURL(url: possibleExperienceURL)
+            if isUniversalLink(url: url) && associatedDomains.contains(host) {
+                let identifier = ExperienceIdentifier.campaignURL(url: url)
                 return experienceViewControllerProvider(identifier)
             } else {
-                // unmatched universal link.
                 return nil
             }
         } else {
-            // unmatched, with an empty host.
             return nil
         }
     }
     
-    func viewControllerFor(possibleSettingsURL: URL) -> UIViewController? {
-        if !isDeepLink(url: possibleSettingsURL) {
+    func viewControllerFor(possibleSettingsURL url: URL) -> UIViewController? {
+        if !isDeepLink(url: url) {
             // Rover notification center may only be opened via a deep link, not a universal link.
             return nil
         }
         
-        guard let host = possibleSettingsURL.host else {
+        guard let host = url.host else {
             return nil
         }
         
@@ -102,13 +100,13 @@ public final class Router {
         return settingsViewControllerProvider()
     }
     
-    func viewControllerFor(possibleNotificationCenterURL: URL) -> UIViewController? {
-        if !isDeepLink(url: possibleNotificationCenterURL) {
+    func viewControllerFor(possibleNotificationCenterURL url: URL) -> UIViewController? {
+        if !isDeepLink(url: url) {
             // Rover notification center may only be opened via a deep link, not a universal link.
             return nil
         }
-        
-        guard let host = possibleNotificationCenterURL.host else {
+
+        guard let host = url.host else {
             return nil
         }
         

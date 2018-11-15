@@ -283,6 +283,11 @@ extension UIAssembler: Assembler {
             resolver.resolve(LifeCycleTracker.self)!.enable()
         }
         
+        if isInfluenceTrackingEnabled {
+            let influenceTracker = resolver.resolve(InfluenceTracker.self)!
+            influenceTracker.startMonitoring()
+        }
+        
         let store = resolver.resolve(NotificationStore.self)!
         store.restore()
         

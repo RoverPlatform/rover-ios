@@ -8,10 +8,4 @@
 
 public struct FoundationAssembler: Assembler {
     public init() { }
-
-    public func assemble(container: Container) {
-        container.register(Dispatcher.self) { resolver in
-            return DispatcherService()
-        }
-    }
 }

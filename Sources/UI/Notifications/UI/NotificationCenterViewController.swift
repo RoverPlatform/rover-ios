@@ -9,7 +9,6 @@
 import UIKit
 
 open class NotificationCenterViewController: UIViewController {
-    public let dispatcher: Dispatcher
     public let eventQueue: EventQueue
     public let imageStore: ImageStore
     public let notificationStore: NotificationStore
@@ -58,7 +57,6 @@ open class NotificationCenterViewController: UIViewController {
     }
     
     public init(
-        dispatcher: Dispatcher,
         eventQueue: EventQueue,
         imageStore: ImageStore,
         notificationStore: NotificationStore,
@@ -66,7 +64,6 @@ open class NotificationCenterViewController: UIViewController {
         sessionController: SessionController,
         syncCoordinator: SyncCoordinator,
         websiteViewControllerProvider: @escaping WebsiteViewControllerProvider) {
-        self.dispatcher = dispatcher
         self.eventQueue = eventQueue
         self.imageStore = imageStore
         self.notificationStore = notificationStore

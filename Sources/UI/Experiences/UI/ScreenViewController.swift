@@ -14,7 +14,6 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     public let experience: Experience
     public let screen: Screen
     
-    public let dispatcher: Dispatcher
     public let eventQueue: EventQueue
     public let imageStore: ImageStore
     public let sessionController: SessionController
@@ -34,10 +33,9 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         }
     }
     
-    public init(collectionViewLayout: UICollectionViewLayout, experience: Experience, screen: Screen, dispatcher: Dispatcher, eventQueue: EventQueue, imageStore: ImageStore, sessionController: SessionController, viewControllerProvider: @escaping ViewControllerProvider, websiteViewControllerProvider: @escaping WebsiteViewControllerProvider) {
+    public init(collectionViewLayout: UICollectionViewLayout, experience: Experience, screen: Screen, eventQueue: EventQueue, imageStore: ImageStore, sessionController: SessionController, viewControllerProvider: @escaping ViewControllerProvider, websiteViewControllerProvider: @escaping WebsiteViewControllerProvider) {
         self.experience = experience
         self.screen = screen
-        self.dispatcher = dispatcher
         self.eventQueue = eventQueue
         self.imageStore = imageStore
         self.sessionController = sessionController

@@ -39,13 +39,6 @@ public struct UIAssembler {
 
 extension UIAssembler: Assembler {
     public func assemble(container: Container) {
-        
-        // MARK: Action (openURL)
-        
-        container.register(Action.self, name: "openURL", scope: .transient) { (resolver, url: URL) in
-            return OpenURLAction(url: url)
-        }
-        
         // MARK: ImageStore
         
         container.register(ImageStore.self) { resolver in
@@ -100,18 +93,6 @@ extension UIAssembler: Assembler {
                 eventQueue: resolver.resolve(EventQueue.self)!,
                 userDefaults: UserDefaults.standard
             )
-        }
-        
-        // MARK: Action (presentExperience)
-        
-        container.register(Action.self, name: "presentExperience", scope: .transient) { (resolver, campaignID: ID) in
-            let identifier = ExperienceIdentifier.campaignID(id: campaignID)
-            return resolver.resolve(Action.self, name: "presentExperience", arguments: identifier)!
-        }
-        
-        container.register(Action.self, name: "presentExperience", scope: .transient) { (resolver, identifier: ExperienceIdentifier) in
-            let viewControllerToPresent = resolver.resolve(UIViewController.self, name: "experience", arguments: identifier)!
-            return resolver.resolve(Action.self, name: "presentView", arguments: viewControllerToPresent)!
         }
         
         // MARK: ExperienceStore
@@ -171,20 +152,12 @@ extension UIAssembler: Assembler {
                 collectionViewLayout: resolver.resolve(UICollectionViewLayout.self, name: "screen", arguments: screen)!,
                 experience: experience,
                 screen: screen,
-                dispatcher: resolver.resolve(Dispatcher.self)!,
                 eventQueue: resolver.resolve(EventQueue.self)!,
                 imageStore: resolver.resolve(ImageStore.self)!,
                 sessionController: resolver.resolve(SessionController.self)!,
                 viewControllerProvider: viewControllerProvider,
                 websiteViewControllerProvider: websiteViewControllerProvider
             )
-        }
-        
-        // MARK: Action (presentNotificationCenter)
-        
-        container.register(Action.self, name: "presentNotificationCenter", scope: .transient) { resolver in
-            let viewControllerToPresent = resolver.resolve(UIViewController.self, name: "notificationCenter")!
-            return resolver.resolve(Action.self, name: "presentView", arguments: viewControllerToPresent)!
         }
         
         // MARK: InfluenceTracker
@@ -250,7 +223,6 @@ extension UIAssembler: Assembler {
             }
             
             return NotificationCenterViewController(
-                dispatcher: resolver.resolve(Dispatcher.self)!,
                 eventQueue: resolver.resolve(EventQueue.self)!,
                 imageStore: resolver.resolve(ImageStore.self)!,
                 notificationStore: resolver.resolve(NotificationStore.self)!,

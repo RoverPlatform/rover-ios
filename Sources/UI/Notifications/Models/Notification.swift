@@ -25,7 +25,7 @@ public struct Notification: Codable, Equatable, Hashable {
         return id.hashValue
     }
     
-    public init(id: ID, campaignID: ID, title: String?, body: String, attachment: NotificationAttachment?, tapBehavior: NotificationTapBehavior, action: Action?, deliveredAt: Date, expiresAt: Date?, isRead: Bool, isNotificationCenterEnabled: Bool, isDeleted: Bool) {
+    public init(id: ID, campaignID: ID, title: String?, body: String, attachment: NotificationAttachment?, tapBehavior: NotificationTapBehavior, deliveredAt: Date, expiresAt: Date?, isRead: Bool, isNotificationCenterEnabled: Bool, isDeleted: Bool) {
         self.id = id
         self.campaignID = campaignID
         self.title = title

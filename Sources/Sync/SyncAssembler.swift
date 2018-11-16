@@ -9,7 +9,14 @@
 import Foundation
 import RoverFoundation
 
-class SyncAssembler: Assembler {
+public class SyncAssembler: Assembler {
+    
+    init(
+        
+    ) {
+        
+    }
+    
     override func assemble(container: Container) {
         // MARK: HTTPClient
         

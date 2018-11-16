@@ -73,16 +73,6 @@ public struct DataAssembler: Assembler {
             )
         }
         
-        // MARK: HTTPClient
-        
-        container.register(HTTPClient.self) { [accountToken, endpoint] _ in
-            return HTTPClient(
-                accountToken: accountToken,
-                endpoint: endpoint,
-                session: URLSession(configuration: URLSessionConfiguration.default)
-            )
-        }
-        
         // MARK: LocaleContextProvider
         
         container.register(LocaleContextProvider.self) { resolver in
@@ -106,20 +96,7 @@ public struct DataAssembler: Assembler {
         container.register(StaticContextProvider.self) { resolver in
             return resolver.resolve(ContextManager.self)!
         }
-        
-        // MARK: SyncClient
-        
-        container.register(SyncClient.self) {  resolver in
-            return resolver.resolve(HTTPClient.self)!
-        }
-        
-        // MARK: SyncCoordinator
-        
-        container.register(SyncCoordinator.self) { resolver in
-            let client = resolver.resolve(SyncClient.self)!
-            return SyncCoordinatorService(client: client)
-        }
-        
+
         // MARK: TimeZoneContextProvider
         
         container.register(TimeZoneContextProvider.self) { resolver in
@@ -130,12 +107,6 @@ public struct DataAssembler: Assembler {
         
         container.register(TokenManager.self) { resolver in
             return resolver.resolve(ContextManager.self)!
-        }
-        
-        // MARK: URLSession
-        
-        container.register(URLSession.self) { _ in
-            return URLSession(configuration: URLSessionConfiguration.default)
         }
         
         // MARK: UserInfoManager

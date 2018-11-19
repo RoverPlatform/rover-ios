@@ -9,19 +9,14 @@
 import UIKit
 
 public struct DataAssembler: Assembler {
-    public var accountToken: String
-    public var endpoint: URL
+
     
     public var flushEventsAt: Int
     public var flushEventsInterval: Double
     public var maxEventBatchSize: Int
     public var maxEventQueueSize: Int
     
-    public init(accountToken: String, endpoint: URL = URL(string: "https://api.rover.io/graphql")!, flushEventsAt: Int = 20, flushEventsInterval: Double = 30.0, maxEventBatchSize: Int = 100, maxEventQueueSize: Int = 1000) {
-        
-        self.accountToken = accountToken
-        self.endpoint = endpoint
-        
+    public init(flushEventsAt: Int = 20, flushEventsInterval: Double = 30.0, maxEventBatchSize: Int = 100, maxEventQueueSize: Int = 1000) {
         self.flushEventsAt = flushEventsAt
         self.flushEventsInterval = flushEventsInterval
         self.maxEventBatchSize = maxEventBatchSize

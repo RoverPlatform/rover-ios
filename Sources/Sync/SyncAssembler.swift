@@ -10,14 +10,18 @@ import Foundation
 import RoverFoundation
 
 public class SyncAssembler: Assembler {
+    public var accountToken: String
+    public var endpoint: URL
     
-    init(
-        
+    public init(
+        accountToken: String,
+        endpoint: URL = URL(string: "https://api.rover.io/graphql")!
     ) {
-        
+        self.accountToken = accountToken
+        self.endpoint = endpoint
     }
     
-    override func assemble(container: Container) {
+    public func assemble(container: Container) {
         // MARK: HTTPClient
         
         container.register(HTTPClient.self) { [accountToken, endpoint] _ in

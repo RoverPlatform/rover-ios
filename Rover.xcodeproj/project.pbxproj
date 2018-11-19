@@ -88,6 +88,8 @@
 		49CB6A45219F4068008E4904 /* Sync.URLRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB496E392148544B0026DE6A /* Sync.URLRequest.swift */; };
 		49CB6A46219F4075008E4904 /* Data+Gzip.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF49ECE203DE49500B54652 /* Data+Gzip.swift */; };
 		49CB6A48219F4294008E4904 /* Sync.OSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49CB6A47219F4294008E4904 /* Sync.OSLog.swift */; };
+		49CB6A4921A314C2008E4904 /* RoverData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD88A7320C1B21700085AE0 /* RoverData.framework */; };
+		49CB6A4A21A314C8008E4904 /* RoverFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF49DD3203DE00F00B54652 /* RoverFoundation.framework */; };
 		DB026279214C300E00893E53 /* Location.CLBeaconRegion.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB026272214C2F5200893E53 /* Location.CLBeaconRegion.swift */; };
 		DB02627A214C301600893E53 /* Location.CLCircularRegion.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB026274214C2F8900893E53 /* Location.CLCircularRegion.swift */; };
 		DB03F9B2214A98A900CBFE11 /* Location.CLLocationCoordinate2D.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB03F9B1214A98A900CBFE11 /* Location.CLLocationCoordinate2D.swift */; };
@@ -541,6 +543,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				49CB6A4A21A314C8008E4904 /* RoverFoundation.framework in Frameworks */,
+				49CB6A4921A314C2008E4904 /* RoverData.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

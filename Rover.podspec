@@ -14,6 +14,7 @@ Pod::Spec.new do |s|
   s.subspec "Core" do |ss|
     ss.dependency "Rover/Location"
     ss.dependency "Rover/UI"
+    ss.dependency "Rover/Sync"
   end
 
   s.subspec "Foundation" do |ss|
@@ -25,6 +26,11 @@ Pod::Spec.new do |s|
     ss.source_files = "Sources/Data/**/*.swift"
     ss.dependency "Rover/Foundation"
     ss.frameworks = "SystemConfiguration", "UIKit"
+  end
+
+  s.subspec "Sync" do |ss|
+    ss.source_files = "Sources/Sync/**/*.swift"
+    ss.dependency "Rover/Data"
   end
 
   s.subspec "UI" do |ss|

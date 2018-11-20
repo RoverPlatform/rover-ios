@@ -21,6 +21,7 @@
 		495821C821A4B04300F2B632 /* RoverUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB6ADD5A20B33EC0002F226C /* RoverUI.framework */; };
 		495821C921A4B06400F2B632 /* RoverUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB6ADD5A20B33EC0002F226C /* RoverUI.framework */; };
 		495821CB21A4B68A00F2B632 /* DeviceSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC3FBE6215467FA00372A65 /* DeviceSnapshot.swift */; };
+		495821CC21A4B77A00F2B632 /* RoverUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB6ADD5A20B33EC0002F226C /* RoverUI.framework */; };
 		4962FB31219B506B00C7F678 /* Experiences.Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1B66209CD89400E99F9F /* Experiences.Color.swift */; };
 		4962FB32219B506B00C7F678 /* Experiences.Text.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1B68209CD8D600E99F9F /* Experiences.Text.swift */; };
 		4962FB33219B506B00C7F678 /* Experiences.ImageConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFDF48320AC858A0031EF47 /* Experiences.ImageConfiguration.swift */; };
@@ -579,6 +580,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				495821CC21A4B77A00F2B632 /* RoverUI.framework in Frameworks */,
 				DB8C0770215FC6AC000DDD56 /* RoverData.framework in Frameworks */,
 				DB8C0771215FC6AC000DDD56 /* RoverFoundation.framework in Frameworks */,
 			);

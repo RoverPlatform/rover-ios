@@ -346,7 +346,7 @@ class Device {
         }
     }
 
-    // MARK: TokenManager
+    // MARK: Token
     
     public func setToken(_ data: Data) {
         self.pushToken = DeviceSnapshot.PushToken(

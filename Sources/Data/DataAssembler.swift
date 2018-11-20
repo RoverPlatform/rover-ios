@@ -9,20 +9,6 @@
 import UIKit
 
 public struct DataAssembler: Assembler {
-
-    
-    public var flushEventsAt: Int
-    public var flushEventsInterval: Double
-    public var maxEventBatchSize: Int
-    public var maxEventQueueSize: Int
-    
-    public init(flushEventsAt: Int = 20, flushEventsInterval: Double = 30.0, maxEventBatchSize: Int = 100, maxEventQueueSize: Int = 1000) {
-        self.flushEventsAt = flushEventsAt
-        self.flushEventsInterval = flushEventsInterval
-        self.maxEventBatchSize = maxEventBatchSize
-        self.maxEventQueueSize = maxEventQueueSize
-    }
-    
     public func assemble(container: Container) {
         
         // MARK: ContextManager

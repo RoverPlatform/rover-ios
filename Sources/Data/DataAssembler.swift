@@ -10,18 +10,7 @@ import UIKit
 
 public struct DataAssembler: Assembler {
 
-    
-    public var flushEventsAt: Int
-    public var flushEventsInterval: Double
-    public var maxEventBatchSize: Int
-    public var maxEventQueueSize: Int
-    
-    public init(flushEventsAt: Int = 20, flushEventsInterval: Double = 30.0, maxEventBatchSize: Int = 100, maxEventQueueSize: Int = 1000) {
-        self.flushEventsAt = flushEventsAt
-        self.flushEventsInterval = flushEventsInterval
-        self.maxEventBatchSize = maxEventBatchSize
-        self.maxEventQueueSize = maxEventQueueSize
-    }
+    public init() { }
     
     public func assemble(container: Container) {
         
@@ -49,25 +38,7 @@ public struct DataAssembler: Assembler {
                 userInfoContextProvider: resolver.resolve(UserInfoContextProvider.self)
             )
         }
-        
-        // MARK: EventsClient
-        
-        container.register(EventsClient.self) { resolver in
-            return resolver.resolve(HTTPClient.self)!
-        }
-        
-        // MARK: EventQueue
-        
-        container.register(EventQueue.self) { [flushEventsAt, flushEventsInterval, maxEventBatchSize, maxEventQueueSize] resolver in
-            return EventQueue(
-                client: resolver.resolve(EventsClient.self)!,
-                flushAt: flushEventsAt,
-                flushInterval: flushEventsInterval,
-                maxBatchSize: maxEventBatchSize,
-                maxQueueSize: maxEventQueueSize
-            )
-        }
-        
+
         // MARK: LocaleContextProvider
         
         container.register(LocaleContextProvider.self) { resolver in
@@ -115,13 +86,5 @@ public struct DataAssembler: Assembler {
         container.register(UserInfoContextProvider.self) { resolver in
             return resolver.resolve(ContextManager.self)!
         }
-    }
-    
-    public func containerDidAssemble(resolver: Resolver) {
-        let eventQueue = resolver.resolve(EventQueue.self)!
-        eventQueue.restore()
-        
-        // Set the context provider on the event queue after assembly to allow circular dependency injection
-        eventQueue.contextProvider = resolver.resolve(ContextProvider.self)!
     }
 }

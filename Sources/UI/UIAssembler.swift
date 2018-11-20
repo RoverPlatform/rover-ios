@@ -171,18 +171,6 @@ extension UIAssembler: Assembler {
             )
         }
         
-        // MARK: NotificationAuthorizationManager
-        
-        container.register(NotificationAuthorizationManager.self) { resolver in
-            return NotificationAuthorizationManager()
-        }
-        
-        // MARK: NotificationContextProvider
-        
-        container.register(NotificationsContextProvider.self) { resolver in
-            return resolver.resolve(NotificationAuthorizationManager.self)!
-        }
-        
         // MARK: NotificationHandler
         
         container.register(NotificationHandler.self) { resolver in            
@@ -247,12 +235,6 @@ extension UIAssembler: Assembler {
                 telephonyInfoProvider: resolver.resolve(TelephonyInfoProvider.self),
                 locationInfoProvider: resolver.resolve(LocationInfoProvider.self)
             )
-        }
-        
-        // MARK: DebugContextProvider
-        
-        container.register(DebugContextProvider.self) { resolver in
-            return DebugContextManager()
         }
         
         // MARK: UIViewController (settings)

@@ -50,8 +50,8 @@ class ModularContextProvider {
 }
 
 extension ModularContextProvider: ContextProvider {
-    var context: Context {
-        return Context(
+    var context: DeviceSnapshot {
+        return DeviceSnapshot(
             advertisingIdentifier: self.adSupportContextProvider?.advertisingIdentifier,
             isBluetoothEnabled: self.bluetoothContextProvider?.isBluetoothEnabled,
             localeLanguage: self.localeContextProvider?.localeLanguage,

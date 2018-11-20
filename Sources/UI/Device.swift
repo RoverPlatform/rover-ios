@@ -1,49 +1,72 @@
 //
-//  ContextManager.swift
-//  RoverData
+//  Device.swift
+//  RoverUI
 //
-//  Created by Sean Rucker on 2018-02-16.
+//  Created by Andrew Clunis on 2018-11-20.
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
+import Foundation
+import os
 import UIKit
-import os.log
 
-class ContextManager {
-    let persistedPushToken = PersistedValue<DeviceSnapshot.PushToken>(storageKey: "io.rover.RoverData.pushToken")
-    let persistedUserInfo = PersistedValue<Attributes>(storageKey: "io.rover.RoverData.userInfo")
+class Device: TokenManager, UserInfoManager {
+    
+    let userDefaults: UserDefaults
+    let jsonDecoder: JSONDecoder
+    let jsonEncoder: JSONEncoder
+    
     let reachability = Reachability(hostname: "google.com")!
     
-    init() { }
-}
-
-// MARK: LocaleContextProvider
-
-extension ContextManager: LocaleContextProvider {
-    var localeLanguage: String? {
+    public init(
+        userDefaults: UserDefaults,
+        jsonDecoder: JSONDecoder,
+        jsonEncoder: JSONEncoder
+    ) {
+        self.userDefaults = userDefaults
+        self.jsonDecoder = jsonDecoder
+        self.jsonEncoder = jsonEncoder
+    }
+    
+    public private(set) var pushToken: DeviceSnapshot.PushToken? {
+        get {
+            guard let data = userDefaults.data(forKey: "io.rover.RoverData.pushToken") else {
+                return nil
+            }
+            
+            do {
+                return try jsonDecoder.decode(DeviceSnapshot.PushToken.self, from: data)
+            } catch {
+                os_log("Failed to decode pushToken: %@", log: .general, type: .error, error.localizedDescription)
+                return nil
+            }
+        }
+        set {
+            do {
+                let data = try jsonEncoder.encode(newValue)
+                userDefaults.set(data, forKey: "io.rover.RoverData.pushToken")
+            } catch {
+                os_log("Failed to encode pushToken: %@", log: .general, type: .error, error.localizedDescription)
+            }
+        }
+    }
+    
+    // MARK: Locale
+    
+    public var localeLanguage: String? {
         return Locale.current.languageCode
     }
     
-    var localeRegion: String? {
+    public var localeRegion: String? {
         return Locale.current.regionCode
     }
     
-    var localeScript: String? {
+    public var localeScript: String? {
         return Locale.current.scriptCode
     }
-}
-
-// MARK: PushTokenContextProvider
-
-extension ContextManager: PushTokenContextProvider {
-    var pushToken: DeviceSnapshot.PushToken? {
-        return self.persistedPushToken.value
-    }
-}
-
-// MARK: ReachabilityContextProvider
-
-extension ContextManager: ReachabilityContextProvider {
+    
+    // MARK: Locale
+    
     var isCellularEnabled: Bool {
         return self.reachability.isReachableViaWWAN
     }
@@ -51,11 +74,9 @@ extension ContextManager: ReachabilityContextProvider {
     var isWifiEnabled: Bool {
         return self.reachability.isReachableViaWiFi
     }
-}
-
-// MARK: StaticContextProvider
-
-extension ContextManager: StaticContextProvider {
+    
+    // MARK: Statics
+    
     var appBadgeNumber: Int {
         if Thread.isMainThread {
             return UIApplication.shared.applicationIconBadgeNumber
@@ -192,45 +213,58 @@ extension ContextManager: StaticContextProvider {
         
         return bundle.infoDictionary!["CFBundleShortVersionString"] as! String
     }
-}
-
-// MARK: TimeZoneContextProvider
-
-extension ContextManager: TimeZoneContextProvider {
+    
+    // MARK: Time Zone
+    
     var timeZone: String {
         return (NSTimeZone.local as NSTimeZone).name
     }
-}
+    
+    // MARK: User Info
+    
+    public private(set) var userInfo: Attributes? {
+        get {
+            guard let data = userDefaults.data(forKey: "io.rover.RoverData.userInfo") else {
+                return nil
+            }
+            
+            do {
+                return try jsonDecoder.decode(Attributes.self, from: data)
+            } catch {
+                os_log("Failed to decode user info: %@", log: .general, type: .error, error.localizedDescription)
+                return nil
+            }
+        }
+        set {
+            do {
+                let data = try jsonEncoder.encode(newValue)
+                userDefaults.set(data, forKey: "io.rover.RoverData.userInfo")
+            } catch {
+                os_log("Failed to encode user info: %@", log: .general, type: .error, error.localizedDescription)
+            }
+        }
+    }
 
-// MARK: TokenManager
-
-extension ContextManager: TokenManager {
+    // MARK: TokenManager
+    
     func setToken(_ data: Data) {
-        self.persistedPushToken.value = DeviceSnapshot.PushToken(
+        self.pushToken = DeviceSnapshot.PushToken(
             value: data.map { String(format: "%02.2hhx", $0) }.joined(),
             timestamp: Date()
         )
     }
-}
-
-// MARK: UserInfoManager
-
-extension ContextManager: UserInfoContextProvider {
-    var userInfo: Attributes? {
-        return self.persistedUserInfo.value
-    }
-}
-
-// MARK: UserInfoManager
-
-extension ContextManager: UserInfoManager {
+    
+    // MARK: UserInfoManager
+    
     func updateUserInfo(block: (inout Attributes) -> Void) {
-        var userInfo = self.persistedUserInfo.value ?? Attributes()
+        var userInfo = self.userInfo ?? Attributes()
         block(&userInfo)
-        self.persistedUserInfo.value = userInfo
+        self.userInfo = userInfo
     }
     
     func clearUserInfo() {
-        self.persistedUserInfo.value = nil
+        userDefaults.set(nil, "io.rover.RoverData.userInfo")
     }
+    
+    
 }

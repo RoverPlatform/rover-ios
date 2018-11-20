@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct Context: Codable, Equatable {
+public struct DeviceSnapshot: Codable, Equatable {
     
     // MARK: AdSupport
     
@@ -116,8 +116,16 @@ public struct Context: Codable, Equatable {
     // MARK: Push Token
     
     public struct PushToken: Codable, Equatable {
-        public internal(set) var value: String
-        public internal(set) var timestamp: Date
+        public var value: String
+        public var timestamp: Date
+        
+        public init(
+            value: String,
+            timestamp: Date
+        ) {
+            self.value = value
+            self.timestamp = timestamp
+        }
     }
     
     public var pushToken: PushToken?
@@ -168,37 +176,37 @@ public struct Context: Codable, Equatable {
     public var userInfo: Attributes?
     
     public init(
-        advertisingIdentifier: String?,
-        isBluetoothEnabled: Bool?,
-        localeLanguage: String?,
-        localeRegion: String?,
-        localeScript: String?,
-        isLocationServicesEnabled: Bool?,
-        location: Location?,
-        locationAuthorization: String?,
-        notificationAuthorization: String?,
-        pushToken: PushToken?,
-        isCellularEnabled: Bool?,
-        isWifiEnabled: Bool?,
-        appBadgeNumber: Int?,
-        appBuild: String?,
-        appIdentifier: String?,
-        appVersion: String?,
-        buildEnvironment: BuildEnvironment?,
-        deviceIdentifier: String?,
-        deviceManufacturer: String?,
-        deviceModel: String?,
-        deviceName: String?,
-        operatingSystemName: String?,
-        operatingSystemVersion: String?,
-        screenHeight: Int?,
-        screenWidth: Int?,
-        sdkVersion: String?,
-        carrierName: String?,
-        radio: String?,
-        isTestDevice: Bool?,
-        timeZone: String?,
-        userInfo: Attributes?
+        advertisingIdentifier: String? = nil,
+        isBluetoothEnabled: Bool? = nil,
+        localeLanguage: String? = nil,
+        localeRegion: String? = nil,
+        localeScript: String? = nil,
+        isLocationServicesEnabled: Bool? = nil,
+        location: Location? = nil,
+        locationAuthorization: String? = nil,
+        notificationAuthorization: String? = nil,
+        pushToken: PushToken? = nil,
+        isCellularEnabled: Bool? = nil,
+        isWifiEnabled: Bool? = nil,
+        appBadgeNumber: Int? = nil,
+        appBuild: String? = nil,
+        appIdentifier: String? = nil,
+        appVersion: String? = nil,
+        buildEnvironment: BuildEnvironment? = nil,
+        deviceIdentifier: String? = nil,
+        deviceManufacturer: String? = nil,
+        deviceModel: String? = nil,
+        deviceName: String? = nil,
+        operatingSystemName: String? = nil,
+        operatingSystemVersion: String? = nil,
+        screenHeight: Int? = nil,
+        screenWidth: Int? = nil,
+        sdkVersion: String? = nil,
+        carrierName: String? = nil,
+        radio: String? = nil,
+        isTestDevice: Bool? = nil,
+        timeZone: String? = nil,
+        userInfo: Attributes? = nil
     ) {
         self.advertisingIdentifier = advertisingIdentifier
         self.isBluetoothEnabled = isBluetoothEnabled

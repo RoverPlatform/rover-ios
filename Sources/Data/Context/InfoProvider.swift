@@ -8,6 +8,6 @@
 
 import Foundation
 
-public protocol ContextProvider {
-    var context: Context { get }
+public protocol InfoProvider {
+    var context: DeviceSnapshot { get }
 }

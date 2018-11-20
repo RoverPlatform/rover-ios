@@ -13,7 +13,7 @@ public protocol StaticContextProvider: class {
     var appBuild: String { get }
     var appIdentifier: String { get }
     var appVersion: String { get }
-    var buildEnvironment: Context.BuildEnvironment { get }
+    var buildEnvironment: DeviceSnapshot.BuildEnvironment { get }
     var deviceIdentifier: String { get }
     var deviceManufacturer: String { get }
     var deviceModel: String { get }

@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		491C9710219B6C580065BAB8 /* UI.UIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 491C970F219B6C580065BAB8 /* UI.UIApplication.swift */; };
 		491C9713219C9D480065BAB8 /* UI.UNNotificationResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 491C9711219C9C8A0065BAB8 /* UI.UNNotificationResponse.swift */; };
+		495821B621A45D1F00F2B632 /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495821B521A45D1F00F2B632 /* Device.swift */; };
+		495821B821A4703800F2B632 /* DeviceModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC3FBF7215581E500372A65 /* DeviceModel.swift */; };
 		4962FB31219B506B00C7F678 /* Experiences.Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1B66209CD89400E99F9F /* Experiences.Color.swift */; };
 		4962FB32219B506B00C7F678 /* Experiences.Text.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1B68209CD8D600E99F9F /* Experiences.Text.swift */; };
 		4962FB33219B506B00C7F678 /* Experiences.ImageConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFDF48320AC858A0031EF47 /* Experiences.ImageConfiguration.swift */; };
@@ -174,9 +176,8 @@
 		DBB89C4C20D084D600DD797A /* RoverFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = DBB89C4A20D083AF00DD797A /* RoverFoundation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DBC3B4112145C11A0096C74E /* Beacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC3B40F2145C1100096C74E /* Beacon.swift */; };
 		DBC3B42721476A6A0096C74E /* Location.UUID.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC3B42621476A6A0096C74E /* Location.UUID.swift */; };
-		DBC3FBE82154680600372A65 /* Context.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC3FBE6215467FA00372A65 /* Context.swift */; };
+		DBC3FBE82154680600372A65 /* DeviceSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC3FBE6215467FA00372A65 /* DeviceSnapshot.swift */; };
 		DBC3FBF32155375D00372A65 /* PersistedValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC3FBF22155375D00372A65 /* PersistedValue.swift */; };
-		DBC3FBF8215581E500372A65 /* DeviceModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC3FBF7215581E500372A65 /* DeviceModel.swift */; };
 		DBCBE086216140E6001C7A96 /* Foundation.JSONEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCBE085216140E6001C7A96 /* Foundation.JSONEncoder.swift */; };
 		DBCBE088216140F1001C7A96 /* Foundation.JSONDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCBE087216140F1001C7A96 /* Foundation.JSONDecoder.swift */; };
 		DBCBE09121614D88001C7A96 /* StaticContextProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCBE09021614D88001C7A96 /* StaticContextProvider.swift */; };
@@ -298,6 +299,7 @@
 /* Begin PBXFileReference section */
 		491C970F219B6C580065BAB8 /* UI.UIApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UI.UIApplication.swift; sourceTree = "<group>"; };
 		491C9711219C9C8A0065BAB8 /* UI.UNNotificationResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UI.UNNotificationResponse.swift; sourceTree = "<group>"; };
+		495821B521A45D1F00F2B632 /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
 		4980D66421307738007267D3 /* Experiences.Barcode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Experiences.Barcode.swift; sourceTree = "<group>"; };
 		49CB6A1D219F2801008E4904 /* RoverSync.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RoverSync.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		49CB6A1F219F2801008E4904 /* RoverSync.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RoverSync.h; sourceTree = "<group>"; };
@@ -440,7 +442,7 @@
 		DBC3B42621476A6A0096C74E /* Location.UUID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.UUID.swift; sourceTree = "<group>"; };
 		DBC3B42A2148A7D10096C74E /* HTTPClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPClient.swift; sourceTree = "<group>"; };
 		DBC3B42C2148B08D0096C74E /* FetchExperienceClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchExperienceClient.swift; sourceTree = "<group>"; };
-		DBC3FBE6215467FA00372A65 /* Context.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Context.swift; sourceTree = "<group>"; };
+		DBC3FBE6215467FA00372A65 /* DeviceSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceSnapshot.swift; sourceTree = "<group>"; };
 		DBC3FBF22155375D00372A65 /* PersistedValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistedValue.swift; sourceTree = "<group>"; };
 		DBC3FBF7215581E500372A65 /* DeviceModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceModel.swift; sourceTree = "<group>"; };
 		DBCBE085216140E6001C7A96 /* Foundation.JSONEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Foundation.JSONEncoder.swift; sourceTree = "<group>"; };
@@ -709,6 +711,14 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
+		495821B721A4700500F2B632 /* Vendor */ = {
+			isa = PBXGroup;
+			children = (
+				DBF49ECF203DE49500B54652 /* Reachability.swift */,
+			);
+			path = Vendor;
+			sourceTree = "<group>";
+		};
 		49CB6A1E219F2801008E4904 /* Sync */ = {
 			isa = PBXGroup;
 			children = (
@@ -910,6 +920,8 @@
 		DB6ADD5B20B33EC0002F226C /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				DBC3FBF7215581E500372A65 /* DeviceModel.swift */,
+				495821B721A4700500F2B632 /* Vendor */,
 				491C970E219B6C2A0065BAB8 /* Extensions */,
 				DBF31B1720E17176005D7C34 /* Debug */,
 				DB9DBF772055974B00E5C77F /* Notifications */,
@@ -918,6 +930,7 @@
 				DB6ADD7620B33F5D002F226C /* UIAssembler.swift */,
 				DB6ADD5C20B33EC0002F226C /* RoverUI.h */,
 				DB6ADD5D20B33EC0002F226C /* Info.plist */,
+				495821B521A45D1F00F2B632 /* Device.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -1149,10 +1162,9 @@
 			isa = PBXGroup;
 			children = (
 				DBCBE09C21614F83001C7A96 /* Providers */,
-				DBC3FBE6215467FA00372A65 /* Context.swift */,
+				DBC3FBE6215467FA00372A65 /* DeviceSnapshot.swift */,
 				DBF49EC3203DE3EB00B54652 /* ContextManager.swift */,
 				DBCBE0A3216153D2001C7A96 /* ContextProvider.swift */,
-				DBC3FBF7215581E500372A65 /* DeviceModel.swift */,
 				DBCBE0A521615458001C7A96 /* ModularContextProvider.swift */,
 				DB8C0786215FEE46000DDD56 /* TokenManager.swift */,
 				DB8C0784215FEC0E000DDD56 /* UserInfoManager.swift */,
@@ -1239,7 +1251,6 @@
 				DBCBE08F21614C8A001C7A96 /* Supporting Files */,
 				DB496E382148543B0026DE6A /* Extensions */,
 				DBC3FBE52154670A00372A65 /* Context */,
-				DBFDF4B920AC95FD0031EF47 /* Vendor */,
 				DBD88ABC20C1BA7C00085AE0 /* DataAssembler.swift */,
 			);
 			path = Data;
@@ -1493,14 +1504,6 @@
 				DBFDF45120AC84430031EF47 /* Info.plist */,
 			);
 			path = ExperiencesTests;
-			sourceTree = "<group>";
-		};
-		DBFDF4B920AC95FD0031EF47 /* Vendor */ = {
-			isa = PBXGroup;
-			children = (
-				DBF49ECF203DE49500B54652 /* Reachability.swift */,
-			);
-			path = Vendor;
 			sourceTree = "<group>";
 		};
 		DBFDF52220AE2B0B0031EF47 /* Extensions */ = {
@@ -2335,6 +2338,7 @@
 				4962FB6D219B51AD00C7F678 /* NotificationStore.swift in Sources */,
 				491C9710219B6C580065BAB8 /* UI.UIApplication.swift in Sources */,
 				4962FB6E219B51AD00C7F678 /* NotificationStoreService.swift in Sources */,
+				495821B821A4703800F2B632 /* DeviceModel.swift in Sources */,
 				4962FB6F219B51AD00C7F678 /* NotificationCell.swift in Sources */,
 				4962FB70219B51AD00C7F678 /* NotificationCenterViewController.swift in Sources */,
 				4962FB4E219B50AA00C7F678 /* BarcodeCell.swift in Sources */,
@@ -2342,6 +2346,7 @@
 				4962FB50219B50AA00C7F678 /* ButtonCell.swift in Sources */,
 				4962FB51219B50AA00C7F678 /* ImageCell.swift in Sources */,
 				4962FB52219B50AA00C7F678 /* RowView.swift in Sources */,
+				495821B621A45D1F00F2B632 /* Device.swift in Sources */,
 				4962FB53219B50AA00C7F678 /* TextCell.swift in Sources */,
 				4962FB54219B50AA00C7F678 /* WebViewCell.swift in Sources */,
 				4962FB55219B50AA00C7F678 /* ExperienceContainer.swift in Sources */,
@@ -2496,11 +2501,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				DBD88A9720C1B58E00085AE0 /* EventInfo.swift in Sources */,
-				DBC3FBE82154680600372A65 /* Context.swift in Sources */,
+				DBC3FBE82154680600372A65 /* DeviceSnapshot.swift in Sources */,
 				DBCBE09721614E9A001C7A96 /* NotificationsContextProvider.swift in Sources */,
 				DB8C0787215FEE46000DDD56 /* TokenManager.swift in Sources */,
 				DBD88AB620C1B99C00085AE0 /* ContextManager.swift in Sources */,
-				DBC3FBF8215581E500372A65 /* DeviceModel.swift in Sources */,
 				DBD88ABE20C1BACF00085AE0 /* DataAssembler.swift in Sources */,
 				DBCBE0A8216154EB001C7A96 /* PushTokenContextProvider.swift in Sources */,
 				DBCBE0A021615031001C7A96 /* LocaleContextProvider.swift in Sources */,

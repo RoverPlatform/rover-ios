@@ -7,5 +7,5 @@
 //
 
 public protocol PushTokenContextProvider: class {
-    var pushToken: Context.PushToken? { get }
+    var pushToken: DeviceSnapshot.PushToken? { get }
 }

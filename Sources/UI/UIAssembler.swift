@@ -233,6 +233,22 @@ extension UIAssembler: Assembler {
             )
         }
         
+        // MARK: Device
+        
+        container.register(Device.self) { resolver in
+            return Device(
+                userDefaults: resolver.resolve(UserDefaults.self)!,
+                jsonDecoder: resolver.resolve(JSONDecoder.self)!,
+                jsonEncoder: resolver.resolve(JSONEncoder.self)!,
+                
+                // these Info Providers are furnished by the other Rover modules, if they are installed.
+                adSupportInfoProvider: resolver.resolve(AdSupportInfoProvider.self),
+                bluetoothInfoProvider: resolver.resolve(BluetoothInfoProvider.self),
+                telephonyInfoProvider: resolver.resolve(TelephonyInfoProvider.self),
+                locationInfoProvider: resolver.resolve(LocationInfoProvider.self)
+            )
+        }
+        
         // MARK: DebugContextProvider
         
         container.register(DebugContextProvider.self) { resolver in

@@ -14,7 +14,7 @@ class AdSupportManager {
     init() { }
 }
 
-extension AdSupportManager: AdSupportContextProvider {
+extension AdSupportManager: AdSupportInfoProvider {
     var advertisingIdentifier: String? {
         guard self.identifierManager.isAdvertisingTrackingEnabled else {
             return nil

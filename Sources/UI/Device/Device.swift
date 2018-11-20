@@ -9,23 +9,74 @@
 import Foundation
 import os
 import UIKit
+import UserNotifications
 
-class Device: TokenManager, UserInfoManager {
+class Device {
     
     let userDefaults: UserDefaults
     let jsonDecoder: JSONDecoder
     let jsonEncoder: JSONEncoder
     
+    let adSupportInfoProvider: AdSupportInfoProvider?
+    let bluetoothInfoProvider: BluetoothInfoProvider?
+    let telephonyInfoProvider: TelephonyInfoProvider?
+    let locationInfoProvider: LocationInfoProvider?
+    
     let reachability = Reachability(hostname: "google.com")!
+    let userNotificationCenter = UNUserNotificationCenter.current()
     
     public init(
         userDefaults: UserDefaults,
         jsonDecoder: JSONDecoder,
-        jsonEncoder: JSONEncoder
+        jsonEncoder: JSONEncoder,
+        adSupportInfoProvider: AdSupportInfoProvider?,
+        bluetoothInfoProvider: BluetoothInfoProvider?,
+        telephonyInfoProvider: TelephonyInfoProvider?,
+        locationInfoProvider: LocationInfoProvider?
     ) {
         self.userDefaults = userDefaults
         self.jsonDecoder = jsonDecoder
         self.jsonEncoder = jsonEncoder
+        self.adSupportInfoProvider = adSupportInfoProvider
+        self.bluetoothInfoProvider = bluetoothInfoProvider
+        self.telephonyInfoProvider = telephonyInfoProvider
+        self.locationInfoProvider = locationInfoProvider
+    }
+    
+    public var snapshot: DeviceSnapshot {
+        return DeviceSnapshot(
+            advertisingIdentifier: advertisingIdentifier,
+            isBluetoothEnabled: isBluetoothEnabled,
+            localeLanguage: localeLanguage,
+            localeRegion: localeRegion,
+            localeScript: localeScript,
+            isLocationServicesEnabled: isLocationServicesEnabled,
+            location: location,
+            locationAuthorization: locationAuthorization,
+            notificationAuthorization: notificationAuthorization,
+            pushToken: pushToken,
+            isCellularEnabled: isCellularEnabled,
+            isWifiEnabled: isWifiEnabled,
+            appBadgeNumber: appBadgeNumber,
+            appBuild: appBuild,
+            appIdentifier: appIdentifier,
+            appVersion: appVersion,
+            buildEnvironment: buildEnvironment,
+            deviceIdentifier: deviceIdentifier,
+            deviceManufacturer: deviceManufacturer,
+            deviceModel: deviceModel,
+            deviceName: deviceName,
+            operatingSystemName: operatingSystemName,
+            operatingSystemVersion: operatingSystemVersion,
+            screenHeight: screenHeight,
+            screenWidth: screenWidth,
+            sdkVersion: sdkVersion,
+            carrierName: carrierName,
+            radio: radio,
+            isTestDevice: isTestDevice,
+            timeZone: timeZone,
+            userInfo: userInfo
+        )
     }
     
     public private(set) var pushToken: DeviceSnapshot.PushToken? {
@@ -67,17 +118,17 @@ class Device: TokenManager, UserInfoManager {
     
     // MARK: Locale
     
-    var isCellularEnabled: Bool {
+    public var isCellularEnabled: Bool {
         return self.reachability.isReachableViaWWAN
     }
     
-    var isWifiEnabled: Bool {
+    public var isWifiEnabled: Bool {
         return self.reachability.isReachableViaWiFi
     }
     
     // MARK: Statics
     
-    var appBadgeNumber: Int {
+    public var appBadgeNumber: Int {
         if Thread.isMainThread {
             return UIApplication.shared.applicationIconBadgeNumber
         } else {
@@ -87,19 +138,19 @@ class Device: TokenManager, UserInfoManager {
         }
     }
     
-    var appBuild: String {
+    public var appBuild: String {
         return Bundle.main.infoDictionary!["CFBundleVersion"] as! String
     }
     
-    var appIdentifier: String {
+    public var appIdentifier: String {
         return Bundle.main.bundleIdentifier!
     }
     
-    var appVersion: String {
+    public var appVersion: String {
         return Bundle.main.infoDictionary!["CFBundleShortVersionString"] as! String
     }
     
-    var buildEnvironment: DeviceSnapshot.BuildEnvironment {
+    public var buildEnvironment: DeviceSnapshot.BuildEnvironment {
         #if targetEnvironment(simulator)
         return .simulator
         #else
@@ -148,15 +199,15 @@ class Device: TokenManager, UserInfoManager {
         #endif
     }
     
-    var deviceIdentifier: String {
+    public var deviceIdentifier: String {
         return UIDevice.current.identifierForVendor!.uuidString
     }
     
-    var deviceManufacturer: String {
+    public var deviceManufacturer: String {
         return "Apple"
     }
     
-    var deviceModel: String {
+    public var deviceModel: String {
         var systemInfo = utsname()
         uname(&systemInfo)
         let size = MemoryLayout<CChar>.size
@@ -178,27 +229,27 @@ class Device: TokenManager, UserInfoManager {
         return deviceModel.description
     }
     
-    var deviceName: String {
+    public var deviceName: String {
         return UIDevice.current.name
     }
     
-    var operatingSystemName: String {
+    public var operatingSystemName: String {
         return UIDevice.current.systemName
     }
     
-    var operatingSystemVersion: String {
+    public var operatingSystemVersion: String {
         return UIDevice.current.systemVersion
     }
     
-    var screenHeight: Int {
+    public var screenHeight: Int {
         return Int(UIScreen.main.bounds.height)
     }
     
-    var screenWidth: Int {
+    public var screenWidth: Int {
         return Int(UIScreen.main.bounds.width)
     }
     
-    var sdkVersion: String {
+    public var sdkVersion: String {
         let bundle: Bundle = {
             if let bundle = Bundle(identifier: "io.rover.RoverFoundation") {
                 return bundle
@@ -216,7 +267,7 @@ class Device: TokenManager, UserInfoManager {
     
     // MARK: Time Zone
     
-    var timeZone: String {
+    public var timeZone: String {
         return (NSTimeZone.local as NSTimeZone).name
     }
     
@@ -244,27 +295,111 @@ class Device: TokenManager, UserInfoManager {
             }
         }
     }
+    
+    // MARK: Notifications Authorization
+    
+    public var notificationAuthorization: String {
+        // Refresh status for _next_ time context is requested
+        userNotificationCenter.getNotificationSettings { [weak self] settings in
+            self?.userDefaults.set(
+                settings.authorizationStatus.rawValue,
+                forKey: "io.rover.RoverNotifications.authorizationStatus"
+            )
+        }
+        
+        let authorizationStatus = UNAuthorizationStatus(
+            // if value not yet set, then userDefaults returns 0, which conveniently maps to .notDetermined.
+            rawValue: userDefaults.integer(forKey: "io.rover.RoverNotifications.authorizationStatus")
+        ) ?? .notDetermined
+        
+        #if swift(>=4.2)
+        switch authorizationStatus {
+        case .authorized:
+            return "authorized"
+        case .denied:
+            return "denied"
+        case .notDetermined:
+            return "notDetermined"
+        case .provisional:
+            return "provisional"
+        }
+        #else
+        switch authorizationStatus {
+        case .authorized:
+        return "authorized"
+        case .denied:
+        return "denied"
+        default:
+        return "notDetermined"
+        }
+        #endif
+    }
+    
+    // MARK: Debug Test Device
+    
+    public private(set) var isTestDevice: Bool {
+        get {
+            return userDefaults.bool(forKey: "io.rover.RoverData.userInfo")
+        }
+        set {
+            userDefaults.set(newValue, forKey: "io.rover.RoverData.userInfo")
+        }
+    }
 
     // MARK: TokenManager
     
-    func setToken(_ data: Data) {
+    public func setToken(_ data: Data) {
         self.pushToken = DeviceSnapshot.PushToken(
             value: data.map { String(format: "%02.2hhx", $0) }.joined(),
             timestamp: Date()
         )
     }
     
-    // MARK: UserInfoManager
+    // MARK: Ad Support
     
-    func updateUserInfo(block: (inout Attributes) -> Void) {
+    public var advertisingIdentifier: String? {
+        return self.adSupportInfoProvider?.advertisingIdentifier
+    }
+    
+    // MARK: Telephony
+    
+    public var carrierName: String? {
+        return self.telephonyInfoProvider?.carrierName
+    }
+    
+    public var radio: String? {
+        return self.telephonyInfoProvider?.radio
+    }
+    
+    // MARK: Bluetooth
+    
+    public var isBluetoothEnabled: Bool? {
+        return bluetoothInfoProvider?.isBluetoothEnabled
+    }
+    
+    // MARK: Location
+    
+    public var location: DeviceSnapshot.Location? {
+        return locationInfoProvider?.location
+    }
+    
+    public var locationAuthorization: String? {
+        return locationInfoProvider?.locationAuthorization
+    }
+    
+    public var isLocationServicesEnabled: Bool? {
+        return locationInfoProvider?.isLocationServicesEnabled
+    }
+    
+    // MARK: User Info
+    
+    public func updateUserInfo(block: (inout Attributes) -> Void) {
         var userInfo = self.userInfo ?? Attributes()
         block(&userInfo)
         self.userInfo = userInfo
     }
     
-    func clearUserInfo() {
-        userDefaults.set(nil, "io.rover.RoverData.userInfo")
+    public func clearUserInfo() {
+        userDefaults.set(nil, forKey: "io.rover.RoverData.userInfo")
     }
-    
-    
 }

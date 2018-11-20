@@ -12,7 +12,7 @@ public class BluetoothAssembler: Assembler {
     public init() { }
     
     public func assemble(container: Container) {
-        container.register(BluetoothContextProvider.self) { resolver in
+        container.register(BluetoothInfoProvider.self) { resolver in
             return BluetoothManager()
         }
     }

@@ -1,5 +1,5 @@
 //
-//  Context.swift
+//  DeviceSnapshot.swift
 //  RoverData
 //
 //  Created by Sean Rucker on 2018-05-02.

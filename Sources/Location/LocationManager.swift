@@ -39,7 +39,7 @@ class LocationManager {
 
 // MARK: LocationContextProvider
 
-extension LocationManager: LocationContextProvider {
+extension LocationManager: LocationInfoProvider {
     var locationAuthorization: String {
         let authorizationStatus: String
         switch CLLocationManager.authorizationStatus() {

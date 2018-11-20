@@ -9,6 +9,9 @@
 import UIKit
 
 public struct DataAssembler: Assembler {
+
+    public init() { }
+    
     public func assemble(container: Container) {
         
         // MARK: ContextManager

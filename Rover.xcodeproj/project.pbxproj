@@ -21,7 +21,6 @@
 		495821C621A4B02700F2B632 /* RoverUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB6ADD5A20B33EC0002F226C /* RoverUI.framework */; };
 		495821C721A4B03300F2B632 /* RoverUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB6ADD5A20B33EC0002F226C /* RoverUI.framework */; };
 		495821C821A4B04300F2B632 /* RoverUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB6ADD5A20B33EC0002F226C /* RoverUI.framework */; };
-		495821C921A4B06400F2B632 /* RoverUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB6ADD5A20B33EC0002F226C /* RoverUI.framework */; };
 		495821CB21A4B68A00F2B632 /* DeviceSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC3FBE6215467FA00372A65 /* DeviceSnapshot.swift */; };
 		495821CC21A4B77A00F2B632 /* RoverUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB6ADD5A20B33EC0002F226C /* RoverUI.framework */; };
 		4962FB31219B506B00C7F678 /* Experiences.Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1B66209CD89400E99F9F /* Experiences.Color.swift */; };
@@ -79,6 +78,12 @@
 		4962FB6F219B51AD00C7F678 /* NotificationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FE2F208FB285008D1A57 /* NotificationCell.swift */; };
 		4962FB70219B51AD00C7F678 /* NotificationCenterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBF90205597C300E5C77F /* NotificationCenterViewController.swift */; };
 		4962FB79219B52BE00C7F678 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF31B4820E193BA005D7C34 /* SettingsViewController.swift */; };
+		4975CBE021A753A900C2DD18 /* Location.Beacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4975CBDF21A753A900C2DD18 /* Location.Beacon.swift */; };
+		4975CBE221A7547200C2DD18 /* Location.Geofence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4975CBE121A7547200C2DD18 /* Location.Geofence.swift */; };
+		4975CBE321A7550500C2DD18 /* Geofence.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD73F76213845AC00E7F322 /* Geofence.swift */; };
+		4975CBE421A7550A00C2DD18 /* Beacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC3B40F2145C1100096C74E /* Beacon.swift */; };
+		4975CBE521A7575100C2DD18 /* Rover.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = DBD73F78213845CA00E7F322 /* Rover.xcdatamodeld */; };
+		49C7829B21A75D5F0059D208 /* RoverUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB6ADD5A20B33EC0002F226C /* RoverUI.framework */; };
 		49CB6A26219F2801008E4904 /* RoverSync.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49CB6A1D219F2801008E4904 /* RoverSync.framework */; };
 		49CB6A2B219F2801008E4904 /* RoverSyncTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49CB6A2A219F2801008E4904 /* RoverSyncTests.swift */; };
 		49CB6A2D219F2801008E4904 /* RoverSync.h in Headers */ = {isa = PBXBuildFile; fileRef = 49CB6A1F219F2801008E4904 /* RoverSync.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -180,7 +185,6 @@
 		DBB89BE820D0415600DD797A /* Rover.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF49DF2203DE18500B54652 /* Rover.swift */; };
 		DBB89C4920D07F6600DD797A /* RoverData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD88A7320C1B21700085AE0 /* RoverData.framework */; };
 		DBB89C4C20D084D600DD797A /* RoverFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = DBB89C4A20D083AF00DD797A /* RoverFoundation.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DBC3B4112145C11A0096C74E /* Beacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC3B40F2145C1100096C74E /* Beacon.swift */; };
 		DBC3B42721476A6A0096C74E /* Location.UUID.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC3B42621476A6A0096C74E /* Location.UUID.swift */; };
 		DBC3FBF32155375D00372A65 /* PersistedValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC3FBF22155375D00372A65 /* PersistedValue.swift */; };
 		DBCBE086216140E6001C7A96 /* Foundation.JSONEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCBE085216140E6001C7A96 /* Foundation.JSONEncoder.swift */; };
@@ -188,8 +192,6 @@
 		DBCBE0AF21616107001C7A96 /* RegionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCBE0AE21616107001C7A96 /* RegionManager.swift */; };
 		DBD22D64212CBB2D0088DE52 /* Location.CLLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD22D5E212CBAC10088DE52 /* Location.CLLocation.swift */; };
 		DBD73F742137418300E7F322 /* GeofencesSyncParticipant.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD73F722137417E00E7F322 /* GeofencesSyncParticipant.swift */; };
-		DBD73F77213845AC00E7F322 /* Geofence.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD73F76213845AC00E7F322 /* Geofence.swift */; };
-		DBD73F7A213845CA00E7F322 /* RoverLocation.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = DBD73F78213845CA00E7F322 /* RoverLocation.xcdatamodeld */; };
 		DBD88A7C20C1B21700085AE0 /* RoverData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD88A7320C1B21700085AE0 /* RoverData.framework */; };
 		DBD88A8120C1B21700085AE0 /* RoverDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD88A8020C1B21700085AE0 /* RoverDataTests.swift */; };
 		DBD88A8320C1B21700085AE0 /* RoverData.h in Headers */ = {isa = PBXBuildFile; fileRef = DBD88A7520C1B21700085AE0 /* RoverData.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -293,6 +295,8 @@
 		495821B521A45D1F00F2B632 /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
 		495821B921A4A60D00F2B632 /* BluetoothInfoProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BluetoothInfoProvider.swift; sourceTree = "<group>"; };
 		495821BE21A4A64300F2B632 /* AdSupportInfoProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AdSupportInfoProvider.swift; sourceTree = "<group>"; };
+		4975CBDF21A753A900C2DD18 /* Location.Beacon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.Beacon.swift; sourceTree = "<group>"; };
+		4975CBE121A7547200C2DD18 /* Location.Geofence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.Geofence.swift; sourceTree = "<group>"; };
 		4980D66421307738007267D3 /* Experiences.Barcode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Experiences.Barcode.swift; sourceTree = "<group>"; };
 		49CB6A1D219F2801008E4904 /* RoverSync.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RoverSync.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		49CB6A1F219F2801008E4904 /* RoverSync.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RoverSync.h; sourceTree = "<group>"; };
@@ -598,7 +602,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				495821C921A4B06400F2B632 /* RoverUI.framework in Frameworks */,
+				49C7829B21A75D5F0059D208 /* RoverUI.framework in Frameworks */,
 				DBB89BC820D03E7900DD797A /* RoverData.framework in Frameworks */,
 				DBB89BC920D03E7900DD797A /* RoverFoundation.framework in Frameworks */,
 			);
@@ -718,6 +722,16 @@
 				495821B521A45D1F00F2B632 /* Device.swift */,
 			);
 			path = Device;
+			sourceTree = "<group>";
+		};
+		4975CBDE21A752F200C2DD18 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				DBD73F78213845CA00E7F322 /* Rover.xcdatamodeld */,
+				DBC3B40F2145C1100096C74E /* Beacon.swift */,
+				DBD73F76213845AC00E7F322 /* Geofence.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 		49CB6A1E219F2801008E4904 /* Sync */ = {
@@ -1215,6 +1229,7 @@
 		DBD88A7420C1B21700085AE0 /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				4975CBDE21A752F200C2DD18 /* Model */,
 				DBC3FBE6215467FA00372A65 /* DeviceSnapshot.swift */,
 				DBFB1A85209B8CC500E99F9F /* EventInfo.swift */,
 				DBCBE08F21614C8A001C7A96 /* Supporting Files */,
@@ -1379,6 +1394,8 @@
 				DB6BE8B8215D4B87000A1FDA /* Location.OSLog.swift */,
 				DB03F9B4214BEDBD00CBFE11 /* Location.SyncQuery.swift */,
 				DBC3B42621476A6A0096C74E /* Location.UUID.swift */,
+				4975CBDF21A753A900C2DD18 /* Location.Beacon.swift */,
+				4975CBE121A7547200C2DD18 /* Location.Geofence.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -1444,9 +1461,6 @@
 		DBFDF43B20AC82BB0031EF47 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				DBC3B40F2145C1100096C74E /* Beacon.swift */,
-				DBD73F76213845AC00E7F322 /* Geofence.swift */,
-				DBD73F78213845CA00E7F322 /* RoverLocation.xcdatamodeld */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -2400,24 +2414,23 @@
 			buildActionMask = 2147483647;
 			files = (
 				DBAA1E9F215425EE00E27982 /* Location.EventInfo.swift in Sources */,
+				4975CBE221A7547200C2DD18 /* Location.Geofence.swift in Sources */,
 				DBFB1AD6209C9ABF00E99F9F /* Location.CLLocationManager.swift in Sources */,
 				DBC3B42721476A6A0096C74E /* Location.UUID.swift in Sources */,
 				DBD22D64212CBB2D0088DE52 /* Location.CLLocation.swift in Sources */,
-				DBC3B4112145C11A0096C74E /* Beacon.swift in Sources */,
 				DB02627A214C301600893E53 /* Location.CLCircularRegion.swift in Sources */,
 				DBD73F742137418300E7F322 /* GeofencesSyncParticipant.swift in Sources */,
 				DB666AA12150201A00B503E9 /* Location.CLBeacon.swift in Sources */,
 				DB6BE8B9215D4B87000A1FDA /* Location.OSLog.swift in Sources */,
 				DBAA1E9B2154226700E27982 /* Location.CLPlacemark.swift in Sources */,
 				DB9DBFDE2055983700E5C77F /* LocationAssembler.swift in Sources */,
+				4975CBE021A753A900C2DD18 /* Location.Beacon.swift in Sources */,
 				DB03F9B2214A98A900CBFE11 /* Location.CLLocationCoordinate2D.swift in Sources */,
 				DB03F9B7214BF7B900CBFE11 /* LocationManager.swift in Sources */,
 				DB026279214C300E00893E53 /* Location.CLBeaconRegion.swift in Sources */,
-				DBD73F7A213845CA00E7F322 /* RoverLocation.xcdatamodeld in Sources */,
 				DB1689EF2141A7060012DA01 /* BeaconsSyncParticipant.swift in Sources */,
 				DBCBE0AF21616107001C7A96 /* RegionManager.swift in Sources */,
 				DB03F9B5214BEDBD00CBFE11 /* Location.SyncQuery.swift in Sources */,
-				DBD73F77213845AC00E7F322 /* Geofence.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2470,8 +2483,11 @@
 			files = (
 				DBD88A9720C1B58E00085AE0 /* EventInfo.swift in Sources */,
 				DBD88ABE20C1BACF00085AE0 /* DataAssembler.swift in Sources */,
+				4975CBE321A7550500C2DD18 /* Geofence.swift in Sources */,
 				DB6BE8B0215D433B000A1FDA /* Data.OSLog.swift in Sources */,
 				495821CB21A4B68A00F2B632 /* DeviceSnapshot.swift in Sources */,
+				4975CBE521A7575100C2DD18 /* Rover.xcdatamodeld in Sources */,
+				4975CBE421A7550A00C2DD18 /* Beacon.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3703,13 +3719,13 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		DBD73F78213845CA00E7F322 /* RoverLocation.xcdatamodeld */ = {
+		DBD73F78213845CA00E7F322 /* Rover.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
 				DBD73F79213845CA00E7F322 /* RoverLocation.xcdatamodel */,
 			);
 			currentVersion = DBD73F79213845CA00E7F322 /* RoverLocation.xcdatamodel */;
-			path = RoverLocation.xcdatamodeld;
+			path = Rover.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};

@@ -15,38 +15,7 @@ public class LocationAssembler: Assembler {
         
     }
     
-    public func assemble(container: Container) {
-        
-        // MARK: Core Data
-        
-        container.register(NSManagedObjectContext.self, name: "location.backgroundContext") { resolver in
-            let container = resolver.resolve(NSPersistentContainer.self, name: "location")!
-            let context = container.newBackgroundContext()
-            context.mergePolicy = NSOverwriteMergePolicy
-            return context
-        }
-        
-        container.register(NSManagedObjectContext.self, name: "location.viewContext") { resolver in
-            let container = resolver.resolve(NSPersistentContainer.self, name: "location")!
-            return container.viewContext
-        }
-        
-        container.register(NSPersistentContainer.self, name: "location") { resolver in
-            let bundles = [Bundle(for: LocationAssembler.self)]
-            guard let model = NSManagedObjectModel.mergedModel(from: bundles) else {
-                fatalError("Model not found")
-            }
-            
-            let container = NSPersistentContainer(name: "RoverLocation", managedObjectModel: model)
-            container.loadPersistentStores { _, error in
-                guard error == nil else {
-                    fatalError("Failed to load store: \(error!)")
-                }
-            }
-            
-            return container
-        }
-        
+public func assemble(container: Container) {
         // MARK: Services
         
         container.register(LocationInfoProvider.self) { resolver in

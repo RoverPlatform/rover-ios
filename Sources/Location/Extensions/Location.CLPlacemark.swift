@@ -9,7 +9,7 @@
 import CoreLocation
 
 extension CLPlacemark {
-    var context: Context.Location? {
+    var context: DeviceSnapshot.Location? {
         return self.location?.context(placemark: self)
     }
 }

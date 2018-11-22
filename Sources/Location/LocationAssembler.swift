@@ -49,7 +49,7 @@ public class LocationAssembler: Assembler {
         
         // MARK: Services
         
-        container.register(LocationContextProvider.self) { resolver in
+        container.register(LocationInfoProvider.self) { resolver in
             return resolver.resolve(LocationManager.self)!
         }
         

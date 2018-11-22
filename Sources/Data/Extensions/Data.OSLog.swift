@@ -9,7 +9,6 @@
 import os.log
 
 extension OSLog {
-    public static let context = OSLog(subsystem: "io.rover", category: "Context")
     public static let events = OSLog(subsystem: "io.rover", category: "Events")
     public static let persistence = OSLog(subsystem: "io.rover", category: "Persistence")
 }

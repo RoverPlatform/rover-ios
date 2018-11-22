@@ -15,7 +15,7 @@ class LocationManager {
     let eventQueue: EventQueue
     let geocoder = CLGeocoder()
     
-    var location: Context.Location?
+    var location: DeviceSnapshot.Location?
     
     typealias RegionIdentifier = String
     
@@ -39,7 +39,7 @@ class LocationManager {
 
 // MARK: LocationContextProvider
 
-extension LocationManager: LocationContextProvider {
+extension LocationManager: LocationInfoProvider {
     var locationAuthorization: String {
         let authorizationStatus: String
         switch CLLocationManager.authorizationStatus() {

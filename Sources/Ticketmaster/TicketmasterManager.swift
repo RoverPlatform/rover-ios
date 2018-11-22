@@ -10,7 +10,7 @@ import Foundation
 import os.log
 
 class TicketmasterManager {
-    let userInfoManager: UserInfoManager
+    let device: Device
     
     struct Member: Codable {
         var hostID: String
@@ -19,8 +19,8 @@ class TicketmasterManager {
     
     var member = PersistedValue<Member>(storageKey: "io.rover.RoverTicketmaster")
     
-    init(userInfoManager: UserInfoManager) {
-        self.userInfoManager = userInfoManager
+    init(device: Device) {
+        self.device = device
     }
 }
 
@@ -33,7 +33,7 @@ extension TicketmasterManager: TicketmasterAuthorizer {
     
     func clearCredentials() {
         self.member.value = nil
-        self.userInfoManager.updateUserInfo { attributes in
+        self.device.updateUserInfo { attributes in
             attributes["ticketmaster"] = nil
         }
     }
@@ -95,7 +95,7 @@ extension TicketmasterManager: SyncParticipant {
             return .noData
         }
         
-        self.userInfoManager.updateUserInfo {
+        self.device.updateUserInfo {
             $0["ticketmaster"] = attributes
         }
         

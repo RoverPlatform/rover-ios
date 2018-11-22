@@ -171,18 +171,6 @@ extension UIAssembler: Assembler {
             )
         }
         
-        // MARK: NotificationAuthorizationManager
-        
-        container.register(NotificationAuthorizationManager.self) { resolver in
-            return NotificationAuthorizationManager()
-        }
-        
-        // MARK: NotificationContextProvider
-        
-        container.register(NotificationsContextProvider.self) { resolver in
-            return resolver.resolve(NotificationAuthorizationManager.self)!
-        }
-        
         // MARK: NotificationHandler
         
         container.register(NotificationHandler.self) { resolver in            
@@ -233,10 +221,16 @@ extension UIAssembler: Assembler {
             )
         }
         
-        // MARK: DebugContextProvider
+        // MARK: Device
         
-        container.register(DebugContextProvider.self) { resolver in
-            return DebugContextManager()
+        container.register(Device.self) { resolver in
+            return Device(
+                // these Info Providers are furnished by the other Rover modules, if they are installed.
+                adSupportInfoProvider: resolver.resolve(AdSupportInfoProvider.self),
+                bluetoothInfoProvider: resolver.resolve(BluetoothInfoProvider.self),
+                telephonyInfoProvider: resolver.resolve(TelephonyInfoProvider.self),
+                locationInfoProvider: resolver.resolve(LocationInfoProvider.self)
+            )
         }
         
         // MARK: UIViewController (settings)

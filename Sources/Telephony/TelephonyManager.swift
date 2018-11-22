@@ -15,7 +15,7 @@ class TelephonyManager {
     init() { }
 }
 
-extension TelephonyManager: TelephonyContextProvider {
+extension TelephonyManager: TelephonyInfoProvider {
     var carrierName: String? {
         guard let carrierName = telephonyNetworkInfo.subscriberCellularProvider?.carrierName else {
             os_log("Failed to capture carrier name (this is expected behaviour if you are running a simulator)", log: .telephony, type: .debug)

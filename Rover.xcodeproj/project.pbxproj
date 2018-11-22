@@ -702,6 +702,7 @@
 		495821C121A4AFDC00F2B632 /* Device */ = {
 			isa = PBXGroup;
 			children = (
+				DBC3FBF7215581E500372A65 /* DeviceModel.swift */,
 				495821BE21A4A64300F2B632 /* AdSupportInfoProvider.swift */,
 				495821B921A4A60D00F2B632 /* BluetoothInfoProvider.swift */,
 				DBCBE09821614EB3001C7A96 /* LocationInfoProvider.swift */,
@@ -913,7 +914,6 @@
 			isa = PBXGroup;
 			children = (
 				495821C121A4AFDC00F2B632 /* Device */,
-				DBC3FBF7215581E500372A65 /* DeviceModel.swift */,
 				495821B721A4700500F2B632 /* Vendor */,
 				491C970E219B6C2A0065BAB8 /* Extensions */,
 				DBF31B1720E17176005D7C34 /* Debug */,

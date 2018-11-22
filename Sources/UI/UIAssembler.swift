@@ -225,10 +225,6 @@ extension UIAssembler: Assembler {
         
         container.register(Device.self) { resolver in
             return Device(
-                userDefaults: resolver.resolve(UserDefaults.self)!,
-                jsonDecoder: resolver.resolve(JSONDecoder.self)!,
-                jsonEncoder: resolver.resolve(JSONEncoder.self)!,
-                
                 // these Info Providers are furnished by the other Rover modules, if they are installed.
                 adSupportInfoProvider: resolver.resolve(AdSupportInfoProvider.self),
                 bluetoothInfoProvider: resolver.resolve(BluetoothInfoProvider.self),

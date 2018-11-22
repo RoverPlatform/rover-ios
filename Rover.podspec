@@ -42,35 +42,30 @@ Pod::Spec.new do |s|
   s.subspec "Location" do |ss|
     ss.source_files = "Sources/Location/**/*.swift"
     ss.resources = "Sources/Location/Model/RoverLocation.xcdatamodeld"
-    ss.dependency "Rover/Data"
     ss.dependency "Rover/UI"
     ss.frameworks = "CoreLocation"
   end
 
   s.subspec "Bluetooth" do |ss|
     ss.source_files = "Sources/Bluetooth/**/*.swift"
-    ss.dependency "Rover/Data"
     ss.dependency "Rover/UI"
     ss.frameworks = "CoreBluetooth"
   end
 
   s.subspec "Telephony" do |ss|
     ss.source_files = "Sources/Telephony/**/*.swift"
-    ss.dependency "Rover/Data"
     ss.dependency "Rover/UI"
     ss.frameworks = "CoreTelephony"
   end
 
   s.subspec "AdSupport" do |ss|
     ss.source_files = "Sources/AdSupport/**/*.swift"
-    ss.dependency "Rover/Data"
     ss.dependency "Rover/UI"
     ss.frameworks = "AdSupport"
   end
 
   s.subspec "Ticketmaster" do |ss|
     ss.source_files = "Sources/Ticketmaster/**/*.swift"
-    ss.dependency "Rover/Data"
     ss.dependency "Rover/UI"
   end
 end

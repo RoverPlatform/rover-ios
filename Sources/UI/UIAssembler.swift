@@ -102,12 +102,6 @@ extension UIAssembler: Assembler {
             return ExperienceStoreService(client: client)
         }
         
-        // MARK: FetchExperienceClient
-        
-        container.register(FetchExperienceClient.self) { resolver in
-            return resolver.resolve(HTTPClient.self)!
-        }
-        
         // MARK: UICollectionViewLayout (screen)
         
         container.register(UICollectionViewLayout.self, name: "screen", scope: .transient) { (resolver, screen: Screen) in
@@ -195,14 +189,6 @@ extension UIAssembler: Assembler {
             )
         }
         
-        // MARK: SyncParticipant (notifications)
-        
-        container.register(SyncParticipant.self, name: "notifications") { resolver in
-            return NotificationsSyncParticipant(
-                store: resolver.resolve(NotificationStore.self)!
-            )
-        }
-        
         // MARK: UIViewController (notificationCenter)
         
         container.register(UIViewController.self, name: "notificationCenter") { resolver in
@@ -255,9 +241,6 @@ extension UIAssembler: Assembler {
         }
         
         let store = resolver.resolve(NotificationStore.self)!
-        store.restore()
-        
-        let syncParticipant = resolver.resolve(SyncParticipant.self, name: "notifications")!
-        resolver.resolve(SyncCoordinator.self)!.participants.append(syncParticipant)
+        store.restore()        
     }
 }

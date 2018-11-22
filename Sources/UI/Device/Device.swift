@@ -287,7 +287,7 @@ open class Device {
     // MARK: Notifications Authorization
     
     open var notificationAuthorization: String {
-        // Refresh status for _next_ time notificationAuthorization is requested
+        // Refresh status next time snapshot is created.
         UNUserNotificationCenter.current().getNotificationSettings { [weak self] settings in
             UserDefaults.standard.set(
                 settings.authorizationStatus.rawValue,

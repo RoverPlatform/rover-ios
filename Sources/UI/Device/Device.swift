@@ -12,10 +12,10 @@ import UIKit
 import UserNotifications
 
 open class Device {
-    let adSupportInfoProvider: AdSupportInfoProvider?
-    let bluetoothInfoProvider: BluetoothInfoProvider?
-    let telephonyInfoProvider: TelephonyInfoProvider?
-    let locationInfoProvider: LocationInfoProvider?
+    public let adSupportInfoProvider: AdSupportInfoProvider?
+    public let bluetoothInfoProvider: BluetoothInfoProvider?
+    public let telephonyInfoProvider: TelephonyInfoProvider?
+    public let locationInfoProvider: LocationInfoProvider?
     
     let reachability = Reachability(hostname: "google.com")!
     
@@ -288,7 +288,7 @@ open class Device {
     
     open var notificationAuthorization: String {
         // Refresh status next time snapshot is created.
-        UNUserNotificationCenter.current().getNotificationSettings { [weak self] settings in
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
             UserDefaults.standard.set(
                 settings.authorizationStatus.rawValue,
                 forKey: "io.rover.RoverNotifications.authorizationStatus"

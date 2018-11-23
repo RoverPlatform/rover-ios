@@ -1067,7 +1067,6 @@
 			children = (
 				DBCBE0AB21615D55001C7A96 /* Supporting Files */,
 				DBFB1AD3209C9A8F00E99F9F /* Extensions */,
-				DBFDF43B20AC82BB0031EF47 /* Model */,
 				DB1689ED2141A6F90012DA01 /* BeaconsSyncParticipant.swift */,
 				DBD73F722137417E00E7F322 /* GeofencesSyncParticipant.swift */,
 				DB9DBFCD2055983700E5C77F /* LocationAssembler.swift */,
@@ -1456,13 +1455,6 @@
 				DBFB1A6D209B8CC500E99F9F /* WebViewBlock.swift */,
 			);
 			path = Models;
-			sourceTree = "<group>";
-		};
-		DBFDF43B20AC82BB0031EF47 /* Model */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Model;
 			sourceTree = "<group>";
 		};
 		DBFDF44320AC84430031EF47 /* Experiences */ = {

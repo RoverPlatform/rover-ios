@@ -1,13 +1,12 @@
 //
 //  Beacon.swift
-//  RoverLocation
+//  RoverData
 //
 //  Created by Sean Rucker on 2018-09-09.
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
 import CoreData
-import CoreLocation
 import os.log
 
 public final class Beacon: NSManagedObject {
@@ -30,8 +29,9 @@ public final class Beacon: NSManagedObject {
     }
     
     public override func willSave() {
-        if self.regionIdentifier != self.region.identifier {
-            self.regionIdentifier = self.region.identifier
+        let regionIdentifier = "\(self.uuid.uuidString):\(self.major):\(self.minor)"
+        if self.regionIdentifier != regionIdentifier {
+            self.regionIdentifier = regionIdentifier
         }
     }
 }
@@ -50,19 +50,6 @@ extension Beacon: AttributeRepresentable {
         ]
         
         return .object(attributes)
-    }
-}
-
-// MARK: Core Location
-
-extension Beacon {
-    public var region: CLBeaconRegion {
-        return CLBeaconRegion(
-            proximityUUID: self.uuid,
-            major: UInt16(self.major),
-            minor: UInt16(self.minor),
-            identifier: "\(self.uuid.uuidString):\(self.major):\(self.minor)"
-        )
     }
 }
 
@@ -124,22 +111,5 @@ extension Beacon {
         } catch {
             os_log("Failed to delete beacons: %@", log: .persistence, type: .error, error.localizedDescription)
         }
-    }
-}
-
-// MARK: Collection
-
-extension Collection where Element == Beacon {
-    public func wildCardRegions(maxLength: Int) -> Set<CLBeaconRegion> {
-        let uuids = self.map({ $0.uuid })
-        let unique = Set(uuids)
-        
-        #if swift(>=4.2)
-        let regions = unique.shuffled().prefix(maxLength).map { $0.region }
-        #else
-        let regions = unique.prefix(maxLength).map { $0.region }
-        #endif
-        
-        return Set<CLBeaconRegion>(regions)
     }
 }

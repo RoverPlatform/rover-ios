@@ -63,6 +63,7 @@ extension SyncQuery {
 }
 
 // MARK: Notifications
+
 extension SyncQuery {
     static let notifications = SyncQuery(
         name: "notifications",
@@ -77,5 +78,47 @@ extension SyncQuery {
             SyncQuery.Argument(name: "deviceIdentifier", type: "String!")
         ],
         fragments: ["notificationFields"]
+    )
+}
+
+// MARK: Location
+
+extension SyncQuery {
+    static let beacons = SyncQuery(
+        name: "beacons",
+        body: """
+            nodes {
+                ...beaconFields
+            }
+            pageInfo {
+                endCursor
+                hasNextPage
+            }
+            """,
+        arguments: [
+            SyncQuery.Argument(name: "first", type: "Int"),
+            SyncQuery.Argument(name: "after", type: "String"),
+            SyncQuery.Argument(name: "orderBy", type: "BeaconOrder")
+        ],
+        fragments: ["beaconFields"]
+    )
+    
+    static let geofences = SyncQuery(
+        name: "geofences",
+        body: """
+            nodes {
+                ...geofenceFields
+            }
+            pageInfo {
+                endCursor
+                hasNextPage
+            }
+            """,
+        arguments: [
+            SyncQuery.Argument(name: "first", type: "Int"),
+            SyncQuery.Argument(name: "after", type: "String"),
+            SyncQuery.Argument(name: "orderBy", type: "GeofenceOrder")
+        ],
+        fragments: ["geofenceFields"]
     )
 }

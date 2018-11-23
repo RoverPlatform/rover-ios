@@ -23,21 +23,16 @@ public final class Beacon: NSManagedObject {
 
     @NSManaged public private(set) var regionIdentifier: String
     
-
-    
     public override func awakeFromInsert() {
         super.awakeFromInsert()
         self.tags = []
     }
     
     public override func willSave() {
-        if self.regionIdentifier != generateIdentifier() {
-            self.regionIdentifier = generateIdentifier()
+        let regionIdentifier = "\(self.uuid.uuidString):\(self.major):\(self.minor)"
+        if self.regionIdentifier != regionIdentifier {
+            self.regionIdentifier = regionIdentifier
         }
-    }
-    
-    func generateIdentifier() -> String {
-        return "\(self.uuid.uuidString):\(self.major):\(self.minor)"
     }
 }
 

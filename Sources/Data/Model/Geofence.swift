@@ -29,13 +29,10 @@ public final class Geofence: NSManagedObject {
     }
     
     public override func willSave() {
-        if self.regionIdentifier != self.generateIdentifier() {
-            self.regionIdentifier = self.generateIdentifier()
+        let regionIdentifier = "\(latitude):\(longitude):\(radius)"
+        if self.regionIdentifier != regionIdentifier {
+            self.regionIdentifier = regionIdentifier
         }
-    }
-    
-    public func generateIdentifier() -> String {
-        return "\(latitude):\(longitude):\(radius)"
     }
 }
 

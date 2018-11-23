@@ -25,7 +25,7 @@ extension Geofence {
         return CLCircularRegion(
             center: location.coordinate,
             radius: radius,
-            identifier: self.generateIdentifier()
+            identifier: self.regionIdentifier
         )
     }
 }

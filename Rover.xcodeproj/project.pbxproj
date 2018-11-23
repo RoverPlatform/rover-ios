@@ -82,6 +82,8 @@
 		4975CBE221A7547200C2DD18 /* Location.Geofence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4975CBE121A7547200C2DD18 /* Location.Geofence.swift */; };
 		4975CBE321A7550500C2DD18 /* Geofence.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD73F76213845AC00E7F322 /* Geofence.swift */; };
 		4975CBE421A7550A00C2DD18 /* Beacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC3B40F2145C1100096C74E /* Beacon.swift */; };
+		4976723D21A858DB006A96A4 /* BeaconsSyncParticipant.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1689ED2141A6F90012DA01 /* BeaconsSyncParticipant.swift */; };
+		4976723E21A85905006A96A4 /* GeofencesSyncParticipant.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD73F722137417E00E7F322 /* GeofencesSyncParticipant.swift */; };
 		49C7829B21A75D5F0059D208 /* RoverUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB6ADD5A20B33EC0002F226C /* RoverUI.framework */; };
 		49CB6A26219F2801008E4904 /* RoverSync.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49CB6A1D219F2801008E4904 /* RoverSync.framework */; };
 		49CB6A2B219F2801008E4904 /* RoverSyncTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49CB6A2A219F2801008E4904 /* RoverSyncTests.swift */; };
@@ -109,13 +111,11 @@
 		DB026279214C300E00893E53 /* Location.CLBeaconRegion.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB026272214C2F5200893E53 /* Location.CLBeaconRegion.swift */; };
 		DB02627A214C301600893E53 /* Location.CLCircularRegion.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB026274214C2F8900893E53 /* Location.CLCircularRegion.swift */; };
 		DB03F9B2214A98A900CBFE11 /* Location.CLLocationCoordinate2D.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB03F9B1214A98A900CBFE11 /* Location.CLLocationCoordinate2D.swift */; };
-		DB03F9B5214BEDBD00CBFE11 /* Location.SyncQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB03F9B4214BEDBD00CBFE11 /* Location.SyncQuery.swift */; };
 		DB03F9B7214BF7B900CBFE11 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB03F9B6214BF7B900CBFE11 /* LocationManager.swift */; };
 		DB0C8F2A20583A5600E0D860 /* RoverAppExtensions.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB0C8F2120583A5600E0D860 /* RoverAppExtensions.framework */; };
 		DB0C8F2F20583A5600E0D860 /* RoverAppExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0C8F2E20583A5600E0D860 /* RoverAppExtensionsTests.swift */; };
 		DB0C8F3120583A5600E0D860 /* RoverAppExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = DB0C8F2320583A5600E0D860 /* RoverAppExtensions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DB0C8F3820583A7A00E0D860 /* NotificationExtensionHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DC0AD2055B82B00E5C77F /* NotificationExtensionHelper.swift */; };
-		DB1689EF2141A7060012DA01 /* BeaconsSyncParticipant.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1689ED2141A6F90012DA01 /* BeaconsSyncParticipant.swift */; };
 		DB1AB419219DD5970071EAA0 /* RouterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1AB418219DD5970071EAA0 /* RouterTests.swift */; };
 		DB1D5DC121079ED70071928F /* AttributeKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1D5DC021079ED70071928F /* AttributeKey.swift */; };
 		DB1D5DC32107C9850071928F /* AttributeValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1D5DC22107C9850071928F /* AttributeValue.swift */; };
@@ -191,7 +191,6 @@
 		DBCBE088216140F1001C7A96 /* Foundation.JSONDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCBE087216140F1001C7A96 /* Foundation.JSONDecoder.swift */; };
 		DBCBE0AF21616107001C7A96 /* RegionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCBE0AE21616107001C7A96 /* RegionManager.swift */; };
 		DBD22D64212CBB2D0088DE52 /* Location.CLLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD22D5E212CBAC10088DE52 /* Location.CLLocation.swift */; };
-		DBD73F742137418300E7F322 /* GeofencesSyncParticipant.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD73F722137417E00E7F322 /* GeofencesSyncParticipant.swift */; };
 		DBD88A7C20C1B21700085AE0 /* RoverData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD88A7320C1B21700085AE0 /* RoverData.framework */; };
 		DBD88A8120C1B21700085AE0 /* RoverDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD88A8020C1B21700085AE0 /* RoverDataTests.swift */; };
 		DBD88A8320C1B21700085AE0 /* RoverData.h in Headers */ = {isa = PBXBuildFile; fileRef = DBD88A7520C1B21700085AE0 /* RoverData.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -315,7 +314,6 @@
 		DB026272214C2F5200893E53 /* Location.CLBeaconRegion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.CLBeaconRegion.swift; sourceTree = "<group>"; };
 		DB026274214C2F8900893E53 /* Location.CLCircularRegion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.CLCircularRegion.swift; sourceTree = "<group>"; };
 		DB03F9B1214A98A900CBFE11 /* Location.CLLocationCoordinate2D.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.CLLocationCoordinate2D.swift; sourceTree = "<group>"; };
-		DB03F9B4214BEDBD00CBFE11 /* Location.SyncQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.SyncQuery.swift; sourceTree = "<group>"; };
 		DB03F9B6214BF7B900CBFE11 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		DB0C8E3D2055C62800E0D860 /* InfluenceTrackerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfluenceTrackerService.swift; sourceTree = "<group>"; };
 		DB0C8E3F2055CCBD00E0D860 /* InfluenceTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfluenceTracker.swift; sourceTree = "<group>"; };
@@ -698,6 +696,8 @@
 		494F05B121A76867008B3AFC /* Participants */ = {
 			isa = PBXGroup;
 			children = (
+				DBD73F722137417E00E7F322 /* GeofencesSyncParticipant.swift */,
+				DB1689ED2141A6F90012DA01 /* BeaconsSyncParticipant.swift */,
 				DB496E44214871410026DE6A /* NotificationsSyncParticipant.swift */,
 			);
 			path = Participants;
@@ -1067,8 +1067,6 @@
 			children = (
 				DBCBE0AB21615D55001C7A96 /* Supporting Files */,
 				DBFB1AD3209C9A8F00E99F9F /* Extensions */,
-				DB1689ED2141A6F90012DA01 /* BeaconsSyncParticipant.swift */,
-				DBD73F722137417E00E7F322 /* GeofencesSyncParticipant.swift */,
 				DB9DBFCD2055983700E5C77F /* LocationAssembler.swift */,
 				DB03F9B6214BF7B900CBFE11 /* LocationManager.swift */,
 				DBCBE0AE21616107001C7A96 /* RegionManager.swift */,
@@ -1391,7 +1389,6 @@
 				DBAA1E9A2154226700E27982 /* Location.CLPlacemark.swift */,
 				DBAA1E9E215425EE00E27982 /* Location.EventInfo.swift */,
 				DB6BE8B8215D4B87000A1FDA /* Location.OSLog.swift */,
-				DB03F9B4214BEDBD00CBFE11 /* Location.SyncQuery.swift */,
 				DBC3B42621476A6A0096C74E /* Location.UUID.swift */,
 				4975CBDF21A753A900C2DD18 /* Location.Beacon.swift */,
 				4975CBE121A7547200C2DD18 /* Location.Geofence.swift */,
@@ -2228,6 +2225,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				49CB6A38219F3BD5008E4904 /* PagingSyncParticipant.swift in Sources */,
+				4976723D21A858DB006A96A4 /* BeaconsSyncParticipant.swift in Sources */,
 				49CB6A39219F3BDB008E4904 /* SyncClient.swift in Sources */,
 				49CB6A40219F3C14008E4904 /* HTTPClient.swift in Sources */,
 				49CB6A36219F3BC3008E4904 /* PageInfo.swift in Sources */,
@@ -2242,6 +2240,7 @@
 				49CB6A3F219F3BF4008E4904 /* SyncResult.swift in Sources */,
 				49CB6A35219F3A41008E4904 /* SyncAssembler.swift in Sources */,
 				49CB6A3E219F3BF0008E4904 /* SyncRequest.swift in Sources */,
+				4976723E21A85905006A96A4 /* GeofencesSyncParticipant.swift in Sources */,
 				49CB6A37219F3BC8008E4904 /* PagingResponse.swift in Sources */,
 				49CB6A3D219F3BEB008E4904 /* SyncQuery.swift in Sources */,
 				49CB6A3B219F3BE3008E4904 /* SyncCoordinatorService.swift in Sources */,
@@ -2411,7 +2410,6 @@
 				DBC3B42721476A6A0096C74E /* Location.UUID.swift in Sources */,
 				DBD22D64212CBB2D0088DE52 /* Location.CLLocation.swift in Sources */,
 				DB02627A214C301600893E53 /* Location.CLCircularRegion.swift in Sources */,
-				DBD73F742137418300E7F322 /* GeofencesSyncParticipant.swift in Sources */,
 				DB666AA12150201A00B503E9 /* Location.CLBeacon.swift in Sources */,
 				DB6BE8B9215D4B87000A1FDA /* Location.OSLog.swift in Sources */,
 				DBAA1E9B2154226700E27982 /* Location.CLPlacemark.swift in Sources */,
@@ -2420,9 +2418,7 @@
 				DB03F9B2214A98A900CBFE11 /* Location.CLLocationCoordinate2D.swift in Sources */,
 				DB03F9B7214BF7B900CBFE11 /* LocationManager.swift in Sources */,
 				DB026279214C300E00893E53 /* Location.CLBeaconRegion.swift in Sources */,
-				DB1689EF2141A7060012DA01 /* BeaconsSyncParticipant.swift in Sources */,
 				DBCBE0AF21616107001C7A96 /* RegionManager.swift in Sources */,
-				DB03F9B5214BEDBD00CBFE11 /* Location.SyncQuery.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -15,7 +15,7 @@ extension Beacon {
             proximityUUID: self.uuid,
             major: UInt16(self.major),
             minor: UInt16(self.minor),
-            identifier: self.generateIdentifier()
+            identifier: self.regionIdentifier
         )
     }
 }

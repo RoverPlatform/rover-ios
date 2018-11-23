@@ -84,6 +84,7 @@
 		4975CBE421A7550A00C2DD18 /* Beacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC3B40F2145C1100096C74E /* Beacon.swift */; };
 		4976723D21A858DB006A96A4 /* BeaconsSyncParticipant.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1689ED2141A6F90012DA01 /* BeaconsSyncParticipant.swift */; };
 		4976723E21A85905006A96A4 /* GeofencesSyncParticipant.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD73F722137417E00E7F322 /* GeofencesSyncParticipant.swift */; };
+		4976724021A86226006A96A4 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4976723F21A86226006A96A4 /* Event.swift */; };
 		49C7829B21A75D5F0059D208 /* RoverUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB6ADD5A20B33EC0002F226C /* RoverUI.framework */; };
 		49CB6A26219F2801008E4904 /* RoverSync.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49CB6A1D219F2801008E4904 /* RoverSync.framework */; };
 		49CB6A2B219F2801008E4904 /* RoverSyncTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49CB6A2A219F2801008E4904 /* RoverSyncTests.swift */; };
@@ -296,6 +297,7 @@
 		495821BE21A4A64300F2B632 /* AdSupportInfoProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AdSupportInfoProvider.swift; sourceTree = "<group>"; };
 		4975CBDF21A753A900C2DD18 /* Location.Beacon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.Beacon.swift; sourceTree = "<group>"; };
 		4975CBE121A7547200C2DD18 /* Location.Geofence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.Geofence.swift; sourceTree = "<group>"; };
+		4976723F21A86226006A96A4 /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
 		4980D66421307738007267D3 /* Experiences.Barcode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Experiences.Barcode.swift; sourceTree = "<group>"; };
 		49CB6A1D219F2801008E4904 /* RoverSync.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RoverSync.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		49CB6A1F219F2801008E4904 /* RoverSync.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RoverSync.h; sourceTree = "<group>"; };
@@ -730,6 +732,7 @@
 				49E5D80B21A851DF001A1BE3 /* Rover.xcdatamodel */,
 				DBC3B40F2145C1100096C74E /* Beacon.swift */,
 				DBD73F76213845AC00E7F322 /* Geofence.swift */,
+				4976723F21A86226006A96A4 /* Event.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -2469,6 +2472,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4976724021A86226006A96A4 /* Event.swift in Sources */,
 				DBD88A9720C1B58E00085AE0 /* EventInfo.swift in Sources */,
 				DBD88ABE20C1BACF00085AE0 /* DataAssembler.swift in Sources */,
 				4975CBE321A7550500C2DD18 /* Geofence.swift in Sources */,

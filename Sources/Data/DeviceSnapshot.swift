@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct DeviceSnapshot: Codable, Equatable {
+public class DeviceSnapshot: Codable, Equatable {
     
     // MARK: AdSupport
     

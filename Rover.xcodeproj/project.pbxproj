@@ -82,7 +82,6 @@
 		4975CBE221A7547200C2DD18 /* Location.Geofence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4975CBE121A7547200C2DD18 /* Location.Geofence.swift */; };
 		4975CBE321A7550500C2DD18 /* Geofence.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD73F76213845AC00E7F322 /* Geofence.swift */; };
 		4975CBE421A7550A00C2DD18 /* Beacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC3B40F2145C1100096C74E /* Beacon.swift */; };
-		4975CBE521A7575100C2DD18 /* Rover.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = DBD73F78213845CA00E7F322 /* Rover.xcdatamodeld */; };
 		49C7829B21A75D5F0059D208 /* RoverUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB6ADD5A20B33EC0002F226C /* RoverUI.framework */; };
 		49CB6A26219F2801008E4904 /* RoverSync.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49CB6A1D219F2801008E4904 /* RoverSync.framework */; };
 		49CB6A2B219F2801008E4904 /* RoverSyncTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49CB6A2A219F2801008E4904 /* RoverSyncTests.swift */; };
@@ -106,6 +105,7 @@
 		49CB6A48219F4294008E4904 /* Sync.OSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49CB6A47219F4294008E4904 /* Sync.OSLog.swift */; };
 		49CB6A4921A314C2008E4904 /* RoverData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD88A7320C1B21700085AE0 /* RoverData.framework */; };
 		49CB6A4A21A314C8008E4904 /* RoverFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF49DD3203DE00F00B54652 /* RoverFoundation.framework */; };
+		49E5D80C21A851DF001A1BE3 /* Rover.xcdatamodel in Sources */ = {isa = PBXBuildFile; fileRef = 49E5D80B21A851DF001A1BE3 /* Rover.xcdatamodel */; };
 		DB026279214C300E00893E53 /* Location.CLBeaconRegion.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB026272214C2F5200893E53 /* Location.CLBeaconRegion.swift */; };
 		DB02627A214C301600893E53 /* Location.CLCircularRegion.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB026274214C2F8900893E53 /* Location.CLCircularRegion.swift */; };
 		DB03F9B2214A98A900CBFE11 /* Location.CLLocationCoordinate2D.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB03F9B1214A98A900CBFE11 /* Location.CLLocationCoordinate2D.swift */; };
@@ -306,6 +306,7 @@
 		49CB6A2C219F2801008E4904 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		49CB6A34219F3A41008E4904 /* SyncAssembler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncAssembler.swift; sourceTree = "<group>"; };
 		49CB6A47219F4294008E4904 /* Sync.OSLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sync.OSLog.swift; sourceTree = "<group>"; };
+		49E5D80B21A851DF001A1BE3 /* Rover.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Rover.xcdatamodel; sourceTree = "<group>"; };
 		DB00FDD92087E09F008D1A57 /* ScreenViewLayoutAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenViewLayoutAttributes.swift; sourceTree = "<group>"; };
 		DB00FDDB20891153008D1A57 /* ImageConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageConfiguration.swift; sourceTree = "<group>"; };
 		DB00FDDF208A4961008D1A57 /* BarcodeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarcodeCell.swift; sourceTree = "<group>"; };
@@ -449,7 +450,6 @@
 		DBD73F5C21359C8700E7F322 /* SyncCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncCoordinator.swift; sourceTree = "<group>"; };
 		DBD73F722137417E00E7F322 /* GeofencesSyncParticipant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeofencesSyncParticipant.swift; sourceTree = "<group>"; };
 		DBD73F76213845AC00E7F322 /* Geofence.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Geofence.swift; sourceTree = "<group>"; };
-		DBD73F79213845CA00E7F322 /* RoverLocation.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = RoverLocation.xcdatamodel; sourceTree = "<group>"; };
 		DBD88A7320C1B21700085AE0 /* RoverData.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RoverData.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBD88A7520C1B21700085AE0 /* RoverData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RoverData.h; sourceTree = "<group>"; };
 		DBD88A7620C1B21700085AE0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -727,7 +727,7 @@
 		4975CBDE21A752F200C2DD18 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				DBD73F78213845CA00E7F322 /* Rover.xcdatamodeld */,
+				49E5D80B21A851DF001A1BE3 /* Rover.xcdatamodel */,
 				DBC3B40F2145C1100096C74E /* Beacon.swift */,
 				DBD73F76213845AC00E7F322 /* Geofence.swift */,
 			);
@@ -2485,8 +2485,8 @@
 				DBD88ABE20C1BACF00085AE0 /* DataAssembler.swift in Sources */,
 				4975CBE321A7550500C2DD18 /* Geofence.swift in Sources */,
 				DB6BE8B0215D433B000A1FDA /* Data.OSLog.swift in Sources */,
+				49E5D80C21A851DF001A1BE3 /* Rover.xcdatamodel in Sources */,
 				495821CB21A4B68A00F2B632 /* DeviceSnapshot.swift in Sources */,
-				4975CBE521A7575100C2DD18 /* Rover.xcdatamodeld in Sources */,
 				4975CBE421A7550A00C2DD18 /* Beacon.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3717,19 +3717,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCVersionGroup section */
-		DBD73F78213845CA00E7F322 /* Rover.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				DBD73F79213845CA00E7F322 /* RoverLocation.xcdatamodel */,
-			);
-			currentVersion = DBD73F79213845CA00E7F322 /* RoverLocation.xcdatamodel */;
-			path = Rover.xcdatamodeld;
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
-/* End XCVersionGroup section */
 	};
 	rootObject = DBF49DCA203DE00F00B54652 /* Project object */;
 }

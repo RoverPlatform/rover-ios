@@ -8,7 +8,17 @@
 
 import Foundation
 
-public class DeviceSnapshot: Codable, Equatable {
+public class DeviceSnapshot: Codable, NSCoding {
+    public func encode(with aCoder: NSCoder) {
+        aCoder.encode(self.isBluetoothEnabled, forKey: "isBluetoothEnabled")
+    }
+    
+    public required init?(coder aDecoder: NSCoder) {
+        <#code#>
+    }
+    
+    
+    
     
     // MARK: AdSupport
     

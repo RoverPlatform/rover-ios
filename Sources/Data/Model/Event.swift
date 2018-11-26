@@ -25,29 +25,48 @@ public final class Event : NSManagedObject {
 }
 
 // MARK: Value Object Serialization
+//
+//class DeviceSnapshotTransformer : ValueTransformer {
+//    override class func transformedValueClass() -> AnyClass {
+//        return NSData.self
+//    }
+//
+//    override class func allowsReverseTransformation() -> Bool {
+//        return true
+//    }
+//
+//    override func transformedValue(_ value: Any?) -> Any? {
+//        guard let deviceSnapshot = value as? DeviceSnapshot else {
+//            os_log("DeviceSnapshotTransformer given something other than DeviceSnapshot.  Returning nil", log: .persistence, type: .error)
+//            return nil
+//        }
+//        guard let encoded = try? JSONEncoder.default.encode(deviceSnapshot) else {
+//            os_log("DeviceSnapshotTransformer could not encode DeviceSnapshot.  Returning nil.", log: .persistence, type: .error)
+//            return nil
+//        }
+//        return encoded
+//    }
+//
+//    override func reverseTransformedValue(_ value: Any?) -> Any? {
+//
+//    }
+//}
 
-class DeviceSnapshotTransformer : ValueTransformer {
-    override class func transformedValueClass() -> AnyClass {
-        return NSData.self
+class DeviceSnapshotTransformable : NSObject, NSCoding {
+    var deviceSnapshot: DeviceSnapshot
+    
+    func encode(with aCoder: NSCoder) {
+        let json = JSONEncoder.default.encode(deviceSnapshot)
+        aCoder.encode(json)
     }
     
-    override class func allowsReverseTransformation() -> Bool {
-        return true
-    }
-    
-    override func transformedValue(_ value: Any?) -> Any? {
-        guard let deviceSnapshot = value as? DeviceSnapshot else {
-            os_log("DeviceSnapshotTransformer given something other than DeviceSnapshot.  Returning nil", log: .persistence, type: .error)
+    required init?(coder aDecoder: NSCoder) {
+        guard let json = aDecoder.decodeData() else {
+            os_log("")
             return nil
         }
-        guard let encoded = try? JSONEncoder.default.encode(deviceSnapshot) else {
-            os_log("DeviceSnapshotTransformer could not encode DeviceSnapshot.  Returning nil.", log: .persistence, type: .error)
-            return nil
-        }
-        return encoded
     }
     
-    override func reverseTransformedValue(_ value: Any?) -> Any? {
-
-    }
+    
 }
+

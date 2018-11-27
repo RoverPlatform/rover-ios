@@ -52,21 +52,18 @@ public final class Event : NSManagedObject {
 //    }
 //}
 
-class DeviceSnapshotTransformable : NSObject, NSCoding {
-    var deviceSnapshot: DeviceSnapshot
-    
-    func encode(with aCoder: NSCoder) {
-        let json = JSONEncoder.default.encode(deviceSnapshot)
-        aCoder.encode(json)
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        guard let json = aDecoder.decodeData() else {
-            os_log("")
-            return nil
-        }
-    }
-    
-    
-}
-
+//class DeviceSnapshotTransformable : NSObject, NSCoding {
+//    var deviceSnapshot: DeviceSnapshot
+//
+//    func encode(with aCoder: NSCoder) {
+//        let json = JSONEncoder.default.encode(deviceSnapshot)
+//        aCoder.encode(json)
+//    }
+//
+//    required init?(coder aDecoder: NSCoder) {
+//        guard let json = aDecoder.decodeData() else {
+//            os_log("")
+//            return nil
+//        }
+//    }
+//}

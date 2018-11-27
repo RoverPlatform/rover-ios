@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import os
 
 public struct Attributes: Equatable, RawRepresentable {
     public var rawValue = [AttributeKey: AttributeValue]()
@@ -117,5 +118,59 @@ extension Attributes: Collection {
 extension Attributes: ExpressibleByDictionaryLiteral {
     public init(dictionaryLiteral elements: (AttributeKey, AttributeRepresentable)...) {
         self.rawValue = elements.reduce(into: [:]) { $0[$1.0] = $1.1.attributeValue }
+    }
+}
+
+extension NSDictionary {
+    func validateAsRoverAttributes() -> Bool {
+        
+        return (self.first { (key: Any, value: Any) -> Bool in
+            guard key is NSString else {
+                let errorMessage = "Unexpected key type \(type(of:key))"
+                assertionFailure(errorMessage)
+                os_log("%s", type: .error, errorMessage)
+                return true
+            }
+            
+            guard let valueObject = value as? NSObject else {
+                let errorMessage = "Unexpected value type \(type(of:value)) in Rover dictionary.  Must be NSObject."
+                assertionFailure(errorMessage)
+                os_log("%s", type: .error, errorMessage)
+                return true
+            }
+            
+            return !valueObject.validateAsRoverAttributeValue()
+        } == nil)
+    }
+}
+
+extension NSObject  {
+    fileprivate func validateAsRoverAttributeValue() -> Bool {
+        switch(self) {
+        case is NSString:
+            return true
+        case is NSNumber:
+            // captures both integers and booleans.
+            return true
+        case let array as NSArray:
+            return (array.first(where: { (value) -> Bool in
+                guard let valueObject = value as? NSObject else {
+                    let errorMessage = "Unexpected value type \(type(of:value)) in Rover array.  Must be NSObject."
+                    assertionFailure(errorMessage)
+                    os_log("%s", type: .error, errorMessage)
+                    return true
+                }
+                
+                return !valueObject.validateAsRoverAttributeValue()
+            }) == nil)
+        case let dictionary as NSDictionary:
+            // recurse
+            return dictionary.validateAsRoverAttributes()
+        default:
+            let errorMessage = "Unsupported type in Attributes: \(type(of:self))"
+            assertionFailure(errorMessage)
+            os_log("%s", type: .error, errorMessage)
+        }
+        return true
     }
 }

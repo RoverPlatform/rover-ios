@@ -8,17 +8,28 @@
 
 import Foundation
 
-public class DeviceSnapshot: Codable, NSCoding {
+public class DeviceSnapshot: NSObject, Codable, NSCoding {
     public func encode(with aCoder: NSCoder) {
+        aCoder.encode(self.advertisingIdentifier, forKey: "advertisingIdentifier")
         aCoder.encode(self.isBluetoothEnabled, forKey: "isBluetoothEnabled")
+        aCoder.encode(self.localeLanguage, forKey: "localeLanguage")
+        aCoder.encode(self.localeRegion, forKey: "localeRegion")
+        aCoder.encode(self.localeScript, forKey: "localeScript")
+        aCoder.encode(self.isBluetoothEnabled, forKey: "isBluetoothEnabled")
+        aCoder.encode(self.isBluetoothEnabled, forKey: "isBluetoothEnabled")
+        aCoder.encode(self.isBluetoothEnabled, forKey: "isBluetoothEnabled")
+        aCoder.encode(self.isBluetoothEnabled, forKey: "isBluetoothEnabled")
+
+        
+        // TODO: manual encodings
     }
     
     public required init?(coder aDecoder: NSCoder) {
-        <#code#>
+        self.isBluetoothEnabled = aDecoder.decodeBool(forKey: "isBluetoothEnabled")
+        // TODO: manual decodings
     }
     
-    
-    
+    // TODO: manual implementation of Codable.
     
     // MARK: AdSupport
     
@@ -33,90 +44,10 @@ public class DeviceSnapshot: Codable, NSCoding {
     public var localeLanguage: String?
     public var localeRegion: String?
     public var localeScript: String?
-    
-    // MARK: Location
-    
-    public struct Location: Codable, Equatable {
-        public struct Coordinate: Codable, Equatable {
-            public var latitude: Double
-            public var longitude: Double
-            
-            public init(latitude: Double, longitude: Double) {
-                self.latitude = latitude
-                self.longitude = longitude
-            }
-            
-            public init(from decoder: Decoder) throws {
-                var container = try decoder.unkeyedContainer()
-                let latitude = try container.decode(Double.self)
-                let longitude = try container.decode(Double.self)
-                self.init(latitude: latitude, longitude: longitude)
-            }
-            
-            public func encode(to encoder: Encoder) throws {
-                var container = encoder.unkeyedContainer()
-                try container.encode(latitude)
-                try container.encode(longitude)
-            }
-        }
-        
-        public struct Address: Codable, Equatable {
-            public var street: String?
-            public var city: String?
-            public var state: String?
-            public var postalCode: String?
-            public var country: String?
-            public var isoCountryCode: String?
-            public var subAdministrativeArea: String?
-            public var subLocality: String?
-            
-            public init(
-                street: String?,
-                city: String?,
-                state: String?,
-                postalCode: String?,
-                country: String?,
-                isoCountryCode: String?,
-                subAdministrativeArea: String?,
-                subLocality: String?
-                ) {
-                self.street = street
-                self.city = city
-                self.state = state
-                self.postalCode = postalCode
-                self.country = country
-                self.isoCountryCode = isoCountryCode
-                self.subAdministrativeArea = subAdministrativeArea
-                self.subLocality = subLocality
-            }
-        }
-        
-        public var coordinate: Coordinate
-        public var altitude: Double
-        public var horizontalAccuracy: Double
-        public var verticalAccuracy: Double
-        public var address: Address?
-        public var timestamp: Date
-        
-        public init(
-            coordinate: Coordinate,
-            altitude: Double,
-            horizontalAccuracy: Double,
-            verticalAccuracy: Double,
-            address: Address?,
-            timestamp: Date
-            ) {
-            self.coordinate = coordinate
-            self.altitude = altitude
-            self.horizontalAccuracy = horizontalAccuracy
-            self.verticalAccuracy = verticalAccuracy
-            self.address = address
-            self.timestamp = timestamp
-        }
-    }
+
     
     public var isLocationServicesEnabled: Bool?
-    public var location: Location?
+    public var location: DeviceLocation?
     public var locationAuthorization: String?
     
     // MARK: Notifications
@@ -183,7 +114,7 @@ public class DeviceSnapshot: Codable, NSCoding {
     
     // MARK: User Info
     
-    public var userInfo: Attributes?
+    public var userInfo: NSDictionary?
     
     public init(
         advertisingIdentifier: String? = nil,
@@ -192,7 +123,7 @@ public class DeviceSnapshot: Codable, NSCoding {
         localeRegion: String? = nil,
         localeScript: String? = nil,
         isLocationServicesEnabled: Bool? = nil,
-        location: Location? = nil,
+        location: DeviceLocation? = nil,
         locationAuthorization: String? = nil,
         notificationAuthorization: String? = nil,
         pushToken: PushToken? = nil,
@@ -216,7 +147,7 @@ public class DeviceSnapshot: Codable, NSCoding {
         radio: String? = nil,
         isTestDevice: Bool? = nil,
         timeZone: String? = nil,
-        userInfo: Attributes? = nil
+        userInfo: NSDictionary? = nil
     ) {
         self.advertisingIdentifier = advertisingIdentifier
         self.isBluetoothEnabled = isBluetoothEnabled
@@ -249,5 +180,89 @@ public class DeviceSnapshot: Codable, NSCoding {
         self.isTestDevice = isTestDevice
         self.timeZone = timeZone
         self.userInfo = userInfo
+    }
+}
+
+// MARK: Location
+
+public class DeviceCoordinate: NSObject, Codable, NSCoding {
+    public var latitude: Double
+    public var longitude: Double
+    
+    // TODO: NSCoding implementation
+    
+    public init(latitude: Double, longitude: Double) {
+        self.latitude = latitude
+        self.longitude = longitude
+    }
+    
+    public init(from decoder: Decoder) throws {
+        var container = try decoder.unkeyedContainer()
+        let latitude = try container.decode(Double.self)
+        let longitude = try container.decode(Double.self)
+        self.init(latitude: latitude, longitude: longitude)
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.unkeyedContainer()
+        try container.encode(latitude)
+        try container.encode(longitude)
+    }
+}
+
+public class DeviceLocation: Codable, NSCoding {
+    public var coordinate: DeviceCoordinate
+    public var altitude: Double
+    public var horizontalAccuracy: Double
+    public var verticalAccuracy: Double
+    public var address: DeviceAddress?
+    public var timestamp: Date
+    
+    public init(
+        coordinate: DeviceCoordinate,
+        altitude: Double,
+        horizontalAccuracy: Double,
+        verticalAccuracy: Double,
+        address: DeviceAddress?,
+        timestamp: Date
+        ) {
+        self.coordinate = coordinate
+        self.altitude = altitude
+        self.horizontalAccuracy = horizontalAccuracy
+        self.verticalAccuracy = verticalAccuracy
+        self.address = address
+        self.timestamp = timestamp
+    }
+}
+
+    
+public class DeviceAddress: Codable, NSCoding {
+    public var street: String?
+    public var city: String?
+    public var state: String?
+    public var postalCode: String?
+    public var country: String?
+    public var isoCountryCode: String?
+    public var subAdministrativeArea: String?
+    public var subLocality: String?
+    
+    public init(
+        street: String?,
+        city: String?,
+        state: String?,
+        postalCode: String?,
+        country: String?,
+        isoCountryCode: String?,
+        subAdministrativeArea: String?,
+        subLocality: String?
+        ) {
+        self.street = street
+        self.city = city
+        self.state = state
+        self.postalCode = postalCode
+        self.country = country
+        self.isoCountryCode = isoCountryCode
+        self.subAdministrativeArea = subAdministrativeArea
+        self.subLocality = subLocality
     }
 }

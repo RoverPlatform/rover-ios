@@ -29,6 +29,53 @@ public class DeviceSnapshot: NSObject, Codable, NSCoding {
         // TODO: manual decodings
     }
     
+    public required init(from decoder: Decoder) throws {
+        
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.advertisingIdentifier = container.decode(String.self, forKey: .advertisingIdentifier)
+        self.isBluetoothEnabled = container.decode(Bool.self, forKey: )
+    }
+    
+    
+    
+    func encode(to encoder: Encoder) throws {
+        <#code#>
+    }
+    
+    enum CodingKeys : String, CodingKey {
+        case advertisingIdentifier
+        case isBluetoothEnabled
+        case localeLanguage
+        case localeRegion
+        case localeScript
+        case isLocationServicesEnabled
+        case location
+        case locationAuthorization
+        case notificationAuthorization
+        case pushToken
+        case isCellularEnabled
+        case isWifiEnabled
+        case appBadgeNumber
+        case appBuild
+        case appIdentifier
+        case appVersion
+        case buildEnvironment
+        case deviceIdentifier
+        case deviceManufacturer
+        case deviceModel
+        case deviceName
+        case operatingSystemName
+        case operatingSystemVersion
+        case screenHeight
+        case screenWidth
+        case sdkVersion
+        case carrierName
+        case radio
+        case isTestDevice
+        case timeZone
+        case userInfo
+    }
+    
     // TODO: manual implementation of Codable.
     
     // MARK: AdSupport
@@ -189,21 +236,31 @@ public class DeviceCoordinate: NSObject, Codable, NSCoding {
     public var latitude: Double
     public var longitude: Double
     
-    // TODO: NSCoding implementation
+    public func encode(with aCoder: NSCoder) {
+        aCoder.encode(self.latitude, forKey: "latitude")
+        aCoder.encode(self.longitude, forKey: "longitude")
+    }
+    
+    public required init?(coder aDecoder: NSCoder) {
+        self.latitude = aDecoder.decodeDouble(forKey: "latitude")
+        self.longitude = aDecoder.decodeDouble(forKey: "longitude")
+        // TODO: manual decodings
+    }
     
     public init(latitude: Double, longitude: Double) {
         self.latitude = latitude
         self.longitude = longitude
     }
     
-    public init(from decoder: Decoder) throws {
+    public required init(from decoder: Decoder) throws {
+        // we want to represent coordinate as a tuple in our JSON as per our GraphQL API rather than a hash of name-value pairs as the default synthesized implementation of Codable would have done.
         var container = try decoder.unkeyedContainer()
-        let latitude = try container.decode(Double.self)
-        let longitude = try container.decode(Double.self)
-        self.init(latitude: latitude, longitude: longitude)
+        latitude = try container.decode(Double.self)
+        longitude = try container.decode(Double.self)
     }
     
     public func encode(to encoder: Encoder) throws {
+        // we want to represent coordinate as a tuple in our JSON as per our GraphQL API rather than a hash of name-value pairs as the default synthesized implementation of Codable would have done.
         var container = encoder.unkeyedContainer()
         try container.encode(latitude)
         try container.encode(longitude)
@@ -217,6 +274,21 @@ public class DeviceLocation: Codable, NSCoding {
     public var verticalAccuracy: Double
     public var address: DeviceAddress?
     public var timestamp: Date
+    
+    // TODO: NSCoding implementation
+    
+    public func encode(with aCoder: NSCoder) {
+        aCoder.encode(self.coordinate, forKey: "coordinate")
+        // TODO: manual encodings
+    }
+    
+    public required init?(coder aDecoder: NSCoder) {
+        guard let coordinate = aDecoder.decodeObject(forKey: "coordinate") as? DeviceCoordinate else {
+            return nil
+        }
+        self.coordinate = coordinate
+        // TODO: manual decodings
+    }
     
     public init(
         coordinate: DeviceCoordinate,
@@ -246,6 +318,19 @@ public class DeviceAddress: Codable, NSCoding {
     public var subAdministrativeArea: String?
     public var subLocality: String?
     
+    // TODO: NSCoding implementation
+    
+    public func encode(with aCoder: NSCoder) {
+        aCoder.encode(self.street, forKey: "street")
+        aCoder.encode(self.city, forKey: "city")
+        // TODO: manual encodings
+    }
+    
+    public required init?(coder aDecoder: NSCoder) {
+        self.street = aDecoder.decodeObject(forKey: "street") as? String ?? ""
+        // TODO: manual decodings
+    }
+    
     public init(
         street: String?,
         city: String?,
@@ -266,3 +351,4 @@ public class DeviceAddress: Codable, NSCoding {
         self.subLocality = subLocality
     }
 }
+

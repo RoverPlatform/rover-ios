@@ -18,7 +18,7 @@ public final class Event : NSManagedObject {
     @NSManaged public internal(set) var id: String
     @NSManaged public internal(set) var name: String
     @NSManaged public internal(set) var namespace: String?
-    @NSManaged public internal(set) var attributes: NSDictionary
+    @NSManaged public internal(set) var attributes: Attributes
     @NSManaged public internal(set) var deviceSnapshot: DeviceSnapshot
     @NSManaged public internal(set) var timestamp: Date
     @NSManaged public internal(set) var isFlushed: Bool

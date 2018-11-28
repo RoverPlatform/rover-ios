@@ -10,21 +10,45 @@ import Foundation
 
 public class DeviceSnapshot: NSObject, Codable, NSCoding {
     public func encode(with aCoder: NSCoder) {
+        //
         aCoder.encode(self.advertisingIdentifier, forKey: "advertisingIdentifier")
         aCoder.encode(self.isBluetoothEnabled, forKey: "isBluetoothEnabled")
         aCoder.encode(self.localeLanguage, forKey: "localeLanguage")
         aCoder.encode(self.localeRegion, forKey: "localeRegion")
         aCoder.encode(self.localeScript, forKey: "localeScript")
+        aCoder.encode(self.isLocationServicesEnabled, forKey: "isLocationServicesEnabled")
+        aCoder.encode(self.location, forKey: "location")
+        aCoder.encode(self.locationAuthorization, forKey: "locationAuthorization")
+        aCoder.encode(self.notificationAuthorization, forKey: "notificationAuthorization")
         aCoder.encode(self.isBluetoothEnabled, forKey: "isBluetoothEnabled")
-        aCoder.encode(self.isBluetoothEnabled, forKey: "isBluetoothEnabled")
-        aCoder.encode(self.isBluetoothEnabled, forKey: "isBluetoothEnabled")
-        aCoder.encode(self.isBluetoothEnabled, forKey: "isBluetoothEnabled")
-
-        
-        // TODO: manual encodings
+        aCoder.encode(self.pushToken, forKey: "pushToken")
+        aCoder.encode(self.isCellularEnabled, forKey: "isCellularEnabled")
+        aCoder.encode(self.isWifiEnabled, forKey: "isWifiEnabled")
+        aCoder.encode(self.appBadgeNumber, forKey: "appBadgeNumber")
+        aCoder.encode(self.appBuild, forKey: "appBuild")
+        aCoder.encode(self.appIdentifier, forKey: "appIdentifier")
+        aCoder.encode(self.appVersion, forKey: "appVersion")
+        aCoder.encode(self.buildEnvironment, forKey: "buildEnvironment")
+        aCoder.encode(self.deviceIdentifier, forKey: "deviceIdentifier")
+        aCoder.encode(self.deviceManufacturer, forKey: "deviceManufacturer")
+        aCoder.encode(self.deviceModel, forKey: "deviceModel")
+        aCoder.encode(self.deviceName, forKey: "deviceName")
+        aCoder.encode(self.operatingSystemName, forKey: "operatingSystemName")
+        aCoder.encode(self.operatingSystemVersion, forKey: "operatingSystemVersion")
+        aCoder.encode(self.screenHeight, forKey: "screenHeight")
+        aCoder.encode(self.screenWidth, forKey: "screenWidth")
+        aCoder.encode(self.sdkVersion, forKey: "sdkVersion")
+        aCoder.encode(self.carrierName, forKey: "carrierName")
+        aCoder.encode(self.radio, forKey: "radio")
+        aCoder.encode(self.isTestDevice, forKey: "isTestDevice")
+        aCoder.encode(self.timeZone, forKey: "timeZone")
+        aCoder.encode(self.userInfo, forKey: "userInfo")
     }
     
     public required init?(coder aDecoder: NSCoder) {
+        // we must implement Decodable manually because the NSDictionary field used for Attributes (which itself was used in lieu of Swift Dictionary in order to enable NSCoding) prevents Codable being synthesized.
+        
+        
         self.isBluetoothEnabled = aDecoder.decodeBool(forKey: "isBluetoothEnabled")
         // TODO: manual decodings
     }
@@ -32,16 +56,16 @@ public class DeviceSnapshot: NSObject, Codable, NSCoding {
     public required init(from decoder: Decoder) throws {
         
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.advertisingIdentifier = container.decode(String.self, forKey: .advertisingIdentifier)
-        self.isBluetoothEnabled = container.decode(Bool.self, forKey: )
+        self.advertisingIdentifier = try container.decode(String.self, forKey: .advertisingIdentifier)
+        self.isBluetoothEnabled = try container.decode(Bool.self, forKey: .isBluetoothEnabled)
+        // TODO: manual decodings
     }
     
-    
-    
-    func encode(to encoder: Encoder) throws {
-        <#code#>
+    public func encode(to encoder: Encoder) throws {
+        // TODO: manual encodings
     }
     
+    // TODO: ripout
     enum CodingKeys : String, CodingKey {
         case advertisingIdentifier
         case isBluetoothEnabled
@@ -76,8 +100,6 @@ public class DeviceSnapshot: NSObject, Codable, NSCoding {
         case userInfo
     }
     
-    // TODO: manual implementation of Codable.
-    
     // MARK: AdSupport
     
     public var advertisingIdentifier: String?
@@ -103,20 +125,7 @@ public class DeviceSnapshot: NSObject, Codable, NSCoding {
     
     // MARK: Push Token
     
-    public struct PushToken: Codable, Equatable {
-        public var value: String
-        public var timestamp: Date
-        
-        public init(
-            value: String,
-            timestamp: Date
-        ) {
-            self.value = value
-            self.timestamp = timestamp
-        }
-    }
-    
-    public var pushToken: PushToken?
+    public var pushToken: DevicePushToken?
     
     // MARK: Reachability
     
@@ -124,12 +133,6 @@ public class DeviceSnapshot: NSObject, Codable, NSCoding {
     public var isWifiEnabled: Bool?
     
     // MARK: Static Context
-    
-    public enum BuildEnvironment: String, Codable, Equatable {
-        case production = "PRODUCTION"
-        case development = "DEVELOPMENT"
-        case simulator = "SIMULATOR"
-    }
     
     public var appBadgeNumber: Int?
     public var appBuild: String?
@@ -161,7 +164,10 @@ public class DeviceSnapshot: NSObject, Codable, NSCoding {
     
     // MARK: User Info
     
-    public var userInfo: NSDictionary?
+    // As Rover Attributes, with all of the constraints thereof implied.
+    // This is using NSDictionary in lieu of Swift Dictionary in order to enable
+    // public var userInfo: NSDictionary?
+    public var userInfo: Attributes
     
     public init(
         advertisingIdentifier: String? = nil,
@@ -173,7 +179,7 @@ public class DeviceSnapshot: NSObject, Codable, NSCoding {
         location: DeviceLocation? = nil,
         locationAuthorization: String? = nil,
         notificationAuthorization: String? = nil,
-        pushToken: PushToken? = nil,
+        pushToken: DevicePushToken? = nil,
         isCellularEnabled: Bool? = nil,
         isWifiEnabled: Bool? = nil,
         appBadgeNumber: Int? = nil,
@@ -228,6 +234,45 @@ public class DeviceSnapshot: NSObject, Codable, NSCoding {
         self.timeZone = timeZone
         self.userInfo = userInfo
     }
+}
+
+// MARK: Push Token
+
+public class DevicePushToken: NSCoding, Codable {
+    public var value: String
+    public var timestamp: Date
+    
+    public init(
+        value: String,
+        timestamp: Date
+        ) {
+        self.value = value
+        self.timestamp = timestamp
+    }
+    
+    public func encode(with aCoder: NSCoder) {
+        // TODO
+    }
+    
+    public required init?(coder aDecoder: NSCoder) {
+        // TODO
+    }
+    
+    public required init(from decoder: Decoder) throws {
+        // TODO
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        // TODO
+    }
+}
+
+// MARK: Build Environment
+
+public enum BuildEnvironment: String, Codable, Equatable {
+    case production = "PRODUCTION"
+    case development = "DEVELOPMENT"
+    case simulator = "SIMULATOR"
 }
 
 // MARK: Location

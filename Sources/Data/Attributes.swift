@@ -10,7 +10,61 @@ import Foundation
 import os
 
 public class Attributes: NSObject, NSCoding, Codable {
+    
     var rawValue: [String: Any]
+
+    // MARK: NSCoding
+    
+    public func encode(with aCoder: NSCoder) {
+        let nsDictionary = rawValue.attributes
+        aCoder.encode(nsDictionary)
+    }
+    
+    public required init?(coder aDecoder: NSCoder) {
+        guard let nsDictionary = aDecoder.decodeObject() as? NSDictionary else {
+            return nil
+        }
+        rawValue = nsDictionary.attributes
+        super.init()
+    }
+    
+    // MARK: Codable
+    
+    public required init(from decoder: Decoder) throws {
+        let type: Decodable.Type = Dictionary<String, Decodable>.self
+        decoder.singleValueContainer().decode()
+        super.init()
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        //
+    }
+    
+    override init() {
+        rawValue = [:]
+        super.init()
+    }
+}
+
+/// A dictionary of
+///
+/// Note that there are several constraints here not expressed in the Swift type.
+///
+/// The value type, Any, may only be one of:
+///
+/// String
+/// Int
+/// Double
+/// Bool
+/// [String]
+/// [Int]
+/// [Double]
+/// [Bool]
+/// [String: Any]
+typealias AttributeValue = [String: Any]
+
+protocol AttributeRepresentable {
+    var attributeValue: AttributeValue { get }
 }
 
 extension Dictionary where Key == String, Value: Any {

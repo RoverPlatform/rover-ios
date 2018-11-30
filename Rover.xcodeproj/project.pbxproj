@@ -206,7 +206,6 @@
 		DBF49E06203DE1DE00B54652 /* ServiceKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF49DFE203DE1DE00B54652 /* ServiceKey.swift */; };
 		DBF49E07203DE1DE00B54652 /* ServiceScope.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF49DFF203DE1DE00B54652 /* ServiceScope.swift */; };
 		DBFB1AD6209C9ABF00E99F9F /* Location.CLLocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1AD4209C9AA600E99F9F /* Location.CLLocationManager.swift */; };
-		DBFB1AF3209CA82800E99F9F /* ID.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A79209B8CC500E99F9F /* ID.swift */; };
 		DBFDF52420AE2B1C0031EF47 /* Foundation.DateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFDF52320AE2B1C0031EF47 /* Foundation.DateFormatter.swift */; };
 /* End PBXBuildFile section */
 
@@ -487,7 +486,6 @@
 		DBFB1A76209B8CC500E99F9F /* Text.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Text.swift; sourceTree = "<group>"; };
 		DBFB1A77209B8CC500E99F9F /* Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		DBFB1A78209B8CC500E99F9F /* ImageBlock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageBlock.swift; sourceTree = "<group>"; };
-		DBFB1A79209B8CC500E99F9F /* ID.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ID.swift; sourceTree = "<group>"; };
 		DBFB1A7C209B8CC500E99F9F /* Notification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Notification.swift; sourceTree = "<group>"; };
 		DBFB1A85209B8CC500E99F9F /* EventInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventInfo.swift; sourceTree = "<group>"; };
 		DBFB1ACB209BB3D200E99F9F /* ExperienceStoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperienceStoreService.swift; sourceTree = "<group>"; };
@@ -1326,7 +1324,6 @@
 				DBCBE08E21614A07001C7A96 /* Supporting Files */,
 				DBFDF52220AE2B0B0031EF47 /* Extensions */,
 				DBF49DF7203DE1CF00B54652 /* Container */,
-				DBFB1A79209B8CC500E99F9F /* ID.swift */,
 				DBF2584020A107BD00400EA2 /* ObserverSet.swift */,
 				DBC3FBF22155375D00372A65 /* PersistedValue.swift */,
 			);
@@ -2474,7 +2471,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				DBF49E02203DE1DE00B54652 /* Assembler.swift in Sources */,
-				DBFB1AF3209CA82800E99F9F /* ID.swift in Sources */,
 				DBC3FBF32155375D00372A65 /* PersistedValue.swift in Sources */,
 				DBF49E05203DE1DE00B54652 /* ServiceFactory.swift in Sources */,
 				DBF2584120A107BD00400EA2 /* ObserverSet.swift in Sources */,

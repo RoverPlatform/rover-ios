@@ -10,10 +10,11 @@ import Foundation
 import os
 
 public class Attributes: NSObject, NSCoding, Codable {
-    
     var rawValue: [String: Any]
 
+    //
     // MARK: NSCoding
+    //
     
     public func encode(with aCoder: NSCoder) {
         let nsDictionary = rawValue.attributes
@@ -28,16 +29,79 @@ public class Attributes: NSObject, NSCoding, Codable {
         super.init()
     }
     
+    //
     // MARK: Codable
+    //
     
-    public required init(from decoder: Decoder) throws {
-        let type: Decodable.Type = Dictionary<String, Decodable>.self
-        decoder.singleValueContainer().decode()
-        super.init()
+    struct CodingKeys: CodingKey {
+        var stringValue: String
+        
+        init(stringValue: String) {
+            self.stringValue = stringValue
+        }
+        
+        var intValue: Int? {
+            return nil
+        }
+        
+        init?(intValue: Int) {
+            return nil
+        }
+    }
+    
+    required public init(from decoder: Decoder) throws {
+        var rawValue = [String: Any]()
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        try container.allKeys.forEach { key in
+            let keyString = key.stringValue
+            // TODO: Verify key is valid (matches regex)
+            
+            if let value = try? container.decode(Bool.self, forKey: key) {
+                rawValue[keyString] = value
+                return
+            }
+            
+            if let value = try? container.decode(Int.self, forKey: key) {
+                rawValue[keyString] = value
+                return
+            }
+            
+            if let value = try? container.decode(String.self, forKey: key) {
+                rawValue[keyString] = value
+                return
+            }
+            
+            // now try probing for an array.
+            
+            
+            if let array = try? container.nestedUnkeyedContainer(forKey: key) {
+                let poop = MutableCollection()
+                while(!array.isAtEnd) {
+                    
+                }
+            }
+            
+            container.nestedUnkeyedContainer(forKey: <#T##Attributes.CodingKeys#>)
+            
+            throw DecodingError.dataCorruptedError(forKey: key, in: container, debugDescription: "Expected one of Int, String, Double, Boolean, or an Array thereof.")
+        }
+        
+        self.rawValue = rawValue
     }
     
     public func encode(to encoder: Encoder) throws {
-        //
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try rawValue.forEach {
+            let key = CodingKeys(stringValue: $0.key)
+            switch $0.value {
+            case let value as Int:
+                try container.encode(value, forKey: key)
+            default:
+                let context = EncodingError.Context(codingPath: container.codingPath, debugDescription: "Unexpected attribute value")
+                throw EncodingError.invalidValue($0.value, context)
+            }
+        }
     }
     
     override init() {
@@ -46,7 +110,7 @@ public class Attributes: NSObject, NSCoding, Codable {
     }
 }
 
-/// A dictionary of
+/// A hash of values.
 ///
 /// Note that there are several constraints here not expressed in the Swift type.
 ///
@@ -61,6 +125,8 @@ public class Attributes: NSObject, NSCoding, Codable {
 /// [Double]
 /// [Bool]
 /// [String: Any]
+///
+/// That is to say, nested dictionaries may not be present any deeper than at the first level of depth.
 typealias AttributeValue = [String: Any]
 
 protocol AttributeRepresentable {

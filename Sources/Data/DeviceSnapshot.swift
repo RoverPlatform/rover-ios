@@ -167,7 +167,7 @@ public class DeviceSnapshot: NSObject, Codable, NSCoding {
     // As Rover Attributes, with all of the constraints thereof implied.
     // This is using NSDictionary in lieu of Swift Dictionary in order to enable
     // public var userInfo: NSDictionary?
-    public var userInfo: Attributes
+    public var userInfo: Attributes?
     
     public init(
         advertisingIdentifier: String? = nil,
@@ -200,7 +200,7 @@ public class DeviceSnapshot: NSObject, Codable, NSCoding {
         radio: String? = nil,
         isTestDevice: Bool? = nil,
         timeZone: String? = nil,
-        userInfo: NSDictionary? = nil
+        userInfo: Attributes? = nil
     ) {
         self.advertisingIdentifier = advertisingIdentifier
         self.isBluetoothEnabled = isBluetoothEnabled

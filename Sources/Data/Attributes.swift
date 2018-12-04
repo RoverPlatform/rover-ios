@@ -50,44 +50,74 @@ public class Attributes: NSObject, NSCoding, Codable {
     }
     
     required public init(from decoder: Decoder) throws {
-        var rawValue = [String: Any]()
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        
-        try container.allKeys.forEach { key in
-            let keyString = key.stringValue
-            // TODO: Verify key is valid (matches regex)
-            
-            if let value = try? container.decode(Bool.self, forKey: key) {
-                rawValue[keyString] = value
-                return
-            }
-            
-            if let value = try? container.decode(Int.self, forKey: key) {
-                rawValue[keyString] = value
-                return
-            }
-            
-            if let value = try? container.decode(String.self, forKey: key) {
-                rawValue[keyString] = value
-                return
-            }
-            
-            // now try probing for an array.
-            
-            
-            if let array = try? container.nestedUnkeyedContainer(forKey: key) {
-                let poop = MutableCollection()
-                while(!array.isAtEnd) {
-                    
+        func fromKeyedDecoder(_ container: KeyedDecodingContainer<Attributes.CodingKeys>) throws -> [String:Any] {
+            var assembledHash = [String: Any]()
+
+            try container.allKeys.forEach { key in
+                let keyString = key.stringValue
+                // TODO: Verify key is valid (matches regex)
+                
+                if let value = try? container.decode(Bool.self, forKey: key) {
+                    assembledHash[keyString] = value
+                    return
                 }
+                
+                if let value = try? container.decode(Int.self, forKey: key) {
+                    assembledHash[keyString] = value
+                    return
+                }
+                
+                if let value = try? container.decode(String.self, forKey: key) {
+                    assembledHash[keyString] = value
+                    return
+                }
+                
+                if (try? container.decodeNil(forKey: key)) == true {
+                    assembledHash[keyString] = nil
+                    return
+                }
+                
+                // now try probing for an embedded dict.
+                if let dictionary = try? container.nestedContainer(keyedBy: CodingKeys.self, forKey: key) {
+                    assembledHash[keyString] = try fromKeyedDecoder(dictionary)
+                    return
+                }
+                
+                // now try probing for an array.
+                if var array = try? container.nestedUnkeyedContainer(forKey: key) {
+                    var collection: [Any] = []
+                    while(!array.isAtEnd) {
+                        if let value = try? array.decode(Bool.self) {
+                            collection.append(value)
+                            continue
+                        }
+                        
+                        if let value = try? array.decode(Int.self) {
+                            collection.append(value)
+                            continue
+                        }
+                        
+                        if let value = try? array.decode(String.self) {
+                            collection.append(value)
+                            continue
+                        }
+                        
+                        
+                        throw DecodingError.dataCorruptedError(in: array, debugDescription: "Expected one of Int, String, Double, Boolean.")
+                    }
+                    
+                    assembledHash[keyString] = collection
+                }
+                
+                throw DecodingError.dataCorruptedError(forKey: key, in: container, debugDescription: "Expected one of Int, String, Double, Boolean, or an Array thereof.")
             }
             
-            container.nestedUnkeyedContainer(forKey: <#T##Attributes.CodingKeys#>)
-            
-            throw DecodingError.dataCorruptedError(forKey: key, in: container, debugDescription: "Expected one of Int, String, Double, Boolean, or an Array thereof.")
+            return assembledHash
         }
         
-        self.rawValue = rawValue
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        self.rawValue = try fromKeyedDecoder(container)
     }
     
     public func encode(to encoder: Encoder) throws {
@@ -110,23 +140,21 @@ public class Attributes: NSObject, NSCoding, Codable {
     }
 }
 
-/// A hash of values.
+/// A dictionary of values.
 ///
-/// Note that there are several constraints here not expressed in the Swift type.
+/// Note that there are several constraints here not expressed in the Swift type.  Namely, arrays may not be present within dictionaries or other arrays.
 ///
-/// The value type, Any, may only be one of:
+/// Thus:
 ///
-/// String
-/// Int
-/// Double
-/// Bool
-/// [String]
-/// [Int]
-/// [Double]
-/// [Bool]
-/// [String: Any]
-///
-/// That is to say, nested dictionaries may not be present any deeper than at the first level of depth.
+/// * `String`
+/// * `Int`
+/// * `Double`
+/// * `Bool`
+/// * `[String]`
+/// * `[Int]`
+/// * `[Double]`
+/// * `[Bool]`
+/// * `[String: Any]` (but the `Any` here may not be another dictionary.)
 typealias AttributeValue = [String: Any]
 
 protocol AttributeRepresentable {
@@ -247,18 +275,3 @@ class BooleanValue: NSCoding, Codable {
         // TODO:
     }
 }
-
-// Possible valid VALUE types
-
-// String
-// Int
-// Double
-// Bool
-// [String]
-// [Int]
-// [Double]
-// [Bool]
-// [String: Any]
-
-
-//func updateUserInfo(block: (inout [String: Any] -> Void))

@@ -59,7 +59,7 @@ class InfluenceTrackerService: InfluenceTracker {
             var campaignID: ID
             var receivedAt: Date
             
-            var attributeValue: AttributeValue {
+            var asAttributes: Attributes {
                 return [
                     "id": notificationID,
                     "campaignID": campaignID

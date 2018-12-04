@@ -51,7 +51,7 @@ extension Notification {
 }
 
 extension Notification: AttributeRepresentable {
-    public var attributeValue: AttributeValue {
+    public var asAttributes: Attributes {
         return [
             "id": id,
             "campaignID": campaignID

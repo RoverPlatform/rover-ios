@@ -39,7 +39,7 @@ public final class Beacon: NSManagedObject {
 // MARK: AttributeRepresentable
 
 extension Beacon: AttributeRepresentable {
-    public var attributeValue: AttributeValue {
+    public var asAttributes: Attributes {
         let attributes: Attributes = [
             "id": self.id,
             "name": self.name,

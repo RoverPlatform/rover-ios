@@ -11,6 +11,14 @@ import os
 
 public class Attributes: NSObject, NSCoding, Codable {
     var rawValue: [String: Any]
+    
+    public init(_ dictionary: [String:Any]) {
+        // to get an implicit pass of our validation logic, render it to our internal NS attributes.
+        dictionary.asAttributesForNsDictionary
+        self.rawValue = dictionary
+    }
+    
+    // TODO: andrew start here and see about implementing the dictionary literal magic.
 
     //
     // MARK: NSCoding
@@ -158,7 +166,7 @@ public class Attributes: NSObject, NSCoding, Codable {
 typealias AttributeValue = [String: Any]
 
 protocol AttributeRepresentable {
-    var attributeValue: AttributeValue { get }
+    var asAttributes: Attributes { get }
 }
 
 extension Dictionary where Key == String, Value: Any {

@@ -61,7 +61,7 @@ extension Experience: Decodable {
 // MARK: AttributeRepresentable
 
 extension Experience: AttributeRepresentable {
-    public var attributeValue: AttributeValue {
+    public var asAttributes: Attributes {
         let keys = self.keys.reduce(into: Attributes()) { $0[$1.0] = $1.1 }
         var attributes: Attributes = [
             "id": id,

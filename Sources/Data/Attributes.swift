@@ -9,16 +9,15 @@
 import Foundation
 import os
 
-public class Attributes: NSObject, NSCoding, Codable {
+/// Wraps a [String: Any], but enables use of both NSCoding and Codable.  Enforces the
+class Attributes: NSObject, NSCoding, Codable {
     var rawValue: [String: Any]
     
     public init(_ dictionary: [String:Any]) {
-        // to get an implicit pass of our validation logic, render it to our internal NS attributes.
-        dictionary.asAttributesForNsDictionary
+        // to get an implicit pass of our validation logic, render it to our internal NS attributes, which as a side-effect can emit an error.
+        let _ = dictionary.asAttributesForNsDictionary
         self.rawValue = dictionary
     }
-    
-    // TODO: andrew start here and see about implementing the dictionary literal magic.
 
     //
     // MARK: NSCoding
@@ -41,7 +40,8 @@ public class Attributes: NSObject, NSCoding, Codable {
     // MARK: Codable
     //
     
-    struct CodingKeys: CodingKey {
+    /// This implementation of CodingKey allows for handling data without strongly and statically typed keys with Codable.
+    struct DynamicCodingKeys: CodingKey {
         var stringValue: String
         
         init(stringValue: String) {
@@ -58,7 +58,7 @@ public class Attributes: NSObject, NSCoding, Codable {
     }
     
     required public init(from decoder: Decoder) throws {
-        func fromKeyedDecoder(_ container: KeyedDecodingContainer<Attributes.CodingKeys>) throws -> [String:Any] {
+        func fromKeyedDecoder(_ container: KeyedDecodingContainer<Attributes.DynamicCodingKeys>) throws -> [String:Any] {
             var assembledHash = [String: Any]()
 
             try container.allKeys.forEach { key in
@@ -86,7 +86,7 @@ public class Attributes: NSObject, NSCoding, Codable {
                 }
                 
                 // now try probing for an embedded dict.
-                if let dictionary = try? container.nestedContainer(keyedBy: CodingKeys.self, forKey: key) {
+                if let dictionary = try? container.nestedContainer(keyedBy: DynamicCodingKeys.self, forKey: key) {
                     assembledHash[keyString] = try fromKeyedDecoder(dictionary)
                     return
                 }
@@ -103,15 +103,14 @@ public class Attributes: NSObject, NSCoding, Codable {
                         if let value = try? array.decode(Int.self) {
                             collection.append(value)
                             continue
-                        }
+                         }
                         
                         if let value = try? array.decode(String.self) {
                             collection.append(value)
                             continue
                         }
                         
-                        
-                        throw DecodingError.dataCorruptedError(in: array, debugDescription: "Expected one of Int, String, Double, Boolean.")
+                        throw DecodingError.dataCorruptedError(in: array, debugDescription: "Expected one of Int, String, Double, Boolean. Rover attributes arrays may only contain those primitive types.")
                     }
                     
                     assembledHash[keyString] = collection
@@ -123,23 +122,55 @@ public class Attributes: NSObject, NSCoding, Codable {
             return assembledHash
         }
         
-        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let container = try decoder.container(keyedBy: DynamicCodingKeys.self)
         
         self.rawValue = try fromKeyedDecoder(container)
     }
     
     public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try rawValue.forEach {
-            let key = CodingKeys(stringValue: $0.key)
-            switch $0.value {
-            case let value as Int:
-                try container.encode(value, forKey: key)
-            default:
-                let context = EncodingError.Context(codingPath: container.codingPath, debugDescription: "Unexpected attribute value")
-                throw EncodingError.invalidValue($0.value, context)
+        /// nested function for recursing through the dictionary and populating the Encoder with it, doing the necessary type coercions on the way.
+        func encodeToContainer(dictionary: [String: Any], container: inout KeyedEncodingContainer<Attributes.DynamicCodingKeys>) throws {
+            try dictionary.forEach { (codingKey, value) in
+                let key = DynamicCodingKeys(stringValue: codingKey)
+                switch value {
+                case let value as Int:
+                    try container.encode(value, forKey: key)
+                case let value as Bool:
+                    try container.encode(value, forKey: key)
+                case let value as String:
+                    try container.encode(value, forKey: key)
+                case let value as Double:
+                    try container.encode(value, forKey: key)
+                case let array as [Any]:
+                    var arrayContainer = container.nestedUnkeyedContainer(forKey: key)
+                    try array.forEach({ (item) in
+                        // sadly must duplicate the primitive value type coercion from above, since KeyedEncodingContainer and UnkeyedEncodingContainer have different interfaces.
+                        switch item {
+                        case let value as Int:
+                            try arrayContainer.encode(value)
+                        case let value as Bool:
+                            try arrayContainer.encode(value)
+                        case let value as String:
+                            try arrayContainer.encode(value)
+                        case let value as Double:
+                            try arrayContainer.encode(value)
+                        default:
+                            let context = EncodingError.Context(codingPath: arrayContainer.codingPath, debugDescription: "Expected one of Int, String, Double, Boolean. Rover attributes arrays may only contain those primitive types.")
+                            throw EncodingError.invalidValue(item, context)
+                        }
+                    })
+                case let value as Dictionary<String, Any>:
+                    var nestedContainer = container.nestedContainer(keyedBy: DynamicCodingKeys.self, forKey: key)
+                    try encodeToContainer(dictionary: value, container: &nestedContainer)
+                default:
+                    let context = EncodingError.Context(codingPath: container.codingPath, debugDescription: "Unexpected attribute value")
+                    throw EncodingError.invalidValue(value, context)
+                }
             }
         }
+        var container = encoder.container(keyedBy: DynamicCodingKeys.self)
+
+        try encodeToContainer(dictionary: self.rawValue, container: &container)
     }
     
     override init() {
@@ -148,26 +179,8 @@ public class Attributes: NSObject, NSCoding, Codable {
     }
 }
 
-/// A dictionary of values.
-///
-/// Note that there are several constraints here not expressed in the Swift type.  Namely, arrays may not be present within dictionaries or other arrays.
-///
-/// Thus:
-///
-/// * `String`
-/// * `Int`
-/// * `Double`
-/// * `Bool`
-/// * `[String]`
-/// * `[Int]`
-/// * `[Double]`
-/// * `[Bool]`
-/// * `[String: Any]` (but the `Any` here may not be another dictionary.)
-typealias AttributeValue = [String: Any]
 
-protocol AttributeRepresentable {
-    var asAttributes: Attributes { get }
-}
+typealias AttributeValue = [String: Any]
 
 extension Dictionary where Key == String, Value: Any {
     fileprivate var asAttributesForNsDictionary: [String: Any] {
@@ -277,8 +290,7 @@ class BooleanValue: NSCoding, Codable {
         value = try container.decode(Bool.self)
     }
     
-    
-    
+
     public func encode(to encoder: Encoder) throws {
         // TODO:
     }

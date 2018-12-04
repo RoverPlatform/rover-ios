@@ -99,8 +99,8 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     override open func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
-        let attributes: Attributes = [
-            "experience": experience,
+        let attributes: [Attributes] = [
+            "experience": experience.attributes,
             "screen": screen
         ]
         

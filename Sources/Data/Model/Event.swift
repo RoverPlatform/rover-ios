@@ -10,60 +10,19 @@ import Foundation
 import CoreData
 import os
 
-public final class Event : NSManagedObject {
+/// A fully filled out Event, modelled to be suitable for storage in the local database.
+///
+/// These are used both for store-and-forwarding events to the Rover cloud services, but also kept and queried locally to power automated campaigns.
+final class Event : NSManagedObject {
     @nonobjc public class func fetchRequest() -> NSFetchRequest<Event> {
         return NSFetchRequest<Event>(entityName: "Event")
     }
     
-    @NSManaged public internal(set) var id: String
-    @NSManaged public internal(set) var name: String
-    @NSManaged public internal(set) var namespace: String?
-    @NSManaged public internal(set) var attributes: Attributes
-    @NSManaged public internal(set) var deviceSnapshot: DeviceSnapshot
-    @NSManaged public internal(set) var timestamp: Date
-    @NSManaged public internal(set) var isFlushed: Bool
+    @NSManaged internal(set) var id: String
+    @NSManaged internal(set) var name: String
+    @NSManaged internal(set) var namespace: String?
+    @NSManaged internal(set) var attributes: Attributes?
+    @NSManaged internal(set) var deviceSnapshot: DeviceSnapshot
+    @NSManaged internal(set) var timestamp: Date
+    @NSManaged internal(set) var isFlushed: Bool
 }
-
-// MARK: Value Object Serialization
-//
-//class DeviceSnapshotTransformer : ValueTransformer {
-//    override class func transformedValueClass() -> AnyClass {
-//        return NSData.self
-//    }
-//
-//    override class func allowsReverseTransformation() -> Bool {
-//        return true
-//    }
-//
-//    override func transformedValue(_ value: Any?) -> Any? {
-//        guard let deviceSnapshot = value as? DeviceSnapshot else {
-//            os_log("DeviceSnapshotTransformer given something other than DeviceSnapshot.  Returning nil", log: .persistence, type: .error)
-//            return nil
-//        }
-//        guard let encoded = try? JSONEncoder.default.encode(deviceSnapshot) else {
-//            os_log("DeviceSnapshotTransformer could not encode DeviceSnapshot.  Returning nil.", log: .persistence, type: .error)
-//            return nil
-//        }
-//        return encoded
-//    }
-//
-//    override func reverseTransformedValue(_ value: Any?) -> Any? {
-//
-//    }
-//}
-
-//class DeviceSnapshotTransformable : NSObject, NSCoding {
-//    var deviceSnapshot: DeviceSnapshot
-//
-//    func encode(with aCoder: NSCoder) {
-//        let json = JSONEncoder.default.encode(deviceSnapshot)
-//        aCoder.encode(json)
-//    }
-//
-//    required init?(coder aDecoder: NSCoder) {
-//        guard let json = aDecoder.decodeData() else {
-//            os_log("")
-//            return nil
-//        }
-//    }
-//}

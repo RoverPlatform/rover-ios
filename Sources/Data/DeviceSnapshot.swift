@@ -8,8 +8,8 @@
 
 import Foundation
 
-public class DeviceSnapshot: NSObject, Codable, NSCoding {
-    public func encode(with aCoder: NSCoder) {
+class DeviceSnapshot: NSObject, Codable, NSCoding {
+    func encode(with aCoder: NSCoder) {
         //
         aCoder.encode(self.advertisingIdentifier, forKey: "advertisingIdentifier")
         aCoder.encode(self.isBluetoothEnabled, forKey: "isBluetoothEnabled")
@@ -45,131 +45,124 @@ public class DeviceSnapshot: NSObject, Codable, NSCoding {
         aCoder.encode(self.userInfo, forKey: "userInfo")
     }
     
-    public required init?(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         // we must implement Decodable manually because the NSDictionary field used for Attributes (which itself was used in lieu of Swift Dictionary in order to enable NSCoding) prevents Codable being synthesized.
         
+        // TODO: ANDREW START HERE and handle nil cases for any values that may improperly coerce nil values as empty or falsy.
+        
+        self.advertisingIdentifier = aDecoder.decodeObject(forKey: "advertisingIdentifier") as? String
         
         self.isBluetoothEnabled = aDecoder.decodeBool(forKey: "isBluetoothEnabled")
-        // TODO: manual decodings
-    }
-    
-    public required init(from decoder: Decoder) throws {
+        self.localeLanguage = aDecoder.decodeObject(forKey: "localeLanguage") as? String
+        self.localeScript = aDecoder.decodeObject(forKey: "localeScript") as? String
         
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.advertisingIdentifier = try container.decode(String.self, forKey: .advertisingIdentifier)
-        self.isBluetoothEnabled = try container.decode(Bool.self, forKey: .isBluetoothEnabled)
-        // TODO: manual decodings
-    }
-    
-    public func encode(to encoder: Encoder) throws {
-        // TODO: manual encodings
-    }
-    
-    // TODO: ripout
-    enum CodingKeys : String, CodingKey {
-        case advertisingIdentifier
-        case isBluetoothEnabled
-        case localeLanguage
-        case localeRegion
-        case localeScript
-        case isLocationServicesEnabled
-        case location
-        case locationAuthorization
-        case notificationAuthorization
-        case pushToken
-        case isCellularEnabled
-        case isWifiEnabled
-        case appBadgeNumber
-        case appBuild
-        case appIdentifier
-        case appVersion
-        case buildEnvironment
-        case deviceIdentifier
-        case deviceManufacturer
-        case deviceModel
-        case deviceName
-        case operatingSystemName
-        case operatingSystemVersion
-        case screenHeight
-        case screenWidth
-        case sdkVersion
-        case carrierName
-        case radio
-        case isTestDevice
-        case timeZone
-        case userInfo
+        self.isLocationServicesEnabled = aDecoder.decodeBool(forKey: "isLocationServicesEnabled")
+        self.location = aDecoder.decodeObject(forKey: "location") as? DeviceLocation
+        self.locationAuthorization = aDecoder.decodeObject(forKey: "locationAuthorization") as? String
+        self.notificationAuthorization = aDecoder.decodeObject(forKey: "notificationAuthorization") as? String
+        
+        self.isBluetoothEnabled = aDecoder.decodeBool(forKey: "isBluetoothEnabled")
+        
+        self.pushToken = aDecoder.decodeObject(forKey: "pushToken") as? DevicePushToken
+        
+        self.isCellularEnabled = aDecoder.decodeBool(forKey: "isCellularEnabled")
+        
+        self.isWifiEnabled = aDecoder.decodeBool(forKey: "isWifiEnabled")
+        self.appBadgeNumber = aDecoder.decodeInteger(forKey: "appBadgeNumber")
+        
+        self.appBuild = aDecoder.decodeObject(forKey: "appBuild") as? String
+        self.appIdentifier = aDecoder.decodeObject(forKey: "appIdentifier") as? String
+        self.appVersion = aDecoder.decodeObject(forKey: "appVersion") as? String
+        self.buildEnvironment = aDecoder.decodeObject(forKey: "buildEnvironment") as? BuildEnvironment
+        self.deviceIdentifier = aDecoder.decodeObject(forKey: "deviceIdentifier") as? String
+        self.deviceManufacturer = aDecoder.decodeObject(forKey: "deviceManufacturer") as? String
+        self.deviceModel = aDecoder.decodeObject(forKey: "deviceModel") as? String
+        self.deviceName = aDecoder.decodeObject(forKey: "deviceName") as? String
+        self.operatingSystemName = aDecoder.decodeObject(forKey: "operatingSystemName") as? String
+        self.operatingSystemVersion = aDecoder.decodeObject(forKey: "operatingSystemVersion") as? String
+        self.screenHeight = aDecoder.decodeInteger(forKey: "screenHeight")
+        self.screenWidth = aDecoder.decodeInteger(forKey: "screenWidth")
+        self.sdkVersion = aDecoder.decodeObject(forKey: "sdkVersion") as? String
+        self.carrierName = aDecoder.decodeObject(forKey: "carrierName") as? String
+        self.radio = aDecoder.decodeObject(forKey: "radio") as? String
+        
+        if aDecoder.containsValue(forKey: "isTestDevice") {
+            self.isTestDevice = aDecoder.decodeBool(forKey: "isTestDevice")
+        }
+        
+        
+        self.timeZone = aDecoder.decodeObject(forKey: "timeZone") as? String
+        self.userInfo = aDecoder.decodeObject(forKey: "userInfo") as? Attributes
     }
     
     // MARK: AdSupport
     
-    public var advertisingIdentifier: String?
+    var advertisingIdentifier: String?
     
     // MARK: Bluetooth
     
-    public var isBluetoothEnabled: Bool?
+    var isBluetoothEnabled: Bool?
     
     // MARK: Locale
     
-    public var localeLanguage: String?
-    public var localeRegion: String?
-    public var localeScript: String?
+    var localeLanguage: String?
+    var localeRegion: String?
+    var localeScript: String?
 
     
-    public var isLocationServicesEnabled: Bool?
-    public var location: DeviceLocation?
-    public var locationAuthorization: String?
+    var isLocationServicesEnabled: Bool?
+    var location: DeviceLocation?
+    var locationAuthorization: String?
     
     // MARK: Notifications
     
-    public var notificationAuthorization: String?
+    var notificationAuthorization: String?
     
     // MARK: Push Token
     
-    public var pushToken: DevicePushToken?
+    var pushToken: DevicePushToken?
     
     // MARK: Reachability
     
-    public var isCellularEnabled: Bool?
-    public var isWifiEnabled: Bool?
+    var isCellularEnabled: Bool?
+    var isWifiEnabled: Bool?
     
     // MARK: Static Context
     
-    public var appBadgeNumber: Int?
-    public var appBuild: String?
-    public var appIdentifier: String?
-    public var appVersion: String?
-    public var buildEnvironment: BuildEnvironment?
-    public var deviceIdentifier: String?
-    public var deviceManufacturer: String?
-    public var deviceModel: String?
-    public var deviceName: String?
-    public var operatingSystemName: String?
-    public var operatingSystemVersion: String?
-    public var screenHeight: Int?
-    public var screenWidth: Int?
-    public var sdkVersion: String?
+    var appBadgeNumber: Int?
+    var appBuild: String?
+    var appIdentifier: String?
+    var appVersion: String?
+    var buildEnvironment: BuildEnvironment?
+    var deviceIdentifier: String?
+    var deviceManufacturer: String?
+    var deviceModel: String?
+    var deviceName: String?
+    var operatingSystemName: String?
+    var operatingSystemVersion: String?
+    var screenHeight: Int?
+    var screenWidth: Int?
+    var sdkVersion: String?
     
     // MARK: Telephony
     
-    public var carrierName: String?
-    public var radio: String?
+    var carrierName: String?
+    var radio: String?
     
     // MARK: Testing
     
-    public var isTestDevice: Bool?
+    var isTestDevice: Bool?
     
     // MARK: Time Zone
     
-    public var timeZone: String?
+    var timeZone: String?
     
     // MARK: User Info
     
-    // As Rover Attributes, with all of the constraints thereof implied.
-    // This is using NSDictionary in lieu of Swift Dictionary in order to enable
-    // public var userInfo: NSDictionary?
-    public var userInfo: Attributes?
+    /// As Rover Attributes, with all of the constraints thereof implied.
+    var userInfo: Attributes?
     
-    public init(
+    init(
         advertisingIdentifier: String? = nil,
         isBluetoothEnabled: Bool? = nil,
         localeLanguage: String? = nil,
@@ -238,11 +231,11 @@ public class DeviceSnapshot: NSObject, Codable, NSCoding {
 
 // MARK: Push Token
 
-public class DevicePushToken: NSCoding, Codable {
-    public var value: String
-    public var timestamp: Date
+class DevicePushToken: NSCoding, Codable {
+    var value: String
+    var timestamp: Date
     
-    public init(
+    init(
         value: String,
         timestamp: Date
         ) {
@@ -250,26 +243,22 @@ public class DevicePushToken: NSCoding, Codable {
         self.timestamp = timestamp
     }
     
-    public func encode(with aCoder: NSCoder) {
-        // TODO
+    func encode(with aCoder: NSCoder) {
+        aCoder.encode(value, forKey: "value")
+        aCoder.encode(timestamp, forKey: "date")
     }
     
-    public required init?(coder aDecoder: NSCoder) {
-        // TODO
-    }
-    
-    public required init(from decoder: Decoder) throws {
-        // TODO
-    }
-    
-    public func encode(to encoder: Encoder) throws {
-        // TODO
+    required init?(coder aDecoder: NSCoder) {
+        guard let value = aDecoder.decodeObject(forKey: "value") as? NSString else { return nil }
+        self.value = String(value)
+        guard let timestamp = aDecoder.decodeObject(forKey: "timestamp") as? Date else { return nil }
+        self.timestamp = timestamp
     }
 }
 
 // MARK: Build Environment
 
-public enum BuildEnvironment: String, Codable, Equatable {
+enum BuildEnvironment: String, Codable, Equatable {
     case production = "PRODUCTION"
     case development = "DEVELOPMENT"
     case simulator = "SIMULATOR"
@@ -277,34 +266,34 @@ public enum BuildEnvironment: String, Codable, Equatable {
 
 // MARK: Location
 
-public class DeviceCoordinate: NSObject, Codable, NSCoding {
-    public var latitude: Double
-    public var longitude: Double
+class DeviceCoordinate: NSObject, Codable, NSCoding {
+    var latitude: Double
+    var longitude: Double
     
-    public func encode(with aCoder: NSCoder) {
+    func encode(with aCoder: NSCoder) {
         aCoder.encode(self.latitude, forKey: "latitude")
         aCoder.encode(self.longitude, forKey: "longitude")
     }
     
-    public required init?(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         self.latitude = aDecoder.decodeDouble(forKey: "latitude")
         self.longitude = aDecoder.decodeDouble(forKey: "longitude")
         // TODO: manual decodings
     }
     
-    public init(latitude: Double, longitude: Double) {
+    init(latitude: Double, longitude: Double) {
         self.latitude = latitude
         self.longitude = longitude
     }
     
-    public required init(from decoder: Decoder) throws {
+    required init(from decoder: Decoder) throws {
         // we want to represent coordinate as a tuple in our JSON as per our GraphQL API rather than a hash of name-value pairs as the default synthesized implementation of Codable would have done.
         var container = try decoder.unkeyedContainer()
         latitude = try container.decode(Double.self)
         longitude = try container.decode(Double.self)
     }
     
-    public func encode(to encoder: Encoder) throws {
+    func encode(to encoder: Encoder) throws {
         // we want to represent coordinate as a tuple in our JSON as per our GraphQL API rather than a hash of name-value pairs as the default synthesized implementation of Codable would have done.
         var container = encoder.unkeyedContainer()
         try container.encode(latitude)
@@ -312,22 +301,22 @@ public class DeviceCoordinate: NSObject, Codable, NSCoding {
     }
 }
 
-public class DeviceLocation: Codable, NSCoding {
-    public var coordinate: DeviceCoordinate
-    public var altitude: Double
-    public var horizontalAccuracy: Double
-    public var verticalAccuracy: Double
-    public var address: DeviceAddress?
-    public var timestamp: Date
+class DeviceLocation: Codable, NSCoding {
+    var coordinate: DeviceCoordinate
+    var altitude: Double
+    var horizontalAccuracy: Double
+    var verticalAccuracy: Double
+    var address: DeviceAddress?
+    var timestamp: Date
     
     // TODO: NSCoding implementation
     
-    public func encode(with aCoder: NSCoder) {
+    func encode(with aCoder: NSCoder) {
         aCoder.encode(self.coordinate, forKey: "coordinate")
         // TODO: manual encodings
     }
     
-    public required init?(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         guard let coordinate = aDecoder.decodeObject(forKey: "coordinate") as? DeviceCoordinate else {
             return nil
         }
@@ -335,7 +324,7 @@ public class DeviceLocation: Codable, NSCoding {
         // TODO: manual decodings
     }
     
-    public init(
+    init(
         coordinate: DeviceCoordinate,
         altitude: Double,
         horizontalAccuracy: Double,
@@ -353,30 +342,30 @@ public class DeviceLocation: Codable, NSCoding {
 }
 
     
-public class DeviceAddress: Codable, NSCoding {
-    public var street: String?
-    public var city: String?
-    public var state: String?
-    public var postalCode: String?
-    public var country: String?
-    public var isoCountryCode: String?
-    public var subAdministrativeArea: String?
-    public var subLocality: String?
+class DeviceAddress: Codable, NSCoding {
+    var street: String?
+    var city: String?
+    var state: String?
+    var postalCode: String?
+    var country: String?
+    var isoCountryCode: String?
+    var subAdministrativeArea: String?
+    var subLocality: String?
     
     // TODO: NSCoding implementation
     
-    public func encode(with aCoder: NSCoder) {
+    func encode(with aCoder: NSCoder) {
         aCoder.encode(self.street, forKey: "street")
         aCoder.encode(self.city, forKey: "city")
         // TODO: manual encodings
     }
     
-    public required init?(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         self.street = aDecoder.decodeObject(forKey: "street") as? String ?? ""
         // TODO: manual decodings
     }
     
-    public init(
+    init(
         street: String?,
         city: String?,
         state: String?,
@@ -396,4 +385,3 @@ public class DeviceAddress: Codable, NSCoding {
         self.subLocality = subLocality
     }
 }
-

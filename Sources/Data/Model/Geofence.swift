@@ -36,10 +36,10 @@ public final class Geofence: NSManagedObject {
     }
 }
 
-// MARK: AttributeRepresentable
+// MARK: Attributes
 
-extension Geofence: AttributeRepresentable {
-    public var asAttributes: Attributes {
+extension Geofence {
+    public var attributes: [String: Any] {
         return [
             "id": self.id,
             "name": self.name,

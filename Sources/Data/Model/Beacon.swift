@@ -36,11 +36,11 @@ public final class Beacon: NSManagedObject {
     }
 }
 
-// MARK: AttributeRepresentable
+// MARK: Attributes
 
-extension Beacon: AttributeRepresentable {
-    public var asAttributes: Attributes {
-        let attributes: Attributes = [
+extension Beacon {
+    public var attributes: [String: Any] {
+        return [
             "id": self.id,
             "name": self.name,
             "uuid": self.uuid.uuidString,
@@ -48,8 +48,6 @@ extension Beacon: AttributeRepresentable {
             "minor": self.minor,
             "tags": self.tags
         ]
-        
-        return .object(attributes)
     }
 }
 

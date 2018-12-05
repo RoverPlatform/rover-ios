@@ -321,6 +321,9 @@ class DeviceLocation: Codable, NSCoding {
             return nil
         }
         self.coordinate = coordinate
+        
+        // TEMPORARY IN ORDER TO BUILD
+        return nil
         // TODO: manual decodings
     }
     

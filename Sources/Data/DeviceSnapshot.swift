@@ -20,7 +20,6 @@ class DeviceSnapshot: NSObject, Codable, NSCoding {
         aCoder.encode(self.location, forKey: "location")
         aCoder.encode(self.locationAuthorization, forKey: "locationAuthorization")
         aCoder.encode(self.notificationAuthorization, forKey: "notificationAuthorization")
-        aCoder.encode(self.isBluetoothEnabled, forKey: "isBluetoothEnabled")
         aCoder.encode(self.pushToken, forKey: "pushToken")
         aCoder.encode(self.isCellularEnabled, forKey: "isCellularEnabled")
         aCoder.encode(self.isWifiEnabled, forKey: "isWifiEnabled")
@@ -28,7 +27,7 @@ class DeviceSnapshot: NSObject, Codable, NSCoding {
         aCoder.encode(self.appBuild, forKey: "appBuild")
         aCoder.encode(self.appIdentifier, forKey: "appIdentifier")
         aCoder.encode(self.appVersion, forKey: "appVersion")
-        aCoder.encode(self.buildEnvironment, forKey: "buildEnvironment")
+        aCoder.encode(self.buildEnvironment?.rawValue, forKey: "buildEnvironment")
         aCoder.encode(self.deviceIdentifier, forKey: "deviceIdentifier")
         aCoder.encode(self.deviceManufacturer, forKey: "deviceManufacturer")
         aCoder.encode(self.deviceModel, forKey: "deviceModel")
@@ -52,43 +51,42 @@ class DeviceSnapshot: NSObject, Codable, NSCoding {
         
         self.advertisingIdentifier = aDecoder.decodeObject(forKey: "advertisingIdentifier") as? String
         
-        self.isBluetoothEnabled = aDecoder.decodeBool(forKey: "isBluetoothEnabled")
-        self.localeLanguage = aDecoder.decodeObject(forKey: "localeLanguage") as? String
-        self.localeScript = aDecoder.decodeObject(forKey: "localeScript") as? String
         
-        self.isLocationServicesEnabled = aDecoder.decodeBool(forKey: "isLocationServicesEnabled")
+        self.isBluetoothEnabled = aDecoder.decodeObject(forKey: "isBluetoothEnabled") as? Bool
+        self.localeLanguage = aDecoder.decodeObject(forKey: "localeLanguage") as? String
+        self.localeRegion = aDecoder.decodeObject(forKey: "localeRegion") as? String
+        self.localeScript = aDecoder.decodeObject(forKey: "localeScript") as? String
+        self.isLocationServicesEnabled = aDecoder.decodeObject(forKey: "isLocationServicesEnabled") as? Bool
         self.location = aDecoder.decodeObject(forKey: "location") as? DeviceLocation
         self.locationAuthorization = aDecoder.decodeObject(forKey: "locationAuthorization") as? String
         self.notificationAuthorization = aDecoder.decodeObject(forKey: "notificationAuthorization") as? String
-        
-        self.isBluetoothEnabled = aDecoder.decodeBool(forKey: "isBluetoothEnabled")
-        
         self.pushToken = aDecoder.decodeObject(forKey: "pushToken") as? DevicePushToken
         
-        self.isCellularEnabled = aDecoder.decodeBool(forKey: "isCellularEnabled")
+        self.isCellularEnabled = aDecoder.decodeObject(forKey: "isCellularEnabled") as? Bool
         
-        self.isWifiEnabled = aDecoder.decodeBool(forKey: "isWifiEnabled")
-        self.appBadgeNumber = aDecoder.decodeInteger(forKey: "appBadgeNumber")
+        self.isWifiEnabled = aDecoder.decodeObject(forKey: "isWifiEnabled") as? Bool
+        self.appBadgeNumber = aDecoder.decodeObject(forKey: "appBadgeNumber") as? Int
         
         self.appBuild = aDecoder.decodeObject(forKey: "appBuild") as? String
         self.appIdentifier = aDecoder.decodeObject(forKey: "appIdentifier") as? String
         self.appVersion = aDecoder.decodeObject(forKey: "appVersion") as? String
-        self.buildEnvironment = aDecoder.decodeObject(forKey: "buildEnvironment") as? BuildEnvironment
+        if let buildEnvironmentString = aDecoder.decodeObject(forKey: "buildEnvironment") as? String {
+            self.buildEnvironment = BuildEnvironment.init(rawValue: buildEnvironmentString)
+        }
         self.deviceIdentifier = aDecoder.decodeObject(forKey: "deviceIdentifier") as? String
         self.deviceManufacturer = aDecoder.decodeObject(forKey: "deviceManufacturer") as? String
         self.deviceModel = aDecoder.decodeObject(forKey: "deviceModel") as? String
         self.deviceName = aDecoder.decodeObject(forKey: "deviceName") as? String
         self.operatingSystemName = aDecoder.decodeObject(forKey: "operatingSystemName") as? String
         self.operatingSystemVersion = aDecoder.decodeObject(forKey: "operatingSystemVersion") as? String
-        self.screenHeight = aDecoder.decodeInteger(forKey: "screenHeight")
-        self.screenWidth = aDecoder.decodeInteger(forKey: "screenWidth")
+        self.screenHeight = aDecoder.decodeObject(forKey: "screenHeight") as? Int
+        self.screenWidth = aDecoder.decodeObject(forKey: "screenWidth") as? Int
         self.sdkVersion = aDecoder.decodeObject(forKey: "sdkVersion") as? String
         self.carrierName = aDecoder.decodeObject(forKey: "carrierName") as? String
         self.radio = aDecoder.decodeObject(forKey: "radio") as? String
         
-        if aDecoder.containsValue(forKey: "isTestDevice") {
-            self.isTestDevice = aDecoder.decodeBool(forKey: "isTestDevice")
-        }
+        self.isTestDevice = aDecoder.decodeObject(forKey: "isTestDevice") as? Bool
+        
         
         
         self.timeZone = aDecoder.decodeObject(forKey: "timeZone") as? String
@@ -231,7 +229,7 @@ class DeviceSnapshot: NSObject, Codable, NSCoding {
 
 // MARK: Push Token
 
-class DevicePushToken: NSCoding, Codable {
+class DevicePushToken: NSObject, NSCoding, Codable {
     var value: String
     var timestamp: Date
     
@@ -301,7 +299,7 @@ class DeviceCoordinate: NSObject, Codable, NSCoding {
     }
 }
 
-class DeviceLocation: Codable, NSCoding {
+class DeviceLocation: NSObject, Codable, NSCoding {
     var coordinate: DeviceCoordinate
     var altitude: Double
     var horizontalAccuracy: Double
@@ -309,11 +307,15 @@ class DeviceLocation: Codable, NSCoding {
     var address: DeviceAddress?
     var timestamp: Date
     
-    // TODO: NSCoding implementation
+    // MARK: NSCoding
     
     func encode(with aCoder: NSCoder) {
         aCoder.encode(self.coordinate, forKey: "coordinate")
-        // TODO: manual encodings
+        aCoder.encode(self.altitude, forKey: "altitude")
+        aCoder.encode(self.horizontalAccuracy, forKey: "horizontalAccuracy")
+        aCoder.encode(self.verticalAccuracy, forKey: "verticalAccuracy")
+        aCoder.encode(self.address, forKey: "address")
+        aCoder.encode(self.timestamp, forKey: "timestamp")
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -321,10 +323,11 @@ class DeviceLocation: Codable, NSCoding {
             return nil
         }
         self.coordinate = coordinate
-        
-        // TEMPORARY IN ORDER TO BUILD
-        return nil
-        // TODO: manual decodings
+        self.altitude = aDecoder.decodeDouble(forKey: "altitude")
+        self.horizontalAccuracy = aDecoder.decodeDouble(forKey: "horizontalAccuracy")
+        self.verticalAccuracy = aDecoder.decodeDouble(forKey: "verticalAccuracy")
+        self.address = aDecoder.decodeObject(forKey: "address") as? DeviceAddress
+        self.timestamp = aDecoder.decodeObject(forKey: "timestamp") as! Date
     }
     
     init(
@@ -345,7 +348,7 @@ class DeviceLocation: Codable, NSCoding {
 }
 
     
-class DeviceAddress: Codable, NSCoding {
+class DeviceAddress: NSObject, Codable, NSCoding {
     var street: String?
     var city: String?
     var state: String?

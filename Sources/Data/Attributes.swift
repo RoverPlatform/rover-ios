@@ -218,10 +218,11 @@ extension Dictionary where Key == String, Value: Any {
     }
     
     var attributes: NSDictionary {
-        let dictionary = NSDictionary()
+        let dictionary = NSMutableDictionary()
         // setValuesForKeys coerces Swifty primitives to their NS* equivalents, however, in asAttributesForNsDictionary() we do a few extra transforms.
         // setValuesForKeys' equivalent in the opposite direction is NSDictionary.dictionaryWithValues
-        dictionary.setValuesForKeys(self.asAttributesForNsDictionary)
+        let attributesSuitableForNsDictionary = self.asAttributesForNsDictionary
+        dictionary.setValuesForKeys(attributesSuitableForNsDictionary)
         return dictionary
     }
     

@@ -142,6 +142,8 @@ class RoverDataTests: XCTestCase {
         XCTAssertEqual(decodedDeviceSnapshot.location?.altitude, 200)
         XCTAssertEqual(decodedDeviceSnapshot.location?.horizontalAccuracy, 20)
         XCTAssertEqual(decodedDeviceSnapshot.location?.verticalAccuracy, 20)
+        
+        // TODO: ANDREW START HERE AND FINISH COVERAGE FOR REMAINING FIELDS.  MAKE SURE THERE'S AT LEAST ONE NIL DOUBLE.
     }
     
     func testDeviceSnapshotNilValuesNSCodingRoundtrip() {

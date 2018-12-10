@@ -55,7 +55,7 @@ class RoverDataTests: XCTestCase {
                 street: "55 Adelaide St E",
                 city: "Toronto",
                 state: "Ontario",
-                postalCode: "M2C yadda yadda",
+                postalCode: "M5C 1K6",
                 country: "Canada",
                 isoCountryCode: "ca",
                 subAdministrativeArea: "Toronto Division",
@@ -66,13 +66,13 @@ class RoverDataTests: XCTestCase {
         locationAuthorization: "authorized",
         notificationAuthorization: "authorized",
         pushToken: DevicePushToken.init(
-            value: "i am a push token beep boop",
+            value: "push token",
             timestamp: Date.init(timeIntervalSinceReferenceDate: 0)
         ),
         isCellularEnabled: true,
         isWifiEnabled: false,
         appBadgeNumber: 42,
-        appBuild: "69",
+        appBuild: "42",
         appIdentifier: "io.rover.tests",
         appVersion: "1.0.0",
         buildEnvironment: BuildEnvironment.development,
@@ -91,7 +91,7 @@ class RoverDataTests: XCTestCase {
         timeZone: "America/Toronto",
         userInfo: Attributes.init(
             [
-                "testField": 42,
+                "testInt": 42,
                 "anArray": [1, 2, 3, 4],
                 "testTrueBoolean": true,
                 "testString": "donut",
@@ -116,19 +116,19 @@ class RoverDataTests: XCTestCase {
         XCTAssertEqual(decodedDeviceSnapshot.location?.address?.city, "Toronto")
         XCTAssertEqual(decodedDeviceSnapshot.location?.address?.street, "55 Adelaide St E")
         XCTAssertEqual(decodedDeviceSnapshot.location?.address?.state, "Ontario")
-        XCTAssertEqual(decodedDeviceSnapshot.location?.address?.postalCode, "M2C yadda yadda")
+        XCTAssertEqual(decodedDeviceSnapshot.location?.address?.postalCode, "M5C 1K6")
         XCTAssertEqual(decodedDeviceSnapshot.location?.address?.country, "Canada")
         XCTAssertEqual(decodedDeviceSnapshot.location?.address?.isoCountryCode, "ca")
         XCTAssertEqual(decodedDeviceSnapshot.location?.address?.subAdministrativeArea, "Toronto Division")
         XCTAssertEqual(decodedDeviceSnapshot.location?.address?.subLocality, "Old Toronto")
         XCTAssertEqual(decodedDeviceSnapshot.locationAuthorization, "authorized")
         XCTAssertEqual(decodedDeviceSnapshot.notificationAuthorization, "authorized")
-        XCTAssertEqual(decodedDeviceSnapshot.pushToken?.value, "i am a push token beep boop")
+        XCTAssertEqual(decodedDeviceSnapshot.pushToken?.value, "push token")
         XCTAssertEqual(decodedDeviceSnapshot.pushToken?.timestamp, Date.init(timeIntervalSinceReferenceDate: 0))
         XCTAssertEqual(decodedDeviceSnapshot.isCellularEnabled, true)
         XCTAssertEqual(decodedDeviceSnapshot.isWifiEnabled, false)
         XCTAssertEqual(decodedDeviceSnapshot.appBadgeNumber, 42)
-        XCTAssertEqual(decodedDeviceSnapshot.appBuild, "69")
+        XCTAssertEqual(decodedDeviceSnapshot.appBuild, "42")
         XCTAssertEqual(decodedDeviceSnapshot.appIdentifier, "io.rover.tests")
         XCTAssertEqual(decodedDeviceSnapshot.appVersion, "1.0.0")
         XCTAssertEqual(decodedDeviceSnapshot.buildEnvironment, .development)
@@ -144,7 +144,7 @@ class RoverDataTests: XCTestCase {
         XCTAssertEqual(decodedDeviceSnapshot.radio, nil)
         XCTAssertEqual(decodedDeviceSnapshot.isTestDevice, true)
         XCTAssertEqual(decodedDeviceSnapshot.timeZone, "America/Toronto")
-        XCTAssertEqual((decodedDeviceSnapshot.userInfo?.rawValue["testField"]) as! Int, 42)
+        XCTAssertEqual((decodedDeviceSnapshot.userInfo?.rawValue["testInt"]) as! Int, 42)
         XCTAssertEqual((decodedDeviceSnapshot.userInfo?.rawValue["anArray"]) as! [Int], [1, 2, 3, 4])
         XCTAssertEqual((decodedDeviceSnapshot.userInfo?.rawValue["testTrueBoolean"]) as! Bool, true)
         XCTAssertEqual((decodedDeviceSnapshot.userInfo?.rawValue["testString"]) as! String, "donut")

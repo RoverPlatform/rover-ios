@@ -25,4 +25,12 @@ final class Event : NSManagedObject {
     @NSManaged internal(set) var deviceSnapshot: DeviceSnapshot
     @NSManaged internal(set) var timestamp: Date
     @NSManaged internal(set) var isFlushed: Bool
+    
+    override func awakeFromInsert() {
+        // default values for newly created and inserted Events.
+        self.id = UUID().uuidString
+        self.attributes = Attributes()
+        self.deviceSnapshot = DeviceSnapshot()
+        self.timestamp = Date()
+    }
 }

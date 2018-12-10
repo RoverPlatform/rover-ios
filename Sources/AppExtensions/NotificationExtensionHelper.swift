@@ -19,10 +19,10 @@ public class NotificationExtensionHelper {
         self.userDefaults = userDefaults
     }
     
-    public func didReceive(_ request: UNNotificationRequest, withContent content: UNMutableNotificationContent) {
+    public func didReceive(_ request: UNNotificationRequest, withContent content: UNMutableNotificationContent) -> Bool {
         guard let data = try? JSONSerialization.data(withJSONObject: content.userInfo, options: []) else {
             clearLastReceivedNotification()
-            return
+            return false
         }
         
         struct Payload: Decodable {
@@ -48,7 +48,7 @@ public class NotificationExtensionHelper {
             
             // This is not a Rover notification – clear the last received notification so we're not taking credit for an influenced open.
             clearLastReceivedNotification()
-            return
+            return false
         }
         
         let notification = payload.rover.notification
@@ -57,6 +57,8 @@ public class NotificationExtensionHelper {
         if let attachment = notification.attachment {
             attachMedia(from: attachment.url, to: content)
         }
+        
+        return true
     }
     
     /*

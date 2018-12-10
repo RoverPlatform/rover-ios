@@ -19,7 +19,7 @@ public class NotificationExtensionHelper {
         self.userDefaults = userDefaults
     }
     
-    public func didReceive(_ request: UNNotificationRequest, withContent content: UNMutableNotificationContent) -> Bool {
+    @discardableResult public func didReceive(_ request: UNNotificationRequest, withContent content: UNMutableNotificationContent) -> Bool {
         guard let data = try? JSONSerialization.data(withJSONObject: content.userInfo, options: []) else {
             clearLastReceivedNotification()
             return false

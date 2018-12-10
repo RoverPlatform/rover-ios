@@ -89,7 +89,16 @@ class RoverDataTests: XCTestCase {
         radio: nil,
         isTestDevice: true,
         timeZone: "America/Toronto",
-        userInfo: Attributes.init(["testField":42])
+        userInfo: Attributes.init(
+            [
+                "testField": 42,
+                "anArray": [1, 2, 3, 4],
+                "testTrueBoolean": true,
+                "testNil": nil,
+                "testFalseBoolean": false,
+                "nestedObject": ["anArray": [1, 2, 3, 4]]
+            ]
+        )
     )
     
     func verifyDecodedSnapshot(decodedDeviceSnapshot: DeviceSnapshot) {

@@ -11,8 +11,15 @@ import CoreLocation
 import os
 
 public class LocationAssembler: Assembler {
-    public init() {
-        
+    let maxGeofenceRegionsToMonitor: Int
+    let maxBeaconRegionsToMonitor: Int
+    
+    public init(
+        maxGeofenceRegionsToMonitor: Int = 20,
+        maxBeaconRegionsToMonitor: Int = 5
+    ) {
+        self.maxGeofenceRegionsToMonitor = maxGeofenceRegionsToMonitor
+        self.maxBeaconRegionsToMonitor = maxBeaconRegionsToMonitor
     }
     
     public func assemble(container: Container) {
@@ -56,7 +63,9 @@ public class LocationAssembler: Assembler {
         container.register(LocationManager.self) { resolver in
             return LocationManager(
                 context: resolver.resolve(NSManagedObjectContext.self, name: "location.viewContext")!,
-                eventQueue: resolver.resolve(EventQueue.self)!
+                eventQueue: resolver.resolve(EventQueue.self)!,
+                maxGeofenceRegionsToMonitor: self.maxGeofenceRegionsToMonitor,
+                maxBeaconRegionsToMonitor: self.maxBeaconRegionsToMonitor
             )
         }
         

@@ -10,7 +10,7 @@ import XCTest
 @testable import RoverData
 
 /// A simple test object to illustrate usage of NSCoding.
-class MyThingy: NSObject, NSCoding {
+class ExampleNSCodingObject: NSObject, NSCoding {
     let myField: Date?
     let myBool: Bool?
     
@@ -162,13 +162,8 @@ class RoverDataTests: XCTestCase {
         super.tearDown()
     }
     
-    func testAttributesCoerction() {
-        let dictionary = ["thing": 42]
-        let attributes = dictionary.attributes
-    }
-    
     func testNscodingUsage() throws {
-        let thingy = MyThingy()
+        let thingy = ExampleNSCodingObject()
         let archiver = NSKeyedArchiver.init(requiringSecureCoding: false)
         archiver.encodeRootObject(thingy)
         //archiver.outputFormat = .xml
@@ -202,10 +197,9 @@ class RoverDataTests: XCTestCase {
             
             verifyDecodedSnapshot(decodedDeviceSnapshot: decodedDeviceSnapshot)
         } catch {
-            print("GOT ERROR: \(error)")
+            // Print the error so the all-important UserInfo is captured:
+            print("Error decoding device: \(error)")
+            throw error
         }
-        
-        
-        
     }
 }

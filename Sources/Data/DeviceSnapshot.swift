@@ -10,7 +10,6 @@ import Foundation
 
 class DeviceSnapshot: NSObject, Codable, NSCoding {
     func encode(with aCoder: NSCoder) {
-        //
         aCoder.encode(self.advertisingIdentifier, forKey: "advertisingIdentifier")
         aCoder.encode(self.isBluetoothEnabled, forKey: "isBluetoothEnabled")
         aCoder.encode(self.localeLanguage, forKey: "localeLanguage")
@@ -46,12 +45,7 @@ class DeviceSnapshot: NSObject, Codable, NSCoding {
     
     required init?(coder aDecoder: NSCoder) {
         // we must implement Decodable manually because the NSDictionary field used for Attributes (which itself was used in lieu of Swift Dictionary in order to enable NSCoding) prevents Codable being synthesized.
-        
-        // TODO: ANDREW START HERE and handle nil cases for any values that may improperly coerce nil values as empty or falsy.
-        
         self.advertisingIdentifier = aDecoder.decodeObject(forKey: "advertisingIdentifier") as? String
-        
-        
         self.isBluetoothEnabled = aDecoder.decodeObject(forKey: "isBluetoothEnabled") as? Bool
         self.localeLanguage = aDecoder.decodeObject(forKey: "localeLanguage") as? String
         self.localeRegion = aDecoder.decodeObject(forKey: "localeRegion") as? String
@@ -61,12 +55,9 @@ class DeviceSnapshot: NSObject, Codable, NSCoding {
         self.locationAuthorization = aDecoder.decodeObject(forKey: "locationAuthorization") as? String
         self.notificationAuthorization = aDecoder.decodeObject(forKey: "notificationAuthorization") as? String
         self.pushToken = aDecoder.decodeObject(forKey: "pushToken") as? DevicePushToken
-        
         self.isCellularEnabled = aDecoder.decodeObject(forKey: "isCellularEnabled") as? Bool
-        
         self.isWifiEnabled = aDecoder.decodeObject(forKey: "isWifiEnabled") as? Bool
         self.appBadgeNumber = aDecoder.decodeObject(forKey: "appBadgeNumber") as? Int
-        
         self.appBuild = aDecoder.decodeObject(forKey: "appBuild") as? String
         self.appIdentifier = aDecoder.decodeObject(forKey: "appIdentifier") as? String
         self.appVersion = aDecoder.decodeObject(forKey: "appVersion") as? String
@@ -84,11 +75,7 @@ class DeviceSnapshot: NSObject, Codable, NSCoding {
         self.sdkVersion = aDecoder.decodeObject(forKey: "sdkVersion") as? String
         self.carrierName = aDecoder.decodeObject(forKey: "carrierName") as? String
         self.radio = aDecoder.decodeObject(forKey: "radio") as? String
-        
         self.isTestDevice = aDecoder.decodeObject(forKey: "isTestDevice") as? Bool
-        
-        
-        
         self.timeZone = aDecoder.decodeObject(forKey: "timeZone") as? String
         self.userInfo = aDecoder.decodeObject(forKey: "userInfo") as? Attributes
     }
@@ -236,18 +223,18 @@ class DevicePushToken: NSObject, NSCoding, Codable {
     init(
         value: String,
         timestamp: Date
-        ) {
+    ) {
         self.value = value
         self.timestamp = timestamp
     }
     
     func encode(with aCoder: NSCoder) {
         aCoder.encode(value, forKey: "value")
-        aCoder.encode(timestamp, forKey: "date")
+        aCoder.encode(timestamp, forKey: "timestamp")
     }
     
     required init?(coder aDecoder: NSCoder) {
-        guard let value = aDecoder.decodeObject(forKey: "value") as? NSString else { return nil }
+        guard let value = aDecoder.decodeObject(forKey: "value") as? String else { return nil }
         self.value = String(value)
         guard let timestamp = aDecoder.decodeObject(forKey: "timestamp") as? Date else { return nil }
         self.timestamp = timestamp
@@ -276,7 +263,6 @@ class DeviceCoordinate: NSObject, Codable, NSCoding {
     required init?(coder aDecoder: NSCoder) {
         self.latitude = aDecoder.decodeDouble(forKey: "latitude")
         self.longitude = aDecoder.decodeDouble(forKey: "longitude")
-        // TODO: manual decodings
     }
     
     init(latitude: Double, longitude: Double) {
@@ -363,12 +349,31 @@ class DeviceAddress: NSObject, Codable, NSCoding {
     func encode(with aCoder: NSCoder) {
         aCoder.encode(self.street, forKey: "street")
         aCoder.encode(self.city, forKey: "city")
-        // TODO: manual encodings
+        aCoder.encode(self.state, forKey: "state")
+        aCoder.encode(self.postalCode, forKey: "postalCode")
+        aCoder.encode(self.country, forKey: "country")
+        aCoder.encode(self.isoCountryCode, forKey: "isoCountryCode")
+        aCoder.encode(self.subAdministrativeArea, forKey: "subAdministrativeArea")
+        aCoder.encode(self.subLocality, forKey: "subLocality")
     }
     
     required init?(coder aDecoder: NSCoder) {
-        self.street = aDecoder.decodeObject(forKey: "street") as? String ?? ""
-        // TODO: manual decodings
+        guard let street = aDecoder.decodeObject(forKey: "street") as? String else { return nil }
+        self.street = String(street)
+        guard let city = aDecoder.decodeObject(forKey: "city") as? String else { return nil }
+        self.city = String(city)
+        guard let state = aDecoder.decodeObject(forKey: "state") as? String else { return nil }
+        self.state = String(state)
+        guard let postalCode = aDecoder.decodeObject(forKey: "postalCode") as? String else { return nil }
+        self.postalCode = String(postalCode)
+        guard let country = aDecoder.decodeObject(forKey: "country") as? String else { return nil }
+        self.country = String(country)
+        guard let isoCountryCode = aDecoder.decodeObject(forKey: "isoCountryCode") as? String else { return nil }
+        self.isoCountryCode = String(isoCountryCode)
+        guard let subAdministrativeArea = aDecoder.decodeObject(forKey: "subAdministrativeArea") as? String else { return nil }
+        self.subAdministrativeArea = String(subAdministrativeArea)
+        guard let subLocality = aDecoder.decodeObject(forKey: "subLocality") as? String else { return nil }
+        self.subLocality = String(subLocality)
     }
     
     init(
@@ -380,7 +385,7 @@ class DeviceAddress: NSObject, Codable, NSCoding {
         isoCountryCode: String?,
         subAdministrativeArea: String?,
         subLocality: String?
-        ) {
+    ) {
         self.street = street
         self.city = city
         self.state = state

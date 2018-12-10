@@ -44,10 +44,10 @@ class LocationManager {
         self.maxBeaconRegionsToMonitor = maxBeaconRegionsToMonitor
         let theoreticalMaximumGeofences = 20
         if maxGeofenceRegionsToMonitor > theoreticalMaximumGeofences {
-            assertionFailure("You may only specify that Rover can monitor up to \(theoreticalMaximumGeofences) geofences at a time.")
+            fatalError("You may only specify that Rover can monitor up to \(theoreticalMaximumGeofences) geofences at a time.")
         }
         if maxBeaconRegionsToMonitor >= maxGeofenceRegionsToMonitor {
-            assertionFailure("Rover uses the same region slots for monitoring beacons as it does for monitoring geofences, so therefore you may only specify that Rover can monitor up to the same max number of beacons as geofence regions, currently \(maxGeofenceRegionsToMonitor).")
+            fatalError("Rover uses the same region slots for monitoring beacons as it does for monitoring geofences, so therefore you may only specify that Rover can monitor up to the same max number of beacons as geofence regions, currently \(maxGeofenceRegionsToMonitor).")
         }
         self.context = context
         self.eventQueue = eventQueue

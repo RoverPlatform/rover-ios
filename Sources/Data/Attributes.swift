@@ -114,6 +114,7 @@ class Attributes: NSObject, NSCoding, Codable {
                     }
                     
                     assembledHash[keyString] = collection
+                    return
                 }
                 
                 throw DecodingError.dataCorruptedError(forKey: key, in: container, debugDescription: "Expected one of Int, String, Double, Boolean, or an Array thereof.")
@@ -271,7 +272,7 @@ extension NSDictionary {
     }
 }
 
-class BooleanValue: NSCoding, Codable {
+class BooleanValue: NSObject, NSCoding, Codable {
     public var value: Bool
     
     func encode(with aCoder: NSCoder) {

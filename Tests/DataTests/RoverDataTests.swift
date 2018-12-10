@@ -94,7 +94,7 @@ class RoverDataTests: XCTestCase {
                 "testField": 42,
                 "anArray": [1, 2, 3, 4],
                 "testTrueBoolean": true,
-                "testNil": nil,
+                "testString": "donut",
                 "testFalseBoolean": false,
                 "nestedObject": ["anArray": [1, 2, 3, 4]]
             ]
@@ -145,6 +145,11 @@ class RoverDataTests: XCTestCase {
         XCTAssertEqual(decodedDeviceSnapshot.isTestDevice, true)
         XCTAssertEqual(decodedDeviceSnapshot.timeZone, "America/Toronto")
         XCTAssertEqual((decodedDeviceSnapshot.userInfo?.rawValue["testField"]) as! Int, 42)
+        XCTAssertEqual((decodedDeviceSnapshot.userInfo?.rawValue["anArray"]) as! [Int], [1, 2, 3, 4])
+        XCTAssertEqual((decodedDeviceSnapshot.userInfo?.rawValue["testTrueBoolean"]) as! Bool, true)
+        XCTAssertEqual((decodedDeviceSnapshot.userInfo?.rawValue["testString"]) as! String, "donut")
+        XCTAssertEqual((decodedDeviceSnapshot.userInfo?.rawValue["testFalseBoolean"]) as! Bool, false)
+        XCTAssertEqual(((decodedDeviceSnapshot.userInfo?.rawValue["nestedObject"]) as! [String: Any])["anArray"] as! [Int], [1, 2, 3, 4])
     }
     
     override func setUp() {
@@ -192,8 +197,15 @@ class RoverDataTests: XCTestCase {
         // use JSONEncoder to test that Codable was synthesized properly.
         let json = try JSONEncoder.default.encode(exampleComprehensiveDevice)
         
-        let decodedDeviceSnapshot = try JSONDecoder.default.decode(DeviceSnapshot.self, from: json)
+        do {
+            let decodedDeviceSnapshot = try JSONDecoder.default.decode(DeviceSnapshot.self, from: json)
+            
+            verifyDecodedSnapshot(decodedDeviceSnapshot: decodedDeviceSnapshot)
+        } catch {
+            print("GOT ERROR: \(error)")
+        }
         
-        verifyDecodedSnapshot(decodedDeviceSnapshot: decodedDeviceSnapshot)
+        
+        
     }
 }

@@ -47,7 +47,7 @@ class AttributesTests: XCTestCase {
     func testNSCodingRoundtrip() throws {
         let archiver = NSKeyedArchiver.init(requiringSecureCoding: false)
         let attributes = Attributes.init(rawValue: exampleAttributes)
-        archiver.encodeRootObject(attributes)
+        archiver.encodeRootObject(attributes as Any)
         //archiver.outputFormat = .xml
         archiver.finishEncoding()
         let archivedData = archiver.encodedData
@@ -58,9 +58,17 @@ class AttributesTests: XCTestCase {
         verifyDecodedAttributes(attributes: decodedAttributes)
     }
     
-    func testInvalidAttributesRawValue() throws {
+    func testInvalidAttributesWithArrayInDict() throws {
         let exampleBogusAttributesWithObjectInArray: [String: Any] = [
             "invalidArrayWithDict": [ 42: ["dict": 24 ]]
+        ]
+        
+        XCTAssertNil(Attributes.init(rawValue: exampleBogusAttributesWithObjectInArray))
+    }
+    
+    func testInvalidAttributesWithBadKey() throws {
+        let exampleBogusAttributesWithObjectInArray: [String: Any] = [
+            "$%#": 38
         ]
         
         XCTAssertNil(Attributes.init(rawValue: exampleBogusAttributesWithObjectInArray))

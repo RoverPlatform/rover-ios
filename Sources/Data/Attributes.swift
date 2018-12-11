@@ -153,21 +153,21 @@ class Attributes: NSObject, NSCoding, Codable, RawRepresentable {
 
             try container.allKeys.forEach { key in
                 let keyString = key.stringValue
+                
+                // primitive values:
                 if let value = try? container.decode(Bool.self, forKey: key) {
                     assembledHash[keyString] = value
                     return
                 }
-                
                 if let value = try? container.decode(Int.self, forKey: key) {
                     assembledHash[keyString] = value
                     return
                 }
-                
                 if let value = try? container.decode(String.self, forKey: key) {
                     assembledHash[keyString] = value
                     return
                 }
-                
+            
                 // now try probing for an embedded dict.
                 if let dictionary = try? container.nestedContainer(keyedBy: DynamicCodingKeys.self, forKey: key) {
                     assembledHash[keyString] = try fromKeyedDecoder(dictionary)
@@ -175,22 +175,18 @@ class Attributes: NSObject, NSCoding, Codable, RawRepresentable {
                 }
                 
                 // we also support arrays of primitive values:
-                
                 if let array = try? container.decode([String].self, forKey: key) {
                     assembledHash[keyString] = array
                     return
                 }
-                
                 if let array = try? container.decode([Bool].self, forKey: key) {
                     assembledHash[keyString] = array
                     return
                 }
-                
                 if let array = try? container.decode([Int].self, forKey: key) {
                     assembledHash[keyString] = array
                     return
                 }
-                
                 if let array = try? container.decode([Double].self, forKey: key) {
                     assembledHash[keyString] = array
                     return
@@ -203,8 +199,10 @@ class Attributes: NSObject, NSCoding, Codable, RawRepresentable {
         }
         
         let container = try decoder.container(keyedBy: DynamicCodingKeys.self)
-        
+    
         self.rawValue = try fromKeyedDecoder(container)
+        
+        try Attributes.validateDictionary(self.rawValue)
     }
     
     public func encode(to encoder: Encoder) throws {

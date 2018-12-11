@@ -18,12 +18,12 @@ class DeviceSnapshotTests: XCTestCase {
         localeRegion: "en_US",
         localeScript: nil,
         isLocationServicesEnabled: false,
-        location: DeviceLocation.init(
-            coordinate: DeviceCoordinate.init(latitude: 45.0, longitude: 24.0),
+        location: LocationSnapshot.init(
+            coordinate: CoordinateSnapshot.init(latitude: 45.0, longitude: 24.0),
             altitude: 200,
             horizontalAccuracy: 20,
             verticalAccuracy: 20,
-            address: DeviceAddress.init(
+            address: AddressSnapshot.init(
                 street: "55 Adelaide St E",
                 city: "Toronto",
                 state: "Ontario",
@@ -37,7 +37,7 @@ class DeviceSnapshotTests: XCTestCase {
         ),
         locationAuthorization: "authorized",
         notificationAuthorization: "authorized",
-        pushToken: DevicePushToken.init(
+        pushToken: PushTokenSnapshot.init(
             value: "push token",
             timestamp: Date.init(timeIntervalSinceReferenceDate: 0)
         ),

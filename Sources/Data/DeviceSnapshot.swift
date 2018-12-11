@@ -51,10 +51,10 @@ class DeviceSnapshot: NSObject, Codable, NSCoding {
         self.localeRegion = aDecoder.decodeObject(forKey: "localeRegion") as? String
         self.localeScript = aDecoder.decodeObject(forKey: "localeScript") as? String
         self.isLocationServicesEnabled = aDecoder.decodeObject(forKey: "isLocationServicesEnabled") as? Bool
-        self.location = aDecoder.decodeObject(forKey: "location") as? DeviceLocation
+        self.location = aDecoder.decodeObject(forKey: "location") as? LocationSnapshot
         self.locationAuthorization = aDecoder.decodeObject(forKey: "locationAuthorization") as? String
         self.notificationAuthorization = aDecoder.decodeObject(forKey: "notificationAuthorization") as? String
-        self.pushToken = aDecoder.decodeObject(forKey: "pushToken") as? DevicePushToken
+        self.pushToken = aDecoder.decodeObject(forKey: "pushToken") as? PushTokenSnapshot
         self.isCellularEnabled = aDecoder.decodeObject(forKey: "isCellularEnabled") as? Bool
         self.isWifiEnabled = aDecoder.decodeObject(forKey: "isWifiEnabled") as? Bool
         self.appBadgeNumber = aDecoder.decodeObject(forKey: "appBadgeNumber") as? Int
@@ -96,7 +96,7 @@ class DeviceSnapshot: NSObject, Codable, NSCoding {
 
     
     var isLocationServicesEnabled: Bool?
-    var location: DeviceLocation?
+    var location: LocationSnapshot?
     var locationAuthorization: String?
     
     // MARK: Notifications
@@ -105,7 +105,7 @@ class DeviceSnapshot: NSObject, Codable, NSCoding {
     
     // MARK: Push Token
     
-    var pushToken: DevicePushToken?
+    var pushToken: PushTokenSnapshot?
     
     // MARK: Reachability
     
@@ -154,10 +154,10 @@ class DeviceSnapshot: NSObject, Codable, NSCoding {
         localeRegion: String? = nil,
         localeScript: String? = nil,
         isLocationServicesEnabled: Bool? = nil,
-        location: DeviceLocation? = nil,
+        location: LocationSnapshot? = nil,
         locationAuthorization: String? = nil,
         notificationAuthorization: String? = nil,
-        pushToken: DevicePushToken? = nil,
+        pushToken: PushTokenSnapshot? = nil,
         isCellularEnabled: Bool? = nil,
         isWifiEnabled: Bool? = nil,
         appBadgeNumber: Int? = nil,
@@ -216,7 +216,7 @@ class DeviceSnapshot: NSObject, Codable, NSCoding {
 
 // MARK: Push Token
 
-class DevicePushToken: NSObject, NSCoding, Codable {
+class PushTokenSnapshot: NSObject, NSCoding, Codable {
     var value: String
     var timestamp: Date
     
@@ -251,7 +251,7 @@ enum BuildEnvironment: String, Codable, Equatable {
 
 // MARK: Location
 
-class DeviceCoordinate: NSObject, Codable, NSCoding {
+class CoordinateSnapshot: NSObject, Codable, NSCoding {
     var latitude: Double
     var longitude: Double
     
@@ -285,12 +285,12 @@ class DeviceCoordinate: NSObject, Codable, NSCoding {
     }
 }
 
-class DeviceLocation: NSObject, Codable, NSCoding {
-    var coordinate: DeviceCoordinate
+class LocationSnapshot: NSObject, Codable, NSCoding {
+    var coordinate: CoordinateSnapshot
     var altitude: Double
     var horizontalAccuracy: Double
     var verticalAccuracy: Double
-    var address: DeviceAddress?
+    var address: AddressSnapshot?
     var timestamp: Date
     
     // MARK: NSCoding
@@ -305,23 +305,23 @@ class DeviceLocation: NSObject, Codable, NSCoding {
     }
     
     required init?(coder aDecoder: NSCoder) {
-        guard let coordinate = aDecoder.decodeObject(forKey: "coordinate") as? DeviceCoordinate else {
+        guard let coordinate = aDecoder.decodeObject(forKey: "coordinate") as? CoordinateSnapshot else {
             return nil
         }
         self.coordinate = coordinate
         self.altitude = aDecoder.decodeDouble(forKey: "altitude")
         self.horizontalAccuracy = aDecoder.decodeDouble(forKey: "horizontalAccuracy")
         self.verticalAccuracy = aDecoder.decodeDouble(forKey: "verticalAccuracy")
-        self.address = aDecoder.decodeObject(forKey: "address") as? DeviceAddress
+        self.address = aDecoder.decodeObject(forKey: "address") as? AddressSnapshot
         self.timestamp = aDecoder.decodeObject(forKey: "timestamp") as! Date
     }
     
     init(
-        coordinate: DeviceCoordinate,
+        coordinate: CoordinateSnapshot,
         altitude: Double,
         horizontalAccuracy: Double,
         verticalAccuracy: Double,
-        address: DeviceAddress?,
+        address: AddressSnapshot?,
         timestamp: Date
         ) {
         self.coordinate = coordinate
@@ -334,7 +334,7 @@ class DeviceLocation: NSObject, Codable, NSCoding {
 }
 
     
-class DeviceAddress: NSObject, Codable, NSCoding {
+class AddressSnapshot: NSObject, Codable, NSCoding {
     var street: String?
     var city: String?
     var state: String?

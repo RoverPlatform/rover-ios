@@ -26,7 +26,7 @@ public struct EventInfo {
     /// * `[Int]`
     /// * `[Double]`
     /// * `[Bool]`
-    /// * `[String: Any]` (but the `Any` here may not be another dictionary.)
+    /// * `[String: Any]` (where any may be any of these given types)
     public let attributes: [String: Any]?
     public let timestamp: Date?
     

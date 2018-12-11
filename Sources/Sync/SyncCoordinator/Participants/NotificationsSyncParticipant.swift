@@ -17,7 +17,7 @@ class NotificationsSyncParticipant: SyncParticipant {
     }
     
     func initialRequest() -> SyncRequest? {
-        let orderBy: Attributes = [
+        let orderBy: [String: Any] = [
             "field": "CREATED_AT",
             "direction": "DESC"
         ]

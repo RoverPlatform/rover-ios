@@ -22,7 +22,7 @@ class LifeCycleTrackerService: LifeCycleTracker {
     
     func enable() {
         self.sessionController.registerSession(identifier: "application") { duration in
-            let attributes: Attributes = ["duration": duration]
+            let attributes: [String: Any] = ["duration": duration]
             return EventInfo(name: "App Viewed", namespace: "rover", attributes: attributes)
         }
         

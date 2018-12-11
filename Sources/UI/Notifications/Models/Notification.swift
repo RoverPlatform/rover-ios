@@ -42,7 +42,7 @@ public struct Notification: Codable, Equatable, Hashable {
 
 extension Notification {
     func openedEvent(source: NotificationSource) -> EventInfo {
-        let attributes: Attributes = [
+        let attributes: [String: Any] = [
             "notification": self,
             "source": source.rawValue
         ]
@@ -51,7 +51,7 @@ extension Notification {
 }
 
 extension Notification {
-    public var attributes: Attributes {
+    public var attributes: [String: Any] {
         return [
             "id": id,
             "campaignID": campaignID

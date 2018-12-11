@@ -81,7 +81,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        let attributes: Attributes = [
+        let attributes: [String: Any] = [
             "experience": experience,
             "screen": screen
         ]
@@ -99,7 +99,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     override open func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
-        let attributes: [Attributes] = [
+        let attributes: [String: Any] = [
             "experience": experience.attributes,
             "screen": screen
         ]
@@ -394,7 +394,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         let row = screen.rows[indexPath.section]
         let block = row.blocks[indexPath.row]
         
-        let attributes: Attributes = [
+        let attributes: [String: Any] = [
             "experience": experience,
             "screen": screen,
             "row": row,

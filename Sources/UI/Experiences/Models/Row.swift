@@ -110,8 +110,8 @@ extension Row: Decodable {
 // MARK: Attributes
 
 extension Row  {
-    public var attributes: Attributes {
-        let keys = self.keys.reduce(into: Attributes()) { $0[$1.0] = $1.1 }
+    public var attributes: [String: Any] {
+        let keys = self.keys.reduce(into: [:]) { $0[$1.0] = $1.1 }
         return [
             "id": id,
             "name": name,

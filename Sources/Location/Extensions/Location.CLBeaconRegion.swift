@@ -9,8 +9,8 @@
 import CoreLocation
 
 extension CLBeaconRegion {
-    public var attributes: Attributes {
-        var attributes: Attributes = [
+    public var attributes: [String: Any] {
+        var attributes: [String: Any] = [
             "uuid": proximityUUID.uuidString
         ]
         

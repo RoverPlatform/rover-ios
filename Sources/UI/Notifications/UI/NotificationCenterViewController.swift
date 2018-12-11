@@ -142,7 +142,7 @@ open class NotificationCenterViewController: UIViewController {
         eventQueue.addEvent(event)
         
         sessionController.registerSession(identifier: "notificationCenter") { duration in
-            let attributes: Attributes = ["duration": duration]
+            let attributes: [String: Any] = ["duration": duration]
             return EventInfo(name: "Notification Center Viewed", namespace: "rover", attributes: attributes)
         }
         

@@ -381,10 +381,10 @@ open class Device {
     
     // MARK: User Info
     
-    open func updateUserInfo(block: (inout Attributes) -> Void) {
-        var userInfo = self.userInfo ?? Attributes()
+    open func updateUserInfo(block: (inout [String: Any]) -> Void) {
+        var userInfo = self.userInfo.rawValue ?? [:]
         block(&userInfo)
-        self.userInfo = userInfo
+        self.userInfo = Attributes.init(rawValue: userInfo)
     }
     
     open func clearUserInfo() {

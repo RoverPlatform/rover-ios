@@ -44,7 +44,6 @@ class DeviceSnapshot: NSObject, Codable, NSCoding {
     }
     
     required init?(coder aDecoder: NSCoder) {
-        // we must implement Decodable manually because the NSDictionary field used for Attributes (which itself was used in lieu of Swift Dictionary in order to enable NSCoding) prevents Codable being synthesized.
         self.advertisingIdentifier = aDecoder.decodeObject(forKey: "advertisingIdentifier") as? String
         self.isBluetoothEnabled = aDecoder.decodeObject(forKey: "isBluetoothEnabled") as? Bool
         self.localeLanguage = aDecoder.decodeObject(forKey: "localeLanguage") as? String
@@ -144,7 +143,6 @@ class DeviceSnapshot: NSObject, Codable, NSCoding {
     
     // MARK: User Info
     
-    /// As Rover Attributes, with all of the constraints thereof implied.
     var userInfo: Attributes?
     
     init(

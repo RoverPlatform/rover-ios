@@ -61,9 +61,9 @@ extension Experience: Decodable {
 // MARK: Attributes
 
 extension Experience {
-    public var attributes: Attributes {
-        let keys = self.keys.reduce(into: Attributes()) { $0[$1.0] = $1.1 }
-        var attributes: Attributes = [
+    public var attributes: [String: Any] {
+        let keys = self.keys.reduce(into: [:]) { $0[$1.0] = $1.1 }
+        var attributes: [String: Any] = [
             "id": id,
             "name": name,
             "keys": AttributeValue.object(keys),

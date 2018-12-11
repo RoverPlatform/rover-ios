@@ -83,7 +83,7 @@ class InfluenceTrackerService: InfluenceTracker {
             return
         }
         
-        let attributes: Attributes = [
+        let attributes: [String: Any] = [
             "notification": lastReceivedNotification,
             "source": NotificationSource.influencedOpen.rawValue
         ]

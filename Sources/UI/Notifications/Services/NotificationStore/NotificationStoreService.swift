@@ -87,7 +87,7 @@ class NotificationStoreService: NotificationStore {
     // MARK: Adding Notifications
     
     func addNotifications(_ notifications: [Notification]) {
-        let map: ([Notification]) -> [ID: Notification] = { notifications in
+        let map: ([Notification]) -> [String: Notification] = { notifications in
             let ids = notifications.map { $0.id }
             let zipped = zip(ids, notifications)
             return Dictionary(zipped, uniquingKeysWith: { (a, b) in
@@ -112,7 +112,7 @@ class NotificationStoreService: NotificationStore {
     
     // MARK: Updating Notifications
     
-    func markNotificationDeleted(_ notificationID: ID) {
+    func markNotificationDeleted(_ notificationID: String) {
         guard let notification = notifications.first(where: { $0.id == notificationID }) else {
             return
         }
@@ -138,7 +138,7 @@ class NotificationStoreService: NotificationStore {
         eventQueue.addEvent(event)
     }
     
-    func markNotificationRead(_ notificationID: ID) {
+    func markNotificationRead(_ notificationID: String) {
         guard let notification = notifications.first(where: { $0.id == notificationID }) else {
             return
         }

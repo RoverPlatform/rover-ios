@@ -10,12 +10,12 @@ public struct Row {
     public var background: Background
     public var blocks: [Block]
     public var height: Height
-    public var id: ID
+    public var id: String
     public var name: String
     public var keys: [String: String]
     public var tags: [String]
     
-    public init(background: Background, blocks: [Block], height: Height, id: ID, name: String, keys: [String: String], tags: [String]) {
+    public init(background: Background, blocks: [Block], height: Height, id: String, name: String, keys: [String: String], tags: [String]) {
         self.background = background
         self.blocks = blocks
         self.height = height
@@ -77,7 +77,7 @@ extension Row: Decodable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         background = try container.decode(Background.self, forKey: .background)
         height = try container.decode(Height.self, forKey: .height)
-        id = try container.decode(ID.self, forKey: .id)
+        id = try container.decode(String.self, forKey: .id)
         name = try container.decode(String.self, forKey: .name)
         keys = try container.decode([String: String].self, forKey: .keys)
         tags = try container.decode([String].self, forKey: .tags)

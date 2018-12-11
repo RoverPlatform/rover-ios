@@ -59,7 +59,7 @@ struct BeaconsSyncResponse: Decodable {
     struct Data: Decodable {
         struct Beacons: Decodable {
             struct Node: Decodable {
-                var id: ID
+                var id: String
                 var name: String
                 var uuid: UUID
                 var major: Int32

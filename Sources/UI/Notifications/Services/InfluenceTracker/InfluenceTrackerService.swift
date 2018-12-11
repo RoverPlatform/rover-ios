@@ -55,8 +55,8 @@ class InfluenceTrackerService: InfluenceTracker {
         }
         
         struct NotificationReceipt: AttributeRepresentable, Decodable {
-            var notificationID: ID
-            var campaignID: ID
+            var notificationID: String
+            var campaignID: String
             var receivedAt: Date
             
             var attributes: Attributes {

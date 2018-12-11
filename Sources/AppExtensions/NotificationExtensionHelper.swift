@@ -28,8 +28,8 @@ public class NotificationExtensionHelper {
         struct Payload: Decodable {
             struct Rover: Decodable {
                 struct Notification: Decodable {
-                    var id: ID
-                    var campaignID: ID
+                    var id: String
+                    var campaignID: String
                     
                     struct Attachment: Decodable {
                         var url: URL
@@ -62,10 +62,10 @@ public class NotificationExtensionHelper {
     /*
      * When a notification is received, store its ID and the time it was received in UserDefaults. These values are used by the InfluenceTracker to determine if an influenced open has occured.
      */
-    func setLastReceivedNotification(notificationID: ID, campaignID: ID) {
+    func setLastReceivedNotification(notificationID: String, campaignID: String) {
         struct NotificationReceipt: Encodable {
-            var notificationID: ID
-            var campaignID: ID
+            var notificationID: String
+            var campaignID: String
             var receivedAt: Date
         }
         

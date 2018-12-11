@@ -66,7 +66,7 @@ struct GeofencesSyncResponse: Decodable {
                     var longitude: Double
                 }
                 
-                var id: ID
+                var id: String
                 var name: String
                 var center: Center
                 var radius: Double

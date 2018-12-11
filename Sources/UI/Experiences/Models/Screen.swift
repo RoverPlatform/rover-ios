@@ -47,7 +47,7 @@ public struct Screen: Decodable {
     }
     
     public var background: Background
-    public var id: ID
+    public var id: String
     public var name: String
     public var isStretchyHeaderEnabled: Bool
     public var rows: [Row]
@@ -56,7 +56,7 @@ public struct Screen: Decodable {
     public var keys: [String: String]
     public var tags: [String]
     
-    public init(background: Background, id: ID, name: String, isStretchyHeaderEnabled: Bool, rows: [Row], statusBar: StatusBar, titleBar: TitleBar, keys: [String: String], tags: [String]) {
+    public init(background: Background, id: String, name: String, isStretchyHeaderEnabled: Bool, rows: [Row], statusBar: StatusBar, titleBar: TitleBar, keys: [String: String], tags: [String]) {
         self.background = background
         self.id = id
         self.name = name

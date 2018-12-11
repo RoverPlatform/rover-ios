@@ -9,7 +9,7 @@
 public protocol Block: AttributeRepresentable, Decodable {
     var background: Background { get }
     var border: Border { get }
-    var id: ID { get }
+    var id: String { get }
     var name: String { get }
     var insets: Insets { get }
     var opacity: Double { get }

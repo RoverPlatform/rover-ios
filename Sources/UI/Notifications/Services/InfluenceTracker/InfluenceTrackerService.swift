@@ -54,7 +54,7 @@ class InfluenceTrackerService: InfluenceTracker {
             clearLastReceivedNotification()
         }
         
-        struct NotificationReceipt: AttributeRepresentable, Decodable {
+        struct NotificationReceipt: Decodable {
             var notificationID: String
             var campaignID: String
             var receivedAt: Date

@@ -50,7 +50,7 @@ extension Notification {
     }
 }
 
-extension Notification: AttributeRepresentable {
+extension Notification {
     public var attributes: Attributes {
         return [
             "id": id,

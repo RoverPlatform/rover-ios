@@ -69,9 +69,9 @@ public struct Screen: Decodable {
     }
 }
 
-// MARK: AttributeRepresentable
+// MARK: Attributes
 
-extension Screen: AttributeRepresentable {
+extension Screen {
     public var attributes: Attributes {
         let keys = self.keys.reduce(into: Attributes()) { $0[$1.0] = $1.1 }
         return [

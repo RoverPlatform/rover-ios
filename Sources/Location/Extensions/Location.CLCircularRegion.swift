@@ -8,7 +8,7 @@
 
 import CoreLocation
 
-extension CLCircularRegion: AttributeRepresentable {
+extension CLCircularRegion {
     public var attributes: Attributes {
         return [
             "center": [

@@ -15,9 +15,9 @@ public enum BlockTapBehavior {
     case presentWebsite(url: URL)
 }
 
-// MARK: AttributeRepresentable
+// MARK: Attributes
 
-extension BlockTapBehavior: AttributeRepresentable {
+extension BlockTapBehavior {
     public var attributes: Attributes {
         switch self {
         case .goToScreen(let screenID):

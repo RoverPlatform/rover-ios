@@ -58,9 +58,9 @@ extension Experience: Decodable {
     }
 }
 
-// MARK: AttributeRepresentable
+// MARK: Attributes
 
-extension Experience: AttributeRepresentable {
+extension Experience {
     public var attributes: Attributes {
         let keys = self.keys.reduce(into: Attributes()) { $0[$1.0] = $1.1 }
         var attributes: Attributes = [

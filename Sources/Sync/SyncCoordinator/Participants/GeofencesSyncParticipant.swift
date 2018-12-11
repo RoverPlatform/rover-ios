@@ -32,7 +32,7 @@ class GeofencesSyncParticipant: PagingSyncParticipant {
             "direction": "ASC"
         ]
         
-        var values: [String: AttributeRepresentable] = [
+        var values: [String: Any] = [
             "first": 500,
             "orderBy": orderBy
         ]

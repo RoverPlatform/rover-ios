@@ -6,7 +6,7 @@
 //  Copyright © 2017 Rover Labs Inc. All rights reserved.
 //
 
-public protocol Block: AttributeRepresentable, Decodable {
+public protocol Block: Decodable {
     var background: Background { get }
     var border: Border { get }
     var id: String { get }

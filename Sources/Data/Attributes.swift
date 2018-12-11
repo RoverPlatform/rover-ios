@@ -15,7 +15,7 @@ class Attributes: NSObject, NSCoding, Codable {
     
     public init(_ dictionary: [String:Any]) {
         // to get an implicit pass of our validation logic, render it to our internal NS attributes, which as a side-effect can emit an error.
-        let _ = dictionary.asAttributesForNsDictionary
+        let _ = dictionary.attributesForNsDictionary
         self.rawValue = dictionary
     }
 
@@ -180,11 +180,8 @@ class Attributes: NSObject, NSCoding, Codable {
     }
 }
 
-
-typealias AttributeValue = [String: Any]
-
 extension Dictionary where Key == String, Value: Any {
-    fileprivate var asAttributesForNsDictionary: [String: Any] {
+    fileprivate var attributesForNsDictionary: [String: Any] {
         func transformAsNeeded(value: Any) -> Any? {
             switch(value) {
             case let bool as Bool:
@@ -205,7 +202,7 @@ extension Dictionary where Key == String, Value: Any {
             switch(element.value) {
             case let dictionary as Dictionary:
                 // nesting!
-                result[element.key] = dictionary.asAttributesForNsDictionary
+                result[element.key] = dictionary.attributesForNsDictionary
             case let array as Array<Any>:
                 // can only contain scalars
                 result[element.key] = array.map { transformAsNeeded(value: $0) }
@@ -220,14 +217,14 @@ extension Dictionary where Key == String, Value: Any {
     
     var attributes: NSDictionary {
         let dictionary = NSMutableDictionary()
-        // setValuesForKeys coerces Swifty primitives to their NS* equivalents, however, in asAttributesForNsDictionary() we do a few extra transforms.
+        // setValuesForKeys coerces Swifty primitives to their NS* equivalents, however, in attributesForNsDictionary() we do a few extra transforms.
         // setValuesForKeys' equivalent in the opposite direction is NSDictionary.dictionaryWithValues
-        let attributesSuitableForNsDictionary = self.asAttributesForNsDictionary
+        let attributesSuitableForNsDictionary = self.attributesForNsDictionary
         dictionary.setValuesForKeys(attributesSuitableForNsDictionary)
         return dictionary
     }
     
-    /// Undo the effects of [asAttributesForNsDictionary].
+    /// Undo the effects of [attributesForNsDictionary].
     fileprivate var fromAttributesAsNsDictionary: [String: Any] {
         
         func transformAsNeeded(value: Any) -> Any? {
@@ -272,7 +269,7 @@ extension NSDictionary {
     }
 }
 
-class BooleanValue: NSObject, NSCoding, Codable {
+class BooleanValue: NSObject, NSCoding {
     public var value: Bool
     
     func encode(with aCoder: NSCoder) {
@@ -285,15 +282,5 @@ class BooleanValue: NSObject, NSCoding, Codable {
     
     init(_ value: Bool) {
         self.value = value
-    }
-    
-    public required init(from decoder: Decoder) throws {
-        let container = try decoder.singleValueContainer()
-        value = try container.decode(Bool.self)
-    }
-    
-
-    public func encode(to encoder: Encoder) throws {
-        // TODO:
     }
 }

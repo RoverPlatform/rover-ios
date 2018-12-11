@@ -18,7 +18,7 @@ public enum BlockTapBehavior {
 // MARK: AttributeRepresentable
 
 extension BlockTapBehavior: AttributeRepresentable {
-    public var asAttributes: Attributes {
+    public var attributes: Attributes {
         switch self {
         case .goToScreen(let screenID):
             return [

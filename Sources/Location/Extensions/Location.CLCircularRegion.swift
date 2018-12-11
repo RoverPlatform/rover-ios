@@ -9,7 +9,7 @@
 import CoreLocation
 
 extension CLCircularRegion: AttributeRepresentable {
-    public var asAttributes: Attributes {
+    public var attributes: Attributes {
         return [
             "center": [
                 center.latitude,

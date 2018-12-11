@@ -36,7 +36,7 @@ class AttributesTests: XCTestCase {
 
     func testCodableRoundtrip() throws {
         // use JSONEncoder to test that Codable was synthesized properly.
-        let json = try JSONEncoder.default.encode(Attributes.init(exampleAttributes))
+        let json = try JSONEncoder.default.encode(Attributes.init(rawValue: exampleAttributes))
         
         do {
             let attributes = try JSONDecoder.default.decode(Attributes.self, from: json)
@@ -51,7 +51,7 @@ class AttributesTests: XCTestCase {
     
     func testNSCodingRoundtrip() throws {
         let archiver = NSKeyedArchiver.init(requiringSecureCoding: false)
-        let attributes = Attributes.init(exampleAttributes)
+        let attributes = Attributes.init(rawValue: exampleAttributes)
         archiver.encodeRootObject(attributes)
         //archiver.outputFormat = .xml
         archiver.finishEncoding()

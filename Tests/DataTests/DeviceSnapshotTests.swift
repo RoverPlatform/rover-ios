@@ -62,7 +62,7 @@ class DeviceSnapshotTests: XCTestCase {
         isTestDevice: true,
         timeZone: "America/Toronto",
         userInfo: Attributes.init(
-            [
+            rawValue: [
                 "testInt": 42,
                 "anArray": [1, 2, 3, 4],
                 "testTrueBoolean": true,

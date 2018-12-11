@@ -15,11 +15,13 @@ fileprivate let roverKeyRegex = try! NSRegularExpression(pattern: "^[a-zA-Z_][a-
 class Attributes: NSObject, NSCoding, Codable, RawRepresentable {
     var rawValue: [String: Any]
     
-    public required init(rawValue: [String:Any]) {
-        // to get an implicit pass of our validation logic, render it to our internal NS attributes, which as a side-effect can emit an error.
-
-        // TODO validations.
-        
+    public required init?(rawValue: [String:Any]) {
+        do {
+            try Attributes.validateDictionary(rawValue)
+        } catch {
+            os_log("Invalid Rover Attributes raw value, because: %s", log: .persistence, type: .error, error.localizedDescription)
+            return nil
+        }
         self.rawValue = rawValue
     }
 
@@ -56,13 +58,15 @@ class Attributes: NSObject, NSCoding, Codable, RawRepresentable {
         func transformDictionary(dictionary: [String: Any]) -> [String: Any] {
             return dictionary.reduce(into: [String:Any]()) { (result, element) in
                 switch(element.value) {
+                // handle our custom boxed Boolean value type:
                 case let value as BooleanValue:
                     result[element.key] = value.value
+                case let array as [BooleanValue]:
+                    result[element.key] = array.map { $0.value }
                 case let dictionary as Dictionary<String, Any>:
                     // nesting!
                     result[element.key] = transformDictionary(dictionary: dictionary)
-                case let array as [BooleanValue]:
-                    result[element.key] = array.map { $0.value }
+                
                 default:
                     result[element.key] = element.value
                 }
@@ -71,7 +75,55 @@ class Attributes: NSObject, NSCoding, Codable, RawRepresentable {
         
         self.rawValue = transformDictionary(dictionary: dictionary)
         
+        do {
+            try Attributes.validateDictionary(self.rawValue)
+        } catch {
+            os_log("Encountered invalid Rover Attributes while decoding from NSCoder, because: %s", log: .persistence, type: .error, error.localizedDescription)
+            return nil
+        }
         super.init()
+    }
+    
+    fileprivate static func validateDictionary(_ dictionary: [String: Any]) throws {
+        try dictionary.forEach { (key, value) in
+            let swiftRange = Range(uncheckedBounds: (key.startIndex, key.endIndex))
+            let nsRange = NSRange(swiftRange, in: key)
+            if roverKeyRegex.matches(in: key, range: nsRange).count == 0 {
+                throw AttributesError.invalidKey(key: key)
+            }
+            
+            if let nestedDictionary = value as? [String: Any] {
+                try validateDictionary(nestedDictionary)
+                return
+            }
+            
+            if !(
+                value is Double ||
+                value is Int ||
+                value is String ||
+                value is Bool ||
+                value is [Double] ||
+                value is [Int] ||
+                value is [String] ||
+                value is [Bool]
+            )  {
+                throw AttributesError.invalidValue(key: key, type: type(of: value))
+            }
+        }
+    }
+    
+    enum AttributesError: Error, LocalizedError {
+        case invalidKey(key: String)
+        case invalidValue(key: String, type: Any.Type)
+        
+        var errorDescription: String? {
+            switch self {
+            case .invalidKey(let key):
+                return "Invalid key: \(key)"
+            case .invalidValue(let key, let type):
+                return "Invalid value for key \(key) with unsupported type: \(String.init(describing: type))"
+            }
+        }
     }
     
     //
@@ -101,12 +153,6 @@ class Attributes: NSObject, NSCoding, Codable, RawRepresentable {
 
             try container.allKeys.forEach { key in
                 let keyString = key.stringValue
-                let swiftRange = Range(uncheckedBounds: (keyString.startIndex, keyString.endIndex))
-                let nsRange = NSRange(swiftRange, in: keyString)
-                if roverKeyRegex.matches(in: keyString, range: nsRange).count == 0 {
-                    fatalError("Unsupported key `\(keyString)` used in attributes.")
-                }
-                
                 if let value = try? container.decode(Bool.self, forKey: key) {
                     assembledHash[keyString] = value
                     return

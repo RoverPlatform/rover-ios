@@ -58,4 +58,11 @@ class AttributesTests: XCTestCase {
         verifyDecodedAttributes(attributes: decodedAttributes)
     }
     
+    func testInvalidAttributesRawValue() throws {
+        let exampleBogusAttributesWithObjectInArray: [String: Any] = [
+            "invalidArrayWithDict": [ 42: ["dict": 24 ]]
+        ]
+        
+        XCTAssertNil(Attributes.init(rawValue: exampleBogusAttributesWithObjectInArray))
+    }
 }

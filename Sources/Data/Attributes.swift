@@ -9,7 +9,9 @@
 import Foundation
 import os
 
-/// Wraps a [String: Any], but enables use of both NSCoding and Codable.  Enforces the
+fileprivate let roverKeyRegex = try! NSRegularExpression(pattern: "^[a-zA-Z_][a-zA-Z_0-9]*$")
+
+/// Wraps a [String: Any], but enables use of both NSCoding and Codable.  Enforces the Rover limitations on allowed types and nesting thereof (not readily capturable in the Swift type system) at runtime.
 class Attributes: NSObject, NSCoding, Codable {
     var rawValue: [String: Any]
     
@@ -63,7 +65,11 @@ class Attributes: NSObject, NSCoding, Codable {
 
             try container.allKeys.forEach { key in
                 let keyString = key.stringValue
-                // TODO: Verify key is valid (matches regex)
+                let swiftRange = Range(uncheckedBounds: (keyString.startIndex, keyString.endIndex))
+                let nsRange = NSRange(swiftRange, in: keyString)
+                if roverKeyRegex.matches(in: keyString, range: nsRange).count == 0 {
+                    fatalError("Unsupported key `\(keyString)` used in attributes.")
+                }
                 
                 if let value = try? container.decode(Bool.self, forKey: key) {
                     assembledHash[keyString] = value
@@ -198,7 +204,12 @@ extension Dictionary where Key == String, Value: Any {
         }
         
         return self.reduce(into: [String:Any]()) { (result, element) in
-            // TODO verify element.key against "^[a-zA-Z_][a-zA-Z_0-9]*$"
+            let key = element.key
+            let swiftRange = Range(uncheckedBounds: (key.startIndex, key.endIndex))
+            let nsRange = NSRange(swiftRange, in: key)
+            if roverKeyRegex.matches(in: element.key, range: nsRange).count == 0 {
+                fatalError("Unsupported key `\(element.key)` used in attributes.")
+            }
             switch(element.value) {
             case let dictionary as Dictionary:
                 // nesting!

@@ -29,11 +29,6 @@ class AttributesTests: XCTestCase {
         XCTAssertEqual((attributes.rawValue["nestedObject"] as! [String: Any])["anArray"] as! [Int], [1, 2, 3, 4])
     }
 
-    func testAttributesCoercion() {
-        let dictionary = ["thing": 42]
-        let attributes = dictionary.attributes
-    }
-
     func testCodableRoundtrip() throws {
         // use JSONEncoder to test that Codable was synthesized properly.
         let json = try JSONEncoder.default.encode(Attributes.init(rawValue: exampleAttributes))

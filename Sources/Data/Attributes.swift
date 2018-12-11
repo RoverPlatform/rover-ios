@@ -17,7 +17,9 @@ class Attributes: NSObject, NSCoding, Codable, RawRepresentable {
     
     public required init(rawValue: [String:Any]) {
         // to get an implicit pass of our validation logic, render it to our internal NS attributes, which as a side-effect can emit an error.
-        let _ = rawValue.attributesForNsDictionary
+
+        // TODO validations.
+        
         self.rawValue = rawValue
     }
 
@@ -26,7 +28,21 @@ class Attributes: NSObject, NSCoding, Codable, RawRepresentable {
     //
     
     public func encode(with aCoder: NSCoder) {
-        let nsDictionary = rawValue.attributes
+        var boolToBoolean: ((Any) -> Any)!
+        boolToBoolean = { anyValue in
+            switch anyValue {
+            case let value as Bool:
+                return BooleanValue(value)
+            case let value as [Bool]:
+                return value.map { BooleanValue($0) }
+            case let value as [String: Any]:
+                return value.mapValues(boolToBoolean)
+            default:
+                return anyValue
+            }
+        }
+        
+        let nsDictionary = self.rawValue.mapValues(boolToBoolean) as Dictionary
         aCoder.encode(nsDictionary)
     }
     
@@ -34,7 +50,27 @@ class Attributes: NSObject, NSCoding, Codable, RawRepresentable {
         guard let nsDictionary = aDecoder.decodeObject() as? NSDictionary else {
             return nil
         }
-        rawValue = nsDictionary.attributes
+        
+        let dictionary = nsDictionary.dictionaryWithValues(forKeys: nsDictionary.allKeys as! [String])
+        
+        func transformDictionary(dictionary: [String: Any]) -> [String: Any] {
+            return dictionary.reduce(into: [String:Any]()) { (result, element) in
+                switch(element.value) {
+                case let value as BooleanValue:
+                    result[element.key] = value.value
+                case let dictionary as Dictionary<String, Any>:
+                    // nesting!
+                    result[element.key] = transformDictionary(dictionary: dictionary)
+                case let array as [BooleanValue]:
+                    result[element.key] = array.map { $0.value }
+                default:
+                    result[element.key] = element.value
+                }
+            }
+        }
+        
+        self.rawValue = transformDictionary(dictionary: dictionary)
+        
         super.init()
     }
     
@@ -164,100 +200,6 @@ class Attributes: NSObject, NSCoding, Codable, RawRepresentable {
     override init() {
         rawValue = [:]
         super.init()
-    }
-}
-
-extension Dictionary where Key == String, Value: Any {
-    fileprivate var attributesForNsDictionary: [String: Any] {
-        func transformAsNeeded(value: Any) -> Any? {
-            switch(value) {
-            case let bool as Bool:
-                // The Nextstep standard library objects do not model Bool separately from Number, so converting our attributes dictionaries to NSDictionary otherwise unmodified would lose the distinction between the two types.  We work around this by creating our own `BooleanValue` type.
-                return BooleanValue(bool)
-            case is Int, is String, is Double:
-                return value
-            default:
-                let errorMessage = "Unsupported type used in a Rover attributes dictionary: \(type(of: value))"
-                assertionFailure(errorMessage)
-                os_log("%s", type: .error, errorMessage)
-                return nil
-            }
-        }
-        
-        return self.reduce(into: [String:Any]()) { (result, element) in
-            let key = element.key
-            let swiftRange = Range(uncheckedBounds: (key.startIndex, key.endIndex))
-            let nsRange = NSRange(swiftRange, in: key)
-            if roverKeyRegex.matches(in: element.key, range: nsRange).count == 0 {
-                fatalError("Unsupported key `\(element.key)` used in attributes.")
-            }
-            switch(element.value) {
-            case let dictionary as Dictionary:
-                // nesting!
-                result[element.key] = dictionary.attributesForNsDictionary
-            case let array as Array<Any>:
-                // can only contain scalars
-                result[element.key] = array.map { transformAsNeeded(value: $0) }
-            default:
-                guard let transformed = transformAsNeeded(value: element.value) else {
-                    return
-                }
-                result[element.key] = transformed
-            }
-        }
-    }
-    
-    var attributes: NSDictionary {
-        let dictionary = NSMutableDictionary()
-        // setValuesForKeys coerces Swifty primitives to their NS* equivalents, however, in attributesForNsDictionary() we do a few extra transforms.
-        // setValuesForKeys' equivalent in the opposite direction is NSDictionary.dictionaryWithValues
-        let attributesSuitableForNsDictionary = self.attributesForNsDictionary
-        dictionary.setValuesForKeys(attributesSuitableForNsDictionary)
-        return dictionary
-    }
-    
-    /// Undo the effects of [attributesForNsDictionary].
-    fileprivate var fromAttributesAsNsDictionary: [String: Any] {
-        
-        func transformAsNeeded(value: Any) -> Any? {
-            if let wrappedBoolean = value as? BooleanValue {
-                // Unwrap our custom BooleanValue type back to the standard swift Bool.
-                return wrappedBoolean.value
-            } else {
-                return value
-            }
-        }
-        
-        return self.reduce(into: [String:Any]()) { (result, element) in
-            switch(element.value) {
-            case let dictionary as Dictionary:
-                // nesting!
-                result[element.key] = dictionary.fromAttributesAsNsDictionary
-            case let array as Array<Any>:
-                result[element.key] = array.map { transformAsNeeded(value: $0) }
-            default:
-                guard let transformed = transformAsNeeded(value: element.value) else {
-                    return
-                }
-                result[element.key] = transformed
-            }
-        }
-    }
-}
-
-extension NSDictionary {
-    var attributes: [String: Any] {
-        guard let keys = self.allKeys as? [String] else {
-            let seenKeyTypes = self.allKeys.map { (key) -> String in
-                return String(describing: type(of: key))
-            }.joined(separator: ", ")
-            let errorMessage = "Unsupported key type appeared in attributes NSDictionary, one of: \(seenKeyTypes)"
-            assertionFailure(errorMessage)
-            os_log("%s", type: .error, errorMessage)
-            return [:]
-        }
-        let dictionary = self.dictionaryWithValues(forKeys: keys)
-        return dictionary.fromAttributesAsNsDictionary
     }
 }
 

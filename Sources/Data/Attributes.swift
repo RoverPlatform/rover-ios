@@ -26,19 +26,14 @@ fileprivate let roverKeyRegex = try! NSRegularExpression(pattern: "^[a-zA-Z_][a-
 /// * `[Double]`
 /// * `[Bool]`
 /// * `[String: Any]` (where Any may be any of these given types)
-public class Attributes: NSObject, NSCoding, Codable, RawRepresentable, ExpressibleByDictionaryLiteral {
-
-    public typealias Key = String
-    
-    public typealias Value = Any
-    
+public class Attributes: NSObject, NSCoding, Codable, RawRepresentable, ExpressibleByDictionaryLiteral {    
     public var rawValue: [String: Any]
     
-    public required init?(rawValue: [String:Any]) {
+    public required init(rawValue: [String:Any]) {
         // transform nested dictionaries to Attributes, if needed.
         let nestedDictionariesTransformedToAttributes = rawValue.mapValues { value -> Any in
             if let dictionary = value as? [String: Any] {
-                return Attributes.init(rawValue: dictionary) as Any? ?? Attributes()
+                return Attributes(rawValue: dictionary) as Any? ?? Attributes()
             } else {
                 return value
             }
@@ -55,7 +50,7 @@ public class Attributes: NSObject, NSCoding, Codable, RawRepresentable, Expressi
         // transform nested dictionaries to Attributes, if needed.
         let nestedDictionariesTransformedToAttributes = dictionary.mapValues { value -> Any in
             if let dictionary = value as? [String: Any] {
-                return Attributes.init(rawValue: dictionary) as Any? ?? Attributes()
+                return Attributes(rawValue: dictionary) as Any? ?? Attributes()
             } else {
                 return value
             }
@@ -217,7 +212,7 @@ public class Attributes: NSObject, NSCoding, Codable, RawRepresentable, Expressi
                 throw DecodingError.dataCorruptedError(forKey: key, in: container, debugDescription: "Expected one of Int, String, Double, Bool, or an Array thereof.")
             }
             
-            return Attributes.init(rawValue: assembledHash) ?? Attributes()
+            return Attributes(rawValue: assembledHash)
         }
         
         let container = try decoder.container(keyedBy: DynamicCodingKeys.self)

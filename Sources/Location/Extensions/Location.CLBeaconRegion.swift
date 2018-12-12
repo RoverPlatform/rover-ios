@@ -22,6 +22,6 @@ extension CLBeaconRegion {
             attributes["minor"] = minor.intValue
         }
         
-        return Attributes.init(rawValue: attributes) ?? Attributes()
+        return Attributes(rawValue: attributes)
     }
 }

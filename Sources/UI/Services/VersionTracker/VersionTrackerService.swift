@@ -79,7 +79,7 @@ class VersionTrackerService: VersionTracker {
             attributes["previousBuild"] = previousBuild
         }
         
-        let event = EventInfo(name: "App Updated", namespace: "rover", attributes: Attributes.init(rawValue: attributes))
+        let event = EventInfo(name: "App Updated", namespace: "rover", attributes: Attributes(rawValue: attributes))
         eventQueue.addEvent(event)
     }
 }

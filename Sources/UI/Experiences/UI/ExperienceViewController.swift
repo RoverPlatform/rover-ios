@@ -40,13 +40,13 @@ open class ExperienceViewController: UINavigationController {
         super.viewDidAppear(animated)
         
         let attributes: [String: Any] = ["experience": experience]
-        let event = EventInfo(name: "Experience Presented", namespace: "rover", attributes: Attributes.init(rawValue: attributes))
+        let event = EventInfo(name: "Experience Presented", namespace: "rover", attributes: Attributes(rawValue: attributes))
         eventQueue.addEvent(event)
         
         sessionController.registerSession(identifier: sessionIdentifier) { [attributes] duration in
             var attributes = attributes
             attributes["duration"] = duration
-            return EventInfo(name: "Experience Viewed", namespace: "rover", attributes: Attributes.init(rawValue: attributes))
+            return EventInfo(name: "Experience Viewed", namespace: "rover", attributes: Attributes(rawValue: attributes))
         }
     }
     

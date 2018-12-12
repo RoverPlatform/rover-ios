@@ -86,13 +86,13 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
             "screen": screen
         ]
         
-        let event = EventInfo(name: "Screen Presented", namespace: "rover", attributes: Attributes.init(rawValue: attributes))
+        let event = EventInfo(name: "Screen Presented", namespace: "rover", attributes: Attributes(rawValue: attributes))
         eventQueue.addEvent(event)
         
         sessionController.registerSession(identifier: sessionIdentifier) { [attributes] duration in
             var attributes = attributes
             attributes["duration"] = duration
-            return EventInfo(name: "Screen Viewed", namespace: "rover", attributes: Attributes.init(rawValue: attributes))
+            return EventInfo(name: "Screen Viewed", namespace: "rover", attributes: Attributes(rawValue: attributes))
         }
     }
     

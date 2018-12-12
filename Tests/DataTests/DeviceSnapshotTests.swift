@@ -61,7 +61,7 @@ class DeviceSnapshotTests: XCTestCase {
         radio: nil,
         isTestDevice: true,
         timeZone: "America/Toronto",
-        userInfo: Attributes.init(
+        userInfo: Attributes(
             rawValue: [
                 "testInt": 42,
                 "anArray": [1, 2, 3, 4],

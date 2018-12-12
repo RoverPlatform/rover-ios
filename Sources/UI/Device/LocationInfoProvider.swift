@@ -7,7 +7,7 @@
 //
 
 public protocol LocationInfoProvider: class {
-    var location: DeviceSnapshot.Location? { get }
+    var location: LocationSnapshot? { get }
     var locationAuthorization: String { get }
     var isLocationServicesEnabled: Bool { get }
 }

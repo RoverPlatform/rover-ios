@@ -69,7 +69,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     }
     
     lazy var sessionIdentifier: String = {
-        var identifier = "experience-\(experience.id.rawValue)-screen-\(screen.id.rawValue)"
+        var identifier = "experience-\(experience.id)-screen-\(screen.id)"
         
         if let campaignID = experience.campaignID {
             identifier = "\(identifier)-campaign-\(campaignID.rawValue)"

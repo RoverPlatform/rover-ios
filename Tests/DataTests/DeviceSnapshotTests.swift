@@ -121,7 +121,7 @@ class DeviceSnapshotTests: XCTestCase {
         XCTAssertEqual((decodedDeviceSnapshot.userInfo?.rawValue["testTrueBoolean"]) as! Bool, true)
         XCTAssertEqual((decodedDeviceSnapshot.userInfo?.rawValue["testString"]) as! String, "donut")
         XCTAssertEqual((decodedDeviceSnapshot.userInfo?.rawValue["testFalseBoolean"]) as! Bool, false)
-        XCTAssertEqual(((decodedDeviceSnapshot.userInfo?.rawValue["nestedObject"]) as! [String: Any])["anArray"] as! [Int], [1, 2, 3, 4])
+        XCTAssertEqual(((decodedDeviceSnapshot.userInfo?.rawValue["nestedObject"]) as! Attributes).rawValue["anArray"] as! [Int], [1, 2, 3, 4])
     }
     
     func testDeviceSnapshotNSCodingRoundtrip() throws {

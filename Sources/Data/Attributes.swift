@@ -16,13 +16,16 @@ class Attributes: NSObject, NSCoding, Codable, RawRepresentable {
     var rawValue: [String: Any]
     
     public required init?(rawValue: [String:Any]) {
-        do {
-            try Attributes.validateDictionary(rawValue)
-        } catch {
-            os_log("Invalid Rover Attributes raw value, because: %s", log: .persistence, type: .error, error.localizedDescription)
-            return nil
+        // transform nested dictionaries to Attributes, if needed.
+        let nestedDictionariesTransformedToAttributes = rawValue.mapValues { value -> Any in
+            if let dictionary = value as? [String: Any] {
+                return Attributes.init(rawValue: dictionary) as Any? ?? Attributes()
+            } else {
+                return value
+            }
         }
-        self.rawValue = rawValue
+        
+        self.rawValue = Attributes.validateDictionary(nestedDictionariesTransformedToAttributes)
     }
 
     //
@@ -37,8 +40,6 @@ class Attributes: NSObject, NSCoding, Codable, RawRepresentable {
                 return BooleanValue(value)
             case let value as [Bool]:
                 return value.map { BooleanValue($0) }
-            case let value as [String: Any]:
-                return value.mapValues(boolToBoolean)
             default:
                 return anyValue
             }
@@ -63,37 +64,32 @@ class Attributes: NSObject, NSCoding, Codable, RawRepresentable {
                     result[element.key] = value.value
                 case let array as [BooleanValue]:
                     result[element.key] = array.map { $0.value }
-                case let dictionary as Dictionary<String, Any>:
-                    // nesting!
-                    result[element.key] = transformDictionary(dictionary: dictionary)
-                
+                case let attributesDictionary as Attributes:
+                    // if a nested dictionary is already attributes, then pass it through.
+                    result[element.key] = attributesDictionary
                 default:
                     result[element.key] = element.value
                 }
             }
         }
         
-        self.rawValue = transformDictionary(dictionary: dictionary)
-        
-        do {
-            try Attributes.validateDictionary(self.rawValue)
-        } catch {
-            os_log("Encountered invalid Rover Attributes while decoding from NSCoder, because: %s", log: .persistence, type: .error, error.localizedDescription)
-            return nil
-        }
+        self.rawValue = Attributes.validateDictionary(transformDictionary(dictionary: dictionary))
+
         super.init()
     }
     
-    fileprivate static func validateDictionary(_ dictionary: [String: Any]) throws {
-        try dictionary.forEach { (key, value) in
+    fileprivate static func validateDictionary(_ dictionary: [String: Any]) -> [String: Any] {
+        var transformed : [String: Any] = [:]
+        dictionary.forEach { (key, value) in
             let swiftRange = Range(uncheckedBounds: (key.startIndex, key.endIndex))
             let nsRange = NSRange(swiftRange, in: key)
             if roverKeyRegex.matches(in: key, range: nsRange).count == 0 {
-                throw AttributesError.invalidKey(key: key)
+                assertionFailureEmitter("Invalid key: \(key)")
+                return
             }
             
-            if let nestedDictionary = value as? [String: Any] {
-                try validateDictionary(nestedDictionary)
+            if let nestedDictionary = value as? Attributes {
+                transformed[key] = nestedDictionary
                 return
             }
             
@@ -107,25 +103,15 @@ class Attributes: NSObject, NSCoding, Codable, RawRepresentable {
                 value is [String] ||
                 value is [Bool]
             )  {
-                throw AttributesError.invalidValue(key: key, type: type(of: value))
+                let valueType = type(of: value)
+                assertionFailureEmitter("Invalid value for key \(key) with unsupported type: \(String.init(describing: valueType))")
+                return
             }
+            transformed[key] = value
         }
+        return transformed
     }
-    
-    enum AttributesError: Error, LocalizedError {
-        case invalidKey(key: String)
-        case invalidValue(key: String, type: Any.Type)
-        
-        var errorDescription: String? {
-            switch self {
-            case .invalidKey(let key):
-                return "Invalid key: \(key)"
-            case .invalidValue(let key, let type):
-                return "Invalid value for key \(key) with unsupported type: \(String.init(describing: type))"
-            }
-        }
-    }
-    
+
     //
     // MARK: Codable
     //
@@ -148,7 +134,7 @@ class Attributes: NSObject, NSCoding, Codable, RawRepresentable {
     }
     
     required public init(from decoder: Decoder) throws {
-        func fromKeyedDecoder(_ container: KeyedDecodingContainer<Attributes.DynamicCodingKeys>) throws -> [String:Any] {
+        func fromKeyedDecoder(_ container: KeyedDecodingContainer<Attributes.DynamicCodingKeys>) throws -> Attributes {
             var assembledHash = [String: Any]()
 
             try container.allKeys.forEach { key in
@@ -195,14 +181,12 @@ class Attributes: NSObject, NSCoding, Codable, RawRepresentable {
                 throw DecodingError.dataCorruptedError(forKey: key, in: container, debugDescription: "Expected one of Int, String, Double, Bool, or an Array thereof.")
             }
             
-            return assembledHash
+            return Attributes.init(rawValue: assembledHash) ?? Attributes()
         }
         
         let container = try decoder.container(keyedBy: DynamicCodingKeys.self)
     
-        self.rawValue = try fromKeyedDecoder(container)
-        
-        try Attributes.validateDictionary(self.rawValue)
+        self.rawValue = try fromKeyedDecoder(container).rawValue
     }
     
     public func encode(to encoder: Encoder) throws {
@@ -227,9 +211,9 @@ class Attributes: NSObject, NSCoding, Codable, RawRepresentable {
                     try container.encode(value, forKey: key)
                 case let value as [String]:
                     try container.encode(value, forKey: key)
-                case let value as Dictionary<String, Any>:
+                case let value as Attributes:
                     var nestedContainer = container.nestedContainer(keyedBy: DynamicCodingKeys.self, forKey: key)
-                    try encodeToContainer(dictionary: value, container: &nestedContainer)
+                    try encodeToContainer(dictionary: value.rawValue, container: &nestedContainer)
                 default:
                     let context = EncodingError.Context(codingPath: container.codingPath, debugDescription: "Unexpected attribute value type. Expected one of Int, String, Double, Boolean, or an array thereof, or a dictionary of all of the above including arrays.")
                     throw EncodingError.invalidValue(value, context)
@@ -244,6 +228,24 @@ class Attributes: NSObject, NSCoding, Codable, RawRepresentable {
     override init() {
         rawValue = [:]
         super.init()
+    }
+    
+    static func wasAssertionThrown(operation: () -> Void) -> Bool {
+        let originalEmitter = assertionFailureEmitter
+        var thrown = false
+        assertionFailureEmitter = { message in
+            os_log("Attributes assertion thrown: %s", message)
+            thrown = true
+        }
+        
+        operation()
+        assertionFailureEmitter = originalEmitter
+        return thrown
+    }
+    
+    /// Needed so tests can override the method of emitting assertion failures.
+    private static var assertionFailureEmitter : (String) -> Void =  { message in
+        assertionFailure(message)
     }
 }
 

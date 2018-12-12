@@ -26,7 +26,7 @@ class AttributesTests: XCTestCase {
         XCTAssertEqual(attributes.rawValue["testTrueBoolean"] as! Bool, true)
         XCTAssertEqual(attributes.rawValue["testString"] as! String, "donut")
         XCTAssertEqual(attributes.rawValue["testFalseBoolean"] as! Bool, false)
-        XCTAssertEqual((attributes.rawValue["nestedObject"] as! [String: Any])["anArray"] as! [Int], [1, 2, 3, 4])
+        XCTAssertEqual((attributes.rawValue["nestedObject"] as! Attributes).rawValue["anArray"] as! [Int], [1, 2, 3, 4])
     }
 
     func testCodableRoundtrip() throws {
@@ -58,19 +58,29 @@ class AttributesTests: XCTestCase {
         verifyDecodedAttributes(attributes: decodedAttributes)
     }
     
+    // These tests cause assertionFailures(), which is the desired behaviour but cannot currently trapped and asserted in tests.
+    
     func testInvalidAttributesWithArrayInDict() throws {
         let exampleBogusAttributesWithObjectInArray: [String: Any] = [
             "invalidArrayWithDict": [ 42: ["dict": 24 ]]
         ]
-        
-        XCTAssertNil(Attributes.init(rawValue: exampleBogusAttributesWithObjectInArray))
+
+        XCTAssertTrue(
+            Attributes.wasAssertionThrown {
+                let _ = Attributes.init(rawValue: exampleBogusAttributesWithObjectInArray)
+            }
+        )
     }
-    
+
     func testInvalidAttributesWithBadKey() throws {
         let exampleBogusAttributesWithObjectInArray: [String: Any] = [
             "$%#": 38
         ]
-        
-        XCTAssertNil(Attributes.init(rawValue: exampleBogusAttributesWithObjectInArray))
+
+        XCTAssertTrue(
+            Attributes.wasAssertionThrown {
+                Attributes.init(rawValue: exampleBogusAttributesWithObjectInArray)
+            }
+        )
     }
 }

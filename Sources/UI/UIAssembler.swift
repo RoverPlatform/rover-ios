@@ -49,10 +49,6 @@ extension UIAssembler: Assembler {
             return FakeSyncCoordinator()
         }
         
-        container.register(FetchExperienceClient.self) factory: { resolver in
-            return 
-        }
-        
         // MARK: ImageStore
         
         container.register(ImageStore.self) { resolver in

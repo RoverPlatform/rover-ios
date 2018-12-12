@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14135" systemVersion="18A391" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14460.32" systemVersion="18B75" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Beacon" representedClassName=".Beacon" syncable="YES">
         <attribute name="id" attributeType="String" syncable="YES"/>
         <attribute name="major" attributeType="Integer 32" minValueString="0" maxValueString="65535" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
@@ -18,6 +18,15 @@
                 <constraint value="minor"/>
             </uniquenessConstraint>
         </uniquenessConstraints>
+    </entity>
+    <entity name="Event" representedClassName="Event" syncable="YES">
+        <attribute name="attributes" attributeType="Transformable" syncable="YES"/>
+        <attribute name="deviceSnapshot" attributeType="Transformable" syncable="YES"/>
+        <attribute name="id" attributeType="String" syncable="YES"/>
+        <attribute name="isFlushed" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="name" attributeType="String" syncable="YES"/>
+        <attribute name="namespace" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="timestamp" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
     </entity>
     <entity name="Geofence" representedClassName=".Geofence" syncable="YES">
         <attribute name="id" attributeType="String" defaultValueString="&quot;&quot;" syncable="YES"/>
@@ -41,5 +50,6 @@
     <elements>
         <element name="Beacon" positionX="-63" positionY="18" width="128" height="150"/>
         <element name="Geofence" positionX="-282.91796875" positionY="25.5" width="128" height="150"/>
+        <element name="Event" positionX="-171" positionY="72" width="128" height="150"/>
     </elements>
 </model>

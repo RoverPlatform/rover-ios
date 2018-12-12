@@ -27,10 +27,10 @@ open class ExperienceViewController: UINavigationController {
     }
     
     lazy var sessionIdentifier: String = {
-        var identifier = "experience-\(experience.id.rawValue)"
+        var identifier = "experience-\(experience.id)"
         
         if let campaignID = experience.campaignID {
-            identifier = "\(identifier)-campaign-\(campaignID.rawValue)"
+            identifier = "\(identifier)-campaign-\(campaignID)"
         }
         
         return identifier
@@ -39,14 +39,14 @@ open class ExperienceViewController: UINavigationController {
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        let attributes: Attributes = ["experience": experience]
-        let event = EventInfo(name: "Experience Presented", namespace: "rover", attributes: attributes)
+        let attributes: [String: Any] = ["experience": experience]
+        let event = EventInfo(name: "Experience Presented", namespace: "rover", attributes: Attributes(rawValue: attributes))
         eventQueue.addEvent(event)
         
         sessionController.registerSession(identifier: sessionIdentifier) { [attributes] duration in
             var attributes = attributes
             attributes["duration"] = duration
-            return EventInfo(name: "Experience Viewed", namespace: "rover", attributes: attributes)
+            return EventInfo(name: "Experience Viewed", namespace: "rover", attributes: Attributes(rawValue: attributes))
         }
     }
     

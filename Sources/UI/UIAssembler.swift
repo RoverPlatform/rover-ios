@@ -39,6 +39,16 @@ public struct UIAssembler {
 
 extension UIAssembler: Assembler {
     public func assemble(container: Container) {
+        // MARK: TEMPORARY FAKE THINGS
+        
+        container.register(EventQueue.self) { resolver in
+            return FakeEventQueue()
+        }
+        
+        container.register(SyncCoordinator.self) { resolver in
+            return FakeSyncCoordinator()
+        }
+        
         // MARK: ImageStore
         
         container.register(ImageStore.self) { resolver in
@@ -84,6 +94,8 @@ extension UIAssembler: Assembler {
         container.register(UIViewController.self, name: "website", scope: .transient) { (resolver, url: URL) in
             return SFSafariViewController(url: url)
         }
+        
+
         
         // MARK: VersionTracker
         

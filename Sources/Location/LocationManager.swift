@@ -15,7 +15,7 @@ class LocationManager {
     let eventQueue: EventQueue
     let geocoder = CLGeocoder()
     
-    var location: DeviceSnapshot.Location?
+    var location: LocationSnapshot?
     
     typealias RegionIdentifier = String
     

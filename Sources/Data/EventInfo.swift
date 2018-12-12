@@ -11,6 +11,7 @@ import Foundation
 public struct EventInfo {
     public let name: String
     public let namespace: String?
+    
     public let attributes: Attributes?
     public let timestamp: Date?
     

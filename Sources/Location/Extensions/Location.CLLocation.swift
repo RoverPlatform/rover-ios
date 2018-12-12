@@ -9,18 +9,18 @@
 import CoreLocation
 
 extension CLLocation {
-    public func context(placemark: CLPlacemark?) -> DeviceSnapshot.Location {
-        let coordinate = DeviceSnapshot.Location.Coordinate(
+    public func context(placemark: CLPlacemark?) -> LocationSnapshot {
+        let coordinate = CoordinateSnapshot(
             latitude: self.coordinate.latitude,
             longitude: self.coordinate.longitude
         )
         
-        let address: DeviceSnapshot.Location.Address? = {
+        let address: AddressSnapshot? = {
             guard let placemark = placemark else {
                 return nil
             }
             
-            return DeviceSnapshot.Location.Address(
+            return AddressSnapshot(
                 street: placemark.thoroughfare,
                 city: placemark.locality,
                 state: placemark.administrativeArea,
@@ -32,7 +32,7 @@ extension CLLocation {
             )
         }()
         
-        return DeviceSnapshot.Location(
+        return LocationSnapshot(
             coordinate: coordinate,
             altitude: self.altitude,
             horizontalAccuracy: self.horizontalAccuracy,

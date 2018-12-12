@@ -70,7 +70,7 @@ class VersionTrackerService: VersionTracker {
     }
     
     func trackAppUpdated(fromVersion previousVersion: String?, build previousBuild: String?) {
-        var attributes = Attributes()
+        var attributes = [String: Any]()
         if let previousVersion = previousVersion {
             attributes["previousVersion"] = previousVersion
         }
@@ -79,7 +79,7 @@ class VersionTrackerService: VersionTracker {
             attributes["previousBuild"] = previousBuild
         }
         
-        let event = EventInfo(name: "App Updated", namespace: "rover", attributes: attributes)
+        let event = EventInfo(name: "App Updated", namespace: "rover", attributes: Attributes(rawValue: attributes))
         eventQueue.addEvent(event)
     }
 }

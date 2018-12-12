@@ -27,12 +27,12 @@ class BeaconsSyncParticipant: PagingSyncParticipant {
     }
     
     func nextRequest(cursor: String?) -> SyncRequest {
-        let orderBy: Attributes = [
+        let orderBy: [String: Any] = [
             "field": "UPDATED_AT",
             "direction": "ASC"
         ]
         
-        var values: [String: AttributeRepresentable] = [
+        var values: [String: Any] = [
             "first": 500,
             "orderBy": orderBy
         ]
@@ -59,7 +59,7 @@ struct BeaconsSyncResponse: Decodable {
     struct Data: Decodable {
         struct Beacons: Decodable {
             struct Node: Decodable {
-                var id: ID
+                var id: String
                 var name: String
                 var uuid: UUID
                 var major: Int32

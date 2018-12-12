@@ -69,10 +69,10 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     }
     
     lazy var sessionIdentifier: String = {
-        var identifier = "experience-\(experience.id.rawValue)-screen-\(screen.id.rawValue)"
+        var identifier = "experience-\(experience.id)-screen-\(screen.id)"
         
         if let campaignID = experience.campaignID {
-            identifier = "\(identifier)-campaign-\(campaignID.rawValue)"
+            identifier = "\(identifier)-campaign-\(campaignID)"
         }
         
         return identifier
@@ -81,18 +81,18 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        let attributes: Attributes = [
+        let attributes: [String: Any] = [
             "experience": experience,
             "screen": screen
         ]
         
-        let event = EventInfo(name: "Screen Presented", namespace: "rover", attributes: attributes)
+        let event = EventInfo(name: "Screen Presented", namespace: "rover", attributes: Attributes(rawValue: attributes))
         eventQueue.addEvent(event)
         
         sessionController.registerSession(identifier: sessionIdentifier) { [attributes] duration in
             var attributes = attributes
             attributes["duration"] = duration
-            return EventInfo(name: "Screen Viewed", namespace: "rover", attributes: attributes)
+            return EventInfo(name: "Screen Viewed", namespace: "rover", attributes: Attributes(rawValue: attributes))
         }
     }
     
@@ -100,7 +100,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         super.viewWillDisappear(animated)
         
         let attributes: Attributes = [
-            "experience": experience,
+            "experience": experience.attributes,
             "screen": screen
         ]
         

@@ -27,12 +27,12 @@ class GeofencesSyncParticipant: PagingSyncParticipant {
     }
     
     func nextRequest(cursor: String?) -> SyncRequest {
-        let orderBy: Attributes = [
+        let orderBy: [String: Any] = [
             "field": "UPDATED_AT",
             "direction": "ASC"
         ]
         
-        var values: [String: AttributeRepresentable] = [
+        var values: [String: Any] = [
             "first": 500,
             "orderBy": orderBy
         ]
@@ -66,7 +66,7 @@ struct GeofencesSyncResponse: Decodable {
                     var longitude: Double
                 }
                 
-                var id: ID
+                var id: String
                 var name: String
                 var center: Center
                 var radius: Double

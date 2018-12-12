@@ -6,10 +6,10 @@
 //  Copyright © 2017 Rover Labs Inc. All rights reserved.
 //
 
-public protocol Block: AttributeRepresentable, Decodable {
+public protocol Block: Decodable {
     var background: Background { get }
     var border: Border { get }
-    var id: ID { get }
+    var id: String { get }
     var name: String { get }
     var insets: Insets { get }
     var opacity: Double { get }
@@ -20,13 +20,12 @@ public protocol Block: AttributeRepresentable, Decodable {
 }
 
 extension Block {
-    public var attributeValue: AttributeValue {
-        let keys = self.keys.reduce(into: Attributes()) { $0[$1.0] = $1.1 }
+    public var attributes: Attributes {
         return [
             "id": id,
             "name": name,
             "tapBehavior": tapBehavior,
-            "keys": AttributeValue.object(keys),
+            "keys": keys,
             "tags": tags
         ]
     }

@@ -28,9 +28,13 @@ final class Event : NSManagedObject {
     
     override func awakeFromInsert() {
         // default values for newly created and inserted Events.
+        
+        // TODO: are these likely to clobber values set by user before insertion?
+        
         self.id = UUID().uuidString
         self.attributes = Attributes()
         self.deviceSnapshot = DeviceSnapshot()
         self.timestamp = Date()
+        self.isFlushed = false
     }
 }

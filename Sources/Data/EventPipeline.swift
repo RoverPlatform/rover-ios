@@ -11,10 +11,10 @@ import CoreData
 import os
 
 class EventPipeline {
-    let managedObjectContext: NSManagedObjectContext
-    
-    var objectsDidChangeObserver: NSObjectProtocol!
     public var observers = ObserverSet<Event>()
+    
+    private let managedObjectContext: NSManagedObjectContext
+    private var objectsDidChangeObserver: NSObjectProtocol!
     
     init(managedObjectContext: NSManagedObjectContext) {
         self.managedObjectContext = managedObjectContext
@@ -24,9 +24,13 @@ class EventPipeline {
                 return
             }
             
-            let insertedEvents = insertedObjects.filter({ (potentialInsertedEvent) -> Bool in
-                return potentialInsertedEvent is Event
-            }) as! Set<Event>
+            insertedObjects
+                .compactMap({ $0 as? Event })
+                .forEach({ self?.observers.notify(parameters: $0) })
+            
+//            let insertedEvents = insertedObjects.filter({ (potentialInsertedEvent) -> Bool in
+//                return potentialInsertedEvent is Event
+//            }) as! Set<Event>
             
             insertedEvents.forEach({ (event) in
                 self?.observers.notify(parameters: event)
@@ -40,30 +44,22 @@ class EventPipeline {
     
     func addEvent(_ event: EventInfo) {
         let eventSnapshot = event.snapshot
-        
-        managedObjectContext.insert(eventSnapshot)
-        
-        var saveError: Error?
-        managedObjectContext.performAndWait { [managedObjectContext] in
-            
+        managedObjectContext.perform { [managedObjectContext] in
             managedObjectContext.insert(eventSnapshot)
            
             do {
                 try managedObjectContext.save()
                 managedObjectContext.reset()
             } catch {
-                saveError = error
-                managedObjectContext.rollback()
-            }
-        }
-        
-        if let error = saveError {
-            if let multipleErrors = (error as NSError).userInfo[NSDetailedErrorsKey] as? [Error] {
-                multipleErrors.forEach {
-                    os_log("Unable to save event into the EventPipeline. Dropping it. Reason: %s", log: .persistence, type: .error, $0.localizedDescription)
+                if let multipleErrors = (error as NSError).userInfo[NSDetailedErrorsKey] as? [Error] {
+                    multipleErrors.forEach {
+                        os_log("Unable to save event into the EventPipeline. Dropping it. Reason: %s", log: .persistence, type: .error, $0.localizedDescription)
+                    }
+                } else {
+                    os_log("Unable to save event into the EventPipeline. Dropping it. Reason: %s", log: .persistence, type: .error, error.localizedDescription)
                 }
-            } else {
-                os_log("Unable to save event into the EventPipeline. Dropping it. Reason: %s", log: .persistence, type: .error, error.localizedDescription)
+                
+                managedObjectContext.rollback()
             }
         }
     }

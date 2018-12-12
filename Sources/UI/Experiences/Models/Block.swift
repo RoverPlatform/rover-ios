@@ -20,13 +20,13 @@ public protocol Block: Decodable {
 }
 
 extension Block {
-    public var attributes: [String: Any] {
+    public var attributes: Attributes {
         let keys = self.keys.reduce(into: [:]) { $0[$1.0] = $1.1 }
         return [
             "id": id,
             "name": name,
             "tapBehavior": tapBehavior,
-            "keys": AttributeValue.object(keys),
+            "keys": keys,
             "tags": tags
         ]
     }

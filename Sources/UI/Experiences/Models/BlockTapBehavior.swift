@@ -18,7 +18,7 @@ public enum BlockTapBehavior {
 // MARK: Attributes
 
 extension BlockTapBehavior {
-    public var attributes: [String: Any] {
+    public var attributes: Attributes {
         switch self {
         case .goToScreen(let screenID):
             return [

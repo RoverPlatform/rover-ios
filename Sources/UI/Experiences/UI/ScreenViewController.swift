@@ -72,7 +72,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         var identifier = "experience-\(experience.id)-screen-\(screen.id)"
         
         if let campaignID = experience.campaignID {
-            identifier = "\(identifier)-campaign-\(campaignID.rawValue)"
+            identifier = "\(identifier)-campaign-\(campaignID)"
         }
         
         return identifier
@@ -86,20 +86,20 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
             "screen": screen
         ]
         
-        let event = EventInfo(name: "Screen Presented", namespace: "rover", attributes: attributes)
+        let event = EventInfo(name: "Screen Presented", namespace: "rover", attributes: Attributes.init(rawValue: attributes))
         eventQueue.addEvent(event)
         
         sessionController.registerSession(identifier: sessionIdentifier) { [attributes] duration in
             var attributes = attributes
             attributes["duration"] = duration
-            return EventInfo(name: "Screen Viewed", namespace: "rover", attributes: attributes)
+            return EventInfo(name: "Screen Viewed", namespace: "rover", attributes: Attributes.init(rawValue: attributes))
         }
     }
     
     override open func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
-        let attributes: [String: Any] = [
+        let attributes: Attributes = [
             "experience": experience.attributes,
             "screen": screen
         ]
@@ -394,7 +394,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         let row = screen.rows[indexPath.section]
         let block = row.blocks[indexPath.row]
         
-        let attributes: [String: Any] = [
+        let attributes: Attributes = [
             "experience": experience,
             "screen": screen,
             "row": row,

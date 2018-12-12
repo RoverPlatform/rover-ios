@@ -8,8 +8,8 @@
 
 import Foundation
 
-class DeviceSnapshot: NSObject, Codable, NSCoding {
-    func encode(with aCoder: NSCoder) {
+public class DeviceSnapshot: NSObject, Codable, NSCoding {
+    public func encode(with aCoder: NSCoder) {
         aCoder.encode(self.advertisingIdentifier, forKey: "advertisingIdentifier")
         aCoder.encode(self.isBluetoothEnabled, forKey: "isBluetoothEnabled")
         aCoder.encode(self.localeLanguage, forKey: "localeLanguage")
@@ -43,7 +43,7 @@ class DeviceSnapshot: NSObject, Codable, NSCoding {
         aCoder.encode(self.userInfo, forKey: "userInfo")
     }
     
-    required init?(coder aDecoder: NSCoder) {
+    public required init?(coder aDecoder: NSCoder) {
         self.advertisingIdentifier = aDecoder.decodeObject(forKey: "advertisingIdentifier") as? String
         self.isBluetoothEnabled = aDecoder.decodeObject(forKey: "isBluetoothEnabled") as? Bool
         self.localeLanguage = aDecoder.decodeObject(forKey: "localeLanguage") as? String
@@ -81,71 +81,71 @@ class DeviceSnapshot: NSObject, Codable, NSCoding {
     
     // MARK: AdSupport
     
-    var advertisingIdentifier: String?
+    public var advertisingIdentifier: String?
     
     // MARK: Bluetooth
     
-    var isBluetoothEnabled: Bool?
+    public var isBluetoothEnabled: Bool?
     
     // MARK: Locale
     
-    var localeLanguage: String?
-    var localeRegion: String?
-    var localeScript: String?
+    public var localeLanguage: String?
+    public var localeRegion: String?
+    public var localeScript: String?
 
     
-    var isLocationServicesEnabled: Bool?
-    var location: LocationSnapshot?
-    var locationAuthorization: String?
+    public var isLocationServicesEnabled: Bool?
+    public var location: LocationSnapshot?
+    public var locationAuthorization: String?
     
     // MARK: Notifications
     
-    var notificationAuthorization: String?
+    public var notificationAuthorization: String?
     
     // MARK: Push Token
     
-    var pushToken: PushTokenSnapshot?
+    public var pushToken: PushTokenSnapshot?
     
     // MARK: Reachability
     
-    var isCellularEnabled: Bool?
-    var isWifiEnabled: Bool?
+    public var isCellularEnabled: Bool?
+    public var isWifiEnabled: Bool?
     
     // MARK: Static Context
     
-    var appBadgeNumber: Int?
-    var appBuild: String?
-    var appIdentifier: String?
-    var appVersion: String?
-    var buildEnvironment: BuildEnvironment?
-    var deviceIdentifier: String?
-    var deviceManufacturer: String?
-    var deviceModel: String?
-    var deviceName: String?
-    var operatingSystemName: String?
-    var operatingSystemVersion: String?
-    var screenHeight: Int?
-    var screenWidth: Int?
-    var sdkVersion: String?
+    public var appBadgeNumber: Int?
+    public var appBuild: String?
+    public var appIdentifier: String?
+    public var appVersion: String?
+    public var buildEnvironment: BuildEnvironment?
+    public var deviceIdentifier: String?
+    public var deviceManufacturer: String?
+    public var deviceModel: String?
+    public var deviceName: String?
+    public var operatingSystemName: String?
+    public var operatingSystemVersion: String?
+    public var screenHeight: Int?
+    public var screenWidth: Int?
+    public var sdkVersion: String?
     
     // MARK: Telephony
     
-    var carrierName: String?
-    var radio: String?
+    public var carrierName: String?
+    public var radio: String?
     
     // MARK: Testing
     
-    var isTestDevice: Bool?
+    public var isTestDevice: Bool?
     
     // MARK: Time Zone
     
-    var timeZone: String?
+    public var timeZone: String?
     
     // MARK: User Info
     
-    var userInfo: Attributes?
+    public var userInfo: Attributes?
     
-    init(
+    public init(
         advertisingIdentifier: String? = nil,
         isBluetoothEnabled: Bool? = nil,
         localeLanguage: String? = nil,
@@ -214,11 +214,11 @@ class DeviceSnapshot: NSObject, Codable, NSCoding {
 
 // MARK: Push Token
 
-class PushTokenSnapshot: NSObject, NSCoding, Codable {
-    var value: String
-    var timestamp: Date
+public class PushTokenSnapshot: NSObject, NSCoding, Codable {
+    public var value: String
+    public var timestamp: Date
     
-    init(
+    public init(
         value: String,
         timestamp: Date
     ) {
@@ -226,12 +226,12 @@ class PushTokenSnapshot: NSObject, NSCoding, Codable {
         self.timestamp = timestamp
     }
     
-    func encode(with aCoder: NSCoder) {
+    public func encode(with aCoder: NSCoder) {
         aCoder.encode(value, forKey: "value")
         aCoder.encode(timestamp, forKey: "timestamp")
     }
     
-    required init?(coder aDecoder: NSCoder) {
+    public required init?(coder aDecoder: NSCoder) {
         guard let value = aDecoder.decodeObject(forKey: "value") as? String else { return nil }
         self.value = String(value)
         guard let timestamp = aDecoder.decodeObject(forKey: "timestamp") as? Date else { return nil }
@@ -241,7 +241,7 @@ class PushTokenSnapshot: NSObject, NSCoding, Codable {
 
 // MARK: Build Environment
 
-enum BuildEnvironment: String, Codable, Equatable {
+public enum BuildEnvironment: String, Codable, Equatable {
     case production = "PRODUCTION"
     case development = "DEVELOPMENT"
     case simulator = "SIMULATOR"
@@ -249,33 +249,33 @@ enum BuildEnvironment: String, Codable, Equatable {
 
 // MARK: Location
 
-class CoordinateSnapshot: NSObject, Codable, NSCoding {
-    var latitude: Double
-    var longitude: Double
+public class CoordinateSnapshot: NSObject, Codable, NSCoding {
+    public var latitude: Double
+    public var longitude: Double
     
-    func encode(with aCoder: NSCoder) {
+    public func encode(with aCoder: NSCoder) {
         aCoder.encode(self.latitude, forKey: "latitude")
         aCoder.encode(self.longitude, forKey: "longitude")
     }
     
-    required init?(coder aDecoder: NSCoder) {
+    public required init?(coder aDecoder: NSCoder) {
         self.latitude = aDecoder.decodeDouble(forKey: "latitude")
         self.longitude = aDecoder.decodeDouble(forKey: "longitude")
     }
     
-    init(latitude: Double, longitude: Double) {
+    public init(latitude: Double, longitude: Double) {
         self.latitude = latitude
         self.longitude = longitude
     }
     
-    required init(from decoder: Decoder) throws {
+    public required init(from decoder: Decoder) throws {
         // we want to represent coordinate as a tuple in our JSON as per our GraphQL API rather than a hash of name-value pairs as the default synthesized implementation of Codable would have done.
         var container = try decoder.unkeyedContainer()
         latitude = try container.decode(Double.self)
         longitude = try container.decode(Double.self)
     }
     
-    func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: Encoder) throws {
         // we want to represent coordinate as a tuple in our JSON as per our GraphQL API rather than a hash of name-value pairs as the default synthesized implementation of Codable would have done.
         var container = encoder.unkeyedContainer()
         try container.encode(latitude)
@@ -283,17 +283,17 @@ class CoordinateSnapshot: NSObject, Codable, NSCoding {
     }
 }
 
-class LocationSnapshot: NSObject, Codable, NSCoding {
-    var coordinate: CoordinateSnapshot
-    var altitude: Double
-    var horizontalAccuracy: Double
-    var verticalAccuracy: Double
-    var address: AddressSnapshot?
-    var timestamp: Date
+public class LocationSnapshot: NSObject, Codable, NSCoding {
+    public var coordinate: CoordinateSnapshot
+    public var altitude: Double
+    public var horizontalAccuracy: Double
+    public var verticalAccuracy: Double
+    public var address: AddressSnapshot?
+    public var timestamp: Date
     
     // MARK: NSCoding
     
-    func encode(with aCoder: NSCoder) {
+    public func encode(with aCoder: NSCoder) {
         aCoder.encode(self.coordinate, forKey: "coordinate")
         aCoder.encode(self.altitude, forKey: "altitude")
         aCoder.encode(self.horizontalAccuracy, forKey: "horizontalAccuracy")
@@ -302,7 +302,7 @@ class LocationSnapshot: NSObject, Codable, NSCoding {
         aCoder.encode(self.timestamp, forKey: "timestamp")
     }
     
-    required init?(coder aDecoder: NSCoder) {
+    public required init?(coder aDecoder: NSCoder) {
         guard let coordinate = aDecoder.decodeObject(forKey: "coordinate") as? CoordinateSnapshot else {
             return nil
         }
@@ -314,7 +314,7 @@ class LocationSnapshot: NSObject, Codable, NSCoding {
         self.timestamp = aDecoder.decodeObject(forKey: "timestamp") as! Date
     }
     
-    init(
+    public init(
         coordinate: CoordinateSnapshot,
         altitude: Double,
         horizontalAccuracy: Double,
@@ -332,19 +332,19 @@ class LocationSnapshot: NSObject, Codable, NSCoding {
 }
 
     
-class AddressSnapshot: NSObject, Codable, NSCoding {
-    var street: String?
-    var city: String?
-    var state: String?
-    var postalCode: String?
-    var country: String?
-    var isoCountryCode: String?
-    var subAdministrativeArea: String?
-    var subLocality: String?
+public class AddressSnapshot: NSObject, Codable, NSCoding {
+    public var street: String?
+    public var city: String?
+    public var state: String?
+    public var postalCode: String?
+    public var country: String?
+    public var isoCountryCode: String?
+    public var subAdministrativeArea: String?
+    public var subLocality: String?
     
     // TODO: NSCoding implementation
     
-    func encode(with aCoder: NSCoder) {
+    public func encode(with aCoder: NSCoder) {
         aCoder.encode(self.street, forKey: "street")
         aCoder.encode(self.city, forKey: "city")
         aCoder.encode(self.state, forKey: "state")
@@ -355,7 +355,7 @@ class AddressSnapshot: NSObject, Codable, NSCoding {
         aCoder.encode(self.subLocality, forKey: "subLocality")
     }
     
-    required init?(coder aDecoder: NSCoder) {
+    public required init?(coder aDecoder: NSCoder) {
         guard let street = aDecoder.decodeObject(forKey: "street") as? String else { return nil }
         self.street = String(street)
         guard let city = aDecoder.decodeObject(forKey: "city") as? String else { return nil }
@@ -374,7 +374,7 @@ class AddressSnapshot: NSObject, Codable, NSCoding {
         self.subLocality = String(subLocality)
     }
     
-    init(
+    public init(
         street: String?,
         city: String?,
         state: String?,

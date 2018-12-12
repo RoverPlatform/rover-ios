@@ -72,12 +72,12 @@ public struct Screen: Decodable {
 // MARK: Attributes
 
 extension Screen {
-    public var attributes: [String: Any] {
+    public var attributes: Attributes {
         let keys = self.keys.reduce(into: [:]) { $0[$1.0] = $1.1 }
         return [
             "id": id,
             "name": name,
-            "keys": AttributeValue.object(keys),
+            "keys": keys,
             "tags": tags
         ]
     }

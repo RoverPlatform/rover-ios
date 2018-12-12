@@ -67,14 +67,14 @@ open class Device {
         )
     }
     
-    open private(set) var pushToken: DeviceSnapshot.PushToken? {
+    open private(set) var pushToken: PushTokenSnapshot? {
         get {
             guard let data = UserDefaults.standard.data(forKey: "io.rover.RoverData.pushToken") else {
                 return nil
             }
             
             do {
-                return try JSONDecoder.default.decode(DeviceSnapshot.PushToken.self, from: data)
+                return try JSONDecoder.default.decode(PushTokenSnapshot.self, from: data)
             } catch {
                 os_log("Failed to decode pushToken: %@", log: .general, type: .error, error.localizedDescription)
                 return nil
@@ -138,7 +138,7 @@ open class Device {
         return Bundle.main.infoDictionary!["CFBundleShortVersionString"] as! String
     }
     
-    open var buildEnvironment: DeviceSnapshot.BuildEnvironment {
+    open var buildEnvironment: BuildEnvironment {
         #if targetEnvironment(simulator)
         return .simulator
         #else
@@ -337,7 +337,7 @@ open class Device {
     // MARK: Token
     
     open func setToken(_ data: Data) {
-        self.pushToken = DeviceSnapshot.PushToken(
+        self.pushToken = PushTokenSnapshot(
             value: data.map { String(format: "%02.2hhx", $0) }.joined(),
             timestamp: Date()
         )
@@ -367,7 +367,7 @@ open class Device {
     
     // MARK: Location
     
-    open var location: DeviceSnapshot.Location? {
+    open var location: LocationSnapshot? {
         return locationInfoProvider?.location
     }
     
@@ -382,7 +382,7 @@ open class Device {
     // MARK: User Info
     
     open func updateUserInfo(block: (inout [String: Any]) -> Void) {
-        var userInfo = self.userInfo.rawValue ?? [:]
+        var userInfo = self.userInfo?.rawValue ?? [:]
         block(&userInfo)
         self.userInfo = Attributes.init(rawValue: userInfo)
     }

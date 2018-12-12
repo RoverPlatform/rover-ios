@@ -39,7 +39,7 @@ public final class Geofence: NSManagedObject {
 // MARK: Attributes
 
 extension Geofence {
-    public var attributes: [String: Any] {
+    public var attributes: Attributes {
         return [
             "id": self.id,
             "name": self.name,

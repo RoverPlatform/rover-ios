@@ -11,9 +11,28 @@ import os
 
 fileprivate let roverKeyRegex = try! NSRegularExpression(pattern: "^[a-zA-Z_][a-zA-Z_0-9]*$")
 
-/// Wraps a [String: Any], but enables use of both NSCoding and Codable.  Enforces the Rover limitations on allowed types and nesting thereof (not readily capturable in the Swift type system) at runtime.
-class Attributes: NSObject, NSCoding, Codable, RawRepresentable {
-    var rawValue: [String: Any]
+/// Wraps a [String: Any], a dictionary of values, but enables use of both NSCoding and Codable.  Enforces the Rover limitations on allowed types and nesting thereof (not readily capturable in the Swift type system) at runtime.
+///
+/// Note that there are several constraints here, enforced by the Rover cloud API itself, not expressed in the Swift type.  Namely, arrays may not be present within dictionaries or other arrays.  These are checked at runtime.
+///
+/// Thus:
+///
+/// * `String`
+/// * `Int`
+/// * `Double`
+/// * `Bool`
+/// * `[String]`
+/// * `[Int]`
+/// * `[Double]`
+/// * `[Bool]`
+/// * `[String: Any]` (where Any may be any of these given types)
+public class Attributes: NSObject, NSCoding, Codable, RawRepresentable, ExpressibleByDictionaryLiteral {
+
+    public typealias Key = String
+    
+    public typealias Value = Any
+    
+    public var rawValue: [String: Any]
     
     public required init?(rawValue: [String:Any]) {
         // transform nested dictionaries to Attributes, if needed.
@@ -27,7 +46,24 @@ class Attributes: NSObject, NSCoding, Codable, RawRepresentable {
         
         self.rawValue = Attributes.validateDictionary(nestedDictionariesTransformedToAttributes)
     }
-
+    
+    public required init(dictionaryLiteral elements: (String, Any)...) {
+        let dictionary = elements.reduce(into: [String:Any]()) { (result, element) in
+            let (key, value) = element
+            result[key] = value
+        }
+        // transform nested dictionaries to Attributes, if needed.
+        let nestedDictionariesTransformedToAttributes = dictionary.mapValues { value -> Any in
+            if let dictionary = value as? [String: Any] {
+                return Attributes.init(rawValue: dictionary) as Any? ?? Attributes()
+            } else {
+                return value
+            }
+        }
+        
+        self.rawValue = Attributes.validateDictionary(nestedDictionariesTransformedToAttributes)
+    }
+    
     //
     // MARK: NSCoding
     //

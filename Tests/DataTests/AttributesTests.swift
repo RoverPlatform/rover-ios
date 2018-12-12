@@ -28,6 +28,18 @@ class AttributesTests: XCTestCase {
         XCTAssertEqual(attributes.rawValue["testFalseBoolean"] as! Bool, false)
         XCTAssertEqual((attributes.rawValue["nestedObject"] as! Attributes).rawValue["anArray"] as! [Int], [1, 2, 3, 4])
     }
+    
+    func testInstantiateFromDictionaryLiteral() {
+        let fromLiteral : Attributes = [
+            "testInt": 42,
+            "anArray": [1, 2, 3, 4],
+            "testTrueBoolean": true,
+            "testString": "donut",
+            "testFalseBoolean": false,
+            "nestedObject": ["anArray": [1, 2, 3, 4]]
+        ]
+        verifyDecodedAttributes(attributes: fromLiteral)
+    }
 
     func testCodableRoundtrip() throws {
         // use JSONEncoder to test that Codable was synthesized properly.

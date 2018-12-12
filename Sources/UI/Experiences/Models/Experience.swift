@@ -61,12 +61,12 @@ extension Experience: Decodable {
 // MARK: Attributes
 
 extension Experience {
-    public var attributes: [String: Any] {
+    public var attributes: Attributes {
         let keys = self.keys.reduce(into: [:]) { $0[$1.0] = $1.1 }
         var attributes: [String: Any] = [
             "id": id,
             "name": name,
-            "keys": AttributeValue.object(keys),
+            "keys": keys,
             "tags": tags
         ]
         
@@ -74,6 +74,6 @@ extension Experience {
             attributes["campaignID"] = campaignID
         }
         
-        return .object(attributes)
+        return Attributes.init(rawValue: attributes) ?? Attributes()
     }
 }

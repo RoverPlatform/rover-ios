@@ -43,5 +43,14 @@ public class DataAssembler: Assembler {
             
             return container
         }
+        
+        // MARK: Event Pipeline
+        
+        container.register(EventPipeline.self) { resolver in
+            return EventPipeline(
+                managedObjectContext: resolver.resolve(NSManagedObjectContext.self, name: "backgroundContext")!,
+                deviceInfoProvider: resolver.resolve(DeviceInfoProvider.self)!
+            )
+        }
     }
 }

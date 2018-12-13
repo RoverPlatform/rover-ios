@@ -14,7 +14,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     public let experience: Experience
     public let screen: Screen
     
-    public let eventQueue: EventQueue
+    public let eventPipeline: EventPipeline
     public let imageStore: ImageStore
     public let sessionController: SessionController
     
@@ -33,10 +33,10 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         }
     }
     
-    public init(collectionViewLayout: UICollectionViewLayout, experience: Experience, screen: Screen, eventQueue: EventQueue, imageStore: ImageStore, sessionController: SessionController, viewControllerProvider: @escaping ViewControllerProvider, websiteViewControllerProvider: @escaping WebsiteViewControllerProvider) {
+    public init(collectionViewLayout: UICollectionViewLayout, experience: Experience, screen: Screen, eventPipeline: EventPipeline, imageStore: ImageStore, sessionController: SessionController, viewControllerProvider: @escaping ViewControllerProvider, websiteViewControllerProvider: @escaping WebsiteViewControllerProvider) {
         self.experience = experience
         self.screen = screen
-        self.eventQueue = eventQueue
+        self.eventPipeline = eventPipeline
         self.imageStore = imageStore
         self.sessionController = sessionController
         self.viewControllerProvider = viewControllerProvider
@@ -87,7 +87,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         ]
         
         let event = EventInfo(name: "Screen Presented", namespace: "rover", attributes: Attributes(rawValue: attributes))
-        eventQueue.addEvent(event)
+        eventPipeline.addEvent(event)
         
         sessionController.registerSession(identifier: sessionIdentifier) { [attributes] duration in
             var attributes = attributes
@@ -105,7 +105,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         ]
         
         let event = EventInfo(name: "Screen Dismissed", namespace: "rover", attributes: attributes)
-        eventQueue.addEvent(event)
+        eventPipeline.addEvent(event)
         
         sessionController.unregisterSession(identifier: sessionIdentifier)
     }
@@ -423,6 +423,6 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         }
         
         let event = EventInfo(name: "Block Tapped", namespace: "rover", attributes: attributes)
-        eventQueue.addEvent(event)
+        self.eventPipeline.addEvent(event)
     }
 }

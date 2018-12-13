@@ -17,12 +17,12 @@ class NotificationHandlerService: NotificationHandler {
     public let websiteViewControllerProvider: WebsiteViewControllerProvider
     
     let notificationStore: NotificationStore
-    let eventQueue: EventQueue
+    let eventPipeline: EventPipeline
     
-    init(influenceTracker: InfluenceTracker, notificationStore: NotificationStore, eventQueue: EventQueue, websiteViewControllerProvider: @escaping WebsiteViewControllerProvider) {
+    init(influenceTracker: InfluenceTracker, notificationStore: NotificationStore, eventPipeline: EventPipeline, websiteViewControllerProvider: @escaping WebsiteViewControllerProvider) {
         self.influenceTracker = influenceTracker
         self.notificationStore = notificationStore
-        self.eventQueue = eventQueue
+        self.eventPipeline = eventPipeline
         self.websiteViewControllerProvider = websiteViewControllerProvider
     }
     
@@ -53,7 +53,7 @@ class NotificationHandlerService: NotificationHandler {
         }
         
         let eventInfo = notification.openedEvent(source: .pushNotification)
-        eventQueue.addEvent(eventInfo)
+        eventPipeline.addEvent(eventInfo)
         
         return true
     }

@@ -10,14 +10,14 @@ import Foundation
 import CoreData
 import os
 
-class EventPipeline {
+public class EventPipeline {
     public var observers = ObserverSet<Event>()
     
     private let managedObjectContext: NSManagedObjectContext
     private let deviceInfoProvider: DeviceInfoProvider
     private var objectsDidChangeObserver: NSObjectProtocol!
     
-    init(
+    public init(
         managedObjectContext: NSManagedObjectContext,
         deviceInfoProvider: DeviceInfoProvider
     ) {
@@ -43,7 +43,7 @@ class EventPipeline {
         NotificationCenter.default.removeObserver(self.objectsDidChangeObserver)
     }
     
-    func addEvent(_ eventInfo: EventInfo) {
+    public func addEvent(_ eventInfo: EventInfo) {
         let event = Event()
         // TODO: decide if a stricter error regime is worth it here?
         

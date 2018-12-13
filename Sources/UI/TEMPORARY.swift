@@ -9,15 +9,14 @@
 import Foundation
 import UIKit
 
-
-public protocol EventQueue {
-    func addEvent(_ event: EventInfo)
-}
-
-public extension EventQueue {
-    public func addEvent(_ event: EventInfo) { }
-    public func flush() { }
-}
+//public protocol EventQueue {
+//    func addEvent(_ event: EventInfo)
+//}
+//
+//public extension EventQueue {
+//    public func addEvent(_ event: EventInfo) { }
+//    public func flush() { }
+//}
 
 public protocol SyncCoordinator {
     func sync(completionHandler: (UIBackgroundFetchResult) -> Void)
@@ -27,9 +26,9 @@ extension SyncCoordinator {
     public func sync(completionHandler: (UIBackgroundFetchResult) -> Void) { }
 }
 
-public class FakeEventQueue : EventQueue {
-    
-}
+//public class FakeEventQueue : EventQueue {
+//    
+//}
 
 public class FakeSyncCoordinator: SyncCoordinator {
     

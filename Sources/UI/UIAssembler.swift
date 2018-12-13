@@ -7,6 +7,7 @@
 //
 
 import SafariServices
+import CoreData
 
 public struct UIAssembler {
     public var associatedDomains: [String]
@@ -41,10 +42,6 @@ extension UIAssembler: Assembler {
     public func assemble(container: Container) {
         // MARK: TEMPORARY FAKE THINGS
         
-        container.register(EventQueue.self) { resolver in
-            return FakeEventQueue()
-        }
-        
         container.register(SyncCoordinator.self) { resolver in
             return FakeSyncCoordinator()
         }
@@ -59,9 +56,9 @@ extension UIAssembler: Assembler {
         // MARK: LifeCycleTracker
         
         container.register(LifeCycleTracker.self) { resolver in
-            let eventQueue = resolver.resolve(EventQueue.self)!
+            let eventPipeline = resolver.resolve(EventPipeline.self)!
             let sessionController = resolver.resolve(SessionController.self)!
-            return LifeCycleTrackerService(eventQueue: eventQueue, sessionController: sessionController)
+            return LifeCycleTrackerService(eventPipeline: eventPipeline, sessionController: sessionController)
         }
         
         // MARK: Router
@@ -85,8 +82,8 @@ extension UIAssembler: Assembler {
         // MARK: SessionController
         
         container.register(SessionController.self) { [sessionKeepAliveTime] resolver in
-            let eventQueue = resolver.resolve(EventQueue.self)!
-            return SessionControllerService(eventQueue: eventQueue, keepAliveTime: sessionKeepAliveTime)
+            let eventPipeline = resolver.resolve(EventPipeline.self)!
+            return SessionControllerService(eventPipeline: eventPipeline, keepAliveTime: sessionKeepAliveTime)
         }
         
         // MARK: UIViewController (website)
@@ -102,7 +99,7 @@ extension UIAssembler: Assembler {
         container.register(VersionTracker.self) { resolver in
             return VersionTrackerService(
                 bundle: Bundle.main,
-                eventQueue: resolver.resolve(EventQueue.self)!,
+                eventPipeline: resolver.resolve(EventPipeline.self)!,
                 userDefaults: UserDefaults.standard
             )
         }
@@ -138,7 +135,7 @@ extension UIAssembler: Assembler {
             return ExperienceViewController(
                 rootViewController: resolver.resolve(UIViewController.self, name: "screen", arguments: experience, experience.homeScreen)!,
                 experience: experience,
-                eventQueue: resolver.resolve(EventQueue.self)!,
+                eventPipeline: resolver.resolve(EventPipeline.self)!,
                 sessionController: resolver.resolve(SessionController.self)!
             )
         }
@@ -158,7 +155,7 @@ extension UIAssembler: Assembler {
                 collectionViewLayout: resolver.resolve(UICollectionViewLayout.self, name: "screen", arguments: screen)!,
                 experience: experience,
                 screen: screen,
-                eventQueue: resolver.resolve(EventQueue.self)!,
+                eventPipeline: resolver.resolve(EventPipeline.self)!,
                 imageStore: resolver.resolve(ImageStore.self)!,
                 sessionController: resolver.resolve(SessionController.self)!,
                 viewControllerProvider: viewControllerProvider,
@@ -171,7 +168,7 @@ extension UIAssembler: Assembler {
         container.register(InfluenceTracker.self) { resolver in
             return InfluenceTrackerService(
                 influenceTime: self.influenceTime,
-                eventQueue: resolver.resolve(EventQueue.self),
+                eventPipeline: resolver.resolve(EventPipeline.self),
                 notificationCenter: NotificationCenter.default,
                 userDefaults: UserDefaults(suiteName: self.appGroup)!
             )
@@ -187,7 +184,7 @@ extension UIAssembler: Assembler {
             return NotificationHandlerService(
                 influenceTracker: resolver.resolve(InfluenceTracker.self)!,
                 notificationStore: resolver.resolve(NotificationStore.self)!,
-                eventQueue: resolver.resolve(EventQueue.self)!,
+                eventPipeline: resolver.resolve(EventPipeline.self)!,
                 websiteViewControllerProvider: websiteViewControllerProvider
             )
         }
@@ -197,7 +194,7 @@ extension UIAssembler: Assembler {
         container.register(NotificationStore.self) { [maxNotifications] resolver in
             return NotificationStoreService(
                 maxSize: maxNotifications,
-                eventQueue: resolver.resolve(EventQueue.self)
+                eventPipeline: resolver.resolve(EventPipeline.self)
             )
         }
         
@@ -209,7 +206,7 @@ extension UIAssembler: Assembler {
             }
             
             return NotificationCenterViewController(
-                eventQueue: resolver.resolve(EventQueue.self)!,
+                eventPipeline: resolver.resolve(EventPipeline.self)!,
                 imageStore: resolver.resolve(ImageStore.self)!,
                 notificationStore: resolver.resolve(NotificationStore.self)!,
                 router: resolver.resolve(Router.self)!,

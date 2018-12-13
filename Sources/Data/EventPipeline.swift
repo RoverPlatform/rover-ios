@@ -14,23 +14,24 @@ class EventPipeline {
     public var observers = ObserverSet<Event>()
     
     private let managedObjectContext: NSManagedObjectContext
+    private let deviceInfoProvider: DeviceInfoProvider
     private var objectsDidChangeObserver: NSObjectProtocol!
     
-    init(managedObjectContext: NSManagedObjectContext) {
+    init(
+        managedObjectContext: NSManagedObjectContext,
+        deviceInfoProvider: DeviceInfoProvider
+    ) {
         self.managedObjectContext = managedObjectContext
-        
+        self.deviceInfoProvider = deviceInfoProvider
         self.objectsDidChangeObserver = NotificationCenter.default.addObserver(forName: .NSManagedObjectContextObjectsDidChange, object: managedObjectContext, queue: nil) { [weak self] notification in
             guard let insertedObjects = notification.userInfo?[NSInsertedObjectsKey] as? Set<NSObject> else {
                 return
             }
             
-            insertedObjects
+            let insertedEvents = insertedObjects
                 .compactMap({ $0 as? Event })
-                .forEach({ self?.observers.notify(parameters: $0) })
-            
-//            let insertedEvents = insertedObjects.filter({ (potentialInsertedEvent) -> Bool in
-//                return potentialInsertedEvent is Event
-//            }) as! Set<Event>
+
+            insertedEvents.forEach({ self?.observers.notify(parameters: $0) })
             
             insertedEvents.forEach({ (event) in
                 self?.observers.notify(parameters: event)
@@ -42,10 +43,17 @@ class EventPipeline {
         NotificationCenter.default.removeObserver(self.objectsDidChangeObserver)
     }
     
-    func addEvent(_ event: EventInfo) {
-        let eventSnapshot = event.snapshot
+    func addEvent(_ eventInfo: EventInfo) {
+        let event = Event()
+        // TODO: decide if a stricter error regime is worth it here?
+        
+        event.attributes = eventInfo.attributes ?? Attributes()
+        event.deviceSnapshot = deviceInfoProvider.deviceSnapshot
+        event.name = eventInfo.name
+        event.namespace = eventInfo.namespace
+        
         managedObjectContext.perform { [managedObjectContext] in
-            managedObjectContext.insert(eventSnapshot)
+            managedObjectContext.insert(event)
            
             do {
                 try managedObjectContext.save()
@@ -65,16 +73,4 @@ class EventPipeline {
     }
     
     
-}
-
-extension EventInfo {
-    var snapshot: Event {
-        let event = Event()
-        // TODO: decide if a stricter error regime is worth it here?
-        event.attributes = Attributes.init(rawValue: self.attributes ?? [:]) ?? Attributes()
-        event.deviceSnapshot = DeviceSnapshot() // TODO: solve once Device indirection is solved
-        event.name = self.name
-        event.namespace = self.namespace
-        return event
-    }
 }

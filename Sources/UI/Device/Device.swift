@@ -391,3 +391,9 @@ open class Device {
         UserDefaults.standard.set(nil, forKey: "io.rover.RoverData.userInfo")
     }
 }
+
+extension Device : DeviceInfoProvider {
+    public var deviceSnapshot: DeviceSnapshot {
+        return self.snapshot
+    }
+}

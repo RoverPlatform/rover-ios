@@ -228,6 +228,10 @@ extension UIAssembler: Assembler {
             )
         }
         
+        container.register(DeviceInfoProvider.self) { resolver in
+            return resolver.resolve(Device.self)!
+        }
+        
         // MARK: UIViewController (settings)
         
         container.register(UIViewController.self, name: "settings", scope: .transient) { resolver in

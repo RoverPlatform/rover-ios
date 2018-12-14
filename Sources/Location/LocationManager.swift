@@ -12,6 +12,8 @@ import os.log
 
 class LocationManager {
     let context: NSManagedObjectContext
+    
+    // Now there's a cyclic dependency in DI through here. D'oh!
     let eventPipeline: EventPipeline
     let geocoder = CLGeocoder()
     

@@ -14,6 +14,10 @@
 		49496A5921C839DB00F89438 /* RoverCampaigns.h in Headers */ = {isa = PBXBuildFile; fileRef = 49496A4B21C839DA00F89438 /* RoverCampaigns.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		49496A6021C83B0300F89438 /* RoverData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD88A7320C1B21700085AE0 /* RoverData.framework */; };
 		49496A6121C83B3600F89438 /* RoverFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF49DD3203DE00F00B54652 /* RoverFoundation.framework */; };
+		49496A6221C83CBB00F89438 /* InfluenceTrackerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0C8E3D2055C62800E0D860 /* InfluenceTrackerService.swift */; };
+		49496A6421C83CCF00F89438 /* InfluenceTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0C8E3F2055CCBD00E0D860 /* InfluenceTracker.swift */; };
+		49496A6521C83CCF00F89438 /* NotificationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7BA92120D970A100968A30 /* NotificationHandler.swift */; };
+		49496A6621C83CCF00F89438 /* NotificationHandlerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7BA92A20D9811100968A30 /* NotificationHandlerService.swift */; };
 		494F05B021A767C5008B3AFC /* TEMPORARY.swift in Sources */ = {isa = PBXBuildFile; fileRef = 494F05AF21A767C5008B3AFC /* TEMPORARY.swift */; };
 		494F05B221A76878008B3AFC /* NotificationsSyncParticipant.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB496E44214871410026DE6A /* NotificationsSyncParticipant.swift */; };
 		495821B621A45D1F00F2B632 /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495821B521A45D1F00F2B632 /* Device.swift */; };
@@ -69,15 +73,11 @@
 		4962FB58219B50AA00C7F678 /* ScreenViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEE32055964E00E5C77F /* ScreenViewLayout.swift */; };
 		4962FB59219B50AA00C7F678 /* ScreenViewLayoutAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FDD92087E09F008D1A57 /* ScreenViewLayoutAttributes.swift */; };
 		4962FB5D219B50AA00C7F678 /* RoverUI.h in Sources */ = {isa = PBXBuildFile; fileRef = DB6ADD5C20B33EC0002F226C /* RoverUI.h */; };
-		4962FB5F219B51AD00C7F678 /* Notifications.OSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6BE8B6215D4B2A000A1FDA /* Notifications.OSLog.swift */; };
+		4962FB5F219B51AD00C7F678 /* Campaigns.OSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6BE8B6215D4B2A000A1FDA /* Campaigns.OSLog.swift */; };
 		4962FB62219B51AD00C7F678 /* Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A7C209B8CC500E99F9F /* Notification.swift */; };
 		4962FB63219B51AD00C7F678 /* NotificationAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB78A3120DAD88900AF1A00 /* NotificationAttachment.swift */; };
 		4962FB64219B51AD00C7F678 /* NotificationSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB496F5220DBECD800DF5949 /* NotificationSource.swift */; };
 		4962FB65219B51AD00C7F678 /* NotificationTapBehavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB78A2F20DAD7B400AF1A00 /* NotificationTapBehavior.swift */; };
-		4962FB69219B51AD00C7F678 /* InfluenceTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0C8E3F2055CCBD00E0D860 /* InfluenceTracker.swift */; };
-		4962FB6A219B51AD00C7F678 /* InfluenceTrackerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0C8E3D2055C62800E0D860 /* InfluenceTrackerService.swift */; };
-		4962FB6B219B51AD00C7F678 /* NotificationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7BA92120D970A100968A30 /* NotificationHandler.swift */; };
-		4962FB6C219B51AD00C7F678 /* NotificationHandlerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7BA92A20D9811100968A30 /* NotificationHandlerService.swift */; };
 		4962FB6D219B51AD00C7F678 /* NotificationStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF2584220A1090100400EA2 /* NotificationStore.swift */; };
 		4962FB6E219B51AD00C7F678 /* NotificationStoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBF9B205597C300E5C77F /* NotificationStoreService.swift */; };
 		4962FB6F219B51AD00C7F678 /* NotificationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FE2F208FB285008D1A57 /* NotificationCell.swift */; };
@@ -378,7 +378,7 @@
 		DB6ADD8720B34F81002F226C /* SessionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionController.swift; sourceTree = "<group>"; };
 		DB6BE8AD215D41F7000A1FDA /* Foundation.OSLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Foundation.OSLog.swift; sourceTree = "<group>"; };
 		DB6BE8AF215D433B000A1FDA /* Data.OSLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Data.OSLog.swift; sourceTree = "<group>"; };
-		DB6BE8B6215D4B2A000A1FDA /* Notifications.OSLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.OSLog.swift; sourceTree = "<group>"; };
+		DB6BE8B6215D4B2A000A1FDA /* Campaigns.OSLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Campaigns.OSLog.swift; sourceTree = "<group>"; };
 		DB6BE8B8215D4B87000A1FDA /* Location.OSLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.OSLog.swift; sourceTree = "<group>"; };
 		DB709C68207E7EFC00F96C2B /* ImageStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageStore.swift; sourceTree = "<group>"; };
 		DB709C6B207EAEED00F96C2B /* ImageStoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageStoreService.swift; sourceTree = "<group>"; };
@@ -729,6 +729,9 @@
 		49496A4A21C839DA00F89438 /* Campaigns */ = {
 			isa = PBXGroup;
 			children = (
+				DB496E46214871710026DE6A /* Extensions */,
+				DB0C8E3C2055C61400E0D860 /* InfluenceTracker */,
+				DB7BA92020D9703300968A30 /* NotificationHandler */,
 				49496A4B21C839DA00F89438 /* RoverCampaigns.h */,
 				49496A4C21C839DA00F89438 /* Info.plist */,
 			);
@@ -967,7 +970,7 @@
 		DB496E46214871710026DE6A /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				DB6BE8B6215D4B2A000A1FDA /* Notifications.OSLog.swift */,
+				DB6BE8B6215D4B2A000A1FDA /* Campaigns.OSLog.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -1086,7 +1089,6 @@
 		DB9DBF772055974B00E5C77F /* Notifications */ = {
 			isa = PBXGroup;
 			children = (
-				DB496E46214871710026DE6A /* Extensions */,
 				DBADA82920A9EE9700225C80 /* Models */,
 				DBF31B5620E41A90005D7C34 /* Services */,
 				DBF31B5920E41C35005D7C34 /* UI */,
@@ -1319,8 +1321,6 @@
 		DBF31B5620E41A90005D7C34 /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				DB0C8E3C2055C61400E0D860 /* InfluenceTracker */,
-				DB7BA92020D9703300968A30 /* NotificationHandler */,
 				DBFDF42F20AC7B620031EF47 /* NotificationStore */,
 			);
 			path = Services;
@@ -2338,6 +2338,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				49496A6421C83CCF00F89438 /* InfluenceTracker.swift in Sources */,
+				49496A6521C83CCF00F89438 /* NotificationHandler.swift in Sources */,
+				49496A6621C83CCF00F89438 /* NotificationHandlerService.swift in Sources */,
+				49496A6221C83CBB00F89438 /* InfluenceTrackerService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2422,15 +2426,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				4962FB79219B52BE00C7F678 /* SettingsViewController.swift in Sources */,
-				4962FB5F219B51AD00C7F678 /* Notifications.OSLog.swift in Sources */,
+				4962FB5F219B51AD00C7F678 /* Campaigns.OSLog.swift in Sources */,
 				4962FB62219B51AD00C7F678 /* Notification.swift in Sources */,
 				4962FB63219B51AD00C7F678 /* NotificationAttachment.swift in Sources */,
 				4962FB64219B51AD00C7F678 /* NotificationSource.swift in Sources */,
 				4962FB65219B51AD00C7F678 /* NotificationTapBehavior.swift in Sources */,
-				4962FB69219B51AD00C7F678 /* InfluenceTracker.swift in Sources */,
-				4962FB6A219B51AD00C7F678 /* InfluenceTrackerService.swift in Sources */,
-				4962FB6B219B51AD00C7F678 /* NotificationHandler.swift in Sources */,
-				4962FB6C219B51AD00C7F678 /* NotificationHandlerService.swift in Sources */,
 				4962FB6D219B51AD00C7F678 /* NotificationStore.swift in Sources */,
 				491C9710219B6C580065BAB8 /* UI.UIApplication.swift in Sources */,
 				4962FB6E219B51AD00C7F678 /* NotificationStoreService.swift in Sources */,
@@ -2764,6 +2764,7 @@
 		49496A5C21C839DB00F89438 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = WDEZX8QD47;
@@ -2782,6 +2783,7 @@
 		49496A5D21C839DB00F89438 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = WDEZX8QD47;

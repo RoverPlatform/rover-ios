@@ -13,16 +13,16 @@ import os
 public class EventPipeline {
     public var observers = ObserverSet<Event>()
     
+    public var deviceInfoProvider: DeviceInfoProvider? = nil
+    
     private let managedObjectContext: NSManagedObjectContext
-    private let deviceInfoProvider: DeviceInfoProvider
     private var objectsDidChangeObserver: NSObjectProtocol!
     
+    
     public init(
-        managedObjectContext: NSManagedObjectContext,
-        deviceInfoProvider: DeviceInfoProvider
+        managedObjectContext: NSManagedObjectContext
     ) {
         self.managedObjectContext = managedObjectContext
-        self.deviceInfoProvider = deviceInfoProvider
         self.objectsDidChangeObserver = NotificationCenter.default.addObserver(forName: .NSManagedObjectContextObjectsDidChange, object: managedObjectContext, queue: nil) { [weak self] notification in
             guard let insertedObjects = notification.userInfo?[NSInsertedObjectsKey] as? Set<NSObject> else {
                 return
@@ -44,11 +44,15 @@ public class EventPipeline {
     }
     
     public func addEvent(_ eventInfo: EventInfo) {
-        let event = Event()
-        // TODO: decide if a stricter error regime is worth it here?
+        let event = Event(context: self.managedObjectContext)
+        
+        guard let deviceSnapshot = deviceInfoProvider?.deviceSnapshot else {
+            os_log("Event added before Device Info Provider set. Dropping event.", log: .events, type: .error)
+            return
+        }
         
         event.attributes = eventInfo.attributes ?? Attributes()
-        event.deviceSnapshot = deviceInfoProvider.deviceSnapshot
+        event.deviceSnapshot = deviceSnapshot
         event.name = eventInfo.name
         event.namespace = eventInfo.namespace
         

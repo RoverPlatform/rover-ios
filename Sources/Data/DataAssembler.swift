@@ -48,9 +48,12 @@ public class DataAssembler: Assembler {
         
         container.register(EventPipeline.self) { resolver in
             return EventPipeline(
-                managedObjectContext: resolver.resolve(NSManagedObjectContext.self, name: "backgroundContext")!,
-                deviceInfoProvider: resolver.resolve(DeviceInfoProvider.self)!
+                managedObjectContext: resolver.resolve(NSManagedObjectContext.self, name: "backgroundContext")!
             )
         }
+    }
+    
+    public func containerDidAssemble(resolver: Resolver) {
+        resolver.resolve(EventPipeline.self)!.deviceInfoProvider = resolver.resolve(DeviceInfoProvider.self)!
     }
 }

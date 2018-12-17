@@ -17,17 +17,12 @@ public struct UIAssembler {
     public var isLifeCycleTrackingEnabled: Bool
     public var isVersionTrackingEnabled: Bool
     
-
-    
-    public var maxNotifications: Int
-    
-    public init(associatedDomains: [String] = [], urlSchemes: [String] = [], sessionKeepAliveTime: Int = 30, isLifeCycleTrackingEnabled: Bool = true, isVersionTrackingEnabled: Bool = true, appGroup: String? = nil, influenceTime: Int = 120, maxNotifications: Int = 200) {
+    public init(associatedDomains: [String] = [], urlSchemes: [String] = [], sessionKeepAliveTime: Int = 30, isLifeCycleTrackingEnabled: Bool = true, isVersionTrackingEnabled: Bool = true, appGroup: String? = nil, influenceTime: Int = 120) {
         self.associatedDomains = associatedDomains
         self.urlSchemes = urlSchemes
         self.sessionKeepAliveTime = sessionKeepAliveTime
         self.isLifeCycleTrackingEnabled = isLifeCycleTrackingEnabled
         self.isVersionTrackingEnabled = isVersionTrackingEnabled
-        self.maxNotifications = maxNotifications
     }
 }
 
@@ -157,17 +152,6 @@ extension UIAssembler: Assembler {
                 websiteViewControllerProvider: websiteViewControllerProvider
             )
         }
-        
-
-        
-        // MARK: NotificationStore
-        
-//        container.register(NotificationStore.self) { [maxNotifications] resolver in
-//            return NotificationStoreService(
-//                maxSize: maxNotifications,
-//                eventPipeline: resolver.resolve(EventPipeline.self)
-//            )
-//        }
         
         // MARK: UIViewController (notificationCenter)
         

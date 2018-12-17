@@ -33,6 +33,11 @@ Pod::Spec.new do |s|
     ss.dependency "Rover/Data"
   end
 
+  s.subspec "Campaigns" do |ss|
+    ss.source_files = "Sources/Campaigns/**/*.swift"
+    ss.dependency "Rover/Data"
+  end
+
   s.subspec "UI" do |ss|
     ss.source_files = "Sources/UI/**/*.swift"
     ss.dependency "Rover/Data"

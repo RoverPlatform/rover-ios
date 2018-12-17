@@ -25,7 +25,7 @@ public func assemble(container: Container) {
         container.register(LocationManager.self) { resolver in
             return LocationManager(
                 context: resolver.resolve(NSManagedObjectContext.self, name: "backgroundContext")!,
-                eventQueue: resolver.resolve(EventQueue.self)!
+                eventPipeline: resolver.resolve(EventPipeline.self)!
             )
         }
         

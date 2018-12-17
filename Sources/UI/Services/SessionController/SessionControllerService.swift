@@ -9,7 +9,7 @@
 import UIKit
 
 class SessionControllerService: SessionController {
-    let eventQueue: EventQueue
+    let eventPipeline: EventPipeline
     let keepAliveTime: Int
     
     struct SessionEntry {
@@ -27,8 +27,8 @@ class SessionControllerService: SessionController {
     var didBecomeActiveObserver: NSObjectProtocol!
     var willResignActiveObserver: NSObjectProtocol!
     
-    init(eventQueue: EventQueue, keepAliveTime: Int) {
-        self.eventQueue = eventQueue
+    init(eventPipeline: EventPipeline, keepAliveTime: Int) {
+        self.eventPipeline = eventPipeline
         self.keepAliveTime = keepAliveTime
         
         #if swift(>=4.2)
@@ -77,7 +77,7 @@ class SessionControllerService: SessionController {
         
         let session = Session(keepAliveTime: keepAliveTime) { [weak self] result in
             let event = completionHandler(result.duration)
-            self?.eventQueue.addEvent(event)
+            self?.eventPipeline.addEvent(event)
             
             if let entry = self?.sessions[identifier], entry.isUnregistered {
                 self?.sessions[identifier] = nil

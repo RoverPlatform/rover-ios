@@ -10,15 +10,15 @@ import UIKit
 
 class InfluenceTrackerService: InfluenceTracker {
     let influenceTime: Int
-    let eventQueue: EventQueue?
+    let eventPipeline: EventPipeline?
     let notificationCenter: NotificationCenter
     let userDefaults: UserDefaults
     
     var didBecomeActiveObserver: NSObjectProtocol?
     
-    init(influenceTime: Int, eventQueue: EventQueue?, notificationCenter: NotificationCenter, userDefaults: UserDefaults) {
+    init(influenceTime: Int, eventPipeline: EventPipeline?, notificationCenter: NotificationCenter, userDefaults: UserDefaults) {
         self.influenceTime = influenceTime
-        self.eventQueue = eventQueue
+        self.eventPipeline = eventPipeline
         self.notificationCenter = notificationCenter
         self.userDefaults = userDefaults
     }
@@ -79,7 +79,7 @@ class InfluenceTrackerService: InfluenceTracker {
             return
         }
         
-        guard let eventQueue = eventQueue else {
+        guard let eventPipeline = self.eventPipeline else {
             return
         }
         
@@ -89,7 +89,7 @@ class InfluenceTrackerService: InfluenceTracker {
         ]
         
         let event = EventInfo(name: "Notification Opened", namespace: "rover", attributes: attributes)
-        eventQueue.addEvent(event)
+        eventPipeline.addEvent(event)
     }
     
     func clearLastReceivedNotification() {

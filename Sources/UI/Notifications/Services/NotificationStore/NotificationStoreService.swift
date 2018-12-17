@@ -10,7 +10,7 @@ import os.log
 import UIKit
 
 class NotificationStoreService: NotificationStore {
-    let eventQueue: EventQueue?
+    let eventPipeline: EventPipeline?
     let maxSize: Int
     
     var notifications = [Notification]() {
@@ -22,8 +22,8 @@ class NotificationStoreService: NotificationStore {
     var observers = ObserverSet<[Notification]>()
     var stateObservation: NSObjectProtocol?
     
-    init(maxSize: Int, eventQueue: EventQueue?) {
-        self.eventQueue = eventQueue
+    init(maxSize: Int, eventPipeline: EventPipeline?) {
+        self.eventPipeline = eventPipeline
         self.maxSize = maxSize
     }
     
@@ -129,13 +129,13 @@ class NotificationStoreService: NotificationStore {
         
         persist()
         
-        guard let eventQueue = eventQueue else {
+        guard let eventPipeline = self.eventPipeline else {
             return
         }
         
         let attributes: Attributes = ["notification": notification]
         let event = EventInfo(name: "Notification Marked Deleted", namespace: "rover", attributes: attributes)
-        eventQueue.addEvent(event)
+        eventPipeline.addEvent(event)
     }
     
     func markNotificationRead(_ notificationID: String) {
@@ -155,12 +155,12 @@ class NotificationStoreService: NotificationStore {
         
         persist()
         
-        guard let eventQueue = eventQueue else {
+        guard let eventPipeline = self.eventPipeline else {
             return
         }
         
         let attributes: Attributes = ["notification": notification]
         let event = EventInfo(name: "Notification Marked Read", namespace: "rover", attributes: attributes)
-        eventQueue.addEvent(event)
+        eventPipeline.addEvent(event)
     }
 }

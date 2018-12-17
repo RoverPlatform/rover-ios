@@ -12,7 +12,8 @@ import os.log
 
 class LocationManager {
     let context: NSManagedObjectContext
-    let eventQueue: EventQueue
+    
+    let eventPipeline: EventPipeline
     let geocoder = CLGeocoder()
     
     var location: LocationSnapshot?
@@ -31,9 +32,9 @@ class LocationManager {
     
     var beaconObservers = ObserverSet<Set<Beacon>>()
     
-    init(context: NSManagedObjectContext, eventQueue: EventQueue) {
+    init(context: NSManagedObjectContext, eventPipeline: EventPipeline) {
         self.context = context
-        self.eventQueue = eventQueue
+        self.eventPipeline = eventPipeline
     }
 }
 
@@ -106,7 +107,7 @@ extension LocationManager: RegionManager {
                 _self.location = location.context(placemark: nil)
             }
             
-            _self.eventQueue.addEvent(EventInfo.locationUpdate)
+            _self.eventPipeline.addEvent(EventInfo.locationUpdate)
         }
     }
     
@@ -130,7 +131,7 @@ extension LocationManager: RegionManager {
         self.geofenceObservers.notify(parameters: self.currentGeofences)
         
         os_log("Entered geofence: %@", log: .location, type: .debug, geofence)
-        eventQueue.addEvent(geofence.enterEvent)
+        eventPipeline.addEvent(geofence.enterEvent)
     }
     
     func exitGeofence(region: CLCircularRegion) {
@@ -142,7 +143,7 @@ extension LocationManager: RegionManager {
         self.geofenceObservers.notify(parameters: self.currentGeofences)
         
         os_log("Exited geofence: %@", log: .location, type: .debug, geofence)
-        eventQueue.addEvent(geofence.exitEvent)
+        eventPipeline.addEvent(geofence.exitEvent)
     }
     
     func startRangingBeacons(in region: CLBeaconRegion, manager: CLLocationManager) {
@@ -159,7 +160,7 @@ extension LocationManager: RegionManager {
         
         self.beaconMap[region]?.forEach {
             os_log("Exited beacon: %@", log: .location, type: .debug, $0)
-            eventQueue.addEvent($0.exitEvent)
+            eventPipeline.addEvent($0.exitEvent)
         }
         
         self.beaconMap[region] = nil
@@ -182,13 +183,13 @@ extension LocationManager: RegionManager {
         let enteredBeacons = nextBeacons.subtracting(previousBeacons)
         enteredBeacons.forEach {
             os_log("Entered beacon: %@", log: .location, type: .debug, $0)
-            eventQueue.addEvent($0.enterEvent)
+            eventPipeline.addEvent($0.enterEvent)
         }
         
         let exitedBeacons = previousBeacons.subtracting(nextBeacons)
         exitedBeacons.forEach {
             os_log("Exited beacon: %@", log: .location, type: .debug, $0)
-            eventQueue.addEvent($0.exitEvent)
+            eventPipeline.addEvent($0.exitEvent)
         }
         
         beaconObservers.notify(parameters: self.currentBeacons)

@@ -10,12 +10,12 @@ import UIKit
 
 open class ExperienceViewController: UINavigationController {
     public let experience: Experience
-    public let eventQueue: EventQueue
+    public let eventPipeline: EventPipeline
     public let sessionController: SessionController
     
-    public init(rootViewController: UIViewController, experience: Experience, eventQueue: EventQueue, sessionController: SessionController) {
+    public init(rootViewController: UIViewController, experience: Experience, eventPipeline: EventPipeline, sessionController: SessionController) {
         self.experience = experience
-        self.eventQueue = eventQueue
+        self.eventPipeline = eventPipeline
         self.sessionController = sessionController
         
         super.init(nibName: nil, bundle: nil)
@@ -41,7 +41,7 @@ open class ExperienceViewController: UINavigationController {
         
         let attributes: [String: Any] = ["experience": experience]
         let event = EventInfo(name: "Experience Presented", namespace: "rover", attributes: Attributes(rawValue: attributes))
-        eventQueue.addEvent(event)
+        self.eventPipeline.addEvent(event)
         
         sessionController.registerSession(identifier: sessionIdentifier) { [attributes] duration in
             var attributes = attributes
@@ -55,7 +55,7 @@ open class ExperienceViewController: UINavigationController {
         
         let attributes: Attributes = ["experience": experience]
         let event = EventInfo(name: "Experience Dismissed", namespace: "rover", attributes: attributes)
-        eventQueue.addEvent(event)
+        self.eventPipeline.addEvent(event)
         
         sessionController.unregisterSession(identifier: sessionIdentifier)
     }

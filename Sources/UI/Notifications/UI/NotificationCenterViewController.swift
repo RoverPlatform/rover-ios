@@ -9,7 +9,7 @@
 import UIKit
 
 open class NotificationCenterViewController: UIViewController {
-    public let eventQueue: EventQueue
+    public let eventPipeline: EventPipeline
     public let imageStore: ImageStore
     public let notificationStore: NotificationStore
     public let router: Router
@@ -57,14 +57,14 @@ open class NotificationCenterViewController: UIViewController {
     }
     
     public init(
-        eventQueue: EventQueue,
+        eventPipeline: EventPipeline,
         imageStore: ImageStore,
         notificationStore: NotificationStore,
         router: Router,
         sessionController: SessionController,
         syncCoordinator: SyncCoordinator,
         websiteViewControllerProvider: @escaping WebsiteViewControllerProvider) {
-        self.eventQueue = eventQueue
+        self.eventPipeline = eventPipeline
         self.imageStore = imageStore
         self.notificationStore = notificationStore
         self.router = router
@@ -139,7 +139,7 @@ open class NotificationCenterViewController: UIViewController {
         super.viewDidAppear(animated)
         
         let event = EventInfo(name: "Notification Center Presented", namespace: "rover")
-        eventQueue.addEvent(event)
+        self.eventPipeline.addEvent(event)
         
         sessionController.registerSession(identifier: "notificationCenter") { duration in
             let attributes: Attributes = ["duration": duration]
@@ -155,7 +155,7 @@ open class NotificationCenterViewController: UIViewController {
         super.viewWillDisappear(animated)
         
         let event = EventInfo(name: "Notification Center Dismissed", namespace: "rover")
-        eventQueue.addEvent(event)
+        self.eventPipeline.addEvent(event)
         
         sessionController.unregisterSession(identifier: "notificationCenter")
     }
@@ -340,7 +340,7 @@ extension NotificationCenterViewController: UITableViewDelegate {
         }
         
         let eventInfo = notification.openedEvent(source: .notificationCenter)
-        eventQueue.addEvent(eventInfo)
+        eventPipeline.addEvent(eventInfo)
     }
     
     func deleteNotification(at indexPath: IndexPath) {

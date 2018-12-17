@@ -11,12 +11,12 @@ import os.log
 
 class VersionTrackerService: VersionTracker {
     let bundle: Bundle
-    let eventQueue: EventQueue
+    let eventPipeline: EventPipeline
     let userDefaults: UserDefaults
     
-    init(bundle: Bundle, eventQueue: EventQueue, userDefaults: UserDefaults) {
+    init(bundle: Bundle, eventPipeline: EventPipeline, userDefaults: UserDefaults) {
         self.bundle = bundle
-        self.eventQueue = eventQueue
+        self.eventPipeline = eventPipeline
         self.userDefaults = userDefaults
     }
     
@@ -66,7 +66,7 @@ class VersionTrackerService: VersionTracker {
     
     func trackAppInstalled() {
         let event = EventInfo(name: "App Installed", namespace: "rover")
-        eventQueue.addEvent(event)
+        self.eventPipeline.addEvent(event)
     }
     
     func trackAppUpdated(fromVersion previousVersion: String?, build previousBuild: String?) {
@@ -80,6 +80,6 @@ class VersionTrackerService: VersionTracker {
         }
         
         let event = EventInfo(name: "App Updated", namespace: "rover", attributes: Attributes(rawValue: attributes))
-        eventQueue.addEvent(event)
+        self.eventPipeline.addEvent(event)
     }
 }

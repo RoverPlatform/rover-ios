@@ -19,7 +19,7 @@
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>
-    <entity name="Event" representedClassName="Event" syncable="YES">
+    <entity name="Event" representedClassName=".Event" syncable="YES">
         <attribute name="attributes" attributeType="Transformable" syncable="YES"/>
         <attribute name="deviceSnapshot" attributeType="Transformable" syncable="YES"/>
         <attribute name="id" attributeType="String" syncable="YES"/>
@@ -49,7 +49,7 @@
     </entity>
     <elements>
         <element name="Beacon" positionX="-63" positionY="18" width="128" height="150"/>
-        <element name="Geofence" positionX="-282.91796875" positionY="25.5" width="128" height="150"/>
         <element name="Event" positionX="-171" positionY="72" width="128" height="150"/>
+        <element name="Geofence" positionX="-282.91796875" positionY="25.5" width="128" height="150"/>
     </elements>
 </model>

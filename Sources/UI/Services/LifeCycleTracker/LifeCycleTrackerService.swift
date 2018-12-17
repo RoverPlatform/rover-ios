@@ -9,14 +9,14 @@
 import UIKit
 
 class LifeCycleTrackerService: LifeCycleTracker {
-    let eventQueue: EventQueue
+    let eventPipeline: EventPipeline
     let sessionController: SessionController
     
     var didBecomeActiveObserver: NSObjectProtocol?
     var willResignActiveObserver: NSObjectProtocol?
     
-    init(eventQueue: EventQueue, sessionController: SessionController) {
-        self.eventQueue = eventQueue
+    init(eventPipeline: EventPipeline, sessionController: SessionController) {
+        self.eventPipeline = eventPipeline
         self.sessionController = sessionController
     }
     
@@ -29,12 +29,12 @@ class LifeCycleTrackerService: LifeCycleTracker {
         #if swift(>=4.2)
         self.didBecomeActiveObserver = NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: OperationQueue.main) { [weak self] _ in
             let event = EventInfo(name: "App Opened", namespace: "rover")
-            self?.eventQueue.addEvent(event)
+            self?.eventPipeline.addEvent(event)
         }
         
         self.willResignActiveObserver = NotificationCenter.default.addObserver(forName: UIApplication.willResignActiveNotification, object: nil, queue: OperationQueue.main) { [weak self] _ in
             let event = EventInfo(name: "App Closed", namespace: "rover")
-            self?.eventQueue.addEvent(event)
+            self?.eventPipeline.addEvent(event)
         }
         #else
         self.didBecomeActiveObserver = NotificationCenter.default.addObserver(forName: .UIApplicationDidBecomeActive, object: nil, queue: OperationQueue.main) { [weak self] _ in

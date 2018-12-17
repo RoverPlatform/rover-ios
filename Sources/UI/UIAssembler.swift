@@ -7,7 +7,6 @@
 //
 
 import SafariServices
-import CoreData
 
 public struct UIAssembler {
     public var associatedDomains: [String]

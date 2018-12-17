@@ -33,6 +33,5 @@ public final class Event : NSManagedObject {
         self.attributes = Attributes()
         self.deviceSnapshot = DeviceSnapshot()
         self.timestamp = Date()
-        self.isFlushed = false
     }
 }

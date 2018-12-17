@@ -57,7 +57,6 @@ public class EventPipeline {
            
             do {
                 try managedObjectContext.save()
-                managedObjectContext.reset()
             } catch {
                 if let multipleErrors = (error as NSError).userInfo[NSDetailedErrorsKey] as? [Error] {
                     multipleErrors.forEach {

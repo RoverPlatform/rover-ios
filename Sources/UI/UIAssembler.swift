@@ -202,8 +202,5 @@ extension UIAssembler: Assembler {
         if isLifeCycleTrackingEnabled {
             resolver.resolve(LifeCycleTracker.self)!.enable()
         }
-        
-        let store = resolver.resolve(NotificationStore.self)!
-        store.restore()        
     }
 }

@@ -31,11 +31,7 @@ public class EventPipeline {
             let insertedEvents = insertedObjects
                 .compactMap({ $0 as? Event })
 
-            insertedEvents.forEach({ self?.observers.notify(parameters: $0) })
-            
-            insertedEvents.forEach({ (event) in
-                self?.observers.notify(parameters: event)
-            })
+            insertedEvents.forEach({ event in self?.observers.notify(parameters: event) })
         }
     }
     

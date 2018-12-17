@@ -35,7 +35,7 @@ Pod::Spec.new do |s|
 
   s.subspec "Campaigns" do |ss|
     ss.source_files = "Sources/Campaigns/**/*.swift"
-    ss.dependency "Rover/Data"
+    ss.dependency "Rover/UI"
     ss.frameworks = "UserNotifications"
   end
 

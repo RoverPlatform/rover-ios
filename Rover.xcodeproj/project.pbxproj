@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		491C9710219B6C580065BAB8 /* UI.UIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 491C970F219B6C580065BAB8 /* UI.UIApplication.swift */; };
-		491C9713219C9D480065BAB8 /* UI.UNNotificationResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 491C9711219C9C8A0065BAB8 /* UI.UNNotificationResponse.swift */; };
 		49496A5221C839DA00F89438 /* RoverCampaigns.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49496A4921C839DA00F89438 /* RoverCampaigns.framework */; };
 		49496A5721C839DA00F89438 /* RoverCampaignsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49496A5621C839DA00F89438 /* RoverCampaignsTests.swift */; };
 		49496A5921C839DB00F89438 /* RoverCampaigns.h in Headers */ = {isa = PBXBuildFile; fileRef = 49496A4B21C839DA00F89438 /* RoverCampaigns.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -32,6 +31,9 @@
 		495821C821A4B04300F2B632 /* RoverUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB6ADD5A20B33EC0002F226C /* RoverUI.framework */; };
 		495821CB21A4B68A00F2B632 /* DeviceSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC3FBE6215467FA00372A65 /* DeviceSnapshot.swift */; };
 		495821CC21A4B77A00F2B632 /* RoverUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB6ADD5A20B33EC0002F226C /* RoverUI.framework */; };
+		4960CA6621C84484009146F0 /* CampaignsAssembler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4960CA6521C84484009146F0 /* CampaignsAssembler.swift */; };
+		4960CA6A21C846EA009146F0 /* RoverUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB6ADD5A20B33EC0002F226C /* RoverUI.framework */; };
+		4960CA6B21C847A5009146F0 /* UI.UNNotificationResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 491C9711219C9C8A0065BAB8 /* UI.UNNotificationResponse.swift */; };
 		4962FB31219B506B00C7F678 /* Experiences.Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1B66209CD89400E99F9F /* Experiences.Color.swift */; };
 		4962FB32219B506B00C7F678 /* Experiences.Text.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1B68209CD8D600E99F9F /* Experiences.Text.swift */; };
 		4962FB33219B506B00C7F678 /* Experiences.ImageConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFDF48320AC858A0031EF47 /* Experiences.ImageConfiguration.swift */; };
@@ -311,6 +313,7 @@
 		495821B521A45D1F00F2B632 /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
 		495821B921A4A60D00F2B632 /* BluetoothInfoProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BluetoothInfoProvider.swift; sourceTree = "<group>"; };
 		495821BE21A4A64300F2B632 /* AdSupportInfoProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AdSupportInfoProvider.swift; sourceTree = "<group>"; };
+		4960CA6521C84484009146F0 /* CampaignsAssembler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampaignsAssembler.swift; sourceTree = "<group>"; };
 		497550DC21C0821400922C9D /* EventPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventPipeline.swift; sourceTree = "<group>"; };
 		4975CBDF21A753A900C2DD18 /* Location.Beacon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.Beacon.swift; sourceTree = "<group>"; };
 		4975CBE121A7547200C2DD18 /* Location.Geofence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.Geofence.swift; sourceTree = "<group>"; };
@@ -530,6 +533,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4960CA6A21C846EA009146F0 /* RoverUI.framework in Frameworks */,
 				49496A6121C83B3600F89438 /* RoverFoundation.framework in Frameworks */,
 				49496A6021C83B0300F89438 /* RoverData.framework in Frameworks */,
 			);
@@ -721,7 +725,6 @@
 			isa = PBXGroup;
 			children = (
 				491C970F219B6C580065BAB8 /* UI.UIApplication.swift */,
-				491C9711219C9C8A0065BAB8 /* UI.UNNotificationResponse.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -734,6 +737,7 @@
 				DB7BA92020D9703300968A30 /* NotificationHandler */,
 				49496A4B21C839DA00F89438 /* RoverCampaigns.h */,
 				49496A4C21C839DA00F89438 /* Info.plist */,
+				4960CA6521C84484009146F0 /* CampaignsAssembler.swift */,
 			);
 			path = Campaigns;
 			sourceTree = "<group>";
@@ -970,6 +974,7 @@
 		DB496E46214871710026DE6A /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				491C9711219C9C8A0065BAB8 /* UI.UNNotificationResponse.swift */,
 				DB6BE8B6215D4B2A000A1FDA /* Campaigns.OSLog.swift */,
 			);
 			path = Extensions;
@@ -2339,9 +2344,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				49496A6421C83CCF00F89438 /* InfluenceTracker.swift in Sources */,
+				4960CA6621C84484009146F0 /* CampaignsAssembler.swift in Sources */,
 				49496A6521C83CCF00F89438 /* NotificationHandler.swift in Sources */,
 				49496A6621C83CCF00F89438 /* NotificationHandlerService.swift in Sources */,
 				49496A6221C83CBB00F89438 /* InfluenceTrackerService.swift in Sources */,
+				4960CA6B21C847A5009146F0 /* UI.UNNotificationResponse.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2450,7 +2457,6 @@
 				4962FB56219B50AA00C7F678 /* ExperienceViewController.swift in Sources */,
 				495821C521A4AFED00F2B632 /* AdSupportInfoProvider.swift in Sources */,
 				4962FB57219B50AA00C7F678 /* ScreenViewController.swift in Sources */,
-				491C9713219C9D480065BAB8 /* UI.UNNotificationResponse.swift in Sources */,
 				4962FB58219B50AA00C7F678 /* ScreenViewLayout.swift in Sources */,
 				4962FB59219B50AA00C7F678 /* ScreenViewLayoutAttributes.swift in Sources */,
 				4962FB5D219B50AA00C7F678 /* RoverUI.h in Sources */,

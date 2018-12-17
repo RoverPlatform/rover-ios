@@ -10,14 +10,14 @@ import Foundation
 import UserNotifications
 
 extension UNNotificationResponse {
-    var roverNotification: Notification? {
+    var roverNotification: RoverUI.Notification? {
         guard let data = try? JSONSerialization.data(withJSONObject: self.notification.request.content.userInfo, options: []) else {
             return nil
         }
         
         struct Payload: Decodable {
             struct Rover: Decodable {
-                var notification: Notification
+                var notification: RoverUI.Notification
             }
             
             var rover: Rover

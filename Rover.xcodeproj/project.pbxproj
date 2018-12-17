@@ -13,6 +13,7 @@
 		49496A5721C839DA00F89438 /* RoverCampaignsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49496A5621C839DA00F89438 /* RoverCampaignsTests.swift */; };
 		49496A5921C839DB00F89438 /* RoverCampaigns.h in Headers */ = {isa = PBXBuildFile; fileRef = 49496A4B21C839DA00F89438 /* RoverCampaigns.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		49496A6021C83B0300F89438 /* RoverData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD88A7320C1B21700085AE0 /* RoverData.framework */; };
+		49496A6121C83B3600F89438 /* RoverFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF49DD3203DE00F00B54652 /* RoverFoundation.framework */; };
 		494F05B021A767C5008B3AFC /* TEMPORARY.swift in Sources */ = {isa = PBXBuildFile; fileRef = 494F05AF21A767C5008B3AFC /* TEMPORARY.swift */; };
 		494F05B221A76878008B3AFC /* NotificationsSyncParticipant.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB496E44214871410026DE6A /* NotificationsSyncParticipant.swift */; };
 		495821B621A45D1F00F2B632 /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495821B521A45D1F00F2B632 /* Device.swift */; };
@@ -529,6 +530,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				49496A6121C83B3600F89438 /* RoverFoundation.framework in Frameworks */,
 				49496A6021C83B0300F89438 /* RoverData.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

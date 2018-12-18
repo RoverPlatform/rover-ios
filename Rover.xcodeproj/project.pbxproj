@@ -76,10 +76,6 @@
 		4962FB58219B50AA00C7F678 /* ScreenViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEE32055964E00E5C77F /* ScreenViewLayout.swift */; };
 		4962FB59219B50AA00C7F678 /* ScreenViewLayoutAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FDD92087E09F008D1A57 /* ScreenViewLayoutAttributes.swift */; };
 		4962FB5D219B50AA00C7F678 /* RoverUI.h in Sources */ = {isa = PBXBuildFile; fileRef = DB6ADD5C20B33EC0002F226C /* RoverUI.h */; };
-		4962FB62219B51AD00C7F678 /* Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A7C209B8CC500E99F9F /* Notification.swift */; };
-		4962FB63219B51AD00C7F678 /* NotificationAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB78A3120DAD88900AF1A00 /* NotificationAttachment.swift */; };
-		4962FB64219B51AD00C7F678 /* NotificationSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB496F5220DBECD800DF5949 /* NotificationSource.swift */; };
-		4962FB65219B51AD00C7F678 /* NotificationTapBehavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB78A2F20DAD7B400AF1A00 /* NotificationTapBehavior.swift */; };
 		4962FB6D219B51AD00C7F678 /* NotificationStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF2584220A1090100400EA2 /* NotificationStore.swift */; };
 		4962FB6E219B51AD00C7F678 /* NotificationStoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBF9B205597C300E5C77F /* NotificationStoreService.swift */; };
 		4962FB6F219B51AD00C7F678 /* NotificationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FE2F208FB285008D1A57 /* NotificationCell.swift */; };
@@ -93,6 +89,10 @@
 		4976723D21A858DB006A96A4 /* BeaconsSyncParticipant.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1689ED2141A6F90012DA01 /* BeaconsSyncParticipant.swift */; };
 		4976723E21A85905006A96A4 /* GeofencesSyncParticipant.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD73F722137417E00E7F322 /* GeofencesSyncParticipant.swift */; };
 		4976724021A86226006A96A4 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4976723F21A86226006A96A4 /* Event.swift */; };
+		49795DF421C94D6F00AEF684 /* Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A7C209B8CC500E99F9F /* Notification.swift */; };
+		49795DF521C94D6F00AEF684 /* NotificationSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB496F5220DBECD800DF5949 /* NotificationSource.swift */; };
+		49795DF621C94D6F00AEF684 /* NotificationTapBehavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB78A2F20DAD7B400AF1A00 /* NotificationTapBehavior.swift */; };
+		49795DF721C94D6F00AEF684 /* NotificationAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB78A3120DAD88900AF1A00 /* NotificationAttachment.swift */; };
 		4988D94921AF4B260050550E /* Attributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1D5DC42107D32C0071928F /* Attributes.swift */; };
 		49AFAED421BF006800F1118B /* AttributesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49AFAED321BF006800F1118B /* AttributesTests.swift */; };
 		49C7829B21A75D5F0059D208 /* RoverUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB6ADD5A20B33EC0002F226C /* RoverUI.framework */; };
@@ -786,6 +786,10 @@
 			isa = PBXGroup;
 			children = (
 				49E5D80B21A851DF001A1BE3 /* Rover.xcdatamodel */,
+				DBFB1A7C209B8CC500E99F9F /* Notification.swift */,
+				DBB78A3120DAD88900AF1A00 /* NotificationAttachment.swift */,
+				DB496F5220DBECD800DF5949 /* NotificationSource.swift */,
+				DBB78A2F20DAD7B400AF1A00 /* NotificationTapBehavior.swift */,
 				DBC3B40F2145C1100096C74E /* Beacon.swift */,
 				DBD73F76213845AC00E7F322 /* Geofence.swift */,
 				4976723F21A86226006A96A4 /* Event.swift */,
@@ -1200,10 +1204,6 @@
 		DBADA82920A9EE9700225C80 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				DBFB1A7C209B8CC500E99F9F /* Notification.swift */,
-				DBB78A3120DAD88900AF1A00 /* NotificationAttachment.swift */,
-				DB496F5220DBECD800DF5949 /* NotificationSource.swift */,
-				DBB78A2F20DAD7B400AF1A00 /* NotificationTapBehavior.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -2434,10 +2434,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				4962FB79219B52BE00C7F678 /* SettingsViewController.swift in Sources */,
-				4962FB62219B51AD00C7F678 /* Notification.swift in Sources */,
-				4962FB63219B51AD00C7F678 /* NotificationAttachment.swift in Sources */,
-				4962FB64219B51AD00C7F678 /* NotificationSource.swift in Sources */,
-				4962FB65219B51AD00C7F678 /* NotificationTapBehavior.swift in Sources */,
 				4962FB6D219B51AD00C7F678 /* NotificationStore.swift in Sources */,
 				491C9710219B6C580065BAB8 /* UI.UIApplication.swift in Sources */,
 				4962FB6E219B51AD00C7F678 /* NotificationStoreService.swift in Sources */,
@@ -2610,8 +2606,12 @@
 				4975CBE321A7550500C2DD18 /* Geofence.swift in Sources */,
 				497550DD21C0821400922C9D /* EventPipeline.swift in Sources */,
 				49D2ED0221C1FAD20043510C /* DeviceInfoProvider.swift in Sources */,
+				49795DF721C94D6F00AEF684 /* NotificationAttachment.swift in Sources */,
 				DB6BE8B0215D433B000A1FDA /* Data.OSLog.swift in Sources */,
+				49795DF521C94D6F00AEF684 /* NotificationSource.swift in Sources */,
+				49795DF621C94D6F00AEF684 /* NotificationTapBehavior.swift in Sources */,
 				49E5D80C21A851DF001A1BE3 /* Rover.xcdatamodel in Sources */,
+				49795DF421C94D6F00AEF684 /* Notification.swift in Sources */,
 				495821CB21A4B68A00F2B632 /* DeviceSnapshot.swift in Sources */,
 				4988D94921AF4B260050550E /* Attributes.swift in Sources */,
 				4975CBE421A7550A00C2DD18 /* Beacon.swift in Sources */,

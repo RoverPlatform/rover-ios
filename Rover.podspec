@@ -33,10 +33,16 @@ Pod::Spec.new do |s|
     ss.dependency "Rover/Data"
   end
 
+  s.subspec "Campaigns" do |ss|
+    ss.source_files = "Sources/Campaigns/**/*.swift"
+    ss.dependency "Rover/UI"
+    ss.frameworks = "UserNotifications"
+  end
+
   s.subspec "UI" do |ss|
     ss.source_files = "Sources/UI/**/*.swift"
     ss.dependency "Rover/Data"
-    ss.frameworks = "SafariServices", "WebKit", "UserNotifications"
+    ss.frameworks = "SafariServices", "WebKit"
   end
 
   s.subspec "Location" do |ss|

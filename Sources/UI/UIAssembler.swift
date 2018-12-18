@@ -17,21 +17,12 @@ public struct UIAssembler {
     public var isLifeCycleTrackingEnabled: Bool
     public var isVersionTrackingEnabled: Bool
     
-    public var appGroup: String?
-    public var influenceTime: Int
-    public var isInfluenceTrackingEnabled: Bool
-    public var maxNotifications: Int
-    
-    public init(associatedDomains: [String] = [], urlSchemes: [String] = [], sessionKeepAliveTime: Int = 30, isLifeCycleTrackingEnabled: Bool = true, isVersionTrackingEnabled: Bool = true, appGroup: String? = nil, isInfluenceTrackingEnabled: Bool = true, influenceTime: Int = 120, maxNotifications: Int = 200) {
+    public init(associatedDomains: [String] = [], urlSchemes: [String] = [], sessionKeepAliveTime: Int = 30, isLifeCycleTrackingEnabled: Bool = true, isVersionTrackingEnabled: Bool = true) {
         self.associatedDomains = associatedDomains
         self.urlSchemes = urlSchemes
         self.sessionKeepAliveTime = sessionKeepAliveTime
         self.isLifeCycleTrackingEnabled = isLifeCycleTrackingEnabled
         self.isVersionTrackingEnabled = isVersionTrackingEnabled
-        self.appGroup = appGroup
-        self.influenceTime = influenceTime
-        self.isInfluenceTrackingEnabled = isInfluenceTrackingEnabled
-        self.maxNotifications = maxNotifications
     }
 }
 
@@ -162,41 +153,6 @@ extension UIAssembler: Assembler {
             )
         }
         
-        // MARK: InfluenceTracker
-        
-        container.register(InfluenceTracker.self) { resolver in
-            return InfluenceTrackerService(
-                influenceTime: self.influenceTime,
-                eventPipeline: resolver.resolve(EventPipeline.self),
-                notificationCenter: NotificationCenter.default,
-                userDefaults: UserDefaults(suiteName: self.appGroup)!
-            )
-        }
-        
-        // MARK: NotificationHandler
-        
-        container.register(NotificationHandler.self) { resolver in            
-            let websiteViewControllerProvider: NotificationCenterViewController.WebsiteViewControllerProvider = { [weak resolver] url in
-                return resolver?.resolve(UIViewController.self, name: "website", arguments: url)!
-            }
-            
-            return NotificationHandlerService(
-                influenceTracker: resolver.resolve(InfluenceTracker.self)!,
-                notificationStore: resolver.resolve(NotificationStore.self)!,
-                eventPipeline: resolver.resolve(EventPipeline.self)!,
-                websiteViewControllerProvider: websiteViewControllerProvider
-            )
-        }
-        
-        // MARK: NotificationStore
-        
-        container.register(NotificationStore.self) { [maxNotifications] resolver in
-            return NotificationStoreService(
-                maxSize: maxNotifications,
-                eventPipeline: resolver.resolve(EventPipeline.self)
-            )
-        }
-        
         // MARK: UIViewController (notificationCenter)
         
         container.register(UIViewController.self, name: "notificationCenter") { resolver in
@@ -246,13 +202,5 @@ extension UIAssembler: Assembler {
         if isLifeCycleTrackingEnabled {
             resolver.resolve(LifeCycleTracker.self)!.enable()
         }
-        
-        if isInfluenceTrackingEnabled {
-            let influenceTracker = resolver.resolve(InfluenceTracker.self)!
-            influenceTracker.startMonitoring()
-        }
-        
-        let store = resolver.resolve(NotificationStore.self)!
-        store.restore()        
     }
 }

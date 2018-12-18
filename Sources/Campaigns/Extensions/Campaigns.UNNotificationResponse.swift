@@ -1,6 +1,6 @@
 //
-//  UI.UNNotificationResponse.swift
-//  RoverUI
+//  Campaigns.UNNotificationResponse.swift
+//  RoverCampaigns
 //
 //  Created by Andrew Clunis on 2018-11-14.
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.

@@ -23,11 +23,11 @@ open class NotificationCenterViewController: UIViewController {
     public private(set) var refreshControl = UIRefreshControl()
     public private(set) var tableView = UITableView()
     
-    private var cache: [Notification]?
+    private var cache: [RoverData.Notification]?
     private var notificationsObservation: NSObjectProtocol?
     private var didBecomeActiveObserver: NSObjectProtocol?
     
-    public var notifications: [Notification] {
+    public var notifications: [RoverData.Notification] {
         if let cache = cache {
             return cache
         }
@@ -42,7 +42,7 @@ open class NotificationCenterViewController: UIViewController {
      
      You can override this method if you wish to modify the rules used to filter notifications. For example if you wish to include expired notifications in the table view and instead show their expired status with a visual indicator.
      */
-    open func filterNotifications() -> [Notification] {
+    open func filterNotifications() -> [RoverData.Notification] {
         return notificationStore.notifications.filter({ notification in
             guard notification.isNotificationCenterEnabled, !notification.isDeleted else {
                 return false

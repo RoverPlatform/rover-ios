@@ -47,9 +47,23 @@
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>
+    <entity name="Notification" representedClassName="Notification" syncable="YES">
+        <attribute name="attachment" optional="YES" attributeType="Transformable" syncable="YES"/>
+        <attribute name="body" attributeType="String" syncable="YES"/>
+        <attribute name="campaignID" attributeType="String" syncable="YES"/>
+        <attribute name="deliveredAt" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="expiresAt" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="id" attributeType="String" syncable="YES"/>
+        <attribute name="is_Deleted" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="isNotificationCenterEnabled" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="isRead" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="tapBehaviour" attributeType="Transformable" syncable="YES"/>
+        <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
     <elements>
         <element name="Beacon" positionX="-63" positionY="18" width="128" height="150"/>
         <element name="Event" positionX="-171" positionY="72" width="128" height="150"/>
         <element name="Geofence" positionX="-282.91796875" positionY="25.5" width="128" height="150"/>
+        <element name="Notification" positionX="-171" positionY="99" width="128" height="210"/>
     </elements>
 </model>

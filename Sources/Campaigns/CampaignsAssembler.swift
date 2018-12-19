@@ -10,7 +10,6 @@ import Foundation
 import UIKit
 
 public struct CampaignsAssembler {
-    
     public var influenceTime: Int
     public var isInfluenceTrackingEnabled: Bool
     public var appGroup: String?

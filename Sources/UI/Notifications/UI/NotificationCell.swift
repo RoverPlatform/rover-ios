@@ -9,7 +9,7 @@
 import UIKit
 
 open class NotificationCell: UITableViewCell {
-    public var notification: Notification?
+    public var notification: RoverData.Notification?
     
     #if swift(>=4.2)
     public override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -25,7 +25,7 @@ open class NotificationCell: UITableViewCell {
         super.init(coder: aDecoder)
     }
     
-    open func configure(with notification: Notification, imageStore: ImageStore) {
+    open func configure(with notification: RoverData.Notification, imageStore: ImageStore) {
         self.notification = notification
         
         configureBackgroundColor()

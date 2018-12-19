@@ -9,19 +9,21 @@
 import Foundation
 
 public protocol NotificationStore {
-    var notifications: [Notification] { get }
     
-    func addObserver(block: @escaping ([Notification]) -> Void) -> NSObjectProtocol
+    // TODO: replace this with returning a fetch request or similar?
+    var notifications: [RoverData.Notification] { get }
+    
+    func addObserver(block: @escaping ([RoverData.Notification]) -> Void) -> NSObjectProtocol
     func removeObserver(_ token: NSObjectProtocol)
     
     func restore()
-    func addNotifications(_ notifications: [Notification])
+    func addNotifications(_ notifications: [RoverData.Notification])
     func markNotificationDeleted(_ notificationID: String)
     func markNotificationRead(_ notificationID: String)
 }
 
 extension NotificationStore {
-    public func addNotification(_ notification: Notification) {
+    public func addNotification(_ notification: RoverData.Notification) {
         addNotifications([notification])
     }
 }

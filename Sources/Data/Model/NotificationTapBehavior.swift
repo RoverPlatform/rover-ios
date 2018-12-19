@@ -7,60 +7,67 @@
 //
 
 import Foundation
+import os
 
-public enum NotificationTapBehavior: Equatable {
-    case openApp
-    case openURL(url: URL)
-    case presentWebsite(url: URL)
+public class NotificationTapBehavior: NSObject, NSCoding {
+    public func encode(with aCoder: NSCoder) {
+        let error = "NotificationTapBehavior is abstract and should not be persisted."
+        os_log("%s", log: .persistence, type: .error, error)
+        assertionFailure(error)
+    }
+    
+    public required init?(coder aDecoder: NSCoder) {
+        let error = "NotificationTapBehavior is abstract and should not have been persisted."
+        os_log("%s", log: .persistence, type: .error, error)
+        assertionFailure(error)
+        return nil
+    }
+    
+    override init() {
+        
+    }
 }
 
-// MARK: Codable
+public class OpenAppTapBehavior: NotificationTapBehavior {
+    public override func encode(with aCoder: NSCoder) {
+    }
+    
+    public required init?(coder aDecoder: NSCoder) {
+        super.init()
+    }
+}
 
-extension NotificationTapBehavior: Codable {
-    private enum CodingKeys: String, CodingKey {
-        case typeName = "__typename"
-    }
+public class OpenURLTapBehavior: NotificationTapBehavior {
+    public var url: URL
     
-    private enum OpenURLKeys: String, CodingKey {
-        case url
-    }
-    
-    private enum PresentWebsiteKeys: String, CodingKey {
-        case url
-    }
-    
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        let typeName = try container.decode(String.self, forKey: .typeName)
-        switch typeName {
-        case "OpenAppNotificationTapBehavior":
-            self = .openApp
-        case "OpenURLNotificationTapBehavior":
-            let container = try decoder.container(keyedBy: OpenURLKeys.self)
-            let url = try container.decode(URL.self, forKey: .url)
-            self = .openURL(url: url)
-        case "PresentWebsiteNotificationTapBehavior":
-            let container = try decoder.container(keyedBy: PresentWebsiteKeys.self)
-            let url = try container.decode(URL.self, forKey: .url)
-            self = .presentWebsite(url: url)
-        default:
-            throw DecodingError.dataCorruptedError(forKey: CodingKeys.typeName, in: container, debugDescription: "Expected one of OpenAppNotificationTapBehavior, OpenURLNotificationTapBehavior or PresentWebsiteNotificationTapBehavior – found \(typeName)")
+    public required init?(coder aDecoder: NSCoder) {
+        
+        guard let urlString = aDecoder.decodeObject(forKey: "url") as? String else {
+            os_log("OpenURLTapBehavior: URL field missing from NSCoder.", log: .persistence, type: .error)
+            return nil
         }
-    }
-    
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        switch self {
-        case .openApp:
-            try container.encode("OpenAppNotificationTapBehavior", forKey: .typeName)
-        case .openURL(let url):
-            try container.encode("OpenURLNotificationTapBehavior", forKey: .typeName)
-            var container = encoder.container(keyedBy: OpenURLKeys.self)
-            try container.encode(url, forKey: .url)
-        case .presentWebsite(let url):
-            try container.encode("PresentWebsiteNotificationTapBehavior", forKey: .typeName)
-            var container = encoder.container(keyedBy: PresentWebsiteKeys.self)
-            try container.encode(url, forKey: .url)
+        guard let url = URL(string: urlString) else {
+            os_log("OpenURLTapBehavior: URL field invalid from NSCoder.", log: .persistence, type: .error)
+            return nil
         }
+        self.url = url
+        super.init()
+    }
+}
+
+public class PresentWebsiteTapBehavior: NotificationTapBehavior {
+    public var url: URL
+    
+    public required init?(coder aDecoder: NSCoder) {
+        guard let urlString = aDecoder.decodeObject(forKey: "url") as? String else {
+            os_log("PresentWebsiteTapBehavior: URL field missing from NSCoder.", log: .persistence, type: .error)
+            return nil
+        }
+        guard let url = URL(string: urlString) else {
+            os_log("PresentWebsiteTapBehavior: URL field invalid from NSCoder.", log: .persistence, type: .error)
+            return nil
+        }
+        self.url = url
+        super.init()
     }
 }

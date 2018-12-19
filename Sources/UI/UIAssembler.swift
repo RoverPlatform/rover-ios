@@ -17,7 +17,8 @@ public struct UIAssembler {
     public var isLifeCycleTrackingEnabled: Bool
     public var isVersionTrackingEnabled: Bool
     
-    public init(associatedDomains: [String] = [], urlSchemes: [String] = [], sessionKeepAliveTime: Int = 30, isLifeCycleTrackingEnabled: Bool = true, isVersionTrackingEnabled: Bool = true) {
+    public init(
+        associatedDomains: [String] = [], urlSchemes: [String] = [], sessionKeepAliveTime: Int = 30, isLifeCycleTrackingEnabled: Bool = true, isVersionTrackingEnabled: Bool = true) {
         self.associatedDomains = associatedDomains
         self.urlSchemes = urlSchemes
         self.sessionKeepAliveTime = sessionKeepAliveTime

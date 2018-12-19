@@ -42,14 +42,18 @@ class NotificationHandlerService: NotificationHandler {
         }
         
         switch notification.tapBehavior {
-        case .openApp:
+        case is OpenAppTapBehavior:
             break
-        case .openURL(let url):
+        case let tapBehavior as OpenURLTapBehavior:
+            let url = tapBehavior.url
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
-        case .presentWebsite(let url):
+        case let tapBehavior as PresentWebsiteTapBehavior:
+            let url = tapBehavior.url
             if let websiteViewController = websiteViewControllerProvider(url) {
                 UIApplication.shared.present(websiteViewController, animated: false)
             }
+        default:
+            break
         }
         
         let eventInfo = notification.openedEvent(source: .pushNotification)

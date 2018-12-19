@@ -44,7 +44,7 @@ open class NotificationCenterViewController: UIViewController {
      */
     open func filterNotifications() -> [RoverData.Notification] {
         return notificationStore.notifications.filter({ notification in
-            guard notification.isNotificationCenterEnabled, !notification.isDeleted else {
+            guard !notification.isDeleted else {
                 return false
             }
             
@@ -322,9 +322,10 @@ extension NotificationCenterViewController: UITableViewDelegate {
         }
         
         switch notification.tapBehavior {
-        case .openApp:
+        case is OpenAppTapBehavior:
             break
-        case .openURL(let url):
+        case let tapBehavior as OpenURLTapBehavior:
+            let url = tapBehavior.url
             if let viewController = router.viewController(for: url) {
                 viewController.transitioningDelegate = self
                 self.present(viewController, animated: true)
@@ -332,11 +333,14 @@ extension NotificationCenterViewController: UITableViewDelegate {
                 // non-Rover URI
                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
             }
-        case .presentWebsite(let url):
+        case let tapBehavior as PresentWebsiteTapBehavior:
+            let url = tapBehavior.url
             if let websiteViewController = websiteViewControllerProvider(url) {
                 websiteViewController.transitioningDelegate = self
                 self.present(websiteViewController, animated: true)
             }
+        default:
+            break
         }
         
         let eventInfo = notification.openedEvent(source: .notificationCenter)

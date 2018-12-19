@@ -35,3 +35,65 @@ public final class Event : NSManagedObject {
         self.timestamp = Date()
     }
 }
+
+// TODO: move eventpipeline trackevent here, then can set above nsmanaged properties to fileprivate and have this be sort of immutable. That is, if a solution for DeviceSnapshot can be engineered.
+
+// TODO: static extension function for setting up an Notification Center obserserver.  This allows us to retire EventPipeline.
+
+extension Event {
+    /// Register a callback to be fired whenever Events are inserted
+    ///
+    /// Note that this returns an opaque chit object that you must retain until you no longer wish the callback to be fired.
+    public static func observeNewEvents(
+        managedObjectContext: NSManagedObjectContext,
+        observerCallback: @escaping ([Event]) -> Void
+    ) -> NSObjectProtocol {
+        return NotificationCenter.default.addObserver(forName: .NSManagedObjectContextObjectsDidChange, object: managedObjectContext, queue: nil) { (iosNotification) in
+            guard let insertedObjects = iosNotification.userInfo?[NSInsertedObjectsKey] as? Set<NSObject> else {
+                return
+            }
+            
+            let insertedEvents = insertedObjects
+                .compactMap({ $0 as? Event })
+            
+            if !insertedEvents.isEmpty {
+                observerCallback(insertedEvents)
+            }
+        }
+    }
+    
+    public convenience init?(
+        insertFrom eventInfo: EventInfo,
+        andInsertIntoContext managedObjectContext: NSManagedObjectContext
+    ) {
+        super.init(context: managedObjectContext)
+
+        guard let deviceSnapshot = deviceInfoProvider?.deviceSnapshot else {
+            os_log("Event added before Device Info Provider set. Dropping event.", log: .events, type: .error)
+            return
+        }
+        
+        self.attributes = eventInfo.attributes ?? Attributes()
+        self.deviceSnapshot = deviceSnapshot
+        self.name = eventInfo.name
+        self.namespace = eventInfo.namespace
+        
+        managedObjectContext.perform { [managedObjectContext] in
+            managedObjectContext.insert(self)
+            
+            do {
+                try managedObjectContext.save()
+            } catch {
+                if let multipleErrors = (error as NSError).userInfo[NSDetailedErrorsKey] as? [Error] {
+                    multipleErrors.forEach {
+                        os_log("Unable to save event into the EventPipeline. Dropping it. Reason: %s", log: .persistence, type: .error, $0.localizedDescription)
+                    }
+                } else {
+                    os_log("Unable to save event into the EventPipeline. Dropping it. Reason: %s", log: .persistence, type: .error, error.localizedDescription)
+                }
+                
+                managedObjectContext.rollback()
+            }
+        }
+    }
+}

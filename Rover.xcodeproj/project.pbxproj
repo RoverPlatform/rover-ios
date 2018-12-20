@@ -76,8 +76,6 @@
 		4962FB58219B50AA00C7F678 /* ScreenViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEE32055964E00E5C77F /* ScreenViewLayout.swift */; };
 		4962FB59219B50AA00C7F678 /* ScreenViewLayoutAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FDD92087E09F008D1A57 /* ScreenViewLayoutAttributes.swift */; };
 		4962FB5D219B50AA00C7F678 /* RoverUI.h in Sources */ = {isa = PBXBuildFile; fileRef = DB6ADD5C20B33EC0002F226C /* RoverUI.h */; };
-		4962FB6D219B51AD00C7F678 /* NotificationStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF2584220A1090100400EA2 /* NotificationStore.swift */; };
-		4962FB6E219B51AD00C7F678 /* NotificationStoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBF9B205597C300E5C77F /* NotificationStoreService.swift */; };
 		4962FB6F219B51AD00C7F678 /* NotificationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FE2F208FB285008D1A57 /* NotificationCell.swift */; };
 		4962FB70219B51AD00C7F678 /* NotificationCenterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBF90205597C300E5C77F /* NotificationCenterViewController.swift */; };
 		4962FB79219B52BE00C7F678 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF31B4820E193BA005D7C34 /* SettingsViewController.swift */; };
@@ -415,7 +413,6 @@
 		DB9DBF832055974B00E5C77F /* RoverNotificationsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoverNotificationsTests.swift; sourceTree = "<group>"; };
 		DB9DBF852055974B00E5C77F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DB9DBF90205597C300E5C77F /* NotificationCenterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationCenterViewController.swift; sourceTree = "<group>"; };
-		DB9DBF9B205597C300E5C77F /* NotificationStoreService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationStoreService.swift; sourceTree = "<group>"; };
 		DB9DBFB52055980800E5C77F /* RoverLocation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RoverLocation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB9DBFB72055980800E5C77F /* RoverLocation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RoverLocation.h; sourceTree = "<group>"; };
 		DB9DBFB82055980800E5C77F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -476,7 +473,6 @@
 		DBD88A8220C1B21700085AE0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DBD88ABC20C1BA7C00085AE0 /* DataAssembler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataAssembler.swift; sourceTree = "<group>"; };
 		DBF2584020A107BD00400EA2 /* ObserverSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObserverSet.swift; sourceTree = "<group>"; };
-		DBF2584220A1090100400EA2 /* NotificationStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationStore.swift; sourceTree = "<group>"; };
 		DBF31B2320E17176005D7C34 /* RoverDebugTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoverDebugTests.swift; sourceTree = "<group>"; };
 		DBF31B2520E17176005D7C34 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DBF31B4820E193BA005D7C34 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
@@ -1471,8 +1467,6 @@
 		DBFDF42F20AC7B620031EF47 /* NotificationStore */ = {
 			isa = PBXGroup;
 			children = (
-				DBF2584220A1090100400EA2 /* NotificationStore.swift */,
-				DB9DBF9B205597C300E5C77F /* NotificationStoreService.swift */,
 			);
 			path = NotificationStore;
 			sourceTree = "<group>";
@@ -2434,9 +2428,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4962FB79219B52BE00C7F678 /* SettingsViewController.swift in Sources */,
-				4962FB6D219B51AD00C7F678 /* NotificationStore.swift in Sources */,
 				491C9710219B6C580065BAB8 /* UI.UIApplication.swift in Sources */,
-				4962FB6E219B51AD00C7F678 /* NotificationStoreService.swift in Sources */,
 				495821B821A4703800F2B632 /* DeviceModel.swift in Sources */,
 				4962FB6F219B51AD00C7F678 /* NotificationCell.swift in Sources */,
 				4962FB70219B51AD00C7F678 /* NotificationCenterViewController.swift in Sources */,

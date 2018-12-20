@@ -77,11 +77,15 @@ open class NotificationCell: UITableViewCell {
         imageView.alpha = 0.0
         imageView.image = nil
         
-        guard let notification = notification, let attachment = notification.attachment, case .image = attachment.format else {
+        // TODO: retrieve attachment from campaign when campaign exists.
+        
+        guard let notification = notification else {
             return
         }
         
-        let configuration = ImageConfiguration(url: attachment.url)
+        return
+        
+        let configuration = ImageConfiguration(url: URL.init(string: "")!)
         
         if let image = imageStore.fetchedImage(for: configuration) {
             imageView.image = image

@@ -16,12 +16,10 @@ class NotificationHandlerService: NotificationHandler {
     public typealias WebsiteViewControllerProvider = (URL) -> UIViewController?
     public let websiteViewControllerProvider: WebsiteViewControllerProvider
     
-    let notificationStore: NotificationStore
     let eventPipeline: EventPipeline
     
-    init(influenceTracker: InfluenceTracker, notificationStore: NotificationStore, eventPipeline: EventPipeline, websiteViewControllerProvider: @escaping WebsiteViewControllerProvider) {
+    init(influenceTracker: InfluenceTracker, eventPipeline: EventPipeline, websiteViewControllerProvider: @escaping WebsiteViewControllerProvider) {
         self.influenceTracker = influenceTracker
-        self.notificationStore = notificationStore
         self.eventPipeline = eventPipeline
         self.websiteViewControllerProvider = websiteViewControllerProvider
     }
@@ -31,33 +29,36 @@ class NotificationHandlerService: NotificationHandler {
         // notification from the influence tracker so we don't erroneously track an influenced open.
         influenceTracker.clearLastReceivedNotification()
         
-        guard let notification = response.roverNotification else {
-            return false
-        }
+        // TODO: all this is is changing with Campaigns.
         
-        notificationStore.addNotification(notification)
-        
-        if !notification.isRead {
-            notificationStore.markNotificationRead(notification.id)
-        }
-        
-        switch notification.tapBehavior {
-        case is OpenAppTapBehavior:
-            break
-        case let tapBehavior as OpenURLTapBehavior:
-            let url = tapBehavior.url
-            UIApplication.shared.open(url, options: [:], completionHandler: nil)
-        case let tapBehavior as PresentWebsiteTapBehavior:
-            let url = tapBehavior.url
-            if let websiteViewController = websiteViewControllerProvider(url) {
-                UIApplication.shared.present(websiteViewController, animated: false)
-            }
-        default:
-            break
-        }
-        
-        let eventInfo = notification.openedEvent(source: .pushNotification)
-        eventPipeline.addEvent(eventInfo)
+//        guard let notification = response.roverNotification else {
+//            return false
+//        }
+//
+//
+//        notificationStore.addNotification(notification)
+//
+//        if !notification.isRead {
+//            notification.markRead()
+//        }
+//
+//        switch notification.tapBehavior {
+//        case is OpenAppTapBehavior:
+//            break
+//        case let tapBehavior as OpenURLTapBehavior:
+//            let url = tapBehavior.url
+//            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+//        case let tapBehavior as PresentWebsiteTapBehavior:
+//            let url = tapBehavior.url
+//            if let websiteViewController = websiteViewControllerProvider(url) {
+//                UIApplication.shared.present(websiteViewController, animated: false)
+//            }
+//        default:
+//            break
+//        }
+//
+//        let eventInfo = notification.openedEvent(source: .pushNotification)
+//        eventPipeline.addEvent(eventInfo)
         
         return true
     }

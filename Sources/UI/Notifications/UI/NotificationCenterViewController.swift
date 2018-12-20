@@ -12,11 +12,10 @@ import os
 
 open class NotificationCenterViewController: UIViewController {
     public let eventPipeline: EventPipeline
-    public let imageStore: ImageStore
-    public let notificationStore: NotificationStore
     public let router: Router
     public let sessionController: SessionController
     public let syncCoordinator: SyncCoordinator
+    public let notificationsDataSource: NotificationsDataSource
     
     public typealias WebsiteViewControllerProvider = (URL) -> UIViewController?
     public let websiteViewControllerProvider: WebsiteViewControllerProvider
@@ -25,76 +24,29 @@ open class NotificationCenterViewController: UIViewController {
     public private(set) var refreshControl = UIRefreshControl()
     public private(set) var tableView = UITableView()
     
-    // TODO: This should probably be removed.
-    private var cache: [RoverData.Notification]?
-    private var notificationsObservation: NSObjectProtocol?
     private var didBecomeActiveObserver: NSObjectProtocol?
-    
-    public var notifications: [RoverData.Notification] {
-        if let cache = cache {
-            return cache
-        }
-        
-        let notifications = filterNotifications()
-        cache = notifications
-        return notifications
-    }
-    
-    /**
-     Returns a filtered list of notifications from dataStore.notifications. The default implementation filters out notifications that aren't notification center enabled, are deleted or have expired. This method is called automatically by the NotificationCenterTableView and the results are cached for performance.
-     
-     You can override this method if you wish to modify the rules used to filter notifications. For example if you wish to include expired notifications in the table view and instead show their expired status with a visual indicator.
-     */
-    open func filterNotifications() -> [RoverData.Notification] {
-        return notificationStore.notifications.filter({ notification in
-            guard !notification.isDeleted else {
-                return false
-            }
-            
-            if let expiresAt = notification.expiresAt {
-                return expiresAt > Date()
-            }
-            
-            return true
-        })
-    }
     
     public init(
         eventPipeline: EventPipeline,
-        imageStore: ImageStore,
-        notificationStore: NotificationStore,
         router: Router,
         sessionController: SessionController,
         syncCoordinator: SyncCoordinator,
+        notificationsDataSource: NotificationsDataSource,
         websiteViewControllerProvider: @escaping WebsiteViewControllerProvider) {
         self.eventPipeline = eventPipeline
-        self.imageStore = imageStore
-        self.notificationStore = notificationStore
         self.router = router
         self.sessionController = sessionController
         self.syncCoordinator = syncCoordinator
+        self.notificationsDataSource = notificationsDataSource
         self.websiteViewControllerProvider = websiteViewControllerProvider
         
         super.init(nibName: nil, bundle: nil)
-        
-        notificationsObservation = notificationStore.addObserver { [weak self] _ in
-            DispatchQueue.main.async {
-                self?.cache = nil
-                self?.tableView.reloadData()
-            }
-        }
     }
     
     required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    deinit {
-        if let didBecomeActiveObserver = self.didBecomeActiveObserver {
-            NotificationCenter.default.removeObserver(didBecomeActiveObserver)
-        }
-    }
-    
+
     override open func viewDidLoad() {
         super.viewDidLoad()
         
@@ -108,7 +60,7 @@ open class NotificationCenterViewController: UIViewController {
         tableView.addSubview(refreshControl)
         
         tableView.delegate = self
-        tableView.dataSource = self
+        tableView.dataSource = notificationsDataSource
         
         registerReusableViews()
 
@@ -255,38 +207,6 @@ open class NotificationCenterViewController: UIViewController {
     open func registerReusableViews() {
         tableView.register(NotificationCell.self, forCellReuseIdentifier: "notification")
     }
-    
-    open func cellReuseIdentifier(at indexPath: IndexPath) -> String {
-        return "notification"
-    }
-}
-
-// MARK: UITableViewDataSource
-
-// ANDREW START HERE AND RETIRE THIS EXTENSION, MOVING ALL APPROPRIATE FUNCTIONALITY DOWN INTO NEW DATASOURCE OBJECT.
-// THEN GO THROUGH EVERY LINE AND VERIFY THAT IT MAKES SENSE.
-extension NotificationCenterViewController: UITableViewDataSource {
-    
-    public func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
-    }
-    
-    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return notifications.count
-    }
-    
-    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let reuseIdentifier = cellReuseIdentifier(at: indexPath)
-        let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath)
-        
-        guard let notificationCell = cell as? NotificationCell else {
-            return cell
-        }
-        
-        let notification = notifications[indexPath.row]
-        notificationCell.configure(with: notification, imageStore: imageStore)
-        return notificationCell
-    }
 }
 
 // MARK: UITableViewDelegate
@@ -319,51 +239,43 @@ extension NotificationCenterViewController: UITableViewDelegate {
     }
     
     func openNotification(at indexPath: IndexPath) {
-        let notification = notifications[indexPath.row]
+        let notification = self.notificationsDataSource.notificationAt(indexPath: indexPath)
         
         if !notification.isRead {
-            tableView.beginUpdates()
-            notificationStore.markNotificationRead(notification.id)
-            tableView.endUpdates()
+            notification.markRead()
         }
+
+        // TODO: Restore this once TapBehaviour is available on Campaign.
         
-        switch notification.tapBehavior {
-        case is OpenAppTapBehavior:
-            break
-        case let tapBehavior as OpenURLTapBehavior:
-            let url = tapBehavior.url
-            if let viewController = router.viewController(for: url) {
-                viewController.transitioningDelegate = self
-                self.present(viewController, animated: true)
-            } else {
-                // non-Rover URI
-                UIApplication.shared.open(url, options: [:], completionHandler: nil)
-            }
-        case let tapBehavior as PresentWebsiteTapBehavior:
-            let url = tapBehavior.url
-            if let websiteViewController = websiteViewControllerProvider(url) {
-                websiteViewController.transitioningDelegate = self
-                self.present(websiteViewController, animated: true)
-            }
-        default:
-            break
-        }
+        //        switch notification.tapBehavior {
+        //        case is OpenAppTapBehavior:
+        //            break
+        //        case let tapBehavior as OpenURLTapBehavior:
+        //            let url = tapBehavior.url
+        //            if let viewController = router.viewController(for: url) {
+        //                viewController.transitioningDelegate = self
+        //                self.present(viewController, animated: true)
+        //            } else {
+        //                // non-Rover URI
+        //                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+        //            }
+        //        case let tapBehavior as PresentWebsiteTapBehavior:
+        //            let url = tapBehavior.url
+        //            if let websiteViewController = websiteViewControllerProvider(url) {
+        //                websiteViewController.transitioningDelegate = self
+        //                self.present(websiteViewController, animated: true)
+        //            }
+        //        default:
+        //            break
+        //        }
         
         let eventInfo = notification.openedEvent(source: .notificationCenter)
         eventPipeline.addEvent(eventInfo)
     }
     
     func deleteNotification(at indexPath: IndexPath) {
-        let notification = notifications[indexPath.row]
-        if notification.isDeleted {
-            return
-        }
-        
-        tableView.beginUpdates()
-        notificationStore.markNotificationDeleted(notification.id)
-        cache = nil
-        tableView.deleteRows(at: [indexPath], with: .automatic)
-        tableView.endUpdates()
+        let notification = self.notificationsDataSource.notificationAt(indexPath: indexPath)
+        notification.delete()
     }
 }
 
@@ -436,29 +348,40 @@ extension NotificationCenterViewController: UIViewControllerTransitioningDelegat
 }
 
 
-class NotificationsDataSource: NSObject, UITableViewDataSource {
+public class NotificationsDataSource: NSObject, UITableViewDataSource {
     var subscribedTableView: UITableView? = nil
     
-    let managedObjectContext: NSManagedObjectContext
-    let fetchedResultsController: NSFetchedResultsController<RoverData.Notification>
+    public let imageStore: ImageStore
     
-    init(
-        managedObjectContext: NSManagedObjectContext
-    ) {
-        self.managedObjectContext = managedObjectContext
+    let managedObjectContext: NSManagedObjectContext
+    
+    open lazy var fetchRequest: NSFetchRequest<RoverData.Notification> = {
         let fetchRequest: NSFetchRequest<RoverData.Notification> = RoverData.Notification.fetchRequest()
-        
+        fetchRequest.predicate = self.predicate
         // TODO: set up sort descriptors
         fetchRequest.sortDescriptors = [
             
         ]
         fetchRequest.fetchBatchSize = 30 // TODO: is this appropriate batch size?
-        fetchedResultsController = NSFetchedResultsController(
-            fetchRequest: fetchRequest,
-            managedObjectContext: managedObjectContext,
-            sectionNameKeyPath: nil,
-            cacheName: nil
-        )
+        return fetchRequest
+    }()
+    
+    open lazy var predicate: NSPredicate = NSPredicate()
+    
+    open lazy var fetchedResultsController: NSFetchedResultsController<RoverData.Notification> = NSFetchedResultsController(
+        fetchRequest: fetchRequest,
+        managedObjectContext: managedObjectContext,
+        sectionNameKeyPath: nil,
+        cacheName: nil
+    )
+    
+    init(
+        managedObjectContext: NSManagedObjectContext,
+        imageStore: ImageStore
+    ) {
+        self.managedObjectContext = managedObjectContext
+        self.imageStore = imageStore
+
         super.init()
         fetchedResultsController.delegate = self
         do {
@@ -468,17 +391,30 @@ class NotificationsDataSource: NSObject, UITableViewDataSource {
         }
     }
     
+    /**
+     Returns a filtered list of notifications from dataStore.notifications. The default implementation filters out notifications that aren't notification center enabled, are deleted or have expired. This method is called automatically by the NotificationCenterTableView and the results are cached for performance.
+     
+     You can override this method if you wish to modify the rules used to filter notifications. For example if you wish to include expired notifications in the table view and instead show their expired status with a visual indicator.
+     */
+    open var notificationFilterPredicate: NSPredicate {
+        return NSPredicate()
+    }
+    
     func notificationAt(indexPath: IndexPath) -> RoverData.Notification {
         return fetchedResultsController.object(at: indexPath) as RoverData.Notification
     }
     
+    open func cellReuseIdentifier(at indexPath: IndexPath) -> String {
+        return "notification"
+    }
+    
     // MARK: UITableViewDataSource
     
-    func numberOfSections(in tableView: UITableView) -> Int {
+    open func numberOfSections(in tableView: UITableView) -> Int {
         return self.fetchedResultsController.sections!.count
     }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    open func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard let sections = self.fetchedResultsController.sections else {
             fatalError("No sections in fetchedResultsController")
         }
@@ -486,33 +422,37 @@ class NotificationsDataSource: NSObject, UITableViewDataSource {
         return sectionInfo.numberOfObjects
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "notification", for: indexPath)
-        let object = self.fetchedResultsController.object(at: indexPath)
-        // Configure the cell with data from the managed object.
+    open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let reuseIdentifier = self.cellReuseIdentifier(at: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath)
         
-        // TODO: CONFIGURE THE CELL CORRECTLY
-
-        return cell
+        guard let notificationCell = cell as? NotificationCell else {
+            return cell
+        }
+        
+        let notification = self.notificationAt(indexPath: indexPath)
+        notificationCell.configure(with: notification, imageStore: self.imageStore)
+        return notificationCell
     }
     
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    open func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         guard let sectionInfo = fetchedResultsController.sections?[section] else {
             return nil
         }
         return sectionInfo.name
     }
     
-    func sectionIndexTitles(for tableView: UITableView) -> [String]? {
+    open func sectionIndexTitles(for tableView: UITableView) -> [String]? {
         return fetchedResultsController.sectionIndexTitles
     }
     
-    func tableView(_ tableView: UITableView, sectionForSectionIndexTitle title: String, at index: Int) -> Int {
+    open func tableView(_ tableView: UITableView, sectionForSectionIndexTitle title: String, at index: Int) -> Int {
         return fetchedResultsController.section(forSectionIndexTitle: title, at: index)
     }
 }
 
 
+// TODO: move this extension onto the TableView itself rather than DataSource.
 extension NotificationsDataSource : NSFetchedResultsControllerDelegate {
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         self.subscribedTableView?.endUpdates()

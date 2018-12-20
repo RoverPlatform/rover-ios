@@ -43,7 +43,6 @@ extension CampaignsAssembler : Assembler {
             
             return NotificationHandlerService(
                 influenceTracker: resolver.resolve(InfluenceTracker.self)!,
-                notificationStore: resolver.resolve(NotificationStore.self)!,
                 eventPipeline: resolver.resolve(EventPipeline.self)!,
                 websiteViewControllerProvider: websiteViewControllerProvider
             )

@@ -358,11 +358,10 @@ public class NotificationsDataSource: NSObject, UITableViewDataSource {
     open lazy var fetchRequest: NSFetchRequest<RoverData.Notification> = {
         let fetchRequest: NSFetchRequest<RoverData.Notification> = RoverData.Notification.fetchRequest()
         fetchRequest.predicate = self.predicate
-        // TODO: set up sort descriptors
         fetchRequest.sortDescriptors = [
-            
+            NSSortDescriptor.init(key: #keyPath(RoverData.Notification.deliveredAt), ascending: false)
         ]
-        fetchRequest.fetchBatchSize = 30 // TODO: is this appropriate batch size?
+        fetchRequest.fetchBatchSize = 20
         return fetchRequest
     }()
     

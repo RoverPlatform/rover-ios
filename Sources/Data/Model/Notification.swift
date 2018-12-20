@@ -48,7 +48,7 @@ public final class Notification: NSManagedObject {
 extension Notification {
     public func openedEvent(source: NotificationSource) -> EventInfo {
         let attributes: Attributes = [
-            "notification": self,
+            "notification": self.attributes,
             "source": source.rawValue
         ]
         return EventInfo(name: "Notification Opened", namespace: "rover", attributes: attributes)
@@ -58,7 +58,7 @@ extension Notification {
 extension Notification {
     public var attributes: Attributes {
         return [
-            "id": self.objectID,
+            "id": self.id.uuidString,
             "campaignID": campaignID
         ]
     }

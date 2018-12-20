@@ -983,8 +983,8 @@
 				495821C121A4AFDC00F2B632 /* Device */,
 				495821B721A4700500F2B632 /* Vendor */,
 				491C970E219B6C2A0065BAB8 /* Extensions */,
-				DBF31B1720E17176005D7C34 /* Debug */,
-				DB9DBF772055974B00E5C77F /* Notifications */,
+				DBF31B1720E17176005D7C34 /* Settings */,
+				DB9DBF772055974B00E5C77F /* NotificationCenter */,
 				DBFDF44320AC84430031EF47 /* Experiences */,
 				DB6ADD7D20B3446D002F226C /* Services */,
 				DB6ADD7620B33F5D002F226C /* UIAssembler.swift */,
@@ -1088,14 +1088,13 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
-		DB9DBF772055974B00E5C77F /* Notifications */ = {
+		DB9DBF772055974B00E5C77F /* NotificationCenter */ = {
 			isa = PBXGroup;
 			children = (
-				DBADA82920A9EE9700225C80 /* Models */,
-				DBF31B5620E41A90005D7C34 /* Services */,
-				DBF31B5920E41C35005D7C34 /* UI */,
+				DB00FE2F208FB285008D1A57 /* NotificationCell.swift */,
+				DB9DBF90205597C300E5C77F /* NotificationCenterViewController.swift */,
 			);
-			path = Notifications;
+			path = NotificationCenter;
 			sourceTree = "<group>";
 		};
 		DB9DBF822055974B00E5C77F /* NotificationsTests */ = {
@@ -1194,13 +1193,6 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		DBADA82920A9EE9700225C80 /* Models */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Models;
-			sourceTree = "<group>";
-		};
 		DBB89B9B20D015F200DD797A /* LifeCycleTracker */ = {
 			isa = PBXGroup;
 			children = (
@@ -1291,12 +1283,12 @@
 			path = DataTests;
 			sourceTree = "<group>";
 		};
-		DBF31B1720E17176005D7C34 /* Debug */ = {
+		DBF31B1720E17176005D7C34 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
 				DBF31B4820E193BA005D7C34 /* SettingsViewController.swift */,
 			);
-			path = Debug;
+			path = Settings;
 			sourceTree = "<group>";
 		};
 		DBF31B2220E17176005D7C34 /* DebugTests */ = {
@@ -1314,23 +1306,6 @@
 				DBFB1B09209CACAC00E99F9F /* ExperienceStore */,
 			);
 			path = Services;
-			sourceTree = "<group>";
-		};
-		DBF31B5620E41A90005D7C34 /* Services */ = {
-			isa = PBXGroup;
-			children = (
-				DBFDF42F20AC7B620031EF47 /* NotificationStore */,
-			);
-			path = Services;
-			sourceTree = "<group>";
-		};
-		DBF31B5920E41C35005D7C34 /* UI */ = {
-			isa = PBXGroup;
-			children = (
-				DB00FE2F208FB285008D1A57 /* NotificationCell.swift */,
-				DB9DBF90205597C300E5C77F /* NotificationCenterViewController.swift */,
-			);
-			path = UI;
 			sourceTree = "<group>";
 		};
 		DBF31B5A20E41C5A005D7C34 /* UI */ = {
@@ -1459,13 +1434,6 @@
 				4980D66421307738007267D3 /* Experiences.Barcode.swift */,
 			);
 			path = Extensions;
-			sourceTree = "<group>";
-		};
-		DBFDF42F20AC7B620031EF47 /* NotificationStore */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = NotificationStore;
 			sourceTree = "<group>";
 		};
 		DBFDF43520AC81CD0031EF47 /* Models */ = {

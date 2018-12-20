@@ -19,10 +19,7 @@ public final class Notification: NSManagedObject {
     @NSManaged public var campaignID: String
     @NSManaged public var title: String?
     @NSManaged public var body: String
-//    @NSManaged public internal(set) var attachment: NotificationAttachment?
-//    @NSManaged public internal(set) var tapBehavior: NotificationTapBehavior
     @NSManaged public var deliveredAt: Date
-//    @NSManaged public internal(set) var expiresAt: Date?
     @NSManaged public var isRead: Bool
     
     public override func awakeFromInsert() {

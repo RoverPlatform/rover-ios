@@ -484,7 +484,6 @@ extension NotificationsDataSource : NSFetchedResultsControllerDelegate {
     }
     
     open func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange sectionInfo: NSFetchedResultsSectionInfo, atSectionIndex sectionIndex: Int, for type: NSFetchedResultsChangeType) {
-        os_log("controllerDidChangeSection")
         switch(type) {
         case .insert:
             subscribedTableView?.insertSections(IndexSet(integer: sectionIndex), with: .fade)

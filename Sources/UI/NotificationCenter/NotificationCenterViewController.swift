@@ -386,7 +386,7 @@ public class NotificationsDataSource: NSObject, UITableViewDataSource {
         do {
             try fetchedResultsController.performFetch()
         } catch {
-            os_log("Problem fetching notifications list: %s", error.localizedDescription)
+            os_log("Problem fetching notifications list: %s", log: .ui, error.localizedDescription)
         }
     }
     

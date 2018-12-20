@@ -22,8 +22,6 @@ public class EventPipeline {
     }
 
     public func addEvent(_ eventInfo: EventInfo) {
-        
-        
         guard let deviceSnapshot = deviceInfoProvider?.deviceSnapshot else {
             os_log("Event added before Device Info Provider set. Dropping event.", log: .events, type: .error)
             return

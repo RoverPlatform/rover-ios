@@ -36,10 +36,6 @@ public final class Event : NSManagedObject {
     }
 }
 
-// TODO: move eventpipeline trackevent here, then can set above nsmanaged properties to fileprivate and have this be sort of immutable. That is, if a solution for DeviceSnapshot can be engineered.
-
-// TODO: static extension function for setting up an Notification Center obserserver.  This allows us to retire EventPipeline.
-
 extension Event {
     /// Register a callback to be fired whenever Events are inserted
     ///

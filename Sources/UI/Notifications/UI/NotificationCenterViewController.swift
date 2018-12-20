@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import CoreData
+import os
 
 open class NotificationCenterViewController: UIViewController {
     public let eventPipeline: EventPipeline
@@ -23,6 +25,7 @@ open class NotificationCenterViewController: UIViewController {
     public private(set) var refreshControl = UIRefreshControl()
     public private(set) var tableView = UITableView()
     
+    // TODO: This should probably be removed.
     private var cache: [RoverData.Notification]?
     private var notificationsObservation: NSObjectProtocol?
     private var didBecomeActiveObserver: NSObjectProtocol?
@@ -260,7 +263,10 @@ open class NotificationCenterViewController: UIViewController {
 
 // MARK: UITableViewDataSource
 
+// ANDREW START HERE AND RETIRE THIS EXTENSION, MOVING ALL APPROPRIATE FUNCTIONALITY DOWN INTO NEW DATASOURCE OBJECT.
+// THEN GO THROUGH EVERY LINE AND VERIFY THAT IT MAKES SENSE.
 extension NotificationCenterViewController: UITableViewDataSource {
+    
     public func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
@@ -428,3 +434,131 @@ extension NotificationCenterViewController: UIViewControllerTransitioningDelegat
         return SlideRightAnimator()
     }
 }
+
+
+class NotificationsDataSource: NSObject, UITableViewDataSource {
+    var subscribedTableView: UITableView? = nil
+    
+    let managedObjectContext: NSManagedObjectContext
+    let fetchedResultsController: NSFetchedResultsController<RoverData.Notification>
+    
+    init(
+        managedObjectContext: NSManagedObjectContext
+    ) {
+        self.managedObjectContext = managedObjectContext
+        let fetchRequest: NSFetchRequest<RoverData.Notification> = RoverData.Notification.fetchRequest()
+        
+        // TODO: set up sort descriptors
+        fetchRequest.sortDescriptors = [
+            
+        ]
+        fetchRequest.fetchBatchSize = 30 // TODO: is this appropriate batch size?
+        fetchedResultsController = NSFetchedResultsController(
+            fetchRequest: fetchRequest,
+            managedObjectContext: managedObjectContext,
+            sectionNameKeyPath: nil,
+            cacheName: nil
+        )
+        super.init()
+        fetchedResultsController.delegate = self
+        do {
+            try fetchedResultsController.performFetch()
+        } catch {
+            os_log("Problem fetching notifications list: %s", error.localizedDescription)
+        }
+    }
+    
+    func notificationAt(indexPath: IndexPath) -> RoverData.Notification {
+        return fetchedResultsController.object(at: indexPath) as RoverData.Notification
+    }
+    
+    // MARK: UITableViewDataSource
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return self.fetchedResultsController.sections!.count
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        guard let sections = self.fetchedResultsController.sections else {
+            fatalError("No sections in fetchedResultsController")
+        }
+        let sectionInfo = sections[section]
+        return sectionInfo.numberOfObjects
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "notification", for: indexPath)
+        let object = self.fetchedResultsController.object(at: indexPath)
+        // Configure the cell with data from the managed object.
+        
+        // TODO: CONFIGURE THE CELL CORRECTLY
+
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        guard let sectionInfo = fetchedResultsController.sections?[section] else {
+            return nil
+        }
+        return sectionInfo.name
+    }
+    
+    func sectionIndexTitles(for tableView: UITableView) -> [String]? {
+        return fetchedResultsController.sectionIndexTitles
+    }
+    
+    func tableView(_ tableView: UITableView, sectionForSectionIndexTitle title: String, at index: Int) -> Int {
+        return fetchedResultsController.section(forSectionIndexTitle: title, at: index)
+    }
+}
+
+
+extension NotificationsDataSource : NSFetchedResultsControllerDelegate {
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        self.subscribedTableView?.endUpdates()
+    }
+    
+    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        self.subscribedTableView?.beginUpdates()
+    }
+    
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+        switch(type) {
+        case .insert:
+            if let newIndexPath = newIndexPath {
+                let target = notificationAt(indexPath: newIndexPath)
+                os_log("... insert (%s into %s)", target.description, newIndexPath.debugDescription)
+                subscribedTableView?.insertRows(at: [newIndexPath], with: .fade)
+            }
+        case .delete:
+            if let indexPath = indexPath {
+                os_log("... delete")
+                subscribedTableView?.deleteRows(at: [indexPath], with: .fade)
+            }
+        case .update:
+            if let indexPath = indexPath {
+                let target = notificationAt(indexPath: indexPath)
+                os_log("... update (%s)", target.description)
+                subscribedTableView?.reloadRows(at: [indexPath], with: .fade)
+            }
+        case .move:
+            if let indexPath = indexPath, let newIndexPath = newIndexPath {
+                os_log("... move")
+                subscribedTableView?.moveRow(at: indexPath, to: newIndexPath)
+            }
+        }
+    }
+    
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange sectionInfo: NSFetchedResultsSectionInfo, atSectionIndex sectionIndex: Int, for type: NSFetchedResultsChangeType) {
+        os_log("controllerDidChangeSection")
+        switch(type) {
+        case .insert:
+            subscribedTableView?.insertSections(IndexSet(integer: sectionIndex), with: .fade)
+        case .delete:
+            subscribedTableView?.deleteSections(IndexSet(integer: sectionIndex), with: .fade)
+        default:
+            os_log("Received a '%d' section didChange event, but apparently it does not need to be handled", type.rawValue)
+        }
+    }
+}
+

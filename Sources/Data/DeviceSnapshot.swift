@@ -342,8 +342,6 @@ public class AddressSnapshot: NSObject, Codable, NSCoding {
     public var subAdministrativeArea: String?
     public var subLocality: String?
     
-    // TODO: NSCoding implementation
-    
     public func encode(with aCoder: NSCoder) {
         aCoder.encode(self.street, forKey: "street")
         aCoder.encode(self.city, forKey: "city")

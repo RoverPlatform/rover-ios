@@ -58,8 +58,13 @@ extension Event {
         }
     }
     
-    public func attemptInsert(managedObjectContext: NSManagedObjectContext) {
-        managedObjectContext.perform { [managedObjectContext] in
+    public func attemptInsert() {
+        guard let managedObjectContext = self.managedObjectContext else {
+            assertionFailure("Not associated with a managed object context, cannot delete.")
+            return
+        }
+        
+        managedObjectContext.perform {
             managedObjectContext.insert(self)
             
             do {
@@ -67,10 +72,10 @@ extension Event {
             } catch {
                 if let multipleErrors = (error as NSError).userInfo[NSDetailedErrorsKey] as? [Error] {
                     multipleErrors.forEach {
-                        os_log("Unable to save event into the EventPipeline. Dropping it. Reason: %s", log: .persistence, type: .error, $0.localizedDescription)
+                        os_log("Unable to save event into the EventPipeline. Dropping it. Reason: %s", log: .persistence, type: .error, ($0 as NSError).userInfo.debugDescription)
                     }
                 } else {
-                    os_log("Unable to save event into the EventPipeline. Dropping it. Reason: %s", log: .persistence, type: .error, error.localizedDescription)
+                    os_log("Unable to save event into the EventPipeline. Dropping it. Reason: %s", log: .persistence, type: .error, (error as NSError).userInfo.debugDescription)
                 }
                 
                 managedObjectContext.rollback()

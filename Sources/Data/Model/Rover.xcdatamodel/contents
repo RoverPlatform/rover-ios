@@ -47,7 +47,7 @@
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>
-    <entity name="Notification" representedClassName="Notification" syncable="YES">
+    <entity name="Notification" representedClassName=".Notification" syncable="YES">
         <attribute name="body" attributeType="String" syncable="YES"/>
         <attribute name="campaignID" attributeType="String" syncable="YES"/>
         <attribute name="deliveredAt" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>

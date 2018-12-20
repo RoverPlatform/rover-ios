@@ -33,6 +33,6 @@ public class EventPipeline {
             inContext: self.managedObjectContext
         )
         
-        event.attemptInsert(managedObjectContext: managedObjectContext)
+        event.attemptInsert()
     }
 }

@@ -366,7 +366,7 @@ public class NotificationsDataSource: NSObject, UITableViewDataSource {
         return fetchRequest
     }()
     
-    open lazy var predicate: NSPredicate = NSPredicate()
+    open lazy var predicate: NSPredicate? = nil
     
     open lazy var fetchedResultsController: NSFetchedResultsController<RoverData.Notification> = NSFetchedResultsController(
         fetchRequest: fetchRequest,

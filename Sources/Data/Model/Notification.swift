@@ -15,15 +15,15 @@ public final class Notification: NSManagedObject {
         return NSFetchRequest<Notification>(entityName: "Notification")
     }
     
-    @NSManaged public internal(set) var id: UUID
-    @NSManaged public internal(set) var campaignID: String
-    @NSManaged public internal(set) var title: String?
-    @NSManaged public internal(set) var body: String
+    @NSManaged public var id: UUID
+    @NSManaged public var campaignID: String
+    @NSManaged public var title: String?
+    @NSManaged public var body: String
 //    @NSManaged public internal(set) var attachment: NotificationAttachment?
 //    @NSManaged public internal(set) var tapBehavior: NotificationTapBehavior
-    @NSManaged public internal(set) var deliveredAt: Date
+    @NSManaged public var deliveredAt: Date
 //    @NSManaged public internal(set) var expiresAt: Date?
-    @NSManaged public internal(set) var isRead: Bool
+    @NSManaged public var isRead: Bool
     
     public override func awakeFromInsert() {
         self.id = UUID()
@@ -115,8 +115,13 @@ extension Notification {
         }
     }
     
-    public func attemptInsert(managedObjectContext: NSManagedObjectContext) {
-        managedObjectContext.perform { [managedObjectContext] in
+    public func attemptInsert() {
+        guard let managedObjectContext = self.managedObjectContext else {
+            assertionFailure("Not associated with a managed object context, cannot delete.")
+            return
+        }
+        
+        managedObjectContext.perform {
             managedObjectContext.insert(self)
             
             do {
@@ -124,10 +129,10 @@ extension Notification {
             } catch {
                 if let multipleErrors = (error as NSError).userInfo[NSDetailedErrorsKey] as? [Error] {
                     multipleErrors.forEach {
-                        os_log("Unable to save notification into local storage. Dropping it. Reason: %s", log: .persistence, type: .error, $0.localizedDescription)
+                        os_log("Unable to save notification into local storage. Dropping it. Reason: %s", log: .persistence, type: .error,  ($0 as NSError).userInfo.debugDescription)
                     }
                 } else {
-                    os_log("Unable to save the notification into local storage. Dropping it. Reason: %s", log: .persistence, type: .error, error.localizedDescription)
+                    os_log("Unable to save the notification into local storage. Dropping it. Reason: %s", log: .persistence, type: .error, (error as NSError).userInfo.debugDescription)
                 }
                 
                 managedObjectContext.rollback()

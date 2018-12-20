@@ -62,22 +62,7 @@ extension Event {
         }
     }
     
-    public convenience init?(
-        insertFrom eventInfo: EventInfo,
-        andInsertIntoContext managedObjectContext: NSManagedObjectContext
-    ) {
-        super.init(context: managedObjectContext)
-
-        guard let deviceSnapshot = deviceInfoProvider?.deviceSnapshot else {
-            os_log("Event added before Device Info Provider set. Dropping event.", log: .events, type: .error)
-            return
-        }
-        
-        self.attributes = eventInfo.attributes ?? Attributes()
-        self.deviceSnapshot = deviceSnapshot
-        self.name = eventInfo.name
-        self.namespace = eventInfo.namespace
-        
+    public func attemptInsert(managedObjectContext: NSManagedObjectContext) {
         managedObjectContext.perform { [managedObjectContext] in
             managedObjectContext.insert(self)
             
@@ -95,5 +80,18 @@ extension Event {
                 managedObjectContext.rollback()
             }
         }
+    }
+    
+    public convenience init(
+        createFrom eventInfo: EventInfo,
+        forDevice deviceSnapshot: DeviceSnapshot,
+        inContext managedObjectContext: NSManagedObjectContext
+    ) {
+        self.init(context: managedObjectContext)
+
+        self.attributes = eventInfo.attributes ?? Attributes()
+        self.deviceSnapshot = deviceSnapshot
+        self.name = eventInfo.name
+        self.namespace = eventInfo.namespace
     }
 }

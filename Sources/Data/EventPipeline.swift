@@ -11,39 +11,30 @@ import CoreData
 import os
 
 public class EventPipeline {
-//    public var observers = ObserverSet<Event>()
-    
     public var deviceInfoProvider: DeviceInfoProvider? = nil
     
     private let managedObjectContext: NSManagedObjectContext
-//    private var objectsDidChangeObserver: NSObjectProtocol!
-    
     
     public init(
         managedObjectContext: NSManagedObjectContext
     ) {
         self.managedObjectContext = managedObjectContext
-//        self.objectsDidChangeObserver = NotificationCenter.default.addObserver(forName: .NSManagedObjectContextObjectsDidChange, object: managedObjectContext, queue: nil) { [weak self] notification in
-//            guard let insertedObjects = notification.userInfo?[NSInsertedObjectsKey] as? Set<NSObject> else {
-//                return
-//            }
-//
-//            let insertedEvents = insertedObjects
-//                .compactMap({ $0 as? Event })
-//
-//            insertedEvents.forEach({ event in self?.observers.notify(parameters: event) })
-//        }
     }
-    
-//    deinit {
-//        NotificationCenter.default.removeObserver(self.objectsDidChangeObserver)
-//    }
-    
+
     public func addEvent(_ eventInfo: EventInfo) {
-        let event = Event(context: self.managedObjectContext)
         
         
+        guard let deviceSnapshot = deviceInfoProvider?.deviceSnapshot else {
+            os_log("Event added before Device Info Provider set. Dropping event.", log: .events, type: .error)
+            return
+        }
+        
+        let event = Event(
+            createFrom: eventInfo,
+            forDevice: deviceSnapshot,
+            inContext: self.managedObjectContext
+        )
+        
+        event.attemptInsert(managedObjectContext: managedObjectContext)
     }
-    
-    
 }

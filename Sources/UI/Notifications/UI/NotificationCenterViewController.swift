@@ -416,7 +416,8 @@ public class NotificationsDataSource: NSObject, UITableViewDataSource {
     
     open func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard let sections = self.fetchedResultsController.sections else {
-            fatalError("No sections in fetchedResultsController")
+            assertionFailure("No sections in fetchedResultsController.")
+            return 0
         }
         let sectionInfo = sections[section]
         return sectionInfo.numberOfObjects
@@ -465,23 +466,19 @@ extension NotificationsDataSource : NSFetchedResultsControllerDelegate {
         case .insert:
             if let newIndexPath = newIndexPath {
                 let target = notificationAt(indexPath: newIndexPath)
-                os_log("... insert (%s into %s)", target.description, newIndexPath.debugDescription)
                 subscribedTableView?.insertRows(at: [newIndexPath], with: .fade)
             }
         case .delete:
             if let indexPath = indexPath {
-                os_log("... delete")
                 subscribedTableView?.deleteRows(at: [indexPath], with: .fade)
             }
         case .update:
             if let indexPath = indexPath {
                 let target = notificationAt(indexPath: indexPath)
-                os_log("... update (%s)", target.description)
                 subscribedTableView?.reloadRows(at: [indexPath], with: .fade)
             }
         case .move:
             if let indexPath = indexPath, let newIndexPath = newIndexPath {
-                os_log("... move")
                 subscribedTableView?.moveRow(at: indexPath, to: newIndexPath)
             }
         }
@@ -495,7 +492,7 @@ extension NotificationsDataSource : NSFetchedResultsControllerDelegate {
         case .delete:
             subscribedTableView?.deleteSections(IndexSet(integer: sectionIndex), with: .fade)
         default:
-            os_log("Received a '%d' section didChange event, but apparently it does not need to be handled", type.rawValue)
+            os_log("Received a '%d' section didChange event, but apparently it does not need to be handled", log: .ui , type: .debug, type.rawValue)
         }
     }
 }

@@ -37,7 +37,7 @@ public final class Event : NSManagedObject {
 }
 
 extension Event {
-    /// Register a callback to be fired whenever Events are inserted
+    /// Register a callback to be fired whenever Events are inserted.
     ///
     /// Note that this returns an opaque chit object that you must retain until you no longer wish the callback to be fired.
     public static func observeNewEvents(

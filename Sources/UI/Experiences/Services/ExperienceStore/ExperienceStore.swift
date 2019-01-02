@@ -7,6 +7,12 @@
 //
 
 public protocol ExperienceStore {
-    func experience(for identifier: ExperienceIdentifier) -> Experience?
-    func fetchExperience(for identifier: ExperienceIdentifier, completionHandler: ((FetchExperienceResult) -> Void)?)
+//    func experience(for identifier: ExperienceIdentifier) -> Experience?
+//    func fetchExperience(for identifier: ExperienceIdentifier, completionHandler: ((FetchExperienceResult) -> Void)?)
+    
+    // NOT using ExperienceIdentifier, because the campaign lookup concern will soon be local.
+    
+    func get(byID id: String) -> Experience
+    
+    func insert(experience: Experience)
 }

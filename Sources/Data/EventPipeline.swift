@@ -35,4 +35,24 @@ public class EventPipeline {
         
         event.attemptInsert()
     }
+    
+    /// Register a callback to be fired whenever Events are inserted.
+    ///
+    /// Note that this returns an opaque chit object that you must retain until you no longer wish the callback to be fired.
+    public func observeNewEvents(
+        observerCallback: @escaping ([Event]) -> Void
+    ) -> NSObjectProtocol {
+        return NotificationCenter.default.addObserver(forName: .NSManagedObjectContextObjectsDidChange, object: self.managedObjectContext, queue: nil) { (iosNotification) in
+            guard let insertedObjects = iosNotification.userInfo?[NSInsertedObjectsKey] as? Set<NSObject> else {
+                return
+            }
+            
+            let insertedEvents = insertedObjects
+                .compactMap({ $0 as? Event })
+            
+            if !insertedEvents.isEmpty {
+                observerCallback(insertedEvents)
+            }
+        }
+    }
 }

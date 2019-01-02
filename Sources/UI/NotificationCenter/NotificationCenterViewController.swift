@@ -44,12 +44,6 @@ open class NotificationCenterViewController: UIViewController {
         self.websiteViewControllerProvider = websiteViewControllerProvider
         
         super.init(nibName: nil, bundle: nil)
-        
-        do {
-            try fetchedResultsController.performFetch()
-        } catch {
-            os_log("Problem fetching notifications list: %s", log: .ui, error.localizedDescription)
-        }
     }
     
     required public init?(coder aDecoder: NSCoder) {
@@ -87,6 +81,12 @@ open class NotificationCenterViewController: UIViewController {
             }
         }
         #endif
+        
+        do {
+            try fetchedResultsController.performFetch()
+        } catch {
+            os_log("Problem fetching notifications list: %s", log: .ui, error.localizedDescription)
+        }
     }
     
     /// Reset the application icon badge number to 0 any time the notification center is viewed, regardless of the number of unread messages

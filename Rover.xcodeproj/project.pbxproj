@@ -7,6 +7,31 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0D53C11021D7F8350072A79F /* Background.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A69209B8CC500E99F9F /* Background.swift */; };
+		0D53C11121D7F8350072A79F /* Barcode.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A65209B8CC500E99F9F /* Barcode.swift */; };
+		0D53C11221D7F8350072A79F /* BarcodeBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A74209B8CC500E99F9F /* BarcodeBlock.swift */; };
+		0D53C11321D7F8350072A79F /* Block.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A6A209B8CC500E99F9F /* Block.swift */; };
+		0D53C11421D7F8350072A79F /* Border.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A71209B8CC500E99F9F /* Border.swift */; };
+		0D53C11521D7F8350072A79F /* ButtonBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A67209B8CC500E99F9F /* ButtonBlock.swift */; };
+		0D53C11621D7F8350072A79F /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A77209B8CC500E99F9F /* Color.swift */; };
+		0D53C11721D7F8350072A79F /* Experience.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A66209B8CC500E99F9F /* Experience.swift */; };
+		0D53C11821D7F8350072A79F /* Height.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A73209B8CC500E99F9F /* Height.swift */; };
+		0D53C11921D7F8350072A79F /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A6B209B8CC500E99F9F /* Image.swift */; };
+		0D53C11A21D7F8350072A79F /* ImageBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A78209B8CC500E99F9F /* ImageBlock.swift */; };
+		0D53C11B21D7F8350072A79F /* Insets.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A72209B8CC500E99F9F /* Insets.swift */; };
+		0D53C11C21D7F8350072A79F /* Position.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A75209B8CC500E99F9F /* Position.swift */; };
+		0D53C11D21D7F8350072A79F /* RectangleBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A68209B8CC500E99F9F /* RectangleBlock.swift */; };
+		0D53C11E21D7F8350072A79F /* Row.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A70209B8CC500E99F9F /* Row.swift */; };
+		0D53C11F21D7F8350072A79F /* Screen.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A6C209B8CC500E99F9F /* Screen.swift */; };
+		0D53C12021D7F8350072A79F /* BlockTapBehavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBADA83120AA03B900225C80 /* BlockTapBehavior.swift */; };
+		0D53C12121D7F8350072A79F /* Text.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A76209B8CC500E99F9F /* Text.swift */; };
+		0D53C12221D7F8350072A79F /* TextBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A6F209B8CC500E99F9F /* TextBlock.swift */; };
+		0D53C12321D7F8350072A79F /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A6E209B8CC500E99F9F /* WebView.swift */; };
+		0D53C12421D7F8350072A79F /* WebViewBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A6D209B8CC500E99F9F /* WebViewBlock.swift */; };
+		0D53C13221D7FA5B0072A79F /* Experiences.Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1B66209CD89400E99F9F /* Experiences.Color.swift */; };
+		0D53C13321D7FA5B0072A79F /* Experiences.Text.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1B68209CD8D600E99F9F /* Experiences.Text.swift */; };
+		0D53C13421D7FA5B0072A79F /* Experiences.ImageConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFDF48320AC858A0031EF47 /* Experiences.ImageConfiguration.swift */; };
+		0D53C13521D7FA5B0072A79F /* Experiences.Barcode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4980D66421307738007267D3 /* Experiences.Barcode.swift */; };
 		491C9710219B6C580065BAB8 /* UI.UIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 491C970F219B6C580065BAB8 /* UI.UIApplication.swift */; };
 		49496A5221C839DA00F89438 /* RoverCampaigns.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49496A4921C839DA00F89438 /* RoverCampaigns.framework */; };
 		49496A5721C839DA00F89438 /* RoverCampaignsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49496A5621C839DA00F89438 /* RoverCampaignsTests.swift */; };
@@ -35,31 +60,6 @@
 		4960CA6A21C846EA009146F0 /* RoverUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB6ADD5A20B33EC0002F226C /* RoverUI.framework */; };
 		4960CA6B21C847A5009146F0 /* Campaigns.UNNotificationResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 491C9711219C9C8A0065BAB8 /* Campaigns.UNNotificationResponse.swift */; };
 		4960CA6C21C84F53009146F0 /* Campaigns.OSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6BE8B6215D4B2A000A1FDA /* Campaigns.OSLog.swift */; };
-		4962FB31219B506B00C7F678 /* Experiences.Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1B66209CD89400E99F9F /* Experiences.Color.swift */; };
-		4962FB32219B506B00C7F678 /* Experiences.Text.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1B68209CD8D600E99F9F /* Experiences.Text.swift */; };
-		4962FB33219B506B00C7F678 /* Experiences.ImageConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFDF48320AC858A0031EF47 /* Experiences.ImageConfiguration.swift */; };
-		4962FB34219B506B00C7F678 /* Experiences.Barcode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4980D66421307738007267D3 /* Experiences.Barcode.swift */; };
-		4962FB35219B507D00C7F678 /* Background.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A69209B8CC500E99F9F /* Background.swift */; };
-		4962FB36219B507D00C7F678 /* Barcode.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A65209B8CC500E99F9F /* Barcode.swift */; };
-		4962FB37219B507D00C7F678 /* BarcodeBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A74209B8CC500E99F9F /* BarcodeBlock.swift */; };
-		4962FB38219B507D00C7F678 /* Block.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A6A209B8CC500E99F9F /* Block.swift */; };
-		4962FB39219B507D00C7F678 /* Border.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A71209B8CC500E99F9F /* Border.swift */; };
-		4962FB3A219B507D00C7F678 /* ButtonBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A67209B8CC500E99F9F /* ButtonBlock.swift */; };
-		4962FB3B219B507D00C7F678 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A77209B8CC500E99F9F /* Color.swift */; };
-		4962FB3C219B507D00C7F678 /* Experience.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A66209B8CC500E99F9F /* Experience.swift */; };
-		4962FB3D219B507D00C7F678 /* Height.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A73209B8CC500E99F9F /* Height.swift */; };
-		4962FB3E219B507D00C7F678 /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A6B209B8CC500E99F9F /* Image.swift */; };
-		4962FB3F219B507D00C7F678 /* ImageBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A78209B8CC500E99F9F /* ImageBlock.swift */; };
-		4962FB40219B507D00C7F678 /* Insets.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A72209B8CC500E99F9F /* Insets.swift */; };
-		4962FB41219B507D00C7F678 /* Position.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A75209B8CC500E99F9F /* Position.swift */; };
-		4962FB42219B507D00C7F678 /* RectangleBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A68209B8CC500E99F9F /* RectangleBlock.swift */; };
-		4962FB43219B507D00C7F678 /* Row.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A70209B8CC500E99F9F /* Row.swift */; };
-		4962FB44219B507D00C7F678 /* Screen.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A6C209B8CC500E99F9F /* Screen.swift */; };
-		4962FB45219B507D00C7F678 /* BlockTapBehavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBADA83120AA03B900225C80 /* BlockTapBehavior.swift */; };
-		4962FB46219B507D00C7F678 /* Text.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A76209B8CC500E99F9F /* Text.swift */; };
-		4962FB47219B507D00C7F678 /* TextBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A6F209B8CC500E99F9F /* TextBlock.swift */; };
-		4962FB48219B507D00C7F678 /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A6E209B8CC500E99F9F /* WebView.swift */; };
-		4962FB49219B507D00C7F678 /* WebViewBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A6D209B8CC500E99F9F /* WebViewBlock.swift */; };
 		4962FB4B219B507D00C7F678 /* FetchExperienceClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC3B42C2148B08D0096C74E /* FetchExperienceClient.swift */; };
 		4962FB4C219B507D00C7F678 /* ExperienceStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1B0E209CAD9600E99F9F /* ExperienceStore.swift */; };
 		4962FB4D219B507D00C7F678 /* ExperienceStoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1ACB209BB3D200E99F9F /* ExperienceStoreService.swift */; };
@@ -717,6 +717,34 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0D53C10F21D7F81B0072A79F /* Experiences */ = {
+			isa = PBXGroup;
+			children = (
+				DBFB1A69209B8CC500E99F9F /* Background.swift */,
+				DBFB1A65209B8CC500E99F9F /* Barcode.swift */,
+				DBFB1A74209B8CC500E99F9F /* BarcodeBlock.swift */,
+				DBFB1A6A209B8CC500E99F9F /* Block.swift */,
+				DBFB1A71209B8CC500E99F9F /* Border.swift */,
+				DBFB1A67209B8CC500E99F9F /* ButtonBlock.swift */,
+				DBFB1A77209B8CC500E99F9F /* Color.swift */,
+				DBFB1A66209B8CC500E99F9F /* Experience.swift */,
+				DBFB1A73209B8CC500E99F9F /* Height.swift */,
+				DBFB1A6B209B8CC500E99F9F /* Image.swift */,
+				DBFB1A78209B8CC500E99F9F /* ImageBlock.swift */,
+				DBFB1A72209B8CC500E99F9F /* Insets.swift */,
+				DBFB1A75209B8CC500E99F9F /* Position.swift */,
+				DBFB1A68209B8CC500E99F9F /* RectangleBlock.swift */,
+				DBFB1A70209B8CC500E99F9F /* Row.swift */,
+				DBFB1A6C209B8CC500E99F9F /* Screen.swift */,
+				DBADA83120AA03B900225C80 /* BlockTapBehavior.swift */,
+				DBFB1A76209B8CC500E99F9F /* Text.swift */,
+				DBFB1A6F209B8CC500E99F9F /* TextBlock.swift */,
+				DBFB1A6E209B8CC500E99F9F /* WebView.swift */,
+				DBFB1A6D209B8CC500E99F9F /* WebViewBlock.swift */,
+			);
+			path = Experiences;
+			sourceTree = "<group>";
+		};
 		491C970E219B6C2A0065BAB8 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -782,6 +810,7 @@
 		4975CBDE21A752F200C2DD18 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				0D53C10F21D7F81B0072A79F /* Experiences */,
 				49E5D80B21A851DF001A1BE3 /* Rover.xcdatamodel */,
 				DBFB1A7C209B8CC500E99F9F /* Notification.swift */,
 				DB496F5220DBECD800DF5949 /* NotificationSource.swift */,
@@ -1439,39 +1468,10 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
-		DBFDF43520AC81CD0031EF47 /* Models */ = {
-			isa = PBXGroup;
-			children = (
-				DBFB1A69209B8CC500E99F9F /* Background.swift */,
-				DBFB1A65209B8CC500E99F9F /* Barcode.swift */,
-				DBFB1A74209B8CC500E99F9F /* BarcodeBlock.swift */,
-				DBFB1A6A209B8CC500E99F9F /* Block.swift */,
-				DBFB1A71209B8CC500E99F9F /* Border.swift */,
-				DBFB1A67209B8CC500E99F9F /* ButtonBlock.swift */,
-				DBFB1A77209B8CC500E99F9F /* Color.swift */,
-				DBFB1A66209B8CC500E99F9F /* Experience.swift */,
-				DBFB1A73209B8CC500E99F9F /* Height.swift */,
-				DBFB1A6B209B8CC500E99F9F /* Image.swift */,
-				DBFB1A78209B8CC500E99F9F /* ImageBlock.swift */,
-				DBFB1A72209B8CC500E99F9F /* Insets.swift */,
-				DBFB1A75209B8CC500E99F9F /* Position.swift */,
-				DBFB1A68209B8CC500E99F9F /* RectangleBlock.swift */,
-				DBFB1A70209B8CC500E99F9F /* Row.swift */,
-				DBFB1A6C209B8CC500E99F9F /* Screen.swift */,
-				DBADA83120AA03B900225C80 /* BlockTapBehavior.swift */,
-				DBFB1A76209B8CC500E99F9F /* Text.swift */,
-				DBFB1A6F209B8CC500E99F9F /* TextBlock.swift */,
-				DBFB1A6E209B8CC500E99F9F /* WebView.swift */,
-				DBFB1A6D209B8CC500E99F9F /* WebViewBlock.swift */,
-			);
-			path = Models;
-			sourceTree = "<group>";
-		};
 		DBFDF44320AC84430031EF47 /* Experiences */ = {
 			isa = PBXGroup;
 			children = (
 				DBFB1B64209CD7E400E99F9F /* Extensions */,
-				DBFDF43520AC81CD0031EF47 /* Models */,
 				DBF31B5420E41A38005D7C34 /* Services */,
 				DBF31B5A20E41C5A005D7C34 /* UI */,
 			);
@@ -2401,6 +2401,7 @@
 				4962FB6F219B51AD00C7F678 /* NotificationCell.swift in Sources */,
 				4962FB70219B51AD00C7F678 /* NotificationCenterViewController.swift in Sources */,
 				4962FB4E219B50AA00C7F678 /* BarcodeCell.swift in Sources */,
+				0D53C13221D7FA5B0072A79F /* Experiences.Color.swift in Sources */,
 				4962FB4F219B50AA00C7F678 /* BlockCell.swift in Sources */,
 				4962FB50219B50AA00C7F678 /* ButtonCell.swift in Sources */,
 				4962FB51219B50AA00C7F678 /* ImageCell.swift in Sources */,
@@ -2413,39 +2414,15 @@
 				4962FB56219B50AA00C7F678 /* ExperienceViewController.swift in Sources */,
 				495821C521A4AFED00F2B632 /* AdSupportInfoProvider.swift in Sources */,
 				4962FB57219B50AA00C7F678 /* ScreenViewController.swift in Sources */,
+				0D53C13321D7FA5B0072A79F /* Experiences.Text.swift in Sources */,
 				4962FB58219B50AA00C7F678 /* ScreenViewLayout.swift in Sources */,
 				4962FB59219B50AA00C7F678 /* ScreenViewLayoutAttributes.swift in Sources */,
 				4962FB5D219B50AA00C7F678 /* RoverUI.h in Sources */,
-				4962FB35219B507D00C7F678 /* Background.swift in Sources */,
-				4962FB36219B507D00C7F678 /* Barcode.swift in Sources */,
-				4962FB37219B507D00C7F678 /* BarcodeBlock.swift in Sources */,
-				4962FB38219B507D00C7F678 /* Block.swift in Sources */,
-				4962FB39219B507D00C7F678 /* Border.swift in Sources */,
 				495821C321A4AFED00F2B632 /* TelephonyInfoProvider.swift in Sources */,
-				4962FB3A219B507D00C7F678 /* ButtonBlock.swift in Sources */,
-				4962FB3B219B507D00C7F678 /* Color.swift in Sources */,
-				4962FB3C219B507D00C7F678 /* Experience.swift in Sources */,
-				4962FB3D219B507D00C7F678 /* Height.swift in Sources */,
-				4962FB3E219B507D00C7F678 /* Image.swift in Sources */,
-				4962FB3F219B507D00C7F678 /* ImageBlock.swift in Sources */,
-				4962FB40219B507D00C7F678 /* Insets.swift in Sources */,
-				4962FB41219B507D00C7F678 /* Position.swift in Sources */,
-				4962FB42219B507D00C7F678 /* RectangleBlock.swift in Sources */,
-				4962FB43219B507D00C7F678 /* Row.swift in Sources */,
-				4962FB44219B507D00C7F678 /* Screen.swift in Sources */,
-				4962FB45219B507D00C7F678 /* BlockTapBehavior.swift in Sources */,
-				4962FB46219B507D00C7F678 /* Text.swift in Sources */,
-				4962FB47219B507D00C7F678 /* TextBlock.swift in Sources */,
-				4962FB48219B507D00C7F678 /* WebView.swift in Sources */,
-				4962FB49219B507D00C7F678 /* WebViewBlock.swift in Sources */,
 				4962FB4B219B507D00C7F678 /* FetchExperienceClient.swift in Sources */,
 				4962FB4C219B507D00C7F678 /* ExperienceStore.swift in Sources */,
 				4962FB4D219B507D00C7F678 /* ExperienceStoreService.swift in Sources */,
-				4962FB31219B506B00C7F678 /* Experiences.Color.swift in Sources */,
 				494F05B021A767C5008B3AFC /* TEMPORARY.swift in Sources */,
-				4962FB32219B506B00C7F678 /* Experiences.Text.swift in Sources */,
-				4962FB33219B506B00C7F678 /* Experiences.ImageConfiguration.swift in Sources */,
-				4962FB34219B506B00C7F678 /* Experiences.Barcode.swift in Sources */,
 				DBB89B9A20D014C700DD797A /* Router.swift in Sources */,
 				DB6ADD7320B33F3A002F226C /* ImageOptimization.swift in Sources */,
 				DBB89B9E20D0167B00DD797A /* LifeCycleTracker.swift in Sources */,
@@ -2457,10 +2434,12 @@
 				DB6ADD7420B33F3A002F226C /* ImageStore.swift in Sources */,
 				DB4831B620DC38D8003DBF1B /* VersionTrackerService.swift in Sources */,
 				DB6ADD7820B33F68002F226C /* UIAssembler.swift in Sources */,
+				0D53C13521D7FA5B0072A79F /* Experiences.Barcode.swift in Sources */,
 				DB6ADD8020B344BC002F226C /* SessionControllerService.swift in Sources */,
 				DB6ADD7520B33F3A002F226C /* ImageStoreService.swift in Sources */,
 				495821C221A4AFED00F2B632 /* BluetoothInfoProvider.swift in Sources */,
 				495821C421A4AFED00F2B632 /* LocationInfoProvider.swift in Sources */,
+				0D53C13421D7FA5B0072A79F /* Experiences.ImageConfiguration.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2561,19 +2540,40 @@
 			buildActionMask = 2147483647;
 			files = (
 				4976724021A86226006A96A4 /* Event.swift in Sources */,
+				0D53C11421D7F8350072A79F /* Border.swift in Sources */,
+				0D53C11921D7F8350072A79F /* Image.swift in Sources */,
+				0D53C11021D7F8350072A79F /* Background.swift in Sources */,
+				0D53C11721D7F8350072A79F /* Experience.swift in Sources */,
 				DBD88A9720C1B58E00085AE0 /* EventInfo.swift in Sources */,
 				DBD88ABE20C1BACF00085AE0 /* DataAssembler.swift in Sources */,
 				4975CBE321A7550500C2DD18 /* Geofence.swift in Sources */,
 				497550DD21C0821400922C9D /* EventPipeline.swift in Sources */,
 				49D2ED0221C1FAD20043510C /* DeviceInfoProvider.swift in Sources */,
+				0D53C12121D7F8350072A79F /* Text.swift in Sources */,
 				DB6BE8B0215D433B000A1FDA /* Data.OSLog.swift in Sources */,
+				0D53C11221D7F8350072A79F /* BarcodeBlock.swift in Sources */,
+				0D53C11E21D7F8350072A79F /* Row.swift in Sources */,
+				0D53C11F21D7F8350072A79F /* Screen.swift in Sources */,
+				0D53C11121D7F8350072A79F /* Barcode.swift in Sources */,
+				0D53C12021D7F8350072A79F /* BlockTapBehavior.swift in Sources */,
+				0D53C12421D7F8350072A79F /* WebViewBlock.swift in Sources */,
+				0D53C11321D7F8350072A79F /* Block.swift in Sources */,
 				49795DF521C94D6F00AEF684 /* NotificationSource.swift in Sources */,
+				0D53C11B21D7F8350072A79F /* Insets.swift in Sources */,
+				0D53C11D21D7F8350072A79F /* RectangleBlock.swift in Sources */,
+				0D53C12321D7F8350072A79F /* WebView.swift in Sources */,
+				0D53C11821D7F8350072A79F /* Height.swift in Sources */,
+				0D53C11621D7F8350072A79F /* Color.swift in Sources */,
+				0D53C11A21D7F8350072A79F /* ImageBlock.swift in Sources */,
 				49E5D80C21A851DF001A1BE3 /* Rover.xcdatamodel in Sources */,
+				0D53C11C21D7F8350072A79F /* Position.swift in Sources */,
+				0D53C12221D7F8350072A79F /* TextBlock.swift in Sources */,
 				49795DF421C94D6F00AEF684 /* Notification.swift in Sources */,
 				495821CB21A4B68A00F2B632 /* DeviceSnapshot.swift in Sources */,
 				4988D94921AF4B260050550E /* Attributes.swift in Sources */,
 				49C14E9521DD0C5400A3B0BC /* Data.NSManagedObjectContext.swift in Sources */,
 				4975CBE421A7550A00C2DD18 /* Beacon.swift in Sources */,
+				0D53C11521D7F8350072A79F /* ButtonBlock.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

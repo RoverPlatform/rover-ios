@@ -1,12 +1,12 @@
 //
-//  WebViewBlock.swift
-//  RoverUI
+//  TextBlock.swift
+//  RoverData
 //
 //  Created by Sean Rucker on 2018-04-24.
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-public struct WebViewBlock: Block {
+public struct TextBlock: Block {
     public var background: Background
     public var border: Border
     public var id: String
@@ -15,11 +15,11 @@ public struct WebViewBlock: Block {
     public var opacity: Double
     public var position: Position
     public var tapBehavior: BlockTapBehavior
-    public var webView: WebView
+    public var text: Text
     public var keys: [String: String]
     public var tags: [String]
     
-    public init(background: Background, border: Border, id: String, name: String, insets: Insets, opacity: Double, position: Position, tapBehavior: BlockTapBehavior, webView: WebView, keys: [String: String], tags: [String]) {
+    public init(background: Background, border: Border, id: String, name: String, insets: Insets, opacity: Double, position: Position, tapBehavior: BlockTapBehavior, text: Text, keys: [String: String], tags: [String]) {
         self.background = background
         self.border = border
         self.id = id
@@ -28,7 +28,7 @@ public struct WebViewBlock: Block {
         self.opacity = opacity
         self.position = position
         self.tapBehavior = tapBehavior
-        self.webView = webView
+        self.text = text
         self.keys = keys
         self.tags = tags
     }

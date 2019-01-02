@@ -35,3 +35,31 @@ public final class Event : NSManagedObject {
         self.timestamp = Date()
     }
 }
+
+extension Event {
+    public func attemptInsert() {
+        guard let managedObjectContext = self.managedObjectContext else {
+            assertionFailure("Not associated with a managed object context, cannot insert.")
+            return
+        }
+        
+        managedObjectContext.perform {
+            managedObjectContext.insert(self)
+            
+            managedObjectContext.saveOrRollback()
+        }
+    }
+    
+    public convenience init(
+        from eventInfo: EventInfo,
+        forDevice deviceSnapshot: DeviceSnapshot,
+        inContext managedObjectContext: NSManagedObjectContext
+    ) {
+        self.init(context: managedObjectContext)
+
+        self.attributes = eventInfo.attributes ?? Attributes()
+        self.deviceSnapshot = deviceSnapshot
+        self.name = eventInfo.name
+        self.namespace = eventInfo.namespace
+    }
+}

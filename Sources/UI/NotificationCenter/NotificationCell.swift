@@ -9,7 +9,7 @@
 import UIKit
 
 open class NotificationCell: UITableViewCell {
-    public var notification: Notification?
+    public var notification: RoverData.Notification?
     
     #if swift(>=4.2)
     public override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -25,7 +25,7 @@ open class NotificationCell: UITableViewCell {
         super.init(coder: aDecoder)
     }
     
-    open func configure(with notification: Notification, imageStore: ImageStore) {
+    open func configure(with notification: RoverData.Notification, imageStore: ImageStore) {
         self.notification = notification
         
         configureBackgroundColor()
@@ -77,11 +77,15 @@ open class NotificationCell: UITableViewCell {
         imageView.alpha = 0.0
         imageView.image = nil
         
-        guard let notification = notification, let attachment = notification.attachment, case .image = attachment.format else {
+        // TODO: retrieve attachment from campaign when campaign exists.
+        
+        guard let notification = notification else {
             return
         }
         
-        let configuration = ImageConfiguration(url: attachment.url)
+        return
+        
+        let configuration = ImageConfiguration(url: URL.init(string: "")!)
         
         if let image = imageStore.fetchedImage(for: configuration) {
             imageView.image = image

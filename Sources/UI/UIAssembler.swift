@@ -7,6 +7,7 @@
 //
 
 import SafariServices
+import CoreData
 
 public struct UIAssembler {
     public var associatedDomains: [String]
@@ -17,7 +18,8 @@ public struct UIAssembler {
     public var isLifeCycleTrackingEnabled: Bool
     public var isVersionTrackingEnabled: Bool
     
-    public init(associatedDomains: [String] = [], urlSchemes: [String] = [], sessionKeepAliveTime: Int = 30, isLifeCycleTrackingEnabled: Bool = true, isVersionTrackingEnabled: Bool = true) {
+    public init(
+        associatedDomains: [String] = [], urlSchemes: [String] = [], sessionKeepAliveTime: Int = 30, isLifeCycleTrackingEnabled: Bool = true, isVersionTrackingEnabled: Bool = true) {
         self.associatedDomains = associatedDomains
         self.urlSchemes = urlSchemes
         self.sessionKeepAliveTime = sessionKeepAliveTime
@@ -162,11 +164,11 @@ extension UIAssembler: Assembler {
             
             return NotificationCenterViewController(
                 eventPipeline: resolver.resolve(EventPipeline.self)!,
-                imageStore: resolver.resolve(ImageStore.self)!,
-                notificationStore: resolver.resolve(NotificationStore.self)!,
                 router: resolver.resolve(Router.self)!,
+                imageStore: resolver.resolve(ImageStore.self)!,
                 sessionController: resolver.resolve(SessionController.self)!,
                 syncCoordinator: resolver.resolve(SyncCoordinator.self)!,
+                managedObjectContext: resolver.resolve(NSManagedObjectContext.self, name: "viewContext")!,
                 websiteViewControllerProvider: websiteViewControllerProvider
             )
         }

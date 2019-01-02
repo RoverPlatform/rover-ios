@@ -10,7 +10,6 @@ import Foundation
 import UIKit
 
 public struct CampaignsAssembler {
-    
     public var influenceTime: Int
     public var isInfluenceTrackingEnabled: Bool
     public var appGroup: String?
@@ -44,7 +43,6 @@ extension CampaignsAssembler : Assembler {
             
             return NotificationHandlerService(
                 influenceTracker: resolver.resolve(InfluenceTracker.self)!,
-                notificationStore: resolver.resolve(NotificationStore.self)!,
                 eventPipeline: resolver.resolve(EventPipeline.self)!,
                 websiteViewControllerProvider: websiteViewControllerProvider
             )

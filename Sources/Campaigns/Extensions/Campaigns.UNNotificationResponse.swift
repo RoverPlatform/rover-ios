@@ -10,6 +10,7 @@ import Foundation
 import UserNotifications
 
 extension UNNotificationResponse {
+    // TODO change to return a campaign.
     var roverNotification: RoverUI.Notification? {
         guard let data = try? JSONSerialization.data(withJSONObject: self.notification.request.content.userInfo, options: []) else {
             return nil
@@ -17,12 +18,13 @@ extension UNNotificationResponse {
         
         struct Payload: Decodable {
             struct Rover: Decodable {
-                var notification: RoverUI.Notification
+                // TODO: a campaign will go here, if anything.
             }
             
             var rover: Rover
         }
         
-        return try? JSONDecoder.default.decode(Payload.self, from: data).rover.notification
+        // TODO: replace once again with decoding the campaign.
+        return RoverData.Notification()
     }
 }

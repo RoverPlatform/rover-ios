@@ -28,7 +28,7 @@ public class EventPipeline {
         }
         
         let event = Event(
-            createFrom: eventInfo,
+            from: eventInfo,
             forDevice: deviceSnapshot,
             inContext: self.managedObjectContext
         )

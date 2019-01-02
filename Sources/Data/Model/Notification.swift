@@ -26,20 +26,6 @@ public final class Notification: NSManagedObject {
         self.id = UUID()
         super.awakeFromInsert()
     }
-    
-    // MARK: Codable
-    
-    private enum CodingKeys: String, CodingKey {
-        case id
-        case campaignID
-        case title
-        case body
-        case attachment
-        case tapBehavior
-        case deliveredAt
-        case expiresAt
-        case isRead
-    }
 }
 
 extension Notification {
@@ -64,26 +50,14 @@ extension Notification {
 extension Notification {
     public func markRead() {
         guard let managedObjectContext = self.managedObjectContext else {
-            assertionFailure("Not associated with a managed object context, cannot delete.")
+            assertionFailure("Not associated with a managed object context, cannot mark read.")
             return
         }
         
         self.isRead = true
-        
+
         managedObjectContext.perform {
-            do {
-                try managedObjectContext.save()
-            } catch {
-                if let multipleErrors = (error as NSError).userInfo[NSDetailedErrorsKey] as? [Error] {
-                    multipleErrors.forEach {
-                        os_log("Unable to delete Notification. Reason: %s", log: .persistence, type: .error, $0.localizedDescription)
-                    }
-                } else {
-                    os_log("Unable to delete Notification. Reason: %s", log: .persistence, type: .error, error.localizedDescription)
-                }
-                
-                managedObjectContext.rollback()
-            }
+            managedObjectContext.saveOrRollback()
         }
     }
     
@@ -95,45 +69,19 @@ extension Notification {
         
         managedObjectContext.perform {
             managedObjectContext.delete(self)
-            
-            do {
-                try managedObjectContext.save()
-            } catch {
-                if let multipleErrors = (error as NSError).userInfo[NSDetailedErrorsKey] as? [Error] {
-                    multipleErrors.forEach {
-                        os_log("Unable to delete Notification. Reason: %s", log: .persistence, type: .error, $0.localizedDescription)
-                    }
-                } else {
-                    os_log("Unable to delete Notification. Reason: %s", log: .persistence, type: .error, error.localizedDescription)
-                }
-                
-                managedObjectContext.rollback()
-            }
+            managedObjectContext.saveOrRollback()
         }
     }
     
     public func attemptInsert() {
         guard let managedObjectContext = self.managedObjectContext else {
-            assertionFailure("Not associated with a managed object context, cannot delete.")
+            assertionFailure("Not associated with a managed object context, cannot insert.")
             return
         }
         
         managedObjectContext.perform {
             managedObjectContext.insert(self)
-            
-            do {
-                try managedObjectContext.save()
-            } catch {
-                if let multipleErrors = (error as NSError).userInfo[NSDetailedErrorsKey] as? [Error] {
-                    multipleErrors.forEach {
-                        os_log("Unable to save notification into local storage. Dropping it. Reason: %s", log: .persistence, type: .error,  ($0 as NSError).userInfo.debugDescription)
-                    }
-                } else {
-                    os_log("Unable to save the notification into local storage. Dropping it. Reason: %s", log: .persistence, type: .error, (error as NSError).userInfo.debugDescription)
-                }
-                
-                managedObjectContext.rollback()
-            }
+            managedObjectContext.saveOrRollback()
         }
     }
 }

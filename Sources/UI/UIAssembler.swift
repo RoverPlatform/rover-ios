@@ -157,13 +157,6 @@ extension UIAssembler: Assembler {
         
         // MARK: UIViewController (notificationCenter)
         
-        container.register(NotificationsDataSource.self) { resolver in
-            return NotificationsDataSource(
-                managedObjectContext: resolver.resolve(NSManagedObjectContext.self, name: "viewContext")!,
-                imageStore: resolver.resolve(ImageStore.self)!
-            )
-        }
-        
         container.register(UIViewController.self, name: "notificationCenter") { resolver in
             let websiteViewControllerProvider: NotificationCenterViewController.WebsiteViewControllerProvider = { [weak resolver] url in
                 return resolver?.resolve(UIViewController.self, name: "website", arguments: url)!
@@ -172,9 +165,10 @@ extension UIAssembler: Assembler {
             return NotificationCenterViewController(
                 eventPipeline: resolver.resolve(EventPipeline.self)!,
                 router: resolver.resolve(Router.self)!,
+                imageStore: resolver.resolve(ImageStore.self)!,
                 sessionController: resolver.resolve(SessionController.self)!,
                 syncCoordinator: resolver.resolve(SyncCoordinator.self)!,
-                notificationsDataSource: resolver.resolve(NotificationsDataSource.self)!,
+                managedObjectContext: resolver.resolve(NSManagedObjectContext.self, name: "viewContext")!,
                 websiteViewControllerProvider: websiteViewControllerProvider
             )
         }

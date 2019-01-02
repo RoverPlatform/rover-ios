@@ -60,7 +60,7 @@ extension Event {
     
     public func attemptInsert() {
         guard let managedObjectContext = self.managedObjectContext else {
-            assertionFailure("Not associated with a managed object context, cannot delete.")
+            assertionFailure("Not associated with a managed object context, cannot insert.")
             return
         }
         
@@ -84,7 +84,7 @@ extension Event {
     }
     
     public convenience init(
-        createFrom eventInfo: EventInfo,
+        from eventInfo: EventInfo,
         forDevice deviceSnapshot: DeviceSnapshot,
         inContext managedObjectContext: NSManagedObjectContext
     ) {

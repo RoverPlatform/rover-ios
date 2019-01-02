@@ -461,16 +461,5 @@ extension NotificationCenterViewController : NSFetchedResultsControllerDelegate 
             }
         }
     }
-    
-    open func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange sectionInfo: NSFetchedResultsSectionInfo, atSectionIndex sectionIndex: Int, for type: NSFetchedResultsChangeType) {
-        switch(type) {
-        case .insert:
-            tableView.insertSections(IndexSet(integer: sectionIndex), with: .fade)
-        case .delete:
-            tableView.deleteSections(IndexSet(integer: sectionIndex), with: .fade)
-        default:
-            os_log("Received a '%d' section didChange event, but apparently it does not need to be handled", log: .ui , type: .debug, type.rawValue)
-        }
-    }
 }
 

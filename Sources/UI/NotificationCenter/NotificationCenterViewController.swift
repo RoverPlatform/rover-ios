@@ -415,21 +415,6 @@ extension NotificationCenterViewController : UITableViewDataSource {
         notificationCell.configure(with: notification, imageStore: self.imageStore)
         return notificationCell
     }
-    
-    open func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        guard let sectionInfo = fetchedResultsController.sections?[section] else {
-            return nil
-        }
-        return sectionInfo.name
-    }
-    
-    open func sectionIndexTitles(for tableView: UITableView) -> [String]? {
-        return fetchedResultsController.sectionIndexTitles
-    }
-    
-    open func tableView(_ tableView: UITableView, sectionForSectionIndexTitle title: String, at index: Int) -> Int {
-        return fetchedResultsController.section(forSectionIndexTitle: title, at: index)
-    }
 }
 
 extension NotificationCenterViewController : NSFetchedResultsControllerDelegate {

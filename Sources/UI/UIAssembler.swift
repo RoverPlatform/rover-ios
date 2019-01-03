@@ -96,12 +96,6 @@ extension UIAssembler: Assembler {
             )
         }
         
-        // MARK: ExperienceStore
-        
-        container.register(ExperienceStore.self) { resolver in
-            return ExperienceStoreService()
-        }
-        
         // MARK: UICollectionViewLayout (screen)
         
         container.register(UICollectionViewLayout.self, name: "screen", scope: .transient) { (resolver, screen: Screen) in

@@ -60,8 +60,6 @@
 		4960CA6A21C846EA009146F0 /* RoverUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB6ADD5A20B33EC0002F226C /* RoverUI.framework */; };
 		4960CA6B21C847A5009146F0 /* Campaigns.UNNotificationResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 491C9711219C9C8A0065BAB8 /* Campaigns.UNNotificationResponse.swift */; };
 		4960CA6C21C84F53009146F0 /* Campaigns.OSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6BE8B6215D4B2A000A1FDA /* Campaigns.OSLog.swift */; };
-		4962FB4C219B507D00C7F678 /* ExperienceStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1B0E209CAD9600E99F9F /* ExperienceStore.swift */; };
-		4962FB4D219B507D00C7F678 /* ExperienceStoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1ACB209BB3D200E99F9F /* ExperienceStoreService.swift */; };
 		4962FB4E219B50AA00C7F678 /* BarcodeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FDDF208A4961008D1A57 /* BarcodeCell.swift */; };
 		4962FB4F219B50AA00C7F678 /* BlockCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEEE2055964E00E5C77F /* BlockCell.swift */; };
 		4962FB50219B50AA00C7F678 /* ButtonCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEED2055964E00E5C77F /* ButtonCell.swift */; };
@@ -78,6 +76,8 @@
 		4962FB6F219B51AD00C7F678 /* NotificationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FE2F208FB285008D1A57 /* NotificationCell.swift */; };
 		4962FB70219B51AD00C7F678 /* NotificationCenterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBF90205597C300E5C77F /* NotificationCenterViewController.swift */; };
 		4962FB79219B52BE00C7F678 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF31B4820E193BA005D7C34 /* SettingsViewController.swift */; };
+		4971FD8E21DE6D6A001537E5 /* ExperienceStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1B0E209CAD9600E99F9F /* ExperienceStore.swift */; };
+		4971FD8F21DE6D6E001537E5 /* ExperienceStoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1ACB209BB3D200E99F9F /* ExperienceStoreService.swift */; };
 		497550DD21C0821400922C9D /* EventPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 497550DC21C0821400922C9D /* EventPipeline.swift */; };
 		4975CBE021A753A900C2DD18 /* Location.Beacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4975CBDF21A753A900C2DD18 /* Location.Beacon.swift */; };
 		4975CBE221A7547200C2DD18 /* Location.Geofence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4975CBE121A7547200C2DD18 /* Location.Geofence.swift */; };
@@ -1289,6 +1289,7 @@
 		DBD88A7420C1B21700085AE0 /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				DBF31B5420E41A38005D7C34 /* Services */,
 				4975CBDE21A752F200C2DD18 /* Model */,
 				DBC3FBE6215467FA00372A65 /* DeviceSnapshot.swift */,
 				DB1D5DC42107D32C0071928F /* Attributes.swift */,
@@ -1469,7 +1470,6 @@
 			isa = PBXGroup;
 			children = (
 				DBFB1B64209CD7E400E99F9F /* Extensions */,
-				DBF31B5420E41A38005D7C34 /* Services */,
 				DBF31B5A20E41C5A005D7C34 /* UI */,
 			);
 			path = Experiences;
@@ -2416,8 +2416,6 @@
 				4962FB59219B50AA00C7F678 /* ScreenViewLayoutAttributes.swift in Sources */,
 				4962FB5D219B50AA00C7F678 /* RoverUI.h in Sources */,
 				495821C321A4AFED00F2B632 /* TelephonyInfoProvider.swift in Sources */,
-				4962FB4C219B507D00C7F678 /* ExperienceStore.swift in Sources */,
-				4962FB4D219B507D00C7F678 /* ExperienceStoreService.swift in Sources */,
 				494F05B021A767C5008B3AFC /* TEMPORARY.swift in Sources */,
 				DBB89B9A20D014C700DD797A /* Router.swift in Sources */,
 				DB6ADD7320B33F3A002F226C /* ImageOptimization.swift in Sources */,
@@ -2536,6 +2534,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4976724021A86226006A96A4 /* Event.swift in Sources */,
+				4971FD8F21DE6D6E001537E5 /* ExperienceStoreService.swift in Sources */,
 				0D53C11421D7F8350072A79F /* Border.swift in Sources */,
 				0D53C11921D7F8350072A79F /* Image.swift in Sources */,
 				0D53C11021D7F8350072A79F /* Background.swift in Sources */,
@@ -2552,6 +2551,7 @@
 				0D53C11F21D7F8350072A79F /* Screen.swift in Sources */,
 				0D53C11121D7F8350072A79F /* Barcode.swift in Sources */,
 				0D53C12021D7F8350072A79F /* BlockTapBehavior.swift in Sources */,
+				4971FD8E21DE6D6A001537E5 /* ExperienceStore.swift in Sources */,
 				0D53C12421D7F8350072A79F /* WebViewBlock.swift in Sources */,
 				0D53C11321D7F8350072A79F /* Block.swift in Sources */,
 				49795DF521C94D6F00AEF684 /* NotificationSource.swift in Sources */,

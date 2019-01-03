@@ -51,6 +51,12 @@ public class DataAssembler: Assembler {
                 managedObjectContext: resolver.resolve(NSManagedObjectContext.self, name: "backgroundContext")!
             )
         }
+        
+        // MARK: ExperienceStore
+        
+        container.register(ExperienceStore.self) { resolver in
+            return ExperienceStoreService()
+        }
     }
     
     public func containerDidAssemble(resolver: Resolver) {

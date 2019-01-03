@@ -11,14 +11,33 @@ import os
 
 class ExperienceStoreService: ExperienceStore {
     func get(byID id: String) -> Experience? {
-        return nil
+        do {
+            guard let path = experienceLocalURL(id: id) else {
+                os_log("Not able to retrieve experience because local storage for it could not be determined.")
+                return nil
+            }
+            let json = try Data.init(contentsOf: path)
+            return try JSONDecoder.default.decode(Experience.self, from: json)
+        } catch {
+            os_log("Unable to retrieve experience locally: %s", log: .persistence, type: .error, error.localizedDescription)
+            return nil
+        }
     }
     
     func insert(experience: Experience) {
-        // ANDREW START HERE run experience through codable and store it on disk at experiencePath
+        do {
+            let json =  try JSONEncoder.default.encode(experience)
+            guard let path = experienceLocalURL(id: experience.id) else {
+                os_log("Not able to store experience because local storage for it could not be determined.")
+                return
+            }
+            try json.write(to: path, options: Data.WritingOptions.atomicWrite)
+        } catch {
+            os_log("Unable to store experience locally: %s", log: .persistence, type: .error, error.localizedDescription)
+        }
     }
     
-    private func experiencePath(id: String) -> String? {
+    private func experienceLocalURL(id: String) -> URL? {
         var experiencesDirectory = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
         experiencesDirectory.appendPathComponent("io.rover")
         experiencesDirectory.appendPathComponent("experiences")
@@ -34,7 +53,7 @@ class ExperienceStoreService: ExperienceStore {
         
         experiencesDirectory.appendPathComponent(id)
         experiencesDirectory.appendPathExtension("json")
-        return experiencesDirectory.path
+        return experiencesDirectory
     }
 }
 

@@ -137,12 +137,23 @@ extension Row: Codable {
         try container.encode(tags, forKey: .tags)
         
         var blocksContainer = container.nestedUnkeyedContainer(forKey: .blocks)
-        blocksContainer.encode(blocks)
-        blocks.forEach { block in
+        try blocks.forEach { block in
             // ANDREW START HERE and identify how to encode typeName considering that the synthesized codable impls for each block type won't encode it and I can't do the equivalent "overlayed decode" hack that sean is doing above for Decodable.
             switch block {
             case let button as ButtonBlock:
-                blocksContainer.encode(button)
+                try blocksContainer.encode(button)
+            case let barcode as BarcodeBlock:
+                try blocksContainer.encode(barcode)
+            case let image as ImageBlock:
+                try blocksContainer.encode(image)
+            case let rectangle as RectangleBlock:
+                try blocksContainer.encode(rectangle)
+            case let text as TextBlock:
+                try blocksContainer.encode(text)
+            case let webView as WebViewBlock:
+                try blocksContainer.encode(webView)
+            default:
+                throw EncodingError.invalidValue(block, .init(codingPath: container.codingPath, debugDescription: "Unexpected block type appeared in a row."))
             }
             
         }

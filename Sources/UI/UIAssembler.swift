@@ -99,8 +99,7 @@ extension UIAssembler: Assembler {
         // MARK: ExperienceStore
         
         container.register(ExperienceStore.self) { resolver in
-            let client = resolver.resolve(FetchExperienceClient.self)!
-            return ExperienceStoreService(client: client)
+            return ExperienceStoreService()
         }
         
         // MARK: UICollectionViewLayout (screen)

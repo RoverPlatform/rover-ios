@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import os
 
 open class ExperienceContainer: UIViewController {
     public let identifier: ExperienceIdentifier
@@ -97,25 +98,20 @@ open class ExperienceContainer: UIViewController {
     open func fetchExperience() {
         startLoading()
         
-        store.fetchExperience(for: identifier) { [weak self] result in
-            
-            // If the user cancels loading, the view controller may have been dismissed and garbage collected before the fetch completes
-            
-            guard let container = self else {
-                return
-            }
-            
-            DispatchQueue.main.async {
-                container.stopLoading()
-                
-                switch result {
-                case let .error(error, shouldRetry):
-                    container.present(error: error, shouldRetry: shouldRetry)
-                case let .success(experience):
-                    container.didFetchExperience(experience)
-                }
-            }
+        let experienceId: String
+        switch identifier {
+        case .experienceID(let id):
+            experienceId = id
+        default:
+            os_log("Unsupported Experience ID type. ExperienceID is (possibly) deprecated.", log: .ui, type: .error)
+            return
         }
+        
+        guard let experience = store.get(byID: experienceId) else {
+            return
+        }
+        
+        didFetchExperience(experience)
     }
     
     open func didFetchExperience(_ experience: Experience) {

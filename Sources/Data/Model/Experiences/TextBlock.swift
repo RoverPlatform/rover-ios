@@ -32,4 +32,50 @@ public struct TextBlock: Block {
         self.keys = keys
         self.tags = tags
     }
+    
+    private enum CodingKeys: String, CodingKey {
+        case typeName = "__typename"
+        case background = "background"
+        case border = "border"
+        case id = "id"
+        case name = "name"
+        case insets = "insets"
+        case opacity = "opacity"
+        case position = "position"
+        case tapBehavior = "tapBehavior"
+        case keys = "keys"
+        case tags = "tags"
+        case text = "text"
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode("TextBlock", forKey: .typeName)
+        try container.encode(background, forKey: .background)
+        try container.encode(border, forKey: .border)
+        try container.encode(id, forKey: .id)
+        try container.encode(name, forKey: .name)
+        try container.encode(insets, forKey: .insets)
+        try container.encode(opacity, forKey: .opacity)
+        try container.encode(position, forKey: .position)
+        try container.encode(tapBehavior, forKey: .tapBehavior)
+        try container.encode(keys, forKey: .keys)
+        try container.encode(tags, forKey: .tags)
+        try container.encode(text, forKey: .text)
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.background = try container.decode(Background.self, forKey: .background)
+        self.border = try container.decode(Border.self, forKey: .border)
+        self.id = try container.decode(String.self, forKey: .id)
+        self.name = try container.decode(String.self, forKey: .name)
+        self.insets = try container.decode(Insets.self, forKey: .insets)
+        self.opacity = try container.decode(Double.self, forKey: .opacity)
+        self.position = try container.decode(Position.self, forKey: .position)
+        self.tapBehavior = try container.decode(BlockTapBehavior.self, forKey: .tapBehavior)
+        self.keys = try container.decode([String: String].self, forKey: .keys)
+        self.tags = try container.decode([String].self, forKey: .tags)
+        self.text = try container.decode(Text.self, forKey: .text)
+    }
 }

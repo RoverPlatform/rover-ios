@@ -96,13 +96,6 @@ extension UIAssembler: Assembler {
             )
         }
         
-        // MARK: ExperienceStore
-        
-        container.register(ExperienceStore.self) { resolver in
-            let client = resolver.resolve(FetchExperienceClient.self)!
-            return ExperienceStoreService(client: client)
-        }
-        
         // MARK: UICollectionViewLayout (screen)
         
         container.register(UICollectionViewLayout.self, name: "screen", scope: .transient) { (resolver, screen: Screen) in

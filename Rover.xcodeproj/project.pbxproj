@@ -60,9 +60,6 @@
 		4960CA6A21C846EA009146F0 /* RoverUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB6ADD5A20B33EC0002F226C /* RoverUI.framework */; };
 		4960CA6B21C847A5009146F0 /* Campaigns.UNNotificationResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 491C9711219C9C8A0065BAB8 /* Campaigns.UNNotificationResponse.swift */; };
 		4960CA6C21C84F53009146F0 /* Campaigns.OSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6BE8B6215D4B2A000A1FDA /* Campaigns.OSLog.swift */; };
-		4962FB4B219B507D00C7F678 /* FetchExperienceClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC3B42C2148B08D0096C74E /* FetchExperienceClient.swift */; };
-		4962FB4C219B507D00C7F678 /* ExperienceStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1B0E209CAD9600E99F9F /* ExperienceStore.swift */; };
-		4962FB4D219B507D00C7F678 /* ExperienceStoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1ACB209BB3D200E99F9F /* ExperienceStoreService.swift */; };
 		4962FB4E219B50AA00C7F678 /* BarcodeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FDDF208A4961008D1A57 /* BarcodeCell.swift */; };
 		4962FB4F219B50AA00C7F678 /* BlockCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEEE2055964E00E5C77F /* BlockCell.swift */; };
 		4962FB50219B50AA00C7F678 /* ButtonCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEED2055964E00E5C77F /* ButtonCell.swift */; };
@@ -79,6 +76,7 @@
 		4962FB6F219B51AD00C7F678 /* NotificationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FE2F208FB285008D1A57 /* NotificationCell.swift */; };
 		4962FB70219B51AD00C7F678 /* NotificationCenterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBF90205597C300E5C77F /* NotificationCenterViewController.swift */; };
 		4962FB79219B52BE00C7F678 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF31B4820E193BA005D7C34 /* SettingsViewController.swift */; };
+		4971FD8E21DE6D6A001537E5 /* ExperienceStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1B0E209CAD9600E99F9F /* ExperienceStore.swift */; };
 		497550DD21C0821400922C9D /* EventPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 497550DC21C0821400922C9D /* EventPipeline.swift */; };
 		4975CBE021A753A900C2DD18 /* Location.Beacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4975CBDF21A753A900C2DD18 /* Location.Beacon.swift */; };
 		4975CBE221A7547200C2DD18 /* Location.Geofence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4975CBE121A7547200C2DD18 /* Location.Geofence.swift */; };
@@ -449,7 +447,6 @@
 		DBC3B40F2145C1100096C74E /* Beacon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Beacon.swift; sourceTree = "<group>"; };
 		DBC3B42621476A6A0096C74E /* Location.UUID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.UUID.swift; sourceTree = "<group>"; };
 		DBC3B42A2148A7D10096C74E /* HTTPClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPClient.swift; sourceTree = "<group>"; };
-		DBC3B42C2148B08D0096C74E /* FetchExperienceClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchExperienceClient.swift; sourceTree = "<group>"; };
 		DBC3FBE6215467FA00372A65 /* DeviceSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceSnapshot.swift; sourceTree = "<group>"; };
 		DBC3FBF22155375D00372A65 /* PersistedValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistedValue.swift; sourceTree = "<group>"; };
 		DBC3FBF7215581E500372A65 /* DeviceModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceModel.swift; sourceTree = "<group>"; };
@@ -513,7 +510,6 @@
 		DBFB1A78209B8CC500E99F9F /* ImageBlock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageBlock.swift; sourceTree = "<group>"; };
 		DBFB1A7C209B8CC500E99F9F /* Notification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Notification.swift; sourceTree = "<group>"; };
 		DBFB1A85209B8CC500E99F9F /* EventInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventInfo.swift; sourceTree = "<group>"; };
-		DBFB1ACB209BB3D200E99F9F /* ExperienceStoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperienceStoreService.swift; sourceTree = "<group>"; };
 		DBFB1AD4209C9AA600E99F9F /* Location.CLLocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.CLLocationManager.swift; sourceTree = "<group>"; };
 		DBFB1B0E209CAD9600E99F9F /* ExperienceStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperienceStore.swift; sourceTree = "<group>"; };
 		DBFB1B66209CD89400E99F9F /* Experiences.Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Experiences.Color.swift; sourceTree = "<group>"; };
@@ -1291,6 +1287,7 @@
 		DBD88A7420C1B21700085AE0 /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				DBF31B5420E41A38005D7C34 /* Services */,
 				4975CBDE21A752F200C2DD18 /* Model */,
 				DBC3FBE6215467FA00372A65 /* DeviceSnapshot.swift */,
 				DB1D5DC42107D32C0071928F /* Attributes.swift */,
@@ -1450,9 +1447,7 @@
 		DBFB1B09209CACAC00E99F9F /* ExperienceStore */ = {
 			isa = PBXGroup;
 			children = (
-				DBC3B42C2148B08D0096C74E /* FetchExperienceClient.swift */,
 				DBFB1B0E209CAD9600E99F9F /* ExperienceStore.swift */,
-				DBFB1ACB209BB3D200E99F9F /* ExperienceStoreService.swift */,
 			);
 			path = ExperienceStore;
 			sourceTree = "<group>";
@@ -1472,7 +1467,6 @@
 			isa = PBXGroup;
 			children = (
 				DBFB1B64209CD7E400E99F9F /* Extensions */,
-				DBF31B5420E41A38005D7C34 /* Services */,
 				DBF31B5A20E41C5A005D7C34 /* UI */,
 			);
 			path = Experiences;
@@ -2419,9 +2413,6 @@
 				4962FB59219B50AA00C7F678 /* ScreenViewLayoutAttributes.swift in Sources */,
 				4962FB5D219B50AA00C7F678 /* RoverUI.h in Sources */,
 				495821C321A4AFED00F2B632 /* TelephonyInfoProvider.swift in Sources */,
-				4962FB4B219B507D00C7F678 /* FetchExperienceClient.swift in Sources */,
-				4962FB4C219B507D00C7F678 /* ExperienceStore.swift in Sources */,
-				4962FB4D219B507D00C7F678 /* ExperienceStoreService.swift in Sources */,
 				494F05B021A767C5008B3AFC /* TEMPORARY.swift in Sources */,
 				DBB89B9A20D014C700DD797A /* Router.swift in Sources */,
 				DB6ADD7320B33F3A002F226C /* ImageOptimization.swift in Sources */,
@@ -2556,6 +2547,7 @@
 				0D53C11F21D7F8350072A79F /* Screen.swift in Sources */,
 				0D53C11121D7F8350072A79F /* Barcode.swift in Sources */,
 				0D53C12021D7F8350072A79F /* BlockTapBehavior.swift in Sources */,
+				4971FD8E21DE6D6A001537E5 /* ExperienceStore.swift in Sources */,
 				0D53C12421D7F8350072A79F /* WebViewBlock.swift in Sources */,
 				0D53C11321D7F8350072A79F /* Block.swift in Sources */,
 				49795DF521C94D6F00AEF684 /* NotificationSource.swift in Sources */,

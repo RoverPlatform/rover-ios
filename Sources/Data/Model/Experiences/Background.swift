@@ -6,8 +6,8 @@
 //  Copyright © 2017 Rover Labs Inc. All rights reserved.
 //
 
-public struct Background: Decodable {
-    public enum ContentMode: String, Decodable {
+public struct Background: Codable {
+    public enum ContentMode: String, Codable {
         case original = "ORIGINAL"
         case stretch = "STRETCH"
         case tile = "TILE"
@@ -15,7 +15,7 @@ public struct Background: Decodable {
         case fit = "FIT"
     }
     
-    public enum Scale: String, Decodable {
+    public enum Scale: String, Codable {
         case x1 = "X1"
         case x2 = "X2"
         case x3 = "X3"

@@ -13,11 +13,12 @@ public enum Height {
 
 // MARK: Decodable
 
-extension Height: Decodable {
+extension Height: Codable {
     private enum CodingKeys: String, CodingKey {
         case typeName = "__typename"
         case value
     }
+    
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let typeName = try container.decode(String.self, forKey: .typeName)
@@ -30,5 +31,18 @@ extension Height: Decodable {
         default:
             throw DecodingError.dataCorruptedError(forKey: CodingKeys.typeName, in: container, debugDescription: "Expected on of HeightIntrinsic or HeightStatic - found \(typeName)")
         }
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        let typeName: String
+        switch self {
+        case .intrinsic:
+            typeName = "HeightIntrinsic"
+        case .static(let value):
+            typeName = "HeightStatic"
+            try container.encode(value, forKey: .value)
+        }
+        try container.encode(typeName, forKey: .typeName)
     }
 }

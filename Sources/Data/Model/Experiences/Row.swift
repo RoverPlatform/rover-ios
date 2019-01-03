@@ -28,7 +28,7 @@ public struct Row {
 
 // MARK: Decodable
 
-extension Row: Decodable {
+extension Row: Codable {
     enum CodingKeys: String, CodingKey {
         case background
         case blocks
@@ -103,6 +103,36 @@ extension Row: Decodable {
                 block = try blocksContainer.decode(WebViewBlock.self)
             }
             blocks.append(block)
+        }
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(background, forKey: .background)
+        try container.encode(height, forKey: .height)
+        try container.encode(id, forKey: .id)
+        try container.encode(name, forKey: .name)
+        try container.encode(keys, forKey: .keys)
+        try container.encode(tags, forKey: .tags)
+        
+        var blocksContainer = container.nestedUnkeyedContainer(forKey: .blocks)
+        try blocks.forEach { block in
+            switch block {
+            case let button as ButtonBlock:
+                try blocksContainer.encode(button)
+            case let barcode as BarcodeBlock:
+                try blocksContainer.encode(barcode)
+            case let image as ImageBlock:
+                try blocksContainer.encode(image)
+            case let rectangle as RectangleBlock:
+                try blocksContainer.encode(rectangle)
+            case let text as TextBlock:
+                try blocksContainer.encode(text)
+            case let webView as WebViewBlock:
+                try blocksContainer.encode(webView)
+            default:
+                throw EncodingError.invalidValue(block, .init(codingPath: container.codingPath, debugDescription: "Unexpected block type appeared in a row."))
+            }
         }
     }
 }

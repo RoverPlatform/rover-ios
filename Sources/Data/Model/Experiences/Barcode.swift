@@ -6,8 +6,8 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-public struct Barcode: Decodable {
-    public enum Format: String, Decodable {
+public struct Barcode: Codable {
+    public enum Format: String, Codable {
         case qrCode = "QR_CODE"
         case aztecCode = "AZTEC_CODE"
         case pdf417 = "PDF417"

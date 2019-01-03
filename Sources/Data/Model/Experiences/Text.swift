@@ -6,15 +6,15 @@
 //  Copyright © 2017 Rover Labs Inc. All rights reserved.
 //
 
-public struct Text: Decodable {
-    public enum Alignment: String, Decodable {
+public struct Text: Codable {
+    public enum Alignment: String, Codable {
         case center = "CENTER"
         case left = "LEFT"
         case right = "RIGHT"
     }
     
-    public struct Font: Decodable {
-        public enum Weight: String, Decodable {
+    public struct Font: Codable {
+        public enum Weight: String, Codable {
             case ultraLight = "ULTRA_LIGHT"
             case thin = "THIN"
             case light = "LIGHT"

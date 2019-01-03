@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct Image: Decodable {
+public struct Image: Codable {
     public var height: Int
     public var isURLOptimizationEnabled: Bool
     public var name: String

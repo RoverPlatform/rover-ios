@@ -6,7 +6,7 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-public struct Insets: Decodable {
+public struct Insets: Codable {
     public var bottom: Int
     public var left: Int
     public var right: Int

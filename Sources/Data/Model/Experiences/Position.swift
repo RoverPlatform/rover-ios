@@ -6,7 +6,7 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-public struct Position: Decodable {
+public struct Position: Codable {
     public enum HorizontalAlignment {
         case center(offset: Double, width: Double)
         case left(offset: Double, width: Double)
@@ -28,7 +28,7 @@ public struct Position: Decodable {
 
 // MARK: Position.HorizontalAlignment
 
-extension Position.HorizontalAlignment: Decodable {
+extension Position.HorizontalAlignment: Codable {
     private enum CodingKeys: String, CodingKey {
         case typeName = "__typename"
         case offset
@@ -61,11 +61,35 @@ extension Position.HorizontalAlignment: Decodable {
             throw DecodingError.dataCorruptedError(forKey: CodingKeys.typeName, in: container, debugDescription: "Expected on of HorizontalAlignmentCenter, HorizontalAlignmentLeft, HorizontalAlignmentRight or HorizontalAlignmentFill - found \(typeName)")
         }
     }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        let typeName: String
+        switch self {
+        case .center(let offset, let width):
+            typeName = "HorizontalAlignmentCenter"
+            try container.encode(width, forKey: .width)
+            try container.encode(offset, forKey: .offset)
+        case .left(let offset, let width):
+            typeName = "HorizontalAlignmentLeft"
+            try container.encode(offset, forKey: .offset)
+            try container.encode(width, forKey: .width)
+        case .right(let offset, let width):
+            typeName = "HorizontalAlignmentRight"
+            try container.encode(offset, forKey: .offset)
+            try container.encode(width, forKey: .width)
+        case .fill(let leftOffset, let rightOffset):
+            typeName = "HorizontalAlignmentFill"
+            try container.encode(leftOffset, forKey: .leftOffset)
+            try container.encode(rightOffset, forKey: .rightOffset)
+        }
+        try container.encode(typeName, forKey: .typeName)
+    }
 }
 
 // MARK: Position.VerticalAlignment
 
-extension Position.VerticalAlignment: Decodable {
+extension Position.VerticalAlignment: Codable {
     private enum CodingKeys: String, CodingKey {
         case typeName = "__typename"
         case offset
@@ -102,5 +126,35 @@ extension Position.VerticalAlignment: Decodable {
         default:
             throw DecodingError.dataCorruptedError(forKey: CodingKeys.typeName, in: container, debugDescription: "Expected on of VerticalAlignmentBottom, VerticalAlignmentMiddle, VerticalAlignmentFill, VerticalAlignmentStacked or VerticalAlignmentTop - found \(typeName)")
         }
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        let typeName: String
+        switch self {
+        case .bottom(let offset, let height):
+            typeName = "VerticalAlignmentBottom"
+            try container.encode(offset, forKey: .offset)
+            try container.encode(height, forKey: .height)
+        case .middle(let offset, let height):
+            typeName = "VerticalAlignmentMiddle"
+            try container.encode(offset, forKey: .offset)
+            try container.encode(height, forKey: .height)
+        case .fill(let topOffset, let bottomOffset):
+            typeName = "VerticalAlignmentFill"
+            try container.encode(topOffset, forKey: .topOffset)
+            try container.encode(bottomOffset, forKey: .bottomOffset)
+        case .stacked(let topOffset, let bottomOffset, let height):
+            typeName = "VerticalAlignmentStacked"
+            try container.encode(topOffset, forKey: .topOffset)
+            try container.encode(bottomOffset, forKey: .bottomOffset)
+            try container.encode(height, forKey: .height)
+        case .top(let offset, let height):
+            typeName = "VerticalAlignmentTop"
+            try container.encode(offset, forKey: .offset)
+            try container.encode(height, forKey: .height)
+        }
+        
+        try container.encode(typeName, forKey: .typeName)
     }
 }

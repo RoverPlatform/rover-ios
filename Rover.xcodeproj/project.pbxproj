@@ -77,6 +77,7 @@
 		4962FB70219B51AD00C7F678 /* NotificationCenterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBF90205597C300E5C77F /* NotificationCenterViewController.swift */; };
 		4962FB79219B52BE00C7F678 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF31B4820E193BA005D7C34 /* SettingsViewController.swift */; };
 		4971FD8E21DE6D6A001537E5 /* ExperienceStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1B0E209CAD9600E99F9F /* ExperienceStore.swift */; };
+		4971FD9321DE9A09001537E5 /* EventClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4971FD9121DE99E7001537E5 /* EventClient.swift */; };
 		497550DD21C0821400922C9D /* EventPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 497550DC21C0821400922C9D /* EventPipeline.swift */; };
 		4975CBE021A753A900C2DD18 /* Location.Beacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4975CBDF21A753A900C2DD18 /* Location.Beacon.swift */; };
 		4975CBE221A7547200C2DD18 /* Location.Geofence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4975CBE121A7547200C2DD18 /* Location.Geofence.swift */; };
@@ -310,6 +311,7 @@
 		495821B921A4A60D00F2B632 /* BluetoothInfoProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BluetoothInfoProvider.swift; sourceTree = "<group>"; };
 		495821BE21A4A64300F2B632 /* AdSupportInfoProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AdSupportInfoProvider.swift; sourceTree = "<group>"; };
 		4960CA6521C84484009146F0 /* CampaignsAssembler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampaignsAssembler.swift; sourceTree = "<group>"; };
+		4971FD9121DE99E7001537E5 /* EventClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventClient.swift; sourceTree = "<group>"; };
 		497550DC21C0821400922C9D /* EventPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventPipeline.swift; sourceTree = "<group>"; };
 		4975CBDF21A753A900C2DD18 /* Location.Beacon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.Beacon.swift; sourceTree = "<group>"; };
 		4975CBE121A7547200C2DD18 /* Location.Geofence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.Geofence.swift; sourceTree = "<group>"; };
@@ -803,6 +805,14 @@
 			path = Device;
 			sourceTree = "<group>";
 		};
+		4971FD9021DE99D2001537E5 /* EventFlusher */ = {
+			isa = PBXGroup;
+			children = (
+				4971FD9121DE99E7001537E5 /* EventClient.swift */,
+			);
+			path = EventFlusher;
+			sourceTree = "<group>";
+		};
 		4975CBDE21A752F200C2DD18 /* Model */ = {
 			isa = PBXGroup;
 			children = (
@@ -820,6 +830,7 @@
 		49CB6A1E219F2801008E4904 /* Sync */ = {
 			isa = PBXGroup;
 			children = (
+				4971FD9021DE99D2001537E5 /* EventFlusher */,
 				49CB6A44219F404E008E4904 /* Extensions */,
 				49CB6A43219F3C21008E4904 /* Vendor */,
 				DB496E3C214854AC0026DE6A /* HTTP */,
@@ -2335,6 +2346,7 @@
 				49CB6A41219F3C14008E4904 /* HTTPError.swift in Sources */,
 				49CB6A46219F4075008E4904 /* Data+Gzip.swift in Sources */,
 				49CB6A3F219F3BF4008E4904 /* SyncResult.swift in Sources */,
+				4971FD9321DE9A09001537E5 /* EventClient.swift in Sources */,
 				49CB6A35219F3A41008E4904 /* SyncAssembler.swift in Sources */,
 				49CB6A3E219F3BF0008E4904 /* SyncRequest.swift in Sources */,
 				4976723E21A85905006A96A4 /* GeofencesSyncParticipant.swift in Sources */,

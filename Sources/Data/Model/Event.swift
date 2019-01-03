@@ -13,7 +13,7 @@ import os
 /// A fully filled out Event, modelled to be suitable for storage in the local database.
 ///
 /// These are used both for store-and-forwarding events to the Rover cloud services, but also kept and queried locally to power automated campaigns.
-public final class Event : NSManagedObject {
+public class Event : NSManagedObject, Encodable {
     @nonobjc public class func fetchRequest() -> NSFetchRequest<Event> {
         return NSFetchRequest<Event>(entityName: "Event")
     }

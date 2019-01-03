@@ -9,51 +9,51 @@
 import CoreData
 import os.log
 
-class GeofencesSyncParticipant: PagingSyncParticipant {
-    typealias Response = GeofencesSyncResponse
-    
-    let context: NSManagedObjectContext
-    let userDefaults: UserDefaults
-    
-    var cursorKey: String {
-        return "io.rover.RoverLocation.geofencesCursor"
-    }
-    
-    var participants = [SyncParticipant]()
-    
-    init(context: NSManagedObjectContext, userDefaults: UserDefaults) {
-        self.context = context
-        self.userDefaults = userDefaults
-    }
-    
-    func nextRequest(cursor: String?) -> SyncRequest {
-        let orderBy: [String: Any] = [
-            "field": "UPDATED_AT",
-            "direction": "ASC"
-        ]
-        
-        var values: [String: Any] = [
-            "first": 500,
-            "orderBy": orderBy
-        ]
-        
-        if let cursor = cursor {
-            values["after"] = cursor
-        }
-        
-        return SyncRequest(query: SyncQuery.geofences, values: values)
-    }
-
-    func insertObject(from node: GeofencesSyncResponse.Data.Geofences.Node) {
-        let geofence = Geofence(context: context)
-        geofence.id = node.id.rawValue
-        geofence.name = node.name
-        geofence.latitude = node.center.latitude
-        geofence.longitude = node.center.longitude
-        geofence.radius = node.radius
-        geofence.tags = node.tags
-    }
-}
+//class GeofencesSyncParticipant: PagingSyncParticipant {
+//    typealias Response = GeofencesSyncResponse
+//    
+//    let context: NSManagedObjectContext
+//    let userDefaults: UserDefaults
+//    
+//    var cursorKey: String {
+//        return "io.rover.RoverLocation.geofencesCursor"
+//    }
+//    
+//    var participants = [SyncParticipant]()
+//    
+//    init(context: NSManagedObjectContext, userDefaults: UserDefaults) {
+//        self.context = context
+//        self.userDefaults = userDefaults
+//    }
+//    
+//    func nextRequest(cursor: String?) -> SyncRequest {
+//        let orderBy: [String: Any] = [
+//            "field": "UPDATED_AT",
+//            "direction": "ASC"
+//        ]
+//        
+//        var values: [String: Any] = [
+//            "first": 500,
+//            "orderBy": orderBy
+//        ]
+//        
+//        if let cursor = cursor {
+//            values["after"] = cursor
+//        }
+//        
+//        return SyncRequest(query: SyncQuery.geofences, values: values)
+//    }
+//
+//    func insertObject(from node: GeofencesSyncResponse.Data.Geofences.Node) {
+//        let geofence = Geofence(context: context)
+//        geofence.id = node.id.rawValue
+//        geofence.name = node.name
+//        geofence.latitude = node.center.latitude
+//        geofence.longitude = node.center.longitude
+//        geofence.radius = node.radius
+//        geofence.tags = node.tags
+//    }
+//}
 
 // MARK: GeofencesSyncResponse
 

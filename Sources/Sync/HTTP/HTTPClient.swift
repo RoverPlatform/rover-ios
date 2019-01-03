@@ -79,34 +79,3 @@ extension HTTPClient {
 }
 
 // MARK: Experiences
-
-extension HTTPClient: FetchExperienceClient {
-    public func task(with experienceIdentifier: ExperienceIdentifier, completionHandler: @escaping (FetchExperienceResult) -> Void) -> URLSessionTask {
-        let queryItems = self.queryItems(experienceIdentifier: experienceIdentifier)
-        let request = self.downloadRequest(queryItems: queryItems)
-        return self.downloadTask(with: request) {
-            let result: FetchExperienceResult
-            switch $0 {
-            case .error(let error, let isRetryable):
-                if let error = error {
-                    os_log("Failed to fetch experience: %@", log: .networking, type: .error, error.localizedDescription)
-                } else {
-                    os_log("Failed to fetch experience", log: .networking, type: .error)
-                }
-                
-                result = .error(error: error, isRetryable: isRetryable)
-            case .success(let data):
-                let response: Response
-                do {
-                    response = try JSONDecoder.default.decode(Response.self, from: data)
-                    result = .success(experience: response.data.experience)
-                } catch {
-                    os_log("Failed to decode experience: %@", log: .networking, type: .error, error.localizedDescription)
-                    result = .error(error: error, isRetryable: false)
-                }
-            }
-            
-            completionHandler(result)
-        }
-    }
-}

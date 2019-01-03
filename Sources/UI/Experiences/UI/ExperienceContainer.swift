@@ -98,16 +98,12 @@ open class ExperienceContainer: UIViewController {
     open func fetchExperience() {
         startLoading()
         
-        let experienceId: String
-        switch identifier {
-        case .experienceID(let id):
-            experienceId = id
-        default:
+        guard case .experienceID(let id) = identifier else {
             os_log("Unsupported Experience ID type. ExperienceID is (possibly) deprecated.", log: .ui, type: .error)
             return
         }
-        
-        guard let experience = store.get(byID: experienceId) else {
+    
+        guard let experience = store.get(byID: id) else {
             return
         }
         

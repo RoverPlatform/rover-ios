@@ -77,7 +77,6 @@
 		4962FB70219B51AD00C7F678 /* NotificationCenterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBF90205597C300E5C77F /* NotificationCenterViewController.swift */; };
 		4962FB79219B52BE00C7F678 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF31B4820E193BA005D7C34 /* SettingsViewController.swift */; };
 		4971FD8E21DE6D6A001537E5 /* ExperienceStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1B0E209CAD9600E99F9F /* ExperienceStore.swift */; };
-		4971FD8F21DE6D6E001537E5 /* ExperienceStoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1ACB209BB3D200E99F9F /* ExperienceStoreService.swift */; };
 		497550DD21C0821400922C9D /* EventPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 497550DC21C0821400922C9D /* EventPipeline.swift */; };
 		4975CBE021A753A900C2DD18 /* Location.Beacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4975CBDF21A753A900C2DD18 /* Location.Beacon.swift */; };
 		4975CBE221A7547200C2DD18 /* Location.Geofence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4975CBE121A7547200C2DD18 /* Location.Geofence.swift */; };
@@ -511,7 +510,6 @@
 		DBFB1A78209B8CC500E99F9F /* ImageBlock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageBlock.swift; sourceTree = "<group>"; };
 		DBFB1A7C209B8CC500E99F9F /* Notification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Notification.swift; sourceTree = "<group>"; };
 		DBFB1A85209B8CC500E99F9F /* EventInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventInfo.swift; sourceTree = "<group>"; };
-		DBFB1ACB209BB3D200E99F9F /* ExperienceStoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperienceStoreService.swift; sourceTree = "<group>"; };
 		DBFB1AD4209C9AA600E99F9F /* Location.CLLocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.CLLocationManager.swift; sourceTree = "<group>"; };
 		DBFB1B0E209CAD9600E99F9F /* ExperienceStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperienceStore.swift; sourceTree = "<group>"; };
 		DBFB1B66209CD89400E99F9F /* Experiences.Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Experiences.Color.swift; sourceTree = "<group>"; };
@@ -1450,7 +1448,6 @@
 			isa = PBXGroup;
 			children = (
 				DBFB1B0E209CAD9600E99F9F /* ExperienceStore.swift */,
-				DBFB1ACB209BB3D200E99F9F /* ExperienceStoreService.swift */,
 			);
 			path = ExperienceStore;
 			sourceTree = "<group>";
@@ -2534,7 +2531,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				4976724021A86226006A96A4 /* Event.swift in Sources */,
-				4971FD8F21DE6D6E001537E5 /* ExperienceStoreService.swift in Sources */,
 				0D53C11421D7F8350072A79F /* Border.swift in Sources */,
 				0D53C11921D7F8350072A79F /* Image.swift in Sources */,
 				0D53C11021D7F8350072A79F /* Background.swift in Sources */,

@@ -59,10 +59,13 @@ extension Experience: Codable {
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(id, forKey: .id)
-        try container.encode(name, forKey: .name)
-        try container.encode(campaignID, forKey: .campaignID)
+        try container.encode(self.id, forKey: .id)
+        try container.encode(self.name, forKey: .name)
+        try container.encode(self.campaignID, forKey: .campaignID)
         try container.encode(self.screens, forKey: .screens)
+        try container.encode(self.keys, forKey: .keys)
+        try container.encode(self.tags, forKey: .tags)
+        try container.encode(self.homeScreen.id, forKey: .homeScreenID)
     }
 }
 

@@ -21,12 +21,6 @@ public struct Screen: Codable {
             self.color = color
         }
         
-        public func encode(to encoder: Encoder) throws {
-            var container = encoder.container(keyedBy: CodingKeys.self)
-            try container.encode(self.color, forKey: .color)
-            try container.encode(self.style.rawValue, forKey: .style)
-        }
-        
         enum CodingKeys: String, CodingKey {
             case style
             case color

@@ -35,17 +35,17 @@ public struct WebViewBlock: Block {
     
     private enum CodingKeys: String, CodingKey {
         case typeName = "__typename"
-        case background = "background"
-        case border = "border"
-        case id = "id"
-        case name = "name"
-        case insets = "insets"
-        case opacity = "opacity"
-        case position = "position"
-        case tapBehavior = "tapBehavior"
-        case keys = "keys"
-        case tags = "tags"
-        case webView = "webView"
+        case background
+        case border
+        case id
+        case name
+        case insets
+        case opacity
+        case position
+        case tapBehavior
+        case keys
+        case tags
+        case webView
     }
     
     public func encode(to encoder: Encoder) throws {

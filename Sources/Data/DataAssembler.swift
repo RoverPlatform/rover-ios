@@ -55,7 +55,7 @@ public class DataAssembler: Assembler {
         // MARK: ExperienceStore
         
         container.register(ExperienceStore.self) { resolver in
-            return ExperienceStoreService()
+            return ExperienceStore()
         }
     }
     

@@ -39,7 +39,7 @@ extension Row: Codable {
         case tags
     }
     
-    enum BlockType: Codable {
+    enum BlockType: Decodable {
         case barcodeBlock
         case buttonBlock
         case imageBlock
@@ -70,27 +70,6 @@ extension Row: Codable {
             default:
                 throw DecodingError.dataCorruptedError(forKey: CodingKeys.typeName, in: container, debugDescription: "Expected one of BarcodeBlock, ButtonBlock, ImageBlock, RectangleBlock, TextBlock, WebViewBlock – found \(typeName)")
             }
-        }
-        
-        public func encode(to encoder: Encoder) throws {
-            var container = encoder.container(keyedBy: CodingKeys.self)
-            let typeName: String
-            switch self {
-            case .barcodeBlock:
-                typeName = "BarcodeBock"
-            case .buttonBlock:
-                typeName = "ButtonBlock"
-            case .imageBlock:
-                typeName = "ImageBlock"
-            case .rectangleBlock:
-                typeName = "RectangleBlock"
-            case .textBlock:
-                typeName = "TextBlock"
-            case .webViewBlock:
-                typeName = "WebViewBlock"
-            }
-            
-            try container.encode(typeName, forKey: .typeName)
         }
     }
     

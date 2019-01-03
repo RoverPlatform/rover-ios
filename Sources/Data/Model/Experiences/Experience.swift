@@ -28,7 +28,7 @@ public struct Experience {
 
 // MARK: Decodable
 
-extension Experience: Decodable {
+extension Experience: Codable {
     enum CodingKeys: String, CodingKey {
         case id
         case name
@@ -55,6 +55,14 @@ extension Experience: Decodable {
         }
         
         self.homeScreen = homeScreen
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(name, forKey: .name)
+        try container.encode(campaignID, forKey: .campaignID)
+        try container.encode(self.screens, forKey: .screens)
     }
 }
 

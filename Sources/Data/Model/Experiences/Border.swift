@@ -6,7 +6,7 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-public struct Border: Decodable {
+public struct Border: Codable {
     public var color: Color
     public var radius: Int
     public var width: Int

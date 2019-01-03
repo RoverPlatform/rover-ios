@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct WebView: Decodable {
+public struct WebView: Codable {
     public var isScrollingEnabled: Bool
     public var url: URL
     

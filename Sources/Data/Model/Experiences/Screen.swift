@@ -6,9 +6,9 @@
 //  Copyright © 2017 Rover Labs Inc. All rights reserved.
 //
 
-public struct Screen: Decodable {
-    public struct StatusBar: Decodable {
-        public enum Style: String, Decodable {
+public struct Screen: Codable {
+    public struct StatusBar: Codable {
+        public enum Style: String, Codable {
             case dark = "DARK"
             case light = "LIGHT"
         }
@@ -20,10 +20,21 @@ public struct Screen: Decodable {
             self.style = style
             self.color = color
         }
+        
+        public func encode(to encoder: Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode(self.color, forKey: .color)
+            try container.encode(self.style.rawValue, forKey: .style)
+        }
+        
+        enum CodingKeys: String, CodingKey {
+            case style
+            case color
+        }
     }
     
-    public struct TitleBar: Decodable {
-        public enum Buttons: String, Decodable {
+    public struct TitleBar: Codable {
+        public enum Buttons: String, Codable {
             case close = "CLOSE"
             case back = "BACK"
             case both = "BOTH"

@@ -6,7 +6,7 @@
 //  Copyright © 2017 Rover Labs Inc. All rights reserved.
 //
 
-public struct Color: Decodable {
+public struct Color: Codable {
     public var red: Int
     public var green: Int
     public var blue: Int

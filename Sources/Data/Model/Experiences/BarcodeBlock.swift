@@ -6,7 +6,7 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-public struct BarcodeBlock: Block {
+public struct BarcodeBlock: Block, Codable {
     public var background: Background
     public var barcode: Barcode
     public var border: Border

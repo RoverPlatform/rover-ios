@@ -28,7 +28,7 @@ public struct Row {
 
 // MARK: Decodable
 
-extension Row: Decodable {
+extension Row: Codable {
     enum CodingKeys: String, CodingKey {
         case background
         case blocks
@@ -39,7 +39,7 @@ extension Row: Decodable {
         case tags
     }
     
-    enum BlockType: Decodable {
+    enum BlockType: Codable {
         case barcodeBlock
         case buttonBlock
         case imageBlock
@@ -70,6 +70,27 @@ extension Row: Decodable {
             default:
                 throw DecodingError.dataCorruptedError(forKey: CodingKeys.typeName, in: container, debugDescription: "Expected one of BarcodeBlock, ButtonBlock, ImageBlock, RectangleBlock, TextBlock, WebViewBlock – found \(typeName)")
             }
+        }
+        
+        public func encode(to encoder: Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            let typeName: String
+            switch self {
+            case .barcodeBlock:
+                typeName = "BarcodeBock"
+            case .buttonBlock:
+                typeName = "ButtonBlock"
+            case .imageBlock:
+                typeName = "ImageBlock"
+            case .rectangleBlock:
+                typeName = "RectangleBlock"
+            case .textBlock:
+                typeName = "TextBlock"
+            case .webViewBlock:
+                typeName = "WebViewBlock"
+            }
+            
+            try container.encode(typeName, forKey: .typeName)
         }
     }
     
@@ -103,6 +124,27 @@ extension Row: Decodable {
                 block = try blocksContainer.decode(WebViewBlock.self)
             }
             blocks.append(block)
+        }
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(background, forKey: .background)
+        try container.encode(height, forKey: .height)
+        try container.encode(id, forKey: .id)
+        try container.encode(name, forKey: .name)
+        try container.encode(keys, forKey: .keys)
+        try container.encode(tags, forKey: .tags)
+        
+        var blocksContainer = container.nestedUnkeyedContainer(forKey: .blocks)
+        blocksContainer.encode(blocks)
+        blocks.forEach { block in
+            // ANDREW START HERE and identify how to encode typeName considering that the synthesized codable impls for each block type won't encode it and I can't do the equivalent "overlayed decode" hack that sean is doing above for Decodable.
+            switch block {
+            case let button as ButtonBlock:
+                blocksContainer.encode(button)
+            }
+            
         }
     }
 }

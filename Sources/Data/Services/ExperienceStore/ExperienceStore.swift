@@ -9,7 +9,21 @@ import Foundation
 import os
 
 public class ExperienceStore {
+    class CacheValue: NSObject {
+        let experience: Experience
+        
+        init(experience: Experience) {
+            self.experience = experience
+        }
+    }
+    
+    private var cache = NSCache<NSString, CacheValue>()
+    
     public func get(byID id: String) -> Experience? {
+        if let experience = self.cache.object(forKey: NSString(string: id))?.experience {
+            return experience
+        }
+        
         guard let path = experienceLocalURL(id: id) else {
             os_log("Not able to retrieve experience because local storage for it could not be determined.", log: .persistence, type: .error)
             return nil
@@ -17,7 +31,9 @@ public class ExperienceStore {
         
         do {
             let json = try Data(contentsOf: path)
-            return try JSONDecoder.default.decode(Experience.self, from: json)
+            let experience = try JSONDecoder.default.decode(Experience.self, from: json)
+            self.cache.setObject(CacheValue(experience: experience), forKey: NSString(string: experience.id))
+            return experience
         } catch {
             os_log("Unable to retrieve experience locally: %s", log: .persistence, type: .error, error.localizedDescription)
             return nil
@@ -37,6 +53,7 @@ public class ExperienceStore {
             os_log("Unable to store experience.  Reason: %s", log: .persistence, type: .error, error.localizedDescription)
             return false
         }
+        self.cache.setObject(CacheValue(experience: experience), forKey: NSString(string: experience.id))
         return true
     }
     

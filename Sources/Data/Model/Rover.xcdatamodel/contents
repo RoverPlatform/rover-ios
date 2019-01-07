@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14460.32" systemVersion="18B75" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14460.32" systemVersion="18C54" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="AutomatedCampaignTrigger" representedClassName="AutomatedCampaignTrigger" parentEntity="CampaignTrigger" syncable="YES">
+        <attribute name="delay" optional="YES" attributeType="Transformable" syncable="YES"/>
+        <relationship name="eventTrigger" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="EventTrigger" inverseName="automatedCampaignTrigger" inverseEntity="EventTrigger" syncable="YES"/>
+        <relationship name="limits" toMany="YES" deletionRule="Nullify" destinationEntity="FrequencyLimit" inverseName="automatedCampaignTrigger" inverseEntity="FrequencyLimit" syncable="YES"/>
+    </entity>
     <entity name="Beacon" representedClassName=".Beacon" syncable="YES">
         <attribute name="id" attributeType="String" syncable="YES"/>
         <attribute name="major" attributeType="Integer 32" minValueString="0" maxValueString="65535" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
@@ -19,6 +24,24 @@
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>
+    <entity name="Campaign" representedClassName="Campaign" syncable="YES">
+        <attribute name="id" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="trigger" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CampaignTrigger" inverseName="campaign" inverseEntity="CampaignTrigger" syncable="YES"/>
+    </entity>
+    <entity name="CampaignDeliverable" representedClassName="CampaignDeliverable" isAbstract="YES" syncable="YES"/>
+    <entity name="CampaignTrigger" representedClassName="CampaignTrigger" isAbstract="YES" syncable="YES">
+        <relationship name="campaign" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Campaign" inverseName="trigger" inverseEntity="Campaign" syncable="YES"/>
+    </entity>
+    <entity name="DayOfTheWeekEventTriggerFilter" representedClassName="DayOfTheWeekEventTriggerFilter" parentEntity="EventTriggerFilter" syncable="YES">
+        <attribute name="friday" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="monday" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="saturday" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="sunday" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="thursday" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="tuesday" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="wednesday" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
+    </entity>
     <entity name="Event" representedClassName=".Event" syncable="YES">
         <attribute name="attributes" attributeType="Transformable" syncable="YES"/>
         <attribute name="deviceSnapshot" attributeType="Transformable" syncable="YES"/>
@@ -27,6 +50,23 @@
         <attribute name="name" attributeType="String" syncable="YES"/>
         <attribute name="namespace" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="timestamp" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+    </entity>
+    <entity name="EventAttributesEventTriggerFilter" representedClassName="EventAttributesEventTriggerFilter" parentEntity="EventTriggerFilter" syncable="YES">
+        <relationship name="predicate" optional="YES" maxCount="1" deletionRule="Nullify" syncable="YES"/>
+    </entity>
+    <entity name="EventTrigger" representedClassName="EventTrigger" syncable="YES">
+        <attribute name="eventName" attributeType="String" syncable="YES"/>
+        <attribute name="eventNamespace" attributeType="String" syncable="YES"/>
+        <relationship name="automatedCampaignTrigger" maxCount="1" deletionRule="Nullify" destinationEntity="AutomatedCampaignTrigger" inverseName="eventTrigger" inverseEntity="AutomatedCampaignTrigger" syncable="YES"/>
+        <relationship name="filters" toMany="YES" deletionRule="Nullify" destinationEntity="EventTriggerFilter" inverseName="eventTrigger" inverseEntity="EventTriggerFilter" syncable="YES"/>
+    </entity>
+    <entity name="EventTriggerFilter" representedClassName="EventTriggerFilter" isAbstract="YES" syncable="YES">
+        <relationship name="eventTrigger" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="EventTrigger" inverseName="filters" inverseEntity="EventTrigger" syncable="YES"/>
+    </entity>
+    <entity name="FrequencyLimit" representedClassName="FrequencyLimit" syncable="YES">
+        <attribute name="count" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="interval" optional="YES" attributeType="Transformable" syncable="YES"/>
+        <relationship name="automatedCampaignTrigger" maxCount="1" deletionRule="Nullify" destinationEntity="AutomatedCampaignTrigger" inverseName="limits" inverseEntity="AutomatedCampaignTrigger" syncable="YES"/>
     </entity>
     <entity name="Geofence" representedClassName=".Geofence" syncable="YES">
         <attribute name="id" attributeType="String" defaultValueString="&quot;&quot;" syncable="YES"/>
@@ -56,10 +96,40 @@
         <attribute name="isRead" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
+    <entity name="NotificationCampaignDeliverable" representedClassName="NotificationCampaignDeliverable" parentEntity="CampaignDeliverable" syncable="YES" codeGenerationType="class">
+        <attribute name="alertOptions" attributeType="Transformable" syncable="YES"/>
+        <attribute name="attachment" optional="YES" attributeType="Transformable" syncable="YES"/>
+        <attribute name="body" attributeType="String" syncable="YES"/>
+        <attribute name="iOSOptions" optional="YES" attributeType="Transformable" syncable="YES"/>
+    </entity>
+    <entity name="ScheduledCampaignTrigger" representedClassName="ScheduledCampaignTrigger" parentEntity="CampaignTrigger" syncable="YES">
+        <attribute name="dateTime" optional="YES" attributeType="Transformable" syncable="YES"/>
+    </entity>
+    <entity name="ScheduledEventTriggerFilter" representedClassName="ScheduledEventTriggerFilter" parentEntity="EventTriggerFilter" syncable="YES">
+        <attribute name="endDateTime" optional="YES" attributeType="Transformable" syncable="YES"/>
+        <attribute name="startDateTime" optional="YES" attributeType="Transformable" syncable="YES"/>
+    </entity>
+    <entity name="TimeOfDayEventTriggerFilter" representedClassName="TimeOfDayEventTriggerFilter" parentEntity="EventTriggerFilter" syncable="YES">
+        <attribute name="endTime" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="startTime" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+    </entity>
     <elements>
-        <element name="Beacon" positionX="-63" positionY="18" width="128" height="150"/>
-        <element name="Event" positionX="-171" positionY="72" width="128" height="150"/>
-        <element name="Geofence" positionX="-282.91796875" positionY="25.5" width="128" height="150"/>
-        <element name="Notification" positionX="-171" positionY="99" width="128" height="150"/>
+        <element name="AutomatedCampaignTrigger" positionX="-148.83203125" positionY="573.6875" width="128" height="90"/>
+        <element name="Beacon" positionX="-373.95703125" positionY="-58.2265625" width="128" height="150"/>
+        <element name="Campaign" positionX="4.98046875" positionY="120.12109375" width="128" height="30"/>
+        <element name="CampaignDeliverable" positionX="119.234375" positionY="366.41796875" width="128" height="30"/>
+        <element name="CampaignTrigger" positionX="-19.44921875" positionY="374.90625" width="128" height="30"/>
+        <element name="DayOfTheWeekEventTriggerFilter" positionX="80.19140625" positionY="-164.515625" width="128" height="30"/>
+        <element name="Event" positionX="-233.1640625" positionY="-122.80078125" width="128" height="150"/>
+        <element name="EventAttributesEventTriggerFilter" positionX="91.35546875" positionY="-112.59765625" width="128" height="30"/>
+        <element name="EventTrigger" positionX="-174.25390625" positionY="127.0234375" width="128" height="105"/>
+        <element name="EventTriggerFilter" positionX="-58.9453125" positionY="-74.56640625" width="128" height="30"/>
+        <element name="FrequencyLimit" positionX="-387.19140625" positionY="348.09765625" width="128" height="90"/>
+        <element name="Geofence" positionX="-528.7421875" positionY="-57.71875" width="128" height="150"/>
+        <element name="Notification" positionX="-500.5078125" positionY="125.21484375" width="128" height="150"/>
+        <element name="NotificationCampaignDeliverable" positionX="85.04296875" positionY="459.52734375" width="128" height="105"/>
+        <element name="ScheduledCampaignTrigger" positionX="-49.03515625" positionY="316.83203125" width="128" height="30"/>
+        <element name="ScheduledEventTriggerFilter" positionX="99.19921875" positionY="-25.7578125" width="128" height="30"/>
+        <element name="TimeOfDayEventTriggerFilter" positionX="91.03125" positionY="-75.2421875" width="128" height="30"/>
     </elements>
 </model>

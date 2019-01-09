@@ -42,7 +42,7 @@
     <entity name="ComparisonPredicate" representedClassName="ComparisonPredicate" parentEntity="Predicate" syncable="YES">
         <attribute name="keyPath" attributeType="String" syncable="YES"/>
         <attribute name="modifier" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="operator" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="op" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="value" attributeType="Transformable" syncable="YES"/>
     </entity>
     <entity name="CompoundPredicate" representedClassName="CompoundPredicate" parentEntity="Predicate" syncable="YES">
@@ -154,7 +154,7 @@
         <element name="ScheduledEventTriggerFilter" positionX="99.19921875" positionY="-25.7578125" width="128" height="30"/>
         <element name="TimeOfDayEventTriggerFilter" positionX="91.03125" positionY="-75.2421875" width="128" height="30"/>
         <element name="Predicate" positionX="-324" positionY="-9" width="128" height="30"/>
-        <element name="ComparisonPredicate" positionX="-315" positionY="0" width="128" height="105"/>
+        <element name="ComparisonPredicate" positionX="-315" positionY="0" width="128" height="30"/>
         <element name="CompoundPredicate" positionX="-306" positionY="9" width="128" height="30"/>
     </elements>
 </model>

@@ -69,11 +69,23 @@ class Predicate : NSManagedObject {
     }
 }
 
+@objc public enum ComparisonPredicateValueType : Int {
+    case numberValue
+    case numberValues
+    case stringValue
+    case stringValues
+    case booleanValue
+    case booleanValues
+    case dateTimeValue
+    case dateTimeValues
+}
+
 class ComparisonPredicate: Predicate, Codable {
     @NSManaged public internal(set) var keyPath: String
     @NSManaged public internal(set) var modifier: ComparisonPredicateModifier
     @NSManaged public internal(set) var op: ComparisonPredicateOperator
     @NSManaged public internal(set) var value: NSObject // could be any of NSNumber, NSString, NSDate, or NSArrays thereof.  Booleans are also possible, but will just appear as Number. TODO maybe need to use same arrangement for booleans as we did with Attributes.
+    @NSManaged public internal(set) var valueType: ComparisonPredicateValueType
     
     enum CodingKeys : String, CodingKey {
         case keyPath
@@ -99,31 +111,37 @@ class ComparisonPredicate: Predicate, Codable {
         // On the GraphQL side ComparisonPredicateValue is basically a union of all possible value types, but only one
         // may be filled in.  Those value types are all primitives OR arrays thereof.  All of those can be represented with NSObjects (NSArrays, NSNumber, etc.), all of which support NSCoding, so unlike the GraphQL side they'll work very nicely as a single field here.
 
-        
         if container.contains(.numberValue) {
             self.value = NSNumber(value: try container.decode(Double.self, forKey: .numberValue))
+            self.valueType = .numberValue
         } else if container.contains(.numberValues) {
             self.value = NSArray(array: try container.decode([Double].self, forKey: .numberValues).map({ double in
                 return NSNumber(value: double)
             }))
+            self.valueType = .numberValues
         } else if container.contains(.stringValue) {
             self.value = NSString(string: try container.decode(String.self, forKey: .stringValue))
+            self.valueType = .stringValue
         } else if container.contains(.stringValues) {
             self.value = NSArray(array: try container.decode([String].self, forKey: .stringValues).map({ string in
                 return NSString(string: string)
             }))
+            self.valueType = .stringValues
         } else if container.contains(.booleanValue) {
             self.value = NSNumber(value: try container.decode(Bool.self, forKey: .booleanValue))
+            self.valueType = .booleanValue
         } else if container.contains(.booleanValues) {
             self.value = NSArray(array: try container.decode([Bool].self, forKey: .booleanValues).map({ bool in
                 return BooleanValue(bool)
             }))
         } else if container.contains(.dateTimeValue) {
             self.value = try container.decode(Date.self, forKey: .dateTimeValue) as NSDate
+            self.valueType = .dateTimeValue
         } else if container.contains(.dateTimeValues) {
             self.value = NSArray(array: try container.decode([Date].self, forKey: .dateTimeValues).map({ date in
                 date as NSDate
             }))
+            self.valueType = .dateTimeValues
         } else {
             let context = DecodingError.Context(codingPath: [], debugDescription: "Missing one of numberValue, numberValues, stringValue, stringValues, booleanValue, booleanValues, dateTimeValue, dateTimeValues")
             throw DecodingError.dataCorrupted(context)
@@ -136,10 +154,10 @@ class ComparisonPredicate: Predicate, Codable {
         try container.encode(self.modifier, forKey: .modifier)
         try container.encode(self.op, forKey: .op)
         
-        switch value {
-        case let number as NSNumber:
-            try container.encode(number.doubleValue, forKey: .numberValue)
-            case let numbers as NSArray<NS
+        switch valueType {
+        case .numberValue:
+            try container.encode((value as? NSNumber)?.doubleValue, forKey: .numberValue)
+            // ANDREW START HERE
         }
     }
 }

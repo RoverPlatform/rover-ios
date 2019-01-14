@@ -9,11 +9,15 @@
 import CoreBluetooth
 
 public class BluetoothAssembler: Assembler {
-    public init() { }
+    let showPowerAlertKey: Bool
+    
+    public init(showPowerAlertKey: Bool = false) {
+        self.showPowerAlertKey = showPowerAlertKey
+    }
     
     public func assemble(container: Container) {
         container.register(BluetoothContextProvider.self) { resolver in
-            return BluetoothManager()
+            return BluetoothManager(showPowerAlertKey: self.showPowerAlertKey)
         }
     }
 }

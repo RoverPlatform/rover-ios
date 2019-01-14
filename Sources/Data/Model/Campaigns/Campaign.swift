@@ -157,7 +157,18 @@ class ComparisonPredicate: Predicate, Codable {
         switch valueType {
         case .numberValue:
             try container.encode((value as? NSNumber)?.doubleValue, forKey: .numberValue)
-            // ANDREW START HERE
+        case .numberValues:
+            var arrayContainer = container.nestedUnkeyedContainer(forKey: .numberValues)
+            
+            guard let nsDictionary = self.value as? NSDictionary else {
+                let errorContext = EncodingError.Context(codingPath: encoder.codingPath, debugDescription: <#T##String#>)
+                throw EncodingError.invalidValue(self.value, <#T##EncodingError.Context#>)
+            }
+            guard let asDoubles = nsDictionary.allKeys as? [Double] else {
+                
+            }
+            arrayContainer.encode(contentsOf: <#T##Sequence#>)
+            try container.encode((value as ), forKey: <#T##ComparisonPredicate.CodingKeys#>)
         }
     }
 }

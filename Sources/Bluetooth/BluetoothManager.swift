@@ -9,10 +9,13 @@
 import CoreBluetooth
 
 class BluetoothManager: NSObject {
-    let centralManager = CBCentralManager()
+    let centralManager: CBCentralManager
     let isEnabled = PersistedValue<Bool>(storageKey: "io.rover.RoverBluetooth.isEnabled")
         
-    override init() {
+    init(showPowerAlertKey: Bool) {
+        let showPowerAlertValue: NSNumber = showPowerAlertKey ? 1 : 0
+        let options: [String: Any] = [CBCentralManagerOptionShowPowerAlertKey: showPowerAlertValue]
+        self.centralManager = CBCentralManager(delegate: nil, queue: nil, options: options)
         super.init()
         self.centralManager.delegate = self
     }

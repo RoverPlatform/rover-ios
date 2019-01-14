@@ -11,6 +11,9 @@ import CoreLocation
 import os.log
 
 class LocationManager {
+    let maxGeofenceRegionsToMonitor: Int
+    let maxBeaconRegionsToMonitor: Int
+    
     let context: NSManagedObjectContext
     
     let eventPipeline: EventPipeline
@@ -32,9 +35,23 @@ class LocationManager {
     
     var beaconObservers = ObserverSet<Set<Beacon>>()
     
-    init(context: NSManagedObjectContext, eventPipeline: EventPipeline) {
+    init(
+        context: NSManagedObjectContext,
+        eventPipeline: EventPipeline,
+        maxGeofenceRegionsToMonitor: Int,
+        maxBeaconRegionsToMonitor: Int
+    ) {
         self.context = context
         self.eventPipeline = eventPipeline
+        self.maxGeofenceRegionsToMonitor = maxGeofenceRegionsToMonitor
+        self.maxBeaconRegionsToMonitor = maxBeaconRegionsToMonitor
+        let theoreticalMaximumGeofences = 20
+        if maxGeofenceRegionsToMonitor > theoreticalMaximumGeofences {
+            fatalError("You may only specify that Rover can monitor up to \(theoreticalMaximumGeofences) geofences at a time.")
+        }
+        if maxBeaconRegionsToMonitor >= maxGeofenceRegionsToMonitor {
+            fatalError("Rover uses the same region slots for monitoring beacons as it does for monitoring geofences, so therefore you may only specify that Rover can monitor up to the same max number of beacons as geofence regions, currently \(maxGeofenceRegionsToMonitor).")
+        }
     }
 }
 
@@ -112,10 +129,10 @@ extension LocationManager: RegionManager {
     }
     
     func updateMonitoredRegions(manager: CLLocationManager) {
-        let beaconRegions: Set<CLRegion> = Beacon.fetchAll(in: self.context).wildCardRegions(maxLength: 5)
+        let beaconRegions: Set<CLRegion> = Beacon.fetchAll(in: self.context).wildCardRegions(maxLength: self.maxBeaconRegionsToMonitor)
         os_log("Monitoring for %d wildcard (UUID-only) beacon regions", log: .location, type: .debug, beaconRegions.count)
         
-        let circularRegions: Set<CLRegion> = Geofence.fetchAll(in: self.context).regions(closestTo: manager.location?.coordinate, maxLength: 20 - beaconRegions.count)
+        let circularRegions: Set<CLRegion> = Geofence.fetchAll(in: self.context).regions(closestTo: manager.location?.coordinate, maxLength: self.maxGeofenceRegionsToMonitor - beaconRegions.count)
         os_log("Monitoring for %d circular (geofence) regions", log: .location, type: .debug, circularRegions.count)
         
         let combinedRegions = beaconRegions.union(circularRegions)

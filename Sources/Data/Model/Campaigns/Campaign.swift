@@ -108,8 +108,7 @@ class ComparisonPredicate: Predicate, Codable {
         self.modifier = try container.decode(ComparisonPredicateModifier.self, forKey: .modifier)
         self.op = try container.decode(ComparisonPredicateOperator.self, forKey: .op)
         
-        // On the GraphQL side ComparisonPredicateValue is basically a union of all possible value types, but only one
-        // may be filled in.  Those value types are all primitives OR arrays thereof.  All of those can be represented with NSObjects (NSArrays, NSNumber, etc.), all of which support NSCoding, so unlike the GraphQL side they'll work very nicely as a single field here.
+        // On the GraphQL side ComparisonPredicateValue is basically a union of all possible value types, but only one may be filled in.  Those value types are all primitives OR arrays thereof.  All of those can be represented with NSObjects (NSArrays, NSNumber, etc.), all of which support NSCoding, so unlike the GraphQL side they'll work very nicely as a single field here.
 
         if container.contains(.numberValue) {
             self.value = NSNumber(value: try container.decode(Double.self, forKey: .numberValue))
@@ -160,15 +159,71 @@ class ComparisonPredicate: Predicate, Codable {
         case .numberValues:
             var arrayContainer = container.nestedUnkeyedContainer(forKey: .numberValues)
             
-            guard let nsDictionary = self.value as? NSDictionary else {
-                let errorContext = EncodingError.Context(codingPath: encoder.codingPath, debugDescription: <#T##String#>)
-                throw EncodingError.invalidValue(self.value, <#T##EncodingError.Context#>)
+            guard let nsArray = self.value as? NSArray else {
+                let errorContext = EncodingError.Context(codingPath: arrayContainer.codingPath, debugDescription: "dynamic `value` field was not NSArray")
+                throw EncodingError.invalidValue(self.value, errorContext)
             }
-            guard let asDoubles = nsDictionary.allKeys as? [Double] else {
-                
+            guard let asNumbers = nsArray as? [NSNumber] else {
+                let errorContext = EncodingError.Context(codingPath: arrayContainer.codingPath, debugDescription: "dynamic `value` field was not array of NSNumbers")
+                throw EncodingError.invalidValue(self.value, errorContext)
             }
-            arrayContainer.encode(contentsOf: <#T##Sequence#>)
-            try container.encode((value as ), forKey: <#T##ComparisonPredicate.CodingKeys#>)
+            let asDoubles = asNumbers.map { nsNumber in
+                return nsNumber.doubleValue
+            }
+            try arrayContainer.encode(contentsOf: asDoubles)
+        case .booleanValue:
+            try container.encode(value as? NSNumber != 0, forKey: .booleanValue)
+        case .booleanValues:
+            var arrayContainer = container.nestedUnkeyedContainer(forKey: .booleanValues)
+            
+            guard let nsArray = self.value as? NSArray else {
+                let errorContext = EncodingError.Context(codingPath: arrayContainer.codingPath, debugDescription: "dynamic `value` field was not NSArray")
+                throw EncodingError.invalidValue(self.value, errorContext)
+            }
+            guard let asNumbers = nsArray as? [NSNumber] else {
+                let errorContext = EncodingError.Context(codingPath: arrayContainer.codingPath, debugDescription: "dynamic `value` field was not array of NSNumber for booleans.")
+                throw EncodingError.invalidValue(self.value, errorContext)
+            }
+            let asBools = asNumbers.map { nsNumber in
+                return nsNumber != 0
+            }
+            try arrayContainer.encode(contentsOf: asBools)
+        case .dateTimeValue:
+            guard let asDate = self.value as? NSDate else {
+                let errorContext = EncodingError.Context(codingPath: container.codingPath, debugDescription: "dynamic `value` field was not NSDate")
+                throw EncodingError.invalidValue(self.value, errorContext)
+            }
+            try container.encode(asDate as Date, forKey: .dateTimeValue)
+        case .dateTimeValues:
+            var arrayContainer = container.nestedUnkeyedContainer(forKey: .dateTimeValues)
+            
+            guard let nsArray = self.value as? NSArray else {
+                let errorContext = EncodingError.Context(codingPath: arrayContainer.codingPath, debugDescription: "dynamic `value` field was not NSArray")
+                throw EncodingError.invalidValue(self.value, errorContext)
+            }
+            guard let asDates = nsArray as? [NSDate] else {
+                let errorContext = EncodingError.Context(codingPath: arrayContainer.codingPath, debugDescription: "dynamic `value` field was not array of NSDate")
+                throw EncodingError.invalidValue(self.value, errorContext)
+            }
+            try arrayContainer.encode(contentsOf: asDates as [Date])
+        case .stringValue:
+            guard let asString = value as? NSString else {
+                let errorContext = EncodingError.Context(codingPath: container.codingPath, debugDescription: "dynamic `value` field was not NSString")
+                throw EncodingError.invalidValue(self.value, errorContext)
+            }
+            try container.encode(asString as String, forKey: .stringValue)
+        case .stringValues:
+            var arrayContainer = container.nestedUnkeyedContainer(forKey: .stringValues)
+            
+            guard let nsArray = self.value as? NSArray else {
+                let errorContext = EncodingError.Context(codingPath: arrayContainer.codingPath, debugDescription: "dynamic `value` field was not NSArray")
+                throw EncodingError.invalidValue(self.value, errorContext)
+            }
+            guard let asStrings = nsArray as? [NSString] else {
+                let errorContext = EncodingError.Context(codingPath: arrayContainer.codingPath, debugDescription: "dynamic `value` field was not array of NSString")
+                throw EncodingError.invalidValue(self.value, errorContext)
+            }
+            try arrayContainer.encode(contentsOf: asStrings as [String])
         }
     }
 }

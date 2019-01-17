@@ -107,7 +107,7 @@ class ComparisonPredicate: Predicate, Codable {
     @NSManaged public internal(set) var keyPath: String
     @NSManaged public internal(set) var modifier: ComparisonPredicateModifier
     @NSManaged public internal(set) var op: ComparisonPredicateOperator
-    @NSManaged public internal(set) var value: NSObject // could be any of NSNumber, NSString, NSDate, or NSArrays thereof.  Booleans are also possible, but will just appear as Number.
+    @NSManaged public internal(set) var value: NSObject // could be any of NSNumber, NSString, NSDate, or NSArrays thereof.  Booleans are also possible, but will just appear as NSNumber.
     @NSManaged public internal(set) var valueType: ComparisonPredicateValueType
     
     enum CodingKeys : String, CodingKey {
@@ -141,35 +141,36 @@ class ComparisonPredicate: Predicate, Codable {
             self.value = NSNumber(value: try container.decode(Double.self, forKey: .numberValue))
             self.valueType = .numberValue
         } else if container.contains(.numberValues) {
-            self.value = NSArray(array: try container.decode([Double].self, forKey: .numberValues).map({ double in
+            self.value = NSArray(array: try container.decode([Double].self, forKey: .numberValues).map { double in
                 return NSNumber(value: double)
-            }))
+            })
             self.valueType = .numberValues
         } else if container.contains(.stringValue) {
             self.value = NSString(string: try container.decode(String.self, forKey: .stringValue))
             self.valueType = .stringValue
         } else if container.contains(.stringValues) {
-            self.value = NSArray(array: try container.decode([String].self, forKey: .stringValues).map({ string in
+            self.value = NSArray(array: try container.decode([String].self, forKey: .stringValues).map { string in
                 return NSString(string: string)
-            }))
+            })
             self.valueType = .stringValues
         } else if container.contains(.booleanValue) {
             self.value = NSNumber(value: try container.decode(Bool.self, forKey: .booleanValue))
             self.valueType = .booleanValue
         } else if container.contains(.booleanValues) {
-            self.value = NSArray(array: try container.decode([Bool].self, forKey: .booleanValues).map({ bool in
+            self.value = NSArray(array: try container.decode([Bool].self, forKey: .booleanValues).map { bool in
                 return BooleanValue(bool)
-            }))
+            })
+            self.valueType = .booleanValues
         } else if container.contains(.dateTimeValue) {
             self.value = try container.decode(Date.self, forKey: .dateTimeValue) as NSDate
             self.valueType = .dateTimeValue
         } else if container.contains(.dateTimeValues) {
-            self.value = NSArray(array: try container.decode([Date].self, forKey: .dateTimeValues).map({ date in
+            self.value = NSArray(array: try container.decode([Date].self, forKey: .dateTimeValues).map { date in
                 date as NSDate
-            }))
+            })
             self.valueType = .dateTimeValues
         } else {
-            let context = DecodingError.Context(codingPath: [], debugDescription: "Missing one of numberValue, numberValues, stringValue, stringValues, booleanValue, booleanValues, dateTimeValue, dateTimeValues")
+            let context = DecodingError.Context(codingPath: container.codingPath, debugDescription: "Must have one of the numberValue, numberValues, stringValue, stringValues, booleanValue, booleanValues, dateTimeValue, dateTimeValues properties")
             throw DecodingError.dataCorrupted(context)
         }
     }
@@ -444,13 +445,13 @@ class EventAttributesEventTriggerFilter : EventTriggerFilter, Codable {
         case let compound as CompoundPredicate:
             try container.encode(compound, forKey: .predicate)
         default:
-            throw EncodingError.invalidValue(predicate, .init(codingPath: container.codingPath, debugDescription: "Unexpected predicate type appeared in a compound predicate."))
+            throw EncodingError.invalidValue(predicate, .init(codingPath: container.codingPath + [CodingKeys.predicate], debugDescription: "Unexpected predicate type appeared in a compound predicate."))
         }
     }
 }
 
 class DateTimeComponents: NSObject, NSCoding, Codable {
-    public var date: String // 8601 ?? note that it is only a DATE and not a moment in time.
+    public var date: String // 8601 date, without a time component.
     public var time: Int // count of seconds into the day (seconds past midnight)
     public var timeZone: String? // zoneinfo name of time zone.  if nil, then local device timezone shall apply.
     
@@ -851,6 +852,4 @@ class Campaign : NSManagedObject, Codable {
             throw EncodingError.invalidValue(self.trigger, .init(codingPath: container.codingPath + [CodingKeys.trigger], debugDescription: "Unexpected trigger type appeared in a Campaign."))
         }
     }
-
 }
-

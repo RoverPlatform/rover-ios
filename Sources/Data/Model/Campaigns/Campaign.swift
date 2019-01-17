@@ -11,6 +11,30 @@ import CoreData
 
 class Predicate : NSManagedObject {
     // abstract.
+    
+    // TODO: consider a fixed enum like BlockType.
+    
+    enum PredicateType : Decodable {
+        case comparisonPredicate
+        case compoundPredicate
+        
+        enum CodingKeys: String, CodingKey {
+            case typeName = "__typename"
+        }
+        
+        init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            let typeName = try container.decode(String.self, forKey: .typeName)
+            switch typeName {
+            case "ComparisonPredicate":
+                self = .comparisonPredicate
+            case "CompoundPredicate":
+                self = .compoundPredicate
+            default:
+                throw DecodingError.dataCorruptedError(forKey: CodingKeys.typeName, in: container, debugDescription: "Expected either ComparisonPredicate or CompoundPredicate – found \(typeName)")
+            }
+        }
+    }
 }
 
 @objc public enum ComparisonPredicateModifier : Int, Codable {
@@ -84,13 +108,14 @@ class ComparisonPredicate: Predicate, Codable {
     @NSManaged public internal(set) var keyPath: String
     @NSManaged public internal(set) var modifier: ComparisonPredicateModifier
     @NSManaged public internal(set) var op: ComparisonPredicateOperator
-    @NSManaged public internal(set) var value: NSObject // could be any of NSNumber, NSString, NSDate, or NSArrays thereof.  Booleans are also possible, but will just appear as Number. TODO maybe need to use same arrangement for booleans as we did with Attributes.
+    @NSManaged public internal(set) var value: NSObject // could be any of NSNumber, NSString, NSDate, or NSArrays thereof.  Booleans are also possible, but will just appear as Number.
     @NSManaged public internal(set) var valueType: ComparisonPredicateValueType
     
     enum CodingKeys : String, CodingKey {
         case keyPath
         case modifier
         case op = "operator"
+        case typeName = "__typename"
         
         case numberValue
         case numberValues
@@ -152,6 +177,7 @@ class ComparisonPredicate: Predicate, Codable {
         try container.encode(self.keyPath, forKey: .keyPath)
         try container.encode(self.modifier, forKey: .modifier)
         try container.encode(self.op, forKey: .op)
+        try container.encode("ComparisonPredicate", forKey: .typeName)
         
         switch valueType {
         case .numberValue:
@@ -228,11 +254,53 @@ class ComparisonPredicate: Predicate, Codable {
     }
 }
 
-class CompoundPredicate: Predicate {
+class CompoundPredicate: Predicate, Codable {
     @NSManaged public internal(set) var booleanOperator: CompoundPredicateLogicalType
     @NSManaged public internal(set) var predicates: Set<Predicate>
     
-    // TODO: Codable
+    enum CodingKeys: String, CodingKey {
+        case booleanOperator
+        case predicates
+    }
+    
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        self.booleanOperator = try container.decode(CompoundPredicateLogicalType.self, forKey: .booleanOperator)
+
+        // now to handle the embedded predicates:
+        let predicateTypes = try container.decode([Predicate.PredicateType].self, forKey: .predicates)
+        var predicatesContainer = try container.nestedUnkeyedContainer(forKey: .predicates)
+        
+        var loadedPredicates = [Predicate]()
+        while !predicatesContainer.isAtEnd {
+            switch predicateTypes[predicatesContainer.currentIndex] {
+            case .compoundPredicate:
+                loadedPredicates.append(try predicatesContainer.decode(CompoundPredicate.self))
+            case .comparisonPredicate:
+                loadedPredicates.append(try predicatesContainer.decode(ComparisonPredicate.self))
+            }
+        }
+        
+        self.predicates = Set(loadedPredicates)
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(booleanOperator, forKey: .booleanOperator)
+        var predicatesContainer = container.nestedUnkeyedContainer(forKey: .predicates)
+        try predicates.forEach { predicate in
+            switch predicate {
+            case let comparison as ComparisonPredicate:
+                try predicatesContainer.encode(comparison)
+            case let compound as CompoundPredicate:
+                try predicatesContainer.encode(compound)
+            default:
+                throw EncodingError.invalidValue(predicate, .init(codingPath: predicatesContainer.codingPath, debugDescription: "Unexpected preciate type appeared in a compound predicate."))
+            }
+        }
+        
+    }
 }
 
 @objc public enum CampaignStatus : Int {
@@ -261,13 +329,62 @@ class DayOfTheWeekEventTriggerFilter : NSManagedObject, Codable {
     @NSManaged public internal(set) var saturday: Bool
     @NSManaged public internal(set) var sunday: Bool
     
-    // TODO: Codable.
+    enum CodingKeys : String, CodingKey {
+        case monday
+        case tuesday
+        case wednesday
+        case thursday
+        case friday
+        case saturday
+        case sunday
+    }
+
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        monday = try container.decode(Bool.self, forKey: .monday)
+        tuesday = try container.decode(Bool.self, forKey: .tuesday)
+        wednesday = try container.decode(Bool.self, forKey: .wednesday)
+        thursday = try container.decode(Bool.self, forKey: .thursday)
+        friday = try container.decode(Bool.self, forKey: .friday)
+        saturday = try container.decode(Bool.self, forKey: .saturday)
+        sunday = try container.decode(Bool.self, forKey: .sunday)
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(self.monday, forKey: .monday)
+        try container.encode(self.tuesday, forKey: .tuesday)
+        try container.encode(self.wednesday, forKey: .wednesday)
+        try container.encode(self.thursday, forKey: .thursday)
+        try container.encode(self.friday, forKey: .friday)
+        try container.encode(self.saturday, forKey: .saturday)
+        try container.encode(self.sunday, forKey: .sunday)
+    }
 }
 
-class EventAttributesEventTriggerFilter : NSManagedObject {
+class EventAttributesEventTriggerFilter : NSManagedObject, Codable {
     @NSManaged public internal(set) var predicate: Predicate
     
-    // TODO: codable.
+    enum CodingKeys : String, CodingKey {
+        case predicate
+    }
+    
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        
+        // TODO: here I must duplicate the Predicate type decode discrimination stuff.
+        
+        // sniff the type:
+        let typeName = try container.decode(Predicate.CodableTypeDiscriminator.self, forKey: .predicate).__typename
+        switch typeName {
+        case "ComparisonPredicate":
+            self.predicate = try container.decode(ComparisonPredicate.self, forKey: .predicate)
+        case "CompoundPredicate":
+            self.predicate = try container.decode(CompoundPredicate.self, forKey: .predicate)
+        }
+        
+    }
 }
 
 class DateTimeComponents: NSObject, NSCoding {

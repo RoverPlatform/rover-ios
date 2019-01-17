@@ -8,11 +8,10 @@
 
 import Foundation
 import CoreData
+import os
 
 class Predicate : NSManagedObject {
     // abstract.
-    
-    // TODO: consider a fixed enum like BlockType.
     
     enum PredicateType : Decodable {
         case comparisonPredicate
@@ -128,6 +127,9 @@ class ComparisonPredicate: Predicate, Codable {
     }
     
     public required init(from decoder: Decoder) throws {
+        let context = (Rover.shared?.resolve(NSManagedObjectContext.self, name: "backgroundContext"))!
+        let entity = NSEntityDescription.entity(forEntityName: "ComparisonPredicate", in: context)!
+        super.init(entity: entity, insertInto: context)
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.keyPath = try container.decode(String.self, forKey: .keyPath)
         self.modifier = try container.decode(ComparisonPredicateModifier.self, forKey: .modifier)
@@ -264,10 +266,12 @@ class CompoundPredicate: Predicate, Codable {
     }
     
     public required init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let context = (Rover.shared?.resolve(NSManagedObjectContext.self, name: "backgroundContext"))!
+        let entity = NSEntityDescription.entity(forEntityName: "CompoundPredicate", in: context)!
+        super.init(entity: entity, insertInto: context)
         
+        let container = try decoder.container(keyedBy: CodingKeys.self)
         self.booleanOperator = try container.decode(CompoundPredicateLogicalType.self, forKey: .booleanOperator)
-
         // now to handle the embedded predicates:
         let predicateTypes = try container.decode([Predicate.PredicateType].self, forKey: .predicates)
         var predicatesContainer = try container.nestedUnkeyedContainer(forKey: .predicates)
@@ -296,31 +300,77 @@ class CompoundPredicate: Predicate, Codable {
             case let compound as CompoundPredicate:
                 try predicatesContainer.encode(compound)
             default:
-                throw EncodingError.invalidValue(predicate, .init(codingPath: predicatesContainer.codingPath, debugDescription: "Unexpected preciate type appeared in a compound predicate."))
+                throw EncodingError.invalidValue(predicate, .init(codingPath: predicatesContainer.codingPath, debugDescription: "Unexpected predicate type appeared in a compound predicate."))
             }
         }
-        
     }
 }
 
-@objc public enum CampaignStatus : Int {
+@objc public enum CampaignStatus : Int, Codable {
     case draft
     case published
     case archived
-    
-    // TODO: Codable.
 }
 
 class CampaignTrigger : NSManagedObject {
     // abstract.
-    @NSManaged public internal(set) var campaign: Campaign
+    
+    enum CampaignTriggerType : Decodable {
+        case automated
+        case scheduled
+        
+        enum CodingKeys: String, CodingKey {
+            case typeName = "__typename"
+        }
+        
+        init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            let typeName = try container.decode(String.self, forKey: .typeName)
+            switch typeName {
+            case "ScheduledCampaignTrigger":
+                self = .scheduled
+            case "AutomatedCampaignTrigger":
+                self = .automated
+            default:
+                throw DecodingError.dataCorruptedError(forKey: CodingKeys.typeName, in: container, debugDescription: "Expected either ScheduledCampaignTrigger or AutomatedCampaignTrigger – found \(typeName)")
+            }
+        }
+    }
 }
 
 class EventTriggerFilter : NSManagedObject {
     // abstract.
+    
+    enum EventTriggerFilterType : Decodable {
+        case dayOfTheWeek
+        case eventAttributes
+        case scheduled
+        case timeOfDay
+        
+        enum CodingKeys: String, CodingKey {
+            case typeName = "__typename"
+        }
+        
+        init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            let typeName = try container.decode(String.self, forKey: .typeName)
+            switch typeName {
+            case "DayOfTheWeekEventTriggerFilter":
+                self = .dayOfTheWeek
+            case "EventAttributesEventTriggerFilter":
+                self = .eventAttributes
+            case "ScheduledEventTriggerFilter":
+                self = .scheduled
+            case "TimeOfDayEventTriggerFilter":
+                self = .timeOfDay
+            default:
+                throw DecodingError.dataCorruptedError(forKey: CodingKeys.typeName, in: container, debugDescription: "Expected one of DayOfTheWeekEventTriggerFilter, EventAttributesEventTriggerFilter, ScheduledEventTriggerFilter, or TimeOfDayEventTriggerFilter – found \(typeName)")
+            }
+        }
+    }
 }
 
-class DayOfTheWeekEventTriggerFilter : NSManagedObject, Codable {
+class DayOfTheWeekEventTriggerFilter : EventTriggerFilter, Codable {
     @NSManaged public internal(set) var monday: Bool
     @NSManaged public internal(set) var tuesday: Bool
     @NSManaged public internal(set) var wednesday: Bool
@@ -340,6 +390,9 @@ class DayOfTheWeekEventTriggerFilter : NSManagedObject, Codable {
     }
 
     required init(from decoder: Decoder) throws {
+        let context = (Rover.shared?.resolve(NSManagedObjectContext.self, name: "backgroundContext"))!
+        let entity = NSEntityDescription.entity(forEntityName: "DayOfTheWeekEventTriggerFilter", in: context)!
+        super.init(entity: entity, insertInto: context)
         let container = try decoder.container(keyedBy: CodingKeys.self)
         monday = try container.decode(Bool.self, forKey: .monday)
         tuesday = try container.decode(Bool.self, forKey: .tuesday)
@@ -362,7 +415,7 @@ class DayOfTheWeekEventTriggerFilter : NSManagedObject, Codable {
     }
 }
 
-class EventAttributesEventTriggerFilter : NSManagedObject, Codable {
+class EventAttributesEventTriggerFilter : EventTriggerFilter, Codable {
     @NSManaged public internal(set) var predicate: Predicate
     
     enum CodingKeys : String, CodingKey {
@@ -370,105 +423,332 @@ class EventAttributesEventTriggerFilter : NSManagedObject, Codable {
     }
     
     required init(from decoder: Decoder) throws {
+        let context = (Rover.shared?.resolve(NSManagedObjectContext.self, name: "backgroundContext"))!
+        let entity = NSEntityDescription.entity(forEntityName: "EventTriggerFilter", in: context)!
+        super.init(entity: entity, insertInto: context)
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        
-        
-        // TODO: here I must duplicate the Predicate type decode discrimination stuff.
-        
-        // sniff the type:
-        let typeName = try container.decode(Predicate.CodableTypeDiscriminator.self, forKey: .predicate).__typename
+        let typeName = try container.decode(Predicate.PredicateType.self, forKey: .predicate)
         switch typeName {
-        case "ComparisonPredicate":
+        case .comparisonPredicate:
             self.predicate = try container.decode(ComparisonPredicate.self, forKey: .predicate)
-        case "CompoundPredicate":
+        case .compoundPredicate:
             self.predicate = try container.decode(CompoundPredicate.self, forKey: .predicate)
         }
-        
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        switch self.predicate {
+        case let comparision as ComparisonPredicate:
+            try container.encode(comparision, forKey: .predicate)
+        case let compound as CompoundPredicate:
+            try container.encode(compound, forKey: .predicate)
+        default:
+            throw EncodingError.invalidValue(predicate, .init(codingPath: container.codingPath, debugDescription: "Unexpected predicate type appeared in a compound predicate."))
+        }
     }
 }
 
-class DateTimeComponents: NSObject, NSCoding {
-    public var date: String // 8601 ?? note that it is a DATE and not a moment in time.
+class DateTimeComponents: NSObject, NSCoding, Codable {
+    public var date: String // 8601 ?? note that it is only a DATE and not a moment in time.
     public var time: Int // count of seconds into the day (seconds past midnight)
     public var timeZone: String? // zoneinfo name of time zone.  if nil, then local device timezone shall apply.
     
-    // TODO: Codable, NSCoding.
+    func encode(with aCoder: NSCoder) {
+        aCoder.encode(date, forKey: "date")
+        aCoder.encode(time, forKey: "time")
+        aCoder.encode("timeZone", forKey: "timeZone")
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        guard let dateString = aDecoder.decodeObject(forKey: "date") as? String else {
+            return nil
+        }
+        self.date = dateString
+        self.time = aDecoder.decodeInteger(forKey: "time")
+        self.timeZone = aDecoder.decodeObject(forKey: "timeZone") as? String
+    }
 }
 
-class ScheduledEventTriggerFilter : NSManagedObject {
+class ScheduledEventTriggerFilter : EventTriggerFilter, Codable {
     @NSManaged public internal(set) var startDateTime: DateTimeComponents
     @NSManaged public internal(set) var endDateTime: DateTimeComponents
     
-    // TODO: Codable.
+    enum CodingKeys : String, CodingKey {
+        case startDateTime
+        case endDateTime
+    }
+    
+    required init(from decoder: Decoder) throws {
+        let context = (Rover.shared?.resolve(NSManagedObjectContext.self, name: "backgroundContext"))!
+        let entity = NSEntityDescription.entity(forEntityName: "ScheduledEventTriggerFilter", in: context)!
+        super.init(entity: entity, insertInto: context)
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.startDateTime = try container.decode(DateTimeComponents.self, forKey: .startDateTime)
+        self.endDateTime = try container.decode(DateTimeComponents.self, forKey: .endDateTime)
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(self.startDateTime, forKey: .startDateTime)
+        try container.encode(self.endDateTime, forKey: .endDateTime)
+    }
 }
 
-class TimeOfDayEventTriggerFilter : NSManagedObject {
+class TimeOfDayEventTriggerFilter : EventTriggerFilter, Codable {
     @NSManaged public internal(set) var startTime: Int
     @NSManaged public internal(set) var endTime: Int
     
-    // TODO: Codable.
+    
+    enum CodingKeys : String, CodingKey {
+        case startTime
+        case endTime
+    }
+    
+    required init(from decoder: Decoder) throws {
+        let context = (Rover.shared?.resolve(NSManagedObjectContext.self, name: "backgroundContext"))!
+        let entity = NSEntityDescription.entity(forEntityName: "TimeOfDayEventTriggerFilter", in: context)!
+        super.init(entity: entity, insertInto: context)
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.startTime = try container.decode(Int.self, forKey: .startTime)
+        self.endTime = try container.decode(Int.self, forKey: .endTime)
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(self.startTime, forKey: .startTime)
+        try container.encode(self.endTime, forKey: .endTime)
+    }
 }
 
-class EventTrigger : NSManagedObject {
+class EventTrigger : NSManagedObject, Codable {
     @NSManaged public internal(set) var eventName: String
     @NSManaged public internal(set) var eventNamespace: String?
     @NSManaged public internal(set) var filters: Set<EventTriggerFilter>
     
-    // TODO: Codable.
+    enum CodingKeys : String, CodingKey {
+        case eventName
+        case eventNamespace
+        case filters
+    }
+    
+    required init(from decoder: Decoder) throws {
+        let context = (Rover.shared?.resolve(NSManagedObjectContext.self, name: "backgroundContext"))!
+        let entity = NSEntityDescription.entity(forEntityName: "EventTrigger", in: context)!
+        super.init(entity: entity, insertInto: context)
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.eventName = try container.decode(String.self, forKey: .eventName)
+        self.eventNamespace = try container.decodeIfPresent(String.self, forKey: .eventNamespace)
+     
+        // now to handle the embedded predicates:
+        let filterTypes = try container.decode([EventTriggerFilter.EventTriggerFilterType].self, forKey: .filters)
+        var filtersContainer = try container.nestedUnkeyedContainer(forKey: .filters)
+        
+        var loadedFilters = [EventTriggerFilter]()
+        while !filtersContainer.isAtEnd {
+            switch filterTypes[filtersContainer.currentIndex] {
+            case .dayOfTheWeek:
+                loadedFilters.append(try filtersContainer.decode(DayOfTheWeekEventTriggerFilter.self))
+            case .eventAttributes:
+                loadedFilters.append(try filtersContainer.decode(EventAttributesEventTriggerFilter.self))
+            case .scheduled:
+                loadedFilters.append(try filtersContainer.decode(ScheduledEventTriggerFilter.self))
+            case .timeOfDay:
+                loadedFilters.append(try filtersContainer.decode(TimeOfDayEventTriggerFilter.self))
+            }
+        }
+        
+        self.filters = Set(loadedFilters)
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        var filtersContainer = container.nestedUnkeyedContainer(forKey: .filters)
+        try self.filters.forEach { filter in
+            switch filter {
+            case let dayOfWeek as DayOfTheWeekEventTriggerFilter:
+                try filtersContainer.encode(dayOfWeek)
+            case let eventAttributes as EventAttributesEventTriggerFilter:
+                try filtersContainer.encode(eventAttributes)
+            case let scheduled as ScheduledEventTriggerFilter:
+                try filtersContainer.encode(scheduled)
+            case let timeOfDay as TimeOfDayEventTriggerFilter:
+                try filtersContainer.encode(timeOfDay)
+            default:
+                throw EncodingError.invalidValue(filter, .init(codingPath: filtersContainer.codingPath, debugDescription: "Unexpected filter type appeared in an EventTrigger."))
+            }
+        }
+    }
 }
 
-class FrequencyLimit : NSManagedObject {
+class FrequencyLimit : NSManagedObject, Codable {
     @NSManaged public internal(set) var count: Int
     @NSManaged public internal(set) var interval: TimeInterval // TODO: change to int if needed, value is in seconds.
     
-    // TODO: Codable.
+    enum CodingKeys: String, CodingKey {
+        case count
+        case interval
+    }
+    
+    required init(from decoder: Decoder) throws {
+        let context = (Rover.shared?.resolve(NSManagedObjectContext.self, name: "backgroundContext"))!
+        let entity = NSEntityDescription.entity(forEntityName: "FrequencyLimit", in: context)!
+        super.init(entity: entity, insertInto: context)
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.count = try container.decode(Int.self, forKey: .count)
+        self.interval = try container.decode(TimeInterval.self, forKey: .interval)
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(self.count, forKey: .count)
+        try container.encode(self.interval, forKey: .interval)
+    }
 }
 
-class AutomatedCampaignTrigger : CampaignTrigger {
+class AutomatedCampaignTrigger : CampaignTrigger, Codable {
     @NSManaged public internal(set) var delay: TimeInterval // TODO: change to Int if needed.  value is in seconds.
     @NSManaged public internal(set) var eventTrigger: EventTrigger
     @NSManaged public internal(set) var limits: Set<FrequencyLimit>
     
-    // TODO: Codable.
+    enum CodingKeys : String, CodingKey {
+        case delay
+        case eventTrigger
+        case limits
+    }
+    
+    required init(from decoder: Decoder) throws {
+        let context = (Rover.shared?.resolve(NSManagedObjectContext.self, name: "backgroundContext"))!
+        let entity = NSEntityDescription.entity(forEntityName: "AutomatedCampaignTrigger", in: context)!
+        super.init(entity: entity, insertInto: context)
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.delay = try container.decode(TimeInterval.self, forKey: .delay)
+        self.eventTrigger = try container.decode(EventTrigger.self, forKey: .eventTrigger)
+        self.limits = Set(try container.decode([FrequencyLimit].self, forKey: .limits))
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(self.delay, forKey: .delay)
+        try container.encode(self.eventTrigger, forKey: .eventTrigger)
+        try container.encode(self.limits, forKey: .limits)
+    }
 }
 
-class CampaignDeliverable : NSManagedObject {
+class ScheduledCampaignTrigger : CampaignTrigger, Codable {
+    @NSManaged public internal(set) var dateTime: DateTimeComponents
+    
+    enum CodingKeys: String, CodingKey {
+        case dateTime
+    }
+    
+    required init(from decoder: Decoder) throws {
+        let context = (Rover.shared?.resolve(NSManagedObjectContext.self, name: "backgroundContext"))!
+        let entity = NSEntityDescription.entity(forEntityName: "ScheduledCampaignTrigger", in: context)!
+        super.init(entity: entity, insertInto: context)
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.dateTime = try container.decode(DateTimeComponents.self, forKey: .dateTime)
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(self.dateTime, forKey: .dateTime)
+    }
+}
+
+class CampaignDeliverable : NSManagedObject, Codable {
     @NSManaged public internal(set) var campaign: Campaign
     
-    // TODO: Codable.
+    enum CodingKeys: String, CodingKey {
+        case campaign
+    }
+    
+    required init(from decoder: Decoder) throws {
+        let context = (Rover.shared?.resolve(NSManagedObjectContext.self, name: "backgroundContext"))!
+        let entity = NSEntityDescription.entity(forEntityName: "CampaignDeliverable", in: context)!
+        super.init(entity: entity, insertInto: context)
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.campaign = try container.decode(Campaign.self, forKey: .campaign)
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(self.campaign, forKey: .campaign)
+    }
 }
 
-class NotificationAlertOptions : NSObject, NSCoding {
+class NotificationAlertOptions : NSObject, NSCoding, Codable {
+    func encode(with aCoder: NSCoder) {
+        aCoder.encode(badgeNumber, forKey: "badgeNumber")
+        aCoder.encode(notificationCenter, forKey: "notificationCenter")
+        aCoder.encode(systemNotification, forKey: "systemNotification")
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        self.badgeNumber = aDecoder.decodeBool(forKey: "badgeNumber")
+        self.notificationCenter = aDecoder.decodeBool(forKey: "notificationCenter")
+        self.systemNotification = aDecoder.decodeBool(forKey: "systemNotification")
+    }
+    
     public var badgeNumber: Bool
     public var notificationCenter: Bool
     public var systemNotification: Bool
-    
-    // TODO: Codable & NSCoding
 }
 
 public enum NotificationAttachmentType : String, Codable {
     case audio
     case image
     case video
-    
-    // this is used in an NSCoding value object, which needs its own handwritten NSCoding implementation, so can I get away with having it just be pure swift and not @objc.
 }
 
-class iOSNotificationOptions : NSObject, NSCoding {
+class iOSNotificationOptions : NSObject, NSCoding, Codable {
+
+    
     public var categoryIdentifier: String?
     public var contentAvailable: Bool?
     public var mutableContent: Bool?
     public var sound: String?
     public var threadIdentifier: String?
     
-    // TODO: Codable and NSCoding.
+    func encode(with aCoder: NSCoder) {
+        aCoder.encode(categoryIdentifier, forKey: "categoryIdentifier")
+        aCoder.encode(contentAvailable, forKey: "contentAvailable")
+        aCoder.encode(mutableContent, forKey: "mutableContent")
+        aCoder.encode(sound, forKey: "sound")
+        aCoder.encode(threadIdentifier, forKey: "threadIdentifier")
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        self.categoryIdentifier = aDecoder.decodeObject(forKey: "categoryIdentifier") as? String
+        self.contentAvailable = aDecoder.decodeObject(forKey: "contentAvailable") as? Bool
+        self.mutableContent = aDecoder.decodeObject(forKey: "mutableContent") as? Bool
+        self.sound = aDecoder.decodeObject(forKey: "sound") as? String
+        self.threadIdentifier = aDecoder.decodeObject(forKey: "threadIdentifier") as? String
+    }
 }
 
-class NotificationAttachment : NSObject, NSCoding {
+class NotificationAttachment : NSObject, NSCoding, Codable {
     public var type: NotificationAttachmentType
     public var url: URL
     
-    // TODO: Codable and NSCoding.
+    func encode(with aCoder: NSCoder) {
+        aCoder.encode(type, forKey: "type")
+        aCoder.encode(url, forKey: "url")
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        guard let type = aDecoder.decodeObject(forKey: "type") as? NotificationAttachmentType else {
+            os_log("Type field missing/invalid from NotificationAttachment on nscoding restore", log: .persistence, type: .error)
+            return nil
+        }
+        self.type = type
+        guard let url = aDecoder.decodeObject(forKey: "url") as? URL else {
+            os_log("URL field missing/invalid from NotificationAttachment on nscoding restore", log: .persistence, type: .error)
+            return nil
+        }
+        self.url = url
+    }
 }
 
 enum NotificationTapBehaviorType: String, Codable {
@@ -483,15 +763,29 @@ enum NotificationTapBehaviorType: String, Codable {
         case presentExperience
         case presentWebsite
     }
-    
-    // TODO: Codable and NSCoding.
 }
 
-class NotificationTapBehavior : NSObject, NSCoding {
+class NotificationTapBehavior : NSObject, NSCoding, Codable {
     public var type: NotificationTapBehaviorType
     public var url: URL
     
-    // TODO: Codable and NSCoding.
+    func encode(with aCoder: NSCoder) {
+        aCoder.encode(type, forKey: "type")
+        aCoder.encode(url, forKey: "url")
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        guard let type = aDecoder.decodeObject(forKey: "type") as? NotificationTapBehaviorType else {
+            os_log("Type field missing/invalid from NotificationTapBehaviorType on nscoding restore", log: .persistence, type: .error)
+            return nil
+        }
+        self.type = type
+        guard let url = aDecoder.decodeObject(forKey: "url") as? URL else {
+            os_log("URL field missing/invalid from NotificationTapBehaviorType on nscoding restore", log: .persistence, type: .error)
+            return nil
+        }
+        self.url = url
+    }
 }
 
 class NotificationCampaignDeliverable : CampaignDeliverable {
@@ -502,10 +796,9 @@ class NotificationCampaignDeliverable : CampaignDeliverable {
     @NSManaged public internal(set) var iOSOptions: iOSNotificationOptions?
     @NSManaged public internal(set) var tapBehavior: NotificationTapBehavior
     
-    // TODO: Codable
 }
 
-class Campaign : NSManagedObject {
+class Campaign : NSManagedObject, Codable {
     @NSManaged public internal(set) var id: String
     @NSManaged public internal(set) var name: String
     @NSManaged public internal(set) var status: CampaignStatus
@@ -515,6 +808,49 @@ class Campaign : NSManagedObject {
     @NSManaged public internal(set) var deliverable: CampaignDeliverable
     @NSManaged public internal(set) var trigger: CampaignTrigger
     
-    // TODO: Codable.
+    enum CodingKeys: String, CodingKey {
+        case id
+        case name
+        case status
+        case createdAt
+        case updatedAt
+        case deliverable
+        case trigger
+    }
+    
+    required init(from decoder: Decoder) throws {
+        let context = (Rover.shared?.resolve(NSManagedObjectContext.self, name: "backgroundContext"))!
+        let entity = NSEntityDescription.entity(forEntityName: "Campaign", in: context)!
+        super.init(entity: entity, insertInto: context)
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.id = try container.decode(String.self, forKey: .id)
+        self.name = try container.decode(String.self, forKey: .name)
+        self.status = try container.decode(CampaignStatus.self, forKey: .status)
+        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
+        self.updatedAt = try container.decode(Date.self, forKey: .updatedAt)
+        self.deliverable = try container.decode(CampaignDeliverable.self, forKey: .deliverable)
+        
+        let triggerType = try container.decode(CampaignTrigger.CampaignTriggerType.self, forKey: .trigger)
+        switch triggerType {
+        case .automated:
+            self.trigger = try container.decode(AutomatedCampaignTrigger.self, forKey: .trigger)
+        case .scheduled:
+            self.trigger = try container.decode(ScheduledCampaignTrigger.self, forKey: .trigger)
+        }
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        switch self.trigger {
+        case let scheduled as ScheduledCampaignTrigger:
+            try container.encode(scheduled, forKey: .trigger)
+        case let automated as AutomatedCampaignTrigger:
+            try container.encode(automated, forKey: .trigger)
+        default:
+            throw EncodingError.invalidValue(self.trigger, .init(codingPath: container.codingPath + [CodingKeys.trigger], debugDescription: "Unexpected trigger type appeared in a Campaign."))
+        }
+    }
+
 }
 

@@ -14,12 +14,12 @@ public final class Beacon: NSManagedObject {
         return NSFetchRequest<Beacon>(entityName: "Beacon")
     }
     
-    @NSManaged public internal(set) var id: String
-    @NSManaged public internal(set) var name: String
-    @NSManaged public internal(set) var uuid: UUID
-    @NSManaged public internal(set) var major: Int32
-    @NSManaged public internal(set) var minor: Int32
-    @NSManaged public internal(set) var tags: [String]
+    @NSManaged public var id: String
+    @NSManaged public var name: String
+    @NSManaged public var uuid: UUID
+    @NSManaged public var major: Int32
+    @NSManaged public var minor: Int32
+    @NSManaged public var tags: [String]
 
     @NSManaged public private(set) var regionIdentifier: String
     

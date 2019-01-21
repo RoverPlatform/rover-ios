@@ -46,7 +46,7 @@ class BeaconsSyncParticipant: PagingSyncParticipant {
     
     func insertObject(from node: BeaconsSyncResponse.Data.Beacons.Node) {
         let beacon = Beacon(context: context)
-        beacon.id = node.id.rawValue
+        beacon.id = node.id
         beacon.name = node.name
         beacon.uuid = node.uuid
         beacon.major = node.major

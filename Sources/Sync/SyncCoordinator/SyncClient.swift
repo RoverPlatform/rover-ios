@@ -44,9 +44,10 @@ extension SyncClient {
         
         let variables: Attributes = {
             return syncRequests.reduce(Attributes(), { (result, request) in
-                return request.variables.reduce(result, { (result, element) in
+                return request.variables.rawValue.reduce(result, { (result, element) in
                     var nextResult = result
-                    nextResult["\(request.query.name)\(element.key.rawValue.capitalized)"] = element.value
+                    // TODO: why on earth is the compiler complaining here that I'mn not mutating nextResult? I clearly am!
+                    nextResult.rawValue["\(request.query.name)\(element.key.capitalized)"] = element.value
                     return nextResult
                 })
             })

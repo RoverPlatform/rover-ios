@@ -14,12 +14,12 @@ public final class Geofence: NSManagedObject {
         return NSFetchRequest<Geofence>(entityName: "Geofence")
     }
     
-    @NSManaged public internal(set) var id: String
-    @NSManaged public internal(set) var name: String
-    @NSManaged public internal(set) var latitude: Double
-    @NSManaged public internal(set) var longitude: Double
-    @NSManaged public internal(set) var radius: Double
-    @NSManaged public internal(set) var tags: [String]
+    @NSManaged public var id: String
+    @NSManaged public var name: String
+    @NSManaged public var latitude: Double
+    @NSManaged public var longitude: Double
+    @NSManaged public var radius: Double
+    @NSManaged public var tags: [String]
     
     @NSManaged public private(set) var regionIdentifier: String
     

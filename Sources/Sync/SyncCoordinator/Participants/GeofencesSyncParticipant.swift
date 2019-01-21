@@ -46,7 +46,7 @@ class GeofencesSyncParticipant: PagingSyncParticipant {
 
     func insertObject(from node: GeofencesSyncResponse.Data.Geofences.Node) {
         let geofence = Geofence(context: context)
-        geofence.id = node.id.rawValue
+        geofence.id = node.id
         geofence.name = node.name
         geofence.latitude = node.center.latitude
         geofence.longitude = node.center.longitude

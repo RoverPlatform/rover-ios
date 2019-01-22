@@ -88,6 +88,7 @@
 		49795DF521C94D6F00AEF684 /* NotificationSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB496F5220DBECD800DF5949 /* NotificationSource.swift */; };
 		497BA67721F78B01003ED346 /* AutomatedCampaign.swift in Sources */ = {isa = PBXBuildFile; fileRef = 497BA67621F78B01003ED346 /* AutomatedCampaign.swift */; };
 		497BA67921F78B12003ED346 /* ScheduledCampaign.swift in Sources */ = {isa = PBXBuildFile; fileRef = 497BA67821F78B12003ED346 /* ScheduledCampaign.swift */; };
+		497BA67B21F7AB4F003ED346 /* CampaignSyncParticipant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 497BA67A21F7AB4F003ED346 /* CampaignSyncParticipant.swift */; };
 		4988D94921AF4B260050550E /* Attributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1D5DC42107D32C0071928F /* Attributes.swift */; };
 		49A0D09521CC3FCE003FAABD /* UI.OSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A0D09421CC3FCE003FAABD /* UI.OSLog.swift */; };
 		49AFAED421BF006800F1118B /* AttributesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49AFAED321BF006800F1118B /* AttributesTests.swift */; };
@@ -318,6 +319,7 @@
 		4976723F21A86226006A96A4 /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
 		497BA67621F78B01003ED346 /* AutomatedCampaign.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomatedCampaign.swift; sourceTree = "<group>"; };
 		497BA67821F78B12003ED346 /* ScheduledCampaign.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduledCampaign.swift; sourceTree = "<group>"; };
+		497BA67A21F7AB4F003ED346 /* CampaignSyncParticipant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampaignSyncParticipant.swift; sourceTree = "<group>"; };
 		4980D66421307738007267D3 /* Experiences.Barcode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Experiences.Barcode.swift; sourceTree = "<group>"; };
 		49A0D09421CC3FCE003FAABD /* UI.OSLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UI.OSLog.swift; sourceTree = "<group>"; };
 		49AFAED321BF006800F1118B /* AttributesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributesTests.swift; sourceTree = "<group>"; };
@@ -781,6 +783,7 @@
 			children = (
 				DBD73F722137417E00E7F322 /* GeofencesSyncParticipant.swift */,
 				DB1689ED2141A6F90012DA01 /* BeaconsSyncParticipant.swift */,
+				497BA67A21F7AB4F003ED346 /* CampaignSyncParticipant.swift */,
 			);
 			path = Participants;
 			sourceTree = "<group>";
@@ -2346,6 +2349,7 @@
 				49CB6A45219F4068008E4904 /* Sync.URLRequest.swift in Sources */,
 				49CB6A3C219F3BE7008E4904 /* SyncParticipant.swift in Sources */,
 				49CB6A41219F3C14008E4904 /* HTTPError.swift in Sources */,
+				497BA67B21F7AB4F003ED346 /* CampaignSyncParticipant.swift in Sources */,
 				49CB6A46219F4075008E4904 /* Data+Gzip.swift in Sources */,
 				49CB6A3F219F3BF4008E4904 /* SyncResult.swift in Sources */,
 				49F7E23B21F664DA0040D5C3 /* Campaign.swift in Sources */,

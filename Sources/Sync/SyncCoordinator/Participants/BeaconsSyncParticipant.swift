@@ -16,10 +16,9 @@ class BeaconsSyncParticipant: PagingSyncParticipant {
     let userDefaults: UserDefaults
     
     var cursorKey: String {
+        // TODO: rename into RoverSync
         return "io.rover.RoverLocation.beaconsCursor"
     }
-    
-    var participants = [SyncParticipant]()
     
     init(context: NSManagedObjectContext, userDefaults: UserDefaults) {
         self.context = context

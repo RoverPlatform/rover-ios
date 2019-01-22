@@ -139,19 +139,6 @@ struct CompoundPredicate : Predicate, Decodable {
     }
 }
 
-extension Predicate  {
-    // I may not use this because the unkeyed counterpart was a total fail.
-    static func decodeFrom<C: CodingKey>(container: KeyedDecodingContainer<C>, forKey key: C) throws -> Predicate {
-        let predicateType = try container.decode(PredicateType.self, forKey: key)
-        switch predicateType {
-        case .comparisonPredicate:
-            return try container.decode(ComparisonPredicate.self, forKey: key)
-        case .compoundPredicate:
-            return try container.decode(CompoundPredicate.self, forKey: key)
-        }
-    }
-}
-
 enum CampaignStatus : String, Decodable {
     case draft
     case published
@@ -215,4 +202,219 @@ enum EventTriggerFilterType : Decodable {
     }
 }
 
-// START HERE WITH DayOfTheWeekEventTriggerFilter
+struct DayOfTheWeekEventTriggerFilter : EventTriggerFilter, Decodable {
+    let monday: Bool
+    let tuesday: Bool
+    let wednesday: Bool
+    let thursday: Bool
+    let friday: Bool
+    let saturday: Bool
+    let sunday: Bool
+}
+
+struct EventAttributesEventTriggerFilter : EventTriggerFilter, Decodable {
+    let predicate: Predicate
+    
+    enum CodingKeys: String, CodingKey {
+        case predicate
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        let predicateType = try container.decode(PredicateType.self, forKey: .predicate)
+        switch predicateType {
+        case .comparisonPredicate:
+            self.predicate = try container.decode(ComparisonPredicate.self, forKey: .predicate)
+        case .compoundPredicate:
+            self.predicate = try container.decode(CompoundPredicate.self, forKey: .predicate)
+        }
+    }
+}
+
+struct DateTimeComponents: Decodable {
+    let date: String
+    let time: Int
+    let timeZone: String?
+}
+
+struct ScheduledEventTriggerFilter : EventTriggerFilter, Decodable {
+    let startDateTime: DateTimeComponents
+    let endDateTime: DateTimeComponents
+}
+
+struct TimeOfDayEventTriggerFilter : EventTriggerFilter, Decodable {
+    let startTime: Int
+    let endTime: Int
+}
+
+struct EventTrigger : Decodable {
+    let eventName: String
+    let eventNamespace: String?
+    let filters: [EventTriggerFilter]
+    
+    enum CodingKeys : String, CodingKey {
+        case eventName
+        case eventNamespace
+        case filters
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.eventName = try container.decode(String.self, forKey: .eventName)
+        self.eventNamespace = try container.decodeIfPresent(String.self, forKey: .eventNamespace)
+        
+        var filtersContainer = try container.nestedUnkeyedContainer(forKey: .filters)
+        var typePeekContainer = filtersContainer
+        var filters = [EventTriggerFilter]()
+        while !filtersContainer.isAtEnd {
+            let filterType = try typePeekContainer.decode(EventTriggerFilterType.self)
+            switch filterType {
+            case .dayOfTheWeek:
+                filters.append(try filtersContainer.decode(DayOfTheWeekEventTriggerFilter.self))
+            case .eventAttributes:
+                filters.append(try filtersContainer.decode(EventAttributesEventTriggerFilter.self))
+            case .scheduled:
+                filters.append(try filtersContainer.decode(EventAttributesEventTriggerFilter.self))
+            case .timeOfDay:
+                filters.append(try filtersContainer.decode(TimeOfDayEventTriggerFilter.self))
+            }
+        }
+        self.filters = filters
+    }
+}
+
+struct FrequencyLimit : Decodable {
+    let count: Int
+    let interval: TimeInterval
+}
+
+struct AutomatedCampaignTrigger : CampaignTrigger, Decodable {
+    let delay: TimeInterval
+    let eventTrigger: EventTrigger
+    let limits: [FrequencyLimit]
+}
+
+struct ScheduledCampaignTrigger : CampaignTrigger, Decodable {
+    let dateTime: DateTimeComponents
+}
+
+protocol CampaignDeliverable {
+    
+}
+
+enum CampaignDeliverableType : Decodable {
+    case notification
+    
+    enum CodingKeys: String, CodingKey {
+        case typeName = "__typename"
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let typeName = try container.decode(String.self, forKey: .typeName)
+        switch typeName {
+        case "NotificationCampaignDeliverable":
+            self = .notification
+        default:
+            throw DecodingError.dataCorruptedError(forKey: CodingKeys.typeName, in: container, debugDescription: "Expected NotificationCampaignDeliverable – found \(typeName)")
+        }
+    }
+}
+
+struct NotificationAlertOptions: Decodable {
+    let badgeNumber: Bool
+    let notificationCenter: Bool
+    let systemNotification: Bool
+}
+
+enum NotificationAttachmentType : String, Decodable {
+    case audio
+    case image
+    case video
+}
+
+struct iOSNotificationOptions : Decodable {
+    let categoryIdentifier: String?
+    let contentAvailable: Bool?
+    let mutableContent: Bool?
+    let sound: String?
+    let threadIdentifier: String?
+}
+
+struct NotificationAttachment: Decodable {
+    let type: NotificationAttachmentType
+    let url: URL
+}
+
+enum NotificationTapBehaviorType: String, Codable {
+    case default_
+    case openURL
+    case presentExperience
+    case presentWebsite
+    
+    enum CodingKeys: String, CodingKey {
+        case default_ = "default"
+        case openURL
+        case presentExperience
+        case presentWebsite
+    }
+}
+
+struct NotificationTapBehavior: Decodable {
+    let type: NotificationTapBehaviorType
+    let url: URL
+}
+
+struct NotificationCampaignDeliverable: CampaignDeliverable, Decodable {
+    let alertOptions: NotificationAlertOptions
+    let attachment: NotificationAttachment
+    let body: String
+    let title: String?
+    let iOSOptions: iOSNotificationOptions?
+    let tapBehavior: NotificationTapBehavior
+}
+
+struct Campaign : Decodable {
+    let id: String
+    let name: String
+    let status: CampaignStatus
+    let createdAt: Date
+    let updatedAt: Date
+    let deliverable: CampaignDeliverable
+    let trigger: CampaignTrigger
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case name
+        case status
+        case createdAt
+        case updatedAt
+        case deliverable
+        case trigger
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.id = try container.decode(String.self, forKey: .id)
+        self.name = try container.decode(String.self, forKey: .name)
+        self.status = try container.decode(CampaignStatus.self, forKey: .status)
+        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
+        self.updatedAt = try container.decode(Date.self, forKey: .updatedAt)
+        
+        
+        let deliverableType = try container.decode(CampaignDeliverableType.self, forKey: .deliverable)
+        switch deliverableType {
+        case .notification:
+            self.deliverable = try container.decode(NotificationCampaignDeliverable.self, forKey: .deliverable)
+        }
+        
+        let triggerType = try container.decode(CampaignTriggerType.self, forKey: .trigger)
+        switch triggerType {
+        case .automated:
+            self.trigger = try container.decode(AutomatedCampaignTrigger.self, forKey: .trigger)
+        case .scheduled:
+            self.trigger = try container.decode(ScheduledCampaignTrigger.self, forKey: .trigger)
+        }
+    }
+}

@@ -31,7 +31,7 @@ public func assemble(container: Container) {
         
         container.register(LocationManager.self) { resolver in
             return LocationManager(
-                context: resolver.resolve(NSManagedObjectContext.self, name: "location.viewContext")!,
+                context: resolver.resolve(NSManagedObjectContext.self, name: "viewContext")!,
                 eventPipeline: resolver.resolve(EventPipeline.self)!,
                 maxGeofenceRegionsToMonitor: self.maxGeofenceRegionsToMonitor,
                 maxBeaconRegionsToMonitor: self.maxBeaconRegionsToMonitor

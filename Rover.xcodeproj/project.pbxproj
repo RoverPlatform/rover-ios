@@ -86,6 +86,8 @@
 		4976724021A86226006A96A4 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4976723F21A86226006A96A4 /* Event.swift */; };
 		49795DF421C94D6F00AEF684 /* Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A7C209B8CC500E99F9F /* Notification.swift */; };
 		49795DF521C94D6F00AEF684 /* NotificationSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB496F5220DBECD800DF5949 /* NotificationSource.swift */; };
+		497BA67721F78B01003ED346 /* AutomatedCampaign.swift in Sources */ = {isa = PBXBuildFile; fileRef = 497BA67621F78B01003ED346 /* AutomatedCampaign.swift */; };
+		497BA67921F78B12003ED346 /* ScheduledCampaign.swift in Sources */ = {isa = PBXBuildFile; fileRef = 497BA67821F78B12003ED346 /* ScheduledCampaign.swift */; };
 		4988D94921AF4B260050550E /* Attributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1D5DC42107D32C0071928F /* Attributes.swift */; };
 		49A0D09521CC3FCE003FAABD /* UI.OSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A0D09421CC3FCE003FAABD /* UI.OSLog.swift */; };
 		49AFAED421BF006800F1118B /* AttributesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49AFAED321BF006800F1118B /* AttributesTests.swift */; };
@@ -314,6 +316,8 @@
 		4975CBDF21A753A900C2DD18 /* Location.Beacon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.Beacon.swift; sourceTree = "<group>"; };
 		4975CBE121A7547200C2DD18 /* Location.Geofence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.Geofence.swift; sourceTree = "<group>"; };
 		4976723F21A86226006A96A4 /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
+		497BA67621F78B01003ED346 /* AutomatedCampaign.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomatedCampaign.swift; sourceTree = "<group>"; };
+		497BA67821F78B12003ED346 /* ScheduledCampaign.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduledCampaign.swift; sourceTree = "<group>"; };
 		4980D66421307738007267D3 /* Experiences.Barcode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Experiences.Barcode.swift; sourceTree = "<group>"; };
 		49A0D09421CC3FCE003FAABD /* UI.OSLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UI.OSLog.swift; sourceTree = "<group>"; };
 		49AFAED321BF006800F1118B /* AttributesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributesTests.swift; sourceTree = "<group>"; };
@@ -812,6 +816,8 @@
 				DBC3B40F2145C1100096C74E /* Beacon.swift */,
 				DBD73F76213845AC00E7F322 /* Geofence.swift */,
 				4976723F21A86226006A96A4 /* Event.swift */,
+				497BA67621F78B01003ED346 /* AutomatedCampaign.swift */,
+				497BA67821F78B12003ED346 /* ScheduledCampaign.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -2548,6 +2554,7 @@
 				4975CBE321A7550500C2DD18 /* Geofence.swift in Sources */,
 				497550DD21C0821400922C9D /* EventPipeline.swift in Sources */,
 				49D2ED0221C1FAD20043510C /* DeviceInfoProvider.swift in Sources */,
+				497BA67721F78B01003ED346 /* AutomatedCampaign.swift in Sources */,
 				0D53C12121D7F8350072A79F /* Text.swift in Sources */,
 				DB6BE8B0215D433B000A1FDA /* Data.OSLog.swift in Sources */,
 				0D53C11221D7F8350072A79F /* BarcodeBlock.swift in Sources */,
@@ -2564,6 +2571,7 @@
 				0D53C12321D7F8350072A79F /* WebView.swift in Sources */,
 				0D53C11821D7F8350072A79F /* Height.swift in Sources */,
 				0D53C11621D7F8350072A79F /* Color.swift in Sources */,
+				497BA67921F78B12003ED346 /* ScheduledCampaign.swift in Sources */,
 				0D53C11A21D7F8350072A79F /* ImageBlock.swift in Sources */,
 				49E5D80C21A851DF001A1BE3 /* Rover.xcdatamodel in Sources */,
 				0D53C11C21D7F8350072A79F /* Position.swift in Sources */,

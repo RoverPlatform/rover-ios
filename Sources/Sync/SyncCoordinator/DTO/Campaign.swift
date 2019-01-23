@@ -375,7 +375,7 @@ struct NotificationCampaignDeliverable: CampaignDeliverable, Decodable {
     let tapBehavior: NotificationTapBehavior
 }
 
-struct Campaign : Decodable {
+struct CampaignNode : Decodable {
     let id: String
     let name: String
     let status: CampaignStatus

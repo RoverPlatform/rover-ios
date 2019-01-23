@@ -52,6 +52,15 @@ public class SyncAssembler: Assembler {
             return URLSession(configuration: URLSessionConfiguration.default)
         }
         
+        // MARK: Campaigns
+        
+        container.register(CampaignSyncParticipant.self) { resolver in
+            return CampaignSyncParticipant(
+                context: resolver.resolve(NSManagedObjectContext.self, name: "backgroundContext")!,
+                userDefaults: UserDefaults.standard
+            )
+        }
+        
         // MARK: Location
         
         container.register(GeofencesSyncParticipant.self) { (resolver) in
@@ -74,7 +83,10 @@ public class SyncAssembler: Assembler {
     
         syncCoordinator.participants.append(resolver.resolve(GeofencesSyncParticipant.self)!)
         syncCoordinator.participants.append(resolver.resolve(BeaconsSyncParticipant.self)!)
-        syncCoordinator.sync()
-
+        syncCoordinator.participants.append(resolver.resolve(CampaignSyncParticipant.self)!)
+        
+        let assembler = SyncAssembler(options:Geofences|Notifications|Beacons|Campaigns)
+        
+        OptionSet
     }
 }

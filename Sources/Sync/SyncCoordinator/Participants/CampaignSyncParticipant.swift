@@ -43,20 +43,15 @@ class CampaignSyncParticipant: PagingSyncParticipant {
         return SyncRequest(query: SyncQuery.campaigns, values: values)
     }
     
-    func insertObject(from node: Campaign) {
-        
-        // TODO: this is where the DTO to model transform will happen.  Perhaps
-        // factor it out into extension method.
-        
-        // ANDREW START HERE AND MATCH TRIGGER TO CHOOSE TO CREATE AUTOMATEDCAMPAIGN OR SCHEDULEDCAMPAIGN ETC.
-
+    func insertObject(from node: CampaignNode) {
+        Campaign.insertFrom(campaignNode: node, into: self.context)
     }
 }
 
 struct CampaignsSyncResponse: Decodable {
     struct Data: Decodable {
         struct Campaigns: Decodable {
-            var nodes: [Campaign]
+            var nodes: [CampaignNode]
             var pageInfo: PageInfo
         }
         var campaigns: Campaigns
@@ -65,8 +60,24 @@ struct CampaignsSyncResponse: Decodable {
     var data: Data
 }
 
+extension Campaign {
+    
+    static func insertFrom(campaignNode: CampaignNode, into managedObjectContext: NSManagedObjectContext) {
+        let campaign: Campaign
+        switch campaignNode.trigger {
+        case is ScheduledCampaignTrigger:
+            campaign = ScheduledCampaign(context: managedObjectContext)
+        case is AutomatedCampaignTrigger:
+            campaign = AutomatedCampaign(context: managedObjectContext)
+        default:
+            fatalError()
+        }
+    }
+}
+
+
 extension CampaignsSyncResponse: PagingResponse {
-    var nodes: [Campaign]? {
+    var nodes: [CampaignNode]? {
         return data.campaigns.nodes
     }
     

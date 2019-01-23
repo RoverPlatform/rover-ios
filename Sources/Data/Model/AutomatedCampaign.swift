@@ -9,6 +9,6 @@
 import Foundation
 import CoreData
 
-class AutomatedCampaign : NSManagedObject {
+public class AutomatedCampaign : Campaign {
     
 }

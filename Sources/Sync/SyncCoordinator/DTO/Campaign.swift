@@ -35,47 +35,31 @@ enum PredicateType : Decodable {
 }
 
 enum ComparisonPredicateModifier : String, Decodable {
-    case direct
-    case any
-    case all
+    case direct = "DIRECT"
+    case any = "ANY"
+    case all = "ALL"
 }
 
 enum ComparisonPredicateOperator : String, Decodable {
-    case lessThan
-    case lessThanOrEqualTo
-    case greaterThan
-    case greaterThanOrEqualTo
-    case equalTo
-    case notEqualTo
-    case like
-    case beginsWith
-    case endsWith
-    case in_
-    case contains
-    case between
-    case geoWithin
-
-    enum CodingKeys : String, CodingKey {
-        case lessThan
-        case lessThanOrEqualTo
-        case greaterThan
-        case greaterThanOrEqualTo
-        case equalTo
-        case notEqualTo
-        case like
-        case beginsWith
-        case endsWith
-        case in_ = "in"
-        case contains
-        case between
-        case geoWithin
-    }
+    case lessThan = "LESS_THAN"
+    case lessThanOrEqualTo = "LESS_THAN_OR_EQUAL_TO"
+    case greaterThan = "GREATER_THAN"
+    case greaterThanOrEqualTo = "GREATER_THAN_OR_EQUAL_TO"
+    case equalTo = "EQUAL_TO"
+    case notEqualTo = "NOT_EQUAL_TO"
+    case like = "LIKE"
+    case beginsWith = "BEGINS_WITH"
+    case endsWith = "ENDS_WITH"
+    case in_ = "IN"
+    case contains = "CONTAINS"
+    case between = "BETWEEN"
+    case geoWithin = "GEO_WITHIN"
 }
 
 enum CompoundPredicateLogicalType : String, Decodable {
-    case or
-    case and
-    case not
+    case or = "OR"
+    case and = "AND"
+    case not = "NOT"
 }
 
 struct ComparisonPredicate : Predicate, Decodable {
@@ -140,9 +124,9 @@ struct CompoundPredicate : Predicate, Decodable {
 }
 
 enum CampaignStatus : String, Decodable {
-    case draft
-    case published
-    case archived
+    case draft = "DRAFT"
+    case published = "PUBLISHED"
+    case archived = "ARCHIVED"
 }
 
 protocol CampaignTrigger {
@@ -348,17 +332,10 @@ struct NotificationAttachment: Decodable {
 }
 
 enum NotificationTapBehaviorType: String, Codable {
-    case default_
-    case openURL
-    case presentExperience
-    case presentWebsite
-    
-    enum CodingKeys: String, CodingKey {
-        case default_ = "default"
-        case openURL
-        case presentExperience
-        case presentWebsite
-    }
+    case default_ = "DEFAULT"
+    case openURL = "OPEN_URL"
+    case presentExperience = "PRESENT_EXPERIENCE"
+    case presentWebsite = "PRESENT_WEBSITE"
 }
 
 struct NotificationTapBehavior: Decodable {
@@ -368,7 +345,7 @@ struct NotificationTapBehavior: Decodable {
 
 struct NotificationCampaignDeliverable: CampaignDeliverable, Decodable {
     let alertOptions: NotificationAlertOptions
-    let attachment: NotificationAttachment
+    let attachment: NotificationAttachment?
     let body: String
     let title: String?
     let iOSOptions: iOSNotificationOptions?

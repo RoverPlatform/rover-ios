@@ -60,7 +60,7 @@ extension PagingSyncParticipant {
         do {
             return try JSONDecoder.default.decode(Response.self, from: data)
         } catch {
-            os_log("Failed to decode response: %@", log: .sync, type: .error, error.localizedDescription)
+            os_log("Failed to decode response: %@", log: .sync, type: .error, String(describing: error))
             return nil
         }
     }

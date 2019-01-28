@@ -16,7 +16,7 @@ extension Color {
         let alpha = CGFloat(self.alpha)
         return UIColor(red: red, green: green, blue: blue, alpha: alpha)
     }
-    
+
     func uiColor(dimmedBy: Double) -> UIColor {
         let red = CGFloat(self.red) / 255.0
         let green = CGFloat(self.green) / 255.0

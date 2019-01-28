@@ -11,14 +11,14 @@ import os.log
 
 class TicketmasterManager {
     let device: Device
-    
+
     struct Member: Codable {
         var hostID: String
         var teamID: String
     }
-    
+
     var member = PersistedValue<Member>(storageKey: "io.rover.RoverTicketmaster")
-    
+
     init(device: Device) {
         self.device = device
     }
@@ -30,7 +30,7 @@ extension TicketmasterManager: TicketmasterAuthorizer {
     func setCredentials(accountManagerMemberID: String, hostMemberID: String) {
         self.member.value = Member(hostID: hostMemberID, teamID: accountManagerMemberID)
     }
-    
+
     func clearCredentials() {
         self.member.value = nil
         self.device.updateUserInfo { attributes in
@@ -60,7 +60,7 @@ extension TicketmasterManager: SyncParticipant {
         guard let member = self.member.value else {
             return nil
         }
-        
+
         return SyncRequest(
             query: .ticketmaster,
             values: [
@@ -69,19 +69,19 @@ extension TicketmasterManager: SyncParticipant {
             ]
         )
     }
-    
+
     struct Response: Decodable {
         struct Data: Decodable {
             struct Profile: Decodable {
                 var attributes: Attributes?
             }
-            
+
             var ticketmasterProfile: Profile
         }
-        
+
         var data: Data
     }
-    
+
     func saveResponse(_ data: Data) -> SyncResult {
         let response: Response
         do {
@@ -90,15 +90,15 @@ extension TicketmasterManager: SyncParticipant {
             os_log("Failed to decode response: %@", log: .sync, type: .error, error.localizedDescription)
             return .failed
         }
-        
+
         guard let attributes = response.data.ticketmasterProfile.attributes else {
             return .noData
         }
-        
+
         self.device.updateUserInfo {
             $0["ticketmaster"] = attributes
         }
-        
+
         return .newData(nextRequest: nil)
     }
 }

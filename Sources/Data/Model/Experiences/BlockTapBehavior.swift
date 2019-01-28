@@ -49,20 +49,20 @@ extension BlockTapBehavior: Codable {
     private enum CodingKeys: String, CodingKey {
         case typeName = "__typename"
     }
-    
+
     private enum GoToScreenKeys: String, CodingKey {
         case screenID
     }
-    
+
     private enum OpenURLKeys: String, CodingKey {
         case url
         case dismiss
     }
-    
+
     private enum PresentWebsiteKeys: String, CodingKey {
         case url
     }
-    
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let typeName = try container.decode(String.self, forKey: .typeName)
@@ -86,7 +86,7 @@ extension BlockTapBehavior: Codable {
             throw DecodingError.dataCorruptedError(forKey: CodingKeys.typeName, in: container, debugDescription: "Expected one of GoToScreenBlockTapBehavior, NoneBlockTapBehavior, OpenURLBlockTapBehavior or PresentWebsiteBlockTapBehavior – found \(typeName)")
         }
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         switch self {
@@ -108,4 +108,3 @@ extension BlockTapBehavior: Codable {
         }
     }
 }
-

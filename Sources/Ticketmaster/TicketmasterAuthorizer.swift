@@ -8,7 +8,7 @@
 
 /// An API to set and clear Ticketmaster credentials after a user signs in with the [Presence SDK](https://developer.ticketmaster.com/products-and-docs/sdks/presence-sdk/).
 public protocol TicketmasterAuthorizer {
-    
+
     /**
      Set the user's Ticketmaster credentials after a successful sign-in with the [Presence SDK](https://developer.ticketmaster.com/products-and-docs/sdks/presence-sdk/). Implement the `onMemberUpdated(backendName:member:)` method in your `PresenceLoginDelegate` and call this method passing in values from the `PresenceMember`.
      
@@ -30,7 +30,7 @@ public protocol TicketmasterAuthorizer {
      ````
      */
     func setCredentials(accountManagerMemberID: String, hostMemberID: String)
-    
+
     /**
      Clear the user's Ticketmaster credentials after a successful sign-out with the [Presence SDK](https://developer.ticketmaster.com/products-and-docs/sdks/presence-sdk/). Implement the `onLogoutAllSuccessful()` method in your `PresenceLoginDelegate` and call this method.
      

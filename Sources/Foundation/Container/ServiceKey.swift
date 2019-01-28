@@ -9,16 +9,16 @@
 public struct ServiceKey: Hashable, Equatable {
     public var factoryType: ServiceFactory.Type
     public var name: String?
-    
+
     public init(factoryType: ServiceFactory.Type, name: String?) {
         self.factoryType = factoryType
         self.name = name
     }
-    
+
     public var hashValue: Int {
         return ObjectIdentifier(factoryType).hashValue ^ (name?.hashValue ?? 0)
     }
-    
+
     public static func == (lhs: ServiceKey, rhs: ServiceKey) -> Bool {
         return lhs.factoryType == rhs.factoryType && lhs.name == rhs.name
     }

@@ -10,9 +10,9 @@ public class ServiceEntry<T> {
     public let serviceType: T.Type
     public let factory: ServiceFactory
     public let scope: ServiceScope
-    
+
     public var instance: T?
-    
+
     public init(serviceType: T.Type, scope: ServiceScope, factory: ServiceFactory) {
         self.serviceType = serviceType
         self.factory = factory

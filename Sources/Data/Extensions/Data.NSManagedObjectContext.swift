@@ -22,7 +22,7 @@ extension NSManagedObjectContext {
             } else {
                 os_log("Unable to save context. Reason: %s", log: .persistence, type: .error, error.localizedDescription)
             }
-            
+
             self.rollback()
         }
     }

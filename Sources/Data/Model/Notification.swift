@@ -14,14 +14,14 @@ public final class Notification: NSManagedObject {
     @nonobjc public class func fetchRequest() -> NSFetchRequest<Notification> {
         return NSFetchRequest<Notification>(entityName: "Notification")
     }
-    
+
     @NSManaged public var id: UUID
     @NSManaged public var campaignID: String
     @NSManaged public var title: String?
     @NSManaged public var body: String
     @NSManaged public var deliveredAt: Date
     @NSManaged public var isRead: Bool
-    
+
     public override func awakeFromInsert() {
         self.id = UUID()
         super.awakeFromInsert()
@@ -53,32 +53,32 @@ extension Notification {
             assertionFailure("Not associated with a managed object context, cannot mark read.")
             return
         }
-        
+
         self.isRead = true
 
         managedObjectContext.perform {
             managedObjectContext.saveOrRollback()
         }
     }
-    
+
     public func delete() {
         guard let managedObjectContext = self.managedObjectContext else {
             assertionFailure("Not associated with a managed object context, cannot delete.")
             return
         }
-        
+
         managedObjectContext.perform {
             managedObjectContext.delete(self)
             managedObjectContext.saveOrRollback()
         }
     }
-    
+
     public func attemptInsert() {
         guard let managedObjectContext = self.managedObjectContext else {
             assertionFailure("Not associated with a managed object context, cannot insert.")
             return
         }
-        
+
         managedObjectContext.perform {
             managedObjectContext.insert(self)
             managedObjectContext.saveOrRollback()

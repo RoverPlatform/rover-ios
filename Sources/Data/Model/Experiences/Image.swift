@@ -15,7 +15,7 @@ public struct Image: Codable {
     public var size: Int
     public var width: Int
     public var url: URL
-    
+
     public init(height: Int, isURLOptimizationEnabled: Bool, name: String, size: Int, width: Int, url: URL) {
         self.height = height
         self.isURLOptimizationEnabled = isURLOptimizationEnabled

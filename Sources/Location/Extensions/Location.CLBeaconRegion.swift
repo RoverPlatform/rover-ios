@@ -13,15 +13,15 @@ extension CLBeaconRegion {
         var attributes: [String: Any] = [
             "uuid": proximityUUID.uuidString
         ]
-        
+
         if let major = major {
             attributes["major"] = major.intValue
         }
-        
+
         if let minor = minor {
             attributes["minor"] = minor.intValue
         }
-        
+
         return Attributes(rawValue: attributes)
     }
 }

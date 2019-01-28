@@ -15,32 +15,32 @@ public struct Screen: Codable {
 
         public var style: Style
         public var color: Color
-        
+
         public init(style: Style, color: Color) {
             self.style = style
             self.color = color
         }
-        
+
         enum CodingKeys: String, CodingKey {
             case style
             case color
         }
     }
-    
+
     public struct TitleBar: Codable {
         public enum Buttons: String, Codable {
             case close = "CLOSE"
             case back = "BACK"
             case both = "BOTH"
         }
-        
+
         public var backgroundColor: Color
         public var buttons: Buttons
         public var buttonColor: Color
         public var text: String
         public var textColor: Color
         public var useDefaultStyle: Bool
-        
+
         public init(backgroundColor: Color, buttons: Buttons, buttonColor: Color, text: String, textColor: Color, useDefaultStyle: Bool) {
             self.backgroundColor = backgroundColor
             self.buttons = buttons
@@ -50,7 +50,7 @@ public struct Screen: Codable {
             self.useDefaultStyle = useDefaultStyle
         }
     }
-    
+
     public var background: Background
     public var id: String
     public var name: String
@@ -60,7 +60,7 @@ public struct Screen: Codable {
     public var titleBar: TitleBar
     public var keys: [String: String]
     public var tags: [String]
-    
+
     public init(background: Background, id: String, name: String, isStretchyHeaderEnabled: Bool, rows: [Row], statusBar: StatusBar, titleBar: TitleBar, keys: [String: String], tags: [String]) {
         self.background = background
         self.id = id

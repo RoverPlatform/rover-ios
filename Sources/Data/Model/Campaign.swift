@@ -10,5 +10,5 @@ import Foundation
 import CoreData
 
 public class Campaign: NSManagedObject {
-    
+
 }

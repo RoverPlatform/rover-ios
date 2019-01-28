@@ -10,18 +10,18 @@ public struct SyncQuery {
     public struct Argument: Equatable, Hashable {
         public var name: String
         public var type: String
-        
+
         public init(name: String, type: String) {
             self.name = name
             self.type = type
         }
     }
-    
+
     public var name: String
     public var body: String
     public var arguments: [Argument]
     public var fragments: [String]
-    
+
     public init(name: String, body: String, arguments: [Argument], fragments: [String]) {
         self.name = name
         self.body = body
@@ -35,25 +35,25 @@ extension SyncQuery {
         if arguments.isEmpty {
             return nil
         }
-        
+
         return arguments.map({
             "$\(name)\($0.name.capitalized):\($0.type)"
         }).joined(separator: ", ")
     }
-    
+
     var definition: String {
         let expression: String = {
             if arguments.isEmpty {
                 return ""
             }
-            
+
             let signature = arguments.map({
                 "\($0.name):$\(name)\($0.name.capitalized)"
             }).joined(separator: ", ")
-            
+
             return "(\(signature))"
         }()
-        
+
         return """
             \(name)\(expression) {
                 \(body)
@@ -102,7 +102,7 @@ extension SyncQuery {
         ],
         fragments: ["beaconFields"]
     )
-    
+
     static let geofences = SyncQuery(
         name: "geofences",
         body: """

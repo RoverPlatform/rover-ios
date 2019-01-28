@@ -11,10 +11,10 @@ import CoreData
 import os
 
 public class EventPipeline {
-    public var deviceInfoProvider: DeviceInfoProvider? = nil
-    
+    public var deviceInfoProvider: DeviceInfoProvider?
+
     private let managedObjectContext: NSManagedObjectContext
-    
+
     public init(
         managedObjectContext: NSManagedObjectContext
     ) {
@@ -26,16 +26,16 @@ public class EventPipeline {
             os_log("Event added before Device Info Provider set. Dropping event.", log: .events, type: .error)
             return
         }
-        
+
         let event = Event(
             from: eventInfo,
             forDevice: deviceSnapshot,
             inContext: self.managedObjectContext
         )
-        
+
         event.attemptInsert()
     }
-    
+
     /// Register a callback to be fired whenever Events are inserted.
     ///
     /// Note that this returns an opaque chit object that you must retain until you no longer wish the callback to be fired.
@@ -46,10 +46,10 @@ public class EventPipeline {
             guard let insertedObjects = iosNotification.userInfo?[NSInsertedObjectsKey] as? Set<NSObject> else {
                 return
             }
-            
+
             let insertedEvents = insertedObjects
                 .compactMap({ $0 as? Event })
-            
+
             if !insertedEvents.isEmpty {
                 observerCallback(insertedEvents)
             }

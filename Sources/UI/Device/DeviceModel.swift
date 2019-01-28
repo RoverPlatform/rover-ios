@@ -44,7 +44,7 @@ enum DeviceModel {
     case iPad5thGen
     case iPadPro2ndGen
     case iPad6thGen
-    
+
     var description: String {
         switch self {
         case .simulator:
@@ -123,7 +123,7 @@ enum DeviceModel {
             return "iPad 6th Gen"
         }
     }
-    
+
     init?(modelName: String) {
         switch modelName {
         case "x86_64":

@@ -19,22 +19,22 @@ public struct ObserverSet<Parameters> {
         weak var token: NSObjectProtocol?
         let block: (Parameters) -> Void
     }
-    
+
     private var observers = [Observer]()
-    
+
     public init() { }
-    
+
     mutating public func add(block: @escaping (Parameters) -> Void) -> NSObjectProtocol {
         let token = NSObject()
         let observer = Observer(token: token, block: block)
         observers.append(observer)
         return token
     }
-    
+
     mutating public func remove(token: NSObjectProtocol) {
         observers = observers.filter { $0.token !== token }
     }
-    
+
     mutating public func notify(parameters: Parameters) {
         let observers = self.observers.filter { $0.token != nil }
         observers.forEach { $0.block(parameters) }

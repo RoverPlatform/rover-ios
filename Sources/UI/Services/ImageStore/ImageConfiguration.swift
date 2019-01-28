@@ -12,26 +12,26 @@ import Foundation
 public struct ImageConfiguration {
     public let url: URL
     public let optimization: ImageOptimization?
-    
+
     public var optimizedURL: URL {
         guard let optimization = optimization else {
             return url
         }
-        
+
         guard var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
             return url
         }
-        
+
         var temp = urlComponents.queryItems ?? [URLQueryItem]()
         temp += optimization.queryItems
         urlComponents.queryItems = temp
         return urlComponents.url ?? url
     }
-    
+
     public var scale: CGFloat {
         return optimization?.scale ?? 1
     }
-    
+
     public init(url: URL, optimization: ImageOptimization? = nil) {
         self.url = url
         self.optimization = optimization

@@ -31,7 +31,7 @@ extension Barcode {
         }
 
         let data =  text.data(using: String.Encoding.ascii)!
-        
+
         var params: [String: Any] = {
             switch format {
             case .pdf417:
@@ -61,9 +61,9 @@ extension Barcode {
                 ]
             }
         }()
-        
+
         params["inputMessage"] = data
-        
+
         #if swift(>=4.2)
         let filter = CIFilter(name: filterName, parameters: params)!
         #else
@@ -74,9 +74,9 @@ extension Barcode {
             os_log("Unable to render barcode - see logs emitted directly by CIFilter for details", log: .general, type: .error)
             return nil
         }
-        
+
         let context = CIContext.init(options: nil)
-        
+
         let renderedBarcode = context.createCGImage(outputImage, from: outputImage.extent)!
 
         return renderedBarcode

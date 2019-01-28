@@ -14,12 +14,12 @@ extension CLLocation {
             latitude: self.coordinate.latitude,
             longitude: self.coordinate.longitude
         )
-        
+
         let address: AddressSnapshot? = {
             guard let placemark = placemark else {
                 return nil
             }
-            
+
             return AddressSnapshot(
                 street: placemark.thoroughfare,
                 city: placemark.locality,
@@ -31,7 +31,7 @@ extension CLLocation {
                 subLocality: placemark.subLocality
             )
         }()
-        
+
         return LocationSnapshot(
             coordinate: coordinate,
             altitude: self.altitude,

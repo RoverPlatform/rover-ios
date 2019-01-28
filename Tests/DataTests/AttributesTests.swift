@@ -10,7 +10,7 @@ import XCTest
 @testable import RoverData
 
 class AttributesTests: XCTestCase {
-    
+
     let exampleAttributes: [String: Any] = [
         "testInt": 42,
         "anArray": [1, 2, 3, 4],
@@ -19,7 +19,7 @@ class AttributesTests: XCTestCase {
         "testFalseBoolean": false,
         "nestedObject": ["anArray": [1, 2, 3, 4]]
     ]
-    
+
     func verifyDecodedAttributes(attributes: Attributes) {
         XCTAssertEqual(attributes.rawValue["testInt"] as! Int, 42)
         XCTAssertEqual(attributes.rawValue["anArray"] as! [Int], [1, 2, 3, 4])
@@ -28,9 +28,9 @@ class AttributesTests: XCTestCase {
         XCTAssertEqual(attributes.rawValue["testFalseBoolean"] as! Bool, false)
         XCTAssertEqual((attributes.rawValue["nestedObject"] as! Attributes).rawValue["anArray"] as! [Int], [1, 2, 3, 4])
     }
-    
+
     func testInstantiateFromDictionaryLiteral() {
-        let fromLiteral : Attributes = [
+        let fromLiteral: Attributes = [
             "testInt": 42,
             "anArray": [1, 2, 3, 4],
             "testTrueBoolean": true,
@@ -44,10 +44,10 @@ class AttributesTests: XCTestCase {
     func testCodableRoundtrip() throws {
         // use JSONEncoder to test that Codable was synthesized properly.
         let json = try JSONEncoder.default.encode(Attributes(rawValue: exampleAttributes))
-        
+
         do {
             let attributes = try JSONDecoder.default.decode(Attributes.self, from: json)
-            
+
             verifyDecodedAttributes(attributes: attributes)
         } catch {
             // Print the error so the all-important UserInfo is captured:
@@ -55,7 +55,7 @@ class AttributesTests: XCTestCase {
             throw error
         }
     }
-    
+
     func testNSCodingRoundtrip() throws {
         let archiver = NSKeyedArchiver.init(requiringSecureCoding: false)
         let attributes = Attributes(rawValue: exampleAttributes)
@@ -69,9 +69,9 @@ class AttributesTests: XCTestCase {
         let decodedAttributes = dearchiver.decodeObject() as! Attributes
         verifyDecodedAttributes(attributes: decodedAttributes)
     }
-    
+
     // These tests cause assertionFailures(), which is the desired behaviour but cannot currently trapped and asserted in tests.
-    
+
     func testInvalidAttributesWithArrayInDict() throws {
         let exampleBogusAttributesWithObjectInArray: [String: Any] = [
             "invalidArrayWithDict": [ 42: ["dict": 24 ]]
@@ -79,7 +79,7 @@ class AttributesTests: XCTestCase {
 
         XCTAssertTrue(
             Attributes.wasAssertionThrown {
-                let _ = Attributes(rawValue: exampleBogusAttributesWithObjectInArray)
+                _ = Attributes(rawValue: exampleBogusAttributesWithObjectInArray)
             }
         )
     }
@@ -91,7 +91,7 @@ class AttributesTests: XCTestCase {
 
         XCTAssertTrue(
             Attributes.wasAssertionThrown {
-                let _ = Attributes(rawValue: exampleBogusAttributesWithObjectInArray)
+                _ = Attributes(rawValue: exampleBogusAttributesWithObjectInArray)
             }
         )
     }

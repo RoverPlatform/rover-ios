@@ -14,7 +14,7 @@ public struct Row {
     public var name: String
     public var keys: [String: String]
     public var tags: [String]
-    
+
     public init(background: Background, blocks: [Block], height: Height, id: String, name: String, keys: [String: String], tags: [String]) {
         self.background = background
         self.blocks = blocks
@@ -38,7 +38,7 @@ extension Row: Codable {
         case keys
         case tags
     }
-    
+
     enum BlockType: Decodable {
         case barcodeBlock
         case buttonBlock
@@ -46,11 +46,11 @@ extension Row: Codable {
         case rectangleBlock
         case textBlock
         case webViewBlock
-        
+
         enum CodingKeys: String, CodingKey {
             case typeName = "__typename"
         }
-        
+
         init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             let typeName = try container.decode(String.self, forKey: .typeName)
@@ -72,7 +72,7 @@ extension Row: Codable {
             }
         }
     }
-    
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         background = try container.decode(Background.self, forKey: .background)
@@ -81,9 +81,9 @@ extension Row: Codable {
         name = try container.decode(String.self, forKey: .name)
         keys = try container.decode([String: String].self, forKey: .keys)
         tags = try container.decode([String].self, forKey: .tags)
-        
+
         blocks = [Block]()
-        
+
         let blockTypes = try container.decode([BlockType].self, forKey: .blocks)
         var blocksContainer = try container.nestedUnkeyedContainer(forKey: .blocks)
         while !blocksContainer.isAtEnd {
@@ -105,7 +105,7 @@ extension Row: Codable {
             blocks.append(block)
         }
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(background, forKey: .background)
@@ -114,7 +114,7 @@ extension Row: Codable {
         try container.encode(name, forKey: .name)
         try container.encode(keys, forKey: .keys)
         try container.encode(tags, forKey: .tags)
-        
+
         var blocksContainer = container.nestedUnkeyedContainer(forKey: .blocks)
         try blocks.forEach { block in
             switch block {
@@ -139,7 +139,7 @@ extension Row: Codable {
 
 // MARK: Attributes
 
-extension Row  {
+extension Row {
     public var attributes: Attributes {
         return [
             "id": id,

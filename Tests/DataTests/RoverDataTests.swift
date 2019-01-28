@@ -19,18 +19,18 @@ class ExampleNSCodingObject: NSObject, NSCoding {
         myBool = true
         super.init()
     }
-    
+
     init(withDate date: Date?) {
         myField = date
         myBool = true
         super.init()
     }
-    
+
     func encode(with aCoder: NSCoder) {
         aCoder.encode(self.myField, forKey: "myField")
         aCoder.encode(self.myBool, forKey: "myBool")
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         self.myField = aDecoder.decodeObject(forKey: "myField") as? Date
         self.myBool = aDecoder.decodeObject(forKey: "myBool") as? Bool
@@ -42,12 +42,12 @@ class RoverDataTests: XCTestCase {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
-    
+
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
         super.tearDown()
     }
-    
+
     func testNscodingUsage() throws {
         let thingy = ExampleNSCodingObject()
         let archiver = NSKeyedArchiver.init(requiringSecureCoding: false)

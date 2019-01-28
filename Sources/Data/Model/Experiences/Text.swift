@@ -12,7 +12,7 @@ public struct Text: Codable {
         case left = "LEFT"
         case right = "RIGHT"
     }
-    
+
     public struct Font: Codable {
         public enum Weight: String, Codable {
             case ultraLight = "ULTRA_LIGHT"
@@ -25,21 +25,21 @@ public struct Text: Codable {
             case heavy = "HEAVY"
             case black = "BLACK"
         }
-        
+
         public var size: Int
         public var weight: Weight
-        
+
         public init(size: Int, weight: Weight) {
             self.size = size
             self.weight = weight
         }
     }
-    
+
     public var rawValue: String
     public var alignment: Alignment
     public var color: Color
     public var font: Font
-    
+
     public init(rawValue: String, alignment: Alignment, color: Color, font: Font) {
         self.rawValue = rawValue
         self.alignment = alignment

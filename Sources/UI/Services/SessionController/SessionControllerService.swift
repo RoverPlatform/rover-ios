@@ -11,33 +11,33 @@ import UIKit
 class SessionControllerService: SessionController {
     let eventPipeline: EventPipeline
     let keepAliveTime: Int
-    
+
     struct SessionEntry {
         let session: Session
-        
+
         var isUnregistered = false
-        
+
         init(session: Session) {
             self.session = session
         }
     }
-    
+
     var sessions = [String: SessionEntry]()
-    
+
     var didBecomeActiveObserver: NSObjectProtocol!
     var willResignActiveObserver: NSObjectProtocol!
-    
+
     init(eventPipeline: EventPipeline, keepAliveTime: Int) {
         self.eventPipeline = eventPipeline
         self.keepAliveTime = keepAliveTime
-        
+
         #if swift(>=4.2)
         self.didBecomeActiveObserver = NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: OperationQueue.main) { [weak self] _ in
             self?.sessions.forEach {
                 $0.value.session.start()
             }
         }
-        
+
         self.willResignActiveObserver = NotificationCenter.default.addObserver(forName: UIApplication.willResignActiveNotification, object: nil, queue: OperationQueue.main) { [weak self] _ in
             self?.sessions.forEach {
                 $0.value.session.end()
@@ -49,7 +49,7 @@ class SessionControllerService: SessionController {
                 $0.value.session.start()
             }
         }
-        
+
         self.willResignActiveObserver = NotificationCenter.default.addObserver(forName: .UIApplicationWillResignActive, object: nil, queue: OperationQueue.main) { [weak self] _ in
             self?.sessions.forEach {
                 $0.value.session.end()
@@ -57,37 +57,37 @@ class SessionControllerService: SessionController {
         }
         #endif
     }
-    
+
     deinit {
         NotificationCenter.default.removeObserver(didBecomeActiveObserver)
         NotificationCenter.default.removeObserver(willResignActiveObserver)
     }
-    
+
     func registerSession(identifier: String, completionHandler: @escaping (Double) -> EventInfo) {
         if var entry = sessions[identifier] {
             entry.session.start()
-            
+
             if entry.isUnregistered {
                 entry.isUnregistered = false
                 sessions[identifier] = entry
             }
-            
+
             return
         }
-        
+
         let session = Session(keepAliveTime: keepAliveTime) { [weak self] result in
             let event = completionHandler(result.duration)
             self?.eventPipeline.addEvent(event)
-            
+
             if let entry = self?.sessions[identifier], entry.isUnregistered {
                 self?.sessions[identifier] = nil
             }
         }
-        
+
         session.start()
         sessions[identifier] = SessionEntry(session: session)
     }
-    
+
     func unregisterSession(identifier: String) {
         if var entry = sessions[identifier] {
             entry.isUnregistered = true

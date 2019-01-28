@@ -10,7 +10,7 @@ import XCTest
 @testable import RoverData
 
 class DeviceSnapshotTests: XCTestCase {
-    
+
     let exampleComprehensiveDevice = DeviceSnapshot(
         advertisingIdentifier: "ad id",
         isBluetoothEnabled: nil,
@@ -72,7 +72,7 @@ class DeviceSnapshotTests: XCTestCase {
             ]
         )
     )
-    
+
     func verifyDecodedSnapshot(decodedDeviceSnapshot: DeviceSnapshot) {
         XCTAssertEqual(decodedDeviceSnapshot.advertisingIdentifier, "ad id")
         XCTAssertEqual(decodedDeviceSnapshot.isBluetoothEnabled, nil)
@@ -123,7 +123,7 @@ class DeviceSnapshotTests: XCTestCase {
         XCTAssertEqual((decodedDeviceSnapshot.userInfo?.rawValue["testFalseBoolean"]) as! Bool, false)
         XCTAssertEqual(((decodedDeviceSnapshot.userInfo?.rawValue["nestedObject"]) as! Attributes).rawValue["anArray"] as! [Int], [1, 2, 3, 4])
     }
-    
+
     func testDeviceSnapshotNSCodingRoundtrip() throws {
         let archiver = NSKeyedArchiver.init(requiringSecureCoding: false)
         archiver.encodeRootObject(exampleComprehensiveDevice)
@@ -136,14 +136,14 @@ class DeviceSnapshotTests: XCTestCase {
         let decodedDeviceSnapshot = dearchiver.decodeObject() as! DeviceSnapshot
         verifyDecodedSnapshot(decodedDeviceSnapshot: decodedDeviceSnapshot)
     }
-    
+
     func testDeviceSnapshotCodableRoundtrip() throws {
         // use JSONEncoder to test that Codable was synthesized properly.
         let json = try JSONEncoder.default.encode(exampleComprehensiveDevice)
-        
+
         do {
             let decodedDeviceSnapshot = try JSONDecoder.default.decode(DeviceSnapshot.self, from: json)
-            
+
             verifyDecodedSnapshot(decodedDeviceSnapshot: decodedDeviceSnapshot)
         } catch {
             // Print the error so the all-important UserInfo is captured:

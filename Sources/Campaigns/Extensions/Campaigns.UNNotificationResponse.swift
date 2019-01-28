@@ -15,15 +15,15 @@ extension UNNotificationResponse {
         guard let data = try? JSONSerialization.data(withJSONObject: self.notification.request.content.userInfo, options: []) else {
             return nil
         }
-        
+
         struct Payload: Decodable {
             struct Rover: Decodable {
                 // TODO: a campaign will go here, if anything.
             }
-            
+
             var rover: Rover
         }
-        
+
         // TODO: replace once again with decoding the campaign.
         return RoverData.Notification()
     }

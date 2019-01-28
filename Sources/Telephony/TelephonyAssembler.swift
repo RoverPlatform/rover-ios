@@ -8,9 +8,9 @@
 
 public class TelephonyAssembler: Assembler {
     public init() { }
-    
+
     public func assemble(container: Container) {
-        container.register(TelephonyInfoProvider.self) { resolver in
+        container.register(TelephonyInfoProvider.self) { _ in
             return TelephonyManager()
         }
     }

@@ -13,7 +13,7 @@ public struct Position: Codable {
         case right(offset: Double, width: Double)
         case fill(leftOffset: Double, rightOffset: Double)
     }
-    
+
     public enum VerticalAlignment {
         case bottom(offset: Double, height: Height)
         case middle(offset: Double, height: Height)
@@ -21,7 +21,7 @@ public struct Position: Codable {
         case stacked(topOffset: Double, bottomOffset: Double, height: Height)
         case top(offset: Double, height: Height)
     }
-    
+
     public var horizontalAlignment: HorizontalAlignment
     public var verticalAlignment: VerticalAlignment
 }
@@ -36,7 +36,7 @@ extension Position.HorizontalAlignment: Codable {
         case leftOffset
         case rightOffset
     }
-    
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let typeName = try container.decode(String.self, forKey: .typeName)
@@ -61,7 +61,7 @@ extension Position.HorizontalAlignment: Codable {
             throw DecodingError.dataCorruptedError(forKey: CodingKeys.typeName, in: container, debugDescription: "Expected on of HorizontalAlignmentCenter, HorizontalAlignmentLeft, HorizontalAlignmentRight or HorizontalAlignmentFill - found \(typeName)")
         }
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         let typeName: String
@@ -97,7 +97,7 @@ extension Position.VerticalAlignment: Codable {
         case topOffset
         case bottomOffset
     }
-    
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let typeName = try container.decode(String.self, forKey: .typeName)
@@ -127,7 +127,7 @@ extension Position.VerticalAlignment: Codable {
             throw DecodingError.dataCorruptedError(forKey: CodingKeys.typeName, in: container, debugDescription: "Expected on of VerticalAlignmentBottom, VerticalAlignmentMiddle, VerticalAlignmentFill, VerticalAlignmentStacked or VerticalAlignmentTop - found \(typeName)")
         }
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         let typeName: String
@@ -154,7 +154,7 @@ extension Position.VerticalAlignment: Codable {
             try container.encode(offset, forKey: .offset)
             try container.encode(height, forKey: .height)
         }
-        
+
         try container.encode(typeName, forKey: .typeName)
     }
 }

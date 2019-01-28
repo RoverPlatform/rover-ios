@@ -13,7 +13,7 @@ public struct CampaignsAssembler {
     public var influenceTime: Int
     public var isInfluenceTrackingEnabled: Bool
     public var appGroup: String?
-    
+
     public init(isInfluenceTrackingEnabled: Bool = true, influenceTime: Int = 120, appGroup: String? = nil) {
         self.isInfluenceTrackingEnabled = isInfluenceTrackingEnabled
         self.influenceTime = influenceTime
@@ -21,10 +21,10 @@ public struct CampaignsAssembler {
     }
 }
 
-extension CampaignsAssembler : Assembler {
+extension CampaignsAssembler: Assembler {
     public func assemble(container: Container) {
         // MARK: InfluenceTracker
-        
+
         container.register(InfluenceTracker.self) { resolver in
             return InfluenceTrackerService(
                 influenceTime: self.influenceTime,
@@ -33,14 +33,14 @@ extension CampaignsAssembler : Assembler {
                 userDefaults: UserDefaults(suiteName: self.appGroup)!
             )
         }
-        
+
         // MARK: NotificationHandler
-        
+
         container.register(NotificationHandler.self) { resolver in
             let websiteViewControllerProvider: NotificationCenterViewController.WebsiteViewControllerProvider = { [weak resolver] url in
                 return resolver?.resolve(UIViewController.self, name: "website", arguments: url)!
             }
-            
+
             return NotificationHandlerService(
                 influenceTracker: resolver.resolve(InfluenceTracker.self)!,
                 eventPipeline: resolver.resolve(EventPipeline.self)!,
@@ -48,7 +48,7 @@ extension CampaignsAssembler : Assembler {
             )
         }
     }
-    
+
     public func containerDidAssemble(resolver: Resolver) {
         if isInfluenceTrackingEnabled {
             let influenceTracker = resolver.resolve(InfluenceTracker.self)!

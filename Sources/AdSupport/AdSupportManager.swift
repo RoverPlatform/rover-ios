@@ -10,7 +10,7 @@ import AdSupport
 
 class AdSupportManager {
     let identifierManager = ASIdentifierManager.shared()
-    
+
     init() { }
 }
 
@@ -19,7 +19,7 @@ extension AdSupportManager: AdSupportInfoProvider {
         guard self.identifierManager.isAdvertisingTrackingEnabled else {
             return nil
         }
-        
+
         return self.identifierManager.advertisingIdentifier.uuidString
     }
 }

@@ -16,7 +16,7 @@ public struct Barcode: Codable {
 
     public var text: String
     public var format: Format
-    
+
     public init(text: String, format: Format) {
         self.text = text
         self.format = format

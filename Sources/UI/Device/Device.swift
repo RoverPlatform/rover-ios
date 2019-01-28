@@ -16,9 +16,9 @@ open class Device {
     public let bluetoothInfoProvider: BluetoothInfoProvider?
     public let telephonyInfoProvider: TelephonyInfoProvider?
     public let locationInfoProvider: LocationInfoProvider?
-    
+
     let reachability = Reachability(hostname: "google.com")!
-    
+
     public init(
         adSupportInfoProvider: AdSupportInfoProvider?,
         bluetoothInfoProvider: BluetoothInfoProvider?,
@@ -30,7 +30,7 @@ open class Device {
         self.telephonyInfoProvider = telephonyInfoProvider
         self.locationInfoProvider = locationInfoProvider
     }
-    
+
     public var snapshot: DeviceSnapshot {
         return DeviceSnapshot(
             advertisingIdentifier: self.advertisingIdentifier,
@@ -66,13 +66,13 @@ open class Device {
             userInfo: self.userInfo
         )
     }
-    
+
     open private(set) var pushToken: PushTokenSnapshot? {
         get {
             guard let data = UserDefaults.standard.data(forKey: "io.rover.RoverData.pushToken") else {
                 return nil
             }
-            
+
             do {
                 return try JSONDecoder.default.decode(PushTokenSnapshot.self, from: data)
             } catch {
@@ -89,33 +89,33 @@ open class Device {
             }
         }
     }
-    
+
     // MARK: Locale
-    
+
     open var localeLanguage: String? {
         return Locale.current.languageCode
     }
-    
+
     open var localeRegion: String? {
         return Locale.current.regionCode
     }
-    
+
     open var localeScript: String? {
         return Locale.current.scriptCode
     }
-    
+
     // MARK: Telephony
-    
+
     open var isCellularEnabled: Bool {
         return self.reachability.isReachableViaWWAN
     }
-    
+
     open var isWifiEnabled: Bool {
         return self.reachability.isReachableViaWiFi
     }
-    
+
     // MARK: Statics
-    
+
     open var appBadgeNumber: Int {
         if Thread.isMainThread {
             return UIApplication.shared.applicationIconBadgeNumber
@@ -125,19 +125,19 @@ open class Device {
             }
         }
     }
-    
+
     open var appBuild: String {
         return Bundle.main.infoDictionary!["CFBundleVersion"] as! String
     }
-    
+
     open var appIdentifier: String {
         return Bundle.main.bundleIdentifier!
     }
-    
+
     open var appVersion: String {
         return Bundle.main.infoDictionary!["CFBundleShortVersionString"] as! String
     }
-    
+
     open var buildEnvironment: BuildEnvironment {
         #if targetEnvironment(simulator)
         return .simulator
@@ -146,35 +146,35 @@ open class Device {
             os_log("Provisioning profile not found", log: .general, type: .error)
             return .production
         }
-        
+
         guard let embeddedProfile = try? String(contentsOfFile: path, encoding: String.Encoding.ascii) else {
             os_log("Failed to read provisioning profile at path: %@", log: .general, type: .error, path)
             return .production
         }
-        
+
         let scanner = Scanner(string: embeddedProfile)
         var string: NSString?
-        
+
         guard scanner.scanUpTo("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", into: nil), scanner.scanUpTo("</plist>", into: &string) else {
             os_log("Unrecognized provisioning profile structure", log: .general, type: .error)
             return .production
         }
-        
+
         guard let data = string?.appending("</plist>").data(using: String.Encoding.utf8) else {
             os_log("Failed to decode provisioning profile", log: .general, type: .error)
             return .production
         }
-        
+
         guard let plist = (try? PropertyListSerialization.propertyList(from: data, options: [], format: nil)) as? [String: Any] else {
             os_log("Failed to serialize provisioning profile", log: .general, type: .error)
             return .production
         }
-        
+
         guard let entitlements = plist["Entitlements"] as? [String: Any], let apsEnvironment = entitlements["aps-environment"] as? String else {
             os_log("No entry for \"aps-environment\" found in Entitlements – defaulting to production", log: .general, type: .info)
             return .production
         }
-        
+
         switch apsEnvironment {
         case "production":
             return .production
@@ -186,15 +186,15 @@ open class Device {
         }
         #endif
     }
-    
+
     open var deviceIdentifier: String {
         return UIDevice.current.identifierForVendor!.uuidString
     }
-    
+
     open var deviceManufacturer: String {
         return "Apple"
     }
-    
+
     open var deviceModel: String {
         var systemInfo = utsname()
         uname(&systemInfo)
@@ -204,69 +204,69 @@ open class Device {
                 String(cString: UnsafePointer<CChar>($0))
             }
         }
-        
+
         guard let modelName = String(validatingUTF8: modelCode) else {
             fatalError("Invalid data")
         }
-        
+
         guard let deviceModel = DeviceModel(modelName: modelName) else {
             os_log("Unknown model name: %@", log: .general, type: .error, modelName)
             return modelName
         }
-        
+
         return deviceModel.description
     }
-    
+
     open var deviceName: String {
         return UIDevice.current.name
     }
-    
+
     open var operatingSystemName: String {
         return UIDevice.current.systemName
     }
-    
+
     open var operatingSystemVersion: String {
         return UIDevice.current.systemVersion
     }
-    
+
     open var screenHeight: Int {
         return Int(UIScreen.main.bounds.height)
     }
-    
+
     open var screenWidth: Int {
         return Int(UIScreen.main.bounds.width)
     }
-    
+
     open var sdkVersion: String {
         let bundle: Bundle = {
             if let bundle = Bundle(identifier: "io.rover.RoverFoundation") {
                 return bundle
             }
-            
+
             if let bundle = Bundle(identifier: "org.cocoapods.RoverKit") {
                 return bundle
             }
-            
+
             fatalError("No bundle found with identifier io.rover.RoverFoundation or org.cocoapods.RoverKit")
         }()
-        
+
         return bundle.infoDictionary!["CFBundleShortVersionString"] as! String
     }
-    
+
     // MARK: Time Zone
-    
+
     open var timeZone: String {
         return (NSTimeZone.local as NSTimeZone).name
     }
-    
+
     // MARK: User Info
-    
+
     open private(set) var userInfo: Attributes? {
         get {
             guard let data = UserDefaults.standard.data(forKey: "io.rover.RoverData.userInfo") else {
                 return nil
             }
-            
+
             do {
                 return try JSONDecoder.default.decode(Attributes.self, from: data)
             } catch {
@@ -283,9 +283,9 @@ open class Device {
             }
         }
     }
-    
+
     // MARK: Notifications Authorization
-    
+
     open var notificationAuthorization: String {
         // Refresh status next time snapshot is created.
         UNUserNotificationCenter.current().getNotificationSettings { settings in
@@ -294,12 +294,12 @@ open class Device {
                 forKey: "io.rover.RoverNotifications.authorizationStatus"
             )
         }
-        
+
         let authorizationStatus = UNAuthorizationStatus(
             // if value not yet set, then UserDefaults.standard returns 0, which conveniently maps to .notDetermined.
             rawValue: UserDefaults.standard.integer(forKey: "io.rover.RoverNotifications.authorizationStatus")
         ) ?? .notDetermined
-        
+
         #if swift(>=4.2)
         switch authorizationStatus {
         case .authorized:
@@ -322,9 +322,9 @@ open class Device {
         }
         #endif
     }
-    
+
     // MARK: Debug Test Device
-    
+
     open private(set) var isTestDevice: Bool {
         get {
             return UserDefaults.standard.bool(forKey: "io.rover.RoverData.userInfo")
@@ -335,64 +335,64 @@ open class Device {
     }
 
     // MARK: Token
-    
+
     open func setToken(_ data: Data) {
         self.pushToken = PushTokenSnapshot(
             value: data.map { String(format: "%02.2hhx", $0) }.joined(),
             timestamp: Date()
         )
     }
-    
+
     // MARK: Ad Support
-    
+
     open var advertisingIdentifier: String? {
         return self.adSupportInfoProvider?.advertisingIdentifier
     }
-    
+
     // MARK: Telephony
-    
+
     open var carrierName: String? {
         return self.telephonyInfoProvider?.carrierName
     }
-    
+
     open var radio: String? {
         return self.telephonyInfoProvider?.radio
     }
-    
+
     // MARK: Bluetooth
-    
+
     open var isBluetoothEnabled: Bool? {
         return bluetoothInfoProvider?.isBluetoothEnabled
     }
-    
+
     // MARK: Location
-    
+
     open var location: LocationSnapshot? {
         return locationInfoProvider?.location
     }
-    
+
     open var locationAuthorization: String? {
         return locationInfoProvider?.locationAuthorization
     }
-    
+
     open var isLocationServicesEnabled: Bool? {
         return locationInfoProvider?.isLocationServicesEnabled
     }
-    
+
     // MARK: User Info
-    
+
     open func updateUserInfo(block: (inout [String: Any]) -> Void) {
         var userInfo = self.userInfo?.rawValue ?? [:]
         block(&userInfo)
         self.userInfo = Attributes(rawValue: userInfo)
     }
-    
+
     open func clearUserInfo() {
         UserDefaults.standard.set(nil, forKey: "io.rover.RoverData.userInfo")
     }
 }
 
-extension Device : DeviceInfoProvider {
+extension Device: DeviceInfoProvider {
     public var deviceSnapshot: DeviceSnapshot {
         return self.snapshot
     }

@@ -9,7 +9,7 @@
 public struct PageInfo: Codable {
     public var endCursor: String?
     public var hasNextPage: Bool
-    
+
     public init(endCursor: String?, hasNextPage: Bool) {
         self.endCursor = endCursor
         self.hasNextPage = hasNextPage

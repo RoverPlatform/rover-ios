@@ -11,7 +11,7 @@ public struct Insets: Codable {
     public var left: Int
     public var right: Int
     public var top: Int
-    
+
     public init(bottom: Int, left: Int, right: Int, top: Int) {
         self.bottom = bottom
         self.left = left

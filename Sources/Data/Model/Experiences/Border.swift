@@ -10,7 +10,7 @@ public struct Border: Codable {
     public var color: Color
     public var radius: Int
     public var width: Int
-    
+
     public init(color: Color, radius: Int, width: Int) {
         self.color = color
         self.radius = radius

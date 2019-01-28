@@ -19,23 +19,23 @@ extension HTTPResult {
             self = .error(error: error, isRetryable: true)
             return
         }
-        
+
         guard let httpResponse = urlResponse as? HTTPURLResponse else {
             self = .error(error: error, isRetryable: true)
             return
         }
-        
+
         if httpResponse.statusCode != 200 {
             let error = HTTPError.invalidStatusCode(statusCode: httpResponse.statusCode)
             self = .error(error: error, isRetryable: false)
             return
         }
-        
+
         guard var data = data else {
             self = .error(error: HTTPError.emptyResponseData, isRetryable: true)
             return
         }
-        
+
         if data.isGzipped {
             do {
                 try data = data.gunzipped()
@@ -44,7 +44,7 @@ extension HTTPResult {
                 return
             }
         }
-        
+
         self = .success(data: data)
     }
 }

@@ -14,7 +14,7 @@ public struct Experience {
     public var screens: [Screen]
     public var keys: [String: String]
     public var tags: [String]
-    
+
     public init(id: String, name: String, campaignID: String?, homeScreen: Screen, screens: [Screen], keys: [String: String], tags: [String]) {
         self.id = id
         self.name = name
@@ -38,7 +38,7 @@ extension Experience: Codable {
         case keys
         case tags
     }
-    
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(String.self, forKey: .id)
@@ -47,16 +47,16 @@ extension Experience: Codable {
         screens = try container.decode([Screen].self, forKey: .screens)
         keys = try container.decode([String: String].self, forKey: .keys)
         tags = try container.decode([String].self, forKey: .tags)
-        
+
         let homeScreenID = try container.decode(String.self, forKey: .homeScreenID)
-        
+
         guard let homeScreen = screens.first(where: { $0.id == homeScreenID }) else {
             throw DecodingError.dataCorruptedError(forKey: .homeScreenID, in: container, debugDescription: "No screen found with homeScreenID \(homeScreenID)")
         }
-        
+
         self.homeScreen = homeScreen
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(self.id, forKey: .id)
@@ -79,11 +79,11 @@ extension Experience {
             "keys": keys,
             "tags": tags
         ]
-        
+
         if let campaignID = campaignID {
             attributes["campaignID"] = campaignID
         }
-        
+
         return Attributes(rawValue: attributes)
     }
 }

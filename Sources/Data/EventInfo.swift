@@ -11,10 +11,10 @@ import Foundation
 public struct EventInfo {
     public let name: String
     public let namespace: String?
-    
+
     public let attributes: Attributes?
     public let timestamp: Date?
-    
+
     public init(name: String, namespace: String? = nil, attributes: Attributes? = nil, timestamp: Date? = nil) {
         self.name = name
         self.namespace = namespace

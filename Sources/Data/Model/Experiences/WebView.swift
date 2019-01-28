@@ -11,7 +11,7 @@ import Foundation
 public struct WebView: Codable {
     public var isScrollingEnabled: Bool
     public var url: URL
-    
+
     public init(isScrollingEnabled: Bool, url: URL) {
         self.isScrollingEnabled = isScrollingEnabled
         self.url = url

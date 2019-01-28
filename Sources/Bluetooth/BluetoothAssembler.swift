@@ -10,13 +10,13 @@ import CoreBluetooth
 
 public class BluetoothAssembler: Assembler {
     let showPowerAlertKey: Bool
-    
+
     public init(showPowerAlertKey: Bool = false) {
         self.showPowerAlertKey = showPowerAlertKey
     }
-    
+
     public func assemble(container: Container) {
-        container.register(BluetoothInfoProvider.self) { resolver in
+        container.register(BluetoothInfoProvider.self) { _ in
             return BluetoothManager(showPowerAlertKey: self.showPowerAlertKey)
         }
     }

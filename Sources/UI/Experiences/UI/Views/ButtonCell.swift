@@ -10,21 +10,21 @@ import UIKit
 
 open class ButtonCell: BlockCell {
     public let label = UILabel()
-    
+
     open override var content: UIView? {
         return label
     }
-    
+
     open override func configure(with block: Block, imageStore: ImageStore) {
         super.configure(with: block, imageStore: imageStore)
-        
+
         guard let buttonBlock = block as? ButtonBlock else {
             label.isHidden = true
             return
         }
-        
+
         label.isHidden = false
-        
+
         let text = buttonBlock.text
         label.highlightedTextColor = text.color.uiColor.withAlphaComponent(0.5 * text.color.uiColor.cgColor.alpha)
         label.text = text.rawValue

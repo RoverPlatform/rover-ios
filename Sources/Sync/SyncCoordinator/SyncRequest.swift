@@ -9,7 +9,7 @@
 public struct SyncRequest {
     public var query: SyncQuery
     public var variables: Attributes
-    
+
     // TODO change this to Attributes?
     public init(query: SyncQuery, values: [String: Any]) {
         self.query = query

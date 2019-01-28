@@ -30,30 +30,30 @@ public enum ImageOptimization {
             let y = (originalSize.height - height) / 2
             let value = [x.paramValue, y.paramValue, width.paramValue, height.paramValue].joined(separator: ",")
             var queryItems = [URLQueryItem(name: "rect", value: value)]
-            
+
             if UIScreen.main.scale < originalScale {
                 let w = width / originalScale * UIScreen.main.scale
                 let h = height / originalScale * UIScreen.main.scale
                 queryItems.append(contentsOf: [URLQueryItem(name: "w", value: w.paramValue), URLQueryItem(name: "h", value: h.paramValue)])
             }
-            
+
             return queryItems
         case .tile(let bounds, let originalSize, let originalScale):
             let width = min(bounds.width * originalScale, originalSize.width)
             let height = min(bounds.height * originalScale, originalSize.height)
             let value = ["0", "0", width.paramValue, height.paramValue].joined(separator: ",")
             var queryItems = [URLQueryItem(name: "rect", value: value)]
-            
+
             if UIScreen.main.scale < originalScale {
                 let w = width / originalScale * UIScreen.main.scale
                 let h = height / originalScale * UIScreen.main.scale
                 queryItems.append(contentsOf: [URLQueryItem(name: "w", value: w.paramValue), URLQueryItem(name: "h", value: h.paramValue)])
             }
-            
+
             return queryItems
         }
     }
-    
+
     var scale: CGFloat {
         switch self {
         case .original(_, _, let originalScale):
@@ -64,7 +64,7 @@ public enum ImageOptimization {
             return 1
         }
     }
-    
+
     case fill(bounds: CGRect)
     case fit(bounds: CGRect)
     case stretch(bounds: CGRect, originalSize: CGSize)

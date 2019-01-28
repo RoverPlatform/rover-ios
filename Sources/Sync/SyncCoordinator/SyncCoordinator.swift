@@ -10,7 +10,7 @@ import UIKit
 
 public protocol SyncCoordinator: class {
     var participants: [SyncParticipant] { get set }
-    
+
     func sync()
     func sync(completionHandler: @escaping () -> Void)
     func sync(completionHandler: @escaping (UIBackgroundFetchResult) -> Void)
@@ -20,7 +20,7 @@ extension SyncCoordinator {
     public func sync() {
         self.sync { _ in }
     }
-    
+
     public func sync(completionHandler: @escaping () -> Void) {
         self.sync { _ in
             completionHandler()

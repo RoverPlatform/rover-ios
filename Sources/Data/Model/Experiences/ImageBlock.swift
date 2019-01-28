@@ -18,7 +18,7 @@ public struct ImageBlock: Block {
     public var tapBehavior: BlockTapBehavior
     public var keys: [String: String]
     public var tags: [String]
-    
+
     public init(background: Background, border: Border, id: String, name: String, image: Image, insets: Insets, opacity: Double, position: Position, tapBehavior: BlockTapBehavior, keys: [String: String], tags: [String]) {
         self.background = background
         self.border = border
@@ -32,7 +32,7 @@ public struct ImageBlock: Block {
         self.keys = keys
         self.tags = tags
     }
-    
+
     private enum CodingKeys: String, CodingKey {
         case typeName = "__typename"
         case background
@@ -47,7 +47,7 @@ public struct ImageBlock: Block {
         case tags
         case image
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode("ImageBlock", forKey: .typeName)
@@ -63,7 +63,7 @@ public struct ImageBlock: Block {
         try container.encode(tags, forKey: .tags)
         try container.encode(image, forKey: .image)
     }
-    
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.background = try container.decode(Background.self, forKey: .background)

@@ -12,25 +12,25 @@ import os
 
 class NotificationHandlerService: NotificationHandler {
     let influenceTracker: InfluenceTracker
-    
+
     public typealias WebsiteViewControllerProvider = (URL) -> UIViewController?
     public let websiteViewControllerProvider: WebsiteViewControllerProvider
-    
+
     let eventPipeline: EventPipeline
-    
+
     init(influenceTracker: InfluenceTracker, eventPipeline: EventPipeline, websiteViewControllerProvider: @escaping WebsiteViewControllerProvider) {
         self.influenceTracker = influenceTracker
         self.eventPipeline = eventPipeline
         self.websiteViewControllerProvider = websiteViewControllerProvider
     }
-    
+
     func handle(_ response: UNNotificationResponse) -> Bool {
         // The app was opened directly from a push notification. Clear the last received
         // notification from the influence tracker so we don't erroneously track an influenced open.
         influenceTracker.clearLastReceivedNotification()
-        
+
         // TODO: all this is is changing with Campaigns.
-        
+
 //        guard let notification = response.roverNotification else {
 //            return false
 //        }
@@ -59,7 +59,7 @@ class NotificationHandlerService: NotificationHandler {
 //
 //        let eventInfo = notification.openedEvent(source: .pushNotification)
 //        eventPipeline.addEvent(eventInfo)
-        
+
         return true
     }
 }

@@ -17,19 +17,19 @@ open class TextCell: BlockCell {
         textView.textContainerInset = UIEdgeInsets.zero
         return textView
     }()
-    
+
     open override var content: UIView? {
         return textView
     }
-    
+
     open override func configure(with block: Block, imageStore: ImageStore) {
         super.configure(with: block, imageStore: imageStore)
-        
+
         guard let textBlock = block as? TextBlock else {
             textView.isHidden = true
             return
         }
-        
+
         textView.isHidden = false
         textView.attributedText = textBlock.text.attributedText
     }

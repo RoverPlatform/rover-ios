@@ -11,7 +11,7 @@ import CoreBluetooth
 class BluetoothManager: NSObject {
     let centralManager: CBCentralManager
     let isEnabled = PersistedValue<Bool>(storageKey: "io.rover.RoverBluetooth.isEnabled")
-        
+
     init(showPowerAlertKey: Bool) {
         let showPowerAlertValue: NSNumber = showPowerAlertKey ? 1 : 0
         let options: [String: Any] = [CBCentralManagerOptionShowPowerAlertKey: showPowerAlertValue]

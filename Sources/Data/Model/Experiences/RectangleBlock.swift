@@ -17,7 +17,7 @@ public struct RectangleBlock: Block {
     public var tapBehavior: BlockTapBehavior
     public var keys: [String: String]
     public var tags: [String]
-    
+
     public init(background: Background, border: Border, id: String, name: String, insets: Insets, opacity: Double, position: Position, tapBehavior: BlockTapBehavior, keys: [String: String], tags: [String]) {
         self.background = background
         self.border = border
@@ -30,7 +30,7 @@ public struct RectangleBlock: Block {
         self.keys = keys
         self.tags = tags
     }
-    
+
     private enum CodingKeys: String, CodingKey {
         case typeName = "__typename"
         case background = "background"
@@ -44,7 +44,7 @@ public struct RectangleBlock: Block {
         case keys = "keys"
         case tags = "tags"
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode("RectangleBlock", forKey: .typeName)
@@ -59,7 +59,7 @@ public struct RectangleBlock: Block {
         try container.encode(keys, forKey: .keys)
         try container.encode(tags, forKey: .tags)
     }
-    
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.background = try container.decode(Background.self, forKey: .background)

@@ -14,37 +14,37 @@ class ScreenLayoutAttributes: UICollectionViewLayoutAttributes {
      * this item should be placed.
      */
     var referenceFrame = CGRect.zero
-    
+
     #if swift(>=4.2)
     var verticalAlignment = UIControl.ContentVerticalAlignment.top
     #else
     var verticalAlignment = UIControlContentVerticalAlignment.top
     #endif
-    
+
     /**
      * An optional clip area, in the coordinate space of the block view itself (ie., top left of the view
      * is origin).
      */
     var clipRect: CGRect? = CGRect.zero
-    
+
     override func copy(with zone: NSZone? = nil) -> Any {
         let copy = super.copy(with: zone)
-        
+
         guard let attributes = copy as? ScreenLayoutAttributes else {
             return copy
         }
-        
+
         attributes.referenceFrame = referenceFrame
         attributes.verticalAlignment = verticalAlignment
         attributes.clipRect = clipRect
         return attributes
     }
-    
+
     override func isEqual(_ object: Any?) -> Bool {
         guard let rhs = object as? ScreenLayoutAttributes else {
             return false
         }
-        
+
         return super.isEqual(object) && referenceFrame == rhs.referenceFrame && verticalAlignment == rhs.verticalAlignment && clipRect == rhs.clipRect
     }
 }

@@ -11,33 +11,33 @@ import os.log
 
 public class Rover {
     static var sharedInstance: Rover?
-    
+
     public static var shared: Resolver? {
         return sharedInstance
     }
-    
+
     public static func initialize(assemblers: [Assembler]) {
         guard sharedInstance == nil else {
             os_log("Rover already initialized", log: .general, type: .default)
             return
         }
-        
+
         let rover = Rover()
-        
+
         assemblers.forEach { $0.assemble(container: rover) }
         assemblers.forEach { $0.containerDidAssemble(resolver: rover) }
-        
+
         if !Thread.isMainThread {
             os_log("Rover must be initialized on the main thread", log: .general, type: .default)
         }
-        
+
         sharedInstance = rover
     }
-    
+
     public static func deinitialize() {
         sharedInstance = nil
     }
-    
+
     var services = [ServiceKey: Any]()
 }
 

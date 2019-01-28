@@ -13,11 +13,11 @@ extension ImageConfiguration {
         guard let image = background.image else {
             return nil
         }
-        
+
         let optimization: ImageOptimization?
         if image.isURLOptimizationEnabled {
             let originalSize = CGSize(width: CGFloat(image.width), height: CGFloat(image.height))
-            
+
             let originalScale: CGFloat
             switch background.scale {
             case .x1:
@@ -27,7 +27,7 @@ extension ImageConfiguration {
             case .x3:
                 originalScale = 3
             }
-            
+
             switch background.contentMode {
             case .fill:
                 optimization = .fill(bounds: frame)
@@ -43,10 +43,10 @@ extension ImageConfiguration {
         } else {
             optimization = nil
         }
-        
+
         self.init(url: image.url, optimization: optimization)
     }
-    
+
     public init(image: Image, frame: CGRect) {
         let originalSize = CGSize(width: CGFloat(image.width), height: CGFloat(image.height))
         let optimization = ImageOptimization.stretch(bounds: frame, originalSize: originalSize)

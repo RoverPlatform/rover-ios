@@ -14,7 +14,7 @@ public class PersistedValue<T> where T: Codable {
     public let encoder: JSONEncoder
     public let storageKey: String
     public let userDefaults: UserDefaults
-    
+
     public var value: T? {
         get {
             switch T.self {
@@ -32,7 +32,7 @@ public class PersistedValue<T> where T: Codable {
                 guard let data = userDefaults.data(forKey: storageKey) else {
                     return nil
                 }
-                
+
                 do {
                     return try decoder.decode(T.self, from: data)
                 } catch {
@@ -46,7 +46,7 @@ public class PersistedValue<T> where T: Codable {
                 userDefaults.removeObject(forKey: storageKey)
                 return
             }
-            
+
             switch newValue {
             case let newValue as Float:
                 userDefaults.set(newValue, forKey: storageKey)
@@ -68,13 +68,13 @@ public class PersistedValue<T> where T: Codable {
             }
         }
     }
-    
+
     public init(
         storageKey: String,
         decoder: JSONDecoder = JSONDecoder.default,
         encoder: JSONEncoder = JSONEncoder.default,
         userDefaults: UserDefaults = UserDefaults.standard) {
-        
+
         self.decoder = decoder
         self.encoder = encoder
         self.storageKey = storageKey

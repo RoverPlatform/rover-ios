@@ -11,7 +11,7 @@ public struct Color: Codable {
     public var green: Int
     public var blue: Int
     public var alpha: Double
-    
+
     public init(red: Int, green: Int, blue: Int, alpha: Double) {
         self.red = red
         self.green = green
@@ -19,4 +19,3 @@ public struct Color: Codable {
         self.alpha = alpha
     }
 }
-

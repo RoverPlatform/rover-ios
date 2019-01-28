@@ -10,71 +10,71 @@ import UIKit
 
 open class BlockCell: UICollectionViewCell {
     public var block: Block?
-    
+
     open var content: UIView? {
         return nil
     }
-    
+
     override public init(frame: CGRect) {
         super.init(frame: frame)
-        
+
         backgroundView = UIImageView()
         clipsToBounds = true
-        
+
         if let content = content {
             contentView.addSubview(content)
             content.translatesAutoresizingMaskIntoConstraints = false
         }
     }
-    
+
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        
+
         backgroundView = UIImageView()
         clipsToBounds = true
-        
+
         if let content = content {
             contentView.addSubview(content)
             content.translatesAutoresizingMaskIntoConstraints = false
         }
     }
-    
+
     open func configure(with block: Block, imageStore: ImageStore) {
         self.block = block
-        
+
         configureBackgroundColor()
         configureBackgroundImage(imageStore: imageStore)
         configureBorder()
         configureOpacity()
         configureContent()
     }
-    
+
     open func configureBackgroundColor() {
         guard let block = block else {
             backgroundColor = UIColor.clear
             return
         }
-        
+
         backgroundColor = block.background.color.uiColor(dimmedBy: block.opacity)
     }
-    
+
     open func configureBackgroundImage(imageStore: ImageStore) {
         guard let backgroundImageView = backgroundView as? UIImageView else {
             return
         }
-        
+
         // Reset any existing background image
-        
+
         backgroundImageView.alpha = 0.0
         backgroundImageView.image = nil
-        
+
         // Background color is used for tiled backgrounds
         backgroundImageView.backgroundColor = UIColor.clear
-        
+
         guard let block = block else {
             return
         }
-        
+
         switch block.background.contentMode {
         case .fill:
             backgroundImageView.contentMode = .scaleAspectFill
@@ -87,11 +87,11 @@ open class BlockCell: UICollectionViewCell {
         case .tile:
             backgroundImageView.contentMode = .center
         }
-        
+
         guard let configuration = ImageConfiguration(background: block.background, frame: frame) else {
             return
         }
-        
+
         if let image = imageStore.fetchedImage(for: configuration) {
             if case .tile = block.background.contentMode {
                 backgroundImageView.backgroundColor = UIColor(patternImage: image)
@@ -104,26 +104,26 @@ open class BlockCell: UICollectionViewCell {
                 guard let image = image else {
                     return
                 }
-                
+
                 // Verify the block cell is still configured to the same block; otherwise we should no-op because the cell has been recycled.
-                
+
                 if self?.block?.id != blockID {
                     return
                 }
-                
+
                 if case .tile = block.background.contentMode {
                     backgroundImageView?.backgroundColor = UIColor(patternImage: image)
                 } else {
                     backgroundImageView?.image = image
                 }
-                
+
                 UIView.animate(withDuration: 0.25, animations: {
                     backgroundImageView?.alpha = 1.0
                 })
             }
         }
     }
-    
+
     open func configureBorder() {
         guard let block = block else {
             layer.borderColor = UIColor.clear.cgColor
@@ -131,7 +131,7 @@ open class BlockCell: UICollectionViewCell {
             layer.cornerRadius = 0
             return
         }
-        
+
         let border = block.border
         layer.borderColor = border.color.uiColor.cgColor
         layer.borderWidth = CGFloat(border.width)
@@ -141,21 +141,21 @@ open class BlockCell: UICollectionViewCell {
             return min(radius, maxRadius)
         }()
     }
-    
+
     open func configureOpacity() {
         guard let block = block else {
             layer.opacity = 0
             return
         }
-        
+
         self.contentView.alpha = CGFloat(block.opacity)
     }
-    
+
     open func configureContent() {
         guard let block = block, let content = content else {
             return
         }
-        
+
         NSLayoutConstraint.deactivate(contentView.constraints)
         contentView.removeConstraints(contentView.constraints)
 
@@ -166,7 +166,7 @@ open class BlockCell: UICollectionViewCell {
             let right = 0 - CGFloat(block.insets.right)
             return UIEdgeInsets(top: top, left: left, bottom: bottom, right: right)
         }()
-        
+
         content.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: insets.bottom).isActive = true
         content.leftAnchor.constraint(equalTo: self.contentView.leftAnchor, constant: insets.left).isActive = true
         content.rightAnchor.constraint(equalTo: self.contentView.rightAnchor, constant: insets.right).isActive = true

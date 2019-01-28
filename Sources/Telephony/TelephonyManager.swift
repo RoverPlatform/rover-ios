@@ -11,7 +11,7 @@ import os.log
 
 class TelephonyManager {
     let telephonyNetworkInfo = CTTelephonyNetworkInfo()
-    
+
     init() { }
 }
 
@@ -21,10 +21,10 @@ extension TelephonyManager: TelephonyInfoProvider {
             os_log("Failed to capture carrier name (this is expected behaviour if you are running a simulator)", log: .telephony, type: .debug)
             return nil
         }
-        
+
         return carrierName
     }
-    
+
     var radio: String? {
         var radio = telephonyNetworkInfo.currentRadioAccessTechnology
         let prefix = "CTRadioAccessTechnology"
@@ -33,7 +33,7 @@ extension TelephonyManager: TelephonyInfoProvider {
         } else if radio!.hasPrefix(prefix) {
             radio = (radio! as NSString).substring(from: prefix.count)
         }
-        
+
         if let radio = radio {
             return radio
         } else {

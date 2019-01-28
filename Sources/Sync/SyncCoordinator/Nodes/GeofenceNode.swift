@@ -14,7 +14,7 @@ public struct GeofenceNode: Decodable {
         var latitude: Double
         var longitude: Double
     }
-    
+
     var id: String
     var name: String
     var center: Center

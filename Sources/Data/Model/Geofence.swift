@@ -17,7 +17,7 @@ public final class Geofence: NSManagedObject {
         var longitude: Double
         var radius: Double
         var tags: [String]
-        
+
         public init(id: String, name: String, latitude: Double, longitude: Double, radius: Double, tags: [String] = []) {
             self.id = id
             self.name = name
@@ -27,7 +27,7 @@ public final class Geofence: NSManagedObject {
             self.tags = tags
         }
     }
-    
+
     @discardableResult static public func insert(from info: InsertionInfo, into context: NSManagedObjectContext) -> Geofence {
         let geofence = Geofence(context: context)
         geofence.id = info.id
@@ -38,25 +38,25 @@ public final class Geofence: NSManagedObject {
         geofence.tags = info.tags
         return geofence
     }
-    
+
     @nonobjc public class func fetchRequest() -> NSFetchRequest<Geofence> {
         return NSFetchRequest<Geofence>(entityName: "Geofence")
     }
-    
+
     @NSManaged public private(set) var id: String
     @NSManaged public private(set) var name: String
     @NSManaged public private(set) var latitude: Double
     @NSManaged public private(set) var longitude: Double
     @NSManaged public private(set) var radius: Double
     @NSManaged public private(set) var tags: [String]
-    
+
     @NSManaged public private(set) var regionIdentifier: String
-    
+
     public override func awakeFromInsert() {
         super.awakeFromInsert()
         self.tags = []
     }
-    
+
     public override func willSave() {
         let regionIdentifier = "\(latitude):\(longitude):\(radius)"
         if self.regionIdentifier != regionIdentifier {
@@ -89,7 +89,7 @@ extension Geofence {
             attributes: ["geofence": self]
         )
     }
-    
+
     public var exitEvent: EventInfo {
         return EventInfo(
             name: "Geofence Exited",
@@ -105,18 +105,18 @@ extension Geofence {
     public static func fetchAll(in context: NSManagedObjectContext) -> Set<Geofence> {
         let fetchRequest: NSFetchRequest<Geofence> = Geofence.fetchRequest()
         let geofences: [Geofence]
-        
+
         do {
             os_log("Fetching all geofences", log: .persistence, type: .debug)
-            
+
             #if swift(>=4.2)
             if #available(iOS 12.0, *) {
                 os_signpost(.begin, log: .persistence, name: "fetchGeofences", "type=all")
             }
             #endif
-            
+
             geofences = try context.fetch(fetchRequest)
-            
+
             #if swift(>=4.2)
             if #available(iOS 12.0, *) {
                 os_signpost(.end, log: .persistence, name: "fetchGeofences", "type=all")
@@ -126,29 +126,29 @@ extension Geofence {
             os_log("Failed to fetch geofences: %@", log: .persistence, type: .error, error.localizedDescription)
             return []
         }
-        
+
         os_log("Successfully fetched %d geofences", log: .persistence, type: .debug, geofences.count)
         return Set(geofences)
     }
-    
+
     public static func fetch(regionIdentifier: String, in context: NSManagedObjectContext) -> Geofence? {
         let fetchRequest: NSFetchRequest<Geofence> = Geofence.fetchRequest()
         let predicate = NSPredicate(format: "regionIdentifier == %@", regionIdentifier)
         fetchRequest.predicate = predicate
-        
+
         let geofences: [Geofence]
-        
+
         do {
             os_log("Fetching geofence with predicate: %{public}", log: .persistence, type: .debug, predicate)
-            
+
             #if swift(>=4.2)
             if #available(iOS 12.0, *) {
                 os_signpost(.begin, log: .persistence, name: "fetchGeofences", "type=regionIdentifier")
             }
             #endif
-            
+
             geofences = try context.fetch(fetchRequest)
-            
+
             #if swift(>=4.2)
             if #available(iOS 12.0, *) {
                 os_signpost(.end, log: .persistence, name: "fetchGeofences", "type=regionIdentifier")
@@ -158,12 +158,12 @@ extension Geofence {
             os_log("Failed to fetch geofence: %@", log: .persistence, type: .error, error.localizedDescription)
             return nil
         }
-        
+
         guard let geofence = geofences.first else {
             os_log("No geofence found matching regionIdentifier: %@", log: .persistence, type: .error, regionIdentifier)
             return nil
         }
-        
+
         os_log("Successfully fetched geofence: %{public}", log: .persistence, type: .debug, geofence)
         return geofence
     }

@@ -11,15 +11,15 @@ import CoreLocation
 public protocol RegionManager: class {
     var currentGeofences: Set<Geofence> { get }
     var geofenceObservers: ObserverSet<Set<Geofence>> { get set }
-    
+
     var currentBeacons: Set<Beacon> { get }
     var beaconObservers: ObserverSet<Set<Beacon>> { get set }
-    
+
     func updateLocation(manager: CLLocationManager)
-    
+
     func enterGeofence(region: CLCircularRegion)
     func exitGeofence(region: CLCircularRegion)
-    
+
     func startRangingBeacons(in region: CLBeaconRegion, manager: CLLocationManager)
     func stopRangingBeacons(in region: CLBeaconRegion, manager: CLLocationManager)
     func updateNearbyBeacons(_ beacons: [CLBeacon], in region: CLBeaconRegion, manager: CLLocationManager)

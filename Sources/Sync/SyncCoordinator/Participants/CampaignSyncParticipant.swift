@@ -44,7 +44,7 @@ class CampaignSyncParticipant: PagingSyncParticipant {
     }
     
     func insertObject(from node: CampaignNode) {
-        Campaign.insertFrom(campaignNode: node, into: self.context)
+        Campaign.insert(from: node, into: self.context)
     }
 }
 
@@ -62,13 +62,13 @@ struct CampaignsSyncResponse: Decodable {
 
 extension Campaign {
     
-    static func insertFrom(campaignNode: CampaignNode, into managedObjectContext: NSManagedObjectContext) {
+    static func insert(from campaignNode: CampaignNode, into managedObjectContext: NSManagedObjectContext) {
         let campaign: Campaign
         switch campaignNode.trigger {
         case is ScheduledCampaignTrigger:
-            campaign = ScheduledCampaign(context: managedObjectContext)
+            campaign = ScheduledCampaign.insert(into: managedObjectContext)
         case is AutomatedCampaignTrigger:
-            campaign = AutomatedCampaign(context: managedObjectContext)
+            campaign = AutomatedCampaign.insert(into: managedObjectContext)
         default:
             fatalError()
         }

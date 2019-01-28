@@ -84,9 +84,5 @@ public class SyncAssembler: Assembler {
         syncCoordinator.participants.append(resolver.resolve(GeofencesSyncParticipant.self)!)
         syncCoordinator.participants.append(resolver.resolve(BeaconsSyncParticipant.self)!)
         syncCoordinator.participants.append(resolver.resolve(CampaignSyncParticipant.self)!)
-        
-//        let assembler = SyncAssembler(options:Geofences|Notifications|Beacons|Campaigns)
-//
-//        OptionSet
     }
 }

@@ -44,14 +44,11 @@ class GeofencesSyncParticipant: PagingSyncParticipant {
         return SyncRequest(query: SyncQuery.geofences, values: values)
     }
 
-    func insertObject(from node: GeofencesSyncResponse.Data.Geofences.Node) {
-        let geofence = Geofence(context: context)
-        geofence.id = node.id
-        geofence.name = node.name
-        geofence.latitude = node.center.latitude
-        geofence.longitude = node.center.longitude
-        geofence.radius = node.radius
-        geofence.tags = node.tags
+    func insertObject(from node: GeofenceNode) {
+        Geofence.insert(
+            from: Geofence.InsertionInfo(id: node.id, name: node.name, latitude: node.center.latitude, longitude: node.center.longitude, radius: node.radius, tags: node.tags),
+            into: self.context
+        )
     }
 }
 
@@ -60,20 +57,8 @@ class GeofencesSyncParticipant: PagingSyncParticipant {
 struct GeofencesSyncResponse: Decodable {
     struct Data: Decodable {
         struct Geofences: Decodable {
-            struct Node: Decodable {
-                struct Center: Decodable {
-                    var latitude: Double
-                    var longitude: Double
-                }
-                
-                var id: String
-                var name: String
-                var center: Center
-                var radius: Double
-                var tags: [String]
-            }
             
-            var nodes: [Node]?
+            var nodes: [GeofenceNode]?
             var pageInfo: PageInfo
         }
         
@@ -84,7 +69,7 @@ struct GeofencesSyncResponse: Decodable {
 }
 
 extension GeofencesSyncResponse: PagingResponse {
-    var nodes: [Data.Geofences.Node]? {
+    var nodes: [GeofenceNode]? {
         return data.geofences.nodes
     }
     

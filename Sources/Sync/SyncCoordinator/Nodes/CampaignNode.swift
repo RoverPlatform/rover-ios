@@ -8,6 +8,8 @@
 
 import Foundation
 
+/// These structures represent the Campaign data coming back from the cloud-side GraphQL API for Sync.
+
 protocol Predicate {
     
 }
@@ -50,7 +52,7 @@ enum ComparisonPredicateOperator : String, Decodable {
     case like = "LIKE"
     case beginsWith = "BEGINS_WITH"
     case endsWith = "ENDS_WITH"
-    case in_ = "IN"
+    case `in` = "IN"
     case contains = "CONTAINS"
     case between = "BETWEEN"
     case geoWithin = "GEO_WITHIN"
@@ -65,7 +67,7 @@ enum CompoundPredicateLogicalType : String, Decodable {
 struct ComparisonPredicate : Predicate, Decodable {
     let keyPath: String
     let modifier: ComparisonPredicateModifier
-    let op: ComparisonPredicateModifier
+    let `operator`: ComparisonPredicateOperator
     let numberValue: Double? = nil
     let numberValues: [Double]? = nil
     let stringValue: String? = nil
@@ -74,25 +76,9 @@ struct ComparisonPredicate : Predicate, Decodable {
     let booleanValues: [Bool]? = nil
     let dateTimeValue: Date? = nil
     let dateTimeValues: [Date]? = nil
-    
-    enum CodingKeys : String, CodingKey {
-        case keyPath
-        case modifier
-        case op = "operator"
-        case numberValue
-        case numberValues
-        case stringValue
-        case stringValues
-        case booleanValue
-        case booleanValues
-        case dateTimeValue
-        case dateTimeValues
-    }
 }
 
 struct CompoundPredicate : Predicate, Decodable {
-    // https://github.com/RoverPlatform/rover-ios/blob/0839c6f4de891219ce199a39ed4a35ce4933cdcb/Sources/Data/Model/Campaigns/Campaign.swift
-    
     let booleanOperator: CompoundPredicateLogicalType
     
     let predicates: [Predicate]

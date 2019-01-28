@@ -10,16 +10,45 @@ import CoreData
 import os.log
 
 public final class Beacon: NSManagedObject {
+    public struct InsertionInfo {
+        var id: String
+        var name: String
+        var uuid: UUID
+        var major: Int32
+        var minor: Int32
+        var tags: [String]
+        
+        public init(id: String, name: String, uuid: UUID, major: Int32, minor: Int32, tags: [String] = []) {
+            self.id = id
+            self.name = name
+            self.uuid = uuid
+            self.major = major
+            self.minor = minor
+            self.tags = tags
+        }
+    }
+    
+    @discardableResult static public func insert(from info: InsertionInfo, into context: NSManagedObjectContext) -> Beacon {
+        let beacon = Beacon(context: context)
+        beacon.id = info.id
+        beacon.name = info.name
+        beacon.uuid = info.uuid
+        beacon.major = info.major
+        beacon.minor = info.minor
+        beacon.tags = info.tags
+        return beacon
+    }
+    
     @nonobjc public class func fetchRequest() -> NSFetchRequest<Beacon> {
         return NSFetchRequest<Beacon>(entityName: "Beacon")
     }
     
-    @NSManaged public internal(set) var id: String
-    @NSManaged public internal(set) var name: String
-    @NSManaged public internal(set) var uuid: UUID
-    @NSManaged public internal(set) var major: Int32
-    @NSManaged public internal(set) var minor: Int32
-    @NSManaged public internal(set) var tags: [String]
+    @NSManaged public private(set) var id: String
+    @NSManaged public private(set) var name: String
+    @NSManaged public private(set) var uuid: UUID
+    @NSManaged public private(set) var major: Int32
+    @NSManaged public private(set) var minor: Int32
+    @NSManaged public private(set) var tags: [String]
 
     @NSManaged public private(set) var regionIdentifier: String
     

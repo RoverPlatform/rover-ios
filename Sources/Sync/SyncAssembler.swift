@@ -8,6 +8,7 @@
 
 import Foundation
 import RoverFoundation
+import CoreData
 
 public class SyncAssembler: Assembler {
     public var accountToken: String
@@ -50,5 +51,38 @@ public class SyncAssembler: Assembler {
         container.register(URLSession.self) { _ in
             return URLSession(configuration: URLSessionConfiguration.default)
         }
+        
+        // MARK: Campaigns
+        
+        container.register(CampaignSyncParticipant.self) { resolver in
+            return CampaignSyncParticipant(
+                context: resolver.resolve(NSManagedObjectContext.self, name: "backgroundContext")!,
+                userDefaults: UserDefaults.standard
+            )
+        }
+        
+        // MARK: Location
+        
+        container.register(GeofencesSyncParticipant.self) { (resolver) in
+            return GeofencesSyncParticipant(
+                context: resolver.resolve(NSManagedObjectContext.self, name: "backgroundContext")!,
+                userDefaults: UserDefaults.standard
+            )
+        }
+        
+        container.register(BeaconsSyncParticipant.self) { (resolver) in
+            return BeaconsSyncParticipant(
+                context: resolver.resolve(NSManagedObjectContext.self, name: "backgroundContext")!,
+                userDefaults: UserDefaults.standard
+            )
+        }
+    }
+    
+    public func containerDidAssemble(resolver: Resolver) {
+        let syncCoordinator = resolver.resolve(SyncCoordinator.self)!
+    
+        syncCoordinator.participants.append(resolver.resolve(GeofencesSyncParticipant.self)!)
+        syncCoordinator.participants.append(resolver.resolve(BeaconsSyncParticipant.self)!)
+        syncCoordinator.participants.append(resolver.resolve(CampaignSyncParticipant.self)!)
     }
 }

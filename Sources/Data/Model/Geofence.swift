@@ -10,16 +10,45 @@ import CoreData
 import os
 
 public final class Geofence: NSManagedObject {
+    public struct InsertionInfo {
+        var id: String
+        var name: String
+        var latitude: Double
+        var longitude: Double
+        var radius: Double
+        var tags: [String]
+        
+        public init(id: String, name: String, latitude: Double, longitude: Double, radius: Double, tags: [String] = []) {
+            self.id = id
+            self.name = name
+            self.latitude = latitude
+            self.longitude = longitude
+            self.radius = radius
+            self.tags = tags
+        }
+    }
+    
+    @discardableResult static public func insert(from info: InsertionInfo, into context: NSManagedObjectContext) -> Geofence {
+        let geofence = Geofence(context: context)
+        geofence.id = info.id
+        geofence.name = info.name
+        geofence.latitude = info.latitude
+        geofence.longitude = info.longitude
+        geofence.radius = info.radius
+        geofence.tags = info.tags
+        return geofence
+    }
+    
     @nonobjc public class func fetchRequest() -> NSFetchRequest<Geofence> {
         return NSFetchRequest<Geofence>(entityName: "Geofence")
     }
     
-    @NSManaged public internal(set) var id: String
-    @NSManaged public internal(set) var name: String
-    @NSManaged public internal(set) var latitude: Double
-    @NSManaged public internal(set) var longitude: Double
-    @NSManaged public internal(set) var radius: Double
-    @NSManaged public internal(set) var tags: [String]
+    @NSManaged public private(set) var id: String
+    @NSManaged public private(set) var name: String
+    @NSManaged public private(set) var latitude: Double
+    @NSManaged public private(set) var longitude: Double
+    @NSManaged public private(set) var radius: Double
+    @NSManaged public private(set) var tags: [String]
     
     @NSManaged public private(set) var regionIdentifier: String
     

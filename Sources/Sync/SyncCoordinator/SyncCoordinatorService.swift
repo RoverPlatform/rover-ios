@@ -22,6 +22,7 @@ class SyncCoordinatorService: SyncCoordinator {
     }
     
     func sync(completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        
         var intialParticipants = [SyncParticipant]()
         var intialRequests = [SyncRequest]()
         
@@ -31,6 +32,10 @@ class SyncCoordinatorService: SyncCoordinator {
                 intialRequests.append(request)
             }
         }
+        
+        let participantNames = self.participants.map({ String.init(describing: type(of: $0)) }).joined(separator: ", ")
+    
+        os_log("Beginning sync with [%s].", log: .persistence, type: .info, participantNames)
         
         self.sync(participants: intialParticipants, requests: intialRequests, completionHandler: completionHandler)
     }

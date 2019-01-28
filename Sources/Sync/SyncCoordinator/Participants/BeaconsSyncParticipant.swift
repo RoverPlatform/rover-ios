@@ -16,10 +16,9 @@ class BeaconsSyncParticipant: PagingSyncParticipant {
     let userDefaults: UserDefaults
     
     var cursorKey: String {
+        // TODO: rename into RoverSync
         return "io.rover.RoverLocation.beaconsCursor"
     }
-    
-    var participants = [SyncParticipant]()
     
     init(context: NSManagedObjectContext, userDefaults: UserDefaults) {
         self.context = context
@@ -44,30 +43,25 @@ class BeaconsSyncParticipant: PagingSyncParticipant {
         return SyncRequest(query: SyncQuery.beacons, values: values)
     }
     
-    func insertObject(from node: BeaconsSyncResponse.Data.Beacons.Node) {
-        let beacon = Beacon(context: context)
-        beacon.id = node.id.rawValue
-        beacon.name = node.name
-        beacon.uuid = node.uuid
-        beacon.major = node.major
-        beacon.minor = node.minor
-        beacon.tags = node.tags
+    func insertObject(from node: BeaconNode) {
+        Beacon.insert(
+            from: Beacon.InsertionInfo(
+                id: node.id,
+                name: node.name,
+                uuid: node.uuid,
+                major: node.major,
+                minor: node.minor,
+                tags: node.tags
+            ),
+            into: self.context
+        )
     }
 }
 
 struct BeaconsSyncResponse: Decodable {
     struct Data: Decodable {
         struct Beacons: Decodable {
-            struct Node: Decodable {
-                var id: String
-                var name: String
-                var uuid: UUID
-                var major: Int32
-                var minor: Int32
-                var tags: [String]
-            }
-            
-            var nodes: [Node]?
+            var nodes: [BeaconNode]?
             var pageInfo: PageInfo
         }
         
@@ -78,7 +72,7 @@ struct BeaconsSyncResponse: Decodable {
 }
 
 extension BeaconsSyncResponse: PagingResponse {
-    var nodes: [Data.Beacons.Node]? {
+    var nodes: [BeaconNode]? {
         return data.beacons.nodes
     }
     

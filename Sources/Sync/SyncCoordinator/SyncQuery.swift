@@ -122,3 +122,26 @@ extension SyncQuery {
         fragments: ["geofenceFields"]
     )
 }
+
+// Campaigns
+
+extension SyncQuery {
+    static let campaigns = SyncQuery(
+        name: "campaigns",
+        body: """
+            nodes {
+                ...campaignFields
+            }
+            pageInfo {
+                endCursor
+                hasNextPage
+            }
+            """,
+        arguments: [
+            SyncQuery.Argument(name: "first", type: "Int"),
+            SyncQuery.Argument(name: "after", type: "String"),
+            SyncQuery.Argument(name: "orderBy", type: "CampaignOrder")
+        ],
+        fragments: ["campaignFields"]
+    )
+}

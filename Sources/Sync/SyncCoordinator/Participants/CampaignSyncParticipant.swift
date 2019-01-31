@@ -70,7 +70,7 @@ extension Campaign {
         case is AutomatedCampaignTrigger:
             campaign = AutomatedCampaign.insert(into: managedObjectContext)
         default:
-            fatalError()
+            fatalError("Some other type somehow appeared for CampaignTrigger")
         }
     }
 }

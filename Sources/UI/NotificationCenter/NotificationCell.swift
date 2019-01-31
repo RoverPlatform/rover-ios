@@ -85,7 +85,7 @@ open class NotificationCell: UITableViewCell {
         
         return
         
-        let configuration = ImageConfiguration(url: URL.init(string: "")!)
+        let configuration = ImageConfiguration(url: URL(string: "")!)
         
         if let image = imageStore.fetchedImage(for: configuration) {
             imageView.image = image

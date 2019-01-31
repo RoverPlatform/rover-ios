@@ -208,7 +208,7 @@ class ScreenViewLayout: UICollectionViewLayout {
                 
                 let blockHeight = partialRect.height ?? {
                     guard case .fill(let topOffset, let bottomOffset) = block.position.verticalAlignment else {
-                        fatalError()
+                        fatalError("Vertical alignment must be fill.")
                     }
                     
                     return rowHeight - CGFloat(topOffset) - CGFloat(bottomOffset)
@@ -221,7 +221,7 @@ class ScreenViewLayout: UICollectionViewLayout {
                     case .middle(let offset, _):
                         return rowY + ((rowHeight - blockHeight) / 2) + CGFloat(offset)
                     default:
-                        fatalError()
+                        fatalError("Vertical alignment must only be bottom or middle.")
                     }
                 }()
                 

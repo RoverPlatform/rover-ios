@@ -226,7 +226,7 @@ open class NotificationCenterViewController: UIViewController {
         let fetchRequest: NSFetchRequest<RoverData.Notification> = RoverData.Notification.fetchRequest()
         fetchRequest.predicate = self.predicate
         fetchRequest.sortDescriptors = [
-            NSSortDescriptor.init(key: #keyPath(RoverData.Notification.deliveredAt), ascending: false)
+            NSSortDescriptor(key: #keyPath(RoverData.Notification.deliveredAt), ascending: false)
         ]
         fetchRequest.fetchBatchSize = 20
         return fetchRequest

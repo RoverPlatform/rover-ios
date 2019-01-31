@@ -35,6 +35,7 @@
 		491C9710219B6C580065BAB8 /* UI.UIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 491C970F219B6C580065BAB8 /* UI.UIApplication.swift */; };
 		4935406D21FF9440006C39F6 /* GeofenceNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4935406C21FF9440006C39F6 /* GeofenceNode.swift */; };
 		4935406F21FF94C7006C39F6 /* BeaconNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4935406E21FF94C7006C39F6 /* BeaconNode.swift */; };
+		49354074220382CF006C39F6 /* UI.OSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A0D09421CC3FCE003FAABD /* UI.OSLog.swift */; };
 		49496A5221C839DA00F89438 /* RoverCampaigns.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49496A4921C839DA00F89438 /* RoverCampaigns.framework */; };
 		49496A5721C839DA00F89438 /* RoverCampaignsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49496A5621C839DA00F89438 /* RoverCampaignsTests.swift */; };
 		49496A5921C839DB00F89438 /* RoverCampaigns.h in Headers */ = {isa = PBXBuildFile; fileRef = 49496A4B21C839DA00F89438 /* RoverCampaigns.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -93,7 +94,6 @@
 		497BA67B21F7AB4F003ED346 /* CampaignSyncParticipant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 497BA67A21F7AB4F003ED346 /* CampaignSyncParticipant.swift */; };
 		4988D94921AF4B260050550E /* Attributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1D5DC42107D32C0071928F /* Attributes.swift */; };
 		499AE17421F8C56000715B44 /* Campaign.swift in Sources */ = {isa = PBXBuildFile; fileRef = 499AE17321F8C56000715B44 /* Campaign.swift */; };
-		49A0D09521CC3FCE003FAABD /* UI.OSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A0D09421CC3FCE003FAABD /* UI.OSLog.swift */; };
 		49AFAED421BF006800F1118B /* AttributesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49AFAED321BF006800F1118B /* AttributesTests.swift */; };
 		49C14E9521DD0C5400A3B0BC /* Data.NSManagedObjectContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C14E9421DD0C5400A3B0BC /* Data.NSManagedObjectContext.swift */; };
 		49C7829B21A75D5F0059D208 /* RoverUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB6ADD5A20B33EC0002F226C /* RoverUI.framework */; };
@@ -2481,6 +2481,7 @@
 				DB6ADD7520B33F3A002F226C /* ImageStoreService.swift in Sources */,
 				495821C221A4AFED00F2B632 /* BluetoothInfoProvider.swift in Sources */,
 				495821C421A4AFED00F2B632 /* LocationInfoProvider.swift in Sources */,
+				49354074220382CF006C39F6 /* UI.OSLog.swift in Sources */,
 				0D53C13421D7FA5B0072A79F /* Experiences.ImageConfiguration.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2650,7 +2651,6 @@
 				DBCBE086216140E6001C7A96 /* Foundation.JSONEncoder.swift in Sources */,
 				DBCBE088216140F1001C7A96 /* Foundation.JSONDecoder.swift in Sources */,
 				DBB89BE820D0415600DD797A /* Rover.swift in Sources */,
-				49A0D09521CC3FCE003FAABD /* UI.OSLog.swift in Sources */,
 				DBF49E07203DE1DE00B54652 /* ServiceScope.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

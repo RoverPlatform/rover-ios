@@ -75,7 +75,7 @@ extension Barcode {
             return nil
         }
         
-        let context = CIContext.init(options: nil)
+        let context = CIContext(options: nil)
         
         let renderedBarcode = context.createCGImage(outputImage, from: outputImage.extent)!
 

@@ -174,7 +174,7 @@ extension SettingsViewController: UITableViewDataSource {
             cell.value.text = UIDevice.current.identifierForVendor?.uuidString
             return cell
         default:
-            fatalError()
+            fatalError("Non-existent column asked for in SettingsViewController.")
         }
     }
     

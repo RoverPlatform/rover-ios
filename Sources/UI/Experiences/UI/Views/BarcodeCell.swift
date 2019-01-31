@@ -49,6 +49,6 @@ open class BarcodeCell: BlockCell {
             return
         }
 
-        imageView.image = UIImage.init(cgImage: barcodeImage)
+        imageView.image = UIImage(cgImage: barcodeImage)
     }
 }

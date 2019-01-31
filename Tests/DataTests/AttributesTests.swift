@@ -57,13 +57,13 @@ class AttributesTests: XCTestCase {
     }
     
     func testNSCodingRoundtrip() throws {
-        let archiver = NSKeyedArchiver.init(requiringSecureCoding: false)
+        let archiver = NSKeyedArchiver(requiringSecureCoding: false)
         let attributes = Attributes(rawValue: exampleAttributes)
         archiver.encodeRootObject(attributes as Any)
         //archiver.outputFormat = .xml
         archiver.finishEncoding()
         let archivedData = archiver.encodedData
-        let dearchiver = try NSKeyedUnarchiver.init(forReadingFrom: archivedData)
+        let dearchiver = try NSKeyedUnarchiver(forReadingFrom: archivedData)
         dearchiver.requiresSecureCoding = false
         dearchiver.decodingFailurePolicy = .raiseException
         let decodedAttributes = dearchiver.decodeObject() as! Attributes

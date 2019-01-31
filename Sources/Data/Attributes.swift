@@ -118,7 +118,7 @@ public class Attributes: NSObject, NSCoding, Codable, RawRepresentable, Expressi
         dictionary.forEach { (key, value) in
             let swiftRange = Range(uncheckedBounds: (key.startIndex, key.endIndex))
             let nsRange = NSRange(swiftRange, in: key)
-            if roverKeyRegex.matches(in: key, range: nsRange).count == 0 {
+            if roverKeyRegex.matches(in: key, range: nsRange).isEmpty {
                 assertionFailureEmitter("Invalid key: \(key)")
                 return
             }
@@ -139,7 +139,7 @@ public class Attributes: NSObject, NSCoding, Codable, RawRepresentable, Expressi
                 value is [Bool]
             ) {
                 let valueType = type(of: value)
-                assertionFailureEmitter("Invalid value for key \(key) with unsupported type: \(String.init(describing: valueType))")
+                assertionFailureEmitter("Invalid value for key \(key) with unsupported type: \(String(describing: valueType))")
                 return
             }
             transformed[key] = value

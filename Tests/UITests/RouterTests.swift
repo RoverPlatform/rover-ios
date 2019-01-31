@@ -98,7 +98,7 @@ class RouterTests: XCTestCase {
         let experienceIdentifier: ExperienceIdentifier
         
         required init?(coder aDecoder: NSCoder) {
-            fatalError()
+            fatalError("No NSCoding in tests.")
         }
         
         init(experienceIdentifier: ExperienceIdentifier) {

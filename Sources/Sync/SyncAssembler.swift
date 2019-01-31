@@ -36,7 +36,7 @@ public class SyncAssembler: Assembler {
         // MARK: SyncClient
         
         container.register(SyncClient.self) {  resolver in
-            return resolver.resolve(HTTPClient.self)!
+            resolver.resolve(HTTPClient.self)!
         }
         
         // MARK: SyncCoordinator

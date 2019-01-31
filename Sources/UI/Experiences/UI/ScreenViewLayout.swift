@@ -73,13 +73,13 @@ class ScreenViewLayout: UICollectionViewLayout {
             for (j, block) in row.blocks.enumerated() {
                 let blockX: CGFloat = {
                     switch block.position.horizontalAlignment {
-                    case .center(let offset, let width):
+                    case let .center(offset, width):
                         return rowX + ((rowWidth - CGFloat(width)) / 2) + CGFloat(offset)
                     case .fill(let leftOffset, _):
                         return rowX + CGFloat(leftOffset)
                     case .left(let offset, _):
                         return rowX + CGFloat(offset)
-                    case .right(let offset, let width):
+                    case let .right(offset, width):
                         return rowX + rowWidth - CGFloat(width) - CGFloat(offset)
                     }
                 }()
@@ -101,7 +101,7 @@ class ScreenViewLayout: UICollectionViewLayout {
                     switch block.position.horizontalAlignment {
                     case .center(_, let width):
                         return CGFloat(width)
-                    case .fill(let leftOffset, let rightOffset):
+                    case let .fill(leftOffset, rightOffset):
                         return rowWidth - CGFloat(leftOffset) - CGFloat(rightOffset)
                     case .left(_, let width):
                         return CGFloat(width)

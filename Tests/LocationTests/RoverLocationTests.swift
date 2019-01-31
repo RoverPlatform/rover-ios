@@ -147,7 +147,7 @@ class RoverLocationTests: XCTestCase {
         let wildcardBeaconRegions = regionManager.wilcardBeaconRegions(maxLength: 20)
         XCTAssertEqual(wildcardBeaconRegions.count, 3)
         
-        let rogersCenter = CLLocation(latitude: 43.6414, longitude: 79.3894)
+        let rogersCenter = CLLocation(latitude: 43.641_4, longitude: 79.389_4)
         let circularRegions = regionManager.circularRegions(closestTo: rogersCenter.coordinate, maxLength: 20)
         XCTAssertEqual(circularRegions.count, 20)
         
@@ -175,9 +175,9 @@ class RoverLocationTests: XCTestCase {
         let fetchRequest: NSFetchRequest<Geofence> = Geofence.fetchRequest()
         var geofences = try! self.context.fetch(fetchRequest)
         XCTAssertEqual(geofences.count, geofenceNodes.count)
-        XCTAssertGreaterThan(geofences.count, 3000)
+        XCTAssertGreaterThan(geofences.count, 3_000)
         
-        let rogersCenter = CLLocation(latitude: 43.6414, longitude: 79.3894)
+        let rogersCenter = CLLocation(latitude: 43.641_4, longitude: 79.389_4)
         
         self.measure {
             geofences.sortByDistance(from: rogersCenter.coordinate)

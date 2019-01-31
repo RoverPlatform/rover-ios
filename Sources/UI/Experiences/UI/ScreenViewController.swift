@@ -137,7 +137,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
                 return defaultColor
             }
             
-            return UIColor(red: (247/255), green: (247/255), blue: (247/255), alpha: 1)
+            return UIColor(red: (247 / 255), green: (247 / 255), blue: (247 / 255), alpha: 1)
         }()
         
         // Button color
@@ -155,7 +155,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
                 return defaultColor
             }
             
-            return UIColor(red: 0.0, green: 122/255, blue: 1.0, alpha: 1)
+            return UIColor(red: 0.0, green: 122 / 255, blue: 1.0, alpha: 1)
         }()
         
         // Title color

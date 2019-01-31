@@ -66,19 +66,19 @@ extension Position.HorizontalAlignment: Codable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         let typeName: String
         switch self {
-        case .center(let offset, let width):
+        case let .center(offset, width):
             typeName = "HorizontalAlignmentCenter"
             try container.encode(width, forKey: .width)
             try container.encode(offset, forKey: .offset)
-        case .left(let offset, let width):
+        case let .left(offset, width):
             typeName = "HorizontalAlignmentLeft"
             try container.encode(offset, forKey: .offset)
             try container.encode(width, forKey: .width)
-        case .right(let offset, let width):
+        case let .right(offset, width):
             typeName = "HorizontalAlignmentRight"
             try container.encode(offset, forKey: .offset)
             try container.encode(width, forKey: .width)
-        case .fill(let leftOffset, let rightOffset):
+        case let .fill(leftOffset, rightOffset):
             typeName = "HorizontalAlignmentFill"
             try container.encode(leftOffset, forKey: .leftOffset)
             try container.encode(rightOffset, forKey: .rightOffset)
@@ -132,24 +132,24 @@ extension Position.VerticalAlignment: Codable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         let typeName: String
         switch self {
-        case .bottom(let offset, let height):
+        case let .bottom(offset, height):
             typeName = "VerticalAlignmentBottom"
             try container.encode(offset, forKey: .offset)
             try container.encode(height, forKey: .height)
-        case .middle(let offset, let height):
+        case let .middle(offset, height):
             typeName = "VerticalAlignmentMiddle"
             try container.encode(offset, forKey: .offset)
             try container.encode(height, forKey: .height)
-        case .fill(let topOffset, let bottomOffset):
+        case let .fill(topOffset, bottomOffset):
             typeName = "VerticalAlignmentFill"
             try container.encode(topOffset, forKey: .topOffset)
             try container.encode(bottomOffset, forKey: .bottomOffset)
-        case .stacked(let topOffset, let bottomOffset, let height):
+        case let .stacked(topOffset, bottomOffset, height):
             typeName = "VerticalAlignmentStacked"
             try container.encode(topOffset, forKey: .topOffset)
             try container.encode(bottomOffset, forKey: .bottomOffset)
             try container.encode(height, forKey: .height)
-        case .top(let offset, let height):
+        case let .top(offset, height):
             typeName = "VerticalAlignmentTop"
             try container.encode(offset, forKey: .offset)
             try container.encode(height, forKey: .height)

@@ -30,7 +30,7 @@ extension Barcode {
             filterName = "CIQRCodeGenerator"
         }
 
-        let data =  text.data(using: String.Encoding.ascii)!
+        let data = text.data(using: String.Encoding.ascii)!
         
         var params: [String: Any] = {
             switch format {

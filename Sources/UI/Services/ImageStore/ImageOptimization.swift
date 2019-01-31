@@ -19,11 +19,11 @@ public enum ImageOptimization {
             let w = bounds.width * UIScreen.main.scale
             let h = bounds.height * UIScreen.main.scale
             return [URLQueryItem(name: "fit", value: "max"), URLQueryItem(name: "w", value: w.paramValue), URLQueryItem(name: "h", value: h.paramValue)]
-        case .stretch(let bounds, let originalSize):
+        case let .stretch(bounds, originalSize):
             let w = min(bounds.width * UIScreen.main.scale, originalSize.width)
             let h = min(bounds.height * UIScreen.main.scale, originalSize.height)
             return [URLQueryItem(name: "w", value: w.paramValue), URLQueryItem(name: "h", value: h.paramValue)]
-        case .original(let bounds, let originalSize, let originalScale):
+        case let .original(bounds, originalSize, originalScale):
             let width = min(bounds.width * originalScale, originalSize.width)
             let height = min(bounds.height * originalScale, originalSize.height)
             let x = (originalSize.width - width) / 2
@@ -38,7 +38,7 @@ public enum ImageOptimization {
             }
             
             return queryItems
-        case .tile(let bounds, let originalSize, let originalScale):
+        case let .tile(bounds, originalSize, originalScale):
             let width = min(bounds.width * originalScale, originalSize.width)
             let height = min(bounds.height * originalScale, originalSize.height)
             let value = ["0", "0", width.paramValue, height.paramValue].joined(separator: ",")

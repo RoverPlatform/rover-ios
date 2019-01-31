@@ -73,7 +73,7 @@ class RoverLocationTests: XCTestCase {
         description.type = NSInMemoryStoreType
         
         container.persistentStoreDescriptions = [description]
-        container.loadPersistentStores { (_, error) in
+        container.loadPersistentStores { _, error in
             precondition(description.type == NSInMemoryStoreType)
             
             guard error == nil else {

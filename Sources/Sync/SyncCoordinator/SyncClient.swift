@@ -43,8 +43,8 @@ extension SyncClient {
         }()
         
         let variables: Attributes = {
-            syncRequests.reduce(Attributes()) { (result, request) in
-                request.variables.rawValue.reduce(result) { (result, element) in
+            syncRequests.reduce(Attributes()) { result, request in
+                request.variables.rawValue.reduce(result) { result, element in
                     var nextResult = result.rawValue
                     nextResult["\(request.query.name)\(element.key.capitalized)"] = element.value
                     return Attributes(rawValue: nextResult)

@@ -42,7 +42,7 @@ public class EventPipeline {
     public func observeNewEvents(
         observerCallback: @escaping ([Event]) -> Void
     ) -> NSObjectProtocol {
-        return NotificationCenter.default.addObserver(forName: .NSManagedObjectContextObjectsDidChange, object: self.managedObjectContext, queue: nil) { (iosNotification) in
+        return NotificationCenter.default.addObserver(forName: .NSManagedObjectContextObjectsDidChange, object: self.managedObjectContext, queue: nil) { iosNotification in
             guard let insertedObjects = iosNotification.userInfo?[NSInsertedObjectsKey] as? Set<NSObject> else {
                 return
             }

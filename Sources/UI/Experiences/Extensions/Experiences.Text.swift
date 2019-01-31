@@ -25,7 +25,7 @@ extension Text {
         // Bold and italicize
         
         #if swift(>=4.2)
-        attributedString.enumerateAttribute(NSAttributedString.Key.font, in: range, options: []) { (value, range, _) in
+        attributedString.enumerateAttribute(NSAttributedString.Key.font, in: range, options: []) { value, range, _ in
             guard let value = value as? UIFont else {
                 return
             }
@@ -47,7 +47,7 @@ extension Text {
         let attributes = [NSAttributedString.Key.foregroundColor: color.uiColor,
                           NSAttributedString.Key.paragraphStyle: alignment.paragraphStyle]
         #else
-        attributedString.enumerateAttribute(NSAttributedStringKey.font, in: range, options: []) { (value, range, stop) in
+        attributedString.enumerateAttribute(NSAttributedStringKey.font, in: range, options: []) { value, range, stop in
             guard let value = value as? UIFont else {
                 return
             }

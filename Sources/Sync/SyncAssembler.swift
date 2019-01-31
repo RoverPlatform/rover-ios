@@ -63,14 +63,14 @@ public class SyncAssembler: Assembler {
         
         // MARK: Location
         
-        container.register(GeofencesSyncParticipant.self) { (resolver) in
+        container.register(GeofencesSyncParticipant.self) { resolver in
             GeofencesSyncParticipant(
                 context: resolver.resolve(NSManagedObjectContext.self, name: "backgroundContext")!,
                 userDefaults: UserDefaults.standard
             )
         }
         
-        container.register(BeaconsSyncParticipant.self) { (resolver) in
+        container.register(BeaconsSyncParticipant.self) { resolver in
             BeaconsSyncParticipant(
                 context: resolver.resolve(NSManagedObjectContext.self, name: "backgroundContext")!,
                 userDefaults: UserDefaults.standard

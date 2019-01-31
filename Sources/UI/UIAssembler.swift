@@ -131,7 +131,7 @@ extension UIAssembler: Assembler {
         // MARK: UIViewController (screen)
         
         container.register(UIViewController.self, name: "screen", scope: .transient) { (resolver, experience: Experience, screen: Screen) in
-            let viewControllerProvider: ScreenViewController.ViewControllerProvider = { [weak resolver] (experience, screen) in
+            let viewControllerProvider: ScreenViewController.ViewControllerProvider = { [weak resolver] experience, screen in
                 resolver?.resolve(UIViewController.self, name: "screen", arguments: experience, screen)
             }
             

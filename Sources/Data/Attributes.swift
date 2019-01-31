@@ -45,7 +45,7 @@ public class Attributes: NSObject, NSCoding, Codable, RawRepresentable, Expressi
     }
     
     public required init(dictionaryLiteral elements: (String, Any)...) {
-        let dictionary = elements.reduce(into: [String: Any]()) { (result, element) in
+        let dictionary = elements.reduce(into: [String: Any]()) { result, element in
             let (key, value) = element
             result[key] = value
         }
@@ -90,7 +90,7 @@ public class Attributes: NSObject, NSCoding, Codable, RawRepresentable, Expressi
         let dictionary = nsDictionary.dictionaryWithValues(forKeys: nsDictionary.allKeys as! [String])
         
         func transformDictionary(dictionary: [String: Any]) -> [String: Any] {
-            return dictionary.reduce(into: [String: Any]()) { (result, element) in
+            return dictionary.reduce(into: [String: Any]()) { result, element in
                 switch element.value {
                 // handle our custom boxed Boolean value type:
                 case let value as BooleanValue:
@@ -115,7 +115,7 @@ public class Attributes: NSObject, NSCoding, Codable, RawRepresentable, Expressi
         var transformed: [String: Any] = [:]
         // This is a set of mappings of types, which makes for a long closure body.
         // swiftlint:disable:next closure_body_length
-        dictionary.forEach { (key, value) in
+        dictionary.forEach { key, value in
             let swiftRange = Range(uncheckedBounds: (key.startIndex, key.endIndex))
             let nsRange = NSRange(swiftRange, in: key)
             if roverKeyRegex.matches(in: key, range: nsRange).isEmpty {
@@ -231,7 +231,7 @@ public class Attributes: NSObject, NSCoding, Codable, RawRepresentable, Expressi
         func encodeToContainer(dictionary: [String: Any], container: inout KeyedEncodingContainer<Attributes.DynamicCodingKeys>) throws {
             // This is a set of mappings of types, which makes for a long closure body.
             // swiftlint:disable:next closure_body_length
-            try dictionary.forEach { (codingKey, value) in
+            try dictionary.forEach { codingKey, value in
                 let key = DynamicCodingKeys(stringValue: codingKey)
                 switch value {
                 case let value as Int:

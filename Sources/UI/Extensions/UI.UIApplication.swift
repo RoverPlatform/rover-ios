@@ -50,10 +50,10 @@ extension UIApplication {
             return
         }
         
-        var findVisibleViewController: ((UIViewController) -> UIViewController?)!
+        var findVisibleViewController: ((UIViewController) -> UIViewController?)?
         findVisibleViewController = { viewController in
             if let presentedViewController = viewController.presentedViewController {
-                return findVisibleViewController(presentedViewController)
+                return findVisibleViewController?(presentedViewController)
             }
             
             if let navigationController = viewController as? UINavigationController {
@@ -67,7 +67,7 @@ extension UIApplication {
             return viewController
         }
         
-        guard let visibleViewController = findVisibleViewController(rootViewController) else {
+        guard let visibleViewController = findVisibleViewController?(rootViewController) else {
             os_log("Failed to present `viewControllerToPresent` - visible view controller not found", log: .general, type: .error)
             completion?()
             return

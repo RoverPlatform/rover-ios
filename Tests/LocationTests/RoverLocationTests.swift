@@ -35,7 +35,7 @@ class RoverLocationTests: XCTestCase {
         var tags: [String]
     }
     
-    static var geofenceNodes: [GeofenceNode]!
+    static var geofenceNodes: [GeofenceNode]
     
     var geofenceNodes: [GeofenceNode] {
         return RoverLocationTests.geofenceNodes
@@ -49,9 +49,9 @@ class RoverLocationTests: XCTestCase {
         var tags: [String]
     }
     
-    static var beaconNodes: [BeaconNode]!
+    static var beaconNodes: [BeaconNode]
     
-    static var context: NSManagedObjectContext!
+    static var context: NSManagedObjectContext
     
     var context: NSManagedObjectContext {
         return RoverLocationTests.context

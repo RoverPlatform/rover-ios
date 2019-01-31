@@ -66,7 +66,7 @@ public class Attributes: NSObject, NSCoding, Codable, RawRepresentable, Expressi
     //
     
     public func encode(with aCoder: NSCoder) {
-        var boolToBoolean: ((Any) -> Any)!
+        var boolToBoolean: ((Any) -> Any)
         boolToBoolean = { anyValue in
             switch anyValue {
             case let value as Bool:

@@ -12,7 +12,7 @@ open class NotificationCell: UITableViewCell {
     public var notification: RoverData.Notification?
     
     #if swift(>=4.2)
-    public override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+    override public init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
     }
     #else
@@ -21,7 +21,7 @@ open class NotificationCell: UITableViewCell {
     }
     #endif
     
-    required public init?(coder aDecoder: NSCoder) {
+    public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
     

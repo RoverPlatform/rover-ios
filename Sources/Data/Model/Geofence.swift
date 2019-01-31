@@ -29,7 +29,7 @@ public final class Geofence: NSManagedObject {
     }
     
     @discardableResult
-    static public func insert(from info: InsertionInfo, into context: NSManagedObjectContext) -> Geofence {
+    public static func insert(from info: InsertionInfo, into context: NSManagedObjectContext) -> Geofence {
         let geofence = Geofence(context: context)
         geofence.id = info.id
         geofence.name = info.name
@@ -54,12 +54,12 @@ public final class Geofence: NSManagedObject {
     
     @NSManaged public private(set) var regionIdentifier: String
     
-    public override func awakeFromInsert() {
+    override public func awakeFromInsert() {
         super.awakeFromInsert()
         self.tags = []
     }
     
-    public override func willSave() {
+    override public func willSave() {
         let regionIdentifier = "\(latitude):\(longitude):\(radius)"
         if self.regionIdentifier != regionIdentifier {
             self.regionIdentifier = regionIdentifier

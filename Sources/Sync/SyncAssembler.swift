@@ -26,7 +26,7 @@ public class SyncAssembler: Assembler {
         // MARK: HTTPClient
         
         container.register(HTTPClient.self) { [accountToken, endpoint] _ in
-            return HTTPClient(
+            HTTPClient(
                 accountToken: accountToken,
                 endpoint: endpoint,
                 session: URLSession(configuration: URLSessionConfiguration.default)
@@ -49,13 +49,13 @@ public class SyncAssembler: Assembler {
         // MARK: URLSession
         
         container.register(URLSession.self) { _ in
-            return URLSession(configuration: URLSessionConfiguration.default)
+            URLSession(configuration: URLSessionConfiguration.default)
         }
         
         // MARK: Campaigns
         
         container.register(CampaignSyncParticipant.self) { resolver in
-            return CampaignSyncParticipant(
+            CampaignSyncParticipant(
                 context: resolver.resolve(NSManagedObjectContext.self, name: "backgroundContext")!,
                 userDefaults: UserDefaults.standard
             )
@@ -64,14 +64,14 @@ public class SyncAssembler: Assembler {
         // MARK: Location
         
         container.register(GeofencesSyncParticipant.self) { (resolver) in
-            return GeofencesSyncParticipant(
+            GeofencesSyncParticipant(
                 context: resolver.resolve(NSManagedObjectContext.self, name: "backgroundContext")!,
                 userDefaults: UserDefaults.standard
             )
         }
         
         container.register(BeaconsSyncParticipant.self) { (resolver) in
-            return BeaconsSyncParticipant(
+            BeaconsSyncParticipant(
                 context: resolver.resolve(NSManagedObjectContext.self, name: "backgroundContext")!,
                 userDefaults: UserDefaults.standard
             )

@@ -168,7 +168,7 @@ public class Attributes: NSObject, NSCoding, Codable, RawRepresentable, Expressi
         }
     }
     
-    required public init(from decoder: Decoder) throws {
+    public required init(from decoder: Decoder) throws {
         func fromKeyedDecoder(_ container: KeyedDecodingContainer<Attributes.DynamicCodingKeys>) throws -> Attributes {
             var assembledHash = [String: Any]()
 
@@ -289,7 +289,7 @@ public class Attributes: NSObject, NSCoding, Codable, RawRepresentable, Expressi
 }
 
 class BooleanValue: NSObject, NSCoding {
-    public var value: Bool
+    var value: Bool
     
     func encode(with aCoder: NSCoder) {
         aCoder.encode(value, forKey: "value")

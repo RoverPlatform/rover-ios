@@ -47,7 +47,7 @@ public class DataAssembler: Assembler {
         // MARK: Event Pipeline
         
         container.register(EventPipeline.self) { resolver in
-            return EventPipeline(
+            EventPipeline(
                 managedObjectContext: resolver.resolve(NSManagedObjectContext.self, name: "backgroundContext")!
             )
         }
@@ -55,7 +55,7 @@ public class DataAssembler: Assembler {
         // MARK: ExperienceStore
         
         container.register(ExperienceStore.self) { _ in
-            return ExperienceStore()
+            ExperienceStore()
         }
     }
     

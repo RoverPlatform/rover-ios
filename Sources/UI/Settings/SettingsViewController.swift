@@ -14,7 +14,7 @@ open class SettingsViewController: UIViewController {
     public private(set) var navigationBar: UINavigationBar?
     public private(set) var tableView = UITableView()
     
-    open override var preferredStatusBarStyle: UIStatusBarStyle {
+    override open var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
     
@@ -22,7 +22,7 @@ open class SettingsViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
     }
     
-    required public init?(coder aDecoder: NSCoder) {
+    public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
@@ -41,7 +41,7 @@ open class SettingsViewController: UIViewController {
         view.addSubview(tableView)
     }
     
-    open override func viewWillAppear(_ animated: Bool) {
+    override open func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         makeNavigationBar()
         configureConstraints()
@@ -102,13 +102,13 @@ open class SettingsViewController: UIViewController {
         NSLayoutConstraint.activate([
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-            ])
+        ])
         
         if let navigationBar = navigationBar {
             NSLayoutConstraint.activate([
                 navigationBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                 navigationBar.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-                ])
+            ])
         }
         
         if #available(iOS 11, *) {
@@ -119,7 +119,7 @@ open class SettingsViewController: UIViewController {
                 NSLayoutConstraint.activate([
                     navigationBar.topAnchor.constraint(equalTo: layoutGuide.topAnchor),
                     tableView.topAnchor.constraint(equalTo: navigationBar.bottomAnchor)
-                    ])
+                ])
             } else {
                 tableView.topAnchor.constraint(equalTo: layoutGuide.topAnchor).isActive = true
             }
@@ -130,7 +130,7 @@ open class SettingsViewController: UIViewController {
                 NSLayoutConstraint.activate([
                     navigationBar.topAnchor.constraint(equalTo: topLayoutGuide.bottomAnchor),
                     tableView.topAnchor.constraint(equalTo: navigationBar.bottomAnchor)
-                    ])
+                ])
             } else {
                 tableView.topAnchor.constraint(equalTo: topLayoutGuide.bottomAnchor).isActive = true
             }
@@ -226,7 +226,7 @@ extension SettingsViewController: UITableViewDataSource {
                 label.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 24.0),
                 label.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 24.0),
                 label.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -24.0)
-                ])
+            ])
             
             let bottomConstraint = label.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -24.0)
             bottomConstraint.priority = UILayoutPriority.defaultLow
@@ -272,14 +272,14 @@ extension SettingsViewController: UITableViewDataSource {
                 label.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 24.0),
                 label.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 24.0),
                 label.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -24.0)
-                ])
+            ])
             
             NSLayoutConstraint.activate([
                 value.heightAnchor.constraint(equalToConstant: 24.0),
                 value.topAnchor.constraint(equalTo: label.bottomAnchor),
                 value.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 24.0),
                 value.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -24.0)
-                ])
+            ])
             
             let bottomConstraint = value.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -23.0)
             bottomConstraint.priority = UILayoutPriority.defaultLow

@@ -47,7 +47,7 @@ class ScreenViewLayout: UICollectionViewLayout {
     }
     
     // swiftlint:disable:next cyclomatic_complexity function_body_length
-    open func prepare(frame: CGRect) {
+    func prepare(frame: CGRect) {
         var rowAttributesMap = AttributesMap()
         var blockAttributesMap = AttributesMap()
         

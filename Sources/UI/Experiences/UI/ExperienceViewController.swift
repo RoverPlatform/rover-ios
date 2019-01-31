@@ -22,7 +22,7 @@ open class ExperienceViewController: UINavigationController {
         viewControllers = [rootViewController]
     }
     
-    required public init?(coder aDecoder: NSCoder) {
+    public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
@@ -61,7 +61,7 @@ open class ExperienceViewController: UINavigationController {
     }
     
     #if swift(>=4.2)
-    open override var childForStatusBarStyle: UIViewController? {
+    override open var childForStatusBarStyle: UIViewController? {
         return self.topViewController
     }
     #else

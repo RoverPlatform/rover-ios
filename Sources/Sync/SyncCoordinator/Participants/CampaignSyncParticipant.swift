@@ -54,6 +54,7 @@ struct CampaignsSyncResponse: Decodable {
             var nodes: [CampaignNode]
             var pageInfo: PageInfo
         }
+        
         var campaigns: Campaigns
     }
     

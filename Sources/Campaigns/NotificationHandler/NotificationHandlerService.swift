@@ -13,8 +13,9 @@ import os
 class NotificationHandlerService: NotificationHandler {
     let influenceTracker: InfluenceTracker
     
-    public typealias WebsiteViewControllerProvider = (URL) -> UIViewController?
-    public let websiteViewControllerProvider: WebsiteViewControllerProvider
+    typealias WebsiteViewControllerProvider = (URL) -> UIViewController?
+    
+    let websiteViewControllerProvider: WebsiteViewControllerProvider
     
     let eventPipeline: EventPipeline
     

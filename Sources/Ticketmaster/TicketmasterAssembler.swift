@@ -13,7 +13,7 @@ public class TicketmasterAssembler: Assembler {
     
     public func assemble(container: Container) {
         container.register(TicketmasterAuthorizer.self) { resolver in
-            return resolver.resolve(TicketmasterManager.self)!
+            resolver.resolve(TicketmasterManager.self)!
         }
         
         container.register(TicketmasterManager.self) { resolver in
@@ -22,7 +22,7 @@ public class TicketmasterAssembler: Assembler {
         }
         
         container.register(SyncParticipant.self, name: "ticketmaster") { resolver in
-            return resolver.resolve(TicketmasterManager.self)!
+            resolver.resolve(TicketmasterManager.self)!
         }
     }
     

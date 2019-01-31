@@ -27,7 +27,7 @@ public final class Event: NSManagedObject {
     @NSManaged public internal(set) var timestamp: Date
     @NSManaged public internal(set) var isFlushed: Bool
     
-    public override func awakeFromInsert() {
+    override public func awakeFromInsert() {
         // default values for newly created and inserted Events.
         
         self.id = UUID().uuidString

@@ -11,7 +11,7 @@ public class AdSupportAssembler: Assembler {
     
     public func assemble(container: Container) {
         container.register(AdSupportInfoProvider.self) { _ in
-            return AdSupportManager()
+            AdSupportManager()
         }
     }
 }

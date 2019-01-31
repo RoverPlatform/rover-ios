@@ -34,7 +34,8 @@ open class NotificationCenterViewController: UIViewController {
         sessionController: SessionController,
         syncCoordinator: SyncCoordinator,
         managedObjectContext: NSManagedObjectContext,
-        websiteViewControllerProvider: @escaping WebsiteViewControllerProvider) {
+        websiteViewControllerProvider: @escaping WebsiteViewControllerProvider
+    ) {
         self.eventPipeline = eventPipeline
         self.router = router
         self.imageStore = imageStore
@@ -46,7 +47,7 @@ open class NotificationCenterViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
     }
     
-    required public init?(coder aDecoder: NSCoder) {
+    public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
@@ -94,7 +95,7 @@ open class NotificationCenterViewController: UIViewController {
         UIApplication.shared.applicationIconBadgeNumber = 0
     }
     
-    open override func viewWillAppear(_ animated: Bool) {
+    override open func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         makeNavigationBar()
         configureConstraints()
@@ -163,13 +164,13 @@ open class NotificationCenterViewController: UIViewController {
         NSLayoutConstraint.activate([
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-            ])
+        ])
         
         if let navigationBar = navigationBar {
             NSLayoutConstraint.activate([
                 navigationBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                 navigationBar.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-                ])
+            ])
         }
         
         if #available(iOS 11, *) {
@@ -191,7 +192,7 @@ open class NotificationCenterViewController: UIViewController {
                 NSLayoutConstraint.activate([
                     navigationBar.topAnchor.constraint(equalTo: topLayoutGuide.bottomAnchor),
                     tableView.topAnchor.constraint(equalTo: navigationBar.bottomAnchor)
-                    ])
+                ])
             } else {
                 tableView.topAnchor.constraint(equalTo: topLayoutGuide.bottomAnchor).isActive = true
             }
@@ -339,11 +340,16 @@ extension NotificationCenterViewController: UIViewControllerTransitioningDelegat
             
             let duration = transitionDuration(using: transitionContext)
             
-            UIView.animate(withDuration: duration, delay: 0, options: .curveEaseInOut, animations: {
-                toViewController.view.frame = finalFrame
-            }, completion: { finished in
-                transitionContext.completeTransition(finished)
-            })
+            UIView.animate(
+                withDuration: duration,
+                delay: 0,
+                options: .curveEaseInOut,
+                animations: {
+                    toViewController.view.frame = finalFrame
+                }, completion: { finished in
+                    transitionContext.completeTransition(finished)
+                }
+            )
         }
         
         func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
@@ -362,11 +368,15 @@ extension NotificationCenterViewController: UIViewControllerTransitioningDelegat
             let finalFrame = transitionContext.finalFrame(for: toViewController)
             let duration = transitionDuration(using: transitionContext)
             
-            UIView.animate(withDuration: duration, animations: {
-                fromViewController.view.frame = finalFrame.offsetBy(dx: finalFrame.width, dy: 0)
-            }, completion: { finished in
-                transitionContext.completeTransition(finished)
-            })
+            UIView.animate(
+                withDuration: duration,
+                animations: {
+                    fromViewController.view.frame = finalFrame.offsetBy(dx: finalFrame.width, dy: 0)
+                },
+                completion: { finished in
+                    transitionContext.completeTransition(finished)
+                }
+            )
         }
         
         func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {

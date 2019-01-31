@@ -11,7 +11,7 @@ public class TelephonyAssembler: Assembler {
     
     public func assemble(container: Container) {
         container.register(TelephonyInfoProvider.self) { _ in
-            return TelephonyManager()
+            TelephonyManager()
         }
     }
 }

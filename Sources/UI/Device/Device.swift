@@ -121,7 +121,7 @@ open class Device {
             return UIApplication.shared.applicationIconBadgeNumber
         } else {
             return DispatchQueue.main.sync {
-                return UIApplication.shared.applicationIconBadgeNumber
+                UIApplication.shared.applicationIconBadgeNumber
             }
         }
     }

@@ -43,7 +43,7 @@ extension Collection where Element == Geofence {
         #endif
         
         let sorted = self.sorted(by: {
-            return coordinate.distanceTo($0.coordinate) < coordinate.distanceTo($1.coordinate)
+            coordinate.distanceTo($0.coordinate) < coordinate.distanceTo($1.coordinate)
         })
         
         #if swift(>=4.2)

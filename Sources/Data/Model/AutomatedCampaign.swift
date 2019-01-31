@@ -11,7 +11,7 @@ import CoreData
 
 public final class AutomatedCampaign: Campaign {
     @discardableResult
-    static public func insert(into context: NSManagedObjectContext) -> AutomatedCampaign {
+    public static func insert(into context: NSManagedObjectContext) -> AutomatedCampaign {
         return AutomatedCampaign(context: context)
     }
 }

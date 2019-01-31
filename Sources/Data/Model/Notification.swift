@@ -23,7 +23,7 @@ public final class Notification: NSManagedObject {
     @NSManaged public var deliveredAt: Date
     @NSManaged public var isRead: Bool
     
-    public override func awakeFromInsert() {
+    override public func awakeFromInsert() {
         self.id = UUID()
         super.awakeFromInsert()
     }

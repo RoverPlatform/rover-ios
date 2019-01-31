@@ -11,11 +11,11 @@ import UIKit
 open class ButtonCell: BlockCell {
     public let label = UILabel()
     
-    open override var content: UIView? {
+    override open var content: UIView? {
         return label
     }
     
-    open override func configure(with block: Block, imageStore: ImageStore) {
+    override open func configure(with block: Block, imageStore: ImageStore) {
         super.configure(with: block, imageStore: imageStore)
         
         guard let buttonBlock = block as? ButtonBlock else {

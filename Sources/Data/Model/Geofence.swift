@@ -28,7 +28,8 @@ public final class Geofence: NSManagedObject {
         }
     }
     
-    @discardableResult static public func insert(from info: InsertionInfo, into context: NSManagedObjectContext) -> Geofence {
+    @discardableResult
+    static public func insert(from info: InsertionInfo, into context: NSManagedObjectContext) -> Geofence {
         let geofence = Geofence(context: context)
         geofence.id = info.id
         geofence.name = info.name
@@ -39,7 +40,8 @@ public final class Geofence: NSManagedObject {
         return geofence
     }
     
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<Geofence> {
+    @nonobjc
+    public class func fetchRequest() -> NSFetchRequest<Geofence> {
         return NSFetchRequest<Geofence>(entityName: "Geofence")
     }
     

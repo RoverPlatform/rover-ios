@@ -91,7 +91,8 @@ open class ExperienceContainer: UIViewController {
         cancelButton.topAnchor.constraint(equalTo: activityIndicator.bottomAnchor, constant: 8).isActive = true
     }
     
-    @objc open func cancel() {
+    @objc
+    open func cancel() {
         dismiss(animated: true, completion: nil)
     }
     

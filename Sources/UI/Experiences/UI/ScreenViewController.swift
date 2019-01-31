@@ -110,7 +110,8 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         sessionController.unregisterSession(identifier: sessionIdentifier)
     }
     
-    @objc open func close() {
+    @objc
+    open func close() {
         dismiss(animated: true, completion: nil)
     }
     

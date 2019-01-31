@@ -45,7 +45,7 @@ extension ImageConfiguration: Equatable {
 }
 
 extension ImageConfiguration: Hashable {
-    public var hashValue: Int {
-        return optimizedURL.hashValue
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(optimizedURL.hashValue)
     }
 }

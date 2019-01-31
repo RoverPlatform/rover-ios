@@ -8,6 +8,7 @@
 
 import UIKit
 
+// swiftlint:disable:next type_body_length
 class ScreenViewLayout: UICollectionViewLayout {
     let screen: Screen
     
@@ -45,6 +46,7 @@ class ScreenViewLayout: UICollectionViewLayout {
         needsPreparation = false
     }
     
+    // swiftlint:disable:next cyclomatic_complexity function_body_length
     open func prepare(frame: CGRect) {
         var rowAttributesMap = AttributesMap()
         var blockAttributesMap = AttributesMap()
@@ -228,7 +230,7 @@ class ScreenViewLayout: UICollectionViewLayout {
                 // if blockFrame exceeds the rowFrame, we need to clip it within the row, and in terms relative
                 // to blockFrame.
                 let clipRect: CGRect? = {
-                    if (!rowFrame.contains(blockFrame)) {
+                    if !rowFrame.contains(blockFrame) {
                         // and find the intersection with blockFrame to find out what should be exposed and then
                         // transform into coordinate space with origin of the blockframe in the top left corner:
                         let intersection = rowFrame.intersection(blockFrame)
@@ -236,7 +238,7 @@ class ScreenViewLayout: UICollectionViewLayout {
                         // translate the clip to return the intersection, but if there is none that means the
                         // block is *entirely* outside of the bounds.  An unlikely but not impossible situation.
                         // Clip it entirely:
-                        if(intersection.isNull) {
+                        if intersection.isNull {
                             return CGRect(x: blockFrame.origin.x, y: blockFrame.origin.y, width: 0, height: 0)
                         } else {
                             // translate the rect into the terms of the containing rowframe:
@@ -307,7 +309,7 @@ class ScreenViewLayout: UICollectionViewLayout {
         if let headerAttributes = rowAttributes.first(where: { $0.indexPath.section == 0 }) {
             var frame = headerAttributes.referenceFrame
             frame.size.height = max(0, frame.size.height + deltaY)
-            frame.origin.y = frame.origin.y - deltaY
+            frame.origin.y -= deltaY
             headerAttributes.frame = frame
         }
         

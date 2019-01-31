@@ -34,13 +34,13 @@ extension UIAssembler: Assembler {
     public func assemble(container: Container) {
         // MARK: TEMPORARY FAKE THINGS
         
-        container.register(SyncCoordinator.self) { resolver in
+        container.register(SyncCoordinator.self) { _ in
             return FakeSyncCoordinator()
         }
         
         // MARK: ImageStore
         
-        container.register(ImageStore.self) { resolver in
+        container.register(ImageStore.self) { _ in
             let session = URLSession(configuration: URLSessionConfiguration.ephemeral)
             return ImageStoreService(session: session)
         }
@@ -80,11 +80,9 @@ extension UIAssembler: Assembler {
         
         // MARK: UIViewController (website)
         
-        container.register(UIViewController.self, name: "website", scope: .transient) { (resolver, url: URL) in
+        container.register(UIViewController.self, name: "website", scope: .transient) { (_, url: URL) in
             return SFSafariViewController(url: url)
         }
-        
-
         
         // MARK: VersionTracker
         
@@ -98,7 +96,7 @@ extension UIAssembler: Assembler {
         
         // MARK: UICollectionViewLayout (screen)
         
-        container.register(UICollectionViewLayout.self, name: "screen", scope: .transient) { (resolver, screen: Screen) in
+        container.register(UICollectionViewLayout.self, name: "screen", scope: .transient) { (_, screen: Screen) in
             return ScreenViewLayout(screen: screen)
         }
         
@@ -184,7 +182,7 @@ extension UIAssembler: Assembler {
         
         // MARK: UIViewController (settings)
         
-        container.register(UIViewController.self, name: "settings", scope: .transient) { resolver in
+        container.register(UIViewController.self, name: "settings", scope: .transient) { _ in
             return SettingsViewController()
         }
     }

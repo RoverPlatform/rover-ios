@@ -14,7 +14,7 @@ protocol Predicate {
     
 }
 
-enum PredicateType : Decodable {
+enum PredicateType: Decodable {
     case comparisonPredicate
     case compoundPredicate
 
@@ -36,13 +36,13 @@ enum PredicateType : Decodable {
     }
 }
 
-enum ComparisonPredicateModifier : String, Decodable {
+enum ComparisonPredicateModifier: String, Decodable {
     case direct = "DIRECT"
     case any = "ANY"
     case all = "ALL"
 }
 
-enum ComparisonPredicateOperator : String, Decodable {
+enum ComparisonPredicateOperator: String, Decodable {
     case lessThan = "LESS_THAN"
     case lessThanOrEqualTo = "LESS_THAN_OR_EQUAL_TO"
     case greaterThan = "GREATER_THAN"
@@ -58,13 +58,13 @@ enum ComparisonPredicateOperator : String, Decodable {
     case geoWithin = "GEO_WITHIN"
 }
 
-enum CompoundPredicateLogicalType : String, Decodable {
+enum CompoundPredicateLogicalType: String, Decodable {
     case or = "OR"
     case and = "AND"
     case not = "NOT"
 }
 
-struct ComparisonPredicate : Predicate, Decodable {
+struct ComparisonPredicate: Predicate, Decodable {
     let keyPath: String
     let modifier: ComparisonPredicateModifier
     let `operator`: ComparisonPredicateOperator
@@ -78,7 +78,7 @@ struct ComparisonPredicate : Predicate, Decodable {
     let dateTimeValues: [Date]? = nil
 }
 
-struct CompoundPredicate : Predicate, Decodable {
+struct CompoundPredicate: Predicate, Decodable {
     let booleanOperator: CompoundPredicateLogicalType
     
     let predicates: [Predicate]
@@ -109,7 +109,7 @@ struct CompoundPredicate : Predicate, Decodable {
     }
 }
 
-enum CampaignStatus : String, Decodable {
+enum CampaignStatus: String, Decodable {
     case draft = "DRAFT"
     case published = "PUBLISHED"
     case archived = "ARCHIVED"
@@ -119,7 +119,7 @@ protocol CampaignTrigger {
     
 }
 
-enum CampaignTriggerType : Decodable {
+enum CampaignTriggerType: Decodable {
     case automated
     case scheduled
     
@@ -144,7 +144,7 @@ enum CampaignTriggerType : Decodable {
 protocol EventTriggerFilter {
 }
 
-enum EventTriggerFilterType : Decodable {
+enum EventTriggerFilterType: Decodable {
     case dayOfTheWeek
     case eventAttributes
     case scheduled
@@ -172,7 +172,7 @@ enum EventTriggerFilterType : Decodable {
     }
 }
 
-struct DayOfTheWeekEventTriggerFilter : EventTriggerFilter, Decodable {
+struct DayOfTheWeekEventTriggerFilter: EventTriggerFilter, Decodable {
     let monday: Bool
     let tuesday: Bool
     let wednesday: Bool
@@ -182,7 +182,7 @@ struct DayOfTheWeekEventTriggerFilter : EventTriggerFilter, Decodable {
     let sunday: Bool
 }
 
-struct EventAttributesEventTriggerFilter : EventTriggerFilter, Decodable {
+struct EventAttributesEventTriggerFilter: EventTriggerFilter, Decodable {
     let predicate: Predicate
     
     enum CodingKeys: String, CodingKey {
@@ -208,22 +208,22 @@ struct DateTimeComponents: Decodable {
     let timeZone: String?
 }
 
-struct ScheduledEventTriggerFilter : EventTriggerFilter, Decodable {
+struct ScheduledEventTriggerFilter: EventTriggerFilter, Decodable {
     let startDateTime: DateTimeComponents
     let endDateTime: DateTimeComponents
 }
 
-struct TimeOfDayEventTriggerFilter : EventTriggerFilter, Decodable {
+struct TimeOfDayEventTriggerFilter: EventTriggerFilter, Decodable {
     let startTime: Int
     let endTime: Int
 }
 
-struct EventTrigger : Decodable {
+struct EventTrigger: Decodable {
     let eventName: String
     let eventNamespace: String?
     let filters: [EventTriggerFilter]
     
-    enum CodingKeys : String, CodingKey {
+    enum CodingKeys: String, CodingKey {
         case eventName
         case eventNamespace
         case filters
@@ -254,18 +254,18 @@ struct EventTrigger : Decodable {
     }
 }
 
-struct FrequencyLimit : Decodable {
+struct FrequencyLimit: Decodable {
     let count: Int
     let interval: TimeInterval
 }
 
-struct AutomatedCampaignTrigger : CampaignTrigger, Decodable {
+struct AutomatedCampaignTrigger: CampaignTrigger, Decodable {
     let delay: TimeInterval
     let eventTrigger: EventTrigger
     let limits: [FrequencyLimit]
 }
 
-struct ScheduledCampaignTrigger : CampaignTrigger, Decodable {
+struct ScheduledCampaignTrigger: CampaignTrigger, Decodable {
     let dateTime: DateTimeComponents
 }
 
@@ -273,7 +273,7 @@ protocol CampaignDeliverable {
     
 }
 
-enum CampaignDeliverableType : Decodable {
+enum CampaignDeliverableType: Decodable {
     case notification
     
     enum CodingKeys: String, CodingKey {
@@ -298,13 +298,15 @@ struct NotificationAlertOptions: Decodable {
     let systemNotification: Bool
 }
 
-enum NotificationAttachmentType : String, Decodable {
+enum NotificationAttachmentType: String, Decodable {
     case audio
     case image
     case video
 }
 
-struct iOSNotificationOptions : Decodable {
+// iOS name is typically considered an exception to this rule.
+// swiftlint:disable:next type_name
+struct iOSNotificationOptions: Decodable {
     let categoryIdentifier: String?
     let contentAvailable: Bool?
     let mutableContent: Bool?
@@ -338,7 +340,7 @@ struct NotificationCampaignDeliverable: CampaignDeliverable, Decodable {
     let tapBehavior: NotificationTapBehavior
 }
 
-struct CampaignNode : Decodable {
+struct CampaignNode: Decodable {
     let id: String
     let name: String
     let status: CampaignStatus
@@ -364,7 +366,6 @@ struct CampaignNode : Decodable {
         self.status = try container.decode(CampaignStatus.self, forKey: .status)
         self.createdAt = try container.decode(Date.self, forKey: .createdAt)
         self.updatedAt = try container.decode(Date.self, forKey: .updatedAt)
-        
         
         let deliverableType = try container.decode(CampaignDeliverableType.self, forKey: .deliverable)
         switch deliverableType {

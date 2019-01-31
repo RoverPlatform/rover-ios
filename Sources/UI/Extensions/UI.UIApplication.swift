@@ -11,9 +11,11 @@ import UIKit
 import os
 
 extension UIApplication {
-    public func present(_ viewControllerToPresent: UIViewController,
-                 animated flag: Bool,
-                 completion: (() -> Void)? = nil) {
+    public func present(
+        _ viewControllerToPresent: UIViewController,
+        animated flag: Bool,
+        completion: (() -> Void)? = nil
+    ) {
         
         // Check if `viewControllerToPresent` is already presented
         
@@ -31,8 +33,6 @@ extension UIApplication {
         }
 
         // Presenting `viewControllerToPresent` inside a container other than `UITabBarController` is not supported at this time
-        
-        
         
         if viewControllerToPresent.parent != nil {
             os_log("Failed to present viewControllerToPresent - already presented in an unsupported container", log: .general, type: .default)

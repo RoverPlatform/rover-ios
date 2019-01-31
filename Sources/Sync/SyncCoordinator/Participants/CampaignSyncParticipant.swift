@@ -75,7 +75,6 @@ extension Campaign {
     }
 }
 
-
 extension CampaignsSyncResponse: PagingResponse {
     var nodes: [CampaignNode]? {
         return data.campaigns.nodes

@@ -30,7 +30,6 @@ extension Geofence {
     }
 }
 
-
 // MARK: Collection
 
 extension Collection where Element == Geofence {
@@ -72,4 +71,3 @@ extension Collection where Element == Geofence {
         return Set<CLCircularRegion>(regions)
     }
 }
-

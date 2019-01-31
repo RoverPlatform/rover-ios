@@ -11,7 +11,7 @@ import CoreData
 import os
 
 public class EventPipeline {
-    public var deviceInfoProvider: DeviceInfoProvider? = nil
+    public var deviceInfoProvider: DeviceInfoProvider?
     
     private let managedObjectContext: NSManagedObjectContext
     

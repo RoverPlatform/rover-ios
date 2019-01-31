@@ -92,7 +92,6 @@ public class DeviceSnapshot: NSObject, Codable, NSCoding {
     public var localeLanguage: String?
     public var localeRegion: String?
     public var localeScript: String?
-
     
     public var isLocationServicesEnabled: Bool?
     public var location: LocationSnapshot?
@@ -330,7 +329,6 @@ public class LocationSnapshot: NSObject, Codable, NSCoding {
         self.timestamp = timestamp
     }
 }
-
     
 public class AddressSnapshot: NSObject, Codable, NSCoding {
     public var street: String?

@@ -43,7 +43,6 @@ extension CompressionLevel {
     static let defaultCompression = Z_DEFAULT_COMPRESSION
 }
 
-
 /**
  Errors on gzipping/gunzipping based on the zlib error codes.
  */
@@ -98,7 +97,6 @@ enum GzipError: Error {
      */
     case unknown(message: String, code: Int)
     
-    
     internal init(code: Int32, msg: UnsafePointer<CChar>?) {
         
         let message: String = {
@@ -131,7 +129,6 @@ enum GzipError: Error {
         }()
     }
     
-    
     var localizedDescription: String {
         
         let description: String = {
@@ -156,7 +153,6 @@ enum GzipError: Error {
     
 }
 
-
 extension Data {
     
     /**
@@ -166,7 +162,6 @@ extension Data {
         
         return self.starts(with: [0x1f, 0x8b])  // check magic number
     }
-    
     
     /**
      Create a new `Data` object by compressing the receiver using zlib.
@@ -217,7 +212,6 @@ extension Data {
         
         return data
     }
-    
     
     /**
      Create a new `Data` object by decompressing the receiver using zlib.
@@ -277,7 +271,6 @@ extension Data {
         return data
     }
     
-    
     private func createZStream() -> z_stream {
         
         var stream = z_stream()
@@ -292,7 +285,6 @@ extension Data {
     
 }
 
-
 private struct DataSize {
     
     static let chunk = 2 ^ 14
@@ -300,4 +292,3 @@ private struct DataSize {
     
     private init() { }
 }
-

@@ -9,8 +9,9 @@
 import Foundation
 import CoreData
 
-public final class AutomatedCampaign : Campaign {
-    @discardableResult static public func insert(into context: NSManagedObjectContext) -> AutomatedCampaign {
+public final class AutomatedCampaign: Campaign {
+    @discardableResult
+    static public func insert(into context: NSManagedObjectContext) -> AutomatedCampaign {
         return AutomatedCampaign(context: context)
     }
 }

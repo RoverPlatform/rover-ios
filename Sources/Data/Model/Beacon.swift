@@ -28,7 +28,8 @@ public final class Beacon: NSManagedObject {
         }
     }
     
-    @discardableResult static public func insert(from info: InsertionInfo, into context: NSManagedObjectContext) -> Beacon {
+    @discardableResult
+    static public func insert(from info: InsertionInfo, into context: NSManagedObjectContext) -> Beacon {
         let beacon = Beacon(context: context)
         beacon.id = info.id
         beacon.name = info.name
@@ -39,7 +40,8 @@ public final class Beacon: NSManagedObject {
         return beacon
     }
     
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<Beacon> {
+    @nonobjc
+    public class func fetchRequest() -> NSFetchRequest<Beacon> {
         return NSFetchRequest<Beacon>(entityName: "Beacon")
     }
     

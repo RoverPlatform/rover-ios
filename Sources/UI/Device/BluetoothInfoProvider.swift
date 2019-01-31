@@ -6,6 +6,6 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-public protocol BluetoothInfoProvider: class {
+public protocol BluetoothInfoProvider: AnyObject {
     var isBluetoothEnabled: Bool { get }
 }

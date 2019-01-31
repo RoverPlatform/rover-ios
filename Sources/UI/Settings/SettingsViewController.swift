@@ -139,7 +139,8 @@ open class SettingsViewController: UIViewController {
     
     // MARK: Actions
     
-    @objc func done(_ sender: Any) {
+    @objc
+    func done(_ sender: Any) {
         dismiss(animated: true, completion: nil)
     }
 }
@@ -177,7 +178,8 @@ extension SettingsViewController: UITableViewDataSource {
         }
     }
     
-    @objc func toggleTestDevice(_ sender: Any) {
+    @objc
+    func toggleTestDevice(_ sender: Any) {
         guard let toggle = sender as? UISwitch else {
             return
         }

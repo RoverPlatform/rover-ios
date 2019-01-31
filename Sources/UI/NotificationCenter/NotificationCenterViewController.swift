@@ -200,11 +200,13 @@ open class NotificationCenterViewController: UIViewController {
     
     // MARK: Actions
     
-    @objc func done(_ sender: Any) {
+    @objc
+    func done(_ sender: Any) {
         dismiss(animated: true, completion: nil)
     }
     
-    @objc func refresh(_ sender: Any) {
+    @objc
+    func refresh(_ sender: Any) {
         self.syncCoordinator.sync { _ in
             DispatchQueue.main.async {
                 self.refreshControl.endRefreshing()
@@ -256,7 +258,7 @@ extension NotificationCenterViewController: UITableViewDelegate {
     // Swipe to delete in iOS 10
     
     public func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
-        return [UITableViewRowAction(style: .destructive, title: "Delete") { (action, indexPath) in
+        return [UITableViewRowAction(style: .destructive, title: "Delete") { (_, indexPath) in
             self.deleteNotification(at: indexPath)
         }]
     }
@@ -266,7 +268,7 @@ extension NotificationCenterViewController: UITableViewDelegate {
     @available(iOS 11.0, *)
     public func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         return UISwipeActionsConfiguration(actions: [
-            UIContextualAction(style: .destructive, title: "Delete") { (action, sourceView, completionHandler) in
+            UIContextualAction(style: .destructive, title: "Delete") { (_, _, _) in
                 self.deleteNotification(at: indexPath)
             }
         ])
@@ -339,9 +341,9 @@ extension NotificationCenterViewController: UIViewControllerTransitioningDelegat
             
             UIView.animate(withDuration: duration, delay: 0, options: .curveEaseInOut, animations: {
                 toViewController.view.frame = finalFrame
-            }) { finished in
+            }, completion: { finished in
                 transitionContext.completeTransition(finished)
-            }
+            })
         }
         
         func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
@@ -362,9 +364,9 @@ extension NotificationCenterViewController: UIViewControllerTransitioningDelegat
             
             UIView.animate(withDuration: duration, animations: {
                 fromViewController.view.frame = finalFrame.offsetBy(dx: finalFrame.width, dy: 0)
-            }) { finished in
+            }, completion: { finished in
                 transitionContext.completeTransition(finished)
-            }
+            })
         }
         
         func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
@@ -381,8 +383,7 @@ extension NotificationCenterViewController: UIViewControllerTransitioningDelegat
     }
 }
 
-
-extension NotificationCenterViewController : UITableViewDataSource {
+extension NotificationCenterViewController: UITableViewDataSource {
     
     func notificationAt(indexPath: IndexPath) -> RoverData.Notification {
         return fetchedResultsController.object(at: indexPath) as RoverData.Notification
@@ -417,7 +418,7 @@ extension NotificationCenterViewController : UITableViewDataSource {
     }
 }
 
-extension NotificationCenterViewController : NSFetchedResultsControllerDelegate {
+extension NotificationCenterViewController: NSFetchedResultsControllerDelegate {
     open func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         self.tableView.endUpdates()
     }
@@ -427,7 +428,7 @@ extension NotificationCenterViewController : NSFetchedResultsControllerDelegate 
     }
     
     open func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
-        switch(type) {
+        switch type {
         case .insert:
             if let newIndexPath = newIndexPath {
                 tableView.insertRows(at: [newIndexPath], with: .fade)
@@ -447,4 +448,3 @@ extension NotificationCenterViewController : NSFetchedResultsControllerDelegate 
         }
     }
 }
-

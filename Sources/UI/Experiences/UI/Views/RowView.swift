@@ -17,6 +17,8 @@ open class RowView: UICollectionReusableView {
         get {
             return true
         }
+        // We want to override super's setter with a no-op.
+        // swiftlint:disable:next unused_setter_value
         set { }
     }
     
@@ -55,6 +57,8 @@ open class RowView: UICollectionReusableView {
         backgroundColor = row.background.color.uiColor
     }
     
+    // Function is decently 
+    // swiftlint:disable:next cyclomatic_complexity
     open func configureBackgroundImage(imageStore: ImageStore) {
         
         // Reset any existing background image

@@ -139,7 +139,7 @@ extension Row: Codable {
 
 // MARK: Attributes
 
-extension Row  {
+extension Row {
     public var attributes: Attributes {
         return [
             "id": id,

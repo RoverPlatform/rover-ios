@@ -11,7 +11,8 @@ import CoreData
 import os
 
 public final class Notification: NSManagedObject {
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<Notification> {
+    @nonobjc
+    public class func fetchRequest() -> NSFetchRequest<Notification> {
         return NSFetchRequest<Notification>(entityName: "Notification")
     }
     

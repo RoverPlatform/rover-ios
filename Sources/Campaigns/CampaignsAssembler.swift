@@ -21,7 +21,7 @@ public struct CampaignsAssembler {
     }
 }
 
-extension CampaignsAssembler : Assembler {
+extension CampaignsAssembler: Assembler {
     public func assemble(container: Container) {
         // MARK: InfluenceTracker
         

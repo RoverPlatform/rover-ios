@@ -20,12 +20,12 @@ extension Text {
             return nil
         }
         
-        let range = NSMakeRange(0, attributedString.length)
+        let range = NSRange(location: 0, length: attributedString.length)
         
         // Bold and italicize
         
         #if swift(>=4.2)
-        attributedString.enumerateAttribute(NSAttributedString.Key.font, in: range, options: []) { (value, range, stop) in
+        attributedString.enumerateAttribute(NSAttributedString.Key.font, in: range, options: []) { (value, range, _) in
             guard let value = value as? UIFont else {
                 return
             }
@@ -76,7 +76,7 @@ extension Text {
         
         let string = attributedString.string
         if attributedString.length > 0 && string.suffix(1) == "\n" {
-            attributedString.replaceCharacters(in: NSMakeRange(attributedString.length - 1, 1), with: "")
+            attributedString.replaceCharacters(in: NSRange(location: attributedString.length - 1, length: 1), with: "")
         }
         
         return attributedString
@@ -156,4 +156,3 @@ extension Text.Font.Weight {
         }
     }
 }
-

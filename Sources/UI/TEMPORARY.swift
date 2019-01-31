@@ -20,4 +20,3 @@ extension SyncCoordinator {
 public class FakeSyncCoordinator: SyncCoordinator {
     
 }
-

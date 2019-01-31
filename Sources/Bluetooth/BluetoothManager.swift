@@ -23,9 +23,7 @@ class BluetoothManager: NSObject {
 
 extension BluetoothManager: BluetoothInfoProvider {
     var isBluetoothEnabled: Bool {
-        get {
-            return self.isEnabled.value ?? false
-        }
+        return self.isEnabled.value ?? false
     }
 }
 

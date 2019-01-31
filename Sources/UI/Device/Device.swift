@@ -392,7 +392,7 @@ open class Device {
     }
 }
 
-extension Device : DeviceInfoProvider {
+extension Device: DeviceInfoProvider {
     public var deviceSnapshot: DeviceSnapshot {
         return self.snapshot
     }

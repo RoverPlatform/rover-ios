@@ -28,7 +28,7 @@ public class DataAssembler: Assembler {
             return container.viewContext
         }
         
-        container.register(NSPersistentContainer.self) { resolver in
+        container.register(NSPersistentContainer.self) { _ in
             let bundles = [Bundle(for: DataAssembler.self)]
             guard let model = NSManagedObjectModel.mergedModel(from: bundles) else {
                 fatalError("Model not found")
@@ -54,7 +54,7 @@ public class DataAssembler: Assembler {
         
         // MARK: ExperienceStore
         
-        container.register(ExperienceStore.self) { resolver in
+        container.register(ExperienceStore.self) { _ in
             return ExperienceStore()
         }
     }

@@ -108,4 +108,3 @@ extension BlockTapBehavior: Codable {
         }
     }
 }
-

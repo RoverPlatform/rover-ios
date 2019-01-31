@@ -30,7 +30,7 @@ class AttributesTests: XCTestCase {
     }
     
     func testInstantiateFromDictionaryLiteral() {
-        let fromLiteral : Attributes = [
+        let fromLiteral: Attributes = [
             "testInt": 42,
             "anArray": [1, 2, 3, 4],
             "testTrueBoolean": true,
@@ -79,7 +79,7 @@ class AttributesTests: XCTestCase {
 
         XCTAssertTrue(
             Attributes.wasAssertionThrown {
-                let _ = Attributes(rawValue: exampleBogusAttributesWithObjectInArray)
+                _ = Attributes(rawValue: exampleBogusAttributesWithObjectInArray)
             }
         )
     }
@@ -91,7 +91,7 @@ class AttributesTests: XCTestCase {
 
         XCTAssertTrue(
             Attributes.wasAssertionThrown {
-                let _ = Attributes(rawValue: exampleBogusAttributesWithObjectInArray)
+                _ = Attributes(rawValue: exampleBogusAttributesWithObjectInArray)
             }
         )
     }

@@ -17,7 +17,7 @@ public final class Router {
     let settingsViewControllerProvider: () -> UIViewController
     let notificationCenterViewControllerProvider: () -> UIViewController
     
-    init(associatedDomains: [String], urlSchemes: [String],  experienceViewControllerProvider: @escaping (ExperienceIdentifier) -> UIViewController, settingsViewControllerProvider: @escaping () -> UIViewController, notificationCenterViewControllerProvider: @escaping () -> UIViewController) {
+    init(associatedDomains: [String], urlSchemes: [String], experienceViewControllerProvider: @escaping (ExperienceIdentifier) -> UIViewController, settingsViewControllerProvider: @escaping () -> UIViewController, notificationCenterViewControllerProvider: @escaping () -> UIViewController) {
         self.associatedDomains = associatedDomains
         self.urlSchemes = urlSchemes
         self.experienceViewControllerProvider = experienceViewControllerProvider

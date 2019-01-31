@@ -124,6 +124,8 @@ enum DeviceModel {
         }
     }
     
+    // This is effectively a look-up table in code, not algorithmic behavior.  The swiftlint rules are not appropriate here.
+    // swiftlint:disable:next cyclomatic_complexity function_body_length
     init?(modelName: String) {
         switch modelName {
         case "x86_64":

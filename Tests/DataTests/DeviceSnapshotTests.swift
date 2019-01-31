@@ -10,7 +10,6 @@
 import XCTest
 
 class DeviceSnapshotTests: XCTestCase {
-    
     let exampleComprehensiveDevice = DeviceSnapshot(
         advertisingIdentifier: "ad id",
         isBluetoothEnabled: nil,
@@ -74,6 +73,8 @@ class DeviceSnapshotTests: XCTestCase {
     )
     
     func verifyDecodedSnapshot(decodedDeviceSnapshot: DeviceSnapshot) {
+        // use XCTAssertEqual for all matchers to make it read better.
+        // swiftlint:disable xct_specific_matcher
         XCTAssertEqual(decodedDeviceSnapshot.advertisingIdentifier, "ad id")
         XCTAssertEqual(decodedDeviceSnapshot.isBluetoothEnabled, nil)
         XCTAssertEqual(decodedDeviceSnapshot.localeLanguage, "en")
@@ -122,6 +123,7 @@ class DeviceSnapshotTests: XCTestCase {
         XCTAssertEqual((decodedDeviceSnapshot.userInfo?.rawValue["testString"]) as! String, "donut")
         XCTAssertEqual((decodedDeviceSnapshot.userInfo?.rawValue["testFalseBoolean"]) as! Bool, false)
         XCTAssertEqual(((decodedDeviceSnapshot.userInfo?.rawValue["nestedObject"]) as! Attributes).rawValue["anArray"] as! [Int], [1, 2, 3, 4])
+        // swiftlint:enable xct_specific_matcher
     }
     
     func testDeviceSnapshotNSCodingRoundtrip() throws {

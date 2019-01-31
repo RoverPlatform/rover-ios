@@ -9,11 +9,9 @@
 import CoreData
 
 public class DataAssembler: Assembler {
-
     public init() { }
     
     public func assemble(container: Container) {
-        
         // MARK: Core Data
         
         container.register(NSManagedObjectContext.self, name: "backgroundContext") { resolver in

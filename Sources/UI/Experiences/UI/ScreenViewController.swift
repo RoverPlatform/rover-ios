@@ -377,7 +377,6 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     // MARK: UICollectionViewDelegate
     
     override open func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-        
         // No-op if the block does not have any meaningful behavior to avoid every rectangle, line, image etc. tracking events
         
         switch screen.rows[indexPath.section].blocks[indexPath.row].tapBehavior {

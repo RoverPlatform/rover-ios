@@ -22,7 +22,6 @@ class SyncCoordinatorService: SyncCoordinator {
     }
     
     func sync(completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        
         var intialParticipants = [SyncParticipant]()
         var intialRequests = [SyncRequest]()
         

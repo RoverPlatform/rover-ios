@@ -10,7 +10,6 @@ import CoreLocation
 
 extension CLLocationManager {
     public func monitor(for regionsToMonitor: Set<CLRegion>) {
-        
         // Remove regions that should no longer be monitored
         for regionToRemove in monitoredRegions.subtracting(regionsToMonitor) {
             self.stopMonitoring(for: regionToRemove)

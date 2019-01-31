@@ -62,7 +62,6 @@ struct CampaignsSyncResponse: Decodable {
 }
 
 extension Campaign {
-    
     static func insert(from campaignNode: CampaignNode, into managedObjectContext: NSManagedObjectContext) {
         let campaign: Campaign
         switch campaignNode.trigger {

@@ -10,7 +10,6 @@
 import XCTest
 
 class RoverAdSupportTests: XCTestCase {
-
     override func setUp() {
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
@@ -30,5 +29,4 @@ class RoverAdSupportTests: XCTestCase {
             // Put the code you want to measure the time of here.
         }
     }
-
 }

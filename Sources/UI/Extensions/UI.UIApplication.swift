@@ -16,7 +16,6 @@ extension UIApplication {
         animated flag: Bool,
         completion: (() -> Void)? = nil
     ) {
-        
         // Check if `viewControllerToPresent` is already presented
         
         if viewControllerToPresent.isBeingPresented || viewControllerToPresent.presentingViewController != nil {

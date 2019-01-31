@@ -395,7 +395,6 @@ extension NotificationCenterViewController: UIViewControllerTransitioningDelegat
 }
 
 extension NotificationCenterViewController: UITableViewDataSource {
-    
     func notificationAt(indexPath: IndexPath) -> RoverData.Notification {
         return fetchedResultsController.object(at: indexPath) as RoverData.Notification
     }

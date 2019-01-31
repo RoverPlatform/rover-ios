@@ -8,7 +8,6 @@
 
 public class TicketmasterAssembler: Assembler {
     public init() {
-        
     }
     
     public func assemble(container: Container) {

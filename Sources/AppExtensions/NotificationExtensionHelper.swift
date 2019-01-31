@@ -46,7 +46,6 @@ public class NotificationExtensionHelper {
         }
         
         guard let payload = try? JSONDecoder.default.decode(Payload.self, from: data) else {
-            
             // This is not a Rover notification – clear the last received notification so we're not taking credit for an influenced open.
             clearLastReceivedNotification()
             return false

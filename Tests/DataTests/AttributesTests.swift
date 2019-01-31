@@ -10,7 +10,6 @@
 import XCTest
 
 class AttributesTests: XCTestCase {
-    
     let exampleAttributes: [String: Any] = [
         "testInt": 42,
         "anArray": [1, 2, 3, 4],
@@ -23,9 +22,9 @@ class AttributesTests: XCTestCase {
     func verifyDecodedAttributes(attributes: Attributes) {
         XCTAssertEqual(attributes.rawValue["testInt"] as! Int, 42)
         XCTAssertEqual(attributes.rawValue["anArray"] as! [Int], [1, 2, 3, 4])
-        XCTAssertEqual(attributes.rawValue["testTrueBoolean"] as! Bool, true)
+        XCTAssertTrue(attributes.rawValue["testTrueBoolean"])
         XCTAssertEqual(attributes.rawValue["testString"] as! String, "donut")
-        XCTAssertEqual(attributes.rawValue["testFalseBoolean"] as! Bool, false)
+        XCTAssertTrue(attributes.rawValue["testFalseBoolean"])
         XCTAssertEqual((attributes.rawValue["nestedObject"] as! Attributes).rawValue["anArray"] as! [Int], [1, 2, 3, 4])
     }
     

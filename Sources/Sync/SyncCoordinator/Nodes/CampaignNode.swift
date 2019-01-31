@@ -11,7 +11,6 @@ import Foundation
 /// These structures represent the Campaign data coming back from the cloud-side GraphQL API for Sync.
 
 protocol Predicate {
-    
 }
 
 enum PredicateType: Decodable {
@@ -89,7 +88,6 @@ struct CompoundPredicate: Predicate, Decodable {
     }
     
     init(from decoder: Decoder) throws {
-
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.booleanOperator = try container.decode(CompoundPredicateLogicalType.self, forKey: .booleanOperator)
         
@@ -116,7 +114,6 @@ enum CampaignStatus: String, Decodable {
 }
 
 protocol CampaignTrigger {
-    
 }
 
 enum CampaignTriggerType: Decodable {
@@ -270,7 +267,6 @@ struct ScheduledCampaignTrigger: CampaignTrigger, Decodable {
 }
 
 protocol CampaignDeliverable {
-    
 }
 
 enum CampaignDeliverableType: Decodable {

@@ -60,7 +60,6 @@ open class RowView: UICollectionReusableView {
     // Function is decently 
     // swiftlint:disable:next cyclomatic_complexity
     open func configureBackgroundImage(imageStore: ImageStore) {
-        
         // Reset any existing background image
         
         backgroundImageView.alpha = 0.0

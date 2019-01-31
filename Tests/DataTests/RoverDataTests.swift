@@ -6,8 +6,8 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-import XCTest
 @testable import RoverData
+import XCTest
 
 /// A simple test object to illustrate usage of NSCoding.
 class ExampleNSCodingObject: NSObject, NSCoding {

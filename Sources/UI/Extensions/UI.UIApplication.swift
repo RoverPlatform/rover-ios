@@ -7,8 +7,8 @@
 //
 
 import Foundation
-import UIKit
 import os
+import UIKit
 
 extension UIApplication {
     public func present(

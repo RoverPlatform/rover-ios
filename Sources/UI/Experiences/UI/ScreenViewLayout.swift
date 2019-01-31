@@ -25,6 +25,7 @@ class ScreenViewLayout: UICollectionViewLayout {
         super.init()
     }
     
+    @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -280,8 +281,8 @@ class ScreenViewLayout: UICollectionViewLayout {
     }
     
     override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
-        let rowAttributes = rowAttributesMap.filter({ $0.1.frame.intersects(rect) }).map({ $0.1 })
-        let blockAttributes = blockAttributesMap.filter({ $0.1.frame.intersects(rect) }).map({ $0.1 })
+        let rowAttributes = rowAttributesMap.filter { $0.1.frame.intersects(rect) }.map { $0.1 }
+        let blockAttributes = blockAttributesMap.filter { $0.1.frame.intersects(rect) }.map { $0.1 }
         
         if !screen.isStretchyHeaderEnabled {
             return rowAttributes + blockAttributes

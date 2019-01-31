@@ -6,8 +6,8 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-import XCTest
 @testable import RoverExperiences
+import XCTest
 
 class RoverExperiencesTests: XCTestCase {
     

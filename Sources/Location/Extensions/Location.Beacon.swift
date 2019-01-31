@@ -6,8 +6,8 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-import Foundation
 import CoreLocation
+import Foundation
 
 extension Beacon {
     public var region: CLBeaconRegion {
@@ -24,7 +24,7 @@ extension Beacon {
 
 extension Collection where Element == Beacon {
     public func wildCardRegions(maxLength: Int) -> Set<CLBeaconRegion> {
-        let uuids = self.map({ $0.uuid })
+        let uuids = self.map { $0.uuid }
         let unique = Set(uuids)
         
         #if swift(>=4.2)

@@ -117,9 +117,9 @@ open class BlockCell: UICollectionViewCell {
                     backgroundImageView?.image = image
                 }
                 
-                UIView.animate(withDuration: 0.25, animations: {
+                UIView.animate(withDuration: 0.25) {
                     backgroundImageView?.alpha = 1.0
-                })
+                }
             }
         }
     }

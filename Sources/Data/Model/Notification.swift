@@ -6,8 +6,8 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-import Foundation
 import CoreData
+import Foundation
 import os
 
 public final class Notification: NSManagedObject {

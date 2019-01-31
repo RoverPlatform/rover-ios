@@ -6,8 +6,8 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-import XCTest
 @testable import RoverUI
+import XCTest
 
 class RouterTests: XCTestCase {
     let settingsViewController = UIViewController()
@@ -97,6 +97,7 @@ class RouterTests: XCTestCase {
     class DummyExperienceViewController: UIViewController {
         let experienceIdentifier: ExperienceIdentifier
         
+        @available(*, unavailable)
         required init?(coder aDecoder: NSCoder) {
             fatalError("No NSCoding in tests.")
         }

@@ -115,9 +115,9 @@ open class RowView: UICollectionReusableView {
                     self?.backgroundImageView.image = image
                 }
                 
-                UIView.animate(withDuration: 0.25, animations: {
+                UIView.animate(withDuration: 0.25) {
                     self?.backgroundImageView.alpha = 1.0
-                })
+                }
             }
         }
     }

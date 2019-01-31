@@ -6,9 +6,9 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-import UIKit
 import CoreData
 import os
+import UIKit
 
 open class NotificationCenterViewController: UIViewController {
     public let eventPipeline: EventPipeline
@@ -47,6 +47,7 @@ open class NotificationCenterViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
     }
     
+    @available(*, unavailable)
     public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

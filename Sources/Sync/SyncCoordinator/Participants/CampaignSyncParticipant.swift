@@ -6,9 +6,9 @@
 //  Copyright © 2019 Rover Labs Inc. All rights reserved.
 //
 
+import CoreData
 import Foundation
 import os.log
-import CoreData
 
 class CampaignSyncParticipant: PagingSyncParticipant {
     typealias Response = CampaignsSyncResponse

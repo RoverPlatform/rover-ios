@@ -6,8 +6,8 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-import Foundation
 import CoreData
+import Foundation
 import os
 
 /// A fully filled out Event, modelled to be suitable for storage in the local database.

@@ -8,9 +8,9 @@
 
 import CoreData
 import CoreLocation
-import XCTest
-@testable import RoverLocation
 @testable import RoverData
+@testable import RoverLocation
+import XCTest
 
 class RoverLocationTests: XCTestCase {
     struct GeofenceNode: Codable, Hashable {

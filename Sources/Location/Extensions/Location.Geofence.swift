@@ -6,8 +6,8 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-import Foundation
 import CoreLocation
+import Foundation
 import os
 
 // MARK: CoreLocation
@@ -42,9 +42,9 @@ extension Collection where Element == Geofence {
         }
         #endif
         
-        let sorted = self.sorted(by: {
+        let sorted = self.sorted {
             coordinate.distanceTo($0.coordinate) < coordinate.distanceTo($1.coordinate)
-        })
+        }
         
         #if swift(>=4.2)
         if #available(iOS 12.0, *) {

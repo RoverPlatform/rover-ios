@@ -100,12 +100,12 @@ public class NotificationExtensionHelper {
             var error: Error?
             
             let semaphore = DispatchSemaphore(value: 0)
-            URLSession.shared.downloadTask(with: url, completionHandler: {
+            URLSession.shared.downloadTask(with: url) {
                 fileLocation = $0
                 response = $1
                 error = $2
                 semaphore.signal()
-            }).resume()
+            }.resume()
             _ = semaphore.wait(timeout: .distantFuture)
             
             return (fileLocation, response, error)

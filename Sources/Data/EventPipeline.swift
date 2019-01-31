@@ -6,8 +6,8 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-import Foundation
 import CoreData
+import Foundation
 import os
 
 public class EventPipeline {
@@ -48,7 +48,7 @@ public class EventPipeline {
             }
             
             let insertedEvents = insertedObjects
-                .compactMap({ $0 as? Event })
+                .compactMap { $0 as? Event }
             
             if !insertedEvents.isEmpty {
                 observerCallback(insertedEvents)

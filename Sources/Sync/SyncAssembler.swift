@@ -6,9 +6,9 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
+import CoreData
 import Foundation
 import RoverFoundation
-import CoreData
 
 public class SyncAssembler: Assembler {
     public var accountToken: String

@@ -6,8 +6,8 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-import XCTest
 @testable import RoverFoundation
+import XCTest
 
 class MockService {
     var arg1: String?

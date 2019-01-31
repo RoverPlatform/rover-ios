@@ -46,6 +46,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         collectionView?.prefetchDataSource = self
     }
     
+    @available(*, unavailable)
     public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -267,9 +268,9 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
                     backgroundImageView?.image = image
                 }
                 
-                UIView.animate(withDuration: 0.25, animations: {
+                UIView.animate(withDuration: 0.25) {
                     backgroundImageView?.alpha = 1.0
-                })
+                }
             }
         }
     }
@@ -411,7 +412,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
             }
         case .none:
             break
-        case .openURL(let url, let dismiss):
+        case let .openURL(url, dismiss):
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
             
             if dismiss {

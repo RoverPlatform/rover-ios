@@ -64,16 +64,16 @@ extension HTTPClient {
     }
     
     public func downloadTask(with request: URLRequest, completionHandler: @escaping (HTTPResult) -> Void) -> URLSessionDataTask {
-        return self.session.dataTask(with: request, completionHandler: { (data, urlResponse, error) in
+        return self.session.dataTask(with: request) { (data, urlResponse, error) in
             let result = HTTPResult(data: data, urlResponse: urlResponse, error: error)
             completionHandler(result)
-        })
+        }
     }
     
     public func uploadTask(with request: URLRequest, from bodyData: Data?, completionHandler: @escaping (HTTPResult) -> Void) -> URLSessionUploadTask {
-        return self.session.uploadTask(with: request, from: bodyData, completionHandler: { (data, urlResponse, error) in
+        return self.session.uploadTask(with: request, from: bodyData) { (data, urlResponse, error) in
             let result = HTTPResult(data: data, urlResponse: urlResponse, error: error)
             completionHandler(result)
-        })
+        }
     }
 }

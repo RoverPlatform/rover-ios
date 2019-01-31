@@ -6,8 +6,8 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-import SafariServices
 import CoreData
+import SafariServices
 
 public struct UIAssembler {
     public var associatedDomains: [String]

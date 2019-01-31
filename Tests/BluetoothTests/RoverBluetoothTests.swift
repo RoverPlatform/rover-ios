@@ -6,8 +6,8 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-import XCTest
 @testable import RoverBluetooth
+import XCTest
 
 class RoverBluetoothTests: XCTestCase {
     

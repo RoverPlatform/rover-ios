@@ -6,8 +6,8 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-import UIKit
 import os.log
+import UIKit
 
 class SyncCoordinatorService: SyncCoordinator {
     let client: SyncClient
@@ -33,7 +33,7 @@ class SyncCoordinatorService: SyncCoordinator {
             }
         }
         
-        let participantNames = self.participants.map({ String(describing: type(of: $0)) }).joined(separator: ", ")
+        let participantNames = self.participants.map { String(describing: type(of: $0)) }.joined(separator: ", ")
     
         os_log("Beginning sync with [%s].", log: .persistence, type: .info, participantNames)
         

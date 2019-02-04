@@ -6,11 +6,12 @@
 //  Copyright © 2019 Rover Labs Inc. All rights reserved.
 //
 
-import Foundation
 import CoreData
+import Foundation
 
-public final class AutomatedCampaign : Campaign {
-    @discardableResult static public func insert(into context: NSManagedObjectContext) -> AutomatedCampaign {
+public final class AutomatedCampaign: Campaign {
+    @discardableResult
+    public static func insert(into context: NSManagedObjectContext) -> AutomatedCampaign {
         return AutomatedCampaign(context: context)
     }
 }

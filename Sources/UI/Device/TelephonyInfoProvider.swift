@@ -6,7 +6,7 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-public protocol TelephonyInfoProvider: class {
+public protocol TelephonyInfoProvider: AnyObject {
     var carrierName: String? { get }
     var radio: String? { get }
 }

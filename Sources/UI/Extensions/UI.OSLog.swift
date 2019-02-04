@@ -9,5 +9,5 @@
 import os.log
 
 extension OSLog {
-    public static let ui = OSLog(subsystem: "io.rover", category: "UI")
+    static let ui = OSLog(subsystem: "io.rover", category: "UI")
 }

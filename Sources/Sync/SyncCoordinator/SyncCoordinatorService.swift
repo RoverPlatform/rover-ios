@@ -6,8 +6,8 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-import UIKit
 import os.log
+import UIKit
 
 class SyncCoordinatorService: SyncCoordinator {
     let client: SyncClient
@@ -22,7 +22,6 @@ class SyncCoordinatorService: SyncCoordinator {
     }
     
     func sync(completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        
         var intialParticipants = [SyncParticipant]()
         var intialRequests = [SyncRequest]()
         
@@ -33,7 +32,7 @@ class SyncCoordinatorService: SyncCoordinator {
             }
         }
         
-        let participantNames = self.participants.map({ String.init(describing: type(of: $0)) }).joined(separator: ", ")
+        let participantNames = self.participants.map { String(describing: type(of: $0)) }.joined(separator: ", ")
     
         os_log("Beginning sync with [%s].", log: .persistence, type: .info, participantNames)
         
@@ -64,6 +63,8 @@ class SyncCoordinatorService: SyncCoordinator {
             return
         }
         
+        // Refactoring this wouldn't add a lot of value, so silence the closure length warning.
+        // swiftlint:disable:next closure_body_length
         let task = self.client.task(with: requests) { [weak self] result in
             guard let _self = self else {
                 return

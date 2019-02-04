@@ -6,11 +6,12 @@
 //  Copyright © 2019 Rover Labs Inc. All rights reserved.
 //
 
-import Foundation
 import CoreData
+import Foundation
 
-public final class ScheduledCampaign : Campaign {
-    @discardableResult static public func insert(into context: NSManagedObjectContext) -> ScheduledCampaign {
+public final class ScheduledCampaign: Campaign {
+    @discardableResult
+    public static func insert(into context: NSManagedObjectContext) -> ScheduledCampaign {
         return ScheduledCampaign(context: context)
     }
 }

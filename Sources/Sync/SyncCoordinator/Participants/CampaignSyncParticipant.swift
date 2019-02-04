@@ -6,9 +6,9 @@
 //  Copyright © 2019 Rover Labs Inc. All rights reserved.
 //
 
+import CoreData
 import Foundation
 import os.log
-import CoreData
 
 class CampaignSyncParticipant: PagingSyncParticipant {
     typealias Response = CampaignsSyncResponse
@@ -54,6 +54,7 @@ struct CampaignsSyncResponse: Decodable {
             var nodes: [CampaignNode]
             var pageInfo: PageInfo
         }
+        
         var campaigns: Campaigns
     }
     
@@ -61,7 +62,6 @@ struct CampaignsSyncResponse: Decodable {
 }
 
 extension Campaign {
-    
     static func insert(from campaignNode: CampaignNode, into managedObjectContext: NSManagedObjectContext) {
         let campaign: Campaign
         switch campaignNode.trigger {
@@ -70,11 +70,10 @@ extension Campaign {
         case is AutomatedCampaignTrigger:
             campaign = AutomatedCampaign.insert(into: managedObjectContext)
         default:
-            fatalError()
+            fatalError("Some other type somehow appeared for CampaignTrigger")
         }
     }
 }
-
 
 extension CampaignsSyncResponse: PagingResponse {
     var nodes: [CampaignNode]? {

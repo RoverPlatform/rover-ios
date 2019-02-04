@@ -79,7 +79,7 @@ public class ExperienceStore {
 
 extension FileManager {
     func directoryExists(at: URL) -> Bool {
-        var returnBool : ObjCBool = false
+        var returnBool: ObjCBool = false
         if self.fileExists(atPath: at.path, isDirectory: &returnBool) {
             return returnBool.boolValue
         } else {
@@ -87,7 +87,6 @@ extension FileManager {
         }
     }
 }
-
 
 // MARK: ExperienceIdentifier
 

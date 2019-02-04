@@ -13,8 +13,8 @@ public struct SyncRequest {
     // TODO change this to Attributes?
     public init(query: SyncQuery, values: [String: Any]) {
         self.query = query
-        self.variables = query.arguments.reduce(into: Attributes(), { (result, argument) in
+        variables = query.arguments.reduce(into: Attributes()) { result, argument in
             result.rawValue[argument.name] = values[argument.name]
-        })
+        }
     }
 }

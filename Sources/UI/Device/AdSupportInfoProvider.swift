@@ -6,6 +6,6 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-public protocol AdSupportInfoProvider: class {
+public protocol AdSupportInfoProvider: AnyObject {
     var advertisingIdentifier: String? { get }
 }

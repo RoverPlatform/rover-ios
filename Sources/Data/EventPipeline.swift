@@ -6,12 +6,12 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-import Foundation
 import CoreData
+import Foundation
 import os
 
 public class EventPipeline {
-    public var deviceInfoProvider: DeviceInfoProvider? = nil
+    public var deviceInfoProvider: DeviceInfoProvider?
     
     private let managedObjectContext: NSManagedObjectContext
     
@@ -42,13 +42,13 @@ public class EventPipeline {
     public func observeNewEvents(
         observerCallback: @escaping ([Event]) -> Void
     ) -> NSObjectProtocol {
-        return NotificationCenter.default.addObserver(forName: .NSManagedObjectContextObjectsDidChange, object: self.managedObjectContext, queue: nil) { (iosNotification) in
+        return NotificationCenter.default.addObserver(forName: .NSManagedObjectContextObjectsDidChange, object: self.managedObjectContext, queue: nil) { iosNotification in
             guard let insertedObjects = iosNotification.userInfo?[NSInsertedObjectsKey] as? Set<NSObject> else {
                 return
             }
             
             let insertedEvents = insertedObjects
-                .compactMap({ $0 as? Event })
+                .compactMap { $0 as? Event }
             
             if !insertedEvents.isEmpty {
                 observerCallback(insertedEvents)

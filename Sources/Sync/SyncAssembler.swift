@@ -6,9 +6,9 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
+import CoreData
 import Foundation
 import RoverFoundation
-import CoreData
 
 public class SyncAssembler: Assembler {
     public var accountToken: String
@@ -26,7 +26,7 @@ public class SyncAssembler: Assembler {
         // MARK: HTTPClient
         
         container.register(HTTPClient.self) { [accountToken, endpoint] _ in
-            return HTTPClient(
+            HTTPClient(
                 accountToken: accountToken,
                 endpoint: endpoint,
                 session: URLSession(configuration: URLSessionConfiguration.default)
@@ -36,7 +36,7 @@ public class SyncAssembler: Assembler {
         // MARK: SyncClient
         
         container.register(SyncClient.self) {  resolver in
-            return resolver.resolve(HTTPClient.self)!
+            resolver.resolve(HTTPClient.self)!
         }
         
         // MARK: SyncCoordinator
@@ -49,13 +49,13 @@ public class SyncAssembler: Assembler {
         // MARK: URLSession
         
         container.register(URLSession.self) { _ in
-            return URLSession(configuration: URLSessionConfiguration.default)
+            URLSession(configuration: URLSessionConfiguration.default)
         }
         
         // MARK: Campaigns
         
         container.register(CampaignSyncParticipant.self) { resolver in
-            return CampaignSyncParticipant(
+            CampaignSyncParticipant(
                 context: resolver.resolve(NSManagedObjectContext.self, name: "backgroundContext")!,
                 userDefaults: UserDefaults.standard
             )
@@ -63,15 +63,15 @@ public class SyncAssembler: Assembler {
         
         // MARK: Location
         
-        container.register(GeofencesSyncParticipant.self) { (resolver) in
-            return GeofencesSyncParticipant(
+        container.register(GeofencesSyncParticipant.self) { resolver in
+            GeofencesSyncParticipant(
                 context: resolver.resolve(NSManagedObjectContext.self, name: "backgroundContext")!,
                 userDefaults: UserDefaults.standard
             )
         }
         
-        container.register(BeaconsSyncParticipant.self) { (resolver) in
-            return BeaconsSyncParticipant(
+        container.register(BeaconsSyncParticipant.self) { resolver in
+            BeaconsSyncParticipant(
                 context: resolver.resolve(NSManagedObjectContext.self, name: "backgroundContext")!,
                 userDefaults: UserDefaults.standard
             )

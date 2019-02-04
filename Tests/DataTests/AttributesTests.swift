@@ -6,11 +6,10 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-import XCTest
 @testable import RoverData
+import XCTest
 
 class AttributesTests: XCTestCase {
-    
     let exampleAttributes: [String: Any] = [
         "testInt": 42,
         "anArray": [1, 2, 3, 4],
@@ -23,14 +22,14 @@ class AttributesTests: XCTestCase {
     func verifyDecodedAttributes(attributes: Attributes) {
         XCTAssertEqual(attributes.rawValue["testInt"] as! Int, 42)
         XCTAssertEqual(attributes.rawValue["anArray"] as! [Int], [1, 2, 3, 4])
-        XCTAssertEqual(attributes.rawValue["testTrueBoolean"] as! Bool, true)
+        XCTAssertTrue(attributes.rawValue["testTrueBoolean"])
         XCTAssertEqual(attributes.rawValue["testString"] as! String, "donut")
-        XCTAssertEqual(attributes.rawValue["testFalseBoolean"] as! Bool, false)
+        XCTAssertTrue(attributes.rawValue["testFalseBoolean"])
         XCTAssertEqual((attributes.rawValue["nestedObject"] as! Attributes).rawValue["anArray"] as! [Int], [1, 2, 3, 4])
     }
     
     func testInstantiateFromDictionaryLiteral() {
-        let fromLiteral : Attributes = [
+        let fromLiteral: Attributes = [
             "testInt": 42,
             "anArray": [1, 2, 3, 4],
             "testTrueBoolean": true,
@@ -57,13 +56,13 @@ class AttributesTests: XCTestCase {
     }
     
     func testNSCodingRoundtrip() throws {
-        let archiver = NSKeyedArchiver.init(requiringSecureCoding: false)
+        let archiver = NSKeyedArchiver(requiringSecureCoding: false)
         let attributes = Attributes(rawValue: exampleAttributes)
         archiver.encodeRootObject(attributes as Any)
         //archiver.outputFormat = .xml
         archiver.finishEncoding()
         let archivedData = archiver.encodedData
-        let dearchiver = try NSKeyedUnarchiver.init(forReadingFrom: archivedData)
+        let dearchiver = try NSKeyedUnarchiver(forReadingFrom: archivedData)
         dearchiver.requiresSecureCoding = false
         dearchiver.decodingFailurePolicy = .raiseException
         let decodedAttributes = dearchiver.decodeObject() as! Attributes
@@ -79,7 +78,7 @@ class AttributesTests: XCTestCase {
 
         XCTAssertTrue(
             Attributes.wasAssertionThrown {
-                let _ = Attributes(rawValue: exampleBogusAttributesWithObjectInArray)
+                _ = Attributes(rawValue: exampleBogusAttributesWithObjectInArray)
             }
         )
     }
@@ -91,7 +90,7 @@ class AttributesTests: XCTestCase {
 
         XCTAssertTrue(
             Attributes.wasAssertionThrown {
-                let _ = Attributes(rawValue: exampleBogusAttributesWithObjectInArray)
+                _ = Attributes(rawValue: exampleBogusAttributesWithObjectInArray)
             }
         )
     }

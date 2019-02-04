@@ -9,11 +9,9 @@
 import CoreData
 
 public class DataAssembler: Assembler {
-
     public init() { }
     
     public func assemble(container: Container) {
-        
         // MARK: Core Data
         
         container.register(NSManagedObjectContext.self, name: "backgroundContext") { resolver in
@@ -28,7 +26,7 @@ public class DataAssembler: Assembler {
             return container.viewContext
         }
         
-        container.register(NSPersistentContainer.self) { resolver in
+        container.register(NSPersistentContainer.self) { _ in
             let bundles = [Bundle(for: DataAssembler.self)]
             guard let model = NSManagedObjectModel.mergedModel(from: bundles) else {
                 fatalError("Model not found")
@@ -47,15 +45,15 @@ public class DataAssembler: Assembler {
         // MARK: Event Pipeline
         
         container.register(EventPipeline.self) { resolver in
-            return EventPipeline(
+            EventPipeline(
                 managedObjectContext: resolver.resolve(NSManagedObjectContext.self, name: "backgroundContext")!
             )
         }
         
         // MARK: ExperienceStore
         
-        container.register(ExperienceStore.self) { resolver in
-            return ExperienceStore()
+        container.register(ExperienceStore.self) { _ in
+            ExperienceStore()
         }
     }
     

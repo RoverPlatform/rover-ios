@@ -6,9 +6,9 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-import UIKit
 import CoreData
 import os
+import UIKit
 
 open class NotificationCenterViewController: UIViewController {
     public let eventPipeline: EventPipeline
@@ -34,7 +34,8 @@ open class NotificationCenterViewController: UIViewController {
         sessionController: SessionController,
         syncCoordinator: SyncCoordinator,
         managedObjectContext: NSManagedObjectContext,
-        websiteViewControllerProvider: @escaping WebsiteViewControllerProvider) {
+        websiteViewControllerProvider: @escaping WebsiteViewControllerProvider
+    ) {
         self.eventPipeline = eventPipeline
         self.router = router
         self.imageStore = imageStore
@@ -46,7 +47,8 @@ open class NotificationCenterViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
     }
     
-    required public init?(coder aDecoder: NSCoder) {
+    @available(*, unavailable)
+    public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
@@ -94,7 +96,7 @@ open class NotificationCenterViewController: UIViewController {
         UIApplication.shared.applicationIconBadgeNumber = 0
     }
     
-    open override func viewWillAppear(_ animated: Bool) {
+    override open func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         makeNavigationBar()
         configureConstraints()
@@ -163,13 +165,13 @@ open class NotificationCenterViewController: UIViewController {
         NSLayoutConstraint.activate([
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-            ])
+        ])
         
         if let navigationBar = navigationBar {
             NSLayoutConstraint.activate([
                 navigationBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                 navigationBar.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-                ])
+            ])
         }
         
         if #available(iOS 11, *) {
@@ -191,7 +193,7 @@ open class NotificationCenterViewController: UIViewController {
                 NSLayoutConstraint.activate([
                     navigationBar.topAnchor.constraint(equalTo: topLayoutGuide.bottomAnchor),
                     tableView.topAnchor.constraint(equalTo: navigationBar.bottomAnchor)
-                    ])
+                ])
             } else {
                 tableView.topAnchor.constraint(equalTo: topLayoutGuide.bottomAnchor).isActive = true
             }
@@ -200,11 +202,13 @@ open class NotificationCenterViewController: UIViewController {
     
     // MARK: Actions
     
-    @objc func done(_ sender: Any) {
+    @objc
+    func done(_ sender: Any) {
         dismiss(animated: true, completion: nil)
     }
     
-    @objc func refresh(_ sender: Any) {
+    @objc
+    func refresh(_ sender: Any) {
         self.syncCoordinator.sync { _ in
             DispatchQueue.main.async {
                 self.refreshControl.endRefreshing()
@@ -224,7 +228,7 @@ open class NotificationCenterViewController: UIViewController {
         let fetchRequest: NSFetchRequest<RoverData.Notification> = RoverData.Notification.fetchRequest()
         fetchRequest.predicate = self.predicate
         fetchRequest.sortDescriptors = [
-            NSSortDescriptor.init(key: #keyPath(RoverData.Notification.deliveredAt), ascending: false)
+            NSSortDescriptor(key: #keyPath(RoverData.Notification.deliveredAt), ascending: false)
         ]
         fetchRequest.fetchBatchSize = 20
         return fetchRequest
@@ -256,7 +260,7 @@ extension NotificationCenterViewController: UITableViewDelegate {
     // Swipe to delete in iOS 10
     
     public func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
-        return [UITableViewRowAction(style: .destructive, title: "Delete") { (action, indexPath) in
+        return [UITableViewRowAction(style: .destructive, title: "Delete") { _, indexPath in
             self.deleteNotification(at: indexPath)
         }]
     }
@@ -266,7 +270,7 @@ extension NotificationCenterViewController: UITableViewDelegate {
     @available(iOS 11.0, *)
     public func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         return UISwipeActionsConfiguration(actions: [
-            UIContextualAction(style: .destructive, title: "Delete") { (action, sourceView, completionHandler) in
+            UIContextualAction(style: .destructive, title: "Delete") { _, _, _ in
                 self.deleteNotification(at: indexPath)
             }
         ])
@@ -337,11 +341,16 @@ extension NotificationCenterViewController: UIViewControllerTransitioningDelegat
             
             let duration = transitionDuration(using: transitionContext)
             
-            UIView.animate(withDuration: duration, delay: 0, options: .curveEaseInOut, animations: {
-                toViewController.view.frame = finalFrame
-            }) { finished in
-                transitionContext.completeTransition(finished)
-            }
+            UIView.animate(
+                withDuration: duration,
+                delay: 0,
+                options: .curveEaseInOut,
+                animations: {
+                    toViewController.view.frame = finalFrame
+                }, completion: { finished in
+                    transitionContext.completeTransition(finished)
+                }
+            )
         }
         
         func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
@@ -360,11 +369,15 @@ extension NotificationCenterViewController: UIViewControllerTransitioningDelegat
             let finalFrame = transitionContext.finalFrame(for: toViewController)
             let duration = transitionDuration(using: transitionContext)
             
-            UIView.animate(withDuration: duration, animations: {
-                fromViewController.view.frame = finalFrame.offsetBy(dx: finalFrame.width, dy: 0)
-            }) { finished in
-                transitionContext.completeTransition(finished)
-            }
+            UIView.animate(
+                withDuration: duration,
+                animations: {
+                    fromViewController.view.frame = finalFrame.offsetBy(dx: finalFrame.width, dy: 0)
+                },
+                completion: { finished in
+                    transitionContext.completeTransition(finished)
+                }
+            )
         }
         
         func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
@@ -381,9 +394,7 @@ extension NotificationCenterViewController: UIViewControllerTransitioningDelegat
     }
 }
 
-
-extension NotificationCenterViewController : UITableViewDataSource {
-    
+extension NotificationCenterViewController: UITableViewDataSource {
     func notificationAt(indexPath: IndexPath) -> RoverData.Notification {
         return fetchedResultsController.object(at: indexPath) as RoverData.Notification
     }
@@ -417,7 +428,7 @@ extension NotificationCenterViewController : UITableViewDataSource {
     }
 }
 
-extension NotificationCenterViewController : NSFetchedResultsControllerDelegate {
+extension NotificationCenterViewController: NSFetchedResultsControllerDelegate {
     open func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         self.tableView.endUpdates()
     }
@@ -427,7 +438,7 @@ extension NotificationCenterViewController : NSFetchedResultsControllerDelegate 
     }
     
     open func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
-        switch(type) {
+        switch type {
         case .insert:
             if let newIndexPath = newIndexPath {
                 tableView.insertRows(at: [newIndexPath], with: .fade)
@@ -447,4 +458,3 @@ extension NotificationCenterViewController : NSFetchedResultsControllerDelegate 
         }
     }
 }
-

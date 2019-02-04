@@ -35,14 +35,12 @@ import zlib
  */
 typealias CompressionLevel = Int32
 extension CompressionLevel {
-    
     static let noCompression = Z_NO_COMPRESSION
     static let bestSpeed = Z_BEST_SPEED
     static let bestCompression = Z_BEST_COMPRESSION
     
     static let defaultCompression = Z_DEFAULT_COMPRESSION
 }
-
 
 /**
  Errors on gzipping/gunzipping based on the zlib error codes.
@@ -98,9 +96,7 @@ enum GzipError: Error {
      */
     case unknown(message: String, code: Int)
     
-    
     internal init(code: Int32, msg: UnsafePointer<CChar>?) {
-        
         let message: String = {
             guard let msg = msg, let message = String(validatingUTF8: msg) else {
                 return "Unknown gzip error"
@@ -131,9 +127,7 @@ enum GzipError: Error {
         }()
     }
     
-    
     var localizedDescription: String {
-        
         let description: String = {
             switch self {
             case .stream(let message):
@@ -153,20 +147,15 @@ enum GzipError: Error {
         
         return description
     }
-    
 }
 
-
 extension Data {
-    
     /**
      Whether the data is compressed in gzip format.
      */
     var isGzipped: Bool {
-        
         return self.starts(with: [0x1f, 0x8b])  // check magic number
     }
-    
     
     /**
      Create a new `Data` object by compressing the receiver using zlib.
@@ -179,7 +168,6 @@ extension Data {
      - returns: Gzip-compressed `Data` object.
      */
     func gzipped(level: CompressionLevel = .defaultCompression) throws -> Data {
-        
         guard !self.isEmpty else {
             return Data()
         }
@@ -218,7 +206,6 @@ extension Data {
         return data
     }
     
-    
     /**
      Create a new `Data` object by decompressing the receiver using zlib.
      Throws an error if decompression failed.
@@ -227,7 +214,6 @@ extension Data {
      - returns: Gzip-decompressed `Data` object.
      */
     func gunzipped() throws -> Data {
-        
         guard !self.isEmpty else {
             return Data()
         }
@@ -259,7 +245,6 @@ extension Data {
             stream.avail_out = uInt(data.count) - uInt(stream.total_out)
             
             status = inflate(&stream, Z_SYNC_FLUSH)
-            
         } while status == Z_OK
         
         guard inflateEnd(&stream) == Z_OK && status == Z_STREAM_END else {
@@ -277,9 +262,7 @@ extension Data {
         return data
     }
     
-    
     private func createZStream() -> z_stream {
-        
         var stream = z_stream()
         
         self.withUnsafeBytes { (bytes: UnsafePointer<Bytef>) in
@@ -289,15 +272,11 @@ extension Data {
         
         return stream
     }
-    
 }
 
-
 private struct DataSize {
-    
     static let chunk = 2 ^ 14
     static let stream = MemoryLayout<z_stream>.size
     
     private init() { }
 }
-

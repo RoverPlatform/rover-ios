@@ -28,7 +28,8 @@ public final class Beacon: NSManagedObject {
         }
     }
     
-    @discardableResult static public func insert(from info: InsertionInfo, into context: NSManagedObjectContext) -> Beacon {
+    @discardableResult
+    public static func insert(from info: InsertionInfo, into context: NSManagedObjectContext) -> Beacon {
         let beacon = Beacon(context: context)
         beacon.id = info.id
         beacon.name = info.name
@@ -39,7 +40,8 @@ public final class Beacon: NSManagedObject {
         return beacon
     }
     
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<Beacon> {
+    @nonobjc
+    public class func fetchRequest() -> NSFetchRequest<Beacon> {
         return NSFetchRequest<Beacon>(entityName: "Beacon")
     }
     
@@ -52,12 +54,12 @@ public final class Beacon: NSManagedObject {
 
     @NSManaged public private(set) var regionIdentifier: String
     
-    public override func awakeFromInsert() {
+    override public func awakeFromInsert() {
         super.awakeFromInsert()
         self.tags = []
     }
     
-    public override func willSave() {
+    override public func willSave() {
         let regionIdentifier = "\(self.uuid.uuidString):\(self.major):\(self.minor)"
         if self.regionIdentifier != regionIdentifier {
             self.regionIdentifier = regionIdentifier

@@ -57,7 +57,6 @@ class GeofencesSyncParticipant: PagingSyncParticipant {
 struct GeofencesSyncResponse: Decodable {
     struct Data: Decodable {
         struct Geofences: Decodable {
-            
             var nodes: [GeofenceNode]?
             var pageInfo: PageInfo
         }

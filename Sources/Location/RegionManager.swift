@@ -8,7 +8,7 @@
 
 import CoreLocation
 
-public protocol RegionManager: class {
+public protocol RegionManager: AnyObject {
     var currentGeofences: Set<Geofence> { get }
     var geofenceObservers: ObserverSet<Set<Geofence>> { get set }
     

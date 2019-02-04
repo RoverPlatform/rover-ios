@@ -13,10 +13,12 @@ open class RowView: UICollectionReusableView {
     
     public var row: Row?
     
-    open override var clipsToBounds: Bool {
+    override open var clipsToBounds: Bool {
         get {
             return true
         }
+        // We want to override super's setter with a no-op, so silence the unused setter warning.
+        // swiftlint:disable:next unused_setter_value
         set { }
     }
     
@@ -25,7 +27,7 @@ open class RowView: UICollectionReusableView {
         addSubviews()
     }
     
-    required public init?(coder aDecoder: NSCoder) {
+    public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         addSubviews()
     }
@@ -55,8 +57,9 @@ open class RowView: UICollectionReusableView {
         backgroundColor = row.background.color.uiColor
     }
     
+    // Function is decently 
+    // swiftlint:disable:next cyclomatic_complexity
     open func configureBackgroundImage(imageStore: ImageStore) {
-        
         // Reset any existing background image
         
         backgroundImageView.alpha = 0.0
@@ -111,9 +114,9 @@ open class RowView: UICollectionReusableView {
                     self?.backgroundImageView.image = image
                 }
                 
-                UIView.animate(withDuration: 0.25, animations: {
+                UIView.animate(withDuration: 0.25) {
                     self?.backgroundImageView.alpha = 1.0
-                })
+                }
             }
         }
     }

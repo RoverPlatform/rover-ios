@@ -6,8 +6,8 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-import XCTest
 @testable import RoverData
+import XCTest
 
 /// A simple test object to illustrate usage of NSCoding.
 class ExampleNSCodingObject: NSObject, NSCoding {
@@ -50,12 +50,12 @@ class RoverDataTests: XCTestCase {
     
     func testNscodingUsage() throws {
         let thingy = ExampleNSCodingObject()
-        let archiver = NSKeyedArchiver.init(requiringSecureCoding: false)
+        let archiver = NSKeyedArchiver(requiringSecureCoding: false)
         archiver.encodeRootObject(thingy)
         //archiver.outputFormat = .xml
         archiver.finishEncoding()
         let archivedData = archiver.encodedData
-        let dearchiver = try NSKeyedUnarchiver.init(forReadingFrom: archivedData)
+        let dearchiver = try NSKeyedUnarchiver(forReadingFrom: archivedData)
         dearchiver.requiresSecureCoding = false
         dearchiver.decodingFailurePolicy = .raiseException
         XCTAssertNotNil(dearchiver.decodeObject())

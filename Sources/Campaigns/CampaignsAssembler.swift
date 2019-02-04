@@ -21,12 +21,12 @@ public struct CampaignsAssembler {
     }
 }
 
-extension CampaignsAssembler : Assembler {
+extension CampaignsAssembler: Assembler {
     public func assemble(container: Container) {
         // MARK: InfluenceTracker
         
         container.register(InfluenceTracker.self) { resolver in
-            return InfluenceTrackerService(
+            InfluenceTrackerService(
                 influenceTime: self.influenceTime,
                 eventPipeline: resolver.resolve(EventPipeline.self),
                 notificationCenter: NotificationCenter.default,
@@ -38,7 +38,7 @@ extension CampaignsAssembler : Assembler {
         
         container.register(NotificationHandler.self) { resolver in
             let websiteViewControllerProvider: NotificationCenterViewController.WebsiteViewControllerProvider = { [weak resolver] url in
-                return resolver?.resolve(UIViewController.self, name: "website", arguments: url)!
+                resolver?.resolve(UIViewController.self, name: "website", arguments: url)!
             }
             
             return NotificationHandlerService(

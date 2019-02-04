@@ -11,11 +11,11 @@ import WebKit
 open class WebViewCell: BlockCell {
     public let webView = WKWebView()
     
-    open override var content: UIView? {
+    override open var content: UIView? {
         return webView
     }
     
-    open override func configure(with block: Block, imageStore: ImageStore) {
+    override open func configure(with block: Block, imageStore: ImageStore) {
         super.configure(with: block, imageStore: imageStore)
         
         guard let webViewBlock = block as? WebViewBlock else {

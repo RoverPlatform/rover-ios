@@ -6,8 +6,8 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-import XCTest
 @testable import RoverFoundation
+import XCTest
 
 class MockService {
     var arg1: String?
@@ -88,7 +88,7 @@ class RoverFoundationTests: XCTestCase {
     
     func testRegisterWithoutNameWithoutScopeAndOneArg() {
         let rover = Rover()
-        rover.register(MockService.self) { (resolver, arg1: String) in MockService(arg1: arg1) }
+        rover.register(MockService.self) { (_, arg1: String) in MockService(arg1: arg1) }
         
         let result1 = rover.resolve(MockService.self)
         XCTAssertNil(result1)
@@ -109,7 +109,7 @@ class RoverFoundationTests: XCTestCase {
     
     func testRegisterWithNameWithoutScopeAndOneArg() {
         let rover = Rover()
-        rover.register(MockService.self, name: "bar") { (resolver, arg1: String) in MockService(arg1: arg1) }
+        rover.register(MockService.self, name: "bar") { (_, arg1: String) in MockService(arg1: arg1) }
         
         let result1 = rover.resolve(MockService.self)
         XCTAssertNil(result1)
@@ -139,7 +139,7 @@ class RoverFoundationTests: XCTestCase {
     
     func testRegisterWithoutNameTransientScopeAndOneArg() {
         let rover = Rover()
-        rover.register(MockService.self, scope: .transient) { (resolver, arg1: String) in MockService(arg1: arg1) }
+        rover.register(MockService.self, scope: .transient) { (_, arg1: String) in MockService(arg1: arg1) }
         
         let result1 = rover.resolve(MockService.self)
         XCTAssertNil(result1)
@@ -162,7 +162,7 @@ class RoverFoundationTests: XCTestCase {
     
     func testRegisterWithNameTransientScopeAndOneArg() {
         let rover = Rover()
-        rover.register(MockService.self, name: "bar", scope: .transient) { (resolver, arg1: String) in MockService(arg1: arg1) }
+        rover.register(MockService.self, name: "bar", scope: .transient) { (_, arg1: String) in MockService(arg1: arg1) }
         
         let result1 = rover.resolve(MockService.self)
         XCTAssertNil(result1)
@@ -194,7 +194,7 @@ class RoverFoundationTests: XCTestCase {
     
     func testRegisterWithoutNameWithoutScopeAndTwoArgs() {
         let rover = Rover()
-        rover.register(MockService.self) { (resolver, arg1: String, arg2: Int) in MockService(arg1: arg1, arg2: arg2) }
+        rover.register(MockService.self) { (_, arg1: String, arg2: Int) in MockService(arg1: arg1, arg2: arg2) }
         
         let result1 = rover.resolve(MockService.self)
         XCTAssertNil(result1)
@@ -225,7 +225,7 @@ class RoverFoundationTests: XCTestCase {
     
     func testRegisterWithNameWithoutScopeAndTwoArgs() {
         let rover = Rover()
-        rover.register(MockService.self, name: "bar") { (resolver, arg1: String, arg2: Int) in MockService(arg1: arg1, arg2: arg2) }
+        rover.register(MockService.self, name: "bar") { (_, arg1: String, arg2: Int) in MockService(arg1: arg1, arg2: arg2) }
         
         let result1 = rover.resolve(MockService.self)
         XCTAssertNil(result1)
@@ -277,7 +277,7 @@ class RoverFoundationTests: XCTestCase {
     
     func testRegisterWithoutNameTransientScopeAndTwoArgs() {
         let rover = Rover()
-        rover.register(MockService.self, scope: .transient) { (resolver, arg1: String, arg2: Int) in MockService(arg1: arg1, arg2: arg2) }
+        rover.register(MockService.self, scope: .transient) { (_, arg1: String, arg2: Int) in MockService(arg1: arg1, arg2: arg2) }
         
         let result1 = rover.resolve(MockService.self)
         XCTAssertNil(result1)

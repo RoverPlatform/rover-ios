@@ -11,6 +11,8 @@ import os
 import UIKit
 import UserNotifications
 
+// Device is fairly readable and discoverable right now, so we'll keep it as a single class, so silence the body length warning.
+// swiftlint:disable type_body_length
 open class Device {
     public let adSupportInfoProvider: AdSupportInfoProvider?
     public let bluetoothInfoProvider: BluetoothInfoProvider?
@@ -121,7 +123,7 @@ open class Device {
             return UIApplication.shared.applicationIconBadgeNumber
         } else {
             return DispatchQueue.main.sync {
-                return UIApplication.shared.applicationIconBadgeNumber
+                UIApplication.shared.applicationIconBadgeNumber
             }
         }
     }
@@ -392,7 +394,7 @@ open class Device {
     }
 }
 
-extension Device : DeviceInfoProvider {
+extension Device: DeviceInfoProvider {
     public var deviceSnapshot: DeviceSnapshot {
         return self.snapshot
     }

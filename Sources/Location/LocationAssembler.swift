@@ -26,11 +26,11 @@ public func assemble(container: Container) {
         // MARK: Services
         
         container.register(LocationInfoProvider.self) { resolver in
-            return resolver.resolve(LocationManager.self)!
+            resolver.resolve(LocationManager.self)!
         }
         
         container.register(LocationManager.self) { resolver in
-            return LocationManager(
+            LocationManager(
                 context: resolver.resolve(NSManagedObjectContext.self, name: "viewContext")!,
                 eventPipeline: resolver.resolve(EventPipeline.self)!,
                 maxGeofenceRegionsToMonitor: self.maxGeofenceRegionsToMonitor,
@@ -39,7 +39,7 @@ public func assemble(container: Container) {
         }
         
         container.register(RegionManager.self) { resolver in
-            return resolver.resolve(LocationManager.self)!
+            resolver.resolve(LocationManager.self)!
         }
     }
 }

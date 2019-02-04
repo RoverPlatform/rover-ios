@@ -6,9 +6,8 @@
 //  Copyright © 2019 Rover Labs Inc. All rights reserved.
 //
 
-import Foundation
 import CoreData
+import Foundation
 
 public class Campaign: NSManagedObject {
-    
 }

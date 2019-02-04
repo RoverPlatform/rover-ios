@@ -6,11 +6,10 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-import XCTest
 @testable import RoverData
+import XCTest
 
 class DeviceSnapshotTests: XCTestCase {
-    
     let exampleComprehensiveDevice = DeviceSnapshot(
         advertisingIdentifier: "ad id",
         isBluetoothEnabled: nil,
@@ -18,12 +17,12 @@ class DeviceSnapshotTests: XCTestCase {
         localeRegion: "en_US",
         localeScript: nil,
         isLocationServicesEnabled: false,
-        location: LocationSnapshot.init(
-            coordinate: CoordinateSnapshot.init(latitude: 45.0, longitude: 24.0),
+        location: LocationSnapshot(
+            coordinate: CoordinateSnapshot(latitude: 45.0, longitude: 24.0),
             altitude: 200,
             horizontalAccuracy: 20,
             verticalAccuracy: 20,
-            address: AddressSnapshot.init(
+            address: AddressSnapshot(
                 street: "55 Adelaide St E",
                 city: "Toronto",
                 state: "Ontario",
@@ -33,13 +32,13 @@ class DeviceSnapshotTests: XCTestCase {
                 subAdministrativeArea: "Toronto Division",
                 subLocality: "Old Toronto"
             ),
-            timestamp: Date.init(timeIntervalSinceReferenceDate: 0)
+            timestamp: Date(timeIntervalSinceReferenceDate: 0)
         ),
         locationAuthorization: "authorized",
         notificationAuthorization: "authorized",
-        pushToken: PushTokenSnapshot.init(
+        pushToken: PushTokenSnapshot(
             value: "push token",
-            timestamp: Date.init(timeIntervalSinceReferenceDate: 0)
+            timestamp: Date(timeIntervalSinceReferenceDate: 0)
         ),
         isCellularEnabled: true,
         isWifiEnabled: false,
@@ -74,6 +73,8 @@ class DeviceSnapshotTests: XCTestCase {
     )
     
     func verifyDecodedSnapshot(decodedDeviceSnapshot: DeviceSnapshot) {
+        // use XCTAssertEqual for all matchers to make it read better.
+        // swiftlint:disable xct_specific_matcher
         XCTAssertEqual(decodedDeviceSnapshot.advertisingIdentifier, "ad id")
         XCTAssertEqual(decodedDeviceSnapshot.isBluetoothEnabled, nil)
         XCTAssertEqual(decodedDeviceSnapshot.localeLanguage, "en")
@@ -96,7 +97,7 @@ class DeviceSnapshotTests: XCTestCase {
         XCTAssertEqual(decodedDeviceSnapshot.locationAuthorization, "authorized")
         XCTAssertEqual(decodedDeviceSnapshot.notificationAuthorization, "authorized")
         XCTAssertEqual(decodedDeviceSnapshot.pushToken?.value, "push token")
-        XCTAssertEqual(decodedDeviceSnapshot.pushToken?.timestamp, Date.init(timeIntervalSinceReferenceDate: 0))
+        XCTAssertEqual(decodedDeviceSnapshot.pushToken?.timestamp, Date(timeIntervalSinceReferenceDate: 0))
         XCTAssertEqual(decodedDeviceSnapshot.isCellularEnabled, true)
         XCTAssertEqual(decodedDeviceSnapshot.isWifiEnabled, false)
         XCTAssertEqual(decodedDeviceSnapshot.appBadgeNumber, 42)
@@ -122,15 +123,16 @@ class DeviceSnapshotTests: XCTestCase {
         XCTAssertEqual((decodedDeviceSnapshot.userInfo?.rawValue["testString"]) as! String, "donut")
         XCTAssertEqual((decodedDeviceSnapshot.userInfo?.rawValue["testFalseBoolean"]) as! Bool, false)
         XCTAssertEqual(((decodedDeviceSnapshot.userInfo?.rawValue["nestedObject"]) as! Attributes).rawValue["anArray"] as! [Int], [1, 2, 3, 4])
+        // swiftlint:enable xct_specific_matcher
     }
     
     func testDeviceSnapshotNSCodingRoundtrip() throws {
-        let archiver = NSKeyedArchiver.init(requiringSecureCoding: false)
+        let archiver = NSKeyedArchiver(requiringSecureCoding: false)
         archiver.encodeRootObject(exampleComprehensiveDevice)
         //archiver.outputFormat = .xml
         archiver.finishEncoding()
         let archivedData = archiver.encodedData
-        let dearchiver = try NSKeyedUnarchiver.init(forReadingFrom: archivedData)
+        let dearchiver = try NSKeyedUnarchiver(forReadingFrom: archivedData)
         dearchiver.requiresSecureCoding = false
         dearchiver.decodingFailurePolicy = .raiseException
         let decodedDeviceSnapshot = dearchiver.decodeObject() as! DeviceSnapshot

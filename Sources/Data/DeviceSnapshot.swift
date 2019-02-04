@@ -61,7 +61,7 @@ public class DeviceSnapshot: NSObject, Codable, NSCoding {
         self.appIdentifier = aDecoder.decodeObject(forKey: "appIdentifier") as? String
         self.appVersion = aDecoder.decodeObject(forKey: "appVersion") as? String
         if let buildEnvironmentString = aDecoder.decodeObject(forKey: "buildEnvironment") as? String {
-            self.buildEnvironment = BuildEnvironment.init(rawValue: buildEnvironmentString)
+            self.buildEnvironment = BuildEnvironment(rawValue: buildEnvironmentString)
         }
         self.deviceIdentifier = aDecoder.decodeObject(forKey: "deviceIdentifier") as? String
         self.deviceManufacturer = aDecoder.decodeObject(forKey: "deviceManufacturer") as? String
@@ -92,7 +92,6 @@ public class DeviceSnapshot: NSObject, Codable, NSCoding {
     public var localeLanguage: String?
     public var localeRegion: String?
     public var localeScript: String?
-
     
     public var isLocationServicesEnabled: Bool?
     public var location: LocationSnapshot?
@@ -232,9 +231,13 @@ public class PushTokenSnapshot: NSObject, NSCoding, Codable {
     }
     
     public required init?(coder aDecoder: NSCoder) {
-        guard let value = aDecoder.decodeObject(forKey: "value") as? String else { return nil }
+        guard let value = aDecoder.decodeObject(forKey: "value") as? String else {
+            return nil
+        }
         self.value = String(value)
-        guard let timestamp = aDecoder.decodeObject(forKey: "timestamp") as? Date else { return nil }
+        guard let timestamp = aDecoder.decodeObject(forKey: "timestamp") as? Date else {
+            return nil
+        }
         self.timestamp = timestamp
     }
 }
@@ -330,7 +333,6 @@ public class LocationSnapshot: NSObject, Codable, NSCoding {
         self.timestamp = timestamp
     }
 }
-
     
 public class AddressSnapshot: NSObject, Codable, NSCoding {
     public var street: String?
@@ -354,21 +356,37 @@ public class AddressSnapshot: NSObject, Codable, NSCoding {
     }
     
     public required init?(coder aDecoder: NSCoder) {
-        guard let street = aDecoder.decodeObject(forKey: "street") as? String else { return nil }
+        guard let street = aDecoder.decodeObject(forKey: "street") as? String else {
+            return nil
+        }
         self.street = String(street)
-        guard let city = aDecoder.decodeObject(forKey: "city") as? String else { return nil }
+        guard let city = aDecoder.decodeObject(forKey: "city") as? String else {
+            return nil
+        }
         self.city = String(city)
-        guard let state = aDecoder.decodeObject(forKey: "state") as? String else { return nil }
+        guard let state = aDecoder.decodeObject(forKey: "state") as? String else {
+            return nil
+        }
         self.state = String(state)
-        guard let postalCode = aDecoder.decodeObject(forKey: "postalCode") as? String else { return nil }
+        guard let postalCode = aDecoder.decodeObject(forKey: "postalCode") as? String else {
+            return nil
+        }
         self.postalCode = String(postalCode)
-        guard let country = aDecoder.decodeObject(forKey: "country") as? String else { return nil }
+        guard let country = aDecoder.decodeObject(forKey: "country") as? String else {
+            return nil
+        }
         self.country = String(country)
-        guard let isoCountryCode = aDecoder.decodeObject(forKey: "isoCountryCode") as? String else { return nil }
+        guard let isoCountryCode = aDecoder.decodeObject(forKey: "isoCountryCode") as? String else {
+            return nil
+        }
         self.isoCountryCode = String(isoCountryCode)
-        guard let subAdministrativeArea = aDecoder.decodeObject(forKey: "subAdministrativeArea") as? String else { return nil }
+        guard let subAdministrativeArea = aDecoder.decodeObject(forKey: "subAdministrativeArea") as? String else {
+            return nil
+        }
         self.subAdministrativeArea = String(subAdministrativeArea)
-        guard let subLocality = aDecoder.decodeObject(forKey: "subLocality") as? String else { return nil }
+        guard let subLocality = aDecoder.decodeObject(forKey: "subLocality") as? String else {
+            return nil
+        }
         self.subLocality = String(subLocality)
     }
     

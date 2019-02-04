@@ -6,15 +6,16 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-import UserNotifications
-import UIKit
 import os
+import UIKit
+import UserNotifications
 
 class NotificationHandlerService: NotificationHandler {
     let influenceTracker: InfluenceTracker
     
-    public typealias WebsiteViewControllerProvider = (URL) -> UIViewController?
-    public let websiteViewControllerProvider: WebsiteViewControllerProvider
+    typealias WebsiteViewControllerProvider = (URL) -> UIViewController?
+    
+    let websiteViewControllerProvider: WebsiteViewControllerProvider
     
     let eventPipeline: EventPipeline
     

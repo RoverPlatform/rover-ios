@@ -7,14 +7,15 @@
 //
 
 import Foundation
-import UIKit
 import os
+import UIKit
 
 extension UIApplication {
-    public func present(_ viewControllerToPresent: UIViewController,
-                 animated flag: Bool,
-                 completion: (() -> Void)? = nil) {
-        
+    public func present(
+        _ viewControllerToPresent: UIViewController,
+        animated flag: Bool,
+        completion: (() -> Void)? = nil
+    ) {
         // Check if `viewControllerToPresent` is already presented
         
         if viewControllerToPresent.isBeingPresented || viewControllerToPresent.presentingViewController != nil {
@@ -32,8 +33,6 @@ extension UIApplication {
 
         // Presenting `viewControllerToPresent` inside a container other than `UITabBarController` is not supported at this time
         
-        
-        
         if viewControllerToPresent.parent != nil {
             os_log("Failed to present viewControllerToPresent - already presented in an unsupported container", log: .general, type: .default)
             completion?()
@@ -50,10 +49,10 @@ extension UIApplication {
             return
         }
         
-        var findVisibleViewController: ((UIViewController) -> UIViewController?)!
+        var findVisibleViewController: ((UIViewController) -> UIViewController?)?
         findVisibleViewController = { viewController in
             if let presentedViewController = viewController.presentedViewController {
-                return findVisibleViewController(presentedViewController)
+                return findVisibleViewController?(presentedViewController)
             }
             
             if let navigationController = viewController as? UINavigationController {
@@ -67,7 +66,7 @@ extension UIApplication {
             return viewController
         }
         
-        guard let visibleViewController = findVisibleViewController(rootViewController) else {
+        guard let visibleViewController = findVisibleViewController?(rootViewController) else {
             os_log("Failed to present `viewControllerToPresent` - visible view controller not found", log: .general, type: .error)
             completion?()
             return

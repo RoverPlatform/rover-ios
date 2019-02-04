@@ -19,4 +19,3 @@ public struct Color: Codable {
         self.alpha = alpha
     }
 }
-

@@ -16,7 +16,7 @@ extension SyncClient {
     public func queryItems(syncRequests: [SyncRequest]) -> [URLQueryItem] {
         let query: String = {
             let expression: String = {
-                let signatures = syncRequests.compactMap({ $0.query.signature })
+                let signatures = syncRequests.compactMap { $0.query.signature }
                 
                 if signatures.isEmpty {
                     return ""
@@ -27,7 +27,7 @@ extension SyncClient {
             }()
             
             let body: String = {
-                return syncRequests.map({ $0.query.definition }).joined(separator: "\n")
+                syncRequests.map { $0.query.definition }.joined(separator: "\n")
             }()
             
             return """
@@ -38,18 +38,18 @@ extension SyncClient {
         }()
         
         let fragments: [String]? = {
-            let fragments = syncRequests.map({ Set($0.query.fragments) }).reduce(Set<String>()) { $0.union($1) }
+            let fragments = syncRequests.map { Set($0.query.fragments) }.reduce(Set<String>()) { $0.union($1) }
             return Array(fragments)
         }()
         
         let variables: Attributes = {
-            return syncRequests.reduce(Attributes(), { (result, request) in
-                return request.variables.rawValue.reduce(result, { (result, element) in
+            syncRequests.reduce(Attributes()) { result, request in
+                request.variables.rawValue.reduce(result) { result, element in
                     var nextResult = result.rawValue
                     nextResult["\(request.query.name)\(element.key.capitalized)"] = element.value
                     return Attributes(rawValue: nextResult)
-                })
-            })
+                }
+            }
         }()
         
         let condensed = query.components(separatedBy: .whitespacesAndNewlines).filter { !$0.isEmpty }.joined(separator: " ")

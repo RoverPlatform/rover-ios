@@ -10,8 +10,8 @@ public class AdSupportAssembler: Assembler {
     public init() { }
     
     public func assemble(container: Container) {
-        container.register(AdSupportInfoProvider.self) { resolver in
-            return AdSupportManager()
+        container.register(AdSupportInfoProvider.self) { _ in
+            AdSupportManager()
         }
     }
 }

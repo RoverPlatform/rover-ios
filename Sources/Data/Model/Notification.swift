@@ -6,12 +6,13 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-import Foundation
 import CoreData
+import Foundation
 import os
 
 public final class Notification: NSManagedObject {
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<Notification> {
+    @nonobjc
+    public class func fetchRequest() -> NSFetchRequest<Notification> {
         return NSFetchRequest<Notification>(entityName: "Notification")
     }
     
@@ -22,7 +23,7 @@ public final class Notification: NSManagedObject {
     @NSManaged public var deliveredAt: Date
     @NSManaged public var isRead: Bool
     
-    public override func awakeFromInsert() {
+    override public func awakeFromInsert() {
         self.id = UUID()
         super.awakeFromInsert()
     }

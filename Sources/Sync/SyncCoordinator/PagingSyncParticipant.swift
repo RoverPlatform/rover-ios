@@ -10,6 +10,8 @@ import CoreData
 import Foundation
 import os
 
+// TODO: change from is-a to has-a.  Rather than this being a protocol with template methods having implementations, INSTEAD have it delegate to some sort of Persistence object.
+
 public protocol PagingSyncParticipant: SyncParticipant {
     associatedtype Response: PagingResponse
     
@@ -18,7 +20,7 @@ public protocol PagingSyncParticipant: SyncParticipant {
     var userDefaults: UserDefaults { get }
     
     func insertObject(from node: Response.Node)
-    func nextRequest(cursor: String?) -> SyncRequest
+    func nextRequestVariables(cursor: String?) -> [String: Any]
 }
 
 extension PagingSyncParticipant {
@@ -35,8 +37,8 @@ extension PagingSyncParticipant {
         }
     }
     
-    public func initialRequest() -> SyncRequest? {
-        return nextRequest(cursor: self.cursor)
+    public func initialRequestVariables() -> [String: Any]? {
+        return nextRequestVariables(cursor: self.cursor)
     }
     
     public func saveResponse(_ data: Data) -> SyncResult {

@@ -94,6 +94,7 @@
 		497BA67B21F7AB4F003ED346 /* CampaignSyncParticipant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 497BA67A21F7AB4F003ED346 /* CampaignSyncParticipant.swift */; };
 		4988D94921AF4B260050550E /* Attributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1D5DC42107D32C0071928F /* Attributes.swift */; };
 		499AE17421F8C56000715B44 /* Campaign.swift in Sources */ = {isa = PBXBuildFile; fileRef = 499AE17321F8C56000715B44 /* Campaign.swift */; };
+		49A276D22208CEAD0052147B /* ExperienceSyncParticipant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A276D12208CEAD0052147B /* ExperienceSyncParticipant.swift */; };
 		49AFAED421BF006800F1118B /* AttributesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49AFAED321BF006800F1118B /* AttributesTests.swift */; };
 		49C14E9521DD0C5400A3B0BC /* Data.NSManagedObjectContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C14E9421DD0C5400A3B0BC /* Data.NSManagedObjectContext.swift */; };
 		49C7829B21A75D5F0059D208 /* RoverUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB6ADD5A20B33EC0002F226C /* RoverUI.framework */; };
@@ -328,6 +329,7 @@
 		4980D66421307738007267D3 /* Experiences.Barcode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Experiences.Barcode.swift; sourceTree = "<group>"; };
 		499AE17321F8C56000715B44 /* Campaign.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Campaign.swift; sourceTree = "<group>"; };
 		49A0D09421CC3FCE003FAABD /* UI.OSLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UI.OSLog.swift; sourceTree = "<group>"; };
+		49A276D12208CEAD0052147B /* ExperienceSyncParticipant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperienceSyncParticipant.swift; sourceTree = "<group>"; };
 		49AFAED321BF006800F1118B /* AttributesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributesTests.swift; sourceTree = "<group>"; };
 		49C14E9421DD0C5400A3B0BC /* Data.NSManagedObjectContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Data.NSManagedObjectContext.swift; sourceTree = "<group>"; };
 		49CB6A1D219F2801008E4904 /* RoverSync.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RoverSync.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -790,6 +792,7 @@
 				DBD73F722137417E00E7F322 /* GeofencesSyncParticipant.swift */,
 				DB1689ED2141A6F90012DA01 /* BeaconsSyncParticipant.swift */,
 				497BA67A21F7AB4F003ED346 /* CampaignSyncParticipant.swift */,
+				49A276D12208CEAD0052147B /* ExperienceSyncParticipant.swift */,
 			);
 			path = Participants;
 			sourceTree = "<group>";
@@ -2391,6 +2394,7 @@
 				4976723E21A85905006A96A4 /* GeofencesSyncParticipant.swift in Sources */,
 				49CB6A37219F3BC8008E4904 /* PagingResponse.swift in Sources */,
 				49CB6A3D219F3BEB008E4904 /* SyncQuery.swift in Sources */,
+				49A276D22208CEAD0052147B /* ExperienceSyncParticipant.swift in Sources */,
 				49CB6A3B219F3BE3008E4904 /* SyncCoordinatorService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

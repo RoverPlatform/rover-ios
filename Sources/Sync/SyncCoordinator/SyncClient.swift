@@ -13,6 +13,8 @@ public protocol SyncClient {
 }
 
 extension SyncClient {
+    
+    
     public func queryItems(syncRequests: [SyncRequest]) -> [URLQueryItem] {
         let query: String = {
             let expression: String = {

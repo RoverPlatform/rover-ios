@@ -26,6 +26,7 @@ class GeofencesSyncParticipant: PagingSyncParticipant {
         self.userDefaults = userDefaults
     }
     
+    
     func nextRequest(cursor: String?) -> SyncRequest {
         let orderBy: [String: Any] = [
             "field": "UPDATED_AT",

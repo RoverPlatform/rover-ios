@@ -12,6 +12,42 @@ import UIKit
 class SyncCoordinatorService: SyncCoordinator {
     let client: SyncClient
     
+    let query = """
+        query Sync($geofencesFirst: Int, $geofencesAfter: String, $geofencesOrderby: GeofenceOrder, $beaconsFirst: Int, $beaconsAfter: String, $beaconsOrderby: BeaconOrder, $campaignsFirst: Int, $campaignsAfter: String, $campaignsOrderby: CampaignOrder) {
+        
+          geofences(first: $geofencesFirst, after: $geofencesAfter, orderBy: $geofencesOrderby) {
+            nodes {
+              ...geofenceFields
+            }
+            pageInfo {
+              endCursor
+              hasNextPage
+            }
+          }
+
+          beacons(first: $beaconsFirst, after: $beaconsAfter, orderBy: $beaconsOrderby) {
+            nodes {
+              ...beaconFields
+            }
+            pageInfo {
+              endCursor
+              hasNextPage
+            }
+          }
+
+          campaigns(first: $campaignsFirst, after: $campaignsAfter, orderBy: $campaignsOrderby) {
+            nodes {
+              ...campaignFields
+            }
+            pageInfo {
+              endCursor
+              hasNextPage
+            }
+          }
+          # TODO: experiences
+        }
+    """
+    
     var syncTask: URLSessionTask?
     var completionHandlers = [(UIBackgroundFetchResult) -> Void]()
     

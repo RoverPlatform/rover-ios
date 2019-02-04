@@ -9,6 +9,7 @@
 import Foundation
 
 public protocol SyncParticipant: AnyObject {
-    func initialRequest() -> SyncRequest?
+    /// Request variables for requesting the TODO doc this.
+    func initialRequestVariables() -> [String: Any]?
     func saveResponse(_ data: Data) -> SyncResult
 }

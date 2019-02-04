@@ -11,7 +11,6 @@ import os
 import UIKit
 import UserNotifications
 
-
 // Device is fairly readable and discoverable right now, so we'll keep it as a single class, so silence the body length warning.
 // swiftlint:disable type_body_length
 open class Device {

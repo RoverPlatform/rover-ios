@@ -300,7 +300,7 @@ enum NotificationAttachmentType: String, Decodable {
     case video
 }
 
-// iOS name is typically considered an exception to this rule.
+// iOS name is typically considered an exception to this rule, so silence the type name format warning.
 // swiftlint:disable:next type_name
 struct iOSNotificationOptions: Decodable {
     let categoryIdentifier: String?

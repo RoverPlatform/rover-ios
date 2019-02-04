@@ -51,7 +51,7 @@ extension Resolver {
         return _resolve(name: name) { (factory: Factory) -> Service in factory(self, arg1, arg2, arg3) }
     }
     
-    // These functions use explicitly rolled out 'varargs', so in this case the parameter count is reasonable.
+    // These functions use explicitly rolled out 'varargs', so in this case the parameter count is reasonable, so silence the param count warning.
     // swiftlint:disable:next function_parameter_count
     public func resolve<Service, Arg1, Arg2, Arg3, Arg4>(_ serviceType: Service.Type, name: String?, arguments arg1: Arg1, _ arg2: Arg2, _ arg3: Arg3, _ arg4: Arg4) -> Service? {
         typealias Factory = (Resolver, Arg1, Arg2, Arg3, Arg4) -> Service

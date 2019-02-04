@@ -124,7 +124,7 @@ enum DeviceModel {
         }
     }
     
-    // This is effectively a look-up table in code, not algorithmic behavior.  The swiftlint rules are not appropriate here.
+    // This is effectively a look-up table in code, not algorithmic behavior, so silence the function length warning.
     // swiftlint:disable:next cyclomatic_complexity function_body_length
     init?(modelName: String) {
         switch modelName {

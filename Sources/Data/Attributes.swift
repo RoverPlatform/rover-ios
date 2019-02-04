@@ -9,7 +9,7 @@
 import Foundation
 import os
 
-// We have a strong guarantee that this will complete. Very determnistic, done in static context at startup.
+// We have a strong guarantee that this will complete. Very determnistic, done in static context at startup, so silence the force try warning.
 // swiftlint:disable:next force_try
 private let roverKeyRegex = try! NSRegularExpression(pattern: "^[a-zA-Z_][a-zA-Z_0-9]*$")
 
@@ -113,7 +113,7 @@ public class Attributes: NSObject, NSCoding, Codable, RawRepresentable, Expressi
     
     fileprivate static func validateDictionary(_ dictionary: [String: Any]) -> [String: Any] {
         var transformed: [String: Any] = [:]
-        // This is a set of mappings of types, which makes for a long closure body.
+        // This is a set of mappings of types, which makes for a long closure body, so silence the closure length warning.
         // swiftlint:disable:next closure_body_length
         dictionary.forEach { key, value in
             let swiftRange = Range(uncheckedBounds: (key.startIndex, key.endIndex))
@@ -172,7 +172,7 @@ public class Attributes: NSObject, NSCoding, Codable, RawRepresentable, Expressi
         func fromKeyedDecoder(_ container: KeyedDecodingContainer<Attributes.DynamicCodingKeys>) throws -> Attributes {
             var assembledHash = [String: Any]()
 
-            // This is a set of mappings of types, which makes for a long closure body.
+            // This is a set of mappings of types, which makes for a long closure body, so silence the closure length warning.
             // swiftlint:disable:next closure_body_length
             try container.allKeys.forEach { key in
                 let keyString = key.stringValue
@@ -229,7 +229,7 @@ public class Attributes: NSObject, NSCoding, Codable, RawRepresentable, Expressi
     public func encode(to encoder: Encoder) throws {
         /// nested function for recursing through the dictionary and populating the Encoder with it, doing the necessary type coercions on the way.
         func encodeToContainer(dictionary: [String: Any], container: inout KeyedEncodingContainer<Attributes.DynamicCodingKeys>) throws {
-            // This is a set of mappings of types, which makes for a long closure body.
+            // This is a set of mappings of types, which makes for a long closure body, so silence the function length warning.
             // swiftlint:disable:next closure_body_length
             try dictionary.forEach { codingKey, value in
                 let key = DynamicCodingKeys(stringValue: codingKey)

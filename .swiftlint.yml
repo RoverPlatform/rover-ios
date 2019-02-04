@@ -11,6 +11,10 @@ disabled_rules:
   - force_cast
   # All of the public API should have docstrings, but that's a much bigger project to implement. (disabled by default)
   - missing_docs
+  # Our pattern for naming Extensions files conflicts with this rule.
+  - file_name
+  # We sometimes bundle multiple extensions into a single file.  Thus this rule can sometimes be excessively restrictive:
+  - file_length
 enabled_rules:
   - anyobject_protocol
   - array_init

@@ -8,6 +8,9 @@
 
 import UIKit
 
+// ScreenViewController may deserve a refactor: https://github.com/RoverPlatform/rover-ios/issues/406
+// swiftlint:disable type_body_length
+/// ScreenViewController displays a screen within a Rover experience.
 open class ScreenViewController: UICollectionViewController, UICollectionViewDataSourcePrefetching {
     static var fetchImageTaskKey: Void?
     

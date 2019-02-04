@@ -17,7 +17,7 @@ open class RowView: UICollectionReusableView {
         get {
             return true
         }
-        // We want to override super's setter with a no-op.
+        // We want to override super's setter with a no-op, so silence the unused setter warning.
         // swiftlint:disable:next unused_setter_value
         set { }
     }

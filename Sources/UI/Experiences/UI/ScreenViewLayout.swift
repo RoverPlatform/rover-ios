@@ -111,43 +111,45 @@ class ScreenViewLayout: UICollectionViewLayout {
                     }
                 }()
                 
-                let intrinsicHeight: CGFloat? = {
-                    switch block {
-                    case let block as BarcodeBlock:
-                        guard let renderedBitmap = block.barcode.cgImage else {
-                            // barcode was not renderable, so intrinsic height will be 0.
-                            return 0
-                        }
-
-                        let aspectRatio = CGFloat(renderedBitmap.width) / CGFloat(renderedBitmap.height)
-                        
-                        return blockWidth / aspectRatio
-                    case let block as ButtonBlock:
-                        guard let attributedText = block.text.attributedText else {
-                            return nil
-                        }
-                        
-                        let innerWidth = blockWidth - CGFloat(block.insets.left) - CGFloat(block.insets.right)
-                        let size = CGSize(width: innerWidth, height: CGFloat.greatestFiniteMagnitude)
-                        let boundingRect = attributedText.boundingRect(with: size, options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil)
-                        return boundingRect.height + CGFloat(block.insets.top) + CGFloat(block.insets.bottom)
-                    case let block as ImageBlock:
-                        let aspectRatio = CGFloat(block.image.width) / CGFloat(block.image.height)
-                        return blockWidth / aspectRatio
-                    case let block as TextBlock:
-                        guard let attributedText = block.text.attributedText else {
-                            return nil
-                        }
-                        
-                        let innerWidth = blockWidth - CGFloat(block.insets.left) - CGFloat(block.insets.right)
-                        let size = CGSize(width: innerWidth, height: CGFloat.greatestFiniteMagnitude)
-                        let boundingRect = attributedText.boundingRect(with: size, options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil)
-                        return boundingRect.height + CGFloat(block.insets.top) + CGFloat(block.insets.bottom)
-                    default:
-                        return nil
+                let intrinsicHeight: CGFloat?
+                switch block {
+                case let block as BarcodeBlock:
+                    guard let renderedBitmap = block.barcode.cgImage else {
+                        // barcode was not renderable, so intrinsic height will be 0.
+                        intrinsicHeight = 0
+                        break
                     }
-                }()
-                
+
+                    let aspectRatio = CGFloat(renderedBitmap.width) / CGFloat(renderedBitmap.height)
+                    
+                    intrinsicHeight = blockWidth / aspectRatio
+                case let block as ButtonBlock:
+                    guard let attributedText = block.text.attributedText else {
+                        intrinsicHeight = nil
+                        break
+                    }
+                    
+                    let innerWidth = blockWidth - CGFloat(block.insets.left) - CGFloat(block.insets.right)
+                    let size = CGSize(width: innerWidth, height: CGFloat.greatestFiniteMagnitude)
+                    let boundingRect = attributedText.boundingRect(with: size, options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil)
+                    intrinsicHeight = boundingRect.height + CGFloat(block.insets.top) + CGFloat(block.insets.bottom)
+                case let block as ImageBlock:
+                    let aspectRatio = CGFloat(block.image.width) / CGFloat(block.image.height)
+                    intrinsicHeight = blockWidth / aspectRatio
+                case let block as TextBlock:
+                    guard let attributedText = block.text.attributedText else {
+                        intrinsicHeight = nil
+                        break
+                    }
+                    
+                    let innerWidth = blockWidth - CGFloat(block.insets.left) - CGFloat(block.insets.right)
+                    let size = CGSize(width: innerWidth, height: CGFloat.greatestFiniteMagnitude)
+                    let boundingRect = attributedText.boundingRect(with: size, options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil)
+                    intrinsicHeight = boundingRect.height + CGFloat(block.insets.top) + CGFloat(block.insets.bottom)
+                default:
+                    intrinsicHeight = nil
+                }
+            
                 let heightFromType: (Height) -> CGFloat? = { heightType in
                     switch heightType {
                     case .intrinsic:

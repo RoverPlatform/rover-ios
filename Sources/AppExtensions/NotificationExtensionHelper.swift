@@ -86,6 +86,8 @@ public class NotificationExtensionHelper {
         userDefaults.removeObject(forKey: "io.rover.lastReceivedNotification")
     }
     
+    // attachMedia is fairly clear, so silence the function length warning.
+    // swiftlint:disable function_body_length
     func attachMedia(from attachmentURL: URL, to content: UNMutableNotificationContent) {
         guard let scheme = attachmentURL.scheme?.lowercased(), ["http", "https"].contains(scheme) else {
             return

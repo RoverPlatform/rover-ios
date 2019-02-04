@@ -35,6 +35,8 @@ public struct UIAssembler {
 
 // MARK: Assembler
 
+// Assemblers by design are long.  They are not particularly behavioural, so this is acceptable.
+// swiftlint:disable function_body_length
 extension UIAssembler: Assembler {
     public func assemble(container: Container) {
         // MARK: TEMPORARY FAKE THINGS

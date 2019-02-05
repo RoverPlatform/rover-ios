@@ -13,6 +13,7 @@ import os
 public protocol SyncStorage {
     associatedtype Node
     
+    /// Insert the objects into the storage.  Returns false if the insertion was not successful.
     func insertObjects(from nodes: [Node]) -> Bool
 }
 

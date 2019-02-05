@@ -61,6 +61,15 @@ public class SyncAssembler: Assembler {
             )
         }
         
+        // MARK: Experiences
+        
+        container.register(ExperienceSyncParticipant.self) { resolver in
+            ExperienceSyncParticipant(
+                experienceStore: resolver.resolve(ExperienceStore.self)!,
+                userDefaults: UserDefaults.standard
+            )
+        }
+        
         // MARK: Location
         
         container.register(GeofencesSyncParticipant.self) { resolver in
@@ -84,5 +93,6 @@ public class SyncAssembler: Assembler {
         syncCoordinator.participants.append(resolver.resolve(GeofencesSyncParticipant.self)!)
         syncCoordinator.participants.append(resolver.resolve(BeaconsSyncParticipant.self)!)
         syncCoordinator.participants.append(resolver.resolve(CampaignSyncParticipant.self)!)
+        syncCoordinator.participants.append(resolver.resolve(ExperienceSyncParticipant.self)!)
     }
 }

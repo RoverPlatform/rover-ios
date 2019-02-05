@@ -15,12 +15,14 @@ public protocol SyncClient {
 private let fragments = [
     "geofenceFields",
     "beaconFields",
-    "campaignFields"
+    "campaignFields",
+    "experienceFields"
 ]
 
 private let query = """
-    query Sync($geofencesFirst: Int, $geofencesAfter: String, $geofencesOrderby: GeofenceOrder, $beaconsFirst: Int, $beaconsAfter: String, $beaconsOrderby: BeaconOrder, $campaignsFirst: Int, $campaignsAfter: String, $campaignsOrderby: CampaignOrder) {
-        geofences(first: $geofencesFirst, after: $geofencesAfter, orderBy: $geofencesOrderby) {
+    query Sync($geofencesFirst: Int, $geofencesAfter: String, $geofencesOrderby: GeofenceOrder, $beaconsFirst: Int, $beaconsAfter: String, $beaconsOrderby: BeaconOrder, $campaignsFirst: Int, $campaignsAfter: String, $campaignsOrderby: CampaignOrder, $experiencesFirst: Int, $experiencesAfter: String, $experiencesOrderby: ExperienceOrder) {
+
+        geofences(first: $geofencesFirst, after: $geofencesAfter, orderBy: $geofencesOrderby, ) {
             nodes {
                 ...geofenceFields
             }
@@ -43,6 +45,16 @@ private let query = """
         campaigns(first: $campaignsFirst, after: $campaignsAfter, orderBy: $campaignsOrderby) {
             nodes {
                 ...campaignFields
+            }
+            pageInfo {
+                endCursor
+                hasNextPage
+            }
+        }
+
+        experiences(first: $experiencesFirst, after: $experiencesAfter, orderBy: $experiencesOrderby) {
+            nodes {
+                ...experienceFields
             }
             pageInfo {
                 endCursor

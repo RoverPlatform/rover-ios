@@ -7,68 +7,77 @@
 //
 
 import Foundation
-//
-//class ExperienceSyncParticipant: PagingSyncParticipant {
-//    typealias Response = ExperienceSyncResponse
-//
-//    private let experienceStore: ExperienceStore
-//
-//    let userDefaults: UserDefaults
-//
-//    var cursorKey: String {
-//        return "io.rover.RoverSync.campaignsCursor"
-//    }
-//
-//    init(
-//        experienceStore: ExperienceStore,
-//        userDefaults: UserDefaults
-//    ) {
-//        self.userDefaults = userDefaults
-//    }
-//
-//    func nextRequest(cursor: String?) -> SyncRequest {
-//        let orderBy: [String: Any] = [
-//            "field": "UPDATED_AT",
-//            "direction": "ASC"
-//        ]
-//
-//        var values: [String: Any] = [
-//            "first": 10, // TODO: sane page size?
-//            "orderBy": orderBy
-//        ]
-//
-//        if let cursor = cursor {
-//            values["after"] = cursor
-//        }
-//
-//        return SyncRequest(query: SyncQuery.campaigns, values: values)
-//    }
-//
-//    func insertObject(from node: Experience) {
-//        // TODO
-//    }
-//
-//}
-//
-//struct ExperienceSyncResponse: Decodable {
-//    struct Data: Decodable {
-//        struct Campaigns: Decodable {
-//            var nodes: [Experience]
-//            var pageInfo: PageInfo
-//        }
-//
-//        var experiences: Campaigns
-//    }
-//
-//    var data: Data
-//}
-//
-//extension ExperienceSyncResponse: PagingResponse {
-//    var nodes: [Experience]? {
-//        return data.experiences.nodes
-//    }
-//
-//    var pageInfo: PageInfo {
-//        return data.experiences.pageInfo
-//    }
-//}
+
+class ExperienceSyncParticipant: PagingSyncParticipant {
+    typealias Response = ExperienceSyncResponse
+
+    let syncStorage: ExperienceStore
+
+    let userDefaults: UserDefaults
+
+    var cursorKey: String {
+        return "io.rover.RoverSync.campaignsCursor"
+    }
+
+    init(
+        experienceStore: ExperienceStore,
+        userDefaults: UserDefaults
+    ) {
+        self.userDefaults = userDefaults
+        self.syncStorage = experienceStore
+    }
+
+    func nextRequestVariables(cursor: String?) -> [String: Any] {
+        let orderBy: [String: Any] = [
+            "field": "UPDATED_AT",
+            "direction": "ASC"
+        ]
+
+        var values: [String: Any] = [
+            "experiencesFirst": 10, // TODO: sane page size?
+            "experiencesOrderBy": orderBy
+        ]
+
+        if let cursor = cursor {
+            values["experiencesAfter"] = cursor
+        }
+
+        return values
+    }
+}
+
+struct ExperienceSyncResponse: Decodable {
+    struct Data: Decodable {
+        struct Campaigns: Decodable {
+            var nodes: [Experience]
+            var pageInfo: PageInfo
+        }
+
+        var experiences: Campaigns
+    }
+
+    var data: Data
+}
+
+extension ExperienceSyncResponse: PagingResponse {
+    var nodes: [Experience]? {
+        return data.experiences.nodes
+    }
+
+    var pageInfo: PageInfo {
+        return data.experiences.pageInfo
+    }
+}
+
+extension ExperienceStore: SyncStorage {
+    public typealias Node = Experience
+    
+    public func insertObjects(from nodes: [Experience]) -> Bool {
+        for experienceNode in nodes {
+            if !self.insert(experience: experienceNode) {
+                return false
+            }
+        }
+        return true
+    }
+}

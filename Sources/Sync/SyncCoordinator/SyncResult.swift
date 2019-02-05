@@ -7,7 +7,7 @@
 //
 
 public enum SyncResult {
-    case newData(nextRequest: SyncRequest?)
+    case newData(nextRequestVariables: [String: Any]?)
     case noData
     case failed
 }

@@ -131,10 +131,10 @@ extension PagingSyncParticipant {
         
         let pageInfo = response.pageInfo
         guard pageInfo.hasNextPage, let endCursor = pageInfo.endCursor else {
-            return .newData(nextRequest: nil)
+            return .newData(nextRequestVariables: nil)
         }
         
-        let nextRequest = self.nextRequest(cursor: endCursor)
-        return .newData(nextRequest: nextRequest)
+        let nextRequestVariables = self.nextRequestVariables(cursor: endCursor)
+        return .newData(nextRequestVariables: nextRequestVariables)
     }
 }

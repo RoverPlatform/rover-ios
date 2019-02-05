@@ -25,22 +25,22 @@ class BeaconsSyncParticipant: PagingSyncParticipant {
         self.userDefaults = userDefaults
     }
     
-    func nextRequest(cursor: String?) -> SyncRequest {
+    func nextRequestVariables(cursor: String?) -> [String: Any] {
         let orderBy: [String: Any] = [
             "field": "UPDATED_AT",
             "direction": "ASC"
         ]
         
         var values: [String: Any] = [
-            "first": 500,
-            "orderBy": orderBy
+            "beaconsFirst": 500,
+            "beaconsOrderBy": orderBy
         ]
         
         if let cursor = cursor {
-            values["after"] = cursor
+            values["beaconsAfter"] = cursor
         }
         
-        return SyncRequest(query: SyncQuery.beacons, values: values)
+        return values
     }
     
     func insertObject(from node: BeaconNode) {

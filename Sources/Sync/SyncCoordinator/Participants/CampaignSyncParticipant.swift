@@ -25,22 +25,22 @@ class CampaignSyncParticipant: PagingSyncParticipant {
         self.userDefaults = userDefaults
     }
     
-    func nextRequest(cursor: String?) -> SyncRequest {
+    func nextRequestVariables(cursor: String?) -> [String: Any] {
         let orderBy: [String: Any] = [
             "field": "UPDATED_AT",
             "direction": "ASC"
         ]
         
         var values: [String: Any] = [
-            "first": 10, // TODO: sane page size?
-            "orderBy": orderBy
+            "campaignsFirst": 10, // TODO: sane page size?
+            "campaignsOrderBy": orderBy
         ]
         
         if let cursor = cursor {
-            values["after"] = cursor
+            values["campaignsAfter"] = cursor
         }
         
-        return SyncRequest(query: SyncQuery.campaigns, values: values)
+        return values
     }
     
     func insertObject(from node: CampaignNode) {

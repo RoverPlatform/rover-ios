@@ -26,23 +26,22 @@ class GeofencesSyncParticipant: PagingSyncParticipant {
         self.userDefaults = userDefaults
     }
     
-    
-    func nextRequest(cursor: String?) -> SyncRequest {
+    func nextRequestVariables(cursor: String?) -> [String: Any] {
         let orderBy: [String: Any] = [
             "field": "UPDATED_AT",
             "direction": "ASC"
         ]
         
         var values: [String: Any] = [
-            "first": 500,
-            "orderBy": orderBy
+            "geofencesFirst": 500,
+            "geofencesOrderBy": orderBy
         ]
         
         if let cursor = cursor {
-            values["after"] = cursor
+            values["geofencesAfter"] = cursor
         }
         
-        return SyncRequest(query: SyncQuery.geofences, values: values)
+        return values
     }
 
     func insertObject(from node: GeofenceNode) {

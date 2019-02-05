@@ -12,41 +12,7 @@ import UIKit
 class SyncCoordinatorService: SyncCoordinator {
     let client: SyncClient
     
-    let query = """
-        query Sync($geofencesFirst: Int, $geofencesAfter: String, $geofencesOrderby: GeofenceOrder, $beaconsFirst: Int, $beaconsAfter: String, $beaconsOrderby: BeaconOrder, $campaignsFirst: Int, $campaignsAfter: String, $campaignsOrderby: CampaignOrder) {
-        
-          geofences(first: $geofencesFirst, after: $geofencesAfter, orderBy: $geofencesOrderby) {
-            nodes {
-              ...geofenceFields
-            }
-            pageInfo {
-              endCursor
-              hasNextPage
-            }
-          }
-
-          beacons(first: $beaconsFirst, after: $beaconsAfter, orderBy: $beaconsOrderby) {
-            nodes {
-              ...beaconFields
-            }
-            pageInfo {
-              endCursor
-              hasNextPage
-            }
-          }
-
-          campaigns(first: $campaignsFirst, after: $campaignsAfter, orderBy: $campaignsOrderby) {
-            nodes {
-              ...campaignFields
-            }
-            pageInfo {
-              endCursor
-              hasNextPage
-            }
-          }
-          # TODO: experiences
-        }
-    """
+    
     
     var syncTask: URLSessionTask?
     var completionHandlers = [(UIBackgroundFetchResult) -> Void]()
@@ -59,12 +25,15 @@ class SyncCoordinatorService: SyncCoordinator {
     
     func sync(completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         var intialParticipants = [SyncParticipant]()
-        var intialRequests = [SyncRequest]()
+        var initialVariables = [String: Any]()
         
         for participant in self.participants {
-            if let request = participant.initialRequest() {
+            if let requestVariables = participant.initialRequestVariables() {
                 intialParticipants.append(participant)
-                intialRequests.append(request)
+                initialVariables.merge(requestVariables) { _, targetVal -> Any in
+                    // no collisions are expected however .merge requires an explicit collision strategy.
+                    targetVal
+                }
             }
         }
         
@@ -72,10 +41,10 @@ class SyncCoordinatorService: SyncCoordinator {
     
         os_log("Beginning sync with [%s].", log: .persistence, type: .info, participantNames)
         
-        self.sync(participants: intialParticipants, requests: intialRequests, completionHandler: completionHandler)
+        self.sync(participants: intialParticipants, variables: initialVariables, completionHandler: completionHandler)
     }
     
-    func sync(participants: [SyncParticipant], requests: [SyncRequest], completionHandler: ((UIBackgroundFetchResult) -> Void)? = nil) {
+    func sync(participants: [SyncParticipant], variables: [String: Any], completionHandler: ((UIBackgroundFetchResult) -> Void)? = nil) {
         if let newHandler = completionHandler {
             self.completionHandlers.append(newHandler)
         }
@@ -85,11 +54,13 @@ class SyncCoordinatorService: SyncCoordinator {
             return
         }
         
-        self.recursiveSync(participants: participants, requests: requests)
+        self.recursiveSync(participants: participants, variables: variables)
     }
     
-    func recursiveSync(participants: [SyncParticipant], requests: [SyncRequest], newData: Bool = false) {
-        if participants.isEmpty || requests.isEmpty {
+    func recursiveSync(participants: [SyncParticipant], variables: [String: Any], newData: Bool = false) {
+        // TODO: because I flattened out the former "requests" parameter into a single dict, checking it for emptiness no longer makes semantic sense here.
+        // however, by deleting that check have it broken an exit case for the algorithm?
+        if participants.isEmpty {
             if newData {
                 self.invokeCompletionHandlers(.newData)
             } else {
@@ -101,7 +72,7 @@ class SyncCoordinatorService: SyncCoordinator {
         
         // Refactoring this wouldn't add a lot of value, so silence the closure length warning.
         // swiftlint:disable:next closure_body_length
-        let task = self.client.task(with: requests) { [weak self] result in
+        let task = self.client.task(with: variables) { [weak self] result in
             guard let _self = self else {
                 return
             }
@@ -120,23 +91,26 @@ class SyncCoordinatorService: SyncCoordinator {
             case .success(let data):
                 var results = [SyncResult]()
                 var nextParticipants = [SyncParticipant]()
-                var nextRequests = [SyncRequest]()
+                var aggregateNextRequestVariables = [String: Any]()
                 var newData = newData
                 
                 for participant in participants {
                     let result = participant.saveResponse(data)
                     results.append(result)
                     
-                    if case .newData(let nextRequest) = result {
+                    if case .newData(let nextRequestVariables) = result {
                         newData = true
-                        if let nextRequest = nextRequest {
+                        if let nextRequestVariables = nextRequestVariables {
                             nextParticipants.append(participant)
-                            nextRequests.append(nextRequest)
+                            aggregateNextRequestVariables.merge(nextRequestVariables, uniquingKeysWith: { _, targetVal in
+                                // collision not expected.
+                                targetVal
+                            })
                         }
                     }
                 }
                 
-                _self.recursiveSync(participants: nextParticipants, requests: nextRequests, newData: newData)
+                _self.recursiveSync(participants: nextParticipants, variables: aggregateNextRequestVariables, newData: newData)
             }
         }
         

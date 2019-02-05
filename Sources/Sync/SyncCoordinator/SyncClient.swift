@@ -9,50 +9,53 @@
 import Foundation
 
 public protocol SyncClient {
-    func task(with syncRequests: [SyncRequest], completionHandler: @escaping (HTTPResult) -> Void) -> URLSessionTask
+    func task(with variables: [String: Any], completionHandler: @escaping (HTTPResult) -> Void) -> URLSessionTask
 }
 
-extension SyncClient {
-    
-    
-    public func queryItems(syncRequests: [SyncRequest]) -> [URLQueryItem] {
-        let query: String = {
-            let expression: String = {
-                let signatures = syncRequests.compactMap { $0.query.signature }
-                
-                if signatures.isEmpty {
-                    return ""
-                }
-                
-                let joined = signatures.joined(separator: ", ")
-                return "(\(joined))"
-            }()
-            
-            let body: String = {
-                syncRequests.map { $0.query.definition }.joined(separator: "\n")
-            }()
-            
-            return """
-                query Sync\(expression) {
-                    \(body)
-                }
-                """
-        }()
-        
-        let fragments: [String]? = {
-            let fragments = syncRequests.map { Set($0.query.fragments) }.reduce(Set<String>()) { $0.union($1) }
-            return Array(fragments)
-        }()
-        
-        let variables: Attributes = {
-            syncRequests.reduce(Attributes()) { result, request in
-                request.variables.rawValue.reduce(result) { result, element in
-                    var nextResult = result.rawValue
-                    nextResult["\(request.query.name)\(element.key.capitalized)"] = element.value
-                    return Attributes(rawValue: nextResult)
-                }
+private let fragments = [
+    "geofenceFields",
+    "beaconFields",
+    "campaignFields"
+]
+
+// ALSO ANDREW FIGURE OUY WHY ITS COMPLAINING ABOUT QUERY FIELDS AND FRAGMENTS BY COMPARING WITH A REQUEST FROM THE V30
+private let query = """
+    query Sync($geofencesFirst: Int, $geofencesAfter: String, $geofencesOrderby: GeofenceOrder, $beaconsFirst: Int, $beaconsAfter: String, $beaconsOrderby: BeaconOrder, $campaignsFirst: Int, $campaignsAfter: String, $campaignsOrderby: CampaignOrder) {
+        geofences(first: $geofencesFirst, after: $geofencesAfter, orderBy: $geofencesOrderby) {
+            nodes {
+                ...geofenceFields
             }
-        }()
+            pageInfo {
+                endCursor
+                hasNextPage
+            }
+        }
+
+        beacons(first: $beaconsFirst, after: $beaconsAfter, orderBy: $beaconsOrderby) {
+            nodes {
+                ...beaconFields
+            }
+            pageInfo {
+                endCursor
+                hasNextPage
+            }
+        }
+
+        campaigns(first: $campaignsFirst, after: $campaignsAfter, orderBy: $campaignsOrderby) {
+            nodes {
+                ...campaignFields
+            }
+            pageInfo {
+                endCursor
+                hasNextPage
+            }
+        }
+    }
+"""
+
+extension SyncClient {
+    public func queryItems(variables: [String: Any]) -> [URLQueryItem] {
+        let variableAttributes = Attributes(rawValue: variables)
         
         let condensed = query.components(separatedBy: .whitespacesAndNewlines).filter { !$0.isEmpty }.joined(separator: " ")
         var queryItems: [URLQueryItem] = [
@@ -60,16 +63,18 @@ extension SyncClient {
         ]
         
         let encoder = JSONEncoder.default
-        if let encoded = try? encoder.encode(variables) {
+        if let encoded = try? encoder.encode(variableAttributes) {
             let value = String(data: encoded, encoding: .utf8)
             let queryItem = URLQueryItem(name: "variables", value: value)
             queryItems.append(queryItem)
         }
         
-        if let fragments = fragments, let encoded = try? encoder.encode(fragments) {
-            let value = String(data: encoded, encoding: .utf8)
-            let queryItem = URLQueryItem(name: "fragments", value: value)
-            queryItems.append(queryItem)
+        if !fragments.isEmpty {
+            if let encoded = try? encoder.encode(fragments) {
+                let value = String(data: encoded, encoding: .utf8)
+                let queryItem = URLQueryItem(name: "fragments", value: value)
+                queryItems.append(queryItem)
+            }
         }
         
         return queryItems
@@ -77,8 +82,8 @@ extension SyncClient {
 }
 
 extension HTTPClient: SyncClient {
-    public func task(with syncRequests: [SyncRequest], completionHandler: @escaping (HTTPResult) -> Void) -> URLSessionTask {
-        let queryItems = self.queryItems(syncRequests: syncRequests)
+    public func task(with variables: [String: Any], completionHandler: @escaping (HTTPResult) -> Void) -> URLSessionTask {
+        let queryItems = self.queryItems(variables: variables)
         let urlRequest = self.downloadRequest(queryItems: queryItems)
         return self.downloadTask(with: urlRequest, completionHandler: completionHandler)
     }

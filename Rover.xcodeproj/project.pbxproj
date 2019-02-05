@@ -78,6 +78,8 @@
 		4962FB6F219B51AD00C7F678 /* NotificationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FE2F208FB285008D1A57 /* NotificationCell.swift */; };
 		4962FB70219B51AD00C7F678 /* NotificationCenterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBF90205597C300E5C77F /* NotificationCenterViewController.swift */; };
 		4962FB79219B52BE00C7F678 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF31B4820E193BA005D7C34 /* SettingsViewController.swift */; };
+		496B32BA220A28180003AB44 /* CoreDataSyncStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496B32B9220A28180003AB44 /* CoreDataSyncStorage.swift */; };
+		496B32BC220A28670003AB44 /* SyncStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496B32BB220A28670003AB44 /* SyncStorage.swift */; };
 		4971FD8E21DE6D6A001537E5 /* ExperienceStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1B0E209CAD9600E99F9F /* ExperienceStore.swift */; };
 		497550DD21C0821400922C9D /* EventPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 497550DC21C0821400922C9D /* EventPipeline.swift */; };
 		4975CBE021A753A900C2DD18 /* Location.Beacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4975CBDF21A753A900C2DD18 /* Location.Beacon.swift */; };
@@ -317,6 +319,8 @@
 		495821B921A4A60D00F2B632 /* BluetoothInfoProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BluetoothInfoProvider.swift; sourceTree = "<group>"; };
 		495821BE21A4A64300F2B632 /* AdSupportInfoProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AdSupportInfoProvider.swift; sourceTree = "<group>"; };
 		4960CA6521C84484009146F0 /* CampaignsAssembler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampaignsAssembler.swift; sourceTree = "<group>"; };
+		496B32B9220A28180003AB44 /* CoreDataSyncStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataSyncStorage.swift; sourceTree = "<group>"; };
+		496B32BB220A28670003AB44 /* SyncStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncStorage.swift; sourceTree = "<group>"; };
 		497550DC21C0821400922C9D /* EventPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventPipeline.swift; sourceTree = "<group>"; };
 		4975CBDF21A753A900C2DD18 /* Location.Beacon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.Beacon.swift; sourceTree = "<group>"; };
 		4975CBE121A7547200C2DD18 /* Location.Geofence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.Geofence.swift; sourceTree = "<group>"; };
@@ -1303,6 +1307,8 @@
 				DB75358421595F0A00CB5654 /* SyncCoordinatorService.swift */,
 				DBD73F5B21359C8700E7F322 /* SyncParticipant.swift */,
 				DBD73F5621359C8700E7F322 /* SyncResult.swift */,
+				496B32B9220A28180003AB44 /* CoreDataSyncStorage.swift */,
+				496B32BB220A28670003AB44 /* SyncStorage.swift */,
 			);
 			path = SyncCoordinator;
 			sourceTree = "<group>";
@@ -2371,6 +2377,7 @@
 				49CB6A39219F3BDB008E4904 /* SyncClient.swift in Sources */,
 				4935406D21FF9440006C39F6 /* GeofenceNode.swift in Sources */,
 				4935406F21FF94C7006C39F6 /* BeaconNode.swift in Sources */,
+				496B32BA220A28180003AB44 /* CoreDataSyncStorage.swift in Sources */,
 				49CB6A40219F3C14008E4904 /* HTTPClient.swift in Sources */,
 				49CB6A36219F3BC3008E4904 /* PageInfo.swift in Sources */,
 				49CB6A42219F3C14008E4904 /* HTTPResult.swift in Sources */,
@@ -2379,6 +2386,7 @@
 				49CB6A45219F4068008E4904 /* Sync.URLRequest.swift in Sources */,
 				49CB6A3C219F3BE7008E4904 /* SyncParticipant.swift in Sources */,
 				49CB6A41219F3C14008E4904 /* HTTPError.swift in Sources */,
+				496B32BC220A28670003AB44 /* SyncStorage.swift in Sources */,
 				497BA67B21F7AB4F003ED346 /* CampaignSyncParticipant.swift in Sources */,
 				49CB6A46219F4075008E4904 /* Data+Gzip.swift in Sources */,
 				49CB6A3F219F3BF4008E4904 /* SyncResult.swift in Sources */,

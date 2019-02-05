@@ -21,7 +21,7 @@ class BeaconsSyncParticipant: PagingSyncParticipant {
         return "io.rover.RoverLocation.beaconsCursor"
     }
     
-    init(userDefaults: UserDefaults, syncStorage: Storage<BeaconNode>) {
+    init(syncStorage: Storage<BeaconNode>, userDefaults: UserDefaults) {
         self.userDefaults = userDefaults
         self.syncStorage = syncStorage
     }

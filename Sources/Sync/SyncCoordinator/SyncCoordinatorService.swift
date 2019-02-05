@@ -11,9 +11,7 @@ import UIKit
 
 class SyncCoordinatorService: SyncCoordinator {
     let client: SyncClient
-    
-    
-    
+
     var syncTask: URLSessionTask?
     var completionHandlers = [(UIBackgroundFetchResult) -> Void]()
     

@@ -21,7 +21,7 @@ class CampaignSyncParticipant: PagingSyncParticipant {
         return "io.rover.RoverSync.campaignsCursor"
     }
     
-    init(userDefaults: UserDefaults, syncStorage: Storage<CampaignNode>) {
+    init(syncStorage: Storage<CampaignNode>, userDefaults: UserDefaults) {
         self.syncStorage = syncStorage
         self.userDefaults = userDefaults
     }

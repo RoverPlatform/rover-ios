@@ -22,7 +22,7 @@ class GeofencesSyncParticipant: PagingSyncParticipant {
     
     var participants = [SyncParticipant]()
     
-    init(userDefaults: UserDefaults, syncStorage: Storage<GeofenceNode>) {
+    init(syncStorage: Storage<GeofenceNode>, userDefaults: UserDefaults) {
         self.syncStorage = syncStorage
         self.userDefaults = userDefaults
     }

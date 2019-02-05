@@ -56,8 +56,8 @@ public class SyncAssembler: Assembler {
         
         container.register(CampaignSyncParticipant.self) { resolver in
             CampaignSyncParticipant(
-                context: resolver.resolve(NSManagedObjectContext.self, name: "backgroundContext")!,
-                userDefaults: UserDefaults.standard
+                userDefaults: UserDefaults.standard,
+                syncStorage: CoreDataSyncStorage(context: resolver.resolve(NSManagedObjectContext.self, name: "backgroundContext")!)
             )
         }
         
@@ -65,15 +65,15 @@ public class SyncAssembler: Assembler {
         
         container.register(GeofencesSyncParticipant.self) { resolver in
             GeofencesSyncParticipant(
-                context: resolver.resolve(NSManagedObjectContext.self, name: "backgroundContext")!,
-                userDefaults: UserDefaults.standard
+                userDefaults: UserDefaults.standard,
+                syncStorage: CoreDataSyncStorage(context: resolver.resolve(NSManagedObjectContext.self, name: "backgroundContext")!)
             )
         }
         
         container.register(BeaconsSyncParticipant.self) { resolver in
             BeaconsSyncParticipant(
-                context: resolver.resolve(NSManagedObjectContext.self, name: "backgroundContext")!,
-                userDefaults: UserDefaults.standard
+                userDefaults: UserDefaults.standard,
+                syncStorage: CoreDataSyncStorage(context: resolver.resolve(NSManagedObjectContext.self, name: "backgroundContext")!)
             )
         }
     }

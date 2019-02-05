@@ -10,19 +10,20 @@ import CoreData
 import os.log
 
 class BeaconsSyncParticipant: PagingSyncParticipant {
+    typealias Storage = CoreDataSyncStorage
     typealias Response = BeaconsSyncResponse
     
-    let context: NSManagedObjectContext
     let userDefaults: UserDefaults
+    let syncStorage: Storage<BeaconNode>
     
     var cursorKey: String {
         // TODO: rename into RoverSync
         return "io.rover.RoverLocation.beaconsCursor"
     }
     
-    init(context: NSManagedObjectContext, userDefaults: UserDefaults) {
-        self.context = context
+    init(userDefaults: UserDefaults, syncStorage: Storage<BeaconNode>) {
         self.userDefaults = userDefaults
+        self.syncStorage = syncStorage
     }
     
     func nextRequestVariables(cursor: String?) -> [String: Any] {
@@ -41,20 +42,6 @@ class BeaconsSyncParticipant: PagingSyncParticipant {
         }
         
         return values
-    }
-    
-    func insertObject(from node: BeaconNode) {
-        Beacon.insert(
-            from: Beacon.InsertionInfo(
-                id: node.id,
-                name: node.name,
-                uuid: node.uuid,
-                major: node.major,
-                minor: node.minor,
-                tags: node.tags
-            ),
-            into: self.context
-        )
     }
 }
 
@@ -78,5 +65,21 @@ extension BeaconsSyncResponse: PagingResponse {
     
     var pageInfo: PageInfo {
         return data.beacons.pageInfo
+    }
+}
+
+extension BeaconNode: CoreDataStorable {
+    public func store(context: NSManagedObjectContext) {
+        Beacon.insert(
+            from: Beacon.InsertionInfo(
+                id: self.id,
+                name: self.name,
+                uuid: self.uuid,
+                major: self.major,
+                minor: self.minor,
+                tags: self.tags
+            ),
+            into: context
+        )
     }
 }

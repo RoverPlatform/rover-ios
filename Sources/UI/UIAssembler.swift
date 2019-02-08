@@ -39,12 +39,6 @@ public struct UIAssembler {
 // swiftlint:disable function_body_length
 extension UIAssembler: Assembler {
     public func assemble(container: Container) {
-        // MARK: TEMPORARY FAKE THINGS
-        
-        container.register(SyncCoordinator.self) { _ in
-            FakeSyncCoordinator()
-        }
-        
         // MARK: ImageStore
         
         container.register(ImageStore.self) { _ in

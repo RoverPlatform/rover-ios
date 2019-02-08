@@ -97,6 +97,7 @@
 		4988D94921AF4B260050550E /* Attributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1D5DC42107D32C0071928F /* Attributes.swift */; };
 		499AE17421F8C56000715B44 /* Campaign.swift in Sources */ = {isa = PBXBuildFile; fileRef = 499AE17321F8C56000715B44 /* Campaign.swift */; };
 		49A276D22208CEAD0052147B /* ExperienceSyncParticipant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A276D12208CEAD0052147B /* ExperienceSyncParticipant.swift */; };
+		49A276D4220DE2C60052147B /* Scribbles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A276D3220DE2C60052147B /* Scribbles.swift */; };
 		49AFAED421BF006800F1118B /* AttributesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49AFAED321BF006800F1118B /* AttributesTests.swift */; };
 		49C14E9521DD0C5400A3B0BC /* Data.NSManagedObjectContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C14E9421DD0C5400A3B0BC /* Data.NSManagedObjectContext.swift */; };
 		49C7829B21A75D5F0059D208 /* RoverUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB6ADD5A20B33EC0002F226C /* RoverUI.framework */; };
@@ -332,6 +333,7 @@
 		499AE17321F8C56000715B44 /* Campaign.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Campaign.swift; sourceTree = "<group>"; };
 		49A0D09421CC3FCE003FAABD /* UI.OSLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UI.OSLog.swift; sourceTree = "<group>"; };
 		49A276D12208CEAD0052147B /* ExperienceSyncParticipant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperienceSyncParticipant.swift; sourceTree = "<group>"; };
+		49A276D3220DE2C60052147B /* Scribbles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scribbles.swift; sourceTree = "<group>"; };
 		49AFAED321BF006800F1118B /* AttributesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributesTests.swift; sourceTree = "<group>"; };
 		49C14E9421DD0C5400A3B0BC /* Data.NSManagedObjectContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Data.NSManagedObjectContext.swift; sourceTree = "<group>"; };
 		49CB6A1D219F2801008E4904 /* RoverSync.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RoverSync.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -773,6 +775,7 @@
 				49496A4B21C839DA00F89438 /* RoverCampaigns.h */,
 				49496A4C21C839DA00F89438 /* Info.plist */,
 				4960CA6521C84484009146F0 /* CampaignsAssembler.swift */,
+				49A276D3220DE2C60052147B /* Scribbles.swift */,
 			);
 			path = Campaigns;
 			sourceTree = "<group>";
@@ -2353,6 +2356,7 @@
 				49496A6421C83CCF00F89438 /* InfluenceTracker.swift in Sources */,
 				4960CA6621C84484009146F0 /* CampaignsAssembler.swift in Sources */,
 				49496A6521C83CCF00F89438 /* NotificationHandler.swift in Sources */,
+				49A276D4220DE2C60052147B /* Scribbles.swift in Sources */,
 				49496A6621C83CCF00F89438 /* NotificationHandlerService.swift in Sources */,
 				49496A6221C83CBB00F89438 /* InfluenceTrackerService.swift in Sources */,
 				4960CA6B21C847A5009146F0 /* Campaigns.UNNotificationResponse.swift in Sources */,

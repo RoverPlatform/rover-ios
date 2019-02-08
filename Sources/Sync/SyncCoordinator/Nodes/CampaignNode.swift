@@ -256,14 +256,46 @@ struct FrequencyLimit: Decodable {
     let interval: TimeInterval
 }
 
+struct Segment: Decodable {
+    // The GraphQL API types themselves are actually unions of several possible segment type, themeselves categorized for each trigger type.  Besides being difficult to represent directly in Swift, the extra type information is unnecessary. All of the Segment types we care about do nothing more than contain a predicate.
+
+    let predicate: Predicate
+    
+    enum CodingKeys: String, CodingKey {
+        case predicate
+        case typename = "__typename"
+    }
+    
+    init(from decoder: Decoder) throws {
+        // do a manual decode so we can verify __typename
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        let typeName = try container.decode(String.self, forKey: .typename)
+
+        if typeName == "CompoundSegment" {
+            throw DecodingError.dataCorruptedError(forKey: .typename, in: container, debugDescription: "Legacy CompoundSegment appeared, which is not supported by SDK 3.  These will soon be migrated away in the Rover Cloud API.")
+        }
+        
+        let predicateType = try container.decode(PredicateType.self, forKey: .predicate)
+        switch predicateType {
+        case .comparisonPredicate:
+            self.predicate = try container.decode(ComparisonPredicate.self, forKey: .predicate)
+        case .compoundPredicate:
+            self.predicate = try container.decode(CompoundPredicate.self, forKey: .predicate)
+        }
+    }
+}
+
 struct AutomatedCampaignTrigger: CampaignTrigger, Decodable {
     let delay: TimeInterval
     let eventTrigger: EventTrigger
     let limits: [FrequencyLimit]
+    let segment: Segment?
 }
 
 struct ScheduledCampaignTrigger: CampaignTrigger, Decodable {
     let dateTime: DateTimeComponents
+    let segment: Segment?
 }
 
 protocol CampaignDeliverable {

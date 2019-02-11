@@ -159,7 +159,6 @@ extension UIAssembler: Assembler {
                 router: resolver.resolve(Router.self)!,
                 imageStore: resolver.resolve(ImageStore.self)!,
                 sessionController: resolver.resolve(SessionController.self)!,
-                syncCoordinator: resolver.resolve(SyncCoordinator.self)!,
                 managedObjectContext: resolver.resolve(NSManagedObjectContext.self, name: "viewContext")!,
                 websiteViewControllerProvider: websiteViewControllerProvider
             )

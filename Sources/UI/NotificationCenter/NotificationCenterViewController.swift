@@ -15,14 +15,12 @@ open class NotificationCenterViewController: UIViewController {
     public let router: Router
     public let imageStore: ImageStore
     public let sessionController: SessionController
-    public let syncCoordinator: SyncCoordinator
     public let managedObjectContext: NSManagedObjectContext
     
     public typealias WebsiteViewControllerProvider = (URL) -> UIViewController?
     public let websiteViewControllerProvider: WebsiteViewControllerProvider
     
     public private(set) var navigationBar: UINavigationBar?
-    public private(set) var refreshControl = UIRefreshControl()
     public private(set) var tableView = UITableView()
     
     private var didBecomeActiveObserver: NSObjectProtocol?
@@ -32,7 +30,6 @@ open class NotificationCenterViewController: UIViewController {
         router: Router,
         imageStore: ImageStore,
         sessionController: SessionController,
-        syncCoordinator: SyncCoordinator,
         managedObjectContext: NSManagedObjectContext,
         websiteViewControllerProvider: @escaping WebsiteViewControllerProvider
     ) {
@@ -40,7 +37,6 @@ open class NotificationCenterViewController: UIViewController {
         self.router = router
         self.imageStore = imageStore
         self.sessionController = sessionController
-        self.syncCoordinator = syncCoordinator
         self.managedObjectContext = managedObjectContext
         self.websiteViewControllerProvider = websiteViewControllerProvider
         
@@ -60,10 +56,7 @@ open class NotificationCenterViewController: UIViewController {
         
         tableView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(tableView)
-        
-        refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
-        tableView.addSubview(refreshControl)
-        
+                
         tableView.delegate = self
         tableView.dataSource = self
         fetchedResultsController.delegate = self
@@ -205,15 +198,6 @@ open class NotificationCenterViewController: UIViewController {
     @objc
     func done(_ sender: Any) {
         dismiss(animated: true, completion: nil)
-    }
-    
-    @objc
-    func refresh(_ sender: Any) {
-        self.syncCoordinator.sync { _ in
-            DispatchQueue.main.async {
-                self.refreshControl.endRefreshing()
-            }
-        }
     }
     
     // MARK: Reuseable Views

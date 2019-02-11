@@ -9,7 +9,7 @@
 import UIKit
 
 public protocol SyncCoordinator: AnyObject {
-    var participants: [SyncParticipant] { get set }
+//    var participants: [SyncParticipant] { get set }
     
     func sync()
     func sync(completionHandler: @escaping () -> Void)

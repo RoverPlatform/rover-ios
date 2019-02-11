@@ -11,40 +11,37 @@ import Foundation
 import os.log
 
 class CampaignSyncParticipant: PagingSyncParticipant {
+    typealias Storage = CoreDataSyncStorage
     typealias Response = CampaignsSyncResponse
     
-    let context: NSManagedObjectContext
     let userDefaults: UserDefaults
+    let syncStorage: Storage<CampaignNode>
     
     var cursorKey: String {
         return "io.rover.RoverSync.campaignsCursor"
     }
     
-    init(context: NSManagedObjectContext, userDefaults: UserDefaults) {
-        self.context = context
+    init(syncStorage: Storage<CampaignNode>, userDefaults: UserDefaults) {
+        self.syncStorage = syncStorage
         self.userDefaults = userDefaults
     }
     
-    func nextRequest(cursor: String?) -> SyncRequest {
+    func nextRequestVariables(cursor: String?) -> [String: Any] {
         let orderBy: [String: Any] = [
             "field": "UPDATED_AT",
             "direction": "ASC"
         ]
         
         var values: [String: Any] = [
-            "first": 10, // TODO: sane page size?
-            "orderBy": orderBy
+            "campaignsFirst": 10, // TODO: sane page size?
+            "campaignsOrderBy": orderBy
         ]
         
         if let cursor = cursor {
-            values["after"] = cursor
+            values["campaignsAfter"] = cursor
         }
         
-        return SyncRequest(query: SyncQuery.campaigns, values: values)
-    }
-    
-    func insertObject(from node: CampaignNode) {
-        Campaign.insert(from: node, into: self.context)
+        return values
     }
 }
 
@@ -61,20 +58,6 @@ struct CampaignsSyncResponse: Decodable {
     var data: Data
 }
 
-extension Campaign {
-    static func insert(from campaignNode: CampaignNode, into managedObjectContext: NSManagedObjectContext) {
-        let campaign: Campaign
-        switch campaignNode.trigger {
-        case is ScheduledCampaignTrigger:
-            campaign = ScheduledCampaign.insert(into: managedObjectContext)
-        case is AutomatedCampaignTrigger:
-            campaign = AutomatedCampaign.insert(into: managedObjectContext)
-        default:
-            fatalError("Some other type somehow appeared for CampaignTrigger")
-        }
-    }
-}
-
 extension CampaignsSyncResponse: PagingResponse {
     var nodes: [CampaignNode]? {
         return data.campaigns.nodes
@@ -82,5 +65,19 @@ extension CampaignsSyncResponse: PagingResponse {
     
     var pageInfo: PageInfo {
         return data.campaigns.pageInfo
+    }
+}
+
+extension CampaignNode: CoreDataStorable {
+    func store(context: NSManagedObjectContext) {
+        let campaign: Campaign
+        switch self.trigger {
+        case is ScheduledCampaignTrigger:
+            campaign = ScheduledCampaign.insert(into: context)
+        case is AutomatedCampaignTrigger:
+            campaign = AutomatedCampaign.insert(into: context)
+        default:
+            fatalError("Some other type somehow appeared for CampaignTrigger")
+        }
     }
 }

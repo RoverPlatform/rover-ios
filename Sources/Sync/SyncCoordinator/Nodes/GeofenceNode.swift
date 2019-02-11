@@ -9,8 +9,8 @@
 import Foundation
 
 /// This structure represents the Geofence data coming back from the cloud-side GraphQL API for Sync.
-public struct GeofenceNode: Decodable {
-    public struct Center: Decodable {
+struct GeofenceNode: Decodable {
+    struct Center: Decodable {
         var latitude: Double
         var longitude: Double
     }

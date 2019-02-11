@@ -9,6 +9,6 @@
 import os.log
 
 extension OSLog {
-    public static let networking = OSLog(subsystem: "io.rover", category: "Networking")
-    public static let sync = OSLog(subsystem: "io.rover", category: "Sync")
+    static let networking = OSLog(subsystem: "io.rover", category: "Networking")
+    static let sync = OSLog(subsystem: "io.rover", category: "Sync")
 }

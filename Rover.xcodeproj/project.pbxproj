@@ -78,6 +78,8 @@
 		4962FB6F219B51AD00C7F678 /* NotificationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FE2F208FB285008D1A57 /* NotificationCell.swift */; };
 		4962FB70219B51AD00C7F678 /* NotificationCenterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBF90205597C300E5C77F /* NotificationCenterViewController.swift */; };
 		4962FB79219B52BE00C7F678 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF31B4820E193BA005D7C34 /* SettingsViewController.swift */; };
+		496B32BA220A28180003AB44 /* CoreDataSyncStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496B32B9220A28180003AB44 /* CoreDataSyncStorage.swift */; };
+		496B32BC220A28670003AB44 /* SyncStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496B32BB220A28670003AB44 /* SyncStorage.swift */; };
 		4971FD8E21DE6D6A001537E5 /* ExperienceStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1B0E209CAD9600E99F9F /* ExperienceStore.swift */; };
 		497550DD21C0821400922C9D /* EventPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 497550DC21C0821400922C9D /* EventPipeline.swift */; };
 		4975CBE021A753A900C2DD18 /* Location.Beacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4975CBDF21A753A900C2DD18 /* Location.Beacon.swift */; };
@@ -94,6 +96,7 @@
 		497BA67B21F7AB4F003ED346 /* CampaignSyncParticipant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 497BA67A21F7AB4F003ED346 /* CampaignSyncParticipant.swift */; };
 		4988D94921AF4B260050550E /* Attributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1D5DC42107D32C0071928F /* Attributes.swift */; };
 		499AE17421F8C56000715B44 /* Campaign.swift in Sources */ = {isa = PBXBuildFile; fileRef = 499AE17321F8C56000715B44 /* Campaign.swift */; };
+		49A276D22208CEAD0052147B /* ExperienceSyncParticipant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A276D12208CEAD0052147B /* ExperienceSyncParticipant.swift */; };
 		49AFAED421BF006800F1118B /* AttributesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49AFAED321BF006800F1118B /* AttributesTests.swift */; };
 		49C14E9521DD0C5400A3B0BC /* Data.NSManagedObjectContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C14E9421DD0C5400A3B0BC /* Data.NSManagedObjectContext.swift */; };
 		49C7829B21A75D5F0059D208 /* RoverUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB6ADD5A20B33EC0002F226C /* RoverUI.framework */; };
@@ -108,8 +111,6 @@
 		49CB6A3A219F3BE0008E4904 /* SyncCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD73F5C21359C8700E7F322 /* SyncCoordinator.swift */; };
 		49CB6A3B219F3BE3008E4904 /* SyncCoordinatorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB75358421595F0A00CB5654 /* SyncCoordinatorService.swift */; };
 		49CB6A3C219F3BE7008E4904 /* SyncParticipant.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD73F5B21359C8700E7F322 /* SyncParticipant.swift */; };
-		49CB6A3D219F3BEB008E4904 /* SyncQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD73F5821359C8700E7F322 /* SyncQuery.swift */; };
-		49CB6A3E219F3BF0008E4904 /* SyncRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB71B7D62145A60200FF5034 /* SyncRequest.swift */; };
 		49CB6A3F219F3BF4008E4904 /* SyncResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD73F5621359C8700E7F322 /* SyncResult.swift */; };
 		49CB6A40219F3C14008E4904 /* HTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC3B42A2148A7D10096C74E /* HTTPClient.swift */; };
 		49CB6A41219F3C14008E4904 /* HTTPError.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB496E3F214854CF0026DE6A /* HTTPError.swift */; };
@@ -318,6 +319,8 @@
 		495821B921A4A60D00F2B632 /* BluetoothInfoProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BluetoothInfoProvider.swift; sourceTree = "<group>"; };
 		495821BE21A4A64300F2B632 /* AdSupportInfoProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AdSupportInfoProvider.swift; sourceTree = "<group>"; };
 		4960CA6521C84484009146F0 /* CampaignsAssembler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampaignsAssembler.swift; sourceTree = "<group>"; };
+		496B32B9220A28180003AB44 /* CoreDataSyncStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataSyncStorage.swift; sourceTree = "<group>"; };
+		496B32BB220A28670003AB44 /* SyncStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncStorage.swift; sourceTree = "<group>"; };
 		497550DC21C0821400922C9D /* EventPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventPipeline.swift; sourceTree = "<group>"; };
 		4975CBDF21A753A900C2DD18 /* Location.Beacon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.Beacon.swift; sourceTree = "<group>"; };
 		4975CBE121A7547200C2DD18 /* Location.Geofence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.Geofence.swift; sourceTree = "<group>"; };
@@ -328,6 +331,7 @@
 		4980D66421307738007267D3 /* Experiences.Barcode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Experiences.Barcode.swift; sourceTree = "<group>"; };
 		499AE17321F8C56000715B44 /* Campaign.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Campaign.swift; sourceTree = "<group>"; };
 		49A0D09421CC3FCE003FAABD /* UI.OSLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UI.OSLog.swift; sourceTree = "<group>"; };
+		49A276D12208CEAD0052147B /* ExperienceSyncParticipant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperienceSyncParticipant.swift; sourceTree = "<group>"; };
 		49AFAED321BF006800F1118B /* AttributesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributesTests.swift; sourceTree = "<group>"; };
 		49C14E9421DD0C5400A3B0BC /* Data.NSManagedObjectContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Data.NSManagedObjectContext.swift; sourceTree = "<group>"; };
 		49CB6A1D219F2801008E4904 /* RoverSync.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RoverSync.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -396,7 +400,6 @@
 		DB709C68207E7EFC00F96C2B /* ImageStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageStore.swift; sourceTree = "<group>"; };
 		DB709C6B207EAEED00F96C2B /* ImageStoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageStoreService.swift; sourceTree = "<group>"; };
 		DB709C72207EB47400F96C2B /* ImageOptimization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageOptimization.swift; sourceTree = "<group>"; };
-		DB71B7D62145A60200FF5034 /* SyncRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncRequest.swift; sourceTree = "<group>"; };
 		DB71B7D82145A77D00FF5034 /* PageInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageInfo.swift; sourceTree = "<group>"; };
 		DB71B7DA2145A7A100FF5034 /* PagingResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagingResponse.swift; sourceTree = "<group>"; };
 		DB71B7DE2145A7F400FF5034 /* PagingSyncParticipant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagingSyncParticipant.swift; sourceTree = "<group>"; };
@@ -469,7 +472,6 @@
 		DBCBE0AE21616107001C7A96 /* RegionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionManager.swift; sourceTree = "<group>"; };
 		DBD22D5E212CBAC10088DE52 /* Location.CLLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.CLLocation.swift; sourceTree = "<group>"; };
 		DBD73F5621359C8700E7F322 /* SyncResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncResult.swift; sourceTree = "<group>"; };
-		DBD73F5821359C8700E7F322 /* SyncQuery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncQuery.swift; sourceTree = "<group>"; };
 		DBD73F5B21359C8700E7F322 /* SyncParticipant.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncParticipant.swift; sourceTree = "<group>"; };
 		DBD73F5C21359C8700E7F322 /* SyncCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncCoordinator.swift; sourceTree = "<group>"; };
 		DBD73F722137417E00E7F322 /* GeofencesSyncParticipant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeofencesSyncParticipant.swift; sourceTree = "<group>"; };
@@ -790,6 +792,7 @@
 				DBD73F722137417E00E7F322 /* GeofencesSyncParticipant.swift */,
 				DB1689ED2141A6F90012DA01 /* BeaconsSyncParticipant.swift */,
 				497BA67A21F7AB4F003ED346 /* CampaignSyncParticipant.swift */,
+				49A276D12208CEAD0052147B /* ExperienceSyncParticipant.swift */,
 			);
 			path = Participants;
 			sourceTree = "<group>";
@@ -1303,9 +1306,9 @@
 				DBD73F5C21359C8700E7F322 /* SyncCoordinator.swift */,
 				DB75358421595F0A00CB5654 /* SyncCoordinatorService.swift */,
 				DBD73F5B21359C8700E7F322 /* SyncParticipant.swift */,
-				DBD73F5821359C8700E7F322 /* SyncQuery.swift */,
-				DB71B7D62145A60200FF5034 /* SyncRequest.swift */,
 				DBD73F5621359C8700E7F322 /* SyncResult.swift */,
+				496B32B9220A28180003AB44 /* CoreDataSyncStorage.swift */,
+				496B32BB220A28670003AB44 /* SyncStorage.swift */,
 			);
 			path = SyncCoordinator;
 			sourceTree = "<group>";
@@ -2374,6 +2377,7 @@
 				49CB6A39219F3BDB008E4904 /* SyncClient.swift in Sources */,
 				4935406D21FF9440006C39F6 /* GeofenceNode.swift in Sources */,
 				4935406F21FF94C7006C39F6 /* BeaconNode.swift in Sources */,
+				496B32BA220A28180003AB44 /* CoreDataSyncStorage.swift in Sources */,
 				49CB6A40219F3C14008E4904 /* HTTPClient.swift in Sources */,
 				49CB6A36219F3BC3008E4904 /* PageInfo.swift in Sources */,
 				49CB6A42219F3C14008E4904 /* HTTPResult.swift in Sources */,
@@ -2382,15 +2386,15 @@
 				49CB6A45219F4068008E4904 /* Sync.URLRequest.swift in Sources */,
 				49CB6A3C219F3BE7008E4904 /* SyncParticipant.swift in Sources */,
 				49CB6A41219F3C14008E4904 /* HTTPError.swift in Sources */,
+				496B32BC220A28670003AB44 /* SyncStorage.swift in Sources */,
 				497BA67B21F7AB4F003ED346 /* CampaignSyncParticipant.swift in Sources */,
 				49CB6A46219F4075008E4904 /* Data+Gzip.swift in Sources */,
 				49CB6A3F219F3BF4008E4904 /* SyncResult.swift in Sources */,
 				49F7E23B21F664DA0040D5C3 /* CampaignNode.swift in Sources */,
 				49CB6A35219F3A41008E4904 /* SyncAssembler.swift in Sources */,
-				49CB6A3E219F3BF0008E4904 /* SyncRequest.swift in Sources */,
 				4976723E21A85905006A96A4 /* GeofencesSyncParticipant.swift in Sources */,
 				49CB6A37219F3BC8008E4904 /* PagingResponse.swift in Sources */,
-				49CB6A3D219F3BEB008E4904 /* SyncQuery.swift in Sources */,
+				49A276D22208CEAD0052147B /* ExperienceSyncParticipant.swift in Sources */,
 				49CB6A3B219F3BE3008E4904 /* SyncCoordinatorService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

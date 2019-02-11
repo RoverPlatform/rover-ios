@@ -10,10 +10,11 @@ import CoreData
 import os.log
 
 class GeofencesSyncParticipant: PagingSyncParticipant {
+    typealias Storage = CoreDataSyncStorage
     typealias Response = GeofencesSyncResponse
     
-    let context: NSManagedObjectContext
     let userDefaults: UserDefaults
+    let syncStorage: Storage<GeofenceNode>
     
     var cursorKey: String {
         return "io.rover.RoverLocation.geofencesCursor"
@@ -21,34 +22,27 @@ class GeofencesSyncParticipant: PagingSyncParticipant {
     
     var participants = [SyncParticipant]()
     
-    init(context: NSManagedObjectContext, userDefaults: UserDefaults) {
-        self.context = context
+    init(syncStorage: Storage<GeofenceNode>, userDefaults: UserDefaults) {
+        self.syncStorage = syncStorage
         self.userDefaults = userDefaults
     }
     
-    func nextRequest(cursor: String?) -> SyncRequest {
+    func nextRequestVariables(cursor: String?) -> [String: Any] {
         let orderBy: [String: Any] = [
             "field": "UPDATED_AT",
             "direction": "ASC"
         ]
         
         var values: [String: Any] = [
-            "first": 500,
-            "orderBy": orderBy
+            "geofencesFirst": 500,
+            "geofencesOrderBy": orderBy
         ]
         
         if let cursor = cursor {
-            values["after"] = cursor
+            values["geofencesAfter"] = cursor
         }
         
-        return SyncRequest(query: SyncQuery.geofences, values: values)
-    }
-
-    func insertObject(from node: GeofenceNode) {
-        Geofence.insert(
-            from: Geofence.InsertionInfo(id: node.id, name: node.name, latitude: node.center.latitude, longitude: node.center.longitude, radius: node.radius, tags: node.tags),
-            into: self.context
-        )
+        return values
     }
 }
 
@@ -74,5 +68,21 @@ extension GeofencesSyncResponse: PagingResponse {
     
     var pageInfo: PageInfo {
         return data.geofences.pageInfo
+    }
+}
+
+extension GeofenceNode: CoreDataStorable {
+    func store(context: NSManagedObjectContext) {
+        Geofence.insert(
+            from: Geofence.InsertionInfo(
+                id: self.id,
+                name: self.name,
+                latitude: self.center.latitude,
+                longitude: self.center.longitude,
+                radius: self.radius,
+                tags: self.tags
+            ),
+            into: context
+        )
     }
 }

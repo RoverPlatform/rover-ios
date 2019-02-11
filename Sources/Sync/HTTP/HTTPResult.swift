@@ -8,7 +8,7 @@
 
 import Foundation
 
-public enum HTTPResult {
+enum HTTPResult {
     case error(error: Error?, isRetryable: Bool)
     case success(data: Data)
 }

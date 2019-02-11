@@ -9,7 +9,7 @@
 import Foundation
 
 extension URLRequest {
-    public mutating func setAccountToken(_ accountToken: String) {
+    mutating func setAccountToken(_ accountToken: String) {
         self.setValue(accountToken, forHTTPHeaderField: "x-rover-account-token")
     }
 }

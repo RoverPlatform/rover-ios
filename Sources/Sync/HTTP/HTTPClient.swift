@@ -9,12 +9,12 @@
 import Foundation
 import os.log
 
-public final class HTTPClient {
-    public let endpoint: URL
-    public let accountToken: String
-    public let session: URLSession
+final class HTTPClient {
+    let endpoint: URL
+    let accountToken: String
+    let session: URLSession
     
-    public init(accountToken: String, endpoint: URL, session: URLSession) {
+    init(accountToken: String, endpoint: URL, session: URLSession) {
         self.accountToken = accountToken
         self.endpoint = endpoint
         self.session = session
@@ -22,7 +22,7 @@ public final class HTTPClient {
 }
 
 extension HTTPClient {
-    public func downloadRequest(queryItems: [URLQueryItem]) -> URLRequest {
+    func downloadRequest(queryItems: [URLQueryItem]) -> URLRequest {
         var urlComponents = URLComponents(url: endpoint, resolvingAgainstBaseURL: false)!
         urlComponents.queryItems = queryItems
         
@@ -33,7 +33,7 @@ extension HTTPClient {
         return urlRequest
     }
     
-    public func uploadRequest() -> URLRequest {
+    func uploadRequest() -> URLRequest {
         var urlRequest = URLRequest(url: endpoint)
         urlRequest.httpMethod = "POST"
         urlRequest.setValue("gzip", forHTTPHeaderField: "accept-encoding")
@@ -43,7 +43,7 @@ extension HTTPClient {
         return urlRequest
     }
     
-    public func bodyData<T>(payload: T) -> Data? where T: Encodable {
+    func bodyData<T>(payload: T) -> Data? where T: Encodable {
         let encoded: Data
         do {
             encoded = try JSONEncoder.default.encode(payload)
@@ -63,14 +63,14 @@ extension HTTPClient {
         return compressed
     }
     
-    public func downloadTask(with request: URLRequest, completionHandler: @escaping (HTTPResult) -> Void) -> URLSessionDataTask {
+    func downloadTask(with request: URLRequest, completionHandler: @escaping (HTTPResult) -> Void) -> URLSessionDataTask {
         return self.session.dataTask(with: request) { data, urlResponse, error in
             let result = HTTPResult(data: data, urlResponse: urlResponse, error: error)
             completionHandler(result)
         }
     }
     
-    public func uploadTask(with request: URLRequest, from bodyData: Data?, completionHandler: @escaping (HTTPResult) -> Void) -> URLSessionUploadTask {
+    func uploadTask(with request: URLRequest, from bodyData: Data?, completionHandler: @escaping (HTTPResult) -> Void) -> URLSessionUploadTask {
         return self.session.uploadTask(with: request, from: bodyData) { data, urlResponse, error in
             let result = HTTPResult(data: data, urlResponse: urlResponse, error: error)
             completionHandler(result)

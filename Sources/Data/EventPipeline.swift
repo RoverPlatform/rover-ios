@@ -13,12 +13,31 @@ import os
 public class EventPipeline {
     public var deviceInfoProvider: DeviceInfoProvider?
     
+    public var observers = ObserverSet<Event>()
+    
     private let managedObjectContext: NSManagedObjectContext
+    
+    private var observerChit: NSObjectProtocol?
     
     public init(
         managedObjectContext: NSManagedObjectContext
     ) {
         self.managedObjectContext = managedObjectContext
+        self.observerChit = NotificationCenter.default.addObserver(forName: .NSManagedObjectContextObjectsDidChange, object: self.managedObjectContext, queue: nil) { [weak self] iosNotification in
+            guard let insertedObjects = iosNotification.userInfo?[NSInsertedObjectsKey] as? Set<NSObject> else {
+                return
+            }
+            guard let self = self else {
+                return
+            }
+            
+            let insertedEvents = insertedObjects
+                .compactMap { $0 as? Event }
+            
+            if !insertedEvents.isEmpty {
+                insertedEvents.forEach { event in self.observers.notify(parameters: event) }
+            }
+        }
     }
 
     public func addEvent(_ eventInfo: EventInfo) {
@@ -34,25 +53,5 @@ public class EventPipeline {
         )
         
         event.attemptInsert()
-    }
-    
-    /// Register a callback to be fired whenever Events are inserted.
-    ///
-    /// Note that this returns an opaque chit object that you must retain until you no longer wish the callback to be fired.
-    public func observeNewEvents(
-        observerCallback: @escaping ([Event]) -> Void
-    ) -> NSObjectProtocol {
-        return NotificationCenter.default.addObserver(forName: .NSManagedObjectContextObjectsDidChange, object: self.managedObjectContext, queue: nil) { iosNotification in
-            guard let insertedObjects = iosNotification.userInfo?[NSInsertedObjectsKey] as? Set<NSObject> else {
-                return
-            }
-            
-            let insertedEvents = insertedObjects
-                .compactMap { $0 as? Event }
-            
-            if !insertedEvents.isEmpty {
-                observerCallback(insertedEvents)
-            }
-        }
     }
 }

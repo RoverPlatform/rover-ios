@@ -25,4 +25,48 @@ struct CampaignEventPipeline {
 //    }
 }
 
+struct SegmentModel {
+}
 
+protocol Segmentable {
+    var segment: SegmentModel { get }
+}
+
+extension AutomatedCampaign: Segmentable {
+    var segment: SegmentModel {
+        fatalError("stand-in")
+    }
+}
+
+extension ScheduledCampaign: Segmentable {
+    var segment: SegmentModel {
+        fatalError("stand-in")
+    }
+}
+
+extension Array where Element == Segmentable {
+    // filter segmentables
+    func filterForDevice(deviceSnapshot: DeviceSnapshot) {
+        // TODO: evaluate predicates.
+    }
+}
+
+struct CampaignNotificationPipeline {
+    // whenever sync completes:
+    let eventObserver: NSObjectProtocol?
+    
+    init(
+        eventPipeline: EventPipeline
+    ) {
+        self.eventObserver = eventPipeline.observers.add { event in
+            // STEP 1. Query for applicable scheduled campaigns and applicable automated campaigns.
+            
+            
+            
+            // STEP 2.
+        }
+
+    }
+    
+    private func 
+}

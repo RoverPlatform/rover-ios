@@ -41,9 +41,13 @@ public class SyncAssembler: Assembler {
         
         // MARK: SyncCoordinator
         
-        container.register(SyncCoordinator.self) { resolver in
+        container.register(SyncCoordinatorService.self) { resolver in
             let client = resolver.resolve(SyncClient.self)!
             return SyncCoordinatorService(client: client)
+        }
+        
+        container.register(SyncCoordinator.self) { resolver in
+            resolver.resolve(SyncCoordinatorService.self)!
         }
         
         // MARK: URLSession
@@ -88,7 +92,7 @@ public class SyncAssembler: Assembler {
     }
     
     public func containerDidAssemble(resolver: Resolver) {
-        let syncCoordinator = resolver.resolve(SyncCoordinator.self) as! SyncCoordinatorService
+        let syncCoordinator = resolver.resolve(SyncCoordinatorService.self)!
     
         syncCoordinator.participants.append(resolver.resolve(GeofencesSyncParticipant.self)!)
         syncCoordinator.participants.append(resolver.resolve(BeaconsSyncParticipant.self)!)

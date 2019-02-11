@@ -9,7 +9,7 @@
 import Foundation
 
 /// This structure represents the Beacon data coming back from the cloud-side GraphQL API for Sync.
-public struct BeaconNode: Decodable {
+struct BeaconNode: Decodable {
     var id: String
     var name: String
     var uuid: UUID

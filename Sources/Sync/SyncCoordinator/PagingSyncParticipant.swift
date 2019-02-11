@@ -10,7 +10,7 @@ import CoreData
 import Foundation
 import os
 
-public protocol PagingSyncParticipant: SyncParticipant {
+protocol PagingSyncParticipant: SyncParticipant {
     associatedtype Response: PagingResponse
     
     associatedtype Storage: SyncStorage where Storage.Node == Response.Node
@@ -23,7 +23,7 @@ public protocol PagingSyncParticipant: SyncParticipant {
 }
 
 extension PagingSyncParticipant {
-    public var cursor: String? {
+    var cursor: String? {
         get {
             return userDefaults.value(forKey: cursorKey) as? String
         }
@@ -36,11 +36,11 @@ extension PagingSyncParticipant {
         }
     }
     
-    public func initialRequestVariables() -> [String: Any]? {
+    func initialRequestVariables() -> [String: Any]? {
         return nextRequestVariables(cursor: self.cursor)
     }
     
-    public func saveResponse(_ data: Data) -> SyncResult {
+    func saveResponse(_ data: Data) -> SyncResult {
         guard let response = decode(data) else {
             return .failed
         }
@@ -57,7 +57,7 @@ extension PagingSyncParticipant {
         return result(from: response)
     }
     
-    public func decode(_ data: Data) -> Response? {
+    func decode(_ data: Data) -> Response? {
         do {
             return try JSONDecoder.default.decode(Response.self, from: data)
         } catch {
@@ -66,17 +66,17 @@ extension PagingSyncParticipant {
         }
     }
     
-    public func insertObjects(from nodes: [Response.Node]) -> Bool {
+    func insertObjects(from nodes: [Response.Node]) -> Bool {
         return self.syncStorage.insertObjects(from: nodes)
     }
     
-    public func updateCursor(from response: Response) {
+    func updateCursor(from response: Response) {
         if let endCursor = response.pageInfo.endCursor {
             self.cursor = endCursor
         }
     }
     
-    public func result(from response: Response) -> SyncResult {
+    func result(from response: Response) -> SyncResult {
         guard let nodes = response.nodes, !nodes.isEmpty else {
             return .noData
         }

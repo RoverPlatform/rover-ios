@@ -88,7 +88,7 @@ public class SyncAssembler: Assembler {
     }
     
     public func containerDidAssemble(resolver: Resolver) {
-        let syncCoordinator = resolver.resolve(SyncCoordinator.self)!
+        let syncCoordinator = resolver.resolve(SyncCoordinator.self) as! SyncCoordinatorService
     
         syncCoordinator.participants.append(resolver.resolve(GeofencesSyncParticipant.self)!)
         syncCoordinator.participants.append(resolver.resolve(BeaconsSyncParticipant.self)!)

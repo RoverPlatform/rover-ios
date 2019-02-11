@@ -9,7 +9,7 @@
 import Foundation
 
 /// Describes how multiple synced objects may be stored for PagingSyncParticipant.
-public protocol SyncStorage {
+protocol SyncStorage {
     associatedtype Node
     
     /// Insert the objects into the storage.  Returns false if the insertion was not successful.

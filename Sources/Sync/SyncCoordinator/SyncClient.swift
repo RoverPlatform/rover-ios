@@ -8,7 +8,7 @@
 
 import Foundation
 
-public protocol SyncClient {
+protocol SyncClient {
     func task(with variables: [String: Any], completionHandler: @escaping (HTTPResult) -> Void) -> URLSessionTask
 }
 
@@ -65,7 +65,7 @@ private let query = """
 """
 
 extension SyncClient {
-    public func queryItems(variables: [String: Any]) -> [URLQueryItem] {
+    func queryItems(variables: [String: Any]) -> [URLQueryItem] {
         let variableAttributes = Attributes(rawValue: variables)
         
         let condensed = query.components(separatedBy: .whitespacesAndNewlines).filter { !$0.isEmpty }.joined(separator: " ")
@@ -93,7 +93,7 @@ extension SyncClient {
 }
 
 extension HTTPClient: SyncClient {
-    public func task(with variables: [String: Any], completionHandler: @escaping (HTTPResult) -> Void) -> URLSessionTask {
+    func task(with variables: [String: Any], completionHandler: @escaping (HTTPResult) -> Void) -> URLSessionTask {
         let queryItems = self.queryItems(variables: variables)
         let urlRequest = self.downloadRequest(queryItems: queryItems)
         return self.downloadTask(with: urlRequest, completionHandler: completionHandler)

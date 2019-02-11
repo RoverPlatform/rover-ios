@@ -72,7 +72,7 @@ extension GeofencesSyncResponse: PagingResponse {
 }
 
 extension GeofenceNode: CoreDataStorable {
-    public func store(context: NSManagedObjectContext) {
+    func store(context: NSManagedObjectContext) {
         Geofence.insert(
             from: Geofence.InsertionInfo(
                 id: self.id,

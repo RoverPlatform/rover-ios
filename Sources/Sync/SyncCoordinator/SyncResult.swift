@@ -6,7 +6,7 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-public enum SyncResult {
+enum SyncResult {
     case newData(nextRequestVariables: [String: Any]?)
     case noData
     case failed

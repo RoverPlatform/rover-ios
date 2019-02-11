@@ -11,20 +11,21 @@ import Foundation
 import os
 
 /// Implement this protocol for Node structures returned from Core Data, so that CoreDataSyncStorage will know how to transform and insert them into Core Data.
-public protocol CoreDataStorable {
+protocol CoreDataStorable {
     func store(context: NSManagedObjectContext)
 }
 
 /// A SyncStorage implementation for sync participants that wish to store their payloads locally in Core Data.  Handles error handling and atomicity.
-public struct CoreDataSyncStorage<T: CoreDataStorable>: SyncStorage {
-    public typealias Node = T
+struct CoreDataSyncStorage<T: CoreDataStorable>: SyncStorage {
+    typealias Node = T
+    
     private let context: NSManagedObjectContext
     
     init(context: NSManagedObjectContext) {
         self.context = context
     }
     
-    public func insertObjects(from nodes: [T]) -> Bool {
+    func insertObjects(from nodes: [T]) -> Bool {
         guard !nodes.isEmpty else {
             return true
         }

@@ -69,7 +69,7 @@ extension BeaconsSyncResponse: PagingResponse {
 }
 
 extension BeaconNode: CoreDataStorable {
-    public func store(context: NSManagedObjectContext) {
+    func store(context: NSManagedObjectContext) {
         Beacon.insert(
             from: Beacon.InsertionInfo(
                 id: self.id,

@@ -70,9 +70,9 @@ extension ExperienceSyncResponse: PagingResponse {
 }
 
 extension ExperienceStore: SyncStorage {
-    public typealias Node = Experience
+    typealias Node = Experience
     
-    public func insertObjects(from nodes: [Experience]) -> Bool {
+    func insertObjects(from nodes: [Experience]) -> Bool {
         for experienceNode in nodes {
             if !self.insert(experience: experienceNode) {
                 return false

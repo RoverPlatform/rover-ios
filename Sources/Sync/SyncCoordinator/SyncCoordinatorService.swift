@@ -56,8 +56,6 @@ class SyncCoordinatorService: SyncCoordinator {
     }
     
     func recursiveSync(participants: [SyncParticipant], variables: [String: Any], newData: Bool = false) {
-        // TODO: because I flattened out the former "requests" parameter into a single dict, checking it for emptiness no longer makes semantic sense here.
-        // however, by deleting that check have it broken an exit case for the algorithm?
         if participants.isEmpty {
             if newData {
                 self.invokeCompletionHandlers(.newData)

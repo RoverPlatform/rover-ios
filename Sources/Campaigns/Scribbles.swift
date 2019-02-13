@@ -52,9 +52,20 @@ struct SegmentModel {
 //    }
 //}
 
+func relevantCampaigns(event: Event, in context: NSManagedObjectContext) -> [AutomatedCampaign] {
+    
+    // ultimately we have to filter by:
+    // * CD queryable: for AutomatedCampaigns only
+    // * CD queryable: event name & namespace
+    // * CD queryable: the queryable flattened event trigger types: day of week, time of day.
+    // * a non-queryable event trigger filter type, event attributes, that needs predicate evaluation: predicate from each remaining campaign against the event.
+    // * a non-queryable event trigger filter type, scheduled, that needs its DateTimeComponents transformed into local time as needed.  Too complex to query on directly through Core Data.
+    // * a non-queryable: campaign segmentation, that also needs predicate evaluation: predicate from each remaining campaign against DeviceSnapshot.
+    
+    // start by filter by event name and namespace.
 
-
-extension Predicate {
+    
+    return []
 }
 
 extension Predicate {

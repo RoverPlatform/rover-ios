@@ -8,9 +8,9 @@
 
 import Foundation
 import os
+import CoreData
 
 class CampaignUpdateObserver {
-    
 }
 
 struct CampaignEventPipeline {
@@ -29,38 +29,43 @@ struct CampaignEventPipeline {
 struct SegmentModel {
 }
 
-protocol Segmentable {
-    var segment: SegmentModel { get }
-}
+//protocol Segmentable {
+//    var segment: SegmentModel { get }
+//}
+//
+//extension AutomatedCampaign: Segmentable {
+//    var segment: SegmentModel {
+//        fatalError("stand-in")
+//    }
+//}
+//
+//extension ScheduledCampaign: Segmentable {
+//    var segment: SegmentModel {
+//        fatalError("Coming later!")
+//    }
+//}
+//
+//extension Array where Element == Segmentable {
+//    // filter segmentables
+//    func filterForDevice(deviceSnapshot: DeviceSnapshot) {
+//        // TODO: evaluate predicates.
+//    }
+//}
 
-extension AutomatedCampaign: Segmentable {
-    var segment: SegmentModel {
-        fatalError("stand-in")
-    }
-}
 
-extension ScheduledCampaign: Segmentable {
-    var segment: SegmentModel {
-        fatalError("Coming later!")
-    }
-}
 
-extension Array where Element == Segmentable {
-    // filter segmentables
-    func filterForDevice(deviceSnapshot: DeviceSnapshot) {
-        // TODO: evaluate predicates.
-    }
+extension Predicate {
 }
 
 extension Predicate {
-    func nsPredicate(forDevice deviceSnapshot: DeviceSnapshot) -> NSPredicate {
+    func nsPredicate() -> NSPredicate {
         let nsPredicate: NSPredicate
 
         switch self {
         case let comparisonPredicate as ComparisonPredicate:
-            nsPredicate = comparisonPredicate.nsPredicate(forDevice: deviceSnapshot)
+            nsPredicate = comparisonPredicate.nsPredicate()
         case let compoundPredicate as CompoundPredicate:
-            nsPredicate = compoundPredicate.nsPredicate(forDevice: deviceSnapshot)
+            nsPredicate = compoundPredicate.nsPredicate()
         default:
             nsPredicate = NSPredicate()
         }
@@ -70,13 +75,15 @@ extension Predicate {
 }
 
 extension ComparisonPredicate {
+    /// Map the Rover Comparison Predicate into its equivalent Apple NSPredicate.
     func nsPredicate() -> NSPredicate {
-        // Left-hand-side value will be the item being tested (as given by keypath)
-        // Right-hand-side value is the constant value given
+        // Left-hand-side value will be the item being tested (as given by keypath).
+        // Right-hand-side value is the constant value given.
         
         let rightExpression = NSExpression(forKeyPath: self.keyPath)
         
-        // can't use one big expression here because the Swift compiler lags out.
+        // The Predicate has just a single value, to be used as the RHS value.  However, for GraphQL typing reasons separate fields are needed to cover all the types, and nils are used in the unneeded fields. Exactly one should be not nil.  So we aggregate them all down into a single Any? value.
+        // can't use one big expression here because the Swift compiler's type inference lags out, so aggregate the nil values in several chunks.
         let value1: Any? = self.booleanValue ?? self.booleanValues
         let value2: Any? = self.dateTimeValue ?? self.dateTimeValues
         let value3: Any? = self.numberValue ?? self.numberValues
@@ -84,8 +91,8 @@ extension ComparisonPredicate {
         let value: Any? = value1 ?? value2 ?? value3 ?? value4
         
         if value == nil {
-            // TODO: this means the Predicate given from GraphQL was invalid?  Handling this case by matching nothing.
-            os_log("feck", log: .campaigns)
+            // this means the Predicate given from GraphQL was invalid.
+            os_log("Predicate was missing an RHS value.  Cloud API should not have given us such a Predicate.", log: .campaigns, type: .error)
             return NSPredicate(value: false)
         }
         
@@ -104,12 +111,18 @@ extension ComparisonPredicate {
 }
 
 extension CompoundPredicate {
-    func nsPredicate(forDevice deviceSnapshot: DeviceSnapshot) -> NSPredicate {
-        // ANDREW START HERE
+    /// Map the Rover Comparison Predicate into its equivalent Apple NSPredicate.
+    func nsPredicate() -> NSPredicate {
+        let nsPredicates = self.predicates.map { predicate in
+            predicate.nsPredicate()
+        }
+        
+        return NSCompoundPredicate(type: self.booleanOperator.nsLogicalType, subpredicates: nsPredicates)
     }
 }
 
 extension ComparisonPredicateOperator {
+    /// Map the Rover comparison predicate operator type into its equivalent Apple NSPredicate type.
     var nsOperator: NSComparisonPredicate.Operator {
         switch self {
         case .lessThan:
@@ -144,6 +157,7 @@ extension ComparisonPredicateOperator {
 }
 
 extension ComparisonPredicateModifier {
+    /// Map the Rover comparison predicate modifier type into its equivalent Apple NSPredicate type.
     var nsModifier: NSComparisonPredicate.Modifier {
         switch self {
         case .all:
@@ -152,6 +166,20 @@ extension ComparisonPredicateModifier {
             return .any
         case .direct:
             return .direct
+        }
+    }
+}
+
+extension CompoundPredicateLogicalType {
+    /// Map the Rover compound predicate logical type into its equivalent Apple NSPredicate type.
+    var nsLogicalType: NSCompoundPredicate.LogicalType {
+        switch self {
+        case .and:
+            return .and
+        case .or:
+            return .or
+        case .not:
+            return .not
         }
     }
 }

@@ -8,9 +8,11 @@
 
 import Foundation
 
+/// Rover's Representation of a Predicate, directly inspired by (and compatible with) the Apple platform's NSPredicate.
 public protocol Predicate {
 }
 
+/// Used to discriminate between Predicate types arriving back from GraphQL.
 public enum PredicateType: Decodable {
     case comparisonPredicate
     case compoundPredicate

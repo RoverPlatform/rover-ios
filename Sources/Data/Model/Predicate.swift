@@ -7,6 +7,8 @@
 //
 
 import Foundation
+import CoreData
+import os
 
 /// Rover's Representation of a Predicate, directly inspired by (and compatible with) the Apple platform's NSPredicate.
 public protocol Predicate {
@@ -182,3 +184,60 @@ public struct CompoundPredicate: Predicate, Decodable, Encodable {
         }
     }
 }
+
+
+extension NSManagedObject {
+    func getPredicateForPrimitiveField(forKey key: String) -> Predicate? {
+        self.willAccessValue(forKey: key)
+        defer { self.didAccessValue(forKey: key) }
+        guard let primitiveValue = primitiveValue(forKey: key) as? Data else {
+            return nil
+        }
+        
+        guard let predicateType = try? JSONDecoder.default.decode(PredicateType.self, from: primitiveValue) else {
+            os_log("Unable to determine type of predicate stored in Core Data.", log: .persistence, type: .error)
+            return nil
+        }
+        
+        do {
+            switch predicateType {
+            case .comparisonPredicate:
+                return try JSONDecoder.default.decode(ComparisonPredicate.self, from: primitiveValue)
+            case .compoundPredicate:
+                return try JSONDecoder.default.decode(CompoundPredicate.self, from: primitiveValue)
+            }
+        } catch {
+            os_log("Unable to decode predicate stored in core data: %s", log: .persistence, type: .error, String(describing: error))
+            return nil
+        }
+    }
+    
+    func setPredicateForPrimitiveField(_ newValue: Predicate?, forKey key: String) {
+        willChangeValue(forKey: key)
+        defer { didChangeValue(forKey: key) }
+        let primitiveValue: Data
+        
+        guard let newValue = newValue else {
+            setPrimitiveValue(nil, forKey: key)
+            return
+        }
+        
+        do {
+            switch newValue {
+            case let compound as CompoundPredicate:
+                primitiveValue = try JSONEncoder.default.encode(compound)
+            case let comparison as ComparisonPredicate:
+                primitiveValue = try JSONEncoder.default.encode(comparison)
+            default:
+                let context = EncodingError.Context(codingPath: [], debugDescription: "Unexpected predicate type appeared during encode.")
+                throw EncodingError.invalidValue(newValue, context)
+            }
+        } catch {
+            os_log("Unable to encode predicate for storage in core data: %@", log: .persistence, type: .error, String(describing: error))
+            return
+        }
+        
+        setPrimitiveValue(primitiveValue, forKey: key)
+    }
+}
+

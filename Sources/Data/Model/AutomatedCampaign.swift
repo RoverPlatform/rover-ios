@@ -22,42 +22,22 @@ public final class AutomatedCampaign: Campaign {
     @NSManaged public private(set) var eventTriggerEventName: String?
     @NSManaged public private(set) var eventTriggerEventNamespace: String?
     
-    // The following properties are made manually rather than synthesized with @NSManaged, because the type coercions supported by @NSManaged are insufficient (namely lack of support for optional Swift scalars, and also our Codable Predicate type).
-
-    public private(set) var dayOfWeekFilterMonday: Bool? {
-        get { return getOptionalBooleanForPrimitiveField(forKey: Attributes.dayOfWeekFilterMonday.rawValue) }
-        set { setOptionalBooleanForPrimitiveField(newValue: newValue, forKey: Attributes.dayOfWeekFilterMonday.rawValue) }
-    }
+    @NSManaged public private(set) var dayOfWeekFilterMonday: Bool
+    @NSManaged public private(set) var dayOfWeekFilterTuesday: Bool
+    @NSManaged public private(set) var dayOfWeekFilterWednesday: Bool
+    @NSManaged public private(set) var dayOfWeekFilterThursday: Bool
+    @NSManaged public private(set) var dayOfWeekFilterFriday: Bool
+    @NSManaged public private(set) var dayOfWeekFilterSaturday: Bool
+    @NSManaged public private(set) var dayOfWeekFilterSunday: Bool
     
-    public private(set) var dayOfWeekFilterTuesday: Bool? {
-        get { return getOptionalBooleanForPrimitiveField(forKey: Attributes.dayOfWeekFilterTuesday.rawValue) }
-        set { setOptionalBooleanForPrimitiveField(newValue: newValue, forKey: Attributes.dayOfWeekFilterTuesday.rawValue) }
-    }
+    @NSManaged public private(set) var timeOfDayFilterStartTime: Int
+    @NSManaged public private(set) var timeOfDayFilterEndTime: Int
     
-    public private(set) var dayOfWeekFilterWednesday: Bool? {
-        get { return getOptionalBooleanForPrimitiveField(forKey: Attributes.dayOfWeekFilterWednesday.rawValue) }
-        set { setOptionalBooleanForPrimitiveField(newValue: newValue, forKey: Attributes.dayOfWeekFilterWednesday.rawValue) }
-    }
-    
-    public private(set) var dayOfWeekFilterThursday: Bool? {
-        get { return getOptionalBooleanForPrimitiveField(forKey: Attributes.dayOfWeekFilterThursday.rawValue) }
-        set { setOptionalBooleanForPrimitiveField(newValue: newValue, forKey: Attributes.dayOfWeekFilterThursday.rawValue) }
-    }
-    
-    public private(set) var dayOfWeekFilterFriday: Bool? {
-        get { return getOptionalBooleanForPrimitiveField(forKey: Attributes.dayOfWeekFilterFriday.rawValue) }
-        set { setOptionalBooleanForPrimitiveField(newValue: newValue, forKey: Attributes.dayOfWeekFilterFriday.rawValue) }
-    }
-    
-    public private(set) var dayOfWeekFilterSaturday: Bool? {
-        get { return getOptionalBooleanForPrimitiveField(forKey: Attributes.dayOfWeekFilterSaturday.rawValue) }
-        set { setOptionalBooleanForPrimitiveField(newValue: newValue, forKey: Attributes.dayOfWeekFilterSaturday.rawValue) }
-    }
-    
-    public private(set) var dayOfWeekFilterSunday: Bool? {
-        get { return getOptionalBooleanForPrimitiveField(forKey: Attributes.dayOfWeekFilterSunday.rawValue) }
-        set { setOptionalBooleanForPrimitiveField(newValue: newValue, forKey: Attributes.dayOfWeekFilterSunday.rawValue) }
-    }
+    /// Specifies if this automated campaign have a Day of Week filter, and thus the timeOfDayFilterStartTime and timeOfDayFilterEndTime fields should be honoured.
+    @NSManaged public private(set) var hasDayOfWeekFilter: Bool
+    @NSManaged public private(set) var hasTimeOfDayFilter: Bool
+    @NSManaged public private(set) var hasEventAttributeFilter: Bool
+    @NSManaged public private(set) var hasScheduledFilter: Bool
 
     @discardableResult
     public static func insert(into context: NSManagedObjectContext) -> AutomatedCampaign {
@@ -69,7 +49,7 @@ public final class AutomatedCampaign: Campaign {
             return getPredicateForPrimitiveField(forKey: Attributes.triggerSegmentPredicate.rawValue)
         }
         set {
-            setPrimitiveValue(newValue, forKey: Attributes.triggerSegmentPredicate.rawValue)
+            setPredicateForPrimitiveField(newValue, forKey: Attributes.triggerSegmentPredicate.rawValue)
         }
     }
 
@@ -78,81 +58,26 @@ public final class AutomatedCampaign: Campaign {
             return getPredicateForPrimitiveField(forKey: Attributes.eventAttributeFilterPredicate.rawValue)
         }
         set {
-            setPrimitiveValue(newValue, forKey: Attributes.eventAttributeFilterPredicate.rawValue)
+            setPredicateForPrimitiveField(newValue, forKey: Attributes.eventAttributeFilterPredicate.rawValue)
         }
     }
     
-    private func getPredicateForPrimitiveField(forKey key: String) -> Predicate? {
-        self.willAccessValue(forKey: key)
-        defer { self.didAccessValue(forKey: key) }
-        guard let primitiveValue = primitiveValue(forKey: key) as? Data else {
-            return nil
+    public private(set) var scheduledFilterStartDateTime: DateTimeComponents? {
+        get {
+            return getDateTimeComponentsForPrimitiveField(forKey: Attributes.scheduledFilterStartDateTime.rawValue)
         }
-        
-        guard let predicateType = try? JSONDecoder.default.decode(PredicateType.self, from: primitiveValue) else {
-            os_log("Unable to determine type of predicate stored in Core Data.", log: .persistence, type: .error)
-            return nil
-        }
-        
-        do {
-            switch predicateType {
-            case .comparisonPredicate:
-                return try JSONDecoder.default.decode(ComparisonPredicate.self, from: primitiveValue)
-            case .compoundPredicate:
-                return try JSONDecoder.default.decode(CompoundPredicate.self, from: primitiveValue)
-            }
-        } catch {
-            os_log("Unable to decode predicate stored in core data: %s", log: .persistence, type: .error, String(describing: error))
-            return nil
+        set {
+            setDateTimeComponentsForPrimitiveField(newValue, forKey: Attributes.scheduledFilterStartDateTime.rawValue)
         }
     }
     
-    private func setPredicateForPrimitiveField(newValue: Predicate?, forKey key: String) {
-        willChangeValue(forKey: key)
-        defer { didChangeValue(forKey: key) }
-        let primitiveValue: Data
-        
-        guard let newValue = newValue else {
-            setPrimitiveValue(nil, forKey: key)
-            return
+    public private(set) var scheduledFilterEndDateTime: DateTimeComponents? {
+        get {
+            return getDateTimeComponentsForPrimitiveField(forKey: Attributes.scheduledFilterEndDateTime.rawValue)
         }
-        
-        do {
-            switch newValue {
-            case let compound as CompoundPredicate:
-                primitiveValue = try JSONEncoder.default.encode(compound)
-            case let comparison as ComparisonPredicate:
-                primitiveValue = try JSONEncoder.default.encode(comparison)
-            default:
-                let context = EncodingError.Context(codingPath: [], debugDescription: "Unexpected predicate type appeared during encode.")
-                throw EncodingError.invalidValue(newValue, context)
-            }
-        } catch {
-            os_log("Unable to encode predicate for storage in core data: %@", log: .persistence, type: .error, String(describing: error))
-            return
+        set {
+            setDateTimeComponentsForPrimitiveField(newValue, forKey: Attributes.scheduledFilterEndDateTime.rawValue)
         }
-        
-        setPrimitiveValue(primitiveValue, forKey: key)
-    }
-    
-    private func getOptionalBooleanForPrimitiveField(forKey key: String) -> Bool? {
-        self.willAccessValue(forKey: key)
-        defer { self.didAccessValue(forKey: key) }
-        guard let primitiveValue = primitiveValue(forKey: key) as? NSNumber else {
-            return nil
-        }
-        return primitiveValue != 0
-    }
-    
-    private func setOptionalBooleanForPrimitiveField(newValue: Bool?, forKey key: String) {
-        willChangeValue(forKey: key)
-        defer { didChangeValue(forKey: key) }
-        
-        guard let newValue = newValue else {
-            setPrimitiveValue(nil, forKey: key)
-            return
-        }
-        setPrimitiveValue(NSNumber(value: newValue), forKey: key)
     }
     
     /// Provides strings of field names for the manually created Core Data accessors.
@@ -168,5 +93,7 @@ public final class AutomatedCampaign: Campaign {
         case dayOfWeekFilterFriday
         case dayOfWeekFilterSaturday
         case dayOfWeekFilterSunday
+        case scheduledFilterStartDateTime
+        case scheduledFilterEndDateTime
     }
 }

@@ -6,11 +6,93 @@
 //  Copyright © 2019 Rover Labs Inc. All rights reserved.
 //
 
+import CoreData
 import Foundation
 import os
-import CoreData
 
-func relevantCampaigns(event: Event, in context: NSManagedObjectContext) -> [AutomatedCampaign] {
+func relevantCampaigns(forEvent event: Event, in context: NSManagedObjectContext) throws -> [AutomatedCampaign] {
+    var fetchRequest: NSFetchRequest<AutomatedCampaign> = AutomatedCampaign.fetchRequest()
+    
+
+    let today = Date()
+    let gregorianCalendar = Calendar(identifier: .gregorian)
+    let todayWeekday = gregorianCalendar.component(.weekday, from: today)
+    
+    let todayComponents = gregorianCalendar.dateComponents([.hour, .minute, .second], from: today)
+    let secondsSoFarToday = (todayComponents.hour! * 3_600) + (todayComponents.minute! * 60) + todayComponents.second!
+
+    fetchRequest.predicate = NSCompoundPredicate(
+        andPredicateWithSubpredicates: [
+            NSPredicate(format: "%K == %@", #keyPath(AutomatedCampaign.eventTriggerEventName), event.name),
+            NSPredicate(format: "%K == %@", #keyPath(AutomatedCampaign.eventTriggerEventNamespace), event.namespace ?? 0),
+            
+            // now to match on the queryable filters.
+            
+            // How we match on filters only when they are enabled: !hasDayOfWeekFilter || (filter expressions...)
+        
+            // day of week.
+            NSCompoundPredicate(
+                orPredicateWithSubpredicates: [
+                    NSPredicate(format: "!%K", #keyPath(AutomatedCampaign.hasDayOfWeekFilter)),
+                    NSCompoundPredicate(
+                        andPredicateWithSubpredicates: [
+                            NSPredicate(format: "%K == %@", #keyPath(AutomatedCampaign.dayOfWeekFilterSunday), todayWeekday == 1),
+                            NSPredicate(format: "%K == %@", #keyPath(AutomatedCampaign.dayOfWeekFilterMonday), todayWeekday == 2),
+                            NSPredicate(format: "%K == %@", #keyPath(AutomatedCampaign.dayOfWeekFilterTuesday), todayWeekday == 3),
+                            NSPredicate(format: "%K == %@", #keyPath(AutomatedCampaign.dayOfWeekFilterWednesday), todayWeekday == 4),
+                            NSPredicate(format: "%K == %@", #keyPath(AutomatedCampaign.dayOfWeekFilterThursday), todayWeekday == 5),
+                            NSPredicate(format: "%K == %@", #keyPath(AutomatedCampaign.dayOfWeekFilterFriday), todayWeekday == 6),
+                            NSPredicate(format: "%K == %@", #keyPath(AutomatedCampaign.dayOfWeekFilterSaturday), todayWeekday == 7)
+                        ]
+                    )
+                ]
+            ),
+            
+            // time of day.
+            NSCompoundPredicate(
+                orPredicateWithSubpredicates: [
+                    NSPredicate(format: "!%K", #keyPath(AutomatedCampaign.hasTimeOfDayFilter)),
+                    NSCompoundPredicate(
+                        andPredicateWithSubpredicates: [
+                            NSPredicate(format: "%K >= %@", #keyPath(AutomatedCampaign.timeOfDayFilterStartTime), secondsSoFarToday),
+                            NSPredicate(format: "%K < %@", #keyPath(AutomatedCampaign.timeOfDayFilterEndTime), secondsSoFarToday),
+                        ]
+                    )
+                ]
+            )
+        ]
+    )
+    
+    // campaigns that match the things we could query directly through Core Data.  However, we haven't fully discriminated it yet, we'll do that programmatically afterwards.
+    let queriedCampaigns = try context.fetch(fetchRequest)
+    
+
+    queriedCampaigns.filter { candidateCampaign in
+        if(candidateCampaign.hasScheduledFilter) {
+            guard let scheduledFilterStartDateTime = candidateCampaign.scheduledFilterStartDateTime else {
+                os_log("Campaign marked as having a scheduled filter lacked an start time.", log: .persistence, type: .error)
+                return false
+            }
+            guard let scheduledFilterEndDateTime = candidateCampaign.scheduledFilterEndDateTime else {
+                os_log("Campaign marked as having a scheduled filter lacked an end time.", log: .persistence, type: .error)
+                return false
+            }
+            let startDate = Date.initFrom(fromDateTimeComponents: scheduledFilterStartDateTime)
+            let endDate = Date.initFrom(fromDateTimeComponents: scheduledFilterEndDateTime)
+            // ANDREW START HERE AND DO FILTER WITH THESE DATES
+            
+            
+            return false
+        }
+    }
+    
+    // TODO: scheduled filter
+    
+    // TODO: event attribute filter
+    
+    // TODO: segment filter
+    
+    
     
     // ultimately we have to filter by:
     // * CD queryable: for AutomatedCampaigns only
@@ -149,5 +231,26 @@ extension CompoundPredicateLogicalType {
         case .not:
             return .not
         }
+    }
+}
+
+extension Date {
+    static func initFrom(fromDateTimeComponents components: DateTimeComponents) -> Date? {
+        let gregorian = Calendar(identifier: .gregorian)
+        let timeZone: TimeZone
+        if let timeZoneString = components.timeZone {
+            timeZone = TimeZone(identifier: timeZoneString) ?? TimeZone.current
+        } else {
+            timeZone = TimeZone.current
+        }
+        let formatter = ISO8601DateFormatter()
+        formatter.timeZone = timeZone
+        
+        guard let parsedDate = formatter.date(from: components.date) else {
+            os_log("Illegal date appeared: %s", log: .persistence, type: .error, components.date)
+            return nil
+        }
+        
+        return gregorian.date(byAdding: .minute, value: components.time, to: parsedDate)
     }
 }

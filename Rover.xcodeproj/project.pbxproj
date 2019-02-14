@@ -99,6 +99,7 @@
 		49A276D22208CEAD0052147B /* ExperienceSyncParticipant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A276D12208CEAD0052147B /* ExperienceSyncParticipant.swift */; };
 		49A276D4220DE2C60052147B /* Scribbles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A276D3220DE2C60052147B /* Scribbles.swift */; };
 		49AFAED421BF006800F1118B /* AttributesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49AFAED321BF006800F1118B /* AttributesTests.swift */; };
+		49B79FE82215E79E008F5982 /* DateTimeComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B79FE72215E79E008F5982 /* DateTimeComponents.swift */; };
 		49C14E9521DD0C5400A3B0BC /* Data.NSManagedObjectContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C14E9421DD0C5400A3B0BC /* Data.NSManagedObjectContext.swift */; };
 		49C7829B21A75D5F0059D208 /* RoverUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB6ADD5A20B33EC0002F226C /* RoverUI.framework */; };
 		49CB6A26219F2801008E4904 /* RoverSync.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49CB6A1D219F2801008E4904 /* RoverSync.framework */; };
@@ -336,6 +337,7 @@
 		49A276D12208CEAD0052147B /* ExperienceSyncParticipant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperienceSyncParticipant.swift; sourceTree = "<group>"; };
 		49A276D3220DE2C60052147B /* Scribbles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scribbles.swift; sourceTree = "<group>"; };
 		49AFAED321BF006800F1118B /* AttributesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributesTests.swift; sourceTree = "<group>"; };
+		49B79FE72215E79E008F5982 /* DateTimeComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateTimeComponents.swift; sourceTree = "<group>"; };
 		49C14E9421DD0C5400A3B0BC /* Data.NSManagedObjectContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Data.NSManagedObjectContext.swift; sourceTree = "<group>"; };
 		49CB6A1D219F2801008E4904 /* RoverSync.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RoverSync.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		49CB6A1F219F2801008E4904 /* RoverSync.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RoverSync.h; sourceTree = "<group>"; };
@@ -837,6 +839,7 @@
 				497BA67821F78B12003ED346 /* ScheduledCampaign.swift */,
 				499AE17321F8C56000715B44 /* Campaign.swift */,
 				49DCA47522134EDD0081675B /* Predicate.swift */,
+				49B79FE72215E79E008F5982 /* DateTimeComponents.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -2620,6 +2623,7 @@
 				0D53C11D21D7F8350072A79F /* RectangleBlock.swift in Sources */,
 				0D53C12321D7F8350072A79F /* WebView.swift in Sources */,
 				0D53C11821D7F8350072A79F /* Height.swift in Sources */,
+				49B79FE82215E79E008F5982 /* DateTimeComponents.swift in Sources */,
 				49DCA47622134EDD0081675B /* Predicate.swift in Sources */,
 				0D53C11621D7F8350072A79F /* Color.swift in Sources */,
 				497BA67921F78B12003ED346 /* ScheduledCampaign.swift in Sources */,

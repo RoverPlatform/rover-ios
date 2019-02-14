@@ -10,48 +10,6 @@ import Foundation
 import os
 import CoreData
 
-class CampaignUpdateObserver {
-}
-
-struct CampaignEventPipeline {
-    // stage 1:  monitor for campaign updates.  do so right from Core Data.
-    
-//    init() {
-//        NotificationCenter.default.addObserver(self, selector: #selector(contextObjectsDidChange(_:)), name: Notification.Name.NSManagedObjectContextObjectsDidChange, object: nil)
-//    }
-//
-//    @objc
-//    func contextObjectsDidChange(_ notification: Foundation.Notification) {
-//
-//    }
-}
-
-struct SegmentModel {
-}
-
-//protocol Segmentable {
-//    var segment: SegmentModel { get }
-//}
-//
-//extension AutomatedCampaign: Segmentable {
-//    var segment: SegmentModel {
-//        fatalError("stand-in")
-//    }
-//}
-//
-//extension ScheduledCampaign: Segmentable {
-//    var segment: SegmentModel {
-//        fatalError("Coming later!")
-//    }
-//}
-//
-//extension Array where Element == Segmentable {
-//    // filter segmentables
-//    func filterForDevice(deviceSnapshot: DeviceSnapshot) {
-//        // TODO: evaluate predicates.
-//    }
-//}
-
 func relevantCampaigns(event: Event, in context: NSManagedObjectContext) -> [AutomatedCampaign] {
     
     // ultimately we have to filter by:
@@ -64,7 +22,6 @@ func relevantCampaigns(event: Event, in context: NSManagedObjectContext) -> [Aut
     
     // start by filter by event name and namespace.
 
-    
     return []
 }
 

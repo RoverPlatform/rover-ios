@@ -67,14 +67,14 @@ public struct ComparisonPredicate: Predicate, Decodable, Encodable {
     public private(set) var keyPath: String
     public private(set) var modifier: ComparisonPredicateModifier
     public private(set) var `operator`: ComparisonPredicateOperator
-    public private(set) var numberValue: Double? = nil
-    public private(set) var numberValues: [Double]? = nil
-    public private(set) var stringValue: String? = nil
-    public private(set) var stringValues: [String]? = nil
-    public private(set) var booleanValue: Bool? = nil
-    public private(set) var booleanValues: [Bool]? = nil
-    public private(set) var dateTimeValue: Date? = nil
-    public private(set) var dateTimeValues: [Date]? = nil
+    public private(set) var numberValue: Double?
+    public private(set) var numberValues: [Double]?
+    public private(set) var stringValue: String?
+    public private(set) var stringValues: [String]?
+    public private(set) var booleanValue: Bool?
+    public private(set) var booleanValues: [Bool]?
+    public private(set) var dateTimeValue: Date?
+    public private(set) var dateTimeValues: [Date]?
     
     enum CodingKeys: String, CodingKey {
         case keyPath

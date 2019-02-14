@@ -10,42 +10,50 @@ import CoreData
 import Foundation
 import os
 
+/// Locally stored version of a Campaign that has an AutomatedCampaignTrigger.
+///
+/// The data structure provided by the GraphQL API is squashed and modified somewhat to better suit storage and queryability in Core Data.
 public final class AutomatedCampaign: Campaign {
-    // TODO: fetch request accessor
-    
-    // fields:
-    // eventName: String
-    // eventNameSpace: String?
-    
-    // flattened trigger filters:
-    // day of week:
-    
-    
+    @nonobjc
+    public class func fetchRequest() -> NSFetchRequest<AutomatedCampaign> {
+        return NSFetchRequest<AutomatedCampaign>(entityName: "AutomatedCampaign")
+    }
 
     public private(set) var dayOfWeekFilterMonday: Bool? {
-        get {
-            return getOptionalBooleanForPrimitiveField(forKey: dayOfWeekFilterMondayFieldName)
-        }
-        set {
-            setOptionalBooleanForPrimitiveField(newValue: newValue, forKey: "dayOfWeekFilterMondayFieldName")
-        }
+        get { return getOptionalBooleanForPrimitiveField(forKey: Attributes.dayOfWeekFilterMonday.rawValue) }
+        set { setOptionalBooleanForPrimitiveField(newValue: newValue, forKey: Attributes.dayOfWeekFilterMonday.rawValue) }
     }
     
+    public private(set) var dayOfWeekFilterTuesday: Bool? {
+        get { return getOptionalBooleanForPrimitiveField(forKey: Attributes.dayOfWeekFilterTuesday.rawValue) }
+        set { setOptionalBooleanForPrimitiveField(newValue: newValue, forKey: Attributes.dayOfWeekFilterTuesday.rawValue) }
+    }
     
+    public private(set) var dayOfWeekFilterWednesday: Bool? {
+        get { return getOptionalBooleanForPrimitiveField(forKey: Attributes.dayOfWeekFilterWednesday.rawValue) }
+        set { setOptionalBooleanForPrimitiveField(newValue: newValue, forKey: Attributes.dayOfWeekFilterWednesday.rawValue) }
+    }
     
-    // dayOfWeekFilterTuesday: BooleanValue?
-    // dayOfWeekFilterWednesday: BooleanValue?
-    // dayOfWeekFilterThursday: BooleanValue?
-    // dayOfWeekFilterFriday: BooleanValue?
-    // dayOfWeekFilterSaturday: BooleanValue?
-    // dayOfWeekFilterSunday: BooleanValue?
+    public private(set) var dayOfWeekFilterThursday: Bool? {
+        get { return getOptionalBooleanForPrimitiveField(forKey: Attributes.dayOfWeekFilterThursday.rawValue) }
+        set { setOptionalBooleanForPrimitiveField(newValue: newValue, forKey: Attributes.dayOfWeekFilterThursday.rawValue) }
+    }
     
-    // TODO: ANDREW START HERE
-    @NSManaged public var timeOfDayFilterStartTime: Int?
-    // timeOfDayFilterEndTime: Int?
+    public private(set) var dayOfWeekFilterFriday: Bool? {
+        get { return getOptionalBooleanForPrimitiveField(forKey: Attributes.dayOfWeekFilterFriday.rawValue) }
+        set { setOptionalBooleanForPrimitiveField(newValue: newValue, forKey: Attributes.dayOfWeekFilterFriday.rawValue) }
+    }
     
-    //
+    public private(set) var dayOfWeekFilterSaturday: Bool? {
+        get { return getOptionalBooleanForPrimitiveField(forKey: Attributes.dayOfWeekFilterSaturday.rawValue) }
+        set { setOptionalBooleanForPrimitiveField(newValue: newValue, forKey: Attributes.dayOfWeekFilterSaturday.rawValue) }
+    }
     
+    public private(set) var dayOfWeekFilterSunday: Bool? {
+        get { return getOptionalBooleanForPrimitiveField(forKey: Attributes.dayOfWeekFilterSunday.rawValue) }
+        set { setOptionalBooleanForPrimitiveField(newValue: newValue, forKey: Attributes.dayOfWeekFilterSunday.rawValue) }
+    }
+
     @discardableResult
     public static func insert(into context: NSManagedObjectContext) -> AutomatedCampaign {
         return AutomatedCampaign(context: context)
@@ -53,19 +61,19 @@ public final class AutomatedCampaign: Campaign {
     
     public private(set) var triggerSegmentPredicate: Predicate? {
         get {
-            return getPredicateForPrimitiveField(forKey: triggerSegmentPredicateFieldName)
+            return getPredicateForPrimitiveField(forKey: Attributes.triggerSegmentPredicate.rawValue)
         }
         set {
-            setPrimitiveValue(newValue, forKey: triggerSegmentPredicateFieldName)
+            setPrimitiveValue(newValue, forKey: Attributes.triggerSegmentPredicate.rawValue)
         }
     }
 
     public private(set) var eventAttributeFilterPredicate: Predicate? {
         get {
-            return getPredicateForPrimitiveField(forKey: eventAttributeFilterPredicateFieldName)
+            return getPredicateForPrimitiveField(forKey: Attributes.eventAttributeFilterPredicate.rawValue)
         }
         set {
-            setPrimitiveValue(newValue, forKey: eventAttributeFilterPredicateFieldName)
+            setPrimitiveValue(newValue, forKey: Attributes.eventAttributeFilterPredicate.rawValue)
         }
     }
     
@@ -95,7 +103,6 @@ public final class AutomatedCampaign: Campaign {
     }
     
     private func setPredicateForPrimitiveField(newValue: Predicate?, forKey key: String) {
-        let key = eventAttributeFilterPredicateFieldName
         willChangeValue(forKey: key)
         defer { didChangeValue(forKey: key) }
         let primitiveValue: Data
@@ -124,7 +131,6 @@ public final class AutomatedCampaign: Campaign {
     }
     
     private func getOptionalBooleanForPrimitiveField(forKey key: String) -> Bool? {
-        let key = timeOfDayFilterStartTimeFieldName
         self.willAccessValue(forKey: key)
         defer { self.didAccessValue(forKey: key) }
         guard let primitiveValue = primitiveValue(forKey: key) as? NSNumber else {
@@ -134,7 +140,6 @@ public final class AutomatedCampaign: Campaign {
     }
     
     private func setOptionalBooleanForPrimitiveField(newValue: Bool?, forKey key: String) {
-        let key = timeOfDayFilterStartTimeFieldName
         willChangeValue(forKey: key)
         defer { didChangeValue(forKey: key) }
         
@@ -142,13 +147,21 @@ public final class AutomatedCampaign: Campaign {
             setPrimitiveValue(nil, forKey: key)
             return
         }
-        setPrimitiveValue(NSNumber(booleanLiteral: newValue), forKey: key)
+        setPrimitiveValue(NSNumber(value: newValue), forKey: key)
     }
     
-    
-    // TODO: screw it, turn these into an "Attributes" enum of some sort, use automatic string value to produce key strings.
-    private let eventAttributeFilterPredicateFieldName = "eventAttributeFilterPredicate"
-    private let triggerSegmentPredicateFieldName = "triggerSegmentPredicate"
-    private let timeOfDayFilterStartTimeFieldName = "timeOfDayFilterStartTime"
-    private let dayOfWeekFilterMondayFieldName = "dayOfWeekFilterMonday"
+    /// Provides strings of field names for the manually created Core Data accessors.
+    enum Attributes: String {
+        case eventAttributeFilterPredicate
+        case triggerSegmentPredicate
+        case timeOfDayFilterStartTime
+        case timeOfDayFilterEndTime
+        case dayOfWeekFilterMonday
+        case dayOfWeekFilterTuesday
+        case dayOfWeekFilterWednesday
+        case dayOfWeekFilterThursday
+        case dayOfWeekFilterFriday
+        case dayOfWeekFilterSaturday
+        case dayOfWeekFilterSunday
+    }
 }

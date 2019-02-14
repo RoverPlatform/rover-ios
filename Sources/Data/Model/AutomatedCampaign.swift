@@ -18,6 +18,11 @@ public final class AutomatedCampaign: Campaign {
     public class func fetchRequest() -> NSFetchRequest<AutomatedCampaign> {
         return NSFetchRequest<AutomatedCampaign>(entityName: "AutomatedCampaign")
     }
+    
+    @NSManaged public private(set) var eventTriggerEventName: String?
+    @NSManaged public private(set) var eventTriggerEventNamespace: String?
+    
+    // The following properties are made manually rather than synthesized with @NSManaged, because the type coercions supported by @NSManaged are insufficient (namely lack of support for optional Swift scalars, and also our Codable Predicate type).
 
     public private(set) var dayOfWeekFilterMonday: Bool? {
         get { return getOptionalBooleanForPrimitiveField(forKey: Attributes.dayOfWeekFilterMonday.rawValue) }

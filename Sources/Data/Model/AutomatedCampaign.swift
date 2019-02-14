@@ -151,7 +151,7 @@ public final class AutomatedCampaign: Campaign {
     }
     
     /// Provides strings of field names for the manually created Core Data accessors.
-    enum Attributes: String {
+    private enum Attributes: String {
         case eventAttributeFilterPredicate
         case triggerSegmentPredicate
         case timeOfDayFilterStartTime

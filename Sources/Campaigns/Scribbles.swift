@@ -10,6 +10,19 @@ import CoreData
 import Foundation
 import os
 
+extension Array where Element == AutomatedCampaign { // TODO: change Element to Campaign and ensure that device filter (segment) field is promoted to abstract type
+    func filterBy(deviceSnapshot: DeviceSnapshot) -> [Element] {
+        return self.filter { campaign in
+            guard let deviceFilter = campaign.triggerSegmentPredicate else {
+                // campaign is not filtering by device.
+                return true
+            }
+            let deviceFilterNsPredicate = deviceFilter.nsPredicate()
+            return deviceFilterNsPredicate.evaluate(with: deviceSnapshot)
+        }
+    }
+}
+
 func relevantCampaigns(forEvent event: Event, in context: NSManagedObjectContext) throws -> [AutomatedCampaign] {
     var fetchRequest: NSFetchRequest<AutomatedCampaign> = AutomatedCampaign.fetchRequest()
     
@@ -26,9 +39,9 @@ func relevantCampaigns(forEvent event: Event, in context: NSManagedObjectContext
             NSPredicate(format: "%K == %@", #keyPath(AutomatedCampaign.eventTriggerEventName), event.name),
             NSPredicate(format: "%K == %@", #keyPath(AutomatedCampaign.eventTriggerEventNamespace), event.namespace ?? 0),
             
-            // now to match on the queryable filters.
+            // now to match on the queryable filters, which are based on simple types and flattened into the AutomatedCampaign record.
             
-            // How we match on filters only when they are enabled: !hasDayOfWeekFilter || (filter expressions...)
+            // How we match on filters only when they are enabled: !hasAGivenFilter || (filter expressions...)
         
             // day of week.
             NSCompoundPredicate(
@@ -63,12 +76,13 @@ func relevantCampaigns(forEvent event: Event, in context: NSManagedObjectContext
         ]
     )
     
-    // campaigns that match the things we could query directly through Core Data.  However, we haven't fully discriminated it yet, we'll do that programmatically afterwards.
+    // campaigns that match the things we could query directly through Core Data.  However, not yet fully discriminated
     let queriedCampaigns = try context.fetch(fetchRequest)
     
-
-    queriedCampaigns.filter { candidateCampaign in
-        if(candidateCampaign.hasScheduledFilter) {
+    // finish the filtering process by filtering by the Automated Campaign filters that could not be implemented in the above large predicate:
+    return queriedCampaigns.filter { candidateCampaign in
+        // Scheduled filter, which needs its DateTimeComponents transformed into local time when needed.  Too complex to query on directly through Core Data.
+        if candidateCampaign.hasScheduledFilter {
             guard let scheduledFilterStartDateTime = candidateCampaign.scheduledFilterStartDateTime else {
                 os_log("Campaign marked as having a scheduled filter lacked an start time.", log: .persistence, type: .error)
                 return false
@@ -79,35 +93,34 @@ func relevantCampaigns(forEvent event: Event, in context: NSManagedObjectContext
             }
             let startDate = Date.initFrom(fromDateTimeComponents: scheduledFilterStartDateTime)
             let endDate = Date.initFrom(fromDateTimeComponents: scheduledFilterEndDateTime)
-            // ANDREW START HERE AND DO FILTER WITH THESE DATES
+            let today = Date()
             
+            let afterStartDate = startDate == nil ? true : today.compare(startDate!) == ComparisonResult.orderedDescending
+            let beforeEndDate = endDate == nil ? true : today.compare(endDate!) == ComparisonResult.orderedAscending
             
-            return false
+            if !(afterStartDate && beforeEndDate) {
+                return false
+            }
         }
-    }
-    
-    // TODO: scheduled filter
-    
-    // TODO: event attribute filter
-    
-    // TODO: segment filter
-    
-    
-    
-    // ultimately we have to filter by:
-    // * CD queryable: for AutomatedCampaigns only
-    // * CD queryable: event name & namespace
-    // * CD queryable: the queryable flattened event trigger types: day of week, time of day.
-    // * a non-queryable event trigger filter type, event attributes, that needs predicate evaluation: predicate from each remaining campaign against the event.
-    // * a non-queryable event trigger filter type, scheduled, that needs its DateTimeComponents transformed into local time as needed.  Too complex to query on directly through Core Data.
-    // * a non-queryable: campaign segmentation, that also needs predicate evaluation: predicate from each remaining campaign against DeviceSnapshot.
-    
-    // start by filter by event name and namespace.
+        
+        // Event Attributes filter, which has its own representation of a custom predicate stored right in data.  Naturally cannot be queryed with directly in Core Data:
+        if candidateCampaign.hasEventAttributeFilter {
+            guard let eventPredicate = candidateCampaign.eventAttributeFilterPredicate else {
+                os_log("Campaign marked as having an event attribute filter lacked an event attributes predicate.", log: .persistence, type: .error)
+                return false
+            }
+            let nsEventPredicate = eventPredicate.nsPredicate()
+            if !nsEventPredicate.evaluate(with: event) {
+                return false
+            }
+        }
 
-    return []
+        return true
+    }
 }
 
 extension Predicate {
+    // TODO: change these to be contruction extensions on NSPredicate() instead, to be more idiomatic.
     func nsPredicate() -> NSPredicate {
         let nsPredicate: NSPredicate
 
@@ -200,7 +213,7 @@ extension ComparisonPredicateOperator {
         case .between:
             return .between
         case .geoWithin:
-            // TODO: uh this has to be handled separately.  An entire compound predicate needs to be constructed with multiple expressions.
+            // TODO: uh this has to be handled separately.  An entire compound predicate needs to be constructed with multiple expressions.  Use an closure-based NSExpression
             fatalError("geoWithin operator not yet implemented")
         }
     }

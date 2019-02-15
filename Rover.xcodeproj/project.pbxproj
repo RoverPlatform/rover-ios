@@ -96,6 +96,7 @@
 		497BA67B21F7AB4F003ED346 /* CampaignSyncParticipant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 497BA67A21F7AB4F003ED346 /* CampaignSyncParticipant.swift */; };
 		4988D94921AF4B260050550E /* Attributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1D5DC42107D32C0071928F /* Attributes.swift */; };
 		499AE17421F8C56000715B44 /* Campaign.swift in Sources */ = {isa = PBXBuildFile; fileRef = 499AE17321F8C56000715B44 /* Campaign.swift */; };
+		49A04D45221768B6009544FB /* CampaignEventObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A04D44221768B6009544FB /* CampaignEventObserver.swift */; };
 		49A276D22208CEAD0052147B /* ExperienceSyncParticipant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A276D12208CEAD0052147B /* ExperienceSyncParticipant.swift */; };
 		49A276D4220DE2C60052147B /* Scribbles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A276D3220DE2C60052147B /* Scribbles.swift */; };
 		49AFAED421BF006800F1118B /* AttributesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49AFAED321BF006800F1118B /* AttributesTests.swift */; };
@@ -333,6 +334,7 @@
 		497BA67A21F7AB4F003ED346 /* CampaignSyncParticipant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampaignSyncParticipant.swift; sourceTree = "<group>"; };
 		4980D66421307738007267D3 /* Experiences.Barcode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Experiences.Barcode.swift; sourceTree = "<group>"; };
 		499AE17321F8C56000715B44 /* Campaign.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Campaign.swift; sourceTree = "<group>"; };
+		49A04D44221768B6009544FB /* CampaignEventObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampaignEventObserver.swift; sourceTree = "<group>"; };
 		49A0D09421CC3FCE003FAABD /* UI.OSLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UI.OSLog.swift; sourceTree = "<group>"; };
 		49A276D12208CEAD0052147B /* ExperienceSyncParticipant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperienceSyncParticipant.swift; sourceTree = "<group>"; };
 		49A276D3220DE2C60052147B /* Scribbles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scribbles.swift; sourceTree = "<group>"; };
@@ -780,6 +782,7 @@
 				49496A4C21C839DA00F89438 /* Info.plist */,
 				4960CA6521C84484009146F0 /* CampaignsAssembler.swift */,
 				49A276D3220DE2C60052147B /* Scribbles.swift */,
+				49A04D44221768B6009544FB /* CampaignEventObserver.swift */,
 			);
 			path = Campaigns;
 			sourceTree = "<group>";
@@ -2367,6 +2370,7 @@
 				49496A6221C83CBB00F89438 /* InfluenceTrackerService.swift in Sources */,
 				4960CA6B21C847A5009146F0 /* Campaigns.UNNotificationResponse.swift in Sources */,
 				4960CA6C21C84F53009146F0 /* Campaigns.OSLog.swift in Sources */,
+				49A04D45221768B6009544FB /* CampaignEventObserver.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

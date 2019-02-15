@@ -75,6 +75,7 @@ extension CampaignNode: CoreDataStorable {
         case is ScheduledCampaignTrigger:
             campaign = ScheduledCampaign.insert(into: context)
         case is AutomatedCampaignTrigger:
+            // ANDREW START HERE
             campaign = AutomatedCampaign.insert(into: context)
         default:
             fatalError("Some other type somehow appeared for CampaignTrigger")

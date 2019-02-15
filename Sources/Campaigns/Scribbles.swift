@@ -71,7 +71,7 @@ extension Array where Element == AutomatedCampaign {
     }
 }
 
-func queryPredicateForQueryableFilters(forEvent event: Event) -> NSPredicate {
+func queryPredicateForCampaignQueryableFilters(forEvent event: Event) -> NSPredicate {
     let today = Date()
     let gregorianCalendar = Calendar(identifier: .gregorian)
     let todayWeekday = gregorianCalendar.component(.weekday, from: today)
@@ -91,16 +91,16 @@ func queryPredicateForQueryableFilters(forEvent event: Event) -> NSPredicate {
             // day of week.
             NSCompoundPredicate(
                 orPredicateWithSubpredicates: [
-                    NSPredicate(format: "!%K", #keyPath(AutomatedCampaign.hasDayOfWeekFilter)),
+                    NSPredicate(format: "%K == NO", #keyPath(AutomatedCampaign.hasDayOfWeekFilter)),
                     NSCompoundPredicate(
                         andPredicateWithSubpredicates: [
-                            NSPredicate(format: "%K == %@", #keyPath(AutomatedCampaign.dayOfWeekFilterSunday), todayWeekday == 1),
-                            NSPredicate(format: "%K == %@", #keyPath(AutomatedCampaign.dayOfWeekFilterMonday), todayWeekday == 2),
-                            NSPredicate(format: "%K == %@", #keyPath(AutomatedCampaign.dayOfWeekFilterTuesday), todayWeekday == 3),
-                            NSPredicate(format: "%K == %@", #keyPath(AutomatedCampaign.dayOfWeekFilterWednesday), todayWeekday == 4),
-                            NSPredicate(format: "%K == %@", #keyPath(AutomatedCampaign.dayOfWeekFilterThursday), todayWeekday == 5),
-                            NSPredicate(format: "%K == %@", #keyPath(AutomatedCampaign.dayOfWeekFilterFriday), todayWeekday == 6),
-                            NSPredicate(format: "%K == %@", #keyPath(AutomatedCampaign.dayOfWeekFilterSaturday), todayWeekday == 7)
+                            NSPredicate(format: "%K == %d", #keyPath(AutomatedCampaign.dayOfWeekFilterSunday), todayWeekday == 1),
+                            NSPredicate(format: "%K == %d", #keyPath(AutomatedCampaign.dayOfWeekFilterMonday), todayWeekday == 2),
+                            NSPredicate(format: "%K == %d", #keyPath(AutomatedCampaign.dayOfWeekFilterTuesday), todayWeekday == 3),
+                            NSPredicate(format: "%K == %d", #keyPath(AutomatedCampaign.dayOfWeekFilterWednesday), todayWeekday == 4),
+                            NSPredicate(format: "%K == %d", #keyPath(AutomatedCampaign.dayOfWeekFilterThursday), todayWeekday == 5),
+                            NSPredicate(format: "%K == %d", #keyPath(AutomatedCampaign.dayOfWeekFilterFriday), todayWeekday == 6),
+                            NSPredicate(format: "%K == %d", #keyPath(AutomatedCampaign.dayOfWeekFilterSaturday), todayWeekday == 7)
                         ]
                     )
                 ]
@@ -109,11 +109,11 @@ func queryPredicateForQueryableFilters(forEvent event: Event) -> NSPredicate {
             // time of day.
             NSCompoundPredicate(
                 orPredicateWithSubpredicates: [
-                    NSPredicate(format: "!%K", #keyPath(AutomatedCampaign.hasTimeOfDayFilter)),
+                    NSPredicate(format: "%K == NO", #keyPath(AutomatedCampaign.hasTimeOfDayFilter)),
                     NSCompoundPredicate(
                         andPredicateWithSubpredicates: [
-                            NSPredicate(format: "%K >= %@", #keyPath(AutomatedCampaign.timeOfDayFilterStartTime), secondsSoFarToday),
-                            NSPredicate(format: "%K < %@", #keyPath(AutomatedCampaign.timeOfDayFilterEndTime), secondsSoFarToday)
+                            NSPredicate(format: "%K >= %d", #keyPath(AutomatedCampaign.timeOfDayFilterStartTime), secondsSoFarToday),
+                            NSPredicate(format: "%K < %d", #keyPath(AutomatedCampaign.timeOfDayFilterEndTime), secondsSoFarToday)
                         ]
                     )
                 ]
@@ -122,9 +122,9 @@ func queryPredicateForQueryableFilters(forEvent event: Event) -> NSPredicate {
     )
 }
 
-func campaignsMatching(event: Event, forDevice device: DeviceSnapshot, in context: NSManagedObjectContext) throws -> [AutomatedCampaign] {
+public func campaignsMatching(event: Event, forDevice device: DeviceSnapshot, in context: NSManagedObjectContext) throws -> [AutomatedCampaign] {
     let fetchRequest: NSFetchRequest<AutomatedCampaign> = AutomatedCampaign.fetchRequest()
-    fetchRequest.predicate = queryPredicateForQueryableFilters(forEvent: event)
+    fetchRequest.predicate = queryPredicateForCampaignQueryableFilters(forEvent: event)
     let queryMatchedCampaigns = try context.fetch(fetchRequest)
     // now apply the computed filters that could not be done directly in the query predicate:
     return queryMatchedCampaigns.filterByScheduledTime().filterBy(deviceSnapshot: device)
@@ -145,6 +145,35 @@ extension Predicate {
         }
 
         return nsPredicate
+    }
+}
+
+extension NSArray {
+    @objc
+    fileprivate func compareGeowithin(latLongAndRadius: NSArray) -> Bool {
+        // invoked on the left-hand-side (which should be a tuple NSArray of lat/long) with the right-hand side as the argument (which should be an NSArray triple of lat/long/radius).
+        guard let withinTriple = latLongAndRadius as? [Double] else {
+            return false
+        }
+        if withinTriple.count != 3 {
+            os_log("Invalid value array given for geoWithin operator: %@", String(describing: latLongAndRadius))
+            return false
+        }
+        let withinLat = withinTriple[0]
+        let withinLong = withinTriple[1]
+        let withinRadius = withinTriple[2]
+        
+        guard let pointTriple = latLongAndRadius as? [Double] else {
+            return false
+        }
+        if pointTriple.count != 2 {
+            os_log("Invalid value array given for geoWithin to compare against: %@", String(describing: self))
+            return false
+        }
+        let pointLat = pointTriple[0]
+        let pointLong = pointTriple[1]
+        
+        return distanceBetween(latitude: withinLat, longitude: withinLong, otherLatitude: pointLat, otherLongitude: pointLong) < withinRadius
     }
 }
 
@@ -174,13 +203,22 @@ extension ComparisonPredicate {
             forConstantValue: value
         )
         
-        return NSComparisonPredicate(
-            leftExpression: leftExpression,
-            rightExpression: rightExpression,
-            modifier: modifier.nsModifier,
-            type: `operator`.nsOperator,
-            options: NSComparisonPredicate.Options(rawValue: 0)
-        )
+        if `operator` == .geoWithin {
+            // geoWithin is our own custom operator.  In that case, refer to a custom selector.
+            return NSComparisonPredicate(
+                leftExpression: leftExpression,
+                rightExpression: rightExpression,
+                customSelector: #selector(NSArray.compareGeowithin(latLongAndRadius:))
+            )
+        } else {
+            return NSComparisonPredicate(
+                leftExpression: leftExpression,
+                rightExpression: rightExpression,
+                modifier: modifier.nsModifier,
+                type: `operator`.nsOperator,
+                options: NSComparisonPredicate.Options(rawValue: 0)
+            )
+        }
     }
 }
 
@@ -224,8 +262,9 @@ extension ComparisonPredicateOperator {
         case .between:
             return .between
         case .geoWithin:
+            return .customSelector
             // TODO: uh this has to be handled separately.  An entire compound predicate needs to be constructed with multiple expressions.  Use an closure-based NSExpression
-            fatalError("geoWithin operator not yet implemented")
+//            fatalError("geoWithin operator not yet implemented")
         }
     }
 }
@@ -277,4 +316,27 @@ extension Date {
         
         return gregorian.date(byAdding: .minute, value: components.time, to: parsedDate)
     }
+}
+
+// https://en.wikipedia.org/wiki/Figure_of_the_Earth
+let earthRadius: Double = 6_371_000
+
+private let haversin: (Double) -> Double = {
+    (1 - cos($0)) / 2
+}
+
+private let ahaversin: (Double) -> Double = {
+    2 * asin(sqrt($0))
+}
+
+private let degreesToRadians: (Double) -> Double = {
+    ($0 / 360) * 2 * Double.pi
+}
+
+private func distanceBetween(latitude: Double, longitude: Double, otherLatitude: Double, otherLongitude: Double) -> Double {
+    let lat1 = degreesToRadians(latitude)
+    let lon1 = degreesToRadians(longitude)
+    let lat2 = degreesToRadians(otherLatitude)
+    let lon2 = degreesToRadians(otherLongitude)
+    return earthRadius * ahaversin(haversin(lat2 - lat1) + cos(lat1) * cos(lat2) * haversin(lon2 - lon1))
 }

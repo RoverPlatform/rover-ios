@@ -11,8 +11,14 @@
         <attribute name="eventAttributeFilterPredicate" optional="YES" attributeType="Binary" syncable="YES"/>
         <attribute name="eventTriggerEventName" attributeType="String" syncable="YES"/>
         <attribute name="eventTriggerEventNamespace" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="hasDayOfWeekFilter" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="hasEventAttributeFilter" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="hasScheduledFilter" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="hasTimeOfDayFilter" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="scheduledFilterEndDateTime" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="scheduledFilterStartDateTime" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="timeOfDayFilterEndTime" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="timeOfDayFilterStartTime" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="triggerSegmentPredicate" optional="YES" attributeType="Binary" syncable="YES"/>
     </entity>
     <entity name="Beacon" representedClassName=".Beacon" syncable="YES">
@@ -74,7 +80,7 @@
     </entity>
     <entity name="ScheduledCampaign" representedClassName=".ScheduledCampaign" parentEntity="Campaign" syncable="YES"/>
     <elements>
-        <element name="AutomatedCampaign" positionX="-171" positionY="108" width="128" height="240"/>
+        <element name="AutomatedCampaign" positionX="-171" positionY="108" width="128" height="330"/>
         <element name="Beacon" positionX="-63" positionY="18" width="128" height="150"/>
         <element name="Campaign" positionX="-171" positionY="108" width="128" height="45"/>
         <element name="Event" positionX="-171" positionY="72" width="128" height="150"/>

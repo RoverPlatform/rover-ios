@@ -8,6 +8,8 @@
 
 import Foundation
 import UIKit
+import CoreData
+import os
 
 public struct CampaignsAssembler {
     public var influenceTime: Int
@@ -47,12 +49,22 @@ extension CampaignsAssembler: Assembler {
                 websiteViewControllerProvider: websiteViewControllerProvider
             )
         }
+        
+        container.register(CampaignEventObserver.self) { resolver in
+            return CampaignEventObserver(
+                eventPipeline: resolver.resolve(EventPipeline.self)!,
+                managedObjectContext: resolver.resolve(NSManagedObjectContext.self, name: "backgroundContext")!,
+                device: resolver.resolve(Device.self)!
+            )
+        }
     }
-    
+
     public func containerDidAssemble(resolver: Resolver) {
         if isInfluenceTrackingEnabled {
             let influenceTracker = resolver.resolve(InfluenceTracker.self)!
             influenceTracker.startMonitoring()
         }
+        
+        resolver.resolve(CampaignEventObserver.self)!.beginObservingEvents()
     }
 }

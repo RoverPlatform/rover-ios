@@ -10,7 +10,55 @@ import CoreData
 import Foundation
 import os
 
-extension Array where Element == AutomatedCampaign { // TODO: change Element to Campaign and ensure that device filter (segment) field is promoted to abstract type
+extension Array where Element == AutomatedCampaign {
+    func filterByScheduledTime() -> [Element] {
+        return filter { campaign in
+            // Scheduled filter, which needs its DateTimeComponents transformed into local time when needed.  Too complex to query on directly through Core Data.
+            if campaign.hasScheduledFilter {
+                guard let scheduledFilterStartDateTime = campaign.scheduledFilterStartDateTime else {
+                    os_log("Campaign marked as having a scheduled filter lacked an start time.", log: .persistence, type: .error)
+                    return false
+                }
+                guard let scheduledFilterEndDateTime = campaign.scheduledFilterEndDateTime else {
+                    os_log("Campaign marked as having a scheduled filter lacked an end time.", log: .persistence, type: .error)
+                    return false
+                }
+                let startDate = Date.initFrom(fromDateTimeComponents: scheduledFilterStartDateTime)
+                let endDate = Date.initFrom(fromDateTimeComponents: scheduledFilterEndDateTime)
+                let today = Date()
+                
+                let afterStartDate = startDate == nil ? true : today.compare(startDate!) == ComparisonResult.orderedDescending
+                let beforeEndDate = endDate == nil ? true : today.compare(endDate!) == ComparisonResult.orderedAscending
+                
+                if !(afterStartDate && beforeEndDate) {
+                    return false
+                }
+            }
+            return true
+        }
+    }
+        
+    func filterByEventAttributes(event: Event) -> [Element] {
+        return filter { campaign in
+            // Event Attributes filter, which has its own representation of a custom predicate stored right in data.  Naturally cannot be queryed with directly in Core Data:
+            if campaign.hasEventAttributeFilter {
+                guard let eventPredicate = campaign.eventAttributeFilterPredicate else {
+                    os_log("Campaign marked as having an event attribute filter lacked an event attributes predicate.", log: .persistence, type: .error)
+                    return false
+                }
+                let nsEventPredicate = eventPredicate.nsPredicate()
+                if !nsEventPredicate.evaluate(with: event) {
+                    return false
+                }
+            }
+            
+            return true
+        }
+    }
+}
+
+extension Array where Element == AutomatedCampaign {
+    // TODO: when implementing Scheduled campaigns change Element to Campaign and ensure that device filter (segment) field is promoted to abstract type
     func filterBy(deviceSnapshot: DeviceSnapshot) -> [Element] {
         return self.filter { campaign in
             guard let deviceFilter = campaign.triggerSegmentPredicate else {
@@ -23,18 +71,15 @@ extension Array where Element == AutomatedCampaign { // TODO: change Element to 
     }
 }
 
-func relevantCampaigns(forEvent event: Event, in context: NSManagedObjectContext) throws -> [AutomatedCampaign] {
-    var fetchRequest: NSFetchRequest<AutomatedCampaign> = AutomatedCampaign.fetchRequest()
-    
-
+func queryPredicateForQueryableFilters(forEvent event: Event) -> NSPredicate {
     let today = Date()
     let gregorianCalendar = Calendar(identifier: .gregorian)
     let todayWeekday = gregorianCalendar.component(.weekday, from: today)
     
     let todayComponents = gregorianCalendar.dateComponents([.hour, .minute, .second], from: today)
     let secondsSoFarToday = (todayComponents.hour! * 3_600) + (todayComponents.minute! * 60) + todayComponents.second!
-
-    fetchRequest.predicate = NSCompoundPredicate(
+    
+    return NSCompoundPredicate(
         andPredicateWithSubpredicates: [
             NSPredicate(format: "%K == %@", #keyPath(AutomatedCampaign.eventTriggerEventName), event.name),
             NSPredicate(format: "%K == %@", #keyPath(AutomatedCampaign.eventTriggerEventNamespace), event.namespace ?? 0),
@@ -42,7 +87,7 @@ func relevantCampaigns(forEvent event: Event, in context: NSManagedObjectContext
             // now to match on the queryable filters, which are based on simple types and flattened into the AutomatedCampaign record.
             
             // How we match on filters only when they are enabled: !hasAGivenFilter || (filter expressions...)
-        
+            
             // day of week.
             NSCompoundPredicate(
                 orPredicateWithSubpredicates: [
@@ -68,55 +113,21 @@ func relevantCampaigns(forEvent event: Event, in context: NSManagedObjectContext
                     NSCompoundPredicate(
                         andPredicateWithSubpredicates: [
                             NSPredicate(format: "%K >= %@", #keyPath(AutomatedCampaign.timeOfDayFilterStartTime), secondsSoFarToday),
-                            NSPredicate(format: "%K < %@", #keyPath(AutomatedCampaign.timeOfDayFilterEndTime), secondsSoFarToday),
+                            NSPredicate(format: "%K < %@", #keyPath(AutomatedCampaign.timeOfDayFilterEndTime), secondsSoFarToday)
                         ]
                     )
                 ]
             )
         ]
     )
-    
-    // campaigns that match the things we could query directly through Core Data.  However, not yet fully discriminated
-    let queriedCampaigns = try context.fetch(fetchRequest)
-    
-    // finish the filtering process by filtering by the Automated Campaign filters that could not be implemented in the above large predicate:
-    return queriedCampaigns.filter { candidateCampaign in
-        // Scheduled filter, which needs its DateTimeComponents transformed into local time when needed.  Too complex to query on directly through Core Data.
-        if candidateCampaign.hasScheduledFilter {
-            guard let scheduledFilterStartDateTime = candidateCampaign.scheduledFilterStartDateTime else {
-                os_log("Campaign marked as having a scheduled filter lacked an start time.", log: .persistence, type: .error)
-                return false
-            }
-            guard let scheduledFilterEndDateTime = candidateCampaign.scheduledFilterEndDateTime else {
-                os_log("Campaign marked as having a scheduled filter lacked an end time.", log: .persistence, type: .error)
-                return false
-            }
-            let startDate = Date.initFrom(fromDateTimeComponents: scheduledFilterStartDateTime)
-            let endDate = Date.initFrom(fromDateTimeComponents: scheduledFilterEndDateTime)
-            let today = Date()
-            
-            let afterStartDate = startDate == nil ? true : today.compare(startDate!) == ComparisonResult.orderedDescending
-            let beforeEndDate = endDate == nil ? true : today.compare(endDate!) == ComparisonResult.orderedAscending
-            
-            if !(afterStartDate && beforeEndDate) {
-                return false
-            }
-        }
-        
-        // Event Attributes filter, which has its own representation of a custom predicate stored right in data.  Naturally cannot be queryed with directly in Core Data:
-        if candidateCampaign.hasEventAttributeFilter {
-            guard let eventPredicate = candidateCampaign.eventAttributeFilterPredicate else {
-                os_log("Campaign marked as having an event attribute filter lacked an event attributes predicate.", log: .persistence, type: .error)
-                return false
-            }
-            let nsEventPredicate = eventPredicate.nsPredicate()
-            if !nsEventPredicate.evaluate(with: event) {
-                return false
-            }
-        }
+}
 
-        return true
-    }
+func campaignsMatching(event: Event, forDevice device: DeviceSnapshot, in context: NSManagedObjectContext) throws -> [AutomatedCampaign] {
+    let fetchRequest: NSFetchRequest<AutomatedCampaign> = AutomatedCampaign.fetchRequest()
+    fetchRequest.predicate = queryPredicateForQueryableFilters(forEvent: event)
+    let queryMatchedCampaigns = try context.fetch(fetchRequest)
+    // now apply the computed filters that could not be done directly in the query predicate:
+    return queryMatchedCampaigns.filterByScheduledTime().filterBy(deviceSnapshot: device)
 }
 
 extension Predicate {

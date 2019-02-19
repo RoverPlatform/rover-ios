@@ -11,7 +11,7 @@ import Foundation
 import os
 
 extension Array where Element == AutomatedCampaign {
-    func filterByScheduledTime() -> [Element] {
+    func filterByScheduledTime(todayBeing today: Date) -> [Element] {
         return filter { campaign in
             // Scheduled filter, which needs its DateTimeComponents transformed into local time when needed.  Too complex to query on directly through Core Data.
             if campaign.hasScheduledFilter {
@@ -25,7 +25,6 @@ extension Array where Element == AutomatedCampaign {
                 }
                 let startDate = Date.initFrom(fromDateTimeComponents: scheduledFilterStartDateTime)
                 let endDate = Date.initFrom(fromDateTimeComponents: scheduledFilterEndDateTime)
-                let today = Date()
                 
                 let afterStartDate = startDate == nil ? true : today.compare(startDate!) == ComparisonResult.orderedDescending
                 let beforeEndDate = endDate == nil ? true : today.compare(endDate!) == ComparisonResult.orderedAscending
@@ -70,8 +69,7 @@ extension Array where Element == AutomatedCampaign {
 }
 
 /// A query predicate, suitable for use with Core Data, for filtering down the Automated Campaigns down to ones that match the event. Howvever, this does not apply all of the Campaigns' filters: only those filters that can be pratically filtered in Core Data are used.  You should subsequently use filterByDeviceSnapshot, filterByEventAttributes, and filterByScheduledTime to fully discriminate the list.
-func queryPredicateForCampaignQueryableFilters(forEvent event: Event) -> NSPredicate {
-    let today = Date()
+func queryPredicateForCampaignQueryableFilters(forEvent event: Event, todayBeing today: Date) -> NSPredicate {
     let gregorianCalendar = Calendar(identifier: .gregorian)
     let todayWeekday = gregorianCalendar.component(.weekday, from: today)
     
@@ -121,12 +119,17 @@ func queryPredicateForCampaignQueryableFilters(forEvent event: Event) -> NSPredi
     )
 }
 
-public func campaignsMatching(event: Event, forDevice device: DeviceSnapshot, in context: NSManagedObjectContext) throws -> [AutomatedCampaign] {
+public func campaignsMatching(
+    event: Event,
+    forDevice device: DeviceSnapshot,
+    in context: NSManagedObjectContext,
+    todayBeing today: Date = Date()
+) throws -> [AutomatedCampaign] {
     let fetchRequest: NSFetchRequest<AutomatedCampaign> = AutomatedCampaign.fetchRequest()
-    fetchRequest.predicate = queryPredicateForCampaignQueryableFilters(forEvent: event)
+    fetchRequest.predicate = queryPredicateForCampaignQueryableFilters(forEvent: event, todayBeing: today)
     let queryMatchedCampaigns = try context.fetch(fetchRequest)
     // now apply the computed filters that could not be done directly in the query predicate:
-    return queryMatchedCampaigns.filterByScheduledTime().filterBy(deviceSnapshot: device).filterBy(attributesFromEvent: event)
+    return queryMatchedCampaigns.filterByScheduledTime(todayBeing: today).filterBy(deviceSnapshot: device).filterBy(attributesFromEvent: event)
 }
 
 extension Predicate {

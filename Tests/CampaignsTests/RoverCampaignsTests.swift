@@ -68,7 +68,31 @@ class RoverCampaignsTests: XCTestCase {
     }
     
     func testMatchCampaignDayOfWeekFilter() {
+        let deviceSnapshot = DeviceSnapshot()
+        let matchingCampaign = AutomatedCampaign.blank(
+            context: self.context!
+        )
+        matchingCampaign.eventTriggerEventName = "Test Run"
+        matchingCampaign.hasDayOfWeekFilter = true
+        matchingCampaign.dayOfWeekFilterTuesday = true
         
+        let event = Event(context: context!)
+        event.name = "Test Run"
+        
+        // 1550613954 Tuesday Feb 19 2019 17:06
+        let today = Date(timeIntervalSince1970: 1550613954)
+        
+        XCTAssertEqual(
+            try campaignsMatching(event: event, forDevice: deviceSnapshot, in: context!, todayBeing: today),
+            [matchingCampaign]
+        )
+        
+//        let nonMatchingEvent = Event(context: context!)
+//        nonMatchingEvent.name = "Some Other Event"
+//        XCTAssertEqual(
+//            try campaignsMatching(event: nonMatchingEvent, forDevice: deviceSnapshot, in: context!),
+//            []
+//        )
     }
     
     func testMatchEventAttributesFilter() {

@@ -38,7 +38,7 @@ extension Array where Element == AutomatedCampaign {
         }
     }
         
-    func filterByEventAttributes(event: Event) -> [Element] {
+    func filterBy(attributesFromEvent event: Event) -> [Element] {
         return filter { campaign in
             // Event Attributes filter, which has its own representation of a custom predicate stored right in data.  Naturally cannot be queryed with directly in Core Data:
             if campaign.hasEventAttributeFilter {
@@ -55,9 +55,7 @@ extension Array where Element == AutomatedCampaign {
             return true
         }
     }
-}
-
-extension Array where Element == AutomatedCampaign {
+    
     // TODO: when implementing Scheduled campaigns change Element to Campaign and ensure that device filter (segment) field is promoted to abstract type
     func filterBy(deviceSnapshot: DeviceSnapshot) -> [Element] {
         return self.filter { campaign in
@@ -71,6 +69,7 @@ extension Array where Element == AutomatedCampaign {
     }
 }
 
+/// A query predicate, suitable for use with Core Data, for filtering down the Automated Campaigns down to ones that match the event. Howvever, this does not apply all of the Campaigns' filters: only those filters that can be pratically filtered in Core Data are used.  You should subsequently use filterByDeviceSnapshot, filterByEventAttributes, and filterByScheduledTime to fully discriminate the list.
 func queryPredicateForCampaignQueryableFilters(forEvent event: Event) -> NSPredicate {
     let today = Date()
     let gregorianCalendar = Calendar(identifier: .gregorian)
@@ -127,7 +126,7 @@ public func campaignsMatching(event: Event, forDevice device: DeviceSnapshot, in
     fetchRequest.predicate = queryPredicateForCampaignQueryableFilters(forEvent: event)
     let queryMatchedCampaigns = try context.fetch(fetchRequest)
     // now apply the computed filters that could not be done directly in the query predicate:
-    return queryMatchedCampaigns.filterByScheduledTime().filterBy(deviceSnapshot: device)
+    return queryMatchedCampaigns.filterByScheduledTime().filterBy(deviceSnapshot: device).filterBy(attributesFromEvent: event)
 }
 
 extension Predicate {

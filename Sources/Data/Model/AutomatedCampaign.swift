@@ -84,26 +84,24 @@ public final class AutomatedCampaign: Campaign {
         }
     }
     
-    @NSManaged public private(set) var eventTriggerEventName: String
-    @NSManaged public private(set) var eventTriggerEventNamespace: String?
+    @NSManaged public internal(set) var eventTriggerEventName: String
+    @NSManaged public internal(set) var eventTriggerEventNamespace: String?
     
     /// Specifies if this automated campaign have a Day of Week filter, and thus the timeOfDayFilterStartTime and timeOfDayFilterEndTime fields should be honoured.
-    @NSManaged public var hasDayOfWeekFilter: Bool
-    @NSManaged public var hasTimeOfDayFilter: Bool
-    @NSManaged public var hasEventAttributeFilter: Bool
-    @NSManaged public var hasScheduledFilter: Bool
+    @NSManaged public internal(set) var hasDayOfWeekFilter: Bool
+    @NSManaged public internal(set) var hasTimeOfDayFilter: Bool
+    @NSManaged public internal(set) var hasEventAttributeFilter: Bool
+    @NSManaged public internal(set) var hasScheduledFilter: Bool
     
-
-    @NSManaged public private(set) var dayOfWeekFilterMonday: Bool
-    @NSManaged public private(set) var dayOfWeekFilterTuesday: Bool
-    @NSManaged public private(set) var dayOfWeekFilterWednesday: Bool
-    @NSManaged public private(set) var dayOfWeekFilterThursday: Bool
-    @NSManaged public private(set) var dayOfWeekFilterFriday: Bool
-    @NSManaged public private(set) var dayOfWeekFilterSaturday: Bool
-    @NSManaged public private(set) var dayOfWeekFilterSunday: Bool
-    @NSManaged public private(set) var timeOfDayFilterStartTime: Int
-    @NSManaged public private(set) var timeOfDayFilterEndTime: Int
-
+    @NSManaged public internal(set) var dayOfWeekFilterMonday: Bool
+    @NSManaged public internal(set) var dayOfWeekFilterTuesday: Bool
+    @NSManaged public internal(set) var dayOfWeekFilterWednesday: Bool
+    @NSManaged public internal(set) var dayOfWeekFilterThursday: Bool
+    @NSManaged public internal(set) var dayOfWeekFilterFriday: Bool
+    @NSManaged public internal(set) var dayOfWeekFilterSaturday: Bool
+    @NSManaged public internal(set) var dayOfWeekFilterSunday: Bool
+    @NSManaged public internal(set) var timeOfDayFilterStartTime: Int
+    @NSManaged public internal(set) var timeOfDayFilterEndTime: Int
 
     @discardableResult
     public static func insert(
@@ -133,7 +131,7 @@ public final class AutomatedCampaign: Campaign {
         return campaign
     }
     
-    public private(set) var triggerSegmentPredicate: Predicate? {
+    public internal(set) var triggerSegmentPredicate: Predicate? {
         get {
             return getPredicateForPrimitiveField(forKey: Attributes.triggerSegmentPredicate.rawValue)
         }
@@ -142,7 +140,7 @@ public final class AutomatedCampaign: Campaign {
         }
     }
 
-    public private(set) var eventAttributeFilterPredicate: Predicate? {
+    public internal(set) var eventAttributeFilterPredicate: Predicate? {
         get {
             return getPredicateForPrimitiveField(forKey: Attributes.eventAttributeFilterPredicate.rawValue)
         }
@@ -151,7 +149,7 @@ public final class AutomatedCampaign: Campaign {
         }
     }
     
-    public private(set) var scheduledFilterStartDateTime: DateTimeComponents? {
+    public internal(set) var scheduledFilterStartDateTime: DateTimeComponents? {
         get {
             return getDateTimeComponentsForPrimitiveField(forKey: Attributes.scheduledFilterStartDateTime.rawValue)
         }
@@ -160,7 +158,7 @@ public final class AutomatedCampaign: Campaign {
         }
     }
     
-    public private(set) var scheduledFilterEndDateTime: DateTimeComponents? {
+    public internal(set) var scheduledFilterEndDateTime: DateTimeComponents? {
         get {
             return getDateTimeComponentsForPrimitiveField(forKey: Attributes.scheduledFilterEndDateTime.rawValue)
         }

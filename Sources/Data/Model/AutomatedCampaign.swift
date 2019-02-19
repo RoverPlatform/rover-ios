@@ -19,9 +19,81 @@ public final class AutomatedCampaign: Campaign {
         return NSFetchRequest<AutomatedCampaign>(entityName: "AutomatedCampaign")
     }
     
-    @NSManaged public private(set) var eventTriggerEventName: String?
+    public struct InsertionInfo {
+        var eventTriggerEventName: String
+        var eventTriggerEventNamespace: String?
+        var hasDayOfWeekFilter: Bool
+        var hasTimeOfDayFilter: Bool
+        var hasEventAttributeFilter: Bool
+        var hasScheduledFilter: Bool
+        var dayOfWeekFilterMonday: Bool
+        var dayOfWeekFilterTuesday: Bool
+        var dayOfWeekFilterWednesday: Bool
+        var dayOfWeekFilterThursday: Bool
+        var dayOfWeekFilterFriday: Bool
+        var dayOfWeekFilterSaturday: Bool
+        var dayOfWeekFilterSunday: Bool
+        var timeOfDayFilterStartTime: Int
+        var timeOfDayFilterEndTime: Int
+        
+        var triggerSegmentPredicate: Predicate?
+        var eventAttributeFilterPredicate: Predicate?
+        var scheduledFilterStartDateTime: DateTimeComponents?
+        var scheduledFilterEndDateTime: DateTimeComponents?
+
+        public init(
+            eventTriggerEventName: String,
+            eventTriggerEventNamespace: String?,
+            hasDayOfWeekFilter: Bool,
+            hasTimeOfDayFilter: Bool,
+            hasEventAttributeFilter: Bool,
+            hasScheduledFilter: Bool,
+            dayOfWeekFilterMonday: Bool,
+            dayOfWeekFilterTuesday: Bool,
+            dayOfWeekFilterWednesday: Bool,
+            dayOfWeekFilterThursday: Bool,
+            dayOfWeekFilterFriday: Bool,
+            dayOfWeekFilterSaturday: Bool,
+            dayOfWeekFilterSunday: Bool,
+            timeOfDayFilterStartTime: Int,
+            timeOfDayFilterEndTime: Int,
+            triggerSegmentPredicate: Predicate?,
+            eventAttributeFilterPredicate: Predicate?,
+            scheduledFilterStartDateTime: DateTimeComponents?,
+            scheduledFilterEndDateTime: DateTimeComponents?
+        ) {
+            self.hasDayOfWeekFilter = hasDayOfWeekFilter
+            self.hasTimeOfDayFilter = hasTimeOfDayFilter
+            self.hasEventAttributeFilter = hasEventAttributeFilter
+            self.hasScheduledFilter = hasScheduledFilter
+            self.eventTriggerEventName = eventTriggerEventName
+            self.eventTriggerEventNamespace = eventTriggerEventNamespace
+            self.dayOfWeekFilterMonday = dayOfWeekFilterMonday
+            self.dayOfWeekFilterTuesday = dayOfWeekFilterTuesday
+            self.dayOfWeekFilterWednesday = dayOfWeekFilterWednesday
+            self.dayOfWeekFilterThursday = dayOfWeekFilterThursday
+            self.dayOfWeekFilterFriday = dayOfWeekFilterFriday
+            self.dayOfWeekFilterSaturday = dayOfWeekFilterSaturday
+            self.dayOfWeekFilterSunday = dayOfWeekFilterSunday
+            self.timeOfDayFilterStartTime = timeOfDayFilterStartTime
+            self.timeOfDayFilterEndTime = timeOfDayFilterEndTime
+            self.triggerSegmentPredicate = triggerSegmentPredicate
+            self.eventAttributeFilterPredicate = eventAttributeFilterPredicate
+            self.scheduledFilterStartDateTime = scheduledFilterStartDateTime
+            self.scheduledFilterEndDateTime = scheduledFilterEndDateTime
+        }
+    }
+    
+    @NSManaged public private(set) var eventTriggerEventName: String
     @NSManaged public private(set) var eventTriggerEventNamespace: String?
     
+    /// Specifies if this automated campaign have a Day of Week filter, and thus the timeOfDayFilterStartTime and timeOfDayFilterEndTime fields should be honoured.
+    @NSManaged public var hasDayOfWeekFilter: Bool
+    @NSManaged public var hasTimeOfDayFilter: Bool
+    @NSManaged public var hasEventAttributeFilter: Bool
+    @NSManaged public var hasScheduledFilter: Bool
+    
+
     @NSManaged public private(set) var dayOfWeekFilterMonday: Bool
     @NSManaged public private(set) var dayOfWeekFilterTuesday: Bool
     @NSManaged public private(set) var dayOfWeekFilterWednesday: Bool
@@ -29,19 +101,36 @@ public final class AutomatedCampaign: Campaign {
     @NSManaged public private(set) var dayOfWeekFilterFriday: Bool
     @NSManaged public private(set) var dayOfWeekFilterSaturday: Bool
     @NSManaged public private(set) var dayOfWeekFilterSunday: Bool
-    
     @NSManaged public private(set) var timeOfDayFilterStartTime: Int
     @NSManaged public private(set) var timeOfDayFilterEndTime: Int
-    
-    /// Specifies if this automated campaign have a Day of Week filter, and thus the timeOfDayFilterStartTime and timeOfDayFilterEndTime fields should be honoured.
-    @NSManaged public private(set) var hasDayOfWeekFilter: Bool
-    @NSManaged public private(set) var hasTimeOfDayFilter: Bool
-    @NSManaged public private(set) var hasEventAttributeFilter: Bool
-    @NSManaged public private(set) var hasScheduledFilter: Bool
+
 
     @discardableResult
-    public static func insert(into context: NSManagedObjectContext) -> AutomatedCampaign {
-        return AutomatedCampaign(context: context)
+    public static func insert(
+        into context: NSManagedObjectContext,
+        insertionInfo: InsertionInfo
+    ) -> AutomatedCampaign {
+        let campaign = AutomatedCampaign(context: context)
+        campaign.hasDayOfWeekFilter = insertionInfo.hasDayOfWeekFilter
+        campaign.hasTimeOfDayFilter = insertionInfo.hasTimeOfDayFilter
+        campaign.hasEventAttributeFilter = insertionInfo.hasEventAttributeFilter
+        campaign.hasScheduledFilter = insertionInfo.hasScheduledFilter
+        campaign.eventTriggerEventName = insertionInfo.eventTriggerEventName
+        campaign.eventTriggerEventNamespace = insertionInfo.eventTriggerEventNamespace
+        campaign.dayOfWeekFilterMonday = insertionInfo.dayOfWeekFilterMonday
+        campaign.dayOfWeekFilterTuesday = insertionInfo.dayOfWeekFilterTuesday
+        campaign.dayOfWeekFilterWednesday = insertionInfo.dayOfWeekFilterWednesday
+        campaign.dayOfWeekFilterThursday = insertionInfo.dayOfWeekFilterThursday
+        campaign.dayOfWeekFilterFriday = insertionInfo.dayOfWeekFilterFriday
+        campaign.dayOfWeekFilterSaturday = insertionInfo.dayOfWeekFilterSaturday
+        campaign.dayOfWeekFilterSunday = insertionInfo.dayOfWeekFilterSunday
+        campaign.timeOfDayFilterStartTime = insertionInfo.timeOfDayFilterStartTime
+        campaign.timeOfDayFilterEndTime = insertionInfo.timeOfDayFilterEndTime
+        campaign.triggerSegmentPredicate = insertionInfo.triggerSegmentPredicate
+        campaign.eventAttributeFilterPredicate = insertionInfo.eventAttributeFilterPredicate
+        campaign.scheduledFilterStartDateTime = insertionInfo.scheduledFilterStartDateTime
+        campaign.scheduledFilterEndDateTime = insertionInfo.scheduledFilterEndDateTime
+        return campaign
     }
     
     public private(set) var triggerSegmentPredicate: Predicate? {

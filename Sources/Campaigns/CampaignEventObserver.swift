@@ -25,10 +25,14 @@ class CampaignEventObserver {
     func beginObservingEvents() {
         self.eventObserverChit = self.eventPipeline.observers.add(block: { [self] event in
             do {
-                os_log("GETTING CAMPAIGNS THAT MATCH EVENT")
-                try campaignsMatching(event: event, forDevice: self.device.snapshot, in: self.managedObjectContext)
+                
+                let matchingCampaigns = try campaignsMatching(event: event, forDevice: self.device.snapshot, in: self.managedObjectContext)
+                os_log("%s campaigns match event.", String(describing: matchingCampaigns.count))
+                matchingCampaigns.forEach({ (matchingCampaign) in
+                    os_log("Campaign: %s", matchingCampaign.eventTriggerEventName)
+                })
             } catch {
-                os_log("FACK: %s", String(describing: error))
+                os_log("Unable to obtain campaigns that match : %s", String(describing: error))
             }
         })
     }

@@ -53,5 +53,7 @@ public class EventPipeline {
         )
         
         event.attemptInsert()
+        
+        os_log("Tracking event: %@", log: .events, type: .debug, event.name)
     }
 }

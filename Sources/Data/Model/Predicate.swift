@@ -96,11 +96,27 @@ public struct ComparisonPredicate: Predicate, Decodable, Encodable {
     public init(
         keyPath: String,
         modifier: ComparisonPredicateModifier,
-        `operator`: ComparisonPredicateOperator
+        `operator`: ComparisonPredicateOperator,
+        numberValue: Double? = nil,
+        numberValues: [Double]? = nil,
+        stringValue: String? = nil,
+        stringValues: [String]? = nil,
+        booleanValue: Bool? = nil,
+        booleanValues: [Bool]? = nil,
+        dateTimeValue: Date? = nil,
+        dateTimeValues: [Date]? = nil
     ) {
         self.keyPath = keyPath
         self.modifier = modifier
         self.`operator` = `operator`
+        self.numberValue = numberValue
+        self.numberValues = numberValues
+        self.stringValue = stringValue
+        self.stringValues = stringValues
+        self.booleanValue = booleanValue
+        self.booleanValues = booleanValues
+        self.dateTimeValue = dateTimeValue
+        self.dateTimeValues = dateTimeValues
     }
     
     public init(from decoder: Decoder) throws {

@@ -80,23 +80,43 @@ class RoverCampaignsTests: XCTestCase {
         event.name = "Test Run"
         
         // 1550613954 Tuesday Feb 19 2019 17:06
-        let today = Date(timeIntervalSince1970: 1550613954)
+        let aTuesday = Date(timeIntervalSince1970: 1_550_613_954)
         
         XCTAssertEqual(
-            try campaignsMatching(event: event, forDevice: deviceSnapshot, in: context!, todayBeing: today),
+            try campaignsMatching(event: event, forDevice: deviceSnapshot, in: context!, todayBeing: aTuesday),
             [matchingCampaign]
         )
         
-//        let nonMatchingEvent = Event(context: context!)
-//        nonMatchingEvent.name = "Some Other Event"
-//        XCTAssertEqual(
-//            try campaignsMatching(event: nonMatchingEvent, forDevice: deviceSnapshot, in: context!),
-//            []
-//        )
+        // 1550677593 Wednesday Feb 20 2019 10:46
+        let aWednesday = Date(timeIntervalSince1970: 1_550_677_593)
+        XCTAssertEqual(
+            try campaignsMatching(event: event, forDevice: deviceSnapshot, in: context!, todayBeing: aWednesday),
+            []
+        )
     }
     
     func testMatchEventAttributesFilter() {
+        let deviceSnapshot = DeviceSnapshot()
+        let matchingCampaign = AutomatedCampaign.blank(
+            context: self.context!
+        )
+        matchingCampaign.eventTriggerEventName = "Test Run"
+        matchingCampaign.hasEventAttributeFilter = true
+        matchingCampaign.eventAttributeFilterPredicate = ComparisonPredicate(
+            keyPath: "attribute field",
+            modifier: .direct,
+            operator: .equalTo,
+            numberValue: 42
+        )
         
+        let event = Event(context: context!)
+        event.name = "Test Run"
+        event.attributes.rawValue["attribute field"] = 42
+        
+        XCTAssertEqual(
+            try campaignsMatching(event: event, forDevice: deviceSnapshot, in: context!),
+            [matchingCampaign]
+        )
     }
     
     func testMatchTimeOfDayFilter() {

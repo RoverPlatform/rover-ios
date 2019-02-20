@@ -46,7 +46,7 @@ extension Array where Element == AutomatedCampaign {
                     return false
                 }
                 let nsEventPredicate = eventPredicate.nsPredicate()
-                if !nsEventPredicate.evaluate(with: event) {
+                if !nsEventPredicate.evaluate(with: event.attributes.rawValue) {
                     return false
                 }
             }

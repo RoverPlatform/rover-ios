@@ -119,6 +119,31 @@ class RoverCampaignsTests: XCTestCase {
         )
     }
     
+    func testInvalidPredicateEventAttributesFilterShouldNotMatch() {
+        let deviceSnapshot = DeviceSnapshot()
+        let matchingCampaign = AutomatedCampaign.blank(
+            context: self.context!
+        )
+        matchingCampaign.eventTriggerEventName = "Test Run"
+        matchingCampaign.hasEventAttributeFilter = true
+        matchingCampaign.eventAttributeFilterPredicate = ComparisonPredicate(
+            keyPath: "attribute field",
+            // .any modifier is inappropriate for scalar values, so NSPredicate will fail.
+            modifier: .any,
+            operator: .equalTo,
+            numberValue: 42
+        )
+        
+        let event = Event(context: context!)
+        event.name = "Test Run"
+        event.attributes.rawValue["attribute field"] = 42
+        
+        XCTAssertEqual(
+            try campaignsMatching(event: event, forDevice: deviceSnapshot, in: context!),
+            []
+        )
+    }
+    
     func testMatchTimeOfDayFilter() {
         
     }

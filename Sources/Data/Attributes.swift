@@ -28,7 +28,7 @@ private let roverKeyRegex = try! NSRegularExpression(pattern: "^[a-zA-Z_][a-zA-Z
 /// * `[Double]`
 /// * `[Bool]`
 /// * `[String: Any]` (where Any may be any of these given types)
-public class Attributes: NSObject, NSCoding, Codable, RawRepresentable, ExpressibleByDictionaryLiteral {    
+public class Attributes: NSObject, NSCoding, Codable, RawRepresentable, ExpressibleByDictionaryLiteral {
     public var rawValue: [String: Any]
     
     public required init(rawValue: [String: Any]) {

@@ -7,3 +7,4 @@
 //
 
 #import <RoverUI/RoverUI.h>
+#import "NSPredicate+RoverNSPredicateExceptionWrapper.h"

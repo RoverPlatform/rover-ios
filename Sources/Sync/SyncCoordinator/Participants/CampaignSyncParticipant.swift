@@ -110,7 +110,7 @@ extension CampaignNode: CoreDataStorable {
 }
 
 extension Array {
-    private func firstOfType<Element>(where type: Element.Type) -> Element? {
+    public func firstOfType<Element>(where type: Element.Type) -> Element? {
         return self.compactMap { element -> Element? in
             element as? Element
         }.first

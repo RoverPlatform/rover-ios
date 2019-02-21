@@ -14,14 +14,15 @@ public struct DateTimeComponents: Codable {
     /// The date, formatted as yyyy-mm-dd.
     public let date: String
     
-    /// Seconds since midnight
+    /// Seconds since midnight.
     public let time: Int
     
-    /// DateTimeComponents with a null time zone value represents a point in time in the user's local time zone defined in their device settings.
+    /// Timezone given in zoneinfo naming format, eg, "America/Montreal".  DateTimeComponents with a null time zone value represents a point in time in the user's local time zone defined in their device settings.
     public let timeZone: String?
 }
 
 extension NSManagedObject {
+    /// Use this method in a custom property in an NSManagedObject to store a DateTimeComponents in the NSManagedObject.  Powered internally by Codable and JSON.
     func getDateTimeComponentsForPrimitiveField(forKey key: String) -> DateTimeComponents? {
         self.willAccessValue(forKey: key)
         defer { self.didAccessValue(forKey: key) }
@@ -37,6 +38,7 @@ extension NSManagedObject {
         }
     }
     
+    /// Use this method in a custom property in an NSManagedObject to store a DateTimeComponents in the NSManagedObject.  Powered internally by Codable and JSON.
     func setDateTimeComponentsForPrimitiveField(_ newValue: DateTimeComponents?, forKey key: String) {
         willChangeValue(forKey: key)
         defer { didChangeValue(forKey: key) }

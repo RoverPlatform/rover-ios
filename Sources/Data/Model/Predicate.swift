@@ -10,7 +10,7 @@ import CoreData
 import Foundation
 import os
 
-/// Rover's Representation of a Predicate, directly inspired by (and compatible with) the Apple platform's NSPredicate.
+/// Rover's Representation of a Predicate, directly inspired by (and compatible with) the Apple platform's NSPredicate.  Predicates describe a filtering function that can be applied to a collection (or even a relation, when they are used with Core Data).
 public protocol Predicate {
 }
 
@@ -65,6 +65,7 @@ public enum CompoundPredicateLogicalType: String, Decodable, Encodable {
     case not = "NOT"
 }
 
+/// Rover representation of a Predicate that filters by applying a comparison operation, including an operator and an operand.
 public struct ComparisonPredicate: Predicate, Decodable, Encodable {
     public private(set) var keyPath: String
     public private(set) var modifier: ComparisonPredicateModifier
@@ -202,6 +203,7 @@ public struct CompoundPredicate: Predicate, Decodable, Encodable {
 }
 
 extension NSManagedObject {
+    /// Use this method in a custom property in an NSManagedObject to store a Predicate in the NSManagedObject.  Powered internally by Codable and JSON.
     func getPredicateForPrimitiveField(forKey key: String) -> Predicate? {
         self.willAccessValue(forKey: key)
         defer { self.didAccessValue(forKey: key) }
@@ -227,6 +229,7 @@ extension NSManagedObject {
         }
     }
     
+    /// Use this method in a custom property in an NSManagedObject to store a Predicate in the NSManagedObject.  Powered internally by Codable and JSON.
     func setPredicateForPrimitiveField(_ newValue: Predicate?, forKey key: String) {
         willChangeValue(forKey: key)
         defer { didChangeValue(forKey: key) }

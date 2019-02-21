@@ -33,7 +33,7 @@ class CampaignEventObserver {
                 }
                 // TODO: Activate Tap behaviour for the event.
             } catch {
-                os_log("Unable to obtain campaigns that match : %s", String(describing: error))
+                os_log("Unable to obtain campaigns that match : %s", log: .campaigns, type: .error, String(describing: error))
             }
         }
     }

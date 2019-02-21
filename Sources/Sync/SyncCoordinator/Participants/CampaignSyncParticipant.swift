@@ -110,7 +110,7 @@ extension CampaignNode: CoreDataStorable {
 }
 
 extension Array {
-    func firstOfType<Element>(where type: Element.Type) -> Element? {
+    private func firstOfType<Element>(where type: Element.Type) -> Element? {
         return self.compactMap { element -> Element? in
             element as? Element
         }.first
@@ -118,12 +118,14 @@ extension Array {
 }
 
 extension RoverData.DateTimeComponents {
+    /// Construct a DateTimeComponents structure in the Data Module from the DateTimeComponents structure DTO.
     init(fromSyncDateTimeComponents source: DateTimeComponents) {
         self.date = source.date
         self.time = source.time
         self.timeZone = source.timeZone
     }
     
+    /// Construct a DateTimeComponents structure in the Data Module from the DateTimeComponents structure DTO, if one is present.
     init?(fromSyncDateTimeComponents source: DateTimeComponents?) {
         guard let source = source else {
             return nil
@@ -133,3 +135,4 @@ extension RoverData.DateTimeComponents {
         self.timeZone = source.timeZone
     }
 }
+

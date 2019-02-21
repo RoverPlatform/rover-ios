@@ -12,7 +12,7 @@ import os
 
 /// Locally stored version of a Campaign that has an AutomatedCampaignTrigger.
 ///
-/// The data structure provided by the GraphQL API is squashed and modified somewhat to better suit storage and queryability in Core Data.
+/// This is a somewhat squashed and modified representation of the data structure provided by the GraphQL API to better suit storage and queryability in Core Data.
 public final class AutomatedCampaign: Campaign {
     @nonobjc
     public class func fetchRequest() -> NSFetchRequest<AutomatedCampaign> {
@@ -87,10 +87,16 @@ public final class AutomatedCampaign: Campaign {
     @NSManaged public internal(set) var eventTriggerEventName: String
     @NSManaged public internal(set) var eventTriggerEventNamespace: String?
     
-    /// Specifies if this automated campaign have a Day of Week filter, and thus the timeOfDayFilterStartTime and timeOfDayFilterEndTime fields should be honoured.
+    /// Specifies if this automated campaign has a Day of Week filter and thus the dayOfWeekFilter* properties should be honoured.
     @NSManaged public internal(set) var hasDayOfWeekFilter: Bool
+    
+    /// Specifies if this automated campaign has a Time of Day filter, and thus the timeOfDayFilterStartTime and timeOfDayFilterEndTime fields should be honoured.
     @NSManaged public internal(set) var hasTimeOfDayFilter: Bool
+    
+    /// Specifies if this automated campaign has an Event Attributes filter, and thus the eventAttributeFilterPredicate should be honoured.
     @NSManaged public internal(set) var hasEventAttributeFilter: Bool
+    
+    // Specifies if this automated campaign has a Scheduled filter, and thus the timeOfDayFilterStartTime and timeOfDayFilterEndTime properties should be honoured.
     @NSManaged public internal(set) var hasScheduledFilter: Bool
     
     @NSManaged public internal(set) var dayOfWeekFilterMonday: Bool
@@ -100,7 +106,11 @@ public final class AutomatedCampaign: Campaign {
     @NSManaged public internal(set) var dayOfWeekFilterFriday: Bool
     @NSManaged public internal(set) var dayOfWeekFilterSaturday: Bool
     @NSManaged public internal(set) var dayOfWeekFilterSunday: Bool
+    
+    /// Start of a window of when campaign may be triggered, as a time of day in seconds.
     @NSManaged public internal(set) var timeOfDayFilterStartTime: Int
+    
+    /// End of a window of \when the campaign may be triggered, as a time of day in seconds.
     @NSManaged public internal(set) var timeOfDayFilterEndTime: Int
 
     @discardableResult

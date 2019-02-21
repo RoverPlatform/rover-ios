@@ -231,6 +231,7 @@ extension ComparisonPredicate {
         
         if `operator` == .geoWithin {
             // geoWithin is our own custom operator.  In that case, refer to a custom selector.
+            // Note that if used this operator precludes the use of this predicate with Core Data (or some other mechanism that transforms the predicate to another language rather than evaluating it directly in the framework).
             return NSComparisonPredicate(
                 leftExpression: leftExpression,
                 rightExpression: rightExpression,

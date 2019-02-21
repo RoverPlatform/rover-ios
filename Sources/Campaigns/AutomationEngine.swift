@@ -59,7 +59,7 @@ extension Array where Element == AutomatedCampaign {
                     os_log("Campaign marked as having an event attribute filter lacked an event attributes predicate.", log: .persistence, type: .error)
                     return false
                 }
-                let nsEventPredicate = eventPredicate.nsPredicate()
+                let nsEventPredicate = eventPredicate.nsPredicate
                 // The underlying dictionary, rawValue, implements KVC so it can be used as an NSPredicate target.
                 if !nsEventPredicate.evaluate(withObjectSwallowingExceptions: event.attributes.rawValue) {
                     return false
@@ -77,7 +77,7 @@ extension Array where Element == AutomatedCampaign {
                 // campaign is not filtering by device.
                 return true
             }
-            let deviceFilterNsPredicate = deviceFilter.nsPredicate()
+            let deviceFilterNsPredicate = deviceFilter.nsPredicate
             // DeviceSnapshot, despite being an NSObject, cannot readily be made KVC compliant. So, we'll use its Codable implementation throug JSONEncoder/JSONDecoder to coerce it to a simple Swift [String: Any] dictionary, which does support KVC.  This also makes it explicit that we're comparing against the JSON version, which is the exact format our backend supports, so all the data types (particularly things like booleans) are represented for comparison here the exact same way as the Predicates coming our backend will expect.
             let deviceDictionary: [String: Any]
             do {
@@ -153,13 +153,12 @@ func queryPredicateForCampaignQueryableFilters(
 }
 
 extension Predicate {
-    // TODO: change these to be contruction extensions on NSPredicate() instead, to be more idiomatic.
-    func nsPredicate() -> NSPredicate {
+    var nsPredicate: NSPredicate {
         let nsPredicate: NSPredicate
 
         switch self {
         case let comparisonPredicate as ComparisonPredicate:
-            nsPredicate = comparisonPredicate.nsPredicate()
+            nsPredicate = comparisonPredicate.nsPredicate
         case let compoundPredicate as CompoundPredicate:
             nsPredicate = compoundPredicate.nsPredicate()
         default:
@@ -174,7 +173,7 @@ extension NSArray {
     @objc
     fileprivate func compareGeowithin(latLongAndRadius: NSArray) -> Bool {
         // invoked on the left-hand-side (which should be a tuple NSArray of lat/long) with the right-hand side as the argument (which should be an NSArray triple of lat/long/radius).
-        guard let withinTriple = latLongAndRadius as? [Double] else {
+        guard let withinTriple = self as? [Double] else {
             return false
         }
         if withinTriple.count != 3 {
@@ -201,7 +200,7 @@ extension NSArray {
 
 extension ComparisonPredicate {
     /// Map the Rover Comparison Predicate into its equivalent Apple NSPredicate.
-    func nsPredicate() -> NSPredicate {
+    var nsPredicate: NSPredicate {
         // Left-hand-side value will be the item being tested (as given by keypath).
         // Right-hand-side value is the constant value given.
         
@@ -248,7 +247,7 @@ extension CompoundPredicate {
     /// Map the Rover Comparison Predicate into its equivalent Apple NSPredicate.
     func nsPredicate() -> NSPredicate {
         let nsPredicates = self.predicates.map { predicate in
-            predicate.nsPredicate()
+            predicate.nsPredicate
         }
         
         return NSCompoundPredicate(type: self.booleanOperator.nsLogicalType, subpredicates: nsPredicates)
@@ -284,9 +283,8 @@ extension ComparisonPredicateOperator {
         case .between:
             return .between
         case .geoWithin:
+            // We implement our own custom `geoWithin` operator using an NSPredicate custom selector.  See ComparisonPredicate.nsPredicate.
             return .customSelector
-            // TODO: uh this has to be handled separately.  An entire compound predicate needs to be constructed with multiple expressions.  Use an closure-based NSExpression
-//            fatalError("geoWithin operator not yet implemented")
         }
     }
 }

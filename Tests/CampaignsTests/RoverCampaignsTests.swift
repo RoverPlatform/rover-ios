@@ -72,12 +72,12 @@ class RoverCampaignsTests: XCTestCase {
         let event = Event(context: context!)
         event.name = "Test Run"
         
-        // 1550613954 Tuesday Feb 19 2019 17:06
+        // 1550613954 Tuesday Feb 19 2019 17:06 america/montreal
         let aTuesday = Date(timeIntervalSince1970: 1_550_613_954)
         
         try assertThat(event: event, matchesCampaigns: [matchingCampaign], whenTodayIs: aTuesday)
         
-        // 1550677593 Wednesday Feb 20 2019 10:46
+        // 1550677593 Wednesday Feb 20 2019 10:46 america/montreal
         let aWednesday = Date(timeIntervalSince1970: 1_550_677_593)
         try assertThat(event: event, matchesCampaigns: [], whenTodayIs: aWednesday)
     }
@@ -140,7 +140,7 @@ class RoverCampaignsTests: XCTestCase {
         let event = Event(context: context!)
         event.name = "Test Run"
         
-        // 1550613954 Tuesday Feb 19 2019 17:06
+        // 1550613954 Tuesday Feb 19 2019 17:06 america/montreal
         let aTimeJustAfterFive = Date(timeIntervalSince1970: 1_550_613_954)
         try assertThat(event: event, matchesCampaigns: [matchingCampaign], whenTodayIs: aTimeJustAfterFive)
     }
@@ -222,6 +222,43 @@ class RoverCampaignsTests: XCTestCase {
         // 1550681193 Tuesday Feb 19 2019 18:06 america/montreal.  Should match on neither.
         let aWednesdayAfterSix = Date(timeIntervalSince1970: 1_550_681_193)
         try assertThat(event: event, matchesCampaigns: [], whenTodayIs: aWednesdayAfterSix)
+    }
+    
+    func testGeowithinPredicate() throws {
+        let deviceSnapshotInToronto = DeviceSnapshot(
+            userInfo: [
+                "location": [
+                    // lat, long
+                    43.650_678_3, -79.378_002_5
+                ]
+            ]
+        )
+        
+        let deviceSnapshotNotInToronto = DeviceSnapshot(
+            userInfo: [
+                "location": [
+                    32.076_401_4, 34.774_564_6
+                ]
+            ]
+        )
+        
+        let matchingCampaign = AutomatedCampaign.blank(context: self.context!)
+        matchingCampaign.eventTriggerEventName = "Test Run"
+        matchingCampaign.triggerSegmentPredicate = ComparisonPredicate(
+            keyPath: "userInfo.location",
+            modifier: .direct,
+            operator: .geoWithin,
+            numberValues: [
+                // lat, long, radius(m)
+                43.650_678_3, -79.378_002_5, 100
+            ]
+        )
+        
+        let event = Event(context: context!)
+        event.name = "Test Run"
+        
+        try assertThat(event: event, matchesCampaigns: [matchingCampaign], forDevice: deviceSnapshotInToronto)
+        try assertThat(event: event, matchesCampaigns: [], forDevice: deviceSnapshotNotInToronto)
     }
     
     private func assertThat(

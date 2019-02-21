@@ -20,8 +20,11 @@ public final class AutomatedCampaign: Campaign {
     }
     
     public struct InsertionInfo {
+        var id: String
         var eventTriggerEventName: String
         var eventTriggerEventNamespace: String?
+        var deliverable: CampaignDeliverable
+        var delay: TimeInterval
         var hasDayOfWeekFilter: Bool
         var hasTimeOfDayFilter: Bool
         var hasEventAttributeFilter: Bool
@@ -35,15 +38,17 @@ public final class AutomatedCampaign: Campaign {
         var dayOfWeekFilterSunday: Bool
         var timeOfDayFilterStartTime: Int
         var timeOfDayFilterEndTime: Int
-        
         var deviceFilterPredicate: Predicate?
         var eventAttributeFilterPredicate: Predicate?
         var scheduledFilterStartDateTime: DateTimeComponents?
         var scheduledFilterEndDateTime: DateTimeComponents?
 
         public init(
+            id: String,
             eventTriggerEventName: String,
             eventTriggerEventNamespace: String?,
+            deliverable: CampaignDeliverable,
+            delay: TimeInterval,
             hasDayOfWeekFilter: Bool,
             hasTimeOfDayFilter: Bool,
             hasEventAttributeFilter: Bool,
@@ -62,8 +67,11 @@ public final class AutomatedCampaign: Campaign {
             scheduledFilterStartDateTime: DateTimeComponents?,
             scheduledFilterEndDateTime: DateTimeComponents?
         ) {
+            self.id = id
             self.hasDayOfWeekFilter = hasDayOfWeekFilter
             self.hasTimeOfDayFilter = hasTimeOfDayFilter
+            self.deliverable = deliverable
+            self.delay = delay
             self.hasEventAttributeFilter = hasEventAttributeFilter
             self.hasScheduledFilter = hasScheduledFilter
             self.eventTriggerEventName = eventTriggerEventName
@@ -84,8 +92,39 @@ public final class AutomatedCampaign: Campaign {
         }
     }
     
+    @discardableResult
+    public static func insert(
+        into context: NSManagedObjectContext,
+        insertionInfo: InsertionInfo
+    ) -> AutomatedCampaign {
+        let campaign = AutomatedCampaign(context: context)
+        campaign.hasDayOfWeekFilter = insertionInfo.hasDayOfWeekFilter
+        campaign.hasTimeOfDayFilter = insertionInfo.hasTimeOfDayFilter
+        campaign.hasEventAttributeFilter = insertionInfo.hasEventAttributeFilter
+        campaign.hasScheduledFilter = insertionInfo.hasScheduledFilter
+        campaign.eventTriggerEventName = insertionInfo.eventTriggerEventName
+        campaign.eventTriggerEventNamespace = insertionInfo.eventTriggerEventNamespace
+        campaign.delay = insertionInfo.delay
+        campaign.dayOfWeekFilterMonday = insertionInfo.dayOfWeekFilterMonday
+        campaign.dayOfWeekFilterTuesday = insertionInfo.dayOfWeekFilterTuesday
+        campaign.dayOfWeekFilterWednesday = insertionInfo.dayOfWeekFilterWednesday
+        campaign.dayOfWeekFilterThursday = insertionInfo.dayOfWeekFilterThursday
+        campaign.dayOfWeekFilterFriday = insertionInfo.dayOfWeekFilterFriday
+        campaign.dayOfWeekFilterSaturday = insertionInfo.dayOfWeekFilterSaturday
+        campaign.dayOfWeekFilterSunday = insertionInfo.dayOfWeekFilterSunday
+        campaign.timeOfDayFilterStartTime = insertionInfo.timeOfDayFilterStartTime
+        campaign.timeOfDayFilterEndTime = insertionInfo.timeOfDayFilterEndTime
+        campaign.deviceFilterPredicate = insertionInfo.deviceFilterPredicate
+        campaign.eventAttributeFilterPredicate = insertionInfo.eventAttributeFilterPredicate
+        campaign.scheduledFilterStartDateTime = insertionInfo.scheduledFilterStartDateTime
+        campaign.scheduledFilterEndDateTime = insertionInfo.scheduledFilterEndDateTime
+        return campaign
+    }
+    
     @NSManaged public internal(set) var eventTriggerEventName: String
     @NSManaged public internal(set) var eventTriggerEventNamespace: String?
+    
+    @NSManaged public internal(set) var delay: TimeInterval
     
     /// Specifies if this automated campaign has a Day of Week filter and thus the dayOfWeekFilter* properties should be honoured.
     @NSManaged public internal(set) var hasDayOfWeekFilter: Bool
@@ -112,34 +151,6 @@ public final class AutomatedCampaign: Campaign {
     
     /// End of a window of \when the campaign may be triggered, as a time of day in seconds.
     @NSManaged public internal(set) var timeOfDayFilterEndTime: Int
-
-    @discardableResult
-    public static func insert(
-        into context: NSManagedObjectContext,
-        insertionInfo: InsertionInfo
-    ) -> AutomatedCampaign {
-        let campaign = AutomatedCampaign(context: context)
-        campaign.hasDayOfWeekFilter = insertionInfo.hasDayOfWeekFilter
-        campaign.hasTimeOfDayFilter = insertionInfo.hasTimeOfDayFilter
-        campaign.hasEventAttributeFilter = insertionInfo.hasEventAttributeFilter
-        campaign.hasScheduledFilter = insertionInfo.hasScheduledFilter
-        campaign.eventTriggerEventName = insertionInfo.eventTriggerEventName
-        campaign.eventTriggerEventNamespace = insertionInfo.eventTriggerEventNamespace
-        campaign.dayOfWeekFilterMonday = insertionInfo.dayOfWeekFilterMonday
-        campaign.dayOfWeekFilterTuesday = insertionInfo.dayOfWeekFilterTuesday
-        campaign.dayOfWeekFilterWednesday = insertionInfo.dayOfWeekFilterWednesday
-        campaign.dayOfWeekFilterThursday = insertionInfo.dayOfWeekFilterThursday
-        campaign.dayOfWeekFilterFriday = insertionInfo.dayOfWeekFilterFriday
-        campaign.dayOfWeekFilterSaturday = insertionInfo.dayOfWeekFilterSaturday
-        campaign.dayOfWeekFilterSunday = insertionInfo.dayOfWeekFilterSunday
-        campaign.timeOfDayFilterStartTime = insertionInfo.timeOfDayFilterStartTime
-        campaign.timeOfDayFilterEndTime = insertionInfo.timeOfDayFilterEndTime
-        campaign.deviceFilterPredicate = insertionInfo.deviceFilterPredicate
-        campaign.eventAttributeFilterPredicate = insertionInfo.eventAttributeFilterPredicate
-        campaign.scheduledFilterStartDateTime = insertionInfo.scheduledFilterStartDateTime
-        campaign.scheduledFilterEndDateTime = insertionInfo.scheduledFilterEndDateTime
-        return campaign
-    }
     
     public internal(set) var deviceFilterPredicate: Predicate? {
         get {

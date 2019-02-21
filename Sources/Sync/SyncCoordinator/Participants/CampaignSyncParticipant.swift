@@ -80,9 +80,18 @@ extension CampaignNode: CoreDataStorable {
             let scheduledFilter = trigger.eventTrigger.filters.firstOfType(where: ScheduledEventTriggerFilter.self)
             let timeOfDayFilter = trigger.eventTrigger.filters.firstOfType(where: TimeOfDayEventTriggerFilter.self)
             
+            // and now build the deliverable.
+            guard let storedDeliverable = RoverData.CampaignDeliverable.initFrom(syncCampaignDeliverable: self.deliverable, in: context) else {
+                os_log("Unable to coerce campaign deliverable to form meant for local storage, unable to store this campaign.", log: .persistence, type: .error)
+                return
+            }
+        
             let insertionInfo = AutomatedCampaign.InsertionInfo(
+                id: self.id,
                 eventTriggerEventName: trigger.eventTrigger.eventName,
                 eventTriggerEventNamespace: trigger.eventTrigger.eventNamespace,
+                deliverable: storedDeliverable,
+                delay: trigger.delay,
                 hasDayOfWeekFilter: dayOfWeekFilter != nil,
                 hasTimeOfDayFilter: timeOfDayFilter != nil,
                 hasEventAttributeFilter: eventAttributesFilter != nil,
@@ -140,3 +149,56 @@ extension RoverData.DateTimeComponents {
     }
 }
 
+extension RoverData.CampaignDeliverable {
+    static func initFrom(syncCampaignDeliverable source: CampaignDeliverable, in context: NSManagedObjectContext) -> RoverData.NotificationCampaignDeliverable? {
+        switch source {
+        case let notificationDeliverable as NotificationCampaignDeliverable:
+            let attachmentType: RoverData.NotificationCampaignDeliverable.AttachmentType?
+            
+            if let attachmentTypeFromNode = notificationDeliverable.attachment?.type {
+                switch attachmentTypeFromNode {
+                case .audio:
+                    attachmentType = .audio
+                case .video:
+                    attachmentType = .video
+                case .image:
+                    attachmentType = .image
+                }
+            } else {
+                attachmentType = nil
+            }
+            
+            let tapBehaviorType: RoverData.NotificationCampaignDeliverable.TapBehaviorType
+            switch notificationDeliverable.tapBehavior.type {
+            case .default_:
+                tapBehaviorType = .default
+            case .openURL:
+                tapBehaviorType = .openURL
+            case .presentExperience:
+                tapBehaviorType = .presentExperience
+            case .presentWebsite:
+                tapBehaviorType = .presentWebsite
+            }
+            
+            let deliverableInsertionInfo = RoverData.NotificationCampaignDeliverable.InsertionInfo(
+                body: notificationDeliverable.body,
+                title: notificationDeliverable.title,
+                showInNotificationCenter: notificationDeliverable.alertOptions.notificationCenter,
+                showBadgeNumber: notificationDeliverable.alertOptions.badgeNumber,
+                showSystemNotification: notificationDeliverable.alertOptions.systemNotification,
+                iosCategoryIdentifier: notificationDeliverable.iOSOptions?.categoryIdentifier,
+                iosMutableContent: notificationDeliverable.iOSOptions?.mutableContent ?? false,
+                iosSound: notificationDeliverable.iOSOptions?.sound,
+                iosThreadIdentifier: notificationDeliverable.iOSOptions?.threadIdentifier,
+                tapBehaviorType: tapBehaviorType,
+                tapBehaviorUrl: notificationDeliverable.tapBehavior.url.absoluteString,
+                attachmentUrl: notificationDeliverable.attachment?.url.absoluteString,
+                attachmentType: attachmentType
+            )
+            return RoverData.NotificationCampaignDeliverable.insert(into: context, insertionInfo: deliverableInsertionInfo)
+        default:
+            os_log("Only NotificationCampaignDeliverables are currently supported for local persistent storage.", log: .persistence, type: .error)
+            return nil
+        }
+    }
+}

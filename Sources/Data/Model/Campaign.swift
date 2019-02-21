@@ -10,4 +10,6 @@ import CoreData
 import Foundation
 
 public class Campaign: NSManagedObject {
+    @NSManaged public private(set) var id: String
+    @NSManaged public private(set) var deliverable: CampaignDeliverable
 }

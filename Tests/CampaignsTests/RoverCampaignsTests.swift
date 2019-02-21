@@ -273,7 +273,7 @@ class RoverCampaignsTests: XCTestCase {
         let timeZone = TimeZone(identifier: "America/Montreal")!
         
         try XCTAssertEqual(
-            campaignsMatching(event: event, forDevice: device, in: self.context!, todayBeing: today, inTimeZone: timeZone),
+            automatedCampaignsMatching(event: event, forDevice: device, in: self.context!, todayBeing: today, inTimeZone: timeZone),
             matchesCampaigns,
             file: file,
             line: line

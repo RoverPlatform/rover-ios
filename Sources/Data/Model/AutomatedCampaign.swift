@@ -57,7 +57,7 @@ public final class AutomatedCampaign: Campaign {
             dayOfWeekFilterSunday: Bool,
             timeOfDayFilterStartTime: Int,
             timeOfDayFilterEndTime: Int,
-            triggerSegmentPredicate: Predicate?,
+            deviceFilterPredicate: Predicate?,
             eventAttributeFilterPredicate: Predicate?,
             scheduledFilterStartDateTime: DateTimeComponents?,
             scheduledFilterEndDateTime: DateTimeComponents?
@@ -77,7 +77,7 @@ public final class AutomatedCampaign: Campaign {
             self.dayOfWeekFilterSunday = dayOfWeekFilterSunday
             self.timeOfDayFilterStartTime = timeOfDayFilterStartTime
             self.timeOfDayFilterEndTime = timeOfDayFilterEndTime
-            self.deviceFilterPredicate = triggerSegmentPredicate
+            self.deviceFilterPredicate = deviceFilterPredicate
             self.eventAttributeFilterPredicate = eventAttributeFilterPredicate
             self.scheduledFilterStartDateTime = scheduledFilterStartDateTime
             self.scheduledFilterEndDateTime = scheduledFilterEndDateTime
@@ -133,10 +133,10 @@ public final class AutomatedCampaign: Campaign {
     
     public internal(set) var deviceFilterPredicate: Predicate? {
         get {
-            return getPredicateForPrimitiveField(forKey: Attributes.triggerSegmentPredicate.rawValue)
+            return getPredicateForPrimitiveField(forKey: Attributes.deviceFilterPredicate.rawValue)
         }
         set {
-            setPredicateForPrimitiveField(newValue, forKey: Attributes.triggerSegmentPredicate.rawValue)
+            setPredicateForPrimitiveField(newValue, forKey: Attributes.deviceFilterPredicate.rawValue)
         }
     }
 
@@ -170,7 +170,7 @@ public final class AutomatedCampaign: Campaign {
     /// Provides strings of field names for the manually created Core Data accessors.
     private enum Attributes: String {
         case eventAttributeFilterPredicate
-        case triggerSegmentPredicate
+        case deviceFilterPredicate
         case timeOfDayFilterStartTime
         case timeOfDayFilterEndTime
         case dayOfWeekFilterMonday

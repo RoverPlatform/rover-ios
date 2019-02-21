@@ -96,7 +96,7 @@ extension CampaignNode: CoreDataStorable {
                 dayOfWeekFilterSunday: dayOfWeekFilter?.sunday ?? false,
                 timeOfDayFilterStartTime: timeOfDayFilter?.startTime ?? 0,
                 timeOfDayFilterEndTime: timeOfDayFilter?.endTime ?? 0,
-                triggerSegmentPredicate: trigger.segment?.predicate,
+                deviceFilterPredicate: trigger.segment?.predicate,
                 eventAttributeFilterPredicate: eventAttributesFilter?.predicate,
                 scheduledFilterStartDateTime: RoverData.DateTimeComponents(fromSyncDateTimeComponents: scheduledFilter?.startDateTime),
                 scheduledFilterEndDateTime: RoverData.DateTimeComponents(fromSyncDateTimeComponents: scheduledFilter?.endDateTime)

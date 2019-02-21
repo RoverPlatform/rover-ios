@@ -10,7 +10,8 @@ import CoreData
 import Foundation
 import os
 
-public func campaignsMatching(
+/// Returns the automated campaigns that match the given event.
+public func automatedCampaignsMatching(
     event: Event,
     forDevice device: DeviceSnapshot,
     in context: NSManagedObjectContext,
@@ -25,6 +26,7 @@ public func campaignsMatching(
 }
 
 extension Array where Element == AutomatedCampaign {
+    /// Filter out any campaigns with a Scheduled Filter, if one is present, that do not match the current time.
     func filterByScheduledTime(todayBeing today: Date, in timeZone: TimeZone) -> [Element] {
         return filter { campaign in
             // Scheduled filter, which needs its DateTimeComponents transformed into local time when needed.  Too complex to query on directly through Core Data.
@@ -50,7 +52,8 @@ extension Array where Element == AutomatedCampaign {
             return true
         }
     }
-        
+    
+    /// Filters out any campaigns with Event Attributes filter, if one is present, that do not match the given event.
     func filterBy(attributesFromEvent event: Event) -> [Element] {
         return filter { campaign in
             // Event Attributes filter, which has its own representation of a custom predicate stored right in data.  Naturally cannot be queryed with directly in Core Data:
@@ -71,6 +74,7 @@ extension Array where Element == AutomatedCampaign {
     }
     
     // TODO: when implementing Scheduled campaigns change Element to Campaign and ensure that device filter (segment) field is promoted to abstract type
+    /// Filters out any campaigns with a device filter, if one is present, that do not match the current device.  Sometimes referred to as a Segment.
     func filterBy(deviceSnapshot: DeviceSnapshot) -> [Element] {
         return self.filter { campaign in
             guard let deviceFilter = campaign.deviceFilterPredicate else {
@@ -113,9 +117,6 @@ func queryPredicateForCampaignQueryableFilters(
         andPredicateWithSubpredicates: [
             NSPredicate(format: "%K == %@", #keyPath(AutomatedCampaign.eventTriggerEventName), event.name),
             NSPredicate(format: "%K == %@", #keyPath(AutomatedCampaign.eventTriggerEventNamespace), event.namespace ?? 0),
-            
-            // now to match on the queryable filters, which are based on simple types and flattened into the AutomatedCampaign record.
-            
             // How we match on filters only when they are enabled: !hasAGivenFilter || (filter expressions...)
             
             // day of week.
@@ -153,6 +154,7 @@ func queryPredicateForCampaignQueryableFilters(
 }
 
 extension Predicate {
+    /// Map the Rover Comparison Predicate into its equivalent Apple NSPredicate.
     var nsPredicate: NSPredicate {
         let nsPredicate: NSPredicate
 
@@ -170,6 +172,9 @@ extension Predicate {
 }
 
 extension NSArray {
+    /// Used as a target for an NSPredicate .customSelector in order to implement our custom geoWithin operator.  Uses the haversine algorithm to determine if the given value is within the coordinates.
+    /// LHS (self) is expected [lat, long, radius].
+    /// RHS (latLongAndRadius) is target coordinates for comparision, [lat, long].
     @objc
     fileprivate func compareGeowithin(latLongAndRadius: NSArray) -> Bool {
         // invoked on the left-hand-side (which should be a tuple NSArray of lat/long) with the right-hand side as the argument (which should be an NSArray triple of lat/long/radius).
@@ -318,6 +323,7 @@ extension CompoundPredicateLogicalType {
 }
 
 extension Date {
+    // Instantiate an Apple Date type from the Rover DateTimeComponents model class, which is equivalent to the Apple DateTimeComponents class.
     static func initFrom(fromDateTimeComponents components: DateTimeComponents, whereLocalTimeZoneIs localTimeZone: TimeZone) -> Date? {
         let gregorian = Calendar(identifier: .gregorian)
         let timeZone: TimeZone
@@ -339,7 +345,7 @@ extension Date {
 }
 
 // https://en.wikipedia.org/wiki/Figure_of_the_Earth
-let earthRadius: Double = 6_371_000
+private let earthRadius: Double = 6_371_000
 
 private let haversin: (Double) -> Double = {
     (1 - cos($0)) / 2

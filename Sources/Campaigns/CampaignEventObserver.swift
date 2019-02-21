@@ -10,6 +10,7 @@ import CoreData
 import Foundation
 import os
 
+/// Observes emitted Rover events, and if an Automated Campaign is relevant for it, triggers it.
 class CampaignEventObserver {
     private let eventPipeline: EventPipeline
     private let device: Device
@@ -25,11 +26,12 @@ class CampaignEventObserver {
     func beginObservingEvents() {
         self.eventObserverChit = self.eventPipeline.observers.add { [self] event in
             do {
-                let matchingCampaigns = try campaignsMatching(event: event, forDevice: self.device.snapshot, in: self.managedObjectContext)
+                let matchingCampaigns = try automatedCampaignsMatching(event: event, forDevice: self.device.snapshot, in: self.managedObjectContext)
                 os_log("%s campaigns match event.", String(describing: matchingCampaigns.count))
                 matchingCampaigns.forEach { matchingCampaign in
                     os_log("Campaign: %s", matchingCampaign.eventTriggerEventName)
                 }
+                // TODO: Activate Tap behaviour for the event.
             } catch {
                 os_log("Unable to obtain campaigns that match : %s", String(describing: error))
             }

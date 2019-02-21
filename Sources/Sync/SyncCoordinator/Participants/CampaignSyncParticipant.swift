@@ -120,9 +120,11 @@ extension Array {
 extension RoverData.DateTimeComponents {
     /// Construct a DateTimeComponents structure in the Data Module from the DateTimeComponents structure DTO.
     init(fromSyncDateTimeComponents source: DateTimeComponents) {
-        self.date = source.date
-        self.time = source.time
-        self.timeZone = source.timeZone
+        self.init(
+            date: source.date,
+            time: source.time,
+            timeZone: source.timeZone
+        )
     }
     
     /// Construct a DateTimeComponents structure in the Data Module from the DateTimeComponents structure DTO, if one is present.
@@ -130,9 +132,11 @@ extension RoverData.DateTimeComponents {
         guard let source = source else {
             return nil
         }
-        self.date = source.date
-        self.time = source.time
-        self.timeZone = source.timeZone
+        self.init(
+            date: source.date,
+            time: source.time,
+            timeZone: source.timeZone
+        )
     }
 }
 

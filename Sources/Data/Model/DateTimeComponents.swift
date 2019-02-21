@@ -19,6 +19,16 @@ public struct DateTimeComponents: Codable {
     
     /// Timezone given in zoneinfo naming format, eg, "America/Montreal".  DateTimeComponents with a null time zone value represents a point in time in the user's local time zone defined in their device settings.
     public let timeZone: String?
+    
+    public init(
+        date: String,
+        time: Int,
+        timeZone: String?
+    ) {
+        self.date = date
+        self.time = time
+        self.timeZone = timeZone
+    }
 }
 
 extension NSManagedObject {

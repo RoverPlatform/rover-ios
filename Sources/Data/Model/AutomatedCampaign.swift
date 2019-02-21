@@ -131,6 +131,7 @@ public final class AutomatedCampaign: Campaign {
         return campaign
     }
     
+    // TODO: rename to deviceFilterPredicate. Make a note that it is separate from the others and does not use a hasDeviceFilter boolean.
     public internal(set) var triggerSegmentPredicate: Predicate? {
         get {
             return getPredicateForPrimitiveField(forKey: Attributes.triggerSegmentPredicate.rawValue)

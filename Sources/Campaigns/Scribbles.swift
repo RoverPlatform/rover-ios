@@ -11,7 +11,7 @@ import Foundation
 import os
 
 extension Array where Element == AutomatedCampaign {
-    func filterByScheduledTime(todayBeing today: Date) -> [Element] {
+    func filterByScheduledTime(todayBeing today: Date, in timeZone: TimeZone) -> [Element] {
         return filter { campaign in
             // Scheduled filter, which needs its DateTimeComponents transformed into local time when needed.  Too complex to query on directly through Core Data.
             if campaign.hasScheduledFilter {
@@ -23,8 +23,8 @@ extension Array where Element == AutomatedCampaign {
                     os_log("Campaign marked as having a scheduled filter lacked an end time.", log: .persistence, type: .error)
                     return false
                 }
-                let startDate = Date.initFrom(fromDateTimeComponents: scheduledFilterStartDateTime)
-                let endDate = Date.initFrom(fromDateTimeComponents: scheduledFilterEndDateTime)
+                let startDate = Date.initFrom(fromDateTimeComponents: scheduledFilterStartDateTime, whereLocalTimeZoneIs: timeZone)
+                let endDate = Date.initFrom(fromDateTimeComponents: scheduledFilterEndDateTime, whereLocalTimeZoneIs: timeZone)
                 
                 let afterStartDate = startDate == nil ? true : today.compare(startDate!) == ComparisonResult.orderedDescending
                 let beforeEndDate = endDate == nil ? true : today.compare(endDate!) == ComparisonResult.orderedAscending
@@ -46,8 +46,8 @@ extension Array where Element == AutomatedCampaign {
                     return false
                 }
                 let nsEventPredicate = eventPredicate.nsPredicate()
+                // The underlying dictionary, rawValue, implements KVC so it can be used as an NSPredicate target.
                 if !nsEventPredicate.evaluate(withObjectSwallowingExceptions: event.attributes.rawValue) {
-//                if !nsEventPredicate.evaluate(with: event.attributes.rawValue) {
                     return false
                 }
             }
@@ -64,14 +64,32 @@ extension Array where Element == AutomatedCampaign {
                 return true
             }
             let deviceFilterNsPredicate = deviceFilter.nsPredicate()
-            return deviceFilterNsPredicate.evaluate(with: deviceSnapshot)
+            // DeviceSnapshot, despite being an NSObject, cannot readily be made KVC compliant. So, we'll use its Codable implementation throug JSONEncoder/JSONDecoder to coerce it to a simple Swift [String: Any] dictionary, which does support KVC.  This also makes it explicit that we're comparing against the JSON version, which is the exact format our backend supports, so all the data types (particularly things like booleans) are represented for comparison here the exact same way as the Predicates coming our backend will expect.
+            let deviceDictionary: [String: Any]
+            do {
+                let deviceJson = try JSONEncoder.default.encode(deviceSnapshot)
+                guard let dictionary = try JSONSerialization.jsonObject(with: deviceJson, options: .allowFragments) as? [String: Any] else {
+                    os_log("Problem coercing DeviceSnapshot JSON back to a dictionary for device filter comparison.  Ignoring this campaign.")
+                    return false
+                }
+                deviceDictionary = dictionary
+            } catch {
+                os_log("Problem dealing with DeviceSnapshot value for device filter comparison.  Ignoring this campaign: %@", String(describing: error))
+                return false
+            }
+            return deviceFilterNsPredicate.evaluate(with: deviceDictionary)
         }
     }
 }
 
 /// A query predicate, suitable for use with Core Data, for filtering down the Automated Campaigns down to ones that match the event. Howvever, this does not apply all of the Campaigns' filters: only those filters that can be pratically filtered in Core Data are used.  You should subsequently use filterByDeviceSnapshot, filterByEventAttributes, and filterByScheduledTime to fully discriminate the list.
-func queryPredicateForCampaignQueryableFilters(forEvent event: Event, todayBeing today: Date) -> NSPredicate {
-    let gregorianCalendar = Calendar(identifier: .gregorian)
+func queryPredicateForCampaignQueryableFilters(
+    forEvent event: Event,
+    todayBeing today: Date,
+    in timeZone: TimeZone
+) -> NSPredicate {
+    var gregorianCalendar = Calendar(identifier: .gregorian)
+    gregorianCalendar.timeZone = timeZone
     let todayWeekday = gregorianCalendar.component(.weekday, from: today)
     
     let todayComponents = gregorianCalendar.dateComponents([.hour, .minute, .second], from: today)
@@ -110,8 +128,8 @@ func queryPredicateForCampaignQueryableFilters(forEvent event: Event, todayBeing
                     NSPredicate(format: "%K == NO", #keyPath(AutomatedCampaign.hasTimeOfDayFilter)),
                     NSCompoundPredicate(
                         andPredicateWithSubpredicates: [
-                            NSPredicate(format: "%K >= %d", #keyPath(AutomatedCampaign.timeOfDayFilterStartTime), secondsSoFarToday),
-                            NSPredicate(format: "%K < %d", #keyPath(AutomatedCampaign.timeOfDayFilterEndTime), secondsSoFarToday)
+                            NSPredicate(format: "%K <= %d", #keyPath(AutomatedCampaign.timeOfDayFilterStartTime), secondsSoFarToday),
+                            NSPredicate(format: "%K > %d", #keyPath(AutomatedCampaign.timeOfDayFilterEndTime), secondsSoFarToday)
                         ]
                     )
                 ]
@@ -124,13 +142,14 @@ public func campaignsMatching(
     event: Event,
     forDevice device: DeviceSnapshot,
     in context: NSManagedObjectContext,
-    todayBeing today: Date = Date()
+    todayBeing today: Date = Date(),
+    inTimeZone timeZone: TimeZone = TimeZone.current
 ) throws -> [AutomatedCampaign] {
     let fetchRequest: NSFetchRequest<AutomatedCampaign> = AutomatedCampaign.fetchRequest()
-    fetchRequest.predicate = queryPredicateForCampaignQueryableFilters(forEvent: event, todayBeing: today)
+    fetchRequest.predicate = queryPredicateForCampaignQueryableFilters(forEvent: event, todayBeing: today, in: timeZone)
     let queryMatchedCampaigns = try context.fetch(fetchRequest)
     // now apply the computed filters that could not be done directly in the query predicate:
-    return queryMatchedCampaigns.filterByScheduledTime(todayBeing: today).filterBy(deviceSnapshot: device).filterBy(attributesFromEvent: event)
+    return queryMatchedCampaigns.filterByScheduledTime(todayBeing: today, in: timeZone).filterBy(deviceSnapshot: device).filterBy(attributesFromEvent: event)
 }
 
 extension Predicate {
@@ -301,13 +320,13 @@ extension CompoundPredicateLogicalType {
 }
 
 extension Date {
-    static func initFrom(fromDateTimeComponents components: DateTimeComponents) -> Date? {
+    static func initFrom(fromDateTimeComponents components: DateTimeComponents, whereLocalTimeZoneIs localTimeZone: TimeZone) -> Date? {
         let gregorian = Calendar(identifier: .gregorian)
         let timeZone: TimeZone
         if let timeZoneString = components.timeZone {
-            timeZone = TimeZone(identifier: timeZoneString) ?? TimeZone.current
+            timeZone = TimeZone(identifier: timeZoneString) ?? localTimeZone
         } else {
-            timeZone = TimeZone.current
+            timeZone = localTimeZone
         }
         let formatter = ISO8601DateFormatter()
         formatter.timeZone = timeZone

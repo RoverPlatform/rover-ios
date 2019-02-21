@@ -98,7 +98,7 @@
 		499AE17421F8C56000715B44 /* Campaign.swift in Sources */ = {isa = PBXBuildFile; fileRef = 499AE17321F8C56000715B44 /* Campaign.swift */; };
 		49A04D45221768B6009544FB /* CampaignEventObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A04D44221768B6009544FB /* CampaignEventObserver.swift */; };
 		49A276D22208CEAD0052147B /* ExperienceSyncParticipant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A276D12208CEAD0052147B /* ExperienceSyncParticipant.swift */; };
-		49A276D4220DE2C60052147B /* Scribbles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A276D3220DE2C60052147B /* Scribbles.swift */; };
+		49A276D4220DE2C60052147B /* AutomationEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A276D3220DE2C60052147B /* AutomationEngine.swift */; };
 		49ACD3CD221DC60A00B2CA47 /* NSPredicate+RoverNSPredicateExceptionWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 49ACD3CC221DC60A00B2CA47 /* NSPredicate+RoverNSPredicateExceptionWrapper.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		49ACD3D1221DCAA300B2CA47 /* NSPredicate+RoverNSPredicateExceptionWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 49ACD3D0221DCAA300B2CA47 /* NSPredicate+RoverNSPredicateExceptionWrapper.m */; };
 		49AFAED421BF006800F1118B /* AttributesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49AFAED321BF006800F1118B /* AttributesTests.swift */; };
@@ -339,7 +339,7 @@
 		49A04D44221768B6009544FB /* CampaignEventObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampaignEventObserver.swift; sourceTree = "<group>"; };
 		49A0D09421CC3FCE003FAABD /* UI.OSLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UI.OSLog.swift; sourceTree = "<group>"; };
 		49A276D12208CEAD0052147B /* ExperienceSyncParticipant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperienceSyncParticipant.swift; sourceTree = "<group>"; };
-		49A276D3220DE2C60052147B /* Scribbles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scribbles.swift; sourceTree = "<group>"; };
+		49A276D3220DE2C60052147B /* AutomationEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationEngine.swift; sourceTree = "<group>"; };
 		49ACD3CC221DC60A00B2CA47 /* NSPredicate+RoverNSPredicateExceptionWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSPredicate+RoverNSPredicateExceptionWrapper.h"; sourceTree = "<group>"; };
 		49ACD3D0221DCAA300B2CA47 /* NSPredicate+RoverNSPredicateExceptionWrapper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSPredicate+RoverNSPredicateExceptionWrapper.m"; sourceTree = "<group>"; };
 		49AFAED321BF006800F1118B /* AttributesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributesTests.swift; sourceTree = "<group>"; };
@@ -785,7 +785,7 @@
 				49496A4B21C839DA00F89438 /* RoverCampaigns.h */,
 				49496A4C21C839DA00F89438 /* Info.plist */,
 				4960CA6521C84484009146F0 /* CampaignsAssembler.swift */,
-				49A276D3220DE2C60052147B /* Scribbles.swift */,
+				49A276D3220DE2C60052147B /* AutomationEngine.swift */,
 				49A04D44221768B6009544FB /* CampaignEventObserver.swift */,
 				49ACD3CC221DC60A00B2CA47 /* NSPredicate+RoverNSPredicateExceptionWrapper.h */,
 				49ACD3D0221DCAA300B2CA47 /* NSPredicate+RoverNSPredicateExceptionWrapper.m */,
@@ -2373,7 +2373,7 @@
 				49496A6421C83CCF00F89438 /* InfluenceTracker.swift in Sources */,
 				4960CA6621C84484009146F0 /* CampaignsAssembler.swift in Sources */,
 				49496A6521C83CCF00F89438 /* NotificationHandler.swift in Sources */,
-				49A276D4220DE2C60052147B /* Scribbles.swift in Sources */,
+				49A276D4220DE2C60052147B /* AutomationEngine.swift in Sources */,
 				49ACD3D1221DCAA300B2CA47 /* NSPredicate+RoverNSPredicateExceptionWrapper.m in Sources */,
 				49496A6621C83CCF00F89438 /* NotificationHandlerService.swift in Sources */,
 				49496A6221C83CBB00F89438 /* InfluenceTrackerService.swift in Sources */,

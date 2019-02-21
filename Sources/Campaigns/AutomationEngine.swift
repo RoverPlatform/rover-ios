@@ -10,6 +10,20 @@ import CoreData
 import Foundation
 import os
 
+public func campaignsMatching(
+    event: Event,
+    forDevice device: DeviceSnapshot,
+    in context: NSManagedObjectContext,
+    todayBeing today: Date = Date(),
+    inTimeZone timeZone: TimeZone = TimeZone.current
+) throws -> [AutomatedCampaign] {
+    let fetchRequest: NSFetchRequest<AutomatedCampaign> = AutomatedCampaign.fetchRequest()
+    fetchRequest.predicate = queryPredicateForCampaignQueryableFilters(forEvent: event, todayBeing: today, in: timeZone)
+    let queryMatchedCampaigns = try context.fetch(fetchRequest)
+    // now apply the computed filters that could not be done directly in the query predicate:
+    return queryMatchedCampaigns.filterByScheduledTime(todayBeing: today, in: timeZone).filterBy(deviceSnapshot: device).filterBy(attributesFromEvent: event)
+}
+
 extension Array where Element == AutomatedCampaign {
     func filterByScheduledTime(todayBeing today: Date, in timeZone: TimeZone) -> [Element] {
         return filter { campaign in
@@ -136,20 +150,6 @@ func queryPredicateForCampaignQueryableFilters(
             )
         ]
     )
-}
-
-public func campaignsMatching(
-    event: Event,
-    forDevice device: DeviceSnapshot,
-    in context: NSManagedObjectContext,
-    todayBeing today: Date = Date(),
-    inTimeZone timeZone: TimeZone = TimeZone.current
-) throws -> [AutomatedCampaign] {
-    let fetchRequest: NSFetchRequest<AutomatedCampaign> = AutomatedCampaign.fetchRequest()
-    fetchRequest.predicate = queryPredicateForCampaignQueryableFilters(forEvent: event, todayBeing: today, in: timeZone)
-    let queryMatchedCampaigns = try context.fetch(fetchRequest)
-    // now apply the computed filters that could not be done directly in the query predicate:
-    return queryMatchedCampaigns.filterByScheduledTime(todayBeing: today, in: timeZone).filterBy(deviceSnapshot: device).filterBy(attributesFromEvent: event)
 }
 
 extension Predicate {

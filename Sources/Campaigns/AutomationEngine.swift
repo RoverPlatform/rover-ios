@@ -73,7 +73,7 @@ extension Array where Element == AutomatedCampaign {
     // TODO: when implementing Scheduled campaigns change Element to Campaign and ensure that device filter (segment) field is promoted to abstract type
     func filterBy(deviceSnapshot: DeviceSnapshot) -> [Element] {
         return self.filter { campaign in
-            guard let deviceFilter = campaign.triggerSegmentPredicate else {
+            guard let deviceFilter = campaign.deviceFilterPredicate else {
                 // campaign is not filtering by device.
                 return true
             }

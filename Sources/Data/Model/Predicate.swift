@@ -6,8 +6,8 @@
 //  Copyright © 2019 Rover Labs Inc. All rights reserved.
 //
 
-import Foundation
 import CoreData
+import Foundation
 import os
 
 /// Rover's Representation of a Predicate, directly inspired by (and compatible with) the Apple platform's NSPredicate.
@@ -201,7 +201,6 @@ public struct CompoundPredicate: Predicate, Decodable, Encodable {
     }
 }
 
-
 extension NSManagedObject {
     func getPredicateForPrimitiveField(forKey key: String) -> Predicate? {
         self.willAccessValue(forKey: key)
@@ -256,4 +255,3 @@ extension NSManagedObject {
         setPrimitiveValue(primitiveValue, forKey: key)
     }
 }
-

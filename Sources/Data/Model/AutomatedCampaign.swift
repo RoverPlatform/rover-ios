@@ -36,7 +36,7 @@ public final class AutomatedCampaign: Campaign {
         var timeOfDayFilterStartTime: Int
         var timeOfDayFilterEndTime: Int
         
-        var triggerSegmentPredicate: Predicate?
+        var deviceFilterPredicate: Predicate?
         var eventAttributeFilterPredicate: Predicate?
         var scheduledFilterStartDateTime: DateTimeComponents?
         var scheduledFilterEndDateTime: DateTimeComponents?
@@ -77,7 +77,7 @@ public final class AutomatedCampaign: Campaign {
             self.dayOfWeekFilterSunday = dayOfWeekFilterSunday
             self.timeOfDayFilterStartTime = timeOfDayFilterStartTime
             self.timeOfDayFilterEndTime = timeOfDayFilterEndTime
-            self.triggerSegmentPredicate = triggerSegmentPredicate
+            self.deviceFilterPredicate = triggerSegmentPredicate
             self.eventAttributeFilterPredicate = eventAttributeFilterPredicate
             self.scheduledFilterStartDateTime = scheduledFilterStartDateTime
             self.scheduledFilterEndDateTime = scheduledFilterEndDateTime
@@ -124,15 +124,14 @@ public final class AutomatedCampaign: Campaign {
         campaign.dayOfWeekFilterSunday = insertionInfo.dayOfWeekFilterSunday
         campaign.timeOfDayFilterStartTime = insertionInfo.timeOfDayFilterStartTime
         campaign.timeOfDayFilterEndTime = insertionInfo.timeOfDayFilterEndTime
-        campaign.triggerSegmentPredicate = insertionInfo.triggerSegmentPredicate
+        campaign.deviceFilterPredicate = insertionInfo.deviceFilterPredicate
         campaign.eventAttributeFilterPredicate = insertionInfo.eventAttributeFilterPredicate
         campaign.scheduledFilterStartDateTime = insertionInfo.scheduledFilterStartDateTime
         campaign.scheduledFilterEndDateTime = insertionInfo.scheduledFilterEndDateTime
         return campaign
     }
     
-    // TODO: rename to deviceFilterPredicate. Make a note that it is separate from the others and does not use a hasDeviceFilter boolean.
-    public internal(set) var triggerSegmentPredicate: Predicate? {
+    public internal(set) var deviceFilterPredicate: Predicate? {
         get {
             return getPredicateForPrimitiveField(forKey: Attributes.triggerSegmentPredicate.rawValue)
         }

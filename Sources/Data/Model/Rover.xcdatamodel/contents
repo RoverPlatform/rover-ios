@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14460.32" systemVersion="18D42" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14460.32" systemVersion="18D109" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="AutomatedCampaign" representedClassName=".AutomatedCampaign" parentEntity="Campaign" syncable="YES">
         <attribute name="dayOfWeekFilterFriday" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="dayOfWeekFilterMonday" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
@@ -8,6 +8,7 @@
         <attribute name="dayOfWeekFilterThursday" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="dayOfWeekFilterTuesday" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="dayOfWeekFilterWednesday" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="deviceFilterPredicate" optional="YES" attributeType="Binary" syncable="YES"/>
         <attribute name="eventAttributeFilterPredicate" optional="YES" attributeType="Binary" syncable="YES"/>
         <attribute name="eventTriggerEventName" attributeType="String" syncable="YES"/>
         <attribute name="eventTriggerEventNamespace" optional="YES" attributeType="String" syncable="YES"/>
@@ -19,7 +20,6 @@
         <attribute name="scheduledFilterStartDateTime" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="timeOfDayFilterEndTime" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="timeOfDayFilterStartTime" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="triggerSegmentPredicate" optional="YES" attributeType="Binary" syncable="YES"/>
     </entity>
     <entity name="Beacon" representedClassName=".Beacon" syncable="YES">
         <attribute name="id" attributeType="String" syncable="YES"/>
@@ -80,12 +80,12 @@
     </entity>
     <entity name="ScheduledCampaign" representedClassName=".ScheduledCampaign" parentEntity="Campaign" syncable="YES"/>
     <elements>
-        <element name="AutomatedCampaign" positionX="-171" positionY="108" width="128" height="330"/>
-        <element name="Beacon" positionX="-63" positionY="18" width="128" height="150"/>
-        <element name="Campaign" positionX="-171" positionY="108" width="128" height="45"/>
-        <element name="Event" positionX="-171" positionY="72" width="128" height="150"/>
-        <element name="Geofence" positionX="-282.91796875" positionY="25.5" width="128" height="150"/>
-        <element name="Notification" positionX="-171" positionY="99" width="128" height="150"/>
-        <element name="ScheduledCampaign" positionX="-162" positionY="117" width="128" height="45"/>
+        <element name="AutomatedCampaign" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="Beacon" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="Campaign" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="Event" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="Geofence" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="Notification" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="ScheduledCampaign" positionX="0" positionY="0" width="0" height="0"/>
     </elements>
 </model>

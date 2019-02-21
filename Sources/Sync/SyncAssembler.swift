@@ -97,6 +97,7 @@ public class SyncAssembler: Assembler {
         syncCoordinator.participants.append(resolver.resolve(GeofencesSyncParticipant.self)!)
         syncCoordinator.participants.append(resolver.resolve(BeaconsSyncParticipant.self)!)
         syncCoordinator.participants.append(resolver.resolve(CampaignSyncParticipant.self)!)
-//        syncCoordinator.participants.append(resolver.resolve(ExperienceSyncParticipant.self)!)
+        // Waiting until Experiences plural sync target is implemented in GraphQL.
+        // syncCoordinator.participants.append(resolver.resolve(ExperienceSyncParticipant.self)!)
     }
 }

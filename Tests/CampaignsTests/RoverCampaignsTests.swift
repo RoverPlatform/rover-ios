@@ -152,7 +152,7 @@ class RoverCampaignsTests: XCTestCase {
         
         let matchingCampaign = AutomatedCampaign.blank(context: self.context!)
         matchingCampaign.eventTriggerEventName = "Test Run"
-        matchingCampaign.triggerSegmentPredicate = ComparisonPredicate(
+        matchingCampaign.deviceFilterPredicate = ComparisonPredicate(
             keyPath: "isTestDevice",
             modifier: .direct,
             operator: .equalTo,
@@ -174,7 +174,7 @@ class RoverCampaignsTests: XCTestCase {
         )
         let matchingCampaign = AutomatedCampaign.blank(context: self.context!)
         matchingCampaign.eventTriggerEventName = "Test Run"
-        matchingCampaign.triggerSegmentPredicate = ComparisonPredicate(
+        matchingCampaign.deviceFilterPredicate = ComparisonPredicate(
             keyPath: "userInfo.scoreChannel",
             modifier: .direct,
             operator: .equalTo,
@@ -244,7 +244,7 @@ class RoverCampaignsTests: XCTestCase {
         
         let matchingCampaign = AutomatedCampaign.blank(context: self.context!)
         matchingCampaign.eventTriggerEventName = "Test Run"
-        matchingCampaign.triggerSegmentPredicate = ComparisonPredicate(
+        matchingCampaign.deviceFilterPredicate = ComparisonPredicate(
             keyPath: "userInfo.location",
             modifier: .direct,
             operator: .geoWithin,

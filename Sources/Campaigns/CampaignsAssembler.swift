@@ -6,10 +6,10 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-import Foundation
-import UIKit
 import CoreData
+import Foundation
 import os
+import UIKit
 
 public struct CampaignsAssembler {
     public var influenceTime: Int

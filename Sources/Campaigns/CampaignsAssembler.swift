@@ -50,10 +50,19 @@ extension CampaignsAssembler: Assembler {
             )
         }
         
-        container.register(CampaignEventObserver.self) { resolver in
-            return CampaignEventObserver(
+        // MARK: Automated Campaigns
+        
+        container.register(AutomatedCampaignsFilter.self) { resolver in
+            AutomatedCampaignsFilter(
+                managedObjectContext: resolver.resolve(NSManagedObjectContext.self, name: "backgroundContext")!
+            )
+        }
+        
+        container.register(AutomationEngine.self) { resolver in
+            AutomationEngine(
                 eventPipeline: resolver.resolve(EventPipeline.self)!,
                 managedObjectContext: resolver.resolve(NSManagedObjectContext.self, name: "backgroundContext")!,
+                automatedCampaignsFilter: resolver.resolve(AutomatedCampaignsFilter.self)!,
                 device: resolver.resolve(Device.self)!
             )
         }
@@ -65,6 +74,6 @@ extension CampaignsAssembler: Assembler {
             influenceTracker.startMonitoring()
         }
         
-        resolver.resolve(CampaignEventObserver.self)!.beginObservingEvents()
+        resolver.resolve(AutomationEngine.self)!.beginObservingEvents()
     }
 }

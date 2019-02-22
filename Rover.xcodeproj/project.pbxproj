@@ -37,7 +37,7 @@
 		4935406F21FF94C7006C39F6 /* BeaconNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4935406E21FF94C7006C39F6 /* BeaconNode.swift */; };
 		49354074220382CF006C39F6 /* UI.OSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A0D09421CC3FCE003FAABD /* UI.OSLog.swift */; };
 		49496A5221C839DA00F89438 /* RoverCampaigns.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49496A4921C839DA00F89438 /* RoverCampaigns.framework */; };
-		49496A5721C839DA00F89438 /* RoverCampaignsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49496A5621C839DA00F89438 /* RoverCampaignsTests.swift */; };
+		49496A5721C839DA00F89438 /* RoverCampaignsFilterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49496A5621C839DA00F89438 /* RoverCampaignsFilterTests.swift */; };
 		49496A5921C839DB00F89438 /* RoverCampaigns.h in Headers */ = {isa = PBXBuildFile; fileRef = 49496A4B21C839DA00F89438 /* RoverCampaigns.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		49496A6021C83B0300F89438 /* RoverData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD88A7320C1B21700085AE0 /* RoverData.framework */; };
 		49496A6121C83B3600F89438 /* RoverFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF49DD3203DE00F00B54652 /* RoverFoundation.framework */; };
@@ -45,7 +45,6 @@
 		49496A6421C83CCF00F89438 /* InfluenceTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0C8E3F2055CCBD00E0D860 /* InfluenceTracker.swift */; };
 		49496A6521C83CCF00F89438 /* NotificationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7BA92120D970A100968A30 /* NotificationHandler.swift */; };
 		49496A6621C83CCF00F89438 /* NotificationHandlerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7BA92A20D9811100968A30 /* NotificationHandlerService.swift */; };
-		494F05B021A767C5008B3AFC /* TEMPORARY.swift in Sources */ = {isa = PBXBuildFile; fileRef = 494F05AF21A767C5008B3AFC /* TEMPORARY.swift */; };
 		495821B621A45D1F00F2B632 /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495821B521A45D1F00F2B632 /* Device.swift */; };
 		495821B821A4703800F2B632 /* DeviceModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC3FBF7215581E500372A65 /* DeviceModel.swift */; };
 		495821C021A4AA8500F2B632 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF49ECF203DE49500B54652 /* Reachability.swift */; };
@@ -96,9 +95,9 @@
 		497BA67B21F7AB4F003ED346 /* CampaignSyncParticipant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 497BA67A21F7AB4F003ED346 /* CampaignSyncParticipant.swift */; };
 		4988D94921AF4B260050550E /* Attributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1D5DC42107D32C0071928F /* Attributes.swift */; };
 		499AE17421F8C56000715B44 /* Campaign.swift in Sources */ = {isa = PBXBuildFile; fileRef = 499AE17321F8C56000715B44 /* Campaign.swift */; };
-		49A04D45221768B6009544FB /* CampaignEventObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A04D44221768B6009544FB /* CampaignEventObserver.swift */; };
+		49A04D45221768B6009544FB /* AutomationEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A04D44221768B6009544FB /* AutomationEngine.swift */; };
 		49A276D22208CEAD0052147B /* ExperienceSyncParticipant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A276D12208CEAD0052147B /* ExperienceSyncParticipant.swift */; };
-		49A276D4220DE2C60052147B /* AutomationEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A276D3220DE2C60052147B /* AutomationEngine.swift */; };
+		49A276D4220DE2C60052147B /* AutomatedCampaignsFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A276D3220DE2C60052147B /* AutomatedCampaignsFilter.swift */; };
 		49ACD3CD221DC60A00B2CA47 /* NSPredicate+RoverNSPredicateExceptionWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 49ACD3CC221DC60A00B2CA47 /* NSPredicate+RoverNSPredicateExceptionWrapper.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		49ACD3D1221DCAA300B2CA47 /* NSPredicate+RoverNSPredicateExceptionWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 49ACD3D0221DCAA300B2CA47 /* NSPredicate+RoverNSPredicateExceptionWrapper.m */; };
 		49AFAED421BF006800F1118B /* AttributesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49AFAED321BF006800F1118B /* AttributesTests.swift */; };
@@ -318,9 +317,8 @@
 		49496A4B21C839DA00F89438 /* RoverCampaigns.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RoverCampaigns.h; sourceTree = "<group>"; };
 		49496A4C21C839DA00F89438 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		49496A5121C839DA00F89438 /* RoverCampaignsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RoverCampaignsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		49496A5621C839DA00F89438 /* RoverCampaignsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoverCampaignsTests.swift; sourceTree = "<group>"; };
+		49496A5621C839DA00F89438 /* RoverCampaignsFilterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoverCampaignsFilterTests.swift; sourceTree = "<group>"; };
 		49496A5821C839DB00F89438 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		494F05AF21A767C5008B3AFC /* TEMPORARY.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TEMPORARY.swift; sourceTree = "<group>"; };
 		495821B521A45D1F00F2B632 /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
 		495821B921A4A60D00F2B632 /* BluetoothInfoProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BluetoothInfoProvider.swift; sourceTree = "<group>"; };
 		495821BE21A4A64300F2B632 /* AdSupportInfoProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AdSupportInfoProvider.swift; sourceTree = "<group>"; };
@@ -336,10 +334,10 @@
 		497BA67A21F7AB4F003ED346 /* CampaignSyncParticipant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampaignSyncParticipant.swift; sourceTree = "<group>"; };
 		4980D66421307738007267D3 /* Experiences.Barcode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Experiences.Barcode.swift; sourceTree = "<group>"; };
 		499AE17321F8C56000715B44 /* Campaign.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Campaign.swift; sourceTree = "<group>"; };
-		49A04D44221768B6009544FB /* CampaignEventObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampaignEventObserver.swift; sourceTree = "<group>"; };
+		49A04D44221768B6009544FB /* AutomationEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationEngine.swift; sourceTree = "<group>"; };
 		49A0D09421CC3FCE003FAABD /* UI.OSLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UI.OSLog.swift; sourceTree = "<group>"; };
 		49A276D12208CEAD0052147B /* ExperienceSyncParticipant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperienceSyncParticipant.swift; sourceTree = "<group>"; };
-		49A276D3220DE2C60052147B /* AutomationEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationEngine.swift; sourceTree = "<group>"; };
+		49A276D3220DE2C60052147B /* AutomatedCampaignsFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomatedCampaignsFilter.swift; sourceTree = "<group>"; };
 		49ACD3CC221DC60A00B2CA47 /* NSPredicate+RoverNSPredicateExceptionWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSPredicate+RoverNSPredicateExceptionWrapper.h"; sourceTree = "<group>"; };
 		49ACD3D0221DCAA300B2CA47 /* NSPredicate+RoverNSPredicateExceptionWrapper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSPredicate+RoverNSPredicateExceptionWrapper.m"; sourceTree = "<group>"; };
 		49AFAED321BF006800F1118B /* AttributesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributesTests.swift; sourceTree = "<group>"; };
@@ -785,8 +783,8 @@
 				49496A4B21C839DA00F89438 /* RoverCampaigns.h */,
 				49496A4C21C839DA00F89438 /* Info.plist */,
 				4960CA6521C84484009146F0 /* CampaignsAssembler.swift */,
-				49A276D3220DE2C60052147B /* AutomationEngine.swift */,
-				49A04D44221768B6009544FB /* CampaignEventObserver.swift */,
+				49A276D3220DE2C60052147B /* AutomatedCampaignsFilter.swift */,
+				49A04D44221768B6009544FB /* AutomationEngine.swift */,
 				49ACD3CC221DC60A00B2CA47 /* NSPredicate+RoverNSPredicateExceptionWrapper.h */,
 				49ACD3D0221DCAA300B2CA47 /* NSPredicate+RoverNSPredicateExceptionWrapper.m */,
 			);
@@ -796,7 +794,7 @@
 		49496A5521C839DA00F89438 /* CampaignsTests */ = {
 			isa = PBXGroup;
 			children = (
-				49496A5621C839DA00F89438 /* RoverCampaignsTests.swift */,
+				49496A5621C839DA00F89438 /* RoverCampaignsFilterTests.swift */,
 				49496A5821C839DB00F89438 /* Info.plist */,
 			);
 			path = CampaignsTests;
@@ -1064,7 +1062,6 @@
 				DB6ADD7620B33F5D002F226C /* UIAssembler.swift */,
 				DB6ADD5C20B33EC0002F226C /* RoverUI.h */,
 				DB6ADD5D20B33EC0002F226C /* Info.plist */,
-				494F05AF21A767C5008B3AFC /* TEMPORARY.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -2373,13 +2370,13 @@
 				49496A6421C83CCF00F89438 /* InfluenceTracker.swift in Sources */,
 				4960CA6621C84484009146F0 /* CampaignsAssembler.swift in Sources */,
 				49496A6521C83CCF00F89438 /* NotificationHandler.swift in Sources */,
-				49A276D4220DE2C60052147B /* AutomationEngine.swift in Sources */,
+				49A276D4220DE2C60052147B /* AutomatedCampaignsFilter.swift in Sources */,
 				49ACD3D1221DCAA300B2CA47 /* NSPredicate+RoverNSPredicateExceptionWrapper.m in Sources */,
 				49496A6621C83CCF00F89438 /* NotificationHandlerService.swift in Sources */,
 				49496A6221C83CBB00F89438 /* InfluenceTrackerService.swift in Sources */,
 				4960CA6B21C847A5009146F0 /* Campaigns.UNNotificationResponse.swift in Sources */,
 				4960CA6C21C84F53009146F0 /* Campaigns.OSLog.swift in Sources */,
-				49A04D45221768B6009544FB /* CampaignEventObserver.swift in Sources */,
+				49A04D45221768B6009544FB /* AutomationEngine.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2387,7 +2384,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				49496A5721C839DA00F89438 /* RoverCampaignsTests.swift in Sources */,
+				49496A5721C839DA00F89438 /* RoverCampaignsFilterTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2491,7 +2488,6 @@
 				4962FB59219B50AA00C7F678 /* ScreenViewLayoutAttributes.swift in Sources */,
 				4962FB5D219B50AA00C7F678 /* RoverUI.h in Sources */,
 				495821C321A4AFED00F2B632 /* TelephonyInfoProvider.swift in Sources */,
-				494F05B021A767C5008B3AFC /* TEMPORARY.swift in Sources */,
 				DBB89B9A20D014C700DD797A /* Router.swift in Sources */,
 				DB6ADD7320B33F3A002F226C /* ImageOptimization.swift in Sources */,
 				DBB89B9E20D0167B00DD797A /* LifeCycleTracker.swift in Sources */,

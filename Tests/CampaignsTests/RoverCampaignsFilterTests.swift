@@ -6,13 +6,15 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
+import CoreData
 @testable import RoverCampaigns
 @testable import RoverData
-import CoreData
 import XCTest
 
 class RoverCampaignsTests: XCTestCase {
     var context: NSManagedObjectContext?
+    
+    lazy var subject = AutomatedCampaignsFilter(managedObjectContext: context!)
     
     override func setUp() {
         let bundles = [Bundle(for: DataAssembler.self)]
@@ -273,7 +275,7 @@ class RoverCampaignsTests: XCTestCase {
         let timeZone = TimeZone(identifier: "America/Montreal")!
         
         try XCTAssertEqual(
-            automatedCampaignsMatching(event: event, forDevice: device, in: self.context!, todayBeing: today, inTimeZone: timeZone),
+            subject.automatedCampaignsMatching(event: event, forDevice: device, in: self.context!, todayBeing: today, inTimeZone: timeZone),
             matchesCampaigns,
             file: file,
             line: line

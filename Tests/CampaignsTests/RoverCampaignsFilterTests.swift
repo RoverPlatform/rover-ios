@@ -1,5 +1,5 @@
 //
-//  RoverCampaignsTests.swift
+//  RoverCampaignsFilterTests.swift
 //  RoverCampaignsTests
 //
 //  Created by Andrew Clunis on 2018-12-17.
@@ -11,7 +11,7 @@ import CoreData
 @testable import RoverData
 import XCTest
 
-class RoverCampaignsTests: XCTestCase {
+class RoverCampaignsFilterTests: XCTestCase {
     var context: NSManagedObjectContext?
     
     lazy var subject = AutomatedCampaignsFilter(managedObjectContext: context!)

@@ -1,5 +1,5 @@
 //
-//  NSPredicate+ExceptionWrapper.m
+//  NSPredicate+RoverNSPredicateExceptionWrapper.m
 //  RoverCampaigns
 //
 //  Created by Andrew Clunis on 2019-02-20.
@@ -16,7 +16,7 @@
     @try {
         return [self evaluateWithObject:object];
     } @catch (NSException *exception) {
-        os_log(OS_LOG_DEFAULT, "Problem evaluating NSPredicate: %@", [exception debugDescription]);
+        os_log_with_type(OS_LOG_DEFAULT, OS_LOG_TYPE_ERROR, "Problem evaluating NSPredicate: %@", [exception debugDescription]);
         return false;
     }
 }

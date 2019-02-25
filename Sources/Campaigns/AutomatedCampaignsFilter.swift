@@ -1,5 +1,5 @@
 //
-//  AutomationEngine.swift
+//  AutomatedCampaignsFilter.swift
 //  RoverCampaigns
 //
 //  Created by Andrew Clunis on 2019-02-08.
@@ -11,15 +11,9 @@ import Foundation
 import os
 
 /// This contains all of the logic for matching an Event to any locally stored Automated Campaigns that match it.
-open class AutomatedCampaignsFilter {
-    let managedObjectContext: NSManagedObjectContext
-    
-    init (managedObjectContext: NSManagedObjectContext) {
-        self.managedObjectContext = managedObjectContext
-    }
-    
+public enum AutomatedCampaignsFilter {
     /// Returns the automated campaigns that match the given event.
-    open func automatedCampaignsMatching(
+    public static func automatedCampaignsMatching(
         event: Event,
         forDevice device: DeviceSnapshot,
         in context: NSManagedObjectContext,
@@ -37,7 +31,7 @@ open class AutomatedCampaignsFilter {
     }
     
     /// A query predicate, suitable for use with Core Data, for filtering down the Automated Campaigns down to ones that match the event. Howvever, this does not apply all of the Campaigns' filters: only those filters that can be pratically filtered in Core Data are used.  You should subsequently use filterByDeviceSnapshot, filterByEventAttributes, and filterByScheduledTime to fully discriminate the list.
-    private func queryPredicateForCampaignQueryableFilters(
+    public static func queryPredicateForCampaignQueryableFilters(
         forEvent event: Event,
         todayBeing today: Date,
         in timeZone: TimeZone

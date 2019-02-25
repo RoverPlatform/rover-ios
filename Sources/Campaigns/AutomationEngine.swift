@@ -1,5 +1,5 @@
 //
-//  CampaignEventObserver.swift
+//  AutomationEngine.swift
 //  RoverCampaigns
 //
 //  Created by Andrew Clunis on 2019-02-15.
@@ -11,22 +11,19 @@ import Foundation
 import os
 
 /// Observes emitted Rover events, and if there is an Automated Campaign is relevant for it, schedules an iOS notification for display.
-class AutomationEngine {
+open class AutomationEngine {
     private let eventPipeline: EventPipeline
     private let device: Device
     private let managedObjectContext: NSManagedObjectContext
-    private let automatedCampaignsFilter: AutomatedCampaignsFilter
     private var eventObserverChit: NSObjectProtocol?
     
     init(
         eventPipeline: EventPipeline,
         managedObjectContext: NSManagedObjectContext,
-        automatedCampaignsFilter: AutomatedCampaignsFilter,
         device: Device
     ) {
         self.eventPipeline = eventPipeline
         self.managedObjectContext = managedObjectContext
-        self.automatedCampaignsFilter = automatedCampaignsFilter
         self.device = device
     }
     
@@ -35,12 +32,11 @@ class AutomationEngine {
             guard let self = self else {
                 return
             }
+            
             do {
                 try events.forEach { event in
-                    let matchingCampaigns = try self.automatedCampaignsFilter.automatedCampaignsMatching(
-                        event: event,
-                        forDevice: self.device.snapshot,
-                        in: self.managedObjectContext
+                    let matchingCampaigns = try self.automatedCampaignsMatching(
+                        event: event
                     )
                     os_log("%s campaigns match event.", String(describing: matchingCampaigns.count))
                     matchingCampaigns.forEach { matchingCampaign in
@@ -52,5 +48,13 @@ class AutomationEngine {
                 os_log("Unable to obtain campaigns that match : %s", log: .campaigns, type: .error, String(describing: error))
             }
         }
+    }
+    
+    open func automatedCampaignsMatching(event: Event) throws -> [AutomatedCampaign] {
+        return try AutomatedCampaignsFilter.automatedCampaignsMatching(
+            event: event,
+            forDevice: device.deviceSnapshot,
+            in: managedObjectContext
+        )
     }
 }

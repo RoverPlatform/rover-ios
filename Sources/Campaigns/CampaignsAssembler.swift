@@ -52,17 +52,10 @@ extension CampaignsAssembler: Assembler {
         
         // MARK: Automated Campaigns
         
-        container.register(AutomatedCampaignsFilter.self) { resolver in
-            AutomatedCampaignsFilter(
-                managedObjectContext: resolver.resolve(NSManagedObjectContext.self, name: "backgroundContext")!
-            )
-        }
-        
         container.register(AutomationEngine.self) { resolver in
             AutomationEngine(
                 eventPipeline: resolver.resolve(EventPipeline.self)!,
                 managedObjectContext: resolver.resolve(NSManagedObjectContext.self, name: "backgroundContext")!,
-                automatedCampaignsFilter: resolver.resolve(AutomatedCampaignsFilter.self)!,
                 device: resolver.resolve(Device.self)!
             )
         }

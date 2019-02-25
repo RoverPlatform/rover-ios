@@ -14,8 +14,6 @@ import XCTest
 class RoverCampaignsFilterTests: XCTestCase {
     var context: NSManagedObjectContext?
     
-    lazy var subject = AutomatedCampaignsFilter(managedObjectContext: context!)
-    
     override func setUp() {
         let bundles = [Bundle(for: DataAssembler.self)]
         guard let model = NSManagedObjectModel.mergedModel(from: bundles) else {
@@ -275,7 +273,7 @@ class RoverCampaignsFilterTests: XCTestCase {
         let timeZone = TimeZone(identifier: "America/Montreal")!
         
         try XCTAssertEqual(
-            subject.automatedCampaignsMatching(event: event, forDevice: device, in: self.context!, todayBeing: today, inTimeZone: timeZone),
+            AutomatedCampaignsFilter.automatedCampaignsMatching(event: event, forDevice: device, in: self.context!, todayBeing: today, inTimeZone: timeZone),
             matchesCampaigns,
             file: file,
             line: line

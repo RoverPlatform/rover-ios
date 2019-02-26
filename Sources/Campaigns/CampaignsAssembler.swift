@@ -6,7 +6,9 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
+import CoreData
 import Foundation
+import os
 import UIKit
 
 public struct CampaignsAssembler {
@@ -47,12 +49,24 @@ extension CampaignsAssembler: Assembler {
                 websiteViewControllerProvider: websiteViewControllerProvider
             )
         }
+        
+        // MARK: Automated Campaigns
+        
+        container.register(AutomationEngine.self) { resolver in
+            AutomationEngine(
+                eventPipeline: resolver.resolve(EventPipeline.self)!,
+                managedObjectContext: resolver.resolve(NSManagedObjectContext.self, name: "backgroundContext")!,
+                device: resolver.resolve(Device.self)!
+            )
+        }
     }
-    
+
     public func containerDidAssemble(resolver: Resolver) {
         if isInfluenceTrackingEnabled {
             let influenceTracker = resolver.resolve(InfluenceTracker.self)!
             influenceTracker.startMonitoring()
         }
+        
+        resolver.resolve(AutomationEngine.self)!.beginObservingEvents()
     }
 }

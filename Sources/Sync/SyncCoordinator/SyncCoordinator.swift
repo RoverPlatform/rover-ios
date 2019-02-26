@@ -9,11 +9,11 @@
 import UIKit
 
 public protocol SyncCoordinator: AnyObject {
-//    var participants: [SyncParticipant] { get set }
-    
     func sync()
     func sync(completionHandler: @escaping () -> Void)
     func sync(completionHandler: @escaping (UIBackgroundFetchResult) -> Void)
+    
+    var observers: ObserverSet<UIBackgroundFetchResult> { get set }
 }
 
 extension SyncCoordinator {

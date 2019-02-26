@@ -70,14 +70,73 @@ extension CampaignsSyncResponse: PagingResponse {
 
 extension CampaignNode: CoreDataStorable {
     func store(context: NSManagedObjectContext) {
-        let campaign: Campaign
+        // flatten out the Campaign structures into a more storable and queryable form, in the shape of our AutomatedCampaign and ScheduledCampaign Core Data models.
         switch self.trigger {
-        case is ScheduledCampaignTrigger:
-            campaign = ScheduledCampaign.insert(into: context)
-        case is AutomatedCampaignTrigger:
-            campaign = AutomatedCampaign.insert(into: context)
+        case let trigger as ScheduledCampaignTrigger:
+            let campaign = ScheduledCampaign.insert(into: context)
+        case let trigger as AutomatedCampaignTrigger:
+            let dayOfWeekFilter = trigger.eventTrigger.filters.firstOfType(where: DayOfTheWeekEventTriggerFilter.self)
+            let eventAttributesFilter = trigger.eventTrigger.filters.firstOfType(where: EventAttributesEventTriggerFilter.self)
+            let scheduledFilter = trigger.eventTrigger.filters.firstOfType(where: ScheduledEventTriggerFilter.self)
+            let timeOfDayFilter = trigger.eventTrigger.filters.firstOfType(where: TimeOfDayEventTriggerFilter.self)
+            
+            let insertionInfo = AutomatedCampaign.InsertionInfo(
+                eventTriggerEventName: trigger.eventTrigger.eventName,
+                eventTriggerEventNamespace: trigger.eventTrigger.eventNamespace,
+                hasDayOfWeekFilter: dayOfWeekFilter != nil,
+                hasTimeOfDayFilter: timeOfDayFilter != nil,
+                hasEventAttributeFilter: eventAttributesFilter != nil,
+                hasScheduledFilter: scheduledFilter != nil,
+                dayOfWeekFilterMonday: dayOfWeekFilter?.monday ?? false,
+                dayOfWeekFilterTuesday: dayOfWeekFilter?.tuesday ?? false,
+                dayOfWeekFilterWednesday: dayOfWeekFilter?.wednesday ?? false,
+                dayOfWeekFilterThursday: dayOfWeekFilter?.thursday ?? false,
+                dayOfWeekFilterFriday: dayOfWeekFilter?.friday ?? false,
+                dayOfWeekFilterSaturday: dayOfWeekFilter?.saturday ?? false,
+                dayOfWeekFilterSunday: dayOfWeekFilter?.sunday ?? false,
+                timeOfDayFilterStartTime: timeOfDayFilter?.startTime ?? 0,
+                timeOfDayFilterEndTime: timeOfDayFilter?.endTime ?? 0,
+                deviceFilterPredicate: trigger.segment?.predicate,
+                eventAttributeFilterPredicate: eventAttributesFilter?.predicate,
+                scheduledFilterStartDateTime: RoverData.DateTimeComponents(fromSyncDateTimeComponents: scheduledFilter?.startDateTime),
+                scheduledFilterEndDateTime: RoverData.DateTimeComponents(fromSyncDateTimeComponents: scheduledFilter?.endDateTime)
+            )
+            
+            _ = AutomatedCampaign.insert(into: context, insertionInfo: insertionInfo)
         default:
             fatalError("Some other type somehow appeared for CampaignTrigger")
         }
     }
 }
+
+extension Array {
+    public func firstOfType<Element>(where type: Element.Type) -> Element? {
+        return self.compactMap { element -> Element? in
+            element as? Element
+        }.first
+    }
+}
+
+extension RoverData.DateTimeComponents {
+    /// Construct a DateTimeComponents structure in the Data Module from the DateTimeComponents structure DTO.
+    init(fromSyncDateTimeComponents source: DateTimeComponents) {
+        self.init(
+            date: source.date,
+            time: source.time,
+            timeZone: source.timeZone
+        )
+    }
+    
+    /// Construct a DateTimeComponents structure in the Data Module from the DateTimeComponents structure DTO, if one is present.
+    init?(fromSyncDateTimeComponents source: DateTimeComponents?) {
+        guard let source = source else {
+            return nil
+        }
+        self.init(
+            date: source.date,
+            time: source.time,
+            timeZone: source.timeZone
+        )
+    }
+}
+

@@ -39,12 +39,6 @@ public struct UIAssembler {
 // swiftlint:disable function_body_length
 extension UIAssembler: Assembler {
     public func assemble(container: Container) {
-        // MARK: TEMPORARY FAKE THINGS
-        
-        container.register(SyncCoordinator.self) { _ in
-            FakeSyncCoordinator()
-        }
-        
         // MARK: ImageStore
         
         container.register(ImageStore.self) { _ in
@@ -165,7 +159,6 @@ extension UIAssembler: Assembler {
                 router: resolver.resolve(Router.self)!,
                 imageStore: resolver.resolve(ImageStore.self)!,
                 sessionController: resolver.resolve(SessionController.self)!,
-                syncCoordinator: resolver.resolve(SyncCoordinator.self)!,
                 managedObjectContext: resolver.resolve(NSManagedObjectContext.self, name: "viewContext")!,
                 websiteViewControllerProvider: websiteViewControllerProvider
             )

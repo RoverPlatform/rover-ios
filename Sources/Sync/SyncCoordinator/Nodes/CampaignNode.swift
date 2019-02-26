@@ -10,103 +10,6 @@ import Foundation
 
 /// These structures represent the Campaign data coming back from the cloud-side GraphQL API for Sync.
 
-protocol Predicate {
-}
-
-enum PredicateType: Decodable {
-    case comparisonPredicate
-    case compoundPredicate
-
-    enum CodingKeys: String, CodingKey {
-        case typeName = "__typename"
-    }
-
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        let typeName = try container.decode(String.self, forKey: .typeName)
-        switch typeName {
-        case "ComparisonPredicate":
-            self = .comparisonPredicate
-        case "CompoundPredicate":
-            self = .compoundPredicate
-        default:
-            throw DecodingError.dataCorruptedError(forKey: CodingKeys.typeName, in: container, debugDescription: "Expected either ComparisonPredicate or CompoundPredicate – found \(typeName)")
-        }
-    }
-}
-
-enum ComparisonPredicateModifier: String, Decodable {
-    case direct = "DIRECT"
-    case any = "ANY"
-    case all = "ALL"
-}
-
-enum ComparisonPredicateOperator: String, Decodable {
-    case lessThan = "LESS_THAN"
-    case lessThanOrEqualTo = "LESS_THAN_OR_EQUAL_TO"
-    case greaterThan = "GREATER_THAN"
-    case greaterThanOrEqualTo = "GREATER_THAN_OR_EQUAL_TO"
-    case equalTo = "EQUAL_TO"
-    case notEqualTo = "NOT_EQUAL_TO"
-    case like = "LIKE"
-    case beginsWith = "BEGINS_WITH"
-    case endsWith = "ENDS_WITH"
-    case `in` = "IN"
-    case contains = "CONTAINS"
-    case between = "BETWEEN"
-    case geoWithin = "GEO_WITHIN"
-}
-
-enum CompoundPredicateLogicalType: String, Decodable {
-    case or = "OR"
-    case and = "AND"
-    case not = "NOT"
-}
-
-struct ComparisonPredicate: Predicate, Decodable {
-    let keyPath: String
-    let modifier: ComparisonPredicateModifier
-    let `operator`: ComparisonPredicateOperator
-    let numberValue: Double? = nil
-    let numberValues: [Double]? = nil
-    let stringValue: String? = nil
-    let stringValues: [String]? = nil
-    let booleanValue: Bool? = nil
-    let booleanValues: [Bool]? = nil
-    let dateTimeValue: Date? = nil
-    let dateTimeValues: [Date]? = nil
-}
-
-struct CompoundPredicate: Predicate, Decodable {
-    let booleanOperator: CompoundPredicateLogicalType
-    
-    let predicates: [Predicate]
-    
-    enum CodingKeys: String, CodingKey {
-        case booleanOperator
-        case predicates
-    }
-    
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.booleanOperator = try container.decode(CompoundPredicateLogicalType.self, forKey: .booleanOperator)
-        
-        var predicatesContainer = try container.nestedUnkeyedContainer(forKey: .predicates)
-        var typePeekContainer = predicatesContainer
-        var predicates = [Predicate]()
-        while !predicatesContainer.isAtEnd {
-            let predicateType = try typePeekContainer.decode(PredicateType.self)
-            switch predicateType {
-            case .comparisonPredicate:
-                predicates.append(try predicatesContainer.decode(ComparisonPredicate.self))
-            case .compoundPredicate:
-                predicates.append(try predicatesContainer.decode(CompoundPredicate.self))
-            }
-        }
-        self.predicates = predicates
-    }
-}
-
 enum CampaignStatus: String, Decodable {
     case draft = "DRAFT"
     case published = "PUBLISHED"
@@ -256,14 +159,46 @@ struct FrequencyLimit: Decodable {
     let interval: TimeInterval
 }
 
+struct Segment: Decodable {
+    // The GraphQL API types themselves are actually unions of several possible segment type, themeselves categorized for each trigger type.  Besides being difficult to represent directly in Swift, the extra type information is unnecessary. All of the Segment types we care about do nothing more than contain a predicate.
+
+    let predicate: Predicate
+    
+    enum CodingKeys: String, CodingKey {
+        case predicate
+        case typename = "__typename"
+    }
+    
+    init(from decoder: Decoder) throws {
+        // do a manual decode so we can verify __typename
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        let typeName = try container.decode(String.self, forKey: .typename)
+
+        if typeName == "CompoundSegment" {
+            throw DecodingError.dataCorruptedError(forKey: .typename, in: container, debugDescription: "Legacy CompoundSegment appeared, which is not supported by SDK 3.  These will soon be migrated away in the Rover Cloud API.")
+        }
+        
+        let predicateType = try container.decode(PredicateType.self, forKey: .predicate)
+        switch predicateType {
+        case .comparisonPredicate:
+            self.predicate = try container.decode(ComparisonPredicate.self, forKey: .predicate)
+        case .compoundPredicate:
+            self.predicate = try container.decode(CompoundPredicate.self, forKey: .predicate)
+        }
+    }
+}
+
 struct AutomatedCampaignTrigger: CampaignTrigger, Decodable {
     let delay: TimeInterval
     let eventTrigger: EventTrigger
     let limits: [FrequencyLimit]
+    let segment: Segment?
 }
 
 struct ScheduledCampaignTrigger: CampaignTrigger, Decodable {
     let dateTime: DateTimeComponents
+    let segment: Segment?
 }
 
 protocol CampaignDeliverable {

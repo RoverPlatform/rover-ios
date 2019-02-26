@@ -10,6 +10,8 @@ import os.log
 import UIKit
 
 class SyncCoordinatorService: SyncCoordinator {
+    var observers = ObserverSet<UIBackgroundFetchResult>()
+    
     let client: SyncClient
 
     var syncTask: URLSessionTask?

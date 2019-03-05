@@ -9,6 +9,5 @@
 import CoreData
 import Foundation
 
-public class CampaignDeliverable: NSManagedObject {
-    
+public class CampaignDeliverable: NSManagedObject {    
 }

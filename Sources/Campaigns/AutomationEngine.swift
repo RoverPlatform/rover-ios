@@ -40,9 +40,10 @@ open class AutomationEngine {
                     )
                     os_log("%s campaigns match event.", String(describing: matchingCampaigns.count))
                     matchingCampaigns.forEach { matchingCampaign in
-                        os_log("Campaign: %s", matchingCampaign.eventTriggerEventName)
+                        if let notificationDeliverable = matchingCampaign.deliverable as? NotificationCampaignDeliverable {
+                                scheduleNotificationFromCampaignDeliverable(notificationDeliverable, withDelay: matchingCampaign.delay)
+                        }
                     }
-                    // TODO: Activate Tap behaviour for the event.
                 }
             } catch {
                 os_log("Unable to obtain campaigns that match : %s", log: .campaigns, type: .error, String(describing: error))

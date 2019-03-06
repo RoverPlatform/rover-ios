@@ -215,10 +215,10 @@ enum CampaignDeliverableType: Decodable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let typeName = try container.decode(String.self, forKey: .typeName)
         switch typeName {
-        case "NotificationCampaignDeliverable":
+        case "CampaignNotificationDeliverable":
             self = .notification
         default:
-            throw DecodingError.dataCorruptedError(forKey: CodingKeys.typeName, in: container, debugDescription: "Expected NotificationCampaignDeliverable – found \(typeName)")
+            throw DecodingError.dataCorruptedError(forKey: CodingKeys.typeName, in: container, debugDescription: "Expected CampaignNotificationDeliverable – found \(typeName)")
         }
     }
 }
@@ -262,7 +262,7 @@ struct NotificationTapBehavior: Decodable {
     let url: URL
 }
 
-struct NotificationCampaignDeliverable: CampaignDeliverable, Decodable {
+struct CampaignNotificationDeliverable: CampaignDeliverable, Decodable {
     let alertOptions: NotificationAlertOptions
     let attachment: NotificationAttachment?
     let body: String
@@ -301,7 +301,7 @@ struct CampaignNode: Decodable {
         let deliverableType = try container.decode(CampaignDeliverableType.self, forKey: .deliverable)
         switch deliverableType {
         case .notification:
-            self.deliverable = try container.decode(NotificationCampaignDeliverable.self, forKey: .deliverable)
+            self.deliverable = try container.decode(CampaignNotificationDeliverable.self, forKey: .deliverable)
         }
         
         let triggerType = try container.decode(CampaignTriggerType.self, forKey: .trigger)

@@ -43,7 +43,7 @@
     </entity>
     <entity name="Campaign" representedClassName=".Campaign" isAbstract="YES" syncable="YES">
         <attribute name="id" attributeType="String" syncable="YES"/>
-        <relationship name="deliverable" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="NotificationCampaignDeliverable" inverseName="campaign" inverseEntity="NotificationCampaignDeliverable" syncable="YES"/>
+        <relationship name="deliverable" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CampaignNotificationDeliverable" inverseName="campaign" inverseEntity="CampaignNotificationDeliverable" syncable="YES"/>
     </entity>
     <entity name="Event" representedClassName=".Event" syncable="YES">
         <attribute name="attributes" attributeType="Transformable" syncable="YES"/>
@@ -82,7 +82,7 @@
         <attribute name="isRead" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
-    <entity name="NotificationCampaignDeliverable" representedClassName=".CampaignNotificationDeliverable" syncable="YES">
+    <entity name="CampaignNotificationDeliverable" representedClassName=".CampaignNotificationDeliverable" syncable="YES">
         <attribute name="attachmentType" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="attachmentUrl" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="body" attributeType="String" syncable="YES"/>
@@ -106,7 +106,7 @@
         <element name="Event" positionX="0" positionY="0" width="128" height="150"/>
         <element name="Geofence" positionX="0" positionY="0" width="128" height="150"/>
         <element name="Notification" positionX="0" positionY="0" width="128" height="150"/>
-        <element name="NotificationCampaignDeliverable" positionX="0" positionY="144" width="128" height="255"/>
+        <element name="CampaignNotificationDeliverable" positionX="0" positionY="144" width="128" height="255"/>
         <element name="ScheduledCampaign" positionX="0" positionY="0" width="128" height="45"/>
     </elements>
 </model>

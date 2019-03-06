@@ -1,5 +1,5 @@
 //
-//  NotificationCampaignDeliverable.swift
+//  CampaignNotificationDeliverable.swift
 //  RoverData
 //
 //  Created by Andrew Clunis on 2019-02-21.
@@ -10,7 +10,7 @@ import CoreData
 import Foundation
 import os
 
-final public class NotificationCampaignDeliverable: CampaignDeliverable {
+final public class CampaignNotificationDeliverable: CampaignDeliverable {
     public struct InsertionInfo {
         var body: String
         var title: String?
@@ -61,8 +61,8 @@ final public class NotificationCampaignDeliverable: CampaignDeliverable {
     public static func insert(
         into context: NSManagedObjectContext,
         insertionInfo: InsertionInfo
-    ) -> NotificationCampaignDeliverable {
-        let deliverable = NotificationCampaignDeliverable(context: context)
+    ) -> CampaignNotificationDeliverable {
+        let deliverable = CampaignNotificationDeliverable(context: context)
         deliverable.body = insertionInfo.body
         deliverable.title = insertionInfo.title
         deliverable.showInNotificationCenter = insertionInfo.showInNotificationCenter

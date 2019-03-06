@@ -40,7 +40,7 @@ open class AutomationEngine {
                     )
                     os_log("%s campaigns match event.", String(describing: matchingCampaigns.count))
                     matchingCampaigns.forEach { matchingCampaign in
-                        if let notificationDeliverable = matchingCampaign.deliverable as? NotificationCampaignDeliverable {
+                        if let notificationDeliverable = matchingCampaign.deliverable as? CampaignNotificationDeliverable {
                                 scheduleNotificationFromCampaignDeliverable(notificationDeliverable, withDelay: matchingCampaign.delay)
                         }
                     }

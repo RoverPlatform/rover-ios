@@ -14,7 +14,7 @@ import os
 // subscribe to any triggered automated campaigns.  filter by deliverable type (notificadtion only).  use apple scheduled notification + the delay
 
 
-func scheduleNotificationFromCampaignDeliverable(_ deliverable: NotificationCampaignDeliverable, withDelay delay: TimeInterval? = nil) {
+func scheduleNotificationFromCampaignDeliverable(_ deliverable: CampaignNotificationDeliverable, withDelay delay: TimeInterval? = nil) {
     let notificationContent = deliverable.iosNotificationContent
 
     let trigger: UNNotificationTrigger?
@@ -120,7 +120,7 @@ fileprivate func fetchAttachment(from attachmentURL: URL) -> UNNotificationAttac
     return try? UNNotificationAttachment(identifier: "", url: attachmentLocation, options: options)
 }
 
-extension NotificationCampaignDeliverable {
+extension CampaignNotificationDeliverable {
     public var iosNotificationContent: UNNotificationContent {
         let iosNotificationContent = UNMutableNotificationContent()
         

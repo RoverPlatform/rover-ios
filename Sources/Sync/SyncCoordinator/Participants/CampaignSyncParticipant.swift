@@ -150,10 +150,10 @@ extension RoverData.DateTimeComponents {
 }
 
 extension RoverData.CampaignDeliverable {
-    static func initFrom(syncCampaignDeliverable source: CampaignDeliverable, in context: NSManagedObjectContext) -> RoverData.NotificationCampaignDeliverable? {
+    static func initFrom(syncCampaignDeliverable source: CampaignDeliverable, in context: NSManagedObjectContext) -> RoverData.CampaignNotificationDeliverable? {
         switch source {
-        case let notificationDeliverable as NotificationCampaignDeliverable:
-            let attachmentType: RoverData.NotificationCampaignDeliverable.AttachmentType?
+        case let notificationDeliverable as CampaignNotificationDeliverable:
+            let attachmentType: RoverData.CampaignNotificationDeliverable.AttachmentType?
             
             if let attachmentTypeFromNode = notificationDeliverable.attachment?.type {
                 switch attachmentTypeFromNode {
@@ -168,7 +168,7 @@ extension RoverData.CampaignDeliverable {
                 attachmentType = nil
             }
             
-            let tapBehaviorType: RoverData.NotificationCampaignDeliverable.TapBehaviorType
+            let tapBehaviorType: RoverData.CampaignNotificationDeliverable.TapBehaviorType
             switch notificationDeliverable.tapBehavior.type {
             case .default_:
                 tapBehaviorType = .default
@@ -180,7 +180,7 @@ extension RoverData.CampaignDeliverable {
                 tapBehaviorType = .presentWebsite
             }
             
-            let deliverableInsertionInfo = RoverData.NotificationCampaignDeliverable.InsertionInfo(
+            let deliverableInsertionInfo = RoverData.CampaignNotificationDeliverable.InsertionInfo(
                 body: notificationDeliverable.body,
                 title: notificationDeliverable.title,
                 showInNotificationCenter: notificationDeliverable.alertOptions.notificationCenter,
@@ -195,9 +195,9 @@ extension RoverData.CampaignDeliverable {
                 attachmentUrl: notificationDeliverable.attachment?.url.absoluteString,
                 attachmentType: attachmentType
             )
-            return RoverData.NotificationCampaignDeliverable.insert(into: context, insertionInfo: deliverableInsertionInfo)
+            return RoverData.CampaignNotificationDeliverable.insert(into: context, insertionInfo: deliverableInsertionInfo)
         default:
-            os_log("Only NotificationCampaignDeliverables are currently supported for local persistent storage.", log: .persistence, type: .error)
+            os_log("Only CampaignNotificationDeliverables are currently supported for local persistent storage.", log: .persistence, type: .error)
             return nil
         }
     }

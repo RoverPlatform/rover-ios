@@ -96,7 +96,7 @@
 		4988D94921AF4B260050550E /* Attributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1D5DC42107D32C0071928F /* Attributes.swift */; };
 		499AE17421F8C56000715B44 /* Campaign.swift in Sources */ = {isa = PBXBuildFile; fileRef = 499AE17321F8C56000715B44 /* Campaign.swift */; };
 		49A04D47221F0775009544FB /* AutomatedCampaignNotificationDelivery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A04D46221F0775009544FB /* AutomatedCampaignNotificationDelivery.swift */; };
-		49A04D49221F2FFD009544FB /* NotificationCampaignDeliverable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A04D48221F2FFD009544FB /* NotificationCampaignDeliverable.swift */; };
+		49A04D49221F2FFD009544FB /* CampaignNotificationDeliverable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A04D48221F2FFD009544FB /* CampaignNotificationDeliverable.swift */; };
 		49A04D4B221F46B0009544FB /* CampaignDeliverable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A04D4A221F46B0009544FB /* CampaignDeliverable.swift */; };
 		49A276D22208CEAD0052147B /* ExperienceSyncParticipant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A276D12208CEAD0052147B /* ExperienceSyncParticipant.swift */; };
 		49A276D4220DE2C60052147B /* AutomatedCampaignsFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A276D3220DE2C60052147B /* AutomatedCampaignsFilter.swift */; };
@@ -338,7 +338,7 @@
 		4980D66421307738007267D3 /* Experiences.Barcode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Experiences.Barcode.swift; sourceTree = "<group>"; };
 		499AE17321F8C56000715B44 /* Campaign.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Campaign.swift; sourceTree = "<group>"; };
 		49A04D46221F0775009544FB /* AutomatedCampaignNotificationDelivery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomatedCampaignNotificationDelivery.swift; sourceTree = "<group>"; };
-		49A04D48221F2FFD009544FB /* NotificationCampaignDeliverable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCampaignDeliverable.swift; sourceTree = "<group>"; };
+		49A04D48221F2FFD009544FB /* CampaignNotificationDeliverable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampaignNotificationDeliverable.swift; sourceTree = "<group>"; };
 		49A04D4A221F46B0009544FB /* CampaignDeliverable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampaignDeliverable.swift; sourceTree = "<group>"; };
 		49A0D09421CC3FCE003FAABD /* UI.OSLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UI.OSLog.swift; sourceTree = "<group>"; };
 		49A276D12208CEAD0052147B /* ExperienceSyncParticipant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperienceSyncParticipant.swift; sourceTree = "<group>"; };
@@ -854,7 +854,7 @@
 				499AE17321F8C56000715B44 /* Campaign.swift */,
 				49DCA47522134EDD0081675B /* Predicate.swift */,
 				49B79FE72215E79E008F5982 /* DateTimeComponents.swift */,
-				49A04D48221F2FFD009544FB /* NotificationCampaignDeliverable.swift */,
+				49A04D48221F2FFD009544FB /* CampaignNotificationDeliverable.swift */,
 				49A04D4A221F46B0009544FB /* CampaignDeliverable.swift */,
 			);
 			path = Model;
@@ -2654,7 +2654,7 @@
 				49795DF421C94D6F00AEF684 /* Notification.swift in Sources */,
 				495821CB21A4B68A00F2B632 /* DeviceSnapshot.swift in Sources */,
 				4988D94921AF4B260050550E /* Attributes.swift in Sources */,
-				49A04D49221F2FFD009544FB /* NotificationCampaignDeliverable.swift in Sources */,
+				49A04D49221F2FFD009544FB /* CampaignNotificationDeliverable.swift in Sources */,
 				49C14E9521DD0C5400A3B0BC /* Data.NSManagedObjectContext.swift in Sources */,
 				4975CBE421A7550A00C2DD18 /* Beacon.swift in Sources */,
 				0D53C11521D7F8350072A79F /* ButtonBlock.swift in Sources */,

@@ -27,15 +27,24 @@ public class EventPipeline {
             return
         }
         
-        let event = Event(
-            from: eventInfo,
-            forDevice: deviceSnapshot,
-            inContext: self.managedObjectContext
-        )
-        
-        event.attemptInsert()
-        
-        os_log("Tracking event: %@", log: .events, type: .debug, event.name)
+        self.managedObjectContext.perform {
+            let event = Event(
+                from: eventInfo,
+                forDevice: deviceSnapshot,
+                inContext: self.managedObjectContext
+            )
+            
+            do {
+                try self.managedObjectContext.save()
+                os_log("Saved cards!")
+            } catch {
+                os_log("Could not save tracked event, because: %s", log: .persistence, type: .error, (error as NSError).userInfo.debugDescription)
+                
+                self.managedObjectContext.rollback()
+            }
+            
+            os_log("Tracked event: %@", log: .events, type: .debug, event.name)
+        }
     }
     
     /// Register a callback to be fired whenever Events are inserted.
@@ -43,7 +52,7 @@ public class EventPipeline {
     /// Note that this returns an opaque chit object that you must retain until you no longer wish the callback to be fired.
     public func observeNewEvents(
         observerCallback: @escaping ([Event]) -> Void
-        ) -> NSObjectProtocol {
+    ) -> NSObjectProtocol {
         return NotificationCenter.default.addObserver(forName: .NSManagedObjectContextObjectsDidChange, object: self.managedObjectContext, queue: nil) { iosNotification in
             guard let insertedObjects = iosNotification.userInfo?[NSInsertedObjectsKey] as? Set<NSObject> else {
                 return

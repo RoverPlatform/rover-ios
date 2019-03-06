@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14460.32" systemVersion="18D42" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14460.32" systemVersion="18D109" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="AutomatedCampaign" representedClassName=".AutomatedCampaign" parentEntity="Campaign" syncable="YES">
         <attribute name="dayOfWeekFilterFriday" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="dayOfWeekFilterMonday" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
@@ -8,7 +8,8 @@
         <attribute name="dayOfWeekFilterThursday" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="dayOfWeekFilterTuesday" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="dayOfWeekFilterWednesday" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="delay" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="delayUnit" attributeType="String" syncable="YES"/>
+        <attribute name="delayValue" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="deviceFilterPredicate" optional="YES" attributeType="Binary" syncable="YES"/>
         <attribute name="eventAttributeFilterPredicate" optional="YES" attributeType="Binary" syncable="YES"/>
         <attribute name="eventTriggerEventName" attributeType="String" syncable="YES"/>
@@ -44,6 +45,22 @@
     <entity name="Campaign" representedClassName=".Campaign" isAbstract="YES" syncable="YES">
         <attribute name="id" attributeType="String" syncable="YES"/>
         <relationship name="deliverable" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CampaignNotificationDeliverable" inverseName="campaign" inverseEntity="CampaignNotificationDeliverable" syncable="YES"/>
+    </entity>
+    <entity name="CampaignNotificationDeliverable" representedClassName=".CampaignNotificationDeliverable" syncable="YES">
+        <attribute name="attachmentType" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="attachmentUrl" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="body" attributeType="String" syncable="YES"/>
+        <attribute name="iosCategoryIdentifier" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="iosMutableContent" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="iosSound" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="iosThreadIdentifier" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="showBadgeNumber" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="showInNotificationCenter" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="showSystemNotification" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="tapBehaviorType" attributeType="String" syncable="YES"/>
+        <attribute name="tapBehaviourUrl" attributeType="String" syncable="YES"/>
+        <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="campaign" maxCount="1" deletionRule="Nullify" destinationEntity="Campaign" inverseName="deliverable" inverseEntity="Campaign" syncable="YES"/>
     </entity>
     <entity name="Event" representedClassName=".Event" syncable="YES">
         <attribute name="attributes" attributeType="Transformable" syncable="YES"/>
@@ -82,25 +99,9 @@
         <attribute name="isRead" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
-    <entity name="CampaignNotificationDeliverable" representedClassName=".CampaignNotificationDeliverable" syncable="YES">
-        <attribute name="attachmentType" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="attachmentUrl" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="body" attributeType="String" syncable="YES"/>
-        <attribute name="iosCategoryIdentifier" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="iosMutableContent" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="iosSound" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="iosThreadIdentifier" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="showBadgeNumber" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="showInNotificationCenter" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="showSystemNotification" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="tapBehaviorType" attributeType="String" syncable="YES"/>
-        <attribute name="tapBehaviourUrl" attributeType="String" syncable="YES"/>
-        <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
-        <relationship name="campaign" maxCount="1" deletionRule="Nullify" destinationEntity="Campaign" inverseName="deliverable" inverseEntity="Campaign" syncable="YES"/>
-    </entity>
     <entity name="ScheduledCampaign" representedClassName=".ScheduledCampaign" parentEntity="Campaign" syncable="YES"/>
     <elements>
-        <element name="AutomatedCampaign" positionX="0" positionY="0" width="128" height="345"/>
+        <element name="AutomatedCampaign" positionX="0" positionY="0" width="128" height="360"/>
         <element name="Beacon" positionX="0" positionY="0" width="128" height="150"/>
         <element name="Campaign" positionX="0" positionY="0" width="128" height="75"/>
         <element name="Event" positionX="0" positionY="0" width="128" height="150"/>

@@ -50,6 +50,8 @@ struct CampaignsSyncResponse: Decodable {
         struct Campaigns: Decodable {
             var nodes: [CampaignNode]
             var pageInfo: PageInfo
+            
+            
         }
         
         var campaigns: Campaigns
@@ -72,9 +74,9 @@ extension CampaignNode: CoreDataStorable {
     func store(context: NSManagedObjectContext) {
         // flatten out the Campaign structures into a more storable and queryable form, in the shape of our AutomatedCampaign and ScheduledCampaign Core Data models.
         switch self.trigger {
-        case let trigger as ScheduledCampaignTrigger:
+        case let trigger as CampaignScheduledTrigger:
             let campaign = ScheduledCampaign.insert(into: context)
-        case let trigger as AutomatedCampaignTrigger:
+        case let trigger as CampaignAutomatedTrigger:
             let dayOfWeekFilter = trigger.eventTrigger.filters.firstOfType(where: DayOfTheWeekEventTriggerFilter.self)
             let eventAttributesFilter = trigger.eventTrigger.filters.firstOfType(where: EventAttributesEventTriggerFilter.self)
             let scheduledFilter = trigger.eventTrigger.filters.firstOfType(where: ScheduledEventTriggerFilter.self)
@@ -91,7 +93,8 @@ extension CampaignNode: CoreDataStorable {
                 eventTriggerEventName: trigger.eventTrigger.eventName,
                 eventTriggerEventNamespace: trigger.eventTrigger.eventNamespace,
                 deliverable: storedDeliverable,
-                delay: trigger.delay,
+                delayValue: trigger.delay.value,
+                delayUnit: RoverData.AutomatedCampaign.DelayUnit(from: trigger.delay.unit),
                 hasDayOfWeekFilter: dayOfWeekFilter != nil,
                 hasTimeOfDayFilter: timeOfDayFilter != nil,
                 hasEventAttributeFilter: eventAttributesFilter != nil,
@@ -199,6 +202,21 @@ extension RoverData.CampaignDeliverable {
         default:
             os_log("Only CampaignNotificationDeliverables are currently supported for local persistent storage.", log: .persistence, type: .error)
             return nil
+        }
+    }
+}
+
+extension RoverData.AutomatedCampaign.DelayUnit {
+    init(from source: DelayUnit) {
+        switch source {
+        case .seconds:
+            self = .seconds
+        case .minutes:
+            self = .minutes
+        case .hours:
+            self = .hours
+        case .days:
+            self = .days
         }
     }
 }

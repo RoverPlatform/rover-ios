@@ -7,19 +7,16 @@
 //
 
 import Foundation
-import UserNotifications
 import MobileCoreServices
 import os
+import UserNotifications
 
-// subscribe to any triggered automated campaigns.  filter by deliverable type (notificadtion only).  use apple scheduled notification + the delay
-
-
-func scheduleNotificationFromCampaignDeliverable(_ deliverable: CampaignNotificationDeliverable, withDelay delay: TimeInterval? = nil) {
+func scheduleNotificationFromCampaignDeliverable(_ deliverable: CampaignNotificationDeliverable, withDelay delay: DateComponents? = nil) {
     let notificationContent = deliverable.iosNotificationContent
 
     let trigger: UNNotificationTrigger?
     if let delay = delay {
-        if let delayTime = Calendar.current.date(byAdding: DateComponents(second: Int(delay)), to: Date()) {
+        if let delayTime = Calendar.current.date(byAdding: delay, to: Date()) {
             let delayTimeAsComponents = Calendar.current.dateComponents(in: TimeZone.current, from: delayTime)
             
             trigger = UNCalendarNotificationTrigger(dateMatching: delayTimeAsComponents, repeats: false)

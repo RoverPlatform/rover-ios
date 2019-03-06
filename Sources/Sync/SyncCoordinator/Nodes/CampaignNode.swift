@@ -31,9 +31,9 @@ enum CampaignTriggerType: Decodable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let typeName = try container.decode(String.self, forKey: .typeName)
         switch typeName {
-        case "ScheduledCampaignTrigger":
+        case "CampaignScheduledTrigger":
             self = .scheduled
-        case "AutomatedCampaignTrigger":
+        case "CampaignAutomatedTrigger":
             self = .automated
         default:
             throw DecodingError.dataCorruptedError(forKey: CodingKeys.typeName, in: container, debugDescription: "Expected either ScheduledCampaignTrigger or AutomatedCampaignTrigger – found \(typeName)")
@@ -137,6 +137,8 @@ struct EventTrigger: Decodable {
         var filtersContainer = try container.nestedUnkeyedContainer(forKey: .filters)
         var typePeekContainer = filtersContainer
         var filters = [EventTriggerFilter]()
+        // TODO: ANDREW START HERE AND FIGURE OUT WHY THIS FAILURE IS HAPPENING ON DECODE:
+        // [Sync] Failed to decode response: keyNotFound(CodingKeys(stringValue: "predicate", intValue: nil), Swift.DecodingError.Context(codingPath: [CodingKeys(stringValue: "data", intValue: nil), CodingKeys(stringValue: "campaigns", intValue: nil), CodingKeys(stringValue: "nodes", intValue: nil), _JSONKey(stringValue: "Index 0", intValue: 0), CodingKeys(stringValue: "trigger", intValue: nil), CodingKeys(stringValue: "eventTrigger", intValue: nil), _JSONKey(stringValue: "Index 0", intValue: 0)], debugDescription: "No value associated with key CodingKeys(stringValue: \"predicate\", intValue: nil) (\"predicate\").", underlyingError: nil))
         while !filtersContainer.isAtEnd {
             let filterType = try typePeekContainer.decode(EventTriggerFilterType.self)
             switch filterType {
@@ -189,15 +191,27 @@ struct Segment: Decodable {
     }
 }
 
-struct AutomatedCampaignTrigger: CampaignTrigger, Decodable {
-    let delay: TimeInterval
+struct CampaignAutomatedTrigger: CampaignTrigger, Decodable {
+    let delay: DelayTimeComponent
     let eventTrigger: EventTrigger
     let limits: [FrequencyLimit]
     let segment: Segment?
 }
 
-struct ScheduledCampaignTrigger: CampaignTrigger, Decodable {
-    let dateTime: DateTimeComponents
+enum DelayUnit: String, Decodable {
+    case seconds = "s"
+    case minutes = "m"
+    case hours = "h"
+    case days = "d"
+}
+
+struct DelayTimeComponent: Decodable {
+    let unit: DelayUnit
+    let value: Int
+}
+
+struct CampaignScheduledTrigger: CampaignTrigger, Decodable {
+    let dateTime: DateTimeComponents?
     let segment: Segment?
 }
 
@@ -230,9 +244,9 @@ struct NotificationAlertOptions: Decodable {
 }
 
 enum NotificationAttachmentType: String, Decodable {
-    case audio
-    case image
-    case video
+    case audio = "AUDIO"
+    case image = "IMAGE"
+    case video = "VIDEO"
 }
 
 // iOS name is typically considered an exception to this rule, so silence the type name format warning.
@@ -307,9 +321,9 @@ struct CampaignNode: Decodable {
         let triggerType = try container.decode(CampaignTriggerType.self, forKey: .trigger)
         switch triggerType {
         case .automated:
-            self.trigger = try container.decode(AutomatedCampaignTrigger.self, forKey: .trigger)
+            self.trigger = try container.decode(CampaignAutomatedTrigger.self, forKey: .trigger)
         case .scheduled:
-            self.trigger = try container.decode(ScheduledCampaignTrigger.self, forKey: .trigger)
+            self.trigger = try container.decode(CampaignScheduledTrigger.self, forKey: .trigger)
         }
     }
 }

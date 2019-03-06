@@ -24,7 +24,8 @@ public final class AutomatedCampaign: Campaign {
         var eventTriggerEventName: String
         var eventTriggerEventNamespace: String?
         var deliverable: CampaignDeliverable
-        var delay: TimeInterval
+        var delayValue: Int
+        var delayUnit: DelayUnit
         var hasDayOfWeekFilter: Bool
         var hasTimeOfDayFilter: Bool
         var hasEventAttributeFilter: Bool
@@ -48,7 +49,8 @@ public final class AutomatedCampaign: Campaign {
             eventTriggerEventName: String,
             eventTriggerEventNamespace: String?,
             deliverable: CampaignDeliverable,
-            delay: TimeInterval,
+            delayValue: Int,
+            delayUnit: DelayUnit,
             hasDayOfWeekFilter: Bool,
             hasTimeOfDayFilter: Bool,
             hasEventAttributeFilter: Bool,
@@ -71,7 +73,8 @@ public final class AutomatedCampaign: Campaign {
             self.hasDayOfWeekFilter = hasDayOfWeekFilter
             self.hasTimeOfDayFilter = hasTimeOfDayFilter
             self.deliverable = deliverable
-            self.delay = delay
+            self.delayValue = delayValue
+            self.delayUnit = delayUnit
             self.hasEventAttributeFilter = hasEventAttributeFilter
             self.hasScheduledFilter = hasScheduledFilter
             self.eventTriggerEventName = eventTriggerEventName
@@ -104,7 +107,8 @@ public final class AutomatedCampaign: Campaign {
         campaign.hasScheduledFilter = insertionInfo.hasScheduledFilter
         campaign.eventTriggerEventName = insertionInfo.eventTriggerEventName
         campaign.eventTriggerEventNamespace = insertionInfo.eventTriggerEventNamespace
-        campaign.delay = insertionInfo.delay
+        campaign.delayValue = insertionInfo.delayValue
+        campaign.delayUnit = insertionInfo.delayUnit
         campaign.dayOfWeekFilterMonday = insertionInfo.dayOfWeekFilterMonday
         campaign.dayOfWeekFilterTuesday = insertionInfo.dayOfWeekFilterTuesday
         campaign.dayOfWeekFilterWednesday = insertionInfo.dayOfWeekFilterWednesday
@@ -124,7 +128,8 @@ public final class AutomatedCampaign: Campaign {
     @NSManaged public internal(set) var eventTriggerEventName: String
     @NSManaged public internal(set) var eventTriggerEventNamespace: String?
     
-    @NSManaged public internal(set) var delay: TimeInterval
+    @NSManaged public internal(set) var delayValue: Int
+    
     
     /// Specifies if this automated campaign has a Day of Week filter and thus the dayOfWeekFilter* properties should be honoured.
     @NSManaged public internal(set) var hasDayOfWeekFilter: Bool
@@ -188,6 +193,22 @@ public final class AutomatedCampaign: Campaign {
         }
     }
     
+    public internal(set) var delayUnit: DelayUnit {
+        get {
+            let key = Attributes.delayUnit.rawValue
+            self.willAccessValue(forKey: key)
+            defer { self.didAccessValue(forKey: key) }
+            let value = primitiveValue(forKey: key) as? String ?? ""
+            return DelayUnit(rawValue: value) ?? .seconds
+        }
+        set {
+            let key = Attributes.delayUnit.rawValue
+            willChangeValue(forKey: key)
+            defer { didChangeValue(forKey: key) }
+            setPrimitiveValue(newValue.rawValue, forKey: key)
+        }
+    }
+    
     /// Provides strings of field names for the manually created Core Data accessors.
     private enum Attributes: String {
         case eventAttributeFilterPredicate
@@ -203,5 +224,13 @@ public final class AutomatedCampaign: Campaign {
         case dayOfWeekFilterSunday
         case scheduledFilterStartDateTime
         case scheduledFilterEndDateTime
+        case delayUnit
+    }
+    
+    public enum DelayUnit: String, Decodable {
+        case seconds = "s"
+        case minutes = "m"
+        case hours = "h"
+        case days = "d"
     }
 }

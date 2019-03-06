@@ -41,7 +41,7 @@ private let query = """
             }
         }
 
-        campaigns(first: $campaignsFirst, after: $campaignsAfter, orderBy: $campaignsOrderby) {
+        campaigns(first: $campaignsFirst, after: $campaignsAfter, orderBy: $campaignsOrderby, statuses: [PUBLISHED]) {
             nodes {
                 ...campaignFields
             }

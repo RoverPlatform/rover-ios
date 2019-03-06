@@ -41,7 +41,10 @@ open class AutomationEngine {
                     os_log("%s campaigns match event.", String(describing: matchingCampaigns.count))
                     matchingCampaigns.forEach { matchingCampaign in
                         if let notificationDeliverable = matchingCampaign.deliverable as? CampaignNotificationDeliverable {
-                                scheduleNotificationFromCampaignDeliverable(notificationDeliverable, withDelay: matchingCampaign.delay)
+                            scheduleNotificationFromCampaignDeliverable(
+                                notificationDeliverable,
+                                withDelay: matchingCampaign.delayDateComponents
+                            )
                         }
                     }
                 }
@@ -57,5 +60,20 @@ open class AutomationEngine {
             forDevice: device.deviceSnapshot,
             in: managedObjectContext
         )
+    }
+}
+
+extension AutomatedCampaign {
+    var delayDateComponents: DateComponents {
+        switch self.delayUnit {
+        case .seconds:
+            return DateComponents(second: self.delayValue)
+        case .minutes:
+            return DateComponents(minute: self.delayValue)
+        case .hours:
+            return DateComponents(hour: self.delayValue)
+        case .days:
+            return DateComponents(day: self.delayValue)
+        }
     }
 }

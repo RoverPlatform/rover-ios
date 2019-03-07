@@ -6,6 +6,6 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-public protocol PushTokenContextProvider: class {
+public protocol PushTokenContextProvider: AnyObject {
     var pushToken: Context.PushToken? { get }
 }

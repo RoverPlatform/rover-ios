@@ -16,7 +16,7 @@ open class ExperienceContainer: UIViewController {
     public let viewControllerProvider: ViewControllerProvider
     
     #if swift(>=4.2)
-    open override var childForStatusBarStyle: UIViewController? {
+    override open var childForStatusBarStyle: UIViewController? {
         return self.children.first
     }
     #else
@@ -57,11 +57,11 @@ open class ExperienceContainer: UIViewController {
         layoutCancelButton()
     }
     
-    required public init?(coder aDecoder: NSCoder) {
+    public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    open override func viewDidLoad() {
+    override open func viewDidLoad() {
         super.viewDidLoad()
         fetchExperience()
     }
@@ -98,7 +98,6 @@ open class ExperienceContainer: UIViewController {
         startLoading()
         
         store.fetchExperience(for: identifier) { [weak self] result in
-            
             // If the user cancels loading, the view controller may have been dismissed and garbage collected before the fetch completes
             
             guard let container = self else {

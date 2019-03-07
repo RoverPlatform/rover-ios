@@ -9,7 +9,6 @@
 import Foundation
 
 public struct Context: Codable, Equatable {
-    
     // MARK: AdSupport
     
     public var advertisingIdentifier: String?

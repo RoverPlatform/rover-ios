@@ -10,8 +10,8 @@ public struct FoundationAssembler: Assembler {
     public init() { }
 
     public func assemble(container: Container) {
-        container.register(Dispatcher.self) { resolver in
-            return DispatcherService()
+        container.register(Dispatcher.self) { _ in
+            DispatcherService()
         }
     }
 }

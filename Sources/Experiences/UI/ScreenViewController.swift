@@ -48,7 +48,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         collectionView?.prefetchDataSource = self
     }
     
-    required public init?(coder aDecoder: NSCoder) {
+    public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
@@ -138,7 +138,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
                 return defaultColor
             }
             
-            return UIColor(red: (247/255), green: (247/255), blue: (247/255), alpha: 1)
+            return UIColor(red: (247 / 255), green: (247 / 255), blue: (247 / 255), alpha: 1)
         }()
         
         // Button color
@@ -156,7 +156,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
                 return defaultColor
             }
             
-            return UIColor(red: 0.0, green: 122/255, blue: 1.0, alpha: 1)
+            return UIColor(red: 0.0, green: 122 / 255, blue: 1.0, alpha: 1)
         }()
         
         // Title color
@@ -377,7 +377,6 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     // MARK: UICollectionViewDelegate
     
     override open func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-        
         // No-op if the block does not have any meaningful behavior to avoid every rectangle, line, image etc. tracking events
         
         switch screen.rows[indexPath.section].blocks[indexPath.row].tapBehavior {

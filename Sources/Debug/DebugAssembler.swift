@@ -12,11 +12,10 @@ public struct DebugAssembler: Assembler {
     public init() { }
     
     public func assemble(container: Container) {
-        
         // MARK: Action (settings)
         
         container.register(Action.self, name: "settings", scope: .transient) { resolver in
-            return PresentViewAction(
+            PresentViewAction(
                 viewControllerToPresent: resolver.resolve(UIViewController.self, name: "settings")!,
                 animated: true
             )
@@ -24,15 +23,15 @@ public struct DebugAssembler: Assembler {
         
         // MARK: DebugContextProvider
         
-        container.register(DebugContextProvider.self) { resolver in
-            return DebugContextManager()
+        container.register(DebugContextProvider.self) { _ in
+            DebugContextManager()
         }
         
         // MARK: RouteHandler (settings)
         
         container.register(RouteHandler.self, name: "settings") { resolver in
             let actionProvider: SettingsRouteHandler.ActionProvider = { [weak resolver] in
-                return resolver?.resolve(Action.self, name: "settings")
+                resolver?.resolve(Action.self, name: "settings")
             }
             
             return SettingsRouteHandler(actionProvider: actionProvider)
@@ -40,8 +39,8 @@ public struct DebugAssembler: Assembler {
         
         // MARK: UIViewController (settings)
         
-        container.register(UIViewController.self, name: "settings", scope: .transient) { resolver in
-            return SettingsViewController()
+        container.register(UIViewController.self, name: "settings", scope: .transient) { _ in
+            SettingsViewController()
         }
     }
     

@@ -90,8 +90,8 @@ class NotificationStoreService: NotificationStore {
         let map: ([Notification]) -> [ID: Notification] = { notifications in
             let ids = notifications.map { $0.id }
             let zipped = zip(ids, notifications)
-            return Dictionary(zipped, uniquingKeysWith: { (a, b) in
-                return a
+            return Dictionary(zipped, uniquingKeysWith: { a, _ in
+                a
             })
         }
         

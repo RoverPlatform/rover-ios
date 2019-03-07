@@ -14,7 +14,7 @@ open class SettingsViewController: UIViewController {
     public private(set) var navigationBar: UINavigationBar?
     public private(set) var tableView = UITableView()
     
-    open override var preferredStatusBarStyle: UIStatusBarStyle {
+    override open var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
     
@@ -22,7 +22,7 @@ open class SettingsViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
     }
     
-    required public init?(coder aDecoder: NSCoder) {
+    public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
@@ -32,16 +32,16 @@ open class SettingsViewController: UIViewController {
         title = "Rover Settings"
         
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.backgroundColor = UIColor(red: 93/255, green: 93/255, blue: 93/255, alpha: 1.0)
+        tableView.backgroundColor = UIColor(red: 93 / 255, green: 93 / 255, blue: 93 / 255, alpha: 1.0)
         tableView.tableFooterView = UIView()
-        tableView.separatorColor = UIColor(red: 129/255, green: 129/255, blue: 129/255, alpha: 1.0)
+        tableView.separatorColor = UIColor(red: 129 / 255, green: 129 / 255, blue: 129 / 255, alpha: 1.0)
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 24, bottom: 0, right: 24)
         tableView.dataSource = self
         tableView.delegate = self
         view.addSubview(tableView)
     }
     
-    open override func viewWillAppear(_ animated: Bool) {
+    override open func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         makeNavigationBar()
         configureConstraints()
@@ -62,8 +62,8 @@ open class SettingsViewController: UIViewController {
         let navigationBar = UINavigationBar()
         navigationBar.delegate = self
         navigationBar.translatesAutoresizingMaskIntoConstraints = false
-        navigationBar.barTintColor = UIColor(red: 50/255, green: 50/255, blue: 50/255, alpha: 1.0)
-        navigationBar.tintColor = UIColor(red: 42/255, green: 197/255, blue: 214/255, alpha: 1.0)
+        navigationBar.barTintColor = UIColor(red: 50 / 255, green: 50 / 255, blue: 50 / 255, alpha: 1.0)
+        navigationBar.tintColor = UIColor(red: 42 / 255, green: 197 / 255, blue: 214 / 255, alpha: 1.0)
         UINavigationBar.appearance().titleTextAttributes = [
             .foregroundColor: UIColor.white
         ]
@@ -102,13 +102,13 @@ open class SettingsViewController: UIViewController {
         NSLayoutConstraint.activate([
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-            ])
+        ])
         
         if let navigationBar = navigationBar {
             NSLayoutConstraint.activate([
                 navigationBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                 navigationBar.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-                ])
+            ])
         }
         
         if #available(iOS 11, *) {
@@ -119,7 +119,7 @@ open class SettingsViewController: UIViewController {
                 NSLayoutConstraint.activate([
                     navigationBar.topAnchor.constraint(equalTo: layoutGuide.topAnchor),
                     tableView.topAnchor.constraint(equalTo: navigationBar.bottomAnchor)
-                    ])
+                ])
             } else {
                 tableView.topAnchor.constraint(equalTo: layoutGuide.topAnchor).isActive = true
             }
@@ -130,7 +130,7 @@ open class SettingsViewController: UIViewController {
                 NSLayoutConstraint.activate([
                     navigationBar.topAnchor.constraint(equalTo: topLayoutGuide.bottomAnchor),
                     tableView.topAnchor.constraint(equalTo: navigationBar.bottomAnchor)
-                    ])
+                ])
             } else {
                 tableView.topAnchor.constraint(equalTo: topLayoutGuide.bottomAnchor).isActive = true
             }
@@ -206,17 +206,17 @@ extension SettingsViewController: UITableViewDataSource {
         }
         
         func configure() {
-            backgroundColor = UIColor(red: 93/255, green: 93/255, blue: 93/255, alpha: 1.0)
+            backgroundColor = UIColor(red: 93 / 255, green: 93 / 255, blue: 93 / 255, alpha: 1.0)
             selectionStyle = .none
             
             label.translatesAutoresizingMaskIntoConstraints = false
             label.font = UIFont.systemFont(ofSize: 19)
-            label.textColor = UIColor(red: 216/255, green: 216/255, blue: 216/255, alpha: 1.0)
+            label.textColor = UIColor(red: 216 / 255, green: 216 / 255, blue: 216 / 255, alpha: 1.0)
             label.text = "Test Device"
             contentView.addSubview(label)
             
             toggle.translatesAutoresizingMaskIntoConstraints = false
-            toggle.onTintColor = UIColor(red: 42/255, green: 197/255, blue: 214/255, alpha: 1.0)
+            toggle.onTintColor = UIColor(red: 42 / 255, green: 197 / 255, blue: 214 / 255, alpha: 1.0)
             contentView.addSubview(toggle)
             
             NSLayoutConstraint.activate([
@@ -224,7 +224,7 @@ extension SettingsViewController: UITableViewDataSource {
                 label.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 24.0),
                 label.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 24.0),
                 label.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -24.0)
-                ])
+            ])
             
             let bottomConstraint = label.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -24.0)
             bottomConstraint.priority = UILayoutPriority.defaultLow
@@ -252,12 +252,12 @@ extension SettingsViewController: UITableViewDataSource {
         #endif
         
         func configure() {
-            backgroundColor = UIColor(red: 93/255, green: 93/255, blue: 93/255, alpha: 1.0)
+            backgroundColor = UIColor(red: 93 / 255, green: 93 / 255, blue: 93 / 255, alpha: 1.0)
             selectionStyle = .none
             
             label.translatesAutoresizingMaskIntoConstraints = false
             label.font = UIFont.systemFont(ofSize: 15)
-            label.textColor = UIColor(red: 216/255, green: 216/255, blue: 216/255, alpha: 1.0)
+            label.textColor = UIColor(red: 216 / 255, green: 216 / 255, blue: 216 / 255, alpha: 1.0)
             contentView.addSubview(label)
             
             value.translatesAutoresizingMaskIntoConstraints = false
@@ -270,14 +270,14 @@ extension SettingsViewController: UITableViewDataSource {
                 label.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 24.0),
                 label.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 24.0),
                 label.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -24.0)
-                ])
+            ])
             
             NSLayoutConstraint.activate([
                 value.heightAnchor.constraint(equalToConstant: 24.0),
                 value.topAnchor.constraint(equalTo: label.bottomAnchor),
                 value.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 24.0),
                 value.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -24.0)
-                ])
+            ])
             
             let bottomConstraint = value.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -23.0)
             bottomConstraint.priority = UILayoutPriority.defaultLow

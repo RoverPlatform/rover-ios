@@ -15,11 +15,11 @@ open class ImageCell: BlockCell {
         return imageView
     }()
     
-    open override var content: UIView? {
+    override open var content: UIView? {
         return imageView
     }
     
-    open override func configure(with block: Block, imageStore: ImageStore) {
+    override open func configure(with block: Block, imageStore: ImageStore) {
         super.configure(with: block, imageStore: imageStore)
         
         guard let imageBlock = block as? ImageBlock else {

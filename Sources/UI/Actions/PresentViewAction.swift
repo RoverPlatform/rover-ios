@@ -45,8 +45,6 @@ open class PresentViewAction: Action {
             
             // Presenting `viewControllerToPresent` inside a container other than `UITabBarController` is not supported at this time
             
-            
-            
             if viewControllerToPresent.parent != nil {
                 os_log("Failed to present viewControllerToPresent - already presented in an unsupported container", log: .dispatching, type: .default)
                 _self.finish()

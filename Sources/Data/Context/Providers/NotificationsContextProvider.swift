@@ -6,6 +6,6 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-public protocol NotificationsContextProvider: class {
+public protocol NotificationsContextProvider: AnyObject {
     var notificationAuthorization: String { get }
 }

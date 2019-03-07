@@ -15,7 +15,7 @@ class DispatcherService: OperationQueue, Dispatcher {
             self?.addOperation($1)
         }
         
-        let finishHandler: BlockObserver.FinishHandler = { _,_  in
+        let finishHandler: BlockObserver.FinishHandler = { _, _  in
             completionHandler?()
         }
         

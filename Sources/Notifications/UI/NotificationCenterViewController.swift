@@ -66,7 +66,6 @@ open class NotificationCenterViewController: UIViewController {
         sessionController: SessionController,
         syncCoordinator: SyncCoordinator,
         presentWebsiteActionProvider: @escaping ActionProvider) {
-        
         self.dispatcher = dispatcher
         self.eventQueue = eventQueue
         self.imageStore = imageStore
@@ -86,7 +85,7 @@ open class NotificationCenterViewController: UIViewController {
         }
     }
     
-    required public init?(coder aDecoder: NSCoder) {
+    public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
@@ -133,7 +132,7 @@ open class NotificationCenterViewController: UIViewController {
         UIApplication.shared.applicationIconBadgeNumber = 0
     }
     
-    open override func viewWillAppear(_ animated: Bool) {
+    override open func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         makeNavigationBar()
         configureConstraints()
@@ -202,13 +201,13 @@ open class NotificationCenterViewController: UIViewController {
         NSLayoutConstraint.activate([
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-            ])
+        ])
         
         if let navigationBar = navigationBar {
             NSLayoutConstraint.activate([
                 navigationBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                 navigationBar.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-                ])
+            ])
         }
         
         if #available(iOS 11, *) {
@@ -230,7 +229,7 @@ open class NotificationCenterViewController: UIViewController {
                 NSLayoutConstraint.activate([
                     navigationBar.topAnchor.constraint(equalTo: topLayoutGuide.bottomAnchor),
                     tableView.topAnchor.constraint(equalTo: navigationBar.bottomAnchor)
-                    ])
+                ])
             } else {
                 tableView.topAnchor.constraint(equalTo: topLayoutGuide.bottomAnchor).isActive = true
             }
@@ -300,7 +299,7 @@ extension NotificationCenterViewController: UITableViewDelegate {
     // Swipe to delete in iOS 10
     
     public func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
-        return [UITableViewRowAction(style: .destructive, title: "Delete") { (action, indexPath) in
+        return [UITableViewRowAction(style: .destructive, title: "Delete") { _, indexPath in
             self.deleteNotification(at: indexPath)
         }]
     }
@@ -310,7 +309,7 @@ extension NotificationCenterViewController: UITableViewDelegate {
     @available(iOS 11.0, *)
     public func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         return UISwipeActionsConfiguration(actions: [
-            UIContextualAction(style: .destructive, title: "Delete") { (action, sourceView, completionHandler) in
+            UIContextualAction(style: .destructive, title: "Delete") { _, _, _ in
                 self.deleteNotification(at: indexPath)
             }
         ])

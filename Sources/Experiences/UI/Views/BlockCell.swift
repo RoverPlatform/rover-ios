@@ -27,7 +27,7 @@ open class BlockCell: UICollectionViewCell {
         }
     }
     
-    required public init?(coder aDecoder: NSCoder) {
+    public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         
         backgroundView = UIImageView()

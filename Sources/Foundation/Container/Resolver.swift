@@ -6,7 +6,7 @@
 //  Copyright © 2017 Rover Labs Inc. All rights reserved.
 //
 
-public protocol Resolver: class {
+public protocol Resolver: AnyObject {
     func entry<Service>(for key: ServiceKey) -> ServiceEntry<Service>?
 }
 

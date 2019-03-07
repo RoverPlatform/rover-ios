@@ -115,7 +115,7 @@ extension HTTPClient: FetchExperienceClient {
 
 // MARK: Response
 
-fileprivate struct Response: Decodable {
+private struct Response: Decodable {
     struct Data: Decodable {
         var experience: Experience
     }

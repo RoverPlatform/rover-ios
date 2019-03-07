@@ -26,7 +26,7 @@ public class EventQueue {
     }()
     
     struct WeakObserver {
-        private(set) public weak var value: EventQueueObserver?
+        public private(set) weak var value: EventQueueObserver?
         
         public init(_ value: EventQueueObserver) {
             self.value = value
@@ -273,7 +273,7 @@ public class EventQueue {
     func removeEvents(_ eventsToRemove: [Event]) {
         serialQueue.addOperation {
             self.eventQueue = self.eventQueue.filter { event in
-                !eventsToRemove.contains() { $0.id == event.id }
+                !eventsToRemove.contains { $0.id == event.id }
             }
             
             os_log("Removed %d event(s) from queue – queue now contains %d event(s)", log: .events, type: .debug, eventsToRemove.count, self.eventQueue.count)
@@ -320,7 +320,7 @@ extension EventQueue {
         endBackgroundTask()
         
         serialQueue.addOperation {
-            self.backgroundTask = UIApplication.shared.beginBackgroundTask() {
+            self.backgroundTask = UIApplication.shared.beginBackgroundTask {
                 self.serialQueue.cancelAllOperations()
                 self.endBackgroundTask()
             }

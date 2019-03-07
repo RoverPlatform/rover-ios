@@ -12,7 +12,7 @@ public struct SyncRequest {
     
     public init(query: SyncQuery, values: [String: AttributeRepresentable]) {
         self.query = query
-        self.variables = query.arguments.reduce(into: Attributes(), { (result, argument) in
+        self.variables = query.arguments.reduce(into: Attributes(), { result, argument in
             result[argument.name] = values[argument.name]
         })
     }

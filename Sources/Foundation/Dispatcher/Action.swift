@@ -69,7 +69,7 @@ open class Action: Operation {
         finish()
     }
     
-    final public func produceAction(_ action: Action) {
+    public final func produceAction(_ action: Action) {
         for observer in observers {
             observer.action(self, didProduceAction: action)
         }
@@ -77,7 +77,7 @@ open class Action: Operation {
     
     // MARK: Finishing
     
-    final public func finish(error: Error?) {
+    public final func finish(error: Error?) {
         if let error = error {
             finish(errors: [error])
         } else {
@@ -85,7 +85,7 @@ open class Action: Operation {
         }
     }
     
-    final public func finish(errors: [Error] = []) {
+    public final func finish(errors: [Error] = []) {
         for observer in observers {
             observer.actionDidFinish(self, errors: errors)
         }

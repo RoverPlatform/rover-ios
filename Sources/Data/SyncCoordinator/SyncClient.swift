@@ -27,7 +27,7 @@ extension SyncClient {
             }()
             
             let body: String = {
-                return syncRequests.map({ $0.query.definition }).joined(separator: "\n")
+                syncRequests.map({ $0.query.definition }).joined(separator: "\n")
             }()
             
             return """
@@ -43,8 +43,8 @@ extension SyncClient {
         }()
         
         let variables: Attributes = {
-            return syncRequests.reduce(Attributes(), { (result, request) in
-                return request.variables.reduce(result, { (result, element) in
+            syncRequests.reduce(Attributes(), { result, request in
+                request.variables.reduce(result, { result, element in
                     var nextResult = result
                     nextResult["\(request.query.name)\(element.key.rawValue.capitalized)"] = element.value
                     return nextResult

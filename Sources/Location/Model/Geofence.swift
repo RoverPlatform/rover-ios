@@ -24,12 +24,12 @@ public final class Geofence: NSManagedObject {
     
     @NSManaged public private(set) var regionIdentifier: String
     
-    public override func awakeFromInsert() {
+    override public func awakeFromInsert() {
         super.awakeFromInsert()
         self.tags = []
     }
     
-    public override func willSave() {
+    override public func willSave() {
         if self.regionIdentifier != self.region.identifier {
             self.regionIdentifier = self.region.identifier
         }
@@ -183,7 +183,7 @@ extension Collection where Element == Geofence {
         #endif
         
         let sorted = self.sorted(by: {
-            return coordinate.distanceTo($0.coordinate) < coordinate.distanceTo($1.coordinate)
+            coordinate.distanceTo($0.coordinate) < coordinate.distanceTo($1.coordinate)
         })
         
         #if swift(>=4.2)

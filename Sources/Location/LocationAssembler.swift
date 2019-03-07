@@ -23,7 +23,6 @@ public class LocationAssembler: Assembler {
     }
     
     public func assemble(container: Container) {
-        
         // MARK: Core Data
         
         container.register(NSManagedObjectContext.self, name: "location.backgroundContext") { resolver in
@@ -38,7 +37,7 @@ public class LocationAssembler: Assembler {
             return container.viewContext
         }
         
-        container.register(NSPersistentContainer.self, name: "location") { resolver in
+        container.register(NSPersistentContainer.self, name: "location") { _ in
             let bundles = [Bundle(for: LocationAssembler.self)]
             guard let model = NSManagedObjectModel.mergedModel(from: bundles) else {
                 fatalError("Model not found")
@@ -57,11 +56,11 @@ public class LocationAssembler: Assembler {
         // MARK: Services
         
         container.register(LocationContextProvider.self) { resolver in
-            return resolver.resolve(LocationManager.self)!
+            resolver.resolve(LocationManager.self)!
         }
         
         container.register(LocationManager.self) { resolver in
-            return LocationManager(
+            LocationManager(
                 context: resolver.resolve(NSManagedObjectContext.self, name: "location.viewContext")!,
                 eventQueue: resolver.resolve(EventQueue.self)!,
                 maxGeofenceRegionsToMonitor: self.maxGeofenceRegionsToMonitor,
@@ -70,18 +69,18 @@ public class LocationAssembler: Assembler {
         }
         
         container.register(RegionManager.self) { resolver in
-            return resolver.resolve(LocationManager.self)!
+            resolver.resolve(LocationManager.self)!
         }
         
         container.register(SyncParticipant.self, name: "location.beacons") { resolver in
-            return BeaconsSyncParticipant(
+            BeaconsSyncParticipant(
                 context: resolver.resolve(NSManagedObjectContext.self, name: "location.backgroundContext")!,
                 userDefaults: UserDefaults.standard
             )
         }
         
         container.register(SyncParticipant.self, name: "location.geofences") { resolver in
-            return GeofencesSyncParticipant(
+            GeofencesSyncParticipant(
                 context: resolver.resolve(NSManagedObjectContext.self, name: "location.backgroundContext")!,
                 userDefaults: UserDefaults.standard
             )

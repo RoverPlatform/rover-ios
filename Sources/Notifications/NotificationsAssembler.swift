@@ -23,12 +23,11 @@ public struct NotificationsAssembler: Assembler {
     }
     
     public func assemble(container: Container) {
-        
         // MARK: Action (openNotification)
         
         container.register(Action.self, name: "openNotification", scope: .transient) { (resolver, notification: Notification) in
             let presentWebsiteActionProvider: OpenNotificationAction.ActionProvider = { [weak resolver] url in
-                return resolver?.resolve(Action.self, name: "presentWebsite", arguments: url)!
+                resolver?.resolve(Action.self, name: "presentWebsite", arguments: url)!
             }
             
             return OpenNotificationAction(
@@ -49,7 +48,7 @@ public struct NotificationsAssembler: Assembler {
         // MARK: InfluenceTracker
         
         container.register(InfluenceTracker.self) { resolver in
-            return InfluenceTrackerService(
+            InfluenceTrackerService(
                 influenceTime: self.influenceTime,
                 eventQueue: resolver.resolve(EventQueue.self),
                 notificationCenter: NotificationCenter.default,
@@ -59,21 +58,21 @@ public struct NotificationsAssembler: Assembler {
         
         // MARK: NotificationAuthorizationManager
         
-        container.register(NotificationAuthorizationManager.self) { resolver in
-            return NotificationAuthorizationManager()
+        container.register(NotificationAuthorizationManager.self) { _ in
+            NotificationAuthorizationManager()
         }
         
         // MARK: NotificationContextProvider
         
         container.register(NotificationsContextProvider.self) { resolver in
-            return resolver.resolve(NotificationAuthorizationManager.self)!
+            resolver.resolve(NotificationAuthorizationManager.self)!
         }
         
         // MARK: NotificationHandler
         
         container.register(NotificationHandler.self) { resolver in
             let actionProvider: NotificationHandlerService.ActionProvider = { [weak resolver] notification in
-                return resolver?.resolve(Action.self, name: "openNotification", arguments: notification)
+                resolver?.resolve(Action.self, name: "openNotification", arguments: notification)
             }
             
             return NotificationHandlerService(
@@ -86,7 +85,7 @@ public struct NotificationsAssembler: Assembler {
         // MARK: NotificationStore
         
         container.register(NotificationStore.self) { [maxNotifications] resolver in
-            return NotificationStoreService(
+            NotificationStoreService(
                 maxSize: maxNotifications,
                 eventQueue: resolver.resolve(EventQueue.self)
             )
@@ -96,7 +95,7 @@ public struct NotificationsAssembler: Assembler {
         
         container.register(RouteHandler.self, name: "notificationCenter") { resolver in
             let actionProvider: NotificationCenterRouteHandler.ActionProvider = { [weak resolver] in
-                return resolver?.resolve(Action.self, name: "presentNotificationCenter")
+                resolver?.resolve(Action.self, name: "presentNotificationCenter")
             }
             
             return NotificationCenterRouteHandler(actionProvider: actionProvider)
@@ -105,7 +104,7 @@ public struct NotificationsAssembler: Assembler {
         // MARK: SyncParticipant (notifications)
         
         container.register(SyncParticipant.self, name: "notifications") { resolver in
-            return NotificationsSyncParticipant(
+            NotificationsSyncParticipant(
                 store: resolver.resolve(NotificationStore.self)!
             )
         }
@@ -114,7 +113,7 @@ public struct NotificationsAssembler: Assembler {
         
         container.register(UIViewController.self, name: "notificationCenter") { resolver in
             let presentWebsiteActionProvider: NotificationCenterViewController.ActionProvider = { [weak resolver] url in
-                return resolver?.resolve(Action.self, name: "presentWebsite", arguments: url)
+                resolver?.resolve(Action.self, name: "presentWebsite", arguments: url)
             }
             
             return NotificationCenterViewController(

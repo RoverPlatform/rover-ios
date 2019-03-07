@@ -13,7 +13,7 @@ open class RowView: UICollectionReusableView {
     
     public var row: Row?
     
-    open override var clipsToBounds: Bool {
+    override open var clipsToBounds: Bool {
         get {
             return true
         }
@@ -25,7 +25,7 @@ open class RowView: UICollectionReusableView {
         addSubviews()
     }
     
-    required public init?(coder aDecoder: NSCoder) {
+    public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         addSubviews()
     }
@@ -56,7 +56,6 @@ open class RowView: UICollectionReusableView {
     }
     
     open func configureBackgroundImage(imageStore: ImageStore) {
-        
         // Reset any existing background image
         
         backgroundImageView.alpha = 0.0

@@ -24,12 +24,12 @@ public final class Beacon: NSManagedObject {
 
     @NSManaged public private(set) var regionIdentifier: String
     
-    public override func awakeFromInsert() {
+    override public func awakeFromInsert() {
         super.awakeFromInsert()
         self.tags = []
     }
     
-    public override func willSave() {
+    override public func willSave() {
         if self.regionIdentifier != self.region.identifier {
             self.regionIdentifier = self.region.identifier
         }

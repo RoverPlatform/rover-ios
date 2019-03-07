@@ -6,8 +6,8 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-import UIKit
 import os.log
+import UIKit
 
 class ContextManager {
     let persistedPushToken = PersistedValue<Context.PushToken>(storageKey: "io.rover.RoverData.pushToken")
@@ -61,7 +61,7 @@ extension ContextManager: StaticContextProvider {
             return UIApplication.shared.applicationIconBadgeNumber
         } else {
             return DispatchQueue.main.sync {
-                return UIApplication.shared.applicationIconBadgeNumber
+                UIApplication.shared.applicationIconBadgeNumber
             }
         }
     }

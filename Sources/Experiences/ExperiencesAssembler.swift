@@ -11,6 +11,7 @@ import UIKit
 public struct ExperiencesAssembler: Assembler {
     public init() { }
     
+    // swiftlint:disable:next function_body_length // Assemblers are fairly declarative.
     public func assemble(container: Container) {
         // MARK: Action (presentExperience)
         

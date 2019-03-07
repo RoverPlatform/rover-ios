@@ -22,6 +22,7 @@ open class SettingsViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
     }
     
+    @available(*, unavailable)
     public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -139,7 +140,8 @@ open class SettingsViewController: UIViewController {
     
     // MARK: Actions
     
-    @objc func done(_ sender: Any) {
+    @objc
+    func done(_ sender: Any) {
         dismiss(animated: true, completion: nil)
     }
 }
@@ -173,11 +175,12 @@ extension SettingsViewController: UITableViewDataSource {
             cell.value.text = UIDevice.current.identifierForVendor?.uuidString
             return cell
         default:
-            fatalError()
+            fatalError("Non-existent column asked for in SettingsViewController.")
         }
     }
     
-    @objc func toggleTestDevice(_ sender: Any) {
+    @objc
+    func toggleTestDevice(_ sender: Any) {
         guard let toggle = sender as? UISwitch else {
             return
         }
@@ -201,6 +204,7 @@ extension SettingsViewController: UITableViewDataSource {
         }
         #endif
         
+        @available(*, unavailable)
         required init?(coder aDecoder: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
@@ -284,6 +288,7 @@ extension SettingsViewController: UITableViewDataSource {
             bottomConstraint.isActive = true
         }
         
+        @available(*, unavailable)
         required init?(coder aDecoder: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }

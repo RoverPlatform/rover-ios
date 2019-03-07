@@ -22,6 +22,7 @@ public struct NotificationsAssembler: Assembler {
         self.maxNotifications = maxNotifications
     }
     
+    // swiftlint:disable:next function_body_length // Assemblers are fairly declarative.
     public func assemble(container: Container) {
         // MARK: Action (openNotification)
         

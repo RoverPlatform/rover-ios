@@ -11,7 +11,8 @@ import CoreLocation
 import os.log
 
 public final class Beacon: NSManagedObject {
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<Beacon> {
+    @nonobjc
+    public class func fetchRequest() -> NSFetchRequest<Beacon> {
         return NSFetchRequest<Beacon>(entityName: "Beacon")
     }
     
@@ -131,7 +132,7 @@ extension Beacon {
 
 extension Collection where Element == Beacon {
     public func wildCardRegions(maxLength: Int) -> Set<CLBeaconRegion> {
-        let uuids = self.map({ $0.uuid })
+        let uuids = self.map { $0.uuid }
         let unique = Set(uuids)
         
         #if swift(>=4.2)

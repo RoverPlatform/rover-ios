@@ -27,9 +27,9 @@ class LocationManager {
     
     var beaconMap = [CLBeaconRegion: Set<Beacon>]()
     var currentBeacons: Set<Beacon> {
-        return self.beaconMap.reduce(Set<Beacon>(), { result, element in
+        return self.beaconMap.reduce(Set<Beacon>()) { result, element in
             result.union(element.value)
-        })
+        }
     }
     
     var beaconObservers = ObserverSet<Set<Beacon>>()

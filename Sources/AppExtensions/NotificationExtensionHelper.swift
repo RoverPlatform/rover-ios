@@ -19,7 +19,8 @@ public class NotificationExtensionHelper {
         self.userDefaults = userDefaults
     }
     
-    @discardableResult public func didReceive(_ request: UNNotificationRequest, withContent content: UNMutableNotificationContent) -> Bool {
+    @discardableResult
+    public func didReceive(_ request: UNNotificationRequest, withContent content: UNMutableNotificationContent) -> Bool {
         guard let data = try? JSONSerialization.data(withJSONObject: content.userInfo, options: []) else {
             clearLastReceivedNotification()
             return false
@@ -85,6 +86,8 @@ public class NotificationExtensionHelper {
         userDefaults.removeObject(forKey: "io.rover.lastReceivedNotification")
     }
     
+    // attachMedia is fairly clear, so silence the function length warning.
+    // swiftlint:disable function_body_length
     func attachMedia(from attachmentURL: URL, to content: UNMutableNotificationContent) {
         guard let scheme = attachmentURL.scheme?.lowercased(), ["http", "https"].contains(scheme) else {
             return
@@ -98,12 +101,12 @@ public class NotificationExtensionHelper {
             var error: Error?
             
             let semaphore = DispatchSemaphore(value: 0)
-            URLSession.shared.downloadTask(with: url, completionHandler: {
+            URLSession.shared.downloadTask(with: url) {
                 fileLocation = $0
                 response = $1
                 error = $2
                 semaphore.signal()
-            }).resume()
+            }.resume()
             _ = semaphore.wait(timeout: .distantFuture)
             
             return (fileLocation, response, error)

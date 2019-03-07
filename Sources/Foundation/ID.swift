@@ -6,6 +6,7 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
+// swiftlint:disable:next type_name // ID is an entirely reasonable name for this.
 public struct ID: Codable, Equatable, Hashable, RawRepresentable {
     public var rawValue: String
     

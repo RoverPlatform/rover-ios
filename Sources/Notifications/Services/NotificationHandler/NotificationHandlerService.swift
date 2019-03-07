@@ -13,6 +13,7 @@ class NotificationHandlerService: NotificationHandler {
     let influenceTracker: InfluenceTracker
     
     typealias ActionProvider = (Notification) -> Action?
+    
     let actionProvider: ActionProvider
     
     init(dispatcher: Dispatcher, influenceTracker: InfluenceTracker, actionProvider: @escaping ActionProvider) {

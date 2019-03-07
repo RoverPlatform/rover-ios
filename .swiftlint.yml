@@ -78,5 +78,5 @@ enabled_rules:
   - xct_specific_matcher
   - yoda_condition
 excluded:
-  - Sources/UI/Vendor/Reachability.swift
+  - Sources/Data/Vendor/Reachability.swift
   

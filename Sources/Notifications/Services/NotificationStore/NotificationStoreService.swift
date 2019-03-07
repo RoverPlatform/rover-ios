@@ -90,21 +90,21 @@ class NotificationStoreService: NotificationStore {
         let map: ([Notification]) -> [ID: Notification] = { notifications in
             let ids = notifications.map { $0.id }
             let zipped = zip(ids, notifications)
-            return Dictionary(zipped, uniquingKeysWith: { a, _ in
+            return Dictionary(zipped) { a, _ in
                 a
-            })
+            }
         }
         
         let existing = map(self.notifications)
         let new = map(notifications)
-        let merged = existing.merging(new, uniquingKeysWith: {
+        let merged = existing.merging(new) {
             var notification = $1
             notification.isRead = $0.isRead || $1.isRead
             notification.isDeleted = $0.isDeleted || $1.isDeleted
             return notification
-        })
+        }
         
-        let sorted = merged.values.sorted(by: { $0.deliveredAt > $1.deliveredAt })
+        let sorted = merged.values.sorted { $0.deliveredAt > $1.deliveredAt }
         let trimmed = sorted.prefix(maxSize)
         self.notifications = Array(trimmed)
         persist()
@@ -117,7 +117,7 @@ class NotificationStoreService: NotificationStore {
             return
         }
         
-        notifications = notifications.map({
+        notifications = notifications.map {
             if $0.id != notification.id {
                 return $0
             }
@@ -125,7 +125,7 @@ class NotificationStoreService: NotificationStore {
             var notification = $0
             notification.isDeleted = true
             return notification
-        })
+        }
         
         persist()
         
@@ -143,7 +143,7 @@ class NotificationStoreService: NotificationStore {
             return
         }
         
-        notifications = notifications.map({
+        notifications = notifications.map {
             if $0.id != notification.id {
                 return $0
             }
@@ -151,7 +151,7 @@ class NotificationStoreService: NotificationStore {
             var notification = $0
             notification.isRead = true
             return notification
-        })
+        }
         
         persist()
         

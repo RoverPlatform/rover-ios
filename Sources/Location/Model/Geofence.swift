@@ -11,7 +11,8 @@ import CoreLocation
 import os
 
 public final class Geofence: NSManagedObject {
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<Geofence> {
+    @nonobjc
+    public class func fetchRequest() -> NSFetchRequest<Geofence> {
         return NSFetchRequest<Geofence>(entityName: "Geofence")
     }
     
@@ -182,9 +183,9 @@ extension Collection where Element == Geofence {
         }
         #endif
         
-        let sorted = self.sorted(by: {
+        let sorted = self.sorted {
             coordinate.distanceTo($0.coordinate) < coordinate.distanceTo($1.coordinate)
-        })
+        }
         
         #if swift(>=4.2)
         if #available(iOS 12.0, *) {

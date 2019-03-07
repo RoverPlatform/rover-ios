@@ -27,6 +27,7 @@ public struct DataAssembler: Assembler {
         self.maxEventQueueSize = maxEventQueueSize
     }
     
+    // swiftlint:disable:next function_body_length // Assemblers are fairly declarative.
     public func assemble(container: Container) {
         // MARK: ContextManager
         

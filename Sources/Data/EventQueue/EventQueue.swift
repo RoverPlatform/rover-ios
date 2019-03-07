@@ -16,7 +16,7 @@ public class EventQueue {
     let maxBatchSize: Int
     let maxQueueSize: Int
     
-    // Use an implicitly unwrapped optional to allow circular dependency injection
+    // swiftlint:disable:next implicitly_unwrapped_optional // Use an implicitly unwrapped optional to allow circular dependency injection
     var contextProvider: ContextProvider!
     
     let serialQueue: Foundation.OperationQueue = {
@@ -26,9 +26,9 @@ public class EventQueue {
     }()
     
     struct WeakObserver {
-        public private(set) weak var value: EventQueueObserver?
+        private(set) weak var value: EventQueueObserver?
         
-        public init(_ value: EventQueueObserver) {
+        init(_ value: EventQueueObserver) {
             self.value = value
         }
     }
@@ -94,7 +94,7 @@ public class EventQueue {
         }
         #endif
         
-        if (UIApplication.shared.applicationState == .active) {
+        if UIApplication.shared.applicationState == .active {
             self.startTimer()
         }
     }
@@ -181,7 +181,7 @@ public class EventQueue {
             }
         }
         
-        observers.compactMap({ $0.value }).forEach { $0.eventQueue(self, didAddEvent: info) }
+        observers.compactMap { $0.value }.forEach { $0.eventQueue(self, didAddEvent: info) }
     }
     
     func persistEvents() {
@@ -218,6 +218,7 @@ public class EventQueue {
     }
     
     func flushEvents(minBatchSize: Int = 1) {
+        // swiftlint:disable:next closure_body_length // TODO consider refactoring.
         serialQueue.addOperation {
             if self.uploadTask != nil {
                 os_log("Skipping flush – already in progress", log: .events, type: .debug)
@@ -239,7 +240,7 @@ public class EventQueue {
             
             let uploadTask = self.client.task(with: events) { result in
                 switch result {
-                case .error(let error, let isRetryable):
+                case let .error(error, isRetryable):
                     if let error = error {
                         os_log("Failed to upload events: %@", log: .events, type: .error, error.localizedDescription)
                     }
@@ -330,13 +331,13 @@ extension EventQueue {
     func endBackgroundTask() {
         serialQueue.addOperation {
             #if swift(>=4.2)
-            if (self.backgroundTask != UIBackgroundTaskIdentifier.invalid) {
+            if self.backgroundTask != UIBackgroundTaskIdentifier.invalid {
                 let taskIdentifier = UIBackgroundTaskIdentifier(rawValue: self.backgroundTask.rawValue)
                 UIApplication.shared.endBackgroundTask(taskIdentifier)
                 self.backgroundTask = UIBackgroundTaskIdentifier.invalid
             }
             #else
-            if (self.backgroundTask != UIBackgroundTaskInvalid) {
+            if self.backgroundTask != UIBackgroundTaskInvalid {
                 UIApplication.shared.endBackgroundTask(self.backgroundTask)
                 self.backgroundTask = UIBackgroundTaskInvalid
             }

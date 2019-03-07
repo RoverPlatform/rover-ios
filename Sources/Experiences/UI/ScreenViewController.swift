@@ -8,6 +8,9 @@
 
 import UIKit
 
+// ScreenViewController may deserve a refactor: https://github.com/RoverPlatform/rover-ios/issues/406
+// swiftlint:disable type_body_length
+/// ScreenViewController displays a screen within a Rover experience.
 open class ScreenViewController: UICollectionViewController, UICollectionViewDataSourcePrefetching {
     static var fetchImageTaskKey: Void?
     
@@ -48,6 +51,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         collectionView?.prefetchDataSource = self
     }
     
+    @available(*, unavailable)
     public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -112,7 +116,8 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         sessionController.unregisterSession(identifier: sessionIdentifier)
     }
     
-    @objc open func close() {
+    @objc
+    open func close() {
         dismiss(animated: true, completion: nil)
     }
     
@@ -268,9 +273,9 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
                     backgroundImageView?.image = image
                 }
                 
-                UIView.animate(withDuration: 0.25, animations: {
+                UIView.animate(withDuration: 0.25) {
                     backgroundImageView?.alpha = 1.0
-                })
+                }
             }
         }
     }
@@ -411,7 +416,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
             }
         case .none:
             break
-        case .openURL(let url, let dismiss):
+        case let .openURL(url, dismiss):
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
             
             if dismiss {

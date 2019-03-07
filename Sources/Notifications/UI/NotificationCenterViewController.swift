@@ -44,7 +44,7 @@ open class NotificationCenterViewController: UIViewController {
      You can override this method if you wish to modify the rules used to filter notifications. For example if you wish to include expired notifications in the table view and instead show their expired status with a visual indicator.
      */
     open func filterNotifications() -> [Notification] {
-        return notificationStore.notifications.filter({ notification in
+        return notificationStore.notifications.filter { notification in
             guard notification.isNotificationCenterEnabled, !notification.isDeleted else {
                 return false
             }
@@ -54,7 +54,7 @@ open class NotificationCenterViewController: UIViewController {
             }
             
             return true
-        })
+        }
     }
     
     public init(
@@ -65,7 +65,8 @@ open class NotificationCenterViewController: UIViewController {
         router: Router,
         sessionController: SessionController,
         syncCoordinator: SyncCoordinator,
-        presentWebsiteActionProvider: @escaping ActionProvider) {
+        presentWebsiteActionProvider: @escaping ActionProvider
+    ) {
         self.dispatcher = dispatcher
         self.eventQueue = eventQueue
         self.imageStore = imageStore
@@ -85,6 +86,7 @@ open class NotificationCenterViewController: UIViewController {
         }
     }
     
+    @available(*, unavailable)
     public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -238,11 +240,13 @@ open class NotificationCenterViewController: UIViewController {
     
     // MARK: Actions
     
-    @objc func done(_ sender: Any) {
+    @objc
+    func done(_ sender: Any) {
         dismiss(animated: true, completion: nil)
     }
     
-    @objc func refresh(_ sender: Any) {
+    @objc
+    func refresh(_ sender: Any) {
         self.syncCoordinator.sync { _ in
             DispatchQueue.main.async {
                 self.refreshControl.endRefreshing()
@@ -386,11 +390,17 @@ extension NotificationCenterViewController: UIViewControllerTransitioningDelegat
             
             let duration = transitionDuration(using: transitionContext)
             
-            UIView.animate(withDuration: duration, delay: 0, options: .curveEaseInOut, animations: {
-                toViewController.view.frame = finalFrame
-            }) { finished in
-                transitionContext.completeTransition(finished)
-            }
+            UIView.animate(
+                withDuration: duration,
+                delay: 0,
+                options: .curveEaseInOut,
+                animations: {
+                    toViewController.view.frame = finalFrame
+                },
+                completion: { finished in
+                    transitionContext.completeTransition(finished)
+                }
+            )
         }
         
         func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
@@ -409,11 +419,15 @@ extension NotificationCenterViewController: UIViewControllerTransitioningDelegat
             let finalFrame = transitionContext.finalFrame(for: toViewController)
             let duration = transitionDuration(using: transitionContext)
             
-            UIView.animate(withDuration: duration, animations: {
-                fromViewController.view.frame = finalFrame.offsetBy(dx: finalFrame.width, dy: 0)
-            }) { finished in
-                transitionContext.completeTransition(finished)
-            }
+            UIView.animate(
+                withDuration: duration,
+                animations: {
+                    fromViewController.view.frame = finalFrame.offsetBy(dx: finalFrame.width, dy: 0)
+                },
+                completion: { finished in
+                    transitionContext.completeTransition(finished)
+                }
+            )
         }
         
         func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {

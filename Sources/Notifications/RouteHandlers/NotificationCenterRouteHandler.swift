@@ -10,6 +10,7 @@ import Foundation
 
 class NotificationCenterRouteHandler: RouteHandler {
     typealias ActionProvider = () -> Action?
+    
     let actionProvider: ActionProvider
     
     init(actionProvider: @escaping ActionProvider) {

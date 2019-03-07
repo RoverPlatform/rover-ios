@@ -48,9 +48,9 @@ open class ImageCell: BlockCell {
                 
                 self?.imageView.image = image
                 
-                UIView.animate(withDuration: 0.25, animations: {
+                UIView.animate(withDuration: 0.25) {
                     self?.imageView.alpha = 1.0
-                })
+                }
             }
         }
     }

@@ -10,8 +10,14 @@ import Foundation
 
 public protocol Router {
     func addHandler(_ handler: RouteHandler)
-    @discardableResult func handle(_ userActivity: NSUserActivity) -> Bool
+    
+    @discardableResult
+    func handle(_ userActivity: NSUserActivity) -> Bool
+    
     func action(for userActivity: NSUserActivity) -> Action?
-    @discardableResult func handle(_ url: URL) -> Bool
+    
+    @discardableResult
+    func handle(_ url: URL) -> Bool
+    
     func action(for url: URL) -> Action?
 }

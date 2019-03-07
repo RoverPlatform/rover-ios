@@ -73,9 +73,7 @@ extension Attributes: Collection {
     }
     
     public subscript(index: Index) -> Element {
-        get {
-            return rawValue[index]
-        }
+        return rawValue[index]
     }
     
     public subscript(key: AttributeKey) -> AttributeRepresentable? {

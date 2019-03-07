@@ -100,9 +100,9 @@ open class NotificationCell: UITableViewCell {
                 
                 imageView?.image = image
                 
-                UIView.animate(withDuration: 0.25, animations: {
+                UIView.animate(withDuration: 0.25) {
                     imageView?.alpha = 1.0
-                })
+                }
                 
                 self?.setNeedsLayout()
             }

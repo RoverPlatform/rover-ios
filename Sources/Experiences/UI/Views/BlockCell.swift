@@ -58,6 +58,7 @@ open class BlockCell: UICollectionViewCell {
         backgroundColor = block.background.color.uiColor(dimmedBy: block.opacity)
     }
     
+    // swiftlint:disable:next cyclomatic_complexity // This routine is fairly readable as it is, so we will hold off on refactoring it, so silence the complexity warning.
     open func configureBackgroundImage(imageStore: ImageStore) {
         guard let backgroundImageView = backgroundView as? UIImageView else {
             return
@@ -117,9 +118,9 @@ open class BlockCell: UICollectionViewCell {
                     backgroundImageView?.image = image
                 }
                 
-                UIView.animate(withDuration: 0.25, animations: {
+                UIView.animate(withDuration: 0.25) {
                     backgroundImageView?.alpha = 1.0
-                })
+                }
             }
         }
     }

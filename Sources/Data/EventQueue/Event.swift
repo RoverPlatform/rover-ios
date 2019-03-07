@@ -26,7 +26,7 @@ public struct Event: Codable, Equatable {
     public var context: Context
     public var timestamp: Date
     
-    public init(name: String, context: Context, namespace: String? = nil, attributes: Attributes? = nil, timestamp: Date) {
+    public init(name: String, context: Context, namespace: String? = nil, attributes: Attributes? = nil, timestamp: Date = Date()) {
         self.name = name
         self.namespace = namespace
         self.attributes = attributes
@@ -38,7 +38,7 @@ public struct Event: Codable, Equatable {
 // MARK: Hashable
 
 extension Event: Hashable {
-    public var hashValue: Int {
-        return id.hashValue
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id.hashValue)
     }
 }

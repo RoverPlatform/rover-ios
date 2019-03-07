@@ -14,6 +14,7 @@ class OpenNotificationAction: Action {
     let notificationStore: NotificationStore
     
     typealias ActionProvider = (URL) -> Action?
+    
     let presentWebsiteActionProvider: ActionProvider
     
     init(eventQueue: EventQueue, notification: Notification, notificationStore: NotificationStore, presentWebsiteActionProvider: @escaping ActionProvider) {

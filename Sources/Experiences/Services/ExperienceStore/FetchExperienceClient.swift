@@ -14,6 +14,7 @@ public protocol FetchExperienceClient {
 }
 
 extension FetchExperienceClient {
+    // swiftlint:disable function_body_length // Function is decently readable.
     public func queryItems(experienceIdentifier: ExperienceIdentifier) -> [URLQueryItem] {
         var queryItems = [URLQueryItem]()
         
@@ -89,7 +90,7 @@ extension HTTPClient: FetchExperienceClient {
         return self.downloadTask(with: request) {
             let result: FetchExperienceResult
             switch $0 {
-            case .error(let error, let isRetryable):
+            case let .error(error, isRetryable):
                 if let error = error {
                     os_log("Failed to fetch experience: %@", log: .networking, type: .error, error.localizedDescription)
                 } else {

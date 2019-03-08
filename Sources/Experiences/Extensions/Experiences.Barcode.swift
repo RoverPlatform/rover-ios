@@ -6,8 +6,8 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-import UIKit
 import os
+import UIKit
 
 extension Barcode {
     /**
@@ -30,7 +30,7 @@ extension Barcode {
             filterName = "CIQRCodeGenerator"
         }
 
-        let data =  text.data(using: String.Encoding.ascii)!
+        let data = text.data(using: String.Encoding.ascii)!
         
         var params: [String: Any] = {
             switch format {
@@ -75,7 +75,7 @@ extension Barcode {
             return nil
         }
         
-        let context = CIContext.init(options: nil)
+        let context = CIContext(options: nil)
         
         let renderedBarcode = context.createCGImage(outputImage, from: outputImage.extent)!
 

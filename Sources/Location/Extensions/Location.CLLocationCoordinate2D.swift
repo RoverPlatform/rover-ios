@@ -19,16 +19,16 @@ extension CLLocationCoordinate2D {
 }
 
 // https://en.wikipedia.org/wiki/Figure_of_the_Earth
-let earthRadius: Double = 6371000
+let earthRadius: Double = 6_371_000
 
-fileprivate let haversin: (Double) -> Double = {
+private let haversin: (Double) -> Double = {
     (1 - cos($0)) / 2
 }
 
-fileprivate let ahaversin: (Double) -> Double = {
+private let ahaversin: (Double) -> Double = {
     2 * asin(sqrt($0))
 }
 
-fileprivate let degreesToRadians: (Double) -> Double = {
+private let degreesToRadians: (Double) -> Double = {
     ($0 / 360) * 2 * Double.pi
 }

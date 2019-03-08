@@ -59,7 +59,7 @@ class ImageStoreService: ImageStore {
         if let image = fetchedImage(for: configuration) {
             invokeCompletionHandlers(for: configuration, with: image)
         } else {
-            let task = session.dataTask(with: configuration.optimizedURL) { (data, response, error) in
+            let task = session.dataTask(with: configuration.optimizedURL) { data, _, _ in
                 if let data = data, let image = UIImage(data: data, scale: configuration.scale) {
                     let key = CacheKey(imageConfiguration: configuration)
                     self.cache.setObject(image, forKey: key)

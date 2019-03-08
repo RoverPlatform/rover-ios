@@ -10,6 +10,7 @@ import Foundation
 
 class ExperienceRouteHandler: RouteHandler {
     typealias ActionProvider = (ExperienceIdentifier) -> Action?
+    
     let actionProvider: ActionProvider
     
     init(actionProvider: @escaping ActionProvider) {

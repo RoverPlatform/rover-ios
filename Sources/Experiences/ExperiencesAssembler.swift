@@ -11,8 +11,8 @@ import UIKit
 public struct ExperiencesAssembler: Assembler {
     public init() { }
     
+    // swiftlint:disable:next function_body_length // Assemblers are fairly declarative.
     public func assemble(container: Container) {
-        
         // MARK: Action (presentExperience)
         
         container.register(Action.self, name: "presentExperience", scope: .transient) { (resolver, campaignID: ID) in
@@ -35,14 +35,14 @@ public struct ExperiencesAssembler: Assembler {
         // MARK: FetchExperienceClient
         
         container.register(FetchExperienceClient.self) { resolver in
-            return resolver.resolve(HTTPClient.self)!
+            resolver.resolve(HTTPClient.self)!
         }
         
         // MARK: RouteHandler (experience)
         
         container.register(RouteHandler.self, name: "experience") { resolver in
             let actionProvider: ExperienceRouteHandler.ActionProvider = { [weak resolver] identifier in
-                return resolver?.resolve(Action.self, name: "presentExperience", arguments: identifier)
+                resolver?.resolve(Action.self, name: "presentExperience", arguments: identifier)
             }
             
             return ExperienceRouteHandler(actionProvider: actionProvider)
@@ -50,15 +50,15 @@ public struct ExperiencesAssembler: Assembler {
         
         // MARK: UICollectionViewLayout (screen)
         
-        container.register(UICollectionViewLayout.self, name: "screen", scope: .transient) { (resolver, screen: Screen) in
-            return ScreenViewLayout(screen: screen)
+        container.register(UICollectionViewLayout.self, name: "screen", scope: .transient) { (_, screen: Screen) in
+            ScreenViewLayout(screen: screen)
         }
         
         // MARK: UIViewController (experience)
         
         container.register(UIViewController.self, name: "experience", scope: .transient) { (resolver, identifier: ExperienceIdentifier) in
             let viewControllerProvider: ExperienceContainer.ViewControllerProvider = { [weak resolver] experience in
-                return resolver?.resolve(UIViewController.self, name: "experience", arguments: experience)
+                resolver?.resolve(UIViewController.self, name: "experience", arguments: experience)
             }
             
             return ExperienceContainer(
@@ -69,7 +69,7 @@ public struct ExperiencesAssembler: Assembler {
         }
         
         container.register(UIViewController.self, name: "experience", scope: .transient) { (resolver, experience: Experience) in
-            return ExperienceViewController(
+            ExperienceViewController(
                 rootViewController: resolver.resolve(UIViewController.self, name: "screen", arguments: experience, experience.homeScreen)!,
                 experience: experience,
                 eventQueue: resolver.resolve(EventQueue.self)!,
@@ -80,12 +80,12 @@ public struct ExperiencesAssembler: Assembler {
         // MARK: UIViewController (screen)
         
         container.register(UIViewController.self, name: "screen", scope: .transient) { (resolver, experience: Experience, screen: Screen) in
-            let viewControllerProvider: ScreenViewController.ViewControllerProvider = { [weak resolver] (experience, screen) in
-                return resolver?.resolve(UIViewController.self, name: "screen", arguments: experience, screen)
+            let viewControllerProvider: ScreenViewController.ViewControllerProvider = { [weak resolver] experience, screen in
+                resolver?.resolve(UIViewController.self, name: "screen", arguments: experience, screen)
             }
             
             let presentWebsiteActionProvider: ScreenViewController.ActionProvider = { [weak resolver] url in
-                return resolver?.resolve(Action.self, name: "presentWebsite", arguments: url)
+                resolver?.resolve(Action.self, name: "presentWebsite", arguments: url)
             }
             
             return ScreenViewController(

@@ -6,8 +6,8 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-import UIKit
 import os.log
+import UIKit
 
 class SyncCoordinatorService: SyncCoordinator {
     let client: SyncClient
@@ -59,6 +59,8 @@ class SyncCoordinatorService: SyncCoordinator {
             return
         }
         
+        // Refactoring this wouldn't add a lot of value, so silence the closure length warning.
+        // swiftlint:disable:next closure_body_length
         let task = self.client.task(with: requests) { [weak self] result in
             guard let _self = self else {
                 return

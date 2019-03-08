@@ -44,7 +44,7 @@ open class NotificationCenterViewController: UIViewController {
      You can override this method if you wish to modify the rules used to filter notifications. For example if you wish to include expired notifications in the table view and instead show their expired status with a visual indicator.
      */
     open func filterNotifications() -> [Notification] {
-        return notificationStore.notifications.filter({ notification in
+        return notificationStore.notifications.filter { notification in
             guard notification.isNotificationCenterEnabled, !notification.isDeleted else {
                 return false
             }
@@ -54,7 +54,7 @@ open class NotificationCenterViewController: UIViewController {
             }
             
             return true
-        })
+        }
     }
     
     public init(
@@ -65,8 +65,8 @@ open class NotificationCenterViewController: UIViewController {
         router: Router,
         sessionController: SessionController,
         syncCoordinator: SyncCoordinator,
-        presentWebsiteActionProvider: @escaping ActionProvider) {
-        
+        presentWebsiteActionProvider: @escaping ActionProvider
+    ) {
         self.dispatcher = dispatcher
         self.eventQueue = eventQueue
         self.imageStore = imageStore
@@ -86,7 +86,8 @@ open class NotificationCenterViewController: UIViewController {
         }
     }
     
-    required public init?(coder aDecoder: NSCoder) {
+    @available(*, unavailable)
+    public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
@@ -133,7 +134,7 @@ open class NotificationCenterViewController: UIViewController {
         UIApplication.shared.applicationIconBadgeNumber = 0
     }
     
-    open override func viewWillAppear(_ animated: Bool) {
+    override open func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         makeNavigationBar()
         configureConstraints()
@@ -202,13 +203,13 @@ open class NotificationCenterViewController: UIViewController {
         NSLayoutConstraint.activate([
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-            ])
+        ])
         
         if let navigationBar = navigationBar {
             NSLayoutConstraint.activate([
                 navigationBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                 navigationBar.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-                ])
+            ])
         }
         
         if #available(iOS 11, *) {
@@ -230,7 +231,7 @@ open class NotificationCenterViewController: UIViewController {
                 NSLayoutConstraint.activate([
                     navigationBar.topAnchor.constraint(equalTo: topLayoutGuide.bottomAnchor),
                     tableView.topAnchor.constraint(equalTo: navigationBar.bottomAnchor)
-                    ])
+                ])
             } else {
                 tableView.topAnchor.constraint(equalTo: topLayoutGuide.bottomAnchor).isActive = true
             }
@@ -239,11 +240,13 @@ open class NotificationCenterViewController: UIViewController {
     
     // MARK: Actions
     
-    @objc func done(_ sender: Any) {
+    @objc
+    func done(_ sender: Any) {
         dismiss(animated: true, completion: nil)
     }
     
-    @objc func refresh(_ sender: Any) {
+    @objc
+    func refresh(_ sender: Any) {
         self.syncCoordinator.sync { _ in
             DispatchQueue.main.async {
                 self.refreshControl.endRefreshing()
@@ -300,7 +303,7 @@ extension NotificationCenterViewController: UITableViewDelegate {
     // Swipe to delete in iOS 10
     
     public func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
-        return [UITableViewRowAction(style: .destructive, title: "Delete") { (action, indexPath) in
+        return [UITableViewRowAction(style: .destructive, title: "Delete") { _, indexPath in
             self.deleteNotification(at: indexPath)
         }]
     }
@@ -310,7 +313,7 @@ extension NotificationCenterViewController: UITableViewDelegate {
     @available(iOS 11.0, *)
     public func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         return UISwipeActionsConfiguration(actions: [
-            UIContextualAction(style: .destructive, title: "Delete") { (action, sourceView, completionHandler) in
+            UIContextualAction(style: .destructive, title: "Delete") { _, _, _ in
                 self.deleteNotification(at: indexPath)
             }
         ])
@@ -387,11 +390,17 @@ extension NotificationCenterViewController: UIViewControllerTransitioningDelegat
             
             let duration = transitionDuration(using: transitionContext)
             
-            UIView.animate(withDuration: duration, delay: 0, options: .curveEaseInOut, animations: {
-                toViewController.view.frame = finalFrame
-            }) { finished in
-                transitionContext.completeTransition(finished)
-            }
+            UIView.animate(
+                withDuration: duration,
+                delay: 0,
+                options: .curveEaseInOut,
+                animations: {
+                    toViewController.view.frame = finalFrame
+                },
+                completion: { finished in
+                    transitionContext.completeTransition(finished)
+                }
+            )
         }
         
         func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
@@ -410,11 +419,15 @@ extension NotificationCenterViewController: UIViewControllerTransitioningDelegat
             let finalFrame = transitionContext.finalFrame(for: toViewController)
             let duration = transitionDuration(using: transitionContext)
             
-            UIView.animate(withDuration: duration, animations: {
-                fromViewController.view.frame = finalFrame.offsetBy(dx: finalFrame.width, dy: 0)
-            }) { finished in
-                transitionContext.completeTransition(finished)
-            }
+            UIView.animate(
+                withDuration: duration,
+                animations: {
+                    fromViewController.view.frame = finalFrame.offsetBy(dx: finalFrame.width, dy: 0)
+                },
+                completion: { finished in
+                    transitionContext.completeTransition(finished)
+                }
+            )
         }
         
         func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {

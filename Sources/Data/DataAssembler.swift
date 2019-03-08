@@ -17,8 +17,7 @@ public struct DataAssembler: Assembler {
     public var maxEventBatchSize: Int
     public var maxEventQueueSize: Int
     
-    public init(accountToken: String, endpoint: URL = URL(string: "https://api.rover.io/graphql")!, flushEventsAt: Int = 20, flushEventsInterval: Double = 30.0, maxEventBatchSize: Int = 100, maxEventQueueSize: Int = 1000) {
-        
+    public init(accountToken: String, endpoint: URL = URL(string: "https://api.rover.io/graphql")!, flushEventsAt: Int = 20, flushEventsInterval: Double = 30.0, maxEventBatchSize: Int = 100, maxEventQueueSize: Int = 1_000) {
         self.accountToken = accountToken
         self.endpoint = endpoint
         
@@ -28,18 +27,18 @@ public struct DataAssembler: Assembler {
         self.maxEventQueueSize = maxEventQueueSize
     }
     
+    // swiftlint:disable:next function_body_length // Assemblers are fairly declarative.
     public func assemble(container: Container) {
-        
         // MARK: ContextManager
         
-        container.register(ContextManager.self) { resolver in
-            return ContextManager()
+        container.register(ContextManager.self) { _ in
+            ContextManager()
         }
         
         // MARK: ContextProvider
         
         container.register(ContextProvider.self) { resolver in
-            return ModularContextProvider(
+            ModularContextProvider(
                 adSupportContextProvider: resolver.resolve(AdSupportContextProvider.self),
                 bluetoothContextProvider: resolver.resolve(BluetoothContextProvider.self),
                 debugContextProvider: resolver.resolve(DebugContextProvider.self),
@@ -58,13 +57,13 @@ public struct DataAssembler: Assembler {
         // MARK: EventsClient
         
         container.register(EventsClient.self) { resolver in
-            return resolver.resolve(HTTPClient.self)!
+            resolver.resolve(HTTPClient.self)!
         }
         
         // MARK: EventQueue
         
         container.register(EventQueue.self) { [flushEventsAt, flushEventsInterval, maxEventBatchSize, maxEventQueueSize] resolver in
-            return EventQueue(
+            EventQueue(
                 client: resolver.resolve(EventsClient.self)!,
                 flushAt: flushEventsAt,
                 flushInterval: flushEventsInterval,
@@ -76,7 +75,7 @@ public struct DataAssembler: Assembler {
         // MARK: HTTPClient
         
         container.register(HTTPClient.self) { [accountToken, endpoint] _ in
-            return HTTPClient(
+            HTTPClient(
                 accountToken: accountToken,
                 endpoint: endpoint,
                 session: URLSession(configuration: URLSessionConfiguration.default)
@@ -86,31 +85,31 @@ public struct DataAssembler: Assembler {
         // MARK: LocaleContextProvider
         
         container.register(LocaleContextProvider.self) { resolver in
-            return resolver.resolve(ContextManager.self)!
+            resolver.resolve(ContextManager.self)!
         }
         
         // MARK: PushTokenContextProvider
         
         container.register(PushTokenContextProvider.self) { resolver in
-            return resolver.resolve(ContextManager.self)!
+            resolver.resolve(ContextManager.self)!
         }
         
         // MARK: ReachabilityContextProvider
         
         container.register(ReachabilityContextProvider.self) { resolver in
-            return resolver.resolve(ContextManager.self)!
+            resolver.resolve(ContextManager.self)!
         }
         
         // MARK: StaticContextProvider
         
         container.register(StaticContextProvider.self) { resolver in
-            return resolver.resolve(ContextManager.self)!
+            resolver.resolve(ContextManager.self)!
         }
         
         // MARK: SyncClient
         
         container.register(SyncClient.self) {  resolver in
-            return resolver.resolve(HTTPClient.self)!
+            resolver.resolve(HTTPClient.self)!
         }
         
         // MARK: SyncCoordinator
@@ -123,31 +122,31 @@ public struct DataAssembler: Assembler {
         // MARK: TimeZoneContextProvider
         
         container.register(TimeZoneContextProvider.self) { resolver in
-            return resolver.resolve(ContextManager.self)!
+            resolver.resolve(ContextManager.self)!
         }
         
         // MARK: TokenManager
         
         container.register(TokenManager.self) { resolver in
-            return resolver.resolve(ContextManager.self)!
+            resolver.resolve(ContextManager.self)!
         }
         
         // MARK: URLSession
         
         container.register(URLSession.self) { _ in
-            return URLSession(configuration: URLSessionConfiguration.default)
+            URLSession(configuration: URLSessionConfiguration.default)
         }
         
         // MARK: UserInfoManager
         
         container.register(UserInfoManager.self) { resolver in
-            return resolver.resolve(ContextManager.self)!
+            resolver.resolve(ContextManager.self)!
         }
         
         // MARK: UserInfoContextProvider
         
         container.register(UserInfoContextProvider.self) { resolver in
-            return resolver.resolve(ContextManager.self)!
+            resolver.resolve(ContextManager.self)!
         }
     }
     

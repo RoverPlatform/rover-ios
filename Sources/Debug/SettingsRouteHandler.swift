@@ -10,6 +10,7 @@ import Foundation
 
 class SettingsRouteHandler: RouteHandler {
     typealias ActionProvider = () -> Action?
+    
     let actionProvider: ActionProvider
     
     init(actionProvider: @escaping ActionProvider) {

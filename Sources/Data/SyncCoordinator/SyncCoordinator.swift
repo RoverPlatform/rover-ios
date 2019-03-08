@@ -8,7 +8,7 @@
 
 import UIKit
 
-public protocol SyncCoordinator: class {
+public protocol SyncCoordinator: AnyObject {
     var participants: [SyncParticipant] { get set }
     
     func sync()

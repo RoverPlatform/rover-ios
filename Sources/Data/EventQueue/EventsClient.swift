@@ -22,7 +22,7 @@ extension HTTPClient: EventsClient {
     }
 }
 
-fileprivate struct EventsPayload {
+private struct EventsPayload {
     var query: String {
         return """
             mutation TrackEvents($events: [Event]!) {

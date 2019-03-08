@@ -32,8 +32,8 @@ class ModularContextProvider {
         staticContextProvider: StaticContextProvider,
         telephonyContextProvider: TelephonyContextProvider?,
         timeZoneContextProvider: TimeZoneContextProvider?,
-        userInfoContextProvider: UserInfoContextProvider?) {
-        
+        userInfoContextProvider: UserInfoContextProvider?
+    ) {
         self.adSupportContextProvider = adSupportContextProvider
         self.bluetoothContextProvider = bluetoothContextProvider
         self.debugContextProvider = debugContextProvider

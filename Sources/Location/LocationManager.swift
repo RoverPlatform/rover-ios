@@ -27,9 +27,9 @@ class LocationManager {
     
     var beaconMap = [CLBeaconRegion: Set<Beacon>]()
     var currentBeacons: Set<Beacon> {
-        return self.beaconMap.reduce(Set<Beacon>(), { (result, element) in
-            return result.union(element.value)
-        })
+        return self.beaconMap.reduce(Set<Beacon>()) { result, element in
+            result.union(element.value)
+        }
     }
     
     var beaconObservers = ObserverSet<Set<Beacon>>()
@@ -100,7 +100,7 @@ extension LocationManager: RegionManager {
         }
         
         os_log("Geocoding location...", log: .location, type: .debug)
-        self.geocoder.reverseGeocodeLocation(location) { [weak self] (placemarks, error) in
+        self.geocoder.reverseGeocodeLocation(location) { [weak self] placemarks, error in
             guard let _self = self else {
                 return
             }

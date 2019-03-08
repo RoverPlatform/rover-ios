@@ -16,8 +16,6 @@ class DebugContextManager {
 
 extension DebugContextManager: DebugContextProvider {
     var isTestDevice: Bool {
-        get {
-            return persistedValue.value ?? false
-        }
+        return persistedValue.value ?? false
     }
 }

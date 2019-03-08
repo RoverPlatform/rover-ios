@@ -50,7 +50,7 @@ class NotificationsSyncParticipant: SyncParticipant {
     }
 }
 
-fileprivate struct Response: Decodable {
+private struct Response: Decodable {
     struct Data: Decodable {
         struct Notifications: Decodable {
             var nodes: [Notification]?

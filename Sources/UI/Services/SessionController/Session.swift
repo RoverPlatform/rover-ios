@@ -59,7 +59,7 @@ class Session {
             state = .started(startedAt: now)
         case .started:
             break
-        case .ending(let startedAt, let timer):
+        case let .ending(startedAt, timer):
             timer.invalidate()
             state = .started(startedAt: startedAt)
         }

@@ -6,11 +6,10 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-import XCTest
 @testable import RoverDebug
+import XCTest
 
 class RoverDebugTests: XCTestCase {
-    
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -32,5 +31,4 @@ class RoverDebugTests: XCTestCase {
             // Put the code you want to measure the time of here.
         }
     }
-    
 }

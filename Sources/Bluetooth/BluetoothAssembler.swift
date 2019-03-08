@@ -16,8 +16,8 @@ public class BluetoothAssembler: Assembler {
     }
     
     public func assemble(container: Container) {
-        container.register(BluetoothContextProvider.self) { resolver in
-            return BluetoothManager(showPowerAlertKey: self.showPowerAlertKey)
+        container.register(BluetoothContextProvider.self) { _ in
+            BluetoothManager(showPowerAlertKey: self.showPowerAlertKey)
         }
     }
 }

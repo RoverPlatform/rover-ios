@@ -17,7 +17,6 @@ class NotificationAuthorizationManager {
 
 extension NotificationAuthorizationManager: NotificationsContextProvider {
     var notificationAuthorization: String {
-        
         // Refresh status for _next_ time context is requested
         userNotificationCenter.getNotificationSettings { settings in
             self.authorizationStatus.value = settings.authorizationStatus.rawValue

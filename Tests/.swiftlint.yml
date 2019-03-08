@@ -1,0 +1,8 @@
+disabled_rules:
+   - force_cast
+   - force_try
+   - type_body_length
+   - function_body_length
+   - file_length
+   - closure_body_length
+   

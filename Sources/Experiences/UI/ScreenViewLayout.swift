@@ -8,6 +8,7 @@
 
 import UIKit
 
+// swiftlint:disable:next type_body_length
 class ScreenViewLayout: UICollectionViewLayout {
     let screen: Screen
     
@@ -24,6 +25,7 @@ class ScreenViewLayout: UICollectionViewLayout {
         super.init()
     }
     
+    @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -45,7 +47,8 @@ class ScreenViewLayout: UICollectionViewLayout {
         needsPreparation = false
     }
     
-    open func prepare(frame: CGRect) {
+    // swiftlint:disable:next cyclomatic_complexity function_body_length
+    func prepare(frame: CGRect) {
         var rowAttributesMap = AttributesMap()
         var blockAttributesMap = AttributesMap()
         
@@ -71,13 +74,13 @@ class ScreenViewLayout: UICollectionViewLayout {
             for (j, block) in row.blocks.enumerated() {
                 let blockX: CGFloat = {
                     switch block.position.horizontalAlignment {
-                    case .center(let offset, let width):
+                    case let .center(offset, width):
                         return rowX + ((rowWidth - CGFloat(width)) / 2) + CGFloat(offset)
-                    case .fill(let leftOffset, _):
+                    case let .fill(leftOffset, _):
                         return rowX + CGFloat(leftOffset)
-                    case .left(let offset, _):
+                    case let .left(offset, _):
                         return rowX + CGFloat(offset)
-                    case .right(let offset, let width):
+                    case let .right(offset, width):
                         return rowX + rowWidth - CGFloat(width) - CGFloat(offset)
                     }
                 }()
@@ -99,51 +102,53 @@ class ScreenViewLayout: UICollectionViewLayout {
                     switch block.position.horizontalAlignment {
                     case .center(_, let width):
                         return CGFloat(width)
-                    case .fill(let leftOffset, let rightOffset):
+                    case let .fill(leftOffset, rightOffset):
                         return rowWidth - CGFloat(leftOffset) - CGFloat(rightOffset)
-                    case .left(_, let width):
+                    case let .left(_, width):
                         return CGFloat(width)
                     case .right(_, let width):
                         return CGFloat(width)
                     }
                 }()
                 
-                let intrinsicHeight: CGFloat? = {
-                    switch block {
-                    case let block as BarcodeBlock:
-                        guard let renderedBitmap = block.barcode.cgImage else {
-                            // barcode was not renderable, so intrinsic height will be 0.
-                            return 0
-                        }
-
-                        let aspectRatio = CGFloat(renderedBitmap.width) / CGFloat(renderedBitmap.height)
-                        
-                        return blockWidth / aspectRatio
-                    case let block as ButtonBlock:
-                        guard let attributedText = block.text.attributedText else {
-                            return nil
-                        }
-                        
-                        let innerWidth = blockWidth - CGFloat(block.insets.left) - CGFloat(block.insets.right)
-                        let size = CGSize(width: innerWidth, height: CGFloat.greatestFiniteMagnitude)
-                        let boundingRect = attributedText.boundingRect(with: size, options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil)
-                        return boundingRect.height + CGFloat(block.insets.top) + CGFloat(block.insets.bottom)
-                    case let block as ImageBlock:
-                        let aspectRatio = CGFloat(block.image.width) / CGFloat(block.image.height)
-                        return blockWidth / aspectRatio
-                    case let block as TextBlock:
-                        guard let attributedText = block.text.attributedText else {
-                            return nil
-                        }
-                        
-                        let innerWidth = blockWidth - CGFloat(block.insets.left) - CGFloat(block.insets.right)
-                        let size = CGSize(width: innerWidth, height: CGFloat.greatestFiniteMagnitude)
-                        let boundingRect = attributedText.boundingRect(with: size, options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil)
-                        return boundingRect.height + CGFloat(block.insets.top) + CGFloat(block.insets.bottom)
-                    default:
-                        return nil
+                let intrinsicHeight: CGFloat?
+                switch block {
+                case let block as BarcodeBlock:
+                    guard let renderedBitmap = block.barcode.cgImage else {
+                        // barcode was not renderable, so intrinsic height will be 0.
+                        intrinsicHeight = 0
+                        break
                     }
-                }()
+                    
+                    let aspectRatio = CGFloat(renderedBitmap.width) / CGFloat(renderedBitmap.height)
+                    
+                    intrinsicHeight = blockWidth / aspectRatio
+                case let block as ButtonBlock:
+                    guard let attributedText = block.text.attributedText else {
+                        intrinsicHeight = nil
+                        break
+                    }
+                    
+                    let innerWidth = blockWidth - CGFloat(block.insets.left) - CGFloat(block.insets.right)
+                    let size = CGSize(width: innerWidth, height: CGFloat.greatestFiniteMagnitude)
+                    let boundingRect = attributedText.boundingRect(with: size, options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil)
+                    intrinsicHeight = boundingRect.height + CGFloat(block.insets.top) + CGFloat(block.insets.bottom)
+                case let block as ImageBlock:
+                    let aspectRatio = CGFloat(block.image.width) / CGFloat(block.image.height)
+                    intrinsicHeight = blockWidth / aspectRatio
+                case let block as TextBlock:
+                    guard let attributedText = block.text.attributedText else {
+                        intrinsicHeight = nil
+                        break
+                    }
+                    
+                    let innerWidth = blockWidth - CGFloat(block.insets.left) - CGFloat(block.insets.right)
+                    let size = CGSize(width: innerWidth, height: CGFloat.greatestFiniteMagnitude)
+                    let boundingRect = attributedText.boundingRect(with: size, options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil)
+                    intrinsicHeight = boundingRect.height + CGFloat(block.insets.top) + CGFloat(block.insets.bottom)
+                default:
+                    intrinsicHeight = nil
+                }
                 
                 let heightFromType: (Height) -> CGFloat? = { heightType in
                     switch heightType {
@@ -206,7 +211,7 @@ class ScreenViewLayout: UICollectionViewLayout {
                 
                 let blockHeight = partialRect.height ?? {
                     guard case .fill(let topOffset, let bottomOffset) = block.position.verticalAlignment else {
-                        fatalError()
+                        fatalError("Vertical alignment must be fill.")
                     }
                     
                     return rowHeight - CGFloat(topOffset) - CGFloat(bottomOffset)
@@ -219,7 +224,7 @@ class ScreenViewLayout: UICollectionViewLayout {
                     case .middle(let offset, _):
                         return rowY + ((rowHeight - blockHeight) / 2) + CGFloat(offset)
                     default:
-                        fatalError()
+                        fatalError("Vertical alignment must only be bottom or middle.")
                     }
                 }()
                 
@@ -228,7 +233,7 @@ class ScreenViewLayout: UICollectionViewLayout {
                 // if blockFrame exceeds the rowFrame, we need to clip it within the row, and in terms relative
                 // to blockFrame.
                 let clipRect: CGRect? = {
-                    if (!rowFrame.contains(blockFrame)) {
+                    if !rowFrame.contains(blockFrame) {
                         // and find the intersection with blockFrame to find out what should be exposed and then
                         // transform into coordinate space with origin of the blockframe in the top left corner:
                         let intersection = rowFrame.intersection(blockFrame)
@@ -236,7 +241,7 @@ class ScreenViewLayout: UICollectionViewLayout {
                         // translate the clip to return the intersection, but if there is none that means the
                         // block is *entirely* outside of the bounds.  An unlikely but not impossible situation.
                         // Clip it entirely:
-                        if(intersection.isNull) {
+                        if intersection.isNull {
                             return CGRect(x: blockFrame.origin.x, y: blockFrame.origin.y, width: 0, height: 0)
                         } else {
                             // translate the rect into the terms of the containing rowframe:
@@ -278,8 +283,8 @@ class ScreenViewLayout: UICollectionViewLayout {
     }
     
     override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
-        let rowAttributes = rowAttributesMap.filter({ $0.1.frame.intersects(rect) }).map({ $0.1 })
-        let blockAttributes = blockAttributesMap.filter({ $0.1.frame.intersects(rect) }).map({ $0.1 })
+        let rowAttributes = rowAttributesMap.filter { $0.1.frame.intersects(rect) }.map { $0.1 }
+        let blockAttributes = blockAttributesMap.filter { $0.1.frame.intersects(rect) }.map { $0.1 }
         
         if !screen.isStretchyHeaderEnabled {
             return rowAttributes + blockAttributes
@@ -307,7 +312,7 @@ class ScreenViewLayout: UICollectionViewLayout {
         if let headerAttributes = rowAttributes.first(where: { $0.indexPath.section == 0 }) {
             var frame = headerAttributes.referenceFrame
             frame.size.height = max(0, frame.size.height + deltaY)
-            frame.origin.y = frame.origin.y - deltaY
+            frame.origin.y -= deltaY
             headerAttributes.frame = frame
         }
         

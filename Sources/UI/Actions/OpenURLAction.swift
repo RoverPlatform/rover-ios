@@ -17,7 +17,7 @@ open class OpenURLAction: Action {
     
     override open func execute() {
         DispatchQueue.main.async { [weak self, url] in
-            UIApplication.shared.open(url, options: [:]) { [weak self] success in
+            UIApplication.shared.open(url, options: [:]) { [weak self] _ in
                 self?.finish()
             }
         }

@@ -36,9 +36,9 @@ extension SyncQuery {
             return nil
         }
         
-        return arguments.map({
+        return arguments.map {
             "$\(name)\($0.name.capitalized):\($0.type)"
-        }).joined(separator: ", ")
+        }.joined(separator: ", ")
     }
     
     var definition: String {
@@ -47,9 +47,9 @@ extension SyncQuery {
                 return ""
             }
             
-            let signature = arguments.map({
+            let signature = arguments.map {
                 "\($0.name):$\(name)\($0.name.capitalized)"
-            }).joined(separator: ", ")
+            }.joined(separator: ", ")
             
             return "(\(signature))"
         }()

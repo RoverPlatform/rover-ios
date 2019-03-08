@@ -16,7 +16,7 @@ open class ExperienceContainer: UIViewController {
     public let viewControllerProvider: ViewControllerProvider
     
     #if swift(>=4.2)
-    open override var childForStatusBarStyle: UIViewController? {
+    override open var childForStatusBarStyle: UIViewController? {
         return self.children.first
     }
     #else
@@ -57,11 +57,12 @@ open class ExperienceContainer: UIViewController {
         layoutCancelButton()
     }
     
-    required public init?(coder aDecoder: NSCoder) {
+    @available(*, unavailable)
+    public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    open override func viewDidLoad() {
+    override open func viewDidLoad() {
         super.viewDidLoad()
         fetchExperience()
     }
@@ -90,7 +91,8 @@ open class ExperienceContainer: UIViewController {
         cancelButton.topAnchor.constraint(equalTo: activityIndicator.bottomAnchor, constant: 8).isActive = true
     }
     
-    @objc open func cancel() {
+    @objc
+    open func cancel() {
         dismiss(animated: true, completion: nil)
     }
     
@@ -98,7 +100,6 @@ open class ExperienceContainer: UIViewController {
         startLoading()
         
         store.fetchExperience(for: identifier) { [weak self] result in
-            
             // If the user cancels loading, the view controller may have been dismissed and garbage collected before the fetch completes
             
             guard let container = self else {
@@ -174,24 +175,24 @@ open class ExperienceContainer: UIViewController {
         if shouldRetry {
             #if swift(>=4.2)
             alertController = UIAlertController(title: "Error", message: "Failed to load experience", preferredStyle: UIAlertController.Style.alert)
-            let cancel = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: { _ in
+            let cancel = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel) { _ in
                 alertController.dismiss(animated: true, completion: nil)
                 self.dismiss(animated: true, completion: nil)
-            })
-            let retry = UIAlertAction(title: "Try Again", style: UIAlertAction.Style.default, handler: { _ in
+            }
+            let retry = UIAlertAction(title: "Try Again", style: UIAlertAction.Style.default) { _ in
                 alertController.dismiss(animated: true, completion: nil)
                 self.fetchExperience()
-            })
+            }
             #else
             alertController = UIAlertController(title: "Error", message: "Failed to load experience", preferredStyle: UIAlertControllerStyle.alert)
-            let cancel = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: { _ in
+            let cancel = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel) { _ in
                 alertController.dismiss(animated: true, completion: nil)
                 self.dismiss(animated: true, completion: nil)
-            })
-            let retry = UIAlertAction(title: "Try Again", style: UIAlertActionStyle.default, handler: { _ in
+            }
+            let retry = UIAlertAction(title: "Try Again", style: UIAlertActionStyle.default) { _ in
                 alertController.dismiss(animated: true, completion: nil)
                 self.fetchExperience()
-            })
+            }
             #endif
             
             alertController.addAction(cancel)
@@ -199,16 +200,16 @@ open class ExperienceContainer: UIViewController {
         } else {
             #if swift(>=4.2)
             alertController = UIAlertController(title: "Error", message: "Something went wrong", preferredStyle: UIAlertController.Style.alert)
-            let ok = UIAlertAction(title: "Ok", style: UIAlertAction.Style.default, handler: { _ in
+            let ok = UIAlertAction(title: "Ok", style: UIAlertAction.Style.default) { _ in
                 alertController.dismiss(animated: false, completion: nil)
                 self.dismiss(animated: true, completion: nil)
-            })
+            }
             #else
             alertController = UIAlertController(title: "Error", message: "Something went wrong", preferredStyle: UIAlertControllerStyle.alert)
-            let ok = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: { _ in
+            let ok = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default) { _ in
                 alertController.dismiss(animated: false, completion: nil)
                 self.dismiss(animated: true, completion: nil)
-            })
+            }
             #endif
             
             alertController.addAction(ok)

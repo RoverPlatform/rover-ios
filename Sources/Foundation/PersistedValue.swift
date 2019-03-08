@@ -73,8 +73,8 @@ public class PersistedValue<T> where T: Codable {
         storageKey: String,
         decoder: JSONDecoder = JSONDecoder.default,
         encoder: JSONEncoder = JSONEncoder.default,
-        userDefaults: UserDefaults = UserDefaults.standard) {
-        
+        userDefaults: UserDefaults = UserDefaults.standard
+    ) {
         self.decoder = decoder
         self.encoder = encoder
         self.storageKey = storageKey

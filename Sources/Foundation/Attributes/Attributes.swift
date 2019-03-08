@@ -46,13 +46,12 @@ extension Attributes: Codable {
             
             rawValue[key] = try container.decode(AttributeValue.self, forKey: $0)
         }
-        
     }
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try rawValue.forEach { (element) in
+        try rawValue.forEach { element in
             let key = CodingKeys(stringValue: element.key.rawValue)
             try container.encode(element.value, forKey: key)
         }
@@ -74,9 +73,7 @@ extension Attributes: Collection {
     }
     
     public subscript(index: Index) -> Element {
-        get {
-            return rawValue[index]
-        }
+        return rawValue[index]
     }
     
     public subscript(key: AttributeKey) -> AttributeRepresentable? {

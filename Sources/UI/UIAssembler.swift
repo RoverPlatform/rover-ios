@@ -30,17 +30,16 @@ public struct UIAssembler {
 
 extension UIAssembler: Assembler {
     public func assemble(container: Container) {
-        
         // MARK: Action (openURL)
         
-        container.register(Action.self, name: "openURL", scope: .transient) { (resolver, url: URL) in
-            return OpenURLAction(url: url)
+        container.register(Action.self, name: "openURL", scope: .transient) { (_, url: URL) in
+            OpenURLAction(url: url)
         }
         
         // MARK: Action (presentView)
         
-        container.register(Action.self, name: "presentView", scope: .transient) { (resolver, viewControllerToPresent: UIViewController) in
-            return PresentViewAction(
+        container.register(Action.self, name: "presentView", scope: .transient) { (_, viewControllerToPresent: UIViewController) in
+            PresentViewAction(
                 viewControllerToPresent: viewControllerToPresent,
                 animated: true
             )
@@ -55,7 +54,7 @@ extension UIAssembler: Assembler {
         
         // MARK: ImageStore
         
-        container.register(ImageStore.self) { resolver in
+        container.register(ImageStore.self) { _ in
             let session = URLSession(configuration: URLSessionConfiguration.ephemeral)
             return ImageStoreService(session: session)
         }
@@ -84,14 +83,14 @@ extension UIAssembler: Assembler {
         
         // MARK: UIViewController (website)
         
-        container.register(UIViewController.self, name: "website", scope: .transient) { (resolver, url: URL) in
-            return SFSafariViewController(url: url)
+        container.register(UIViewController.self, name: "website", scope: .transient) { (_, url: URL) in
+            SFSafariViewController(url: url)
         }
         
         // MARK: VersionTracker
         
         container.register(VersionTracker.self) { resolver in
-            return VersionTrackerService(
+            VersionTrackerService(
                 bundle: Bundle.main,
                 eventQueue: resolver.resolve(EventQueue.self)!,
                 userDefaults: UserDefaults.standard

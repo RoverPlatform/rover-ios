@@ -8,8 +8,8 @@
 
 import CoreData
 import CoreLocation
-import XCTest
 @testable import RoverLocation
+import XCTest
 
 class RoverLocationTests: XCTestCase {
     struct GeofenceNode: Codable, Hashable {
@@ -34,7 +34,7 @@ class RoverLocationTests: XCTestCase {
         var tags: [String]
     }
     
-    static var geofenceNodes: [GeofenceNode]!
+    static var geofenceNodes: [GeofenceNode]
     
     var geofenceNodes: [GeofenceNode] {
         return RoverLocationTests.geofenceNodes
@@ -48,9 +48,9 @@ class RoverLocationTests: XCTestCase {
         var tags: [String]
     }
     
-    static var beaconNodes: [BeaconNode]!
+    static var beaconNodes: [BeaconNode]
     
-    static var context: NSManagedObjectContext!
+    static var context: NSManagedObjectContext
     
     var context: NSManagedObjectContext {
         return RoverLocationTests.context
@@ -72,7 +72,7 @@ class RoverLocationTests: XCTestCase {
         description.type = NSInMemoryStoreType
         
         container.persistentStoreDescriptions = [description]
-        container.loadPersistentStores { (_, error) in
+        container.loadPersistentStores { _, error in
             precondition(description.type == NSInMemoryStoreType)
             
             guard error == nil else {
@@ -146,7 +146,7 @@ class RoverLocationTests: XCTestCase {
         let wildcardBeaconRegions = regionManager.wilcardBeaconRegions(maxLength: 20)
         XCTAssertEqual(wildcardBeaconRegions.count, 3)
         
-        let rogersCenter = CLLocation(latitude: 43.6414, longitude: 79.3894)
+        let rogersCenter = CLLocation(latitude: 43.641_4, longitude: 79.389_4)
         let circularRegions = regionManager.circularRegions(closestTo: rogersCenter.coordinate, maxLength: 20)
         XCTAssertEqual(circularRegions.count, 20)
         
@@ -174,9 +174,9 @@ class RoverLocationTests: XCTestCase {
         let fetchRequest: NSFetchRequest<Geofence> = Geofence.fetchRequest()
         var geofences = try! self.context.fetch(fetchRequest)
         XCTAssertEqual(geofences.count, geofenceNodes.count)
-        XCTAssertGreaterThan(geofences.count, 3000)
+        XCTAssertGreaterThan(geofences.count, 3_000)
         
-        let rogersCenter = CLLocation(latitude: 43.6414, longitude: 79.3894)
+        let rogersCenter = CLLocation(latitude: 43.641_4, longitude: 79.389_4)
         
         self.measure {
             geofences.sortByDistance(from: rogersCenter.coordinate)

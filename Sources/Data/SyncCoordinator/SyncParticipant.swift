@@ -8,7 +8,7 @@
 
 import Foundation
 
-public protocol SyncParticipant: class {
+public protocol SyncParticipant: AnyObject {
     func initialRequest() -> SyncRequest?
     func saveResponse(_ data: Data) -> SyncResult
 }

@@ -96,7 +96,7 @@ extension BlockTapBehavior: Codable {
             try container.encode(screenID, forKey: .screenID)
         case .none:
             try container.encode("NoneBlockTapBehavior", forKey: .typeName)
-        case .openURL(let url, let dismiss):
+        case let .openURL(url, dismiss):
             try container.encode("OpenURLBlockTapTapBehavior", forKey: .typeName)
             var container = encoder.container(keyedBy: OpenURLKeys.self)
             try container.encode(url, forKey: .url)
@@ -108,4 +108,3 @@ extension BlockTapBehavior: Codable {
         }
     }
 }
-

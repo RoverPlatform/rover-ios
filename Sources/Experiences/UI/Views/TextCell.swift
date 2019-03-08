@@ -18,11 +18,11 @@ open class TextCell: BlockCell {
         return textView
     }()
     
-    open override var content: UIView? {
+    override open var content: UIView? {
         return textView
     }
     
-    open override func configure(with block: Block, imageStore: ImageStore) {
+    override open func configure(with block: Block, imageStore: ImageStore) {
         super.configure(with: block, imageStore: imageStore)
         
         guard let textBlock = block as? TextBlock else {

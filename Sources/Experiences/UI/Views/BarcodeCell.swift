@@ -27,11 +27,11 @@ open class BarcodeCell: BlockCell {
         return imageView
     }()
     
-    open override var content: UIView? {
+    override open var content: UIView? {
         return imageView
     }
     
-    open override func configure(with block: Block, imageStore: ImageStore) {
+    override open func configure(with block: Block, imageStore: ImageStore) {
         super.configure(with: block, imageStore: imageStore)
         
         guard let barcodeBlock = block as? BarcodeBlock else {
@@ -49,6 +49,6 @@ open class BarcodeCell: BlockCell {
             return
         }
 
-        imageView.image = UIImage.init(cgImage: barcodeImage)
+        imageView.image = UIImage(cgImage: barcodeImage)
     }
 }

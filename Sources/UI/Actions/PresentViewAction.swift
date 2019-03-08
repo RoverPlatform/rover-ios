@@ -21,6 +21,8 @@ open class PresentViewAction: Action {
     }
     
     override open func execute() {
+        // TODO: this ought to be refactored into multiple methods.
+        // swiftlint:disable:next closure_body_length
         DispatchQueue.main.async { [weak self] in
             guard let _self = self else {
                 return
@@ -45,8 +47,6 @@ open class PresentViewAction: Action {
             
             // Presenting `viewControllerToPresent` inside a container other than `UITabBarController` is not supported at this time
             
-            
-            
             if viewControllerToPresent.parent != nil {
                 os_log("Failed to present viewControllerToPresent - already presented in an unsupported container", log: .dispatching, type: .default)
                 _self.finish()
@@ -63,10 +63,10 @@ open class PresentViewAction: Action {
                 return
             }
             
-            var findVisibleViewController: ((UIViewController) -> UIViewController?)!
+            var findVisibleViewController: ((UIViewController) -> UIViewController?)?
             findVisibleViewController = { viewController in
                 if let presentedViewController = viewController.presentedViewController {
-                    return findVisibleViewController(presentedViewController)
+                    return findVisibleViewController?(presentedViewController)
                 }
                 
                 if let navigationController = viewController as? UINavigationController {
@@ -80,7 +80,7 @@ open class PresentViewAction: Action {
                 return viewController
             }
             
-            guard let visibleViewController = findVisibleViewController(rootViewController) else {
+            guard let visibleViewController = findVisibleViewController?(rootViewController) else {
                 os_log("Failed to present `viewControllerToPresent` - visible view controller not found", log: .dispatching, type: .error)
                 _self.finish()
                 return

@@ -24,8 +24,8 @@ class SessionControllerService: SessionController {
     
     var sessions = [String: SessionEntry]()
     
-    var didBecomeActiveObserver: NSObjectProtocol!
-    var willResignActiveObserver: NSObjectProtocol!
+    var didBecomeActiveObserver: NSObjectProtocol?
+    var willResignActiveObserver: NSObjectProtocol?
     
     init(eventQueue: EventQueue, keepAliveTime: Int) {
         self.eventQueue = eventQueue
@@ -59,8 +59,12 @@ class SessionControllerService: SessionController {
     }
     
     deinit {
-        NotificationCenter.default.removeObserver(didBecomeActiveObserver)
-        NotificationCenter.default.removeObserver(willResignActiveObserver)
+        if let observer = didBecomeActiveObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
+        if let observer = willResignActiveObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
     }
     
     func registerSession(identifier: String, completionHandler: @escaping (Double) -> EventInfo) {

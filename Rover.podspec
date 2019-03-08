@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.name              = "Rover"
   s.module_name       = "RoverKit"
-  s.version           = "2.3.1"
+  s.version           = "3.0"
   s.summary           = "iOS framework for the Rover platform"
   s.homepage          = "https://www.rover.io"
   s.license           = "Apache License, Version 2.0"
@@ -41,44 +41,8 @@ Pod::Spec.new do |s|
     ss.frameworks = "WebKit"
   end
 
-  s.subspec "Notifications" do |ss|
-    ss.source_files = "Sources/Notifications/**/*.swift"
-    ss.dependency "Rover/UI"
-    ss.frameworks = "UserNotifications"
-  end
-
-  s.subspec "Location" do |ss|
-    ss.source_files = "Sources/Location/**/*.swift"
-    ss.resources = "Sources/Location/Model/RoverLocation.xcdatamodeld"
-    ss.dependency "Rover/Data"
-    ss.frameworks = "CoreLocation"
-  end
-
-  s.subspec "Bluetooth" do |ss|
-    ss.source_files = "Sources/Bluetooth/**/*.swift"
-    ss.dependency "Rover/Data"
-    ss.frameworks = "CoreBluetooth"
-  end
-
   s.subspec "Debug" do |ss|
     ss.source_files = "Sources/Debug/**/*.swift"
     ss.dependency "Rover/UI"
-  end
-
-  s.subspec "Telephony" do |ss|
-    ss.source_files = "Sources/Telephony/**/*.swift"
-    ss.dependency "Rover/Data"
-    ss.frameworks = "CoreTelephony"
-  end
-
-  s.subspec "AdSupport" do |ss|
-    ss.source_files = "Sources/AdSupport/**/*.swift"
-    ss.dependency "Rover/Data"
-    ss.frameworks = "AdSupport"
-  end
-
-  s.subspec "Ticketmaster" do |ss|
-    ss.source_files = "Sources/Ticketmaster/**/*.swift"
-    ss.dependency "Rover/Data"
   end
 end

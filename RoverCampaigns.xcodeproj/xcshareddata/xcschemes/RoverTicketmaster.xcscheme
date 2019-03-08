@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0930"
+   LastUpgradeVersion = "1000"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "DB9DBF752055974B00E5C77F"
-               BuildableName = "RoverNotifications.framework"
-               BlueprintName = "RoverNotifications"
-               ReferencedContainer = "container:Rover.xcodeproj">
+               BlueprintIdentifier = "DB8C0755215FC4D2000DDD56"
+               BuildableName = "RoverCampaignsTicketmaster.framework"
+               BlueprintName = "RoverCampaignsTicketmaster"
+               ReferencedContainer = "container:RoverCampaigns.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -32,20 +32,20 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "DB9DBF7D2055974B00E5C77F"
-               BuildableName = "RoverNotificationsTests.xctest"
-               BlueprintName = "RoverNotificationsTests"
-               ReferencedContainer = "container:Rover.xcodeproj">
+               BlueprintIdentifier = "DB8C075D215FC4D2000DDD56"
+               BuildableName = "RoverCampaignsTicketmasterTests.xctest"
+               BlueprintName = "RoverCampaignsTicketmasterTests"
+               ReferencedContainer = "container:RoverCampaigns.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "DB9DBF752055974B00E5C77F"
-            BuildableName = "RoverNotifications.framework"
-            BlueprintName = "RoverNotifications"
-            ReferencedContainer = "container:Rover.xcodeproj">
+            BlueprintIdentifier = "DB8C0755215FC4D2000DDD56"
+            BuildableName = "RoverCampaignsTicketmaster.framework"
+            BlueprintName = "RoverCampaignsTicketmaster"
+            ReferencedContainer = "container:RoverCampaigns.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -64,10 +64,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "DB9DBF752055974B00E5C77F"
-            BuildableName = "RoverNotifications.framework"
-            BlueprintName = "RoverNotifications"
-            ReferencedContainer = "container:Rover.xcodeproj">
+            BlueprintIdentifier = "DB8C0755215FC4D2000DDD56"
+            BuildableName = "RoverCampaignsTicketmaster.framework"
+            BlueprintName = "RoverCampaignsTicketmaster"
+            ReferencedContainer = "container:RoverCampaigns.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -82,10 +82,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "DB9DBF752055974B00E5C77F"
-            BuildableName = "RoverNotifications.framework"
-            BlueprintName = "RoverNotifications"
-            ReferencedContainer = "container:Rover.xcodeproj">
+            BlueprintIdentifier = "DB8C0755215FC4D2000DDD56"
+            BuildableName = "RoverCampaignsTicketmaster.framework"
+            BlueprintName = "RoverCampaignsTicketmaster"
+            ReferencedContainer = "container:RoverCampaigns.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

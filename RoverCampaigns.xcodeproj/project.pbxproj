@@ -15,7 +15,7 @@
 		DB03F9B7214BF7B900CBFE11 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB03F9B6214BF7B900CBFE11 /* LocationManager.swift */; };
 		DB0C8E3E2055C62800E0D860 /* InfluenceTrackerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0C8E3D2055C62800E0D860 /* InfluenceTrackerService.swift */; };
 		DB0C8E402055CCBD00E0D860 /* InfluenceTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0C8E3F2055CCBD00E0D860 /* InfluenceTracker.swift */; };
-		DB0C8F2A20583A5600E0D860 /* RoverAppExtensions.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB0C8F2120583A5600E0D860 /* RoverAppExtensions.framework */; };
+		DB0C8F2A20583A5600E0D860 /* RoverCampaignsAppExtensions.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB0C8F2120583A5600E0D860 /* RoverCampaignsAppExtensions.framework */; };
 		DB0C8F2F20583A5600E0D860 /* RoverAppExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0C8F2E20583A5600E0D860 /* RoverAppExtensionsTests.swift */; };
 		DB0C8F3120583A5600E0D860 /* RoverAppExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = DB0C8F2320583A5600E0D860 /* RoverAppExtensions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DB0C8F3820583A7A00E0D860 /* NotificationExtensionHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DC0AD2055B82B00E5C77F /* NotificationExtensionHelper.swift */; };
@@ -23,10 +23,10 @@
 		DB1D5DC121079ED70071928F /* AttributeKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1D5DC021079ED70071928F /* AttributeKey.swift */; };
 		DB1D5DC32107C9850071928F /* AttributeValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1D5DC22107C9850071928F /* AttributeValue.swift */; };
 		DB1D5DC52107D32C0071928F /* Attributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1D5DC42107D32C0071928F /* Attributes.swift */; };
-		DB1FBEE72062C0B600850D59 /* RoverBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB1FBEDE2062C0B600850D59 /* RoverBluetooth.framework */; };
+		DB1FBEE72062C0B600850D59 /* RoverCampaignsBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB1FBEDE2062C0B600850D59 /* RoverCampaignsBluetooth.framework */; };
 		DB1FBEEC2062C0B700850D59 /* RoverBluetoothTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1FBEEB2062C0B700850D59 /* RoverBluetoothTests.swift */; };
 		DB1FBEEE2062C0B700850D59 /* RoverBluetooth.h in Headers */ = {isa = PBXBuildFile; fileRef = DB1FBEE02062C0B600850D59 /* RoverBluetooth.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DB1FBEF52062C0CE00850D59 /* RoverFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF49DD3203DE00F00B54652 /* RoverFoundation.framework */; };
+		DB1FBEF52062C0CE00850D59 /* RoverCampaignsFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF49DD3203DE00F00B54652 /* RoverCampaignsFoundation.framework */; };
 		DB1FBEFC2062C5EF00850D59 /* BluetoothAssembler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1FBEFB2062C5EF00850D59 /* BluetoothAssembler.swift */; };
 		DB1FBF2B2062D01400850D59 /* BluetoothManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1FBF2A2062D01400850D59 /* BluetoothManager.swift */; };
 		DB4831B620DC38D8003DBF1B /* VersionTrackerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB4831B520DC38D8003DBF1B /* VersionTrackerService.swift */; };
@@ -41,10 +41,10 @@
 		DB496E482148717C0026DE6A /* Notifications.SyncQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB496E472148717C0026DE6A /* Notifications.SyncQuery.swift */; };
 		DB496E4C214989CA0026DE6A /* Geofences.plist in Resources */ = {isa = PBXBuildFile; fileRef = DB496E4B214989CA0026DE6A /* Geofences.plist */; };
 		DB666AA12150201A00B503E9 /* Location.CLBeacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB666AA02150201A00B503E9 /* Location.CLBeacon.swift */; };
-		DB6ADD6320B33EC0002F226C /* RoverUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB6ADD5A20B33EC0002F226C /* RoverUI.framework */; };
+		DB6ADD6320B33EC0002F226C /* RoverCampaignsUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB6ADD5A20B33EC0002F226C /* RoverCampaignsUI.framework */; };
 		DB6ADD6820B33EC0002F226C /* RoverUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6ADD6720B33EC0002F226C /* RoverUITests.swift */; };
 		DB6ADD6A20B33EC0002F226C /* RoverUI.h in Headers */ = {isa = PBXBuildFile; fileRef = DB6ADD5C20B33EC0002F226C /* RoverUI.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DB6ADD7120B33F12002F226C /* RoverFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF49DD3203DE00F00B54652 /* RoverFoundation.framework */; };
+		DB6ADD7120B33F12002F226C /* RoverCampaignsFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF49DD3203DE00F00B54652 /* RoverCampaignsFoundation.framework */; };
 		DB6ADD7220B33F3A002F226C /* ImageConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FDDB20891153008D1A57 /* ImageConfiguration.swift */; };
 		DB6ADD7320B33F3A002F226C /* ImageOptimization.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB709C72207EB47400F96C2B /* ImageOptimization.swift */; };
 		DB6ADD7420B33F3A002F226C /* ImageStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB709C68207E7EFC00F96C2B /* ImageStore.swift */; };
@@ -72,38 +72,38 @@
 		DB7BA92C20D9811B00968A30 /* NotificationHandlerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7BA92A20D9811100968A30 /* NotificationHandlerService.swift */; };
 		DB7BA93020D982C200968A30 /* NotificationCenterRouteHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7BA92E20D982BE00968A30 /* NotificationCenterRouteHandler.swift */; };
 		DB7BA93420D98F7E00968A30 /* RouteHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7BA91A20D9594500968A30 /* RouteHandler.swift */; };
-		DB8C075F215FC4D2000DDD56 /* RoverTicketmaster.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB8C0756215FC4D2000DDD56 /* RoverTicketmaster.framework */; };
+		DB8C075F215FC4D2000DDD56 /* RoverCampaignsTicketmaster.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB8C0756215FC4D2000DDD56 /* RoverCampaignsTicketmaster.framework */; };
 		DB8C0764215FC4D2000DDD56 /* RoverTicketmasterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8C0763215FC4D2000DDD56 /* RoverTicketmasterTests.swift */; };
 		DB8C0766215FC4D2000DDD56 /* RoverTicketmaster.h in Headers */ = {isa = PBXBuildFile; fileRef = DB8C0758215FC4D2000DDD56 /* RoverTicketmaster.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DB8C0770215FC6AC000DDD56 /* RoverData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD88A7320C1B21700085AE0 /* RoverData.framework */; };
-		DB8C0771215FC6AC000DDD56 /* RoverFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF49DD3203DE00F00B54652 /* RoverFoundation.framework */; };
+		DB8C0770215FC6AC000DDD56 /* RoverCampaignsData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD88A7320C1B21700085AE0 /* RoverCampaignsData.framework */; };
+		DB8C0771215FC6AC000DDD56 /* RoverCampaignsFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF49DD3203DE00F00B54652 /* RoverCampaignsFoundation.framework */; };
 		DB8C0779215FCA7C000DDD56 /* TicketmasterAssembler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8C0778215FCA7C000DDD56 /* TicketmasterAssembler.swift */; };
 		DB8C0782215FE043000DDD56 /* TicketmasterAuthorizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8C077E215FDFD7000DDD56 /* TicketmasterAuthorizer.swift */; };
 		DB8C0783215FE043000DDD56 /* TicketmasterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8C076E215FC56B000DDD56 /* TicketmasterManager.swift */; };
 		DB8C0785215FEC0E000DDD56 /* UserInfoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8C0784215FEC0E000DDD56 /* UserInfoManager.swift */; };
 		DB8C0787215FEE46000DDD56 /* TokenManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8C0786215FEE46000DDD56 /* TokenManager.swift */; };
-		DB9DBF7F2055974B00E5C77F /* RoverNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB9DBF762055974B00E5C77F /* RoverNotifications.framework */; };
+		DB9DBF7F2055974B00E5C77F /* RoverCampaignsNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB9DBF762055974B00E5C77F /* RoverCampaignsNotifications.framework */; };
 		DB9DBF842055974B00E5C77F /* RoverNotificationsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBF832055974B00E5C77F /* RoverNotificationsTests.swift */; };
 		DB9DBF862055974B00E5C77F /* RoverNotifications.h in Headers */ = {isa = PBXBuildFile; fileRef = DB9DBF782055974B00E5C77F /* RoverNotifications.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DB9DBFA2205597C300E5C77F /* NotificationsAssembler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBF8E205597C300E5C77F /* NotificationsAssembler.swift */; };
 		DB9DBFA8205597C300E5C77F /* NotificationAuthorizationContextProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBF98205597C300E5C77F /* NotificationAuthorizationContextProvider.swift */; };
-		DB9DBFBE2055980800E5C77F /* RoverLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB9DBFB52055980800E5C77F /* RoverLocation.framework */; };
+		DB9DBFBE2055980800E5C77F /* RoverCampaignsLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB9DBFB52055980800E5C77F /* RoverCampaignsLocation.framework */; };
 		DB9DBFC32055980800E5C77F /* RoverLocationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBFC22055980800E5C77F /* RoverLocationTests.swift */; };
 		DB9DBFC52055980800E5C77F /* RoverLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = DB9DBFB72055980800E5C77F /* RoverLocation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DB9DBFDE2055983700E5C77F /* LocationAssembler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBFCD2055983700E5C77F /* LocationAssembler.swift */; };
-		DBA015D9217E6DE700268822 /* RoverTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBA015D0217E6DE600268822 /* RoverTelephony.framework */; };
+		DBA015D9217E6DE700268822 /* RoverCampaignsTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBA015D0217E6DE600268822 /* RoverCampaignsTelephony.framework */; };
 		DBA015DE217E6DE700268822 /* RoverTelephonyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA015DD217E6DE700268822 /* RoverTelephonyTests.swift */; };
 		DBA015E0217E6DE700268822 /* RoverTelephony.h in Headers */ = {isa = PBXBuildFile; fileRef = DBA015D2217E6DE700268822 /* RoverTelephony.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DBA015E7217E6E5C00268822 /* RoverData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD88A7320C1B21700085AE0 /* RoverData.framework */; };
-		DBA015E8217E6E5C00268822 /* RoverFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF49DD3203DE00F00B54652 /* RoverFoundation.framework */; };
+		DBA015E7217E6E5C00268822 /* RoverCampaignsData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD88A7320C1B21700085AE0 /* RoverCampaignsData.framework */; };
+		DBA015E8217E6E5C00268822 /* RoverCampaignsFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF49DD3203DE00F00B54652 /* RoverCampaignsFoundation.framework */; };
 		DBA015EB217E6F0200268822 /* TelephonyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA015EA217E6F0200268822 /* TelephonyManager.swift */; };
 		DBA015F0217E6F8100268822 /* Telephony.OSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA015EF217E6F8100268822 /* Telephony.OSLog.swift */; };
 		DBA015F2217E706900268822 /* TelephonyAssembler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA015F1217E706900268822 /* TelephonyAssembler.swift */; };
-		DBA01604217E71E900268822 /* RoverAdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBA015FB217E71E900268822 /* RoverAdSupport.framework */; };
+		DBA01604217E71E900268822 /* RoverCampaignsAdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBA015FB217E71E900268822 /* RoverCampaignsAdSupport.framework */; };
 		DBA01609217E71E900268822 /* RoverAdSupportTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA01608217E71E900268822 /* RoverAdSupportTests.swift */; };
 		DBA0160B217E71E900268822 /* RoverAdSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = DBA015FD217E71E900268822 /* RoverAdSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DBA01612217E724300268822 /* RoverData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD88A7320C1B21700085AE0 /* RoverData.framework */; };
-		DBA01613217E724300268822 /* RoverFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF49DD3203DE00F00B54652 /* RoverFoundation.framework */; };
+		DBA01612217E724300268822 /* RoverCampaignsData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD88A7320C1B21700085AE0 /* RoverCampaignsData.framework */; };
+		DBA01613217E724300268822 /* RoverCampaignsFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF49DD3203DE00F00B54652 /* RoverCampaignsFoundation.framework */; };
 		DBA01616217E773900268822 /* AdSupportContextProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA01615217E773900268822 /* AdSupportContextProvider.swift */; };
 		DBA0161A217E78D200268822 /* AdSupportManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA01619217E78D200268822 /* AdSupportManager.swift */; };
 		DBA0161C217E7B8400268822 /* AdSupportAssembler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA0161B217E7B8400268822 /* AdSupportAssembler.swift */; };
@@ -120,16 +120,16 @@
 		DBB89B9A20D014C700DD797A /* RouterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FDF9208D0A0A008D1A57 /* RouterService.swift */; };
 		DBB89B9E20D0167B00DD797A /* LifeCycleTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB89B9C20D0160100DD797A /* LifeCycleTracker.swift */; };
 		DBB89BA120D01CD700DD797A /* LifeCycleTrackerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB89B9F20D01CC500DD797A /* LifeCycleTrackerService.swift */; };
-		DBB89BC820D03E7900DD797A /* RoverData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD88A7320C1B21700085AE0 /* RoverData.framework */; };
-		DBB89BC920D03E7900DD797A /* RoverFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF49DD3203DE00F00B54652 /* RoverFoundation.framework */; };
-		DBB89BCA20D03E8600DD797A /* RoverData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD88A7320C1B21700085AE0 /* RoverData.framework */; };
-		DBB89BCB20D03E8600DD797A /* RoverFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF49DD3203DE00F00B54652 /* RoverFoundation.framework */; };
-		DBB89BCC20D03E8600DD797A /* RoverUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB6ADD5A20B33EC0002F226C /* RoverUI.framework */; };
-		DBB89BCD20D03E9000DD797A /* RoverData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD88A7320C1B21700085AE0 /* RoverData.framework */; };
-		DBB89BCE20D03E9000DD797A /* RoverFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF49DD3203DE00F00B54652 /* RoverFoundation.framework */; };
-		DBB89BCF20D03E9000DD797A /* RoverUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB6ADD5A20B33EC0002F226C /* RoverUI.framework */; };
+		DBB89BC820D03E7900DD797A /* RoverCampaignsData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD88A7320C1B21700085AE0 /* RoverCampaignsData.framework */; };
+		DBB89BC920D03E7900DD797A /* RoverCampaignsFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF49DD3203DE00F00B54652 /* RoverCampaignsFoundation.framework */; };
+		DBB89BCA20D03E8600DD797A /* RoverCampaignsData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD88A7320C1B21700085AE0 /* RoverCampaignsData.framework */; };
+		DBB89BCB20D03E8600DD797A /* RoverCampaignsFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF49DD3203DE00F00B54652 /* RoverCampaignsFoundation.framework */; };
+		DBB89BCC20D03E8600DD797A /* RoverCampaignsUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB6ADD5A20B33EC0002F226C /* RoverCampaignsUI.framework */; };
+		DBB89BCD20D03E9000DD797A /* RoverCampaignsData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD88A7320C1B21700085AE0 /* RoverCampaignsData.framework */; };
+		DBB89BCE20D03E9000DD797A /* RoverCampaignsFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF49DD3203DE00F00B54652 /* RoverCampaignsFoundation.framework */; };
+		DBB89BCF20D03E9000DD797A /* RoverCampaignsUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB6ADD5A20B33EC0002F226C /* RoverCampaignsUI.framework */; };
 		DBB89BE820D0415600DD797A /* Rover.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF49DF2203DE18500B54652 /* Rover.swift */; };
-		DBB89C4920D07F6600DD797A /* RoverData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD88A7320C1B21700085AE0 /* RoverData.framework */; };
+		DBB89C4920D07F6600DD797A /* RoverCampaignsData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD88A7320C1B21700085AE0 /* RoverCampaignsData.framework */; };
 		DBB89C4C20D084D600DD797A /* RoverFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = DBB89C4A20D083AF00DD797A /* RoverFoundation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DBC3B4112145C11A0096C74E /* Beacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC3B40F2145C1100096C74E /* Beacon.swift */; };
 		DBC3B42721476A6A0096C74E /* Location.UUID.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC3B42621476A6A0096C74E /* Location.UUID.swift */; };
@@ -164,10 +164,10 @@
 		DBD73F742137418300E7F322 /* GeofencesSyncParticipant.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD73F722137417E00E7F322 /* GeofencesSyncParticipant.swift */; };
 		DBD73F77213845AC00E7F322 /* Geofence.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD73F76213845AC00E7F322 /* Geofence.swift */; };
 		DBD73F7A213845CA00E7F322 /* RoverLocation.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = DBD73F78213845CA00E7F322 /* RoverLocation.xcdatamodeld */; };
-		DBD88A7C20C1B21700085AE0 /* RoverData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD88A7320C1B21700085AE0 /* RoverData.framework */; };
+		DBD88A7C20C1B21700085AE0 /* RoverCampaignsData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD88A7320C1B21700085AE0 /* RoverCampaignsData.framework */; };
 		DBD88A8120C1B21700085AE0 /* RoverDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD88A8020C1B21700085AE0 /* RoverDataTests.swift */; };
 		DBD88A8320C1B21700085AE0 /* RoverData.h in Headers */ = {isa = PBXBuildFile; fileRef = DBD88A7520C1B21700085AE0 /* RoverData.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DBD88A8A20C1B26100085AE0 /* RoverFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF49DD3203DE00F00B54652 /* RoverFoundation.framework */; };
+		DBD88A8A20C1B26100085AE0 /* RoverCampaignsFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF49DD3203DE00F00B54652 /* RoverCampaignsFoundation.framework */; };
 		DBD88A9420C1B58E00085AE0 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A80209B8CC500E99F9F /* Event.swift */; };
 		DBD88A9720C1B58E00085AE0 /* EventInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A85209B8CC500E99F9F /* EventInfo.swift */; };
 		DBD88A9920C1B58E00085AE0 /* EventQueueObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A88209B8CC500E99F9F /* EventQueueObserver.swift */; };
@@ -176,19 +176,19 @@
 		DBD88AA920C1B61800085AE0 /* Data+Gzip.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF49ECE203DE49500B54652 /* Data+Gzip.swift */; };
 		DBD88AB620C1B99C00085AE0 /* ContextManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF49EC3203DE3EB00B54652 /* ContextManager.swift */; };
 		DBD88ABE20C1BACF00085AE0 /* DataAssembler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD88ABC20C1BA7C00085AE0 /* DataAssembler.swift */; };
-		DBD88AC620C1BE1C00085AE0 /* RoverData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD88A7320C1B21700085AE0 /* RoverData.framework */; };
-		DBE03B3B20AF162700F3CE95 /* RoverFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF49DD3203DE00F00B54652 /* RoverFoundation.framework */; };
+		DBD88AC620C1BE1C00085AE0 /* RoverCampaignsData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD88A7320C1B21700085AE0 /* RoverCampaignsData.framework */; };
+		DBE03B3B20AF162700F3CE95 /* RoverCampaignsFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF49DD3203DE00F00B54652 /* RoverCampaignsFoundation.framework */; };
 		DBF2584120A107BD00400EA2 /* ObserverSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF2584020A107BD00400EA2 /* ObserverSet.swift */; };
-		DBF31B1F20E17176005D7C34 /* RoverDebug.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF31B1620E17176005D7C34 /* RoverDebug.framework */; };
+		DBF31B1F20E17176005D7C34 /* RoverCampaignsDebug.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF31B1620E17176005D7C34 /* RoverCampaignsDebug.framework */; };
 		DBF31B2420E17176005D7C34 /* RoverDebugTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF31B2320E17176005D7C34 /* RoverDebugTests.swift */; };
 		DBF31B2620E17176005D7C34 /* RoverDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = DBF31B1820E17176005D7C34 /* RoverDebug.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DBF31B2D20E171C8005D7C34 /* RoverData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD88A7320C1B21700085AE0 /* RoverData.framework */; };
-		DBF31B2E20E171C8005D7C34 /* RoverFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF49DD3203DE00F00B54652 /* RoverFoundation.framework */; };
+		DBF31B2D20E171C8005D7C34 /* RoverCampaignsData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD88A7320C1B21700085AE0 /* RoverCampaignsData.framework */; };
+		DBF31B2E20E171C8005D7C34 /* RoverCampaignsFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF49DD3203DE00F00B54652 /* RoverCampaignsFoundation.framework */; };
 		DBF31B4220E17CD9005D7C34 /* DebugContextManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF31B4020E17CD1005D7C34 /* DebugContextManager.swift */; };
 		DBF31B4A20E193C5005D7C34 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF31B4820E193BA005D7C34 /* SettingsViewController.swift */; };
-		DBF31B4E20E19696005D7C34 /* RoverUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB6ADD5A20B33EC0002F226C /* RoverUI.framework */; };
+		DBF31B4E20E19696005D7C34 /* RoverCampaignsUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB6ADD5A20B33EC0002F226C /* RoverCampaignsUI.framework */; };
 		DBF31B4F20E196BB005D7C34 /* SettingsRouteHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF31B4C20E19678005D7C34 /* SettingsRouteHandler.swift */; };
-		DBF49DDD203DE00F00B54652 /* RoverFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF49DD3203DE00F00B54652 /* RoverFoundation.framework */; };
+		DBF49DDD203DE00F00B54652 /* RoverCampaignsFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF49DD3203DE00F00B54652 /* RoverCampaignsFoundation.framework */; };
 		DBF49DE2203DE00F00B54652 /* RoverFoundationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF49DE1203DE00F00B54652 /* RoverFoundationTests.swift */; };
 		DBF49DF6203DE18500B54652 /* FoundationAssembler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF49DF3203DE18500B54652 /* FoundationAssembler.swift */; };
 		DBF49E00203DE1DE00B54652 /* Resolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF49DF8203DE1DE00B54652 /* Resolver.swift */; };
@@ -205,7 +205,7 @@
 		DBFDF42D20AC7B1E0031EF47 /* NotificationCenterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBF90205597C300E5C77F /* NotificationCenterViewController.swift */; };
 		DBFDF43120AC7BA10031EF47 /* NotificationStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF2584220A1090100400EA2 /* NotificationStore.swift */; };
 		DBFDF43220AC7BA10031EF47 /* NotificationStoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBF9B205597C300E5C77F /* NotificationStoreService.swift */; };
-		DBFDF44B20AC84430031EF47 /* RoverExperiences.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBFDF44220AC84430031EF47 /* RoverExperiences.framework */; };
+		DBFDF44B20AC84430031EF47 /* RoverCampaignsExperiences.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBFDF44220AC84430031EF47 /* RoverCampaignsExperiences.framework */; };
 		DBFDF45020AC84430031EF47 /* RoverExperiencesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFDF44F20AC84430031EF47 /* RoverExperiencesTests.swift */; };
 		DBFDF45220AC84430031EF47 /* RoverExperiences.h in Headers */ = {isa = PBXBuildFile; fileRef = DBFDF44420AC84430031EF47 /* RoverExperiences.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DBFDF45A20AC84B30031EF47 /* ExperiencesAssembler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1B62209CD46200E99F9F /* ExperiencesAssembler.swift */; };
@@ -352,20 +352,20 @@
 		DB03F9B6214BF7B900CBFE11 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		DB0C8E3D2055C62800E0D860 /* InfluenceTrackerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfluenceTrackerService.swift; sourceTree = "<group>"; };
 		DB0C8E3F2055CCBD00E0D860 /* InfluenceTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfluenceTracker.swift; sourceTree = "<group>"; };
-		DB0C8F2120583A5600E0D860 /* RoverAppExtensions.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RoverAppExtensions.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		DB0C8F2120583A5600E0D860 /* RoverCampaignsAppExtensions.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RoverCampaignsAppExtensions.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB0C8F2320583A5600E0D860 /* RoverAppExtensions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RoverAppExtensions.h; sourceTree = "<group>"; };
 		DB0C8F2420583A5600E0D860 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		DB0C8F2920583A5600E0D860 /* RoverAppExtensionsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RoverAppExtensionsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		DB0C8F2920583A5600E0D860 /* RoverCampaignsAppExtensionsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RoverCampaignsAppExtensionsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB0C8F2E20583A5600E0D860 /* RoverAppExtensionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoverAppExtensionsTests.swift; sourceTree = "<group>"; };
 		DB0C8F3020583A5600E0D860 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DB1689ED2141A6F90012DA01 /* BeaconsSyncParticipant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeaconsSyncParticipant.swift; sourceTree = "<group>"; };
 		DB1D5DC021079ED70071928F /* AttributeKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributeKey.swift; sourceTree = "<group>"; };
 		DB1D5DC22107C9850071928F /* AttributeValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributeValue.swift; sourceTree = "<group>"; };
 		DB1D5DC42107D32C0071928F /* Attributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Attributes.swift; sourceTree = "<group>"; };
-		DB1FBEDE2062C0B600850D59 /* RoverBluetooth.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RoverBluetooth.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		DB1FBEDE2062C0B600850D59 /* RoverCampaignsBluetooth.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RoverCampaignsBluetooth.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB1FBEE02062C0B600850D59 /* RoverBluetooth.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RoverBluetooth.h; sourceTree = "<group>"; };
 		DB1FBEE12062C0B600850D59 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		DB1FBEE62062C0B600850D59 /* RoverBluetoothTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RoverBluetoothTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		DB1FBEE62062C0B600850D59 /* RoverCampaignsBluetoothTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RoverCampaignsBluetoothTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB1FBEEB2062C0B700850D59 /* RoverBluetoothTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoverBluetoothTests.swift; sourceTree = "<group>"; };
 		DB1FBEED2062C0B700850D59 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DB1FBEFB2062C5EF00850D59 /* BluetoothAssembler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothAssembler.swift; sourceTree = "<group>"; };
@@ -383,10 +383,10 @@
 		DB496E4B214989CA0026DE6A /* Geofences.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Geofences.plist; sourceTree = "<group>"; };
 		DB496F5220DBECD800DF5949 /* NotificationSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSource.swift; sourceTree = "<group>"; };
 		DB666AA02150201A00B503E9 /* Location.CLBeacon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.CLBeacon.swift; sourceTree = "<group>"; };
-		DB6ADD5A20B33EC0002F226C /* RoverUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RoverUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		DB6ADD5A20B33EC0002F226C /* RoverCampaignsUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RoverCampaignsUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB6ADD5C20B33EC0002F226C /* RoverUI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RoverUI.h; sourceTree = "<group>"; };
 		DB6ADD5D20B33EC0002F226C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		DB6ADD6220B33EC0002F226C /* RoverUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RoverUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		DB6ADD6220B33EC0002F226C /* RoverCampaignsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RoverCampaignsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB6ADD6720B33EC0002F226C /* RoverUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoverUITests.swift; sourceTree = "<group>"; };
 		DB6ADD6920B33EC0002F226C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DB6ADD7620B33F5D002F226C /* UIAssembler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIAssembler.swift; sourceTree = "<group>"; };
@@ -413,10 +413,10 @@
 		DB7BA92520D9729600968A30 /* OpenNotificationAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenNotificationAction.swift; sourceTree = "<group>"; };
 		DB7BA92A20D9811100968A30 /* NotificationHandlerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationHandlerService.swift; sourceTree = "<group>"; };
 		DB7BA92E20D982BE00968A30 /* NotificationCenterRouteHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCenterRouteHandler.swift; sourceTree = "<group>"; };
-		DB8C0756215FC4D2000DDD56 /* RoverTicketmaster.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RoverTicketmaster.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		DB8C0756215FC4D2000DDD56 /* RoverCampaignsTicketmaster.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RoverCampaignsTicketmaster.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB8C0758215FC4D2000DDD56 /* RoverTicketmaster.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RoverTicketmaster.h; sourceTree = "<group>"; };
 		DB8C0759215FC4D2000DDD56 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		DB8C075E215FC4D2000DDD56 /* RoverTicketmasterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RoverTicketmasterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		DB8C075E215FC4D2000DDD56 /* RoverCampaignsTicketmasterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RoverCampaignsTicketmasterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB8C0763215FC4D2000DDD56 /* RoverTicketmasterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoverTicketmasterTests.swift; sourceTree = "<group>"; };
 		DB8C0765215FC4D2000DDD56 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DB8C076E215FC56B000DDD56 /* TicketmasterManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TicketmasterManager.swift; sourceTree = "<group>"; };
@@ -434,37 +434,37 @@
 		DB9DBEED2055964E00E5C77F /* ButtonCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ButtonCell.swift; sourceTree = "<group>"; };
 		DB9DBEEE2055964E00E5C77F /* BlockCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlockCell.swift; sourceTree = "<group>"; };
 		DB9DBEEF2055964E00E5C77F /* WebViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebViewCell.swift; sourceTree = "<group>"; };
-		DB9DBF762055974B00E5C77F /* RoverNotifications.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RoverNotifications.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		DB9DBF762055974B00E5C77F /* RoverCampaignsNotifications.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RoverCampaignsNotifications.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB9DBF782055974B00E5C77F /* RoverNotifications.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RoverNotifications.h; sourceTree = "<group>"; };
 		DB9DBF792055974B00E5C77F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		DB9DBF7E2055974B00E5C77F /* RoverNotificationsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RoverNotificationsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		DB9DBF7E2055974B00E5C77F /* RoverCampaignsNotificationsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RoverCampaignsNotificationsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB9DBF832055974B00E5C77F /* RoverNotificationsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoverNotificationsTests.swift; sourceTree = "<group>"; };
 		DB9DBF852055974B00E5C77F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DB9DBF8E205597C300E5C77F /* NotificationsAssembler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationsAssembler.swift; sourceTree = "<group>"; };
 		DB9DBF90205597C300E5C77F /* NotificationCenterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationCenterViewController.swift; sourceTree = "<group>"; };
 		DB9DBF98205597C300E5C77F /* NotificationAuthorizationContextProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationAuthorizationContextProvider.swift; sourceTree = "<group>"; };
 		DB9DBF9B205597C300E5C77F /* NotificationStoreService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationStoreService.swift; sourceTree = "<group>"; };
-		DB9DBFB52055980800E5C77F /* RoverLocation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RoverLocation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		DB9DBFB52055980800E5C77F /* RoverCampaignsLocation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RoverCampaignsLocation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB9DBFB72055980800E5C77F /* RoverLocation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RoverLocation.h; sourceTree = "<group>"; };
 		DB9DBFB82055980800E5C77F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		DB9DBFBD2055980800E5C77F /* RoverLocationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RoverLocationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		DB9DBFBD2055980800E5C77F /* RoverCampaignsLocationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RoverCampaignsLocationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB9DBFC22055980800E5C77F /* RoverLocationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoverLocationTests.swift; sourceTree = "<group>"; };
 		DB9DBFC42055980800E5C77F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DB9DBFCD2055983700E5C77F /* LocationAssembler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationAssembler.swift; sourceTree = "<group>"; };
 		DB9DC0AD2055B82B00E5C77F /* NotificationExtensionHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationExtensionHelper.swift; sourceTree = "<group>"; };
-		DBA015D0217E6DE600268822 /* RoverTelephony.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RoverTelephony.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		DBA015D0217E6DE600268822 /* RoverCampaignsTelephony.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RoverCampaignsTelephony.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBA015D2217E6DE700268822 /* RoverTelephony.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RoverTelephony.h; sourceTree = "<group>"; };
 		DBA015D3217E6DE700268822 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		DBA015D8217E6DE700268822 /* RoverTelephonyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RoverTelephonyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		DBA015D8217E6DE700268822 /* RoverCampaignsTelephonyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RoverCampaignsTelephonyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBA015DD217E6DE700268822 /* RoverTelephonyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoverTelephonyTests.swift; sourceTree = "<group>"; };
 		DBA015DF217E6DE700268822 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DBA015EA217E6F0200268822 /* TelephonyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelephonyManager.swift; sourceTree = "<group>"; };
 		DBA015EF217E6F8100268822 /* Telephony.OSLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Telephony.OSLog.swift; sourceTree = "<group>"; };
 		DBA015F1217E706900268822 /* TelephonyAssembler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelephonyAssembler.swift; sourceTree = "<group>"; };
-		DBA015FB217E71E900268822 /* RoverAdSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RoverAdSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		DBA015FB217E71E900268822 /* RoverCampaignsAdSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RoverCampaignsAdSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBA015FD217E71E900268822 /* RoverAdSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RoverAdSupport.h; sourceTree = "<group>"; };
 		DBA015FE217E71E900268822 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		DBA01603217E71E900268822 /* RoverAdSupportTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RoverAdSupportTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		DBA01603217E71E900268822 /* RoverCampaignsAdSupportTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RoverCampaignsAdSupportTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBA01608217E71E900268822 /* RoverAdSupportTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoverAdSupportTests.swift; sourceTree = "<group>"; };
 		DBA0160A217E71E900268822 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DBA01615217E773900268822 /* AdSupportContextProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdSupportContextProvider.swift; sourceTree = "<group>"; };
@@ -514,10 +514,10 @@
 		DBD73F722137417E00E7F322 /* GeofencesSyncParticipant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeofencesSyncParticipant.swift; sourceTree = "<group>"; };
 		DBD73F76213845AC00E7F322 /* Geofence.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Geofence.swift; sourceTree = "<group>"; };
 		DBD73F79213845CA00E7F322 /* RoverLocation.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = RoverLocation.xcdatamodel; sourceTree = "<group>"; };
-		DBD88A7320C1B21700085AE0 /* RoverData.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RoverData.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		DBD88A7320C1B21700085AE0 /* RoverCampaignsData.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RoverCampaignsData.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBD88A7520C1B21700085AE0 /* RoverData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RoverData.h; sourceTree = "<group>"; };
 		DBD88A7620C1B21700085AE0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		DBD88A7B20C1B21700085AE0 /* RoverDataTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RoverDataTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		DBD88A7B20C1B21700085AE0 /* RoverCampaignsDataTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RoverCampaignsDataTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBD88A8020C1B21700085AE0 /* RoverDataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoverDataTests.swift; sourceTree = "<group>"; };
 		DBD88A8220C1B21700085AE0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DBD88ABC20C1BA7C00085AE0 /* DataAssembler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataAssembler.swift; sourceTree = "<group>"; };
@@ -525,19 +525,19 @@
 		DBF2584220A1090100400EA2 /* NotificationStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationStore.swift; sourceTree = "<group>"; };
 		DBF2585920A36DF400400EA2 /* OpenURLAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenURLAction.swift; sourceTree = "<group>"; };
 		DBF2585D20A37BF300400EA2 /* PresentViewAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PresentViewAction.swift; sourceTree = "<group>"; };
-		DBF31B1620E17176005D7C34 /* RoverDebug.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RoverDebug.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		DBF31B1620E17176005D7C34 /* RoverCampaignsDebug.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RoverCampaignsDebug.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBF31B1820E17176005D7C34 /* RoverDebug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RoverDebug.h; sourceTree = "<group>"; };
 		DBF31B1920E17176005D7C34 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		DBF31B1E20E17176005D7C34 /* RoverDebugTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RoverDebugTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		DBF31B1E20E17176005D7C34 /* RoverCampaignsDebugTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RoverCampaignsDebugTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBF31B2320E17176005D7C34 /* RoverDebugTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoverDebugTests.swift; sourceTree = "<group>"; };
 		DBF31B2520E17176005D7C34 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DBF31B2F20E17216005D7C34 /* DebugAssembler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugAssembler.swift; sourceTree = "<group>"; };
 		DBF31B4020E17CD1005D7C34 /* DebugContextManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugContextManager.swift; sourceTree = "<group>"; };
 		DBF31B4820E193BA005D7C34 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		DBF31B4C20E19678005D7C34 /* SettingsRouteHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRouteHandler.swift; sourceTree = "<group>"; };
-		DBF49DD3203DE00F00B54652 /* RoverFoundation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RoverFoundation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		DBF49DD3203DE00F00B54652 /* RoverCampaignsFoundation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RoverCampaignsFoundation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBF49DD7203DE00F00B54652 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		DBF49DDC203DE00F00B54652 /* RoverFoundationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RoverFoundationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		DBF49DDC203DE00F00B54652 /* RoverCampaignsFoundationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RoverCampaignsFoundationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBF49DE1203DE00F00B54652 /* RoverFoundationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoverFoundationTests.swift; sourceTree = "<group>"; };
 		DBF49DE3203DE00F00B54652 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DBF49DF2203DE18500B54652 /* Rover.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Rover.swift; sourceTree = "<group>"; };
@@ -584,10 +584,10 @@
 		DBFB1B62209CD46200E99F9F /* ExperiencesAssembler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperiencesAssembler.swift; sourceTree = "<group>"; };
 		DBFB1B66209CD89400E99F9F /* Experiences.Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Experiences.Color.swift; sourceTree = "<group>"; };
 		DBFB1B68209CD8D600E99F9F /* Experiences.Text.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Experiences.Text.swift; sourceTree = "<group>"; };
-		DBFDF44220AC84430031EF47 /* RoverExperiences.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RoverExperiences.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		DBFDF44220AC84430031EF47 /* RoverCampaignsExperiences.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RoverCampaignsExperiences.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBFDF44420AC84430031EF47 /* RoverExperiences.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RoverExperiences.h; sourceTree = "<group>"; };
 		DBFDF44520AC84430031EF47 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		DBFDF44A20AC84430031EF47 /* RoverExperiencesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RoverExperiencesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		DBFDF44A20AC84430031EF47 /* RoverCampaignsExperiencesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RoverCampaignsExperiencesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBFDF44F20AC84430031EF47 /* RoverExperiencesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoverExperiencesTests.swift; sourceTree = "<group>"; };
 		DBFDF45120AC84430031EF47 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DBFDF48320AC858A0031EF47 /* Experiences.ImageConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Experiences.ImageConfiguration.swift; sourceTree = "<group>"; };
@@ -599,7 +599,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DBE03B3B20AF162700F3CE95 /* RoverFoundation.framework in Frameworks */,
+				DBE03B3B20AF162700F3CE95 /* RoverCampaignsFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -607,7 +607,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DB0C8F2A20583A5600E0D860 /* RoverAppExtensions.framework in Frameworks */,
+				DB0C8F2A20583A5600E0D860 /* RoverCampaignsAppExtensions.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -615,8 +615,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DBD88AC620C1BE1C00085AE0 /* RoverData.framework in Frameworks */,
-				DB1FBEF52062C0CE00850D59 /* RoverFoundation.framework in Frameworks */,
+				DBD88AC620C1BE1C00085AE0 /* RoverCampaignsData.framework in Frameworks */,
+				DB1FBEF52062C0CE00850D59 /* RoverCampaignsFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -624,7 +624,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DB1FBEE72062C0B600850D59 /* RoverBluetooth.framework in Frameworks */,
+				DB1FBEE72062C0B600850D59 /* RoverCampaignsBluetooth.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -632,8 +632,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DBB89C4920D07F6600DD797A /* RoverData.framework in Frameworks */,
-				DB6ADD7120B33F12002F226C /* RoverFoundation.framework in Frameworks */,
+				DBB89C4920D07F6600DD797A /* RoverCampaignsData.framework in Frameworks */,
+				DB6ADD7120B33F12002F226C /* RoverCampaignsFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -641,7 +641,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DB6ADD6320B33EC0002F226C /* RoverUI.framework in Frameworks */,
+				DB6ADD6320B33EC0002F226C /* RoverCampaignsUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -649,8 +649,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DB8C0770215FC6AC000DDD56 /* RoverData.framework in Frameworks */,
-				DB8C0771215FC6AC000DDD56 /* RoverFoundation.framework in Frameworks */,
+				DB8C0770215FC6AC000DDD56 /* RoverCampaignsData.framework in Frameworks */,
+				DB8C0771215FC6AC000DDD56 /* RoverCampaignsFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -658,7 +658,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DB8C075F215FC4D2000DDD56 /* RoverTicketmaster.framework in Frameworks */,
+				DB8C075F215FC4D2000DDD56 /* RoverCampaignsTicketmaster.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -666,9 +666,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DBB89BCA20D03E8600DD797A /* RoverData.framework in Frameworks */,
-				DBB89BCB20D03E8600DD797A /* RoverFoundation.framework in Frameworks */,
-				DBB89BCC20D03E8600DD797A /* RoverUI.framework in Frameworks */,
+				DBB89BCA20D03E8600DD797A /* RoverCampaignsData.framework in Frameworks */,
+				DBB89BCB20D03E8600DD797A /* RoverCampaignsFoundation.framework in Frameworks */,
+				DBB89BCC20D03E8600DD797A /* RoverCampaignsUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -676,7 +676,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DB9DBF7F2055974B00E5C77F /* RoverNotifications.framework in Frameworks */,
+				DB9DBF7F2055974B00E5C77F /* RoverCampaignsNotifications.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -684,8 +684,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DBB89BC820D03E7900DD797A /* RoverData.framework in Frameworks */,
-				DBB89BC920D03E7900DD797A /* RoverFoundation.framework in Frameworks */,
+				DBB89BC820D03E7900DD797A /* RoverCampaignsData.framework in Frameworks */,
+				DBB89BC920D03E7900DD797A /* RoverCampaignsFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -693,7 +693,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DB9DBFBE2055980800E5C77F /* RoverLocation.framework in Frameworks */,
+				DB9DBFBE2055980800E5C77F /* RoverCampaignsLocation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -701,8 +701,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DBA015E7217E6E5C00268822 /* RoverData.framework in Frameworks */,
-				DBA015E8217E6E5C00268822 /* RoverFoundation.framework in Frameworks */,
+				DBA015E7217E6E5C00268822 /* RoverCampaignsData.framework in Frameworks */,
+				DBA015E8217E6E5C00268822 /* RoverCampaignsFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -710,7 +710,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DBA015D9217E6DE700268822 /* RoverTelephony.framework in Frameworks */,
+				DBA015D9217E6DE700268822 /* RoverCampaignsTelephony.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -718,8 +718,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DBA01612217E724300268822 /* RoverData.framework in Frameworks */,
-				DBA01613217E724300268822 /* RoverFoundation.framework in Frameworks */,
+				DBA01612217E724300268822 /* RoverCampaignsData.framework in Frameworks */,
+				DBA01613217E724300268822 /* RoverCampaignsFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -727,7 +727,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DBA01604217E71E900268822 /* RoverAdSupport.framework in Frameworks */,
+				DBA01604217E71E900268822 /* RoverCampaignsAdSupport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -735,7 +735,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DBD88A8A20C1B26100085AE0 /* RoverFoundation.framework in Frameworks */,
+				DBD88A8A20C1B26100085AE0 /* RoverCampaignsFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -743,7 +743,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DBD88A7C20C1B21700085AE0 /* RoverData.framework in Frameworks */,
+				DBD88A7C20C1B21700085AE0 /* RoverCampaignsData.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -751,9 +751,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DBF31B4E20E19696005D7C34 /* RoverUI.framework in Frameworks */,
-				DBF31B2D20E171C8005D7C34 /* RoverData.framework in Frameworks */,
-				DBF31B2E20E171C8005D7C34 /* RoverFoundation.framework in Frameworks */,
+				DBF31B4E20E19696005D7C34 /* RoverCampaignsUI.framework in Frameworks */,
+				DBF31B2D20E171C8005D7C34 /* RoverCampaignsData.framework in Frameworks */,
+				DBF31B2E20E171C8005D7C34 /* RoverCampaignsFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -761,7 +761,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DBF31B1F20E17176005D7C34 /* RoverDebug.framework in Frameworks */,
+				DBF31B1F20E17176005D7C34 /* RoverCampaignsDebug.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -776,7 +776,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DBF49DDD203DE00F00B54652 /* RoverFoundation.framework in Frameworks */,
+				DBF49DDD203DE00F00B54652 /* RoverCampaignsFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -784,9 +784,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DBB89BCD20D03E9000DD797A /* RoverData.framework in Frameworks */,
-				DBB89BCE20D03E9000DD797A /* RoverFoundation.framework in Frameworks */,
-				DBB89BCF20D03E9000DD797A /* RoverUI.framework in Frameworks */,
+				DBB89BCD20D03E9000DD797A /* RoverCampaignsData.framework in Frameworks */,
+				DBB89BCE20D03E9000DD797A /* RoverCampaignsFoundation.framework in Frameworks */,
+				DBB89BCF20D03E9000DD797A /* RoverCampaignsUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -794,7 +794,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DBFDF44B20AC84430031EF47 /* RoverExperiences.framework in Frameworks */,
+				DBFDF44B20AC84430031EF47 /* RoverCampaignsExperiences.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1434,30 +1434,30 @@
 		DBF49DD4203DE00F00B54652 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				DBF49DD3203DE00F00B54652 /* RoverFoundation.framework */,
-				DBF49DDC203DE00F00B54652 /* RoverFoundationTests.xctest */,
-				DB9DBF762055974B00E5C77F /* RoverNotifications.framework */,
-				DB9DBF7E2055974B00E5C77F /* RoverNotificationsTests.xctest */,
-				DB9DBFB52055980800E5C77F /* RoverLocation.framework */,
-				DB9DBFBD2055980800E5C77F /* RoverLocationTests.xctest */,
-				DB0C8F2120583A5600E0D860 /* RoverAppExtensions.framework */,
-				DB0C8F2920583A5600E0D860 /* RoverAppExtensionsTests.xctest */,
-				DB1FBEDE2062C0B600850D59 /* RoverBluetooth.framework */,
-				DB1FBEE62062C0B600850D59 /* RoverBluetoothTests.xctest */,
-				DBFDF44220AC84430031EF47 /* RoverExperiences.framework */,
-				DBFDF44A20AC84430031EF47 /* RoverExperiencesTests.xctest */,
-				DB6ADD5A20B33EC0002F226C /* RoverUI.framework */,
-				DB6ADD6220B33EC0002F226C /* RoverUITests.xctest */,
-				DBD88A7320C1B21700085AE0 /* RoverData.framework */,
-				DBD88A7B20C1B21700085AE0 /* RoverDataTests.xctest */,
-				DBF31B1620E17176005D7C34 /* RoverDebug.framework */,
-				DBF31B1E20E17176005D7C34 /* RoverDebugTests.xctest */,
-				DB8C0756215FC4D2000DDD56 /* RoverTicketmaster.framework */,
-				DB8C075E215FC4D2000DDD56 /* RoverTicketmasterTests.xctest */,
-				DBA015D0217E6DE600268822 /* RoverTelephony.framework */,
-				DBA015D8217E6DE700268822 /* RoverTelephonyTests.xctest */,
-				DBA015FB217E71E900268822 /* RoverAdSupport.framework */,
-				DBA01603217E71E900268822 /* RoverAdSupportTests.xctest */,
+				DBF49DD3203DE00F00B54652 /* RoverCampaignsFoundation.framework */,
+				DBF49DDC203DE00F00B54652 /* RoverCampaignsFoundationTests.xctest */,
+				DB9DBF762055974B00E5C77F /* RoverCampaignsNotifications.framework */,
+				DB9DBF7E2055974B00E5C77F /* RoverCampaignsNotificationsTests.xctest */,
+				DB9DBFB52055980800E5C77F /* RoverCampaignsLocation.framework */,
+				DB9DBFBD2055980800E5C77F /* RoverCampaignsLocationTests.xctest */,
+				DB0C8F2120583A5600E0D860 /* RoverCampaignsAppExtensions.framework */,
+				DB0C8F2920583A5600E0D860 /* RoverCampaignsAppExtensionsTests.xctest */,
+				DB1FBEDE2062C0B600850D59 /* RoverCampaignsBluetooth.framework */,
+				DB1FBEE62062C0B600850D59 /* RoverCampaignsBluetoothTests.xctest */,
+				DBFDF44220AC84430031EF47 /* RoverCampaignsExperiences.framework */,
+				DBFDF44A20AC84430031EF47 /* RoverCampaignsExperiencesTests.xctest */,
+				DB6ADD5A20B33EC0002F226C /* RoverCampaignsUI.framework */,
+				DB6ADD6220B33EC0002F226C /* RoverCampaignsUITests.xctest */,
+				DBD88A7320C1B21700085AE0 /* RoverCampaignsData.framework */,
+				DBD88A7B20C1B21700085AE0 /* RoverCampaignsDataTests.xctest */,
+				DBF31B1620E17176005D7C34 /* RoverCampaignsDebug.framework */,
+				DBF31B1E20E17176005D7C34 /* RoverCampaignsDebugTests.xctest */,
+				DB8C0756215FC4D2000DDD56 /* RoverCampaignsTicketmaster.framework */,
+				DB8C075E215FC4D2000DDD56 /* RoverCampaignsTicketmasterTests.xctest */,
+				DBA015D0217E6DE600268822 /* RoverCampaignsTelephony.framework */,
+				DBA015D8217E6DE700268822 /* RoverCampaignsTelephonyTests.xctest */,
+				DBA015FB217E71E900268822 /* RoverCampaignsAdSupport.framework */,
+				DBA01603217E71E900268822 /* RoverCampaignsAdSupportTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1755,9 +1755,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		DB0C8F2020583A5600E0D860 /* RoverAppExtensions */ = {
+		DB0C8F2020583A5600E0D860 /* RoverCampaignsAppExtensions */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DB0C8F3220583A5600E0D860 /* Build configuration list for PBXNativeTarget "RoverAppExtensions" */;
+			buildConfigurationList = DB0C8F3220583A5600E0D860 /* Build configuration list for PBXNativeTarget "RoverCampaignsAppExtensions" */;
 			buildPhases = (
 				DB0C8F1C20583A5600E0D860 /* Sources */,
 				DB0C8F1D20583A5600E0D860 /* Frameworks */,
@@ -1768,14 +1768,14 @@
 			);
 			dependencies = (
 			);
-			name = RoverAppExtensions;
+			name = RoverCampaignsAppExtensions;
 			productName = RoverAppExtensions;
-			productReference = DB0C8F2120583A5600E0D860 /* RoverAppExtensions.framework */;
+			productReference = DB0C8F2120583A5600E0D860 /* RoverCampaignsAppExtensions.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		DB0C8F2820583A5600E0D860 /* RoverAppExtensionsTests */ = {
+		DB0C8F2820583A5600E0D860 /* RoverCampaignsAppExtensionsTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DB0C8F3520583A5600E0D860 /* Build configuration list for PBXNativeTarget "RoverAppExtensionsTests" */;
+			buildConfigurationList = DB0C8F3520583A5600E0D860 /* Build configuration list for PBXNativeTarget "RoverCampaignsAppExtensionsTests" */;
 			buildPhases = (
 				DB0C8F2520583A5600E0D860 /* Sources */,
 				DB0C8F2620583A5600E0D860 /* Frameworks */,
@@ -1786,14 +1786,14 @@
 			dependencies = (
 				DB0C8F2C20583A5600E0D860 /* PBXTargetDependency */,
 			);
-			name = RoverAppExtensionsTests;
+			name = RoverCampaignsAppExtensionsTests;
 			productName = RoverAppExtensionsTests;
-			productReference = DB0C8F2920583A5600E0D860 /* RoverAppExtensionsTests.xctest */;
+			productReference = DB0C8F2920583A5600E0D860 /* RoverCampaignsAppExtensionsTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		DB1FBEDD2062C0B600850D59 /* RoverBluetooth */ = {
+		DB1FBEDD2062C0B600850D59 /* RoverCampaignsBluetooth */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DB1FBEEF2062C0B700850D59 /* Build configuration list for PBXNativeTarget "RoverBluetooth" */;
+			buildConfigurationList = DB1FBEEF2062C0B700850D59 /* Build configuration list for PBXNativeTarget "RoverCampaignsBluetooth" */;
 			buildPhases = (
 				DB1FBED92062C0B600850D59 /* Sources */,
 				DB1FBEDA2062C0B600850D59 /* Frameworks */,
@@ -1804,14 +1804,14 @@
 			);
 			dependencies = (
 			);
-			name = RoverBluetooth;
+			name = RoverCampaignsBluetooth;
 			productName = RoverBluetooth;
-			productReference = DB1FBEDE2062C0B600850D59 /* RoverBluetooth.framework */;
+			productReference = DB1FBEDE2062C0B600850D59 /* RoverCampaignsBluetooth.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		DB1FBEE52062C0B600850D59 /* RoverBluetoothTests */ = {
+		DB1FBEE52062C0B600850D59 /* RoverCampaignsBluetoothTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DB1FBEF22062C0B700850D59 /* Build configuration list for PBXNativeTarget "RoverBluetoothTests" */;
+			buildConfigurationList = DB1FBEF22062C0B700850D59 /* Build configuration list for PBXNativeTarget "RoverCampaignsBluetoothTests" */;
 			buildPhases = (
 				DB1FBEE22062C0B600850D59 /* Sources */,
 				DB1FBEE32062C0B600850D59 /* Frameworks */,
@@ -1822,14 +1822,14 @@
 			dependencies = (
 				DB1FBEE92062C0B600850D59 /* PBXTargetDependency */,
 			);
-			name = RoverBluetoothTests;
+			name = RoverCampaignsBluetoothTests;
 			productName = RoverBluetoothTests;
-			productReference = DB1FBEE62062C0B600850D59 /* RoverBluetoothTests.xctest */;
+			productReference = DB1FBEE62062C0B600850D59 /* RoverCampaignsBluetoothTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		DB6ADD5920B33EC0002F226C /* RoverUI */ = {
+		DB6ADD5920B33EC0002F226C /* RoverCampaignsUI */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DB6ADD6F20B33EC0002F226C /* Build configuration list for PBXNativeTarget "RoverUI" */;
+			buildConfigurationList = DB6ADD6F20B33EC0002F226C /* Build configuration list for PBXNativeTarget "RoverCampaignsUI" */;
 			buildPhases = (
 				DB6ADD5520B33EC0002F226C /* Sources */,
 				DB6ADD5620B33EC0002F226C /* Frameworks */,
@@ -1841,14 +1841,14 @@
 			);
 			dependencies = (
 			);
-			name = RoverUI;
+			name = RoverCampaignsUI;
 			productName = RoverUI;
-			productReference = DB6ADD5A20B33EC0002F226C /* RoverUI.framework */;
+			productReference = DB6ADD5A20B33EC0002F226C /* RoverCampaignsUI.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		DB6ADD6120B33EC0002F226C /* RoverUITests */ = {
+		DB6ADD6120B33EC0002F226C /* RoverCampaignsUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DB6ADD7020B33EC0002F226C /* Build configuration list for PBXNativeTarget "RoverUITests" */;
+			buildConfigurationList = DB6ADD7020B33EC0002F226C /* Build configuration list for PBXNativeTarget "RoverCampaignsUITests" */;
 			buildPhases = (
 				DB6ADD5E20B33EC0002F226C /* Sources */,
 				DB6ADD5F20B33EC0002F226C /* Frameworks */,
@@ -1859,14 +1859,14 @@
 			dependencies = (
 				DB6ADD6520B33EC0002F226C /* PBXTargetDependency */,
 			);
-			name = RoverUITests;
+			name = RoverCampaignsUITests;
 			productName = RoverUITests;
-			productReference = DB6ADD6220B33EC0002F226C /* RoverUITests.xctest */;
+			productReference = DB6ADD6220B33EC0002F226C /* RoverCampaignsUITests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		DB8C0755215FC4D2000DDD56 /* RoverTicketmaster */ = {
+		DB8C0755215FC4D2000DDD56 /* RoverCampaignsTicketmaster */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DB8C076B215FC4D2000DDD56 /* Build configuration list for PBXNativeTarget "RoverTicketmaster" */;
+			buildConfigurationList = DB8C076B215FC4D2000DDD56 /* Build configuration list for PBXNativeTarget "RoverCampaignsTicketmaster" */;
 			buildPhases = (
 				DB8C0751215FC4D2000DDD56 /* Sources */,
 				DB8C0752215FC4D2000DDD56 /* Frameworks */,
@@ -1877,14 +1877,14 @@
 			);
 			dependencies = (
 			);
-			name = RoverTicketmaster;
+			name = RoverCampaignsTicketmaster;
 			productName = RoverTicketmaster;
-			productReference = DB8C0756215FC4D2000DDD56 /* RoverTicketmaster.framework */;
+			productReference = DB8C0756215FC4D2000DDD56 /* RoverCampaignsTicketmaster.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		DB8C075D215FC4D2000DDD56 /* RoverTicketmasterTests */ = {
+		DB8C075D215FC4D2000DDD56 /* RoverCampaignsTicketmasterTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DB8C076C215FC4D2000DDD56 /* Build configuration list for PBXNativeTarget "RoverTicketmasterTests" */;
+			buildConfigurationList = DB8C076C215FC4D2000DDD56 /* Build configuration list for PBXNativeTarget "RoverCampaignsTicketmasterTests" */;
 			buildPhases = (
 				DB8C075A215FC4D2000DDD56 /* Sources */,
 				DB8C075B215FC4D2000DDD56 /* Frameworks */,
@@ -1895,14 +1895,14 @@
 			dependencies = (
 				DB8C0761215FC4D2000DDD56 /* PBXTargetDependency */,
 			);
-			name = RoverTicketmasterTests;
+			name = RoverCampaignsTicketmasterTests;
 			productName = RoverTicketmasterTests;
-			productReference = DB8C075E215FC4D2000DDD56 /* RoverTicketmasterTests.xctest */;
+			productReference = DB8C075E215FC4D2000DDD56 /* RoverCampaignsTicketmasterTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		DB9DBF752055974B00E5C77F /* RoverNotifications */ = {
+		DB9DBF752055974B00E5C77F /* RoverCampaignsNotifications */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DB9DBF8B2055974B00E5C77F /* Build configuration list for PBXNativeTarget "RoverNotifications" */;
+			buildConfigurationList = DB9DBF8B2055974B00E5C77F /* Build configuration list for PBXNativeTarget "RoverCampaignsNotifications" */;
 			buildPhases = (
 				DB9DBF712055974B00E5C77F /* Sources */,
 				DB9DBF722055974B00E5C77F /* Frameworks */,
@@ -1913,14 +1913,14 @@
 			);
 			dependencies = (
 			);
-			name = RoverNotifications;
+			name = RoverCampaignsNotifications;
 			productName = RoverNotifications;
-			productReference = DB9DBF762055974B00E5C77F /* RoverNotifications.framework */;
+			productReference = DB9DBF762055974B00E5C77F /* RoverCampaignsNotifications.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		DB9DBF7D2055974B00E5C77F /* RoverNotificationsTests */ = {
+		DB9DBF7D2055974B00E5C77F /* RoverCampaignsNotificationsTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DB9DBF8C2055974B00E5C77F /* Build configuration list for PBXNativeTarget "RoverNotificationsTests" */;
+			buildConfigurationList = DB9DBF8C2055974B00E5C77F /* Build configuration list for PBXNativeTarget "RoverCampaignsNotificationsTests" */;
 			buildPhases = (
 				DB9DBF7A2055974B00E5C77F /* Sources */,
 				DB9DBF7B2055974B00E5C77F /* Frameworks */,
@@ -1931,14 +1931,14 @@
 			dependencies = (
 				DB9DBF812055974B00E5C77F /* PBXTargetDependency */,
 			);
-			name = RoverNotificationsTests;
+			name = RoverCampaignsNotificationsTests;
 			productName = RoverNotificationsTests;
-			productReference = DB9DBF7E2055974B00E5C77F /* RoverNotificationsTests.xctest */;
+			productReference = DB9DBF7E2055974B00E5C77F /* RoverCampaignsNotificationsTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		DB9DBFB42055980800E5C77F /* RoverLocation */ = {
+		DB9DBFB42055980800E5C77F /* RoverCampaignsLocation */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DB9DBFC62055980800E5C77F /* Build configuration list for PBXNativeTarget "RoverLocation" */;
+			buildConfigurationList = DB9DBFC62055980800E5C77F /* Build configuration list for PBXNativeTarget "RoverCampaignsLocation" */;
 			buildPhases = (
 				DB9DBFB02055980800E5C77F /* Sources */,
 				DB9DBFB12055980800E5C77F /* Frameworks */,
@@ -1949,14 +1949,14 @@
 			);
 			dependencies = (
 			);
-			name = RoverLocation;
+			name = RoverCampaignsLocation;
 			productName = RoverLocation;
-			productReference = DB9DBFB52055980800E5C77F /* RoverLocation.framework */;
+			productReference = DB9DBFB52055980800E5C77F /* RoverCampaignsLocation.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		DB9DBFBC2055980800E5C77F /* RoverLocationTests */ = {
+		DB9DBFBC2055980800E5C77F /* RoverCampaignsLocationTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DB9DBFC92055980800E5C77F /* Build configuration list for PBXNativeTarget "RoverLocationTests" */;
+			buildConfigurationList = DB9DBFC92055980800E5C77F /* Build configuration list for PBXNativeTarget "RoverCampaignsLocationTests" */;
 			buildPhases = (
 				DB9DBFB92055980800E5C77F /* Sources */,
 				DB9DBFBA2055980800E5C77F /* Frameworks */,
@@ -1967,14 +1967,14 @@
 			dependencies = (
 				DB9DBFC02055980800E5C77F /* PBXTargetDependency */,
 			);
-			name = RoverLocationTests;
+			name = RoverCampaignsLocationTests;
 			productName = RoverLocationTests;
-			productReference = DB9DBFBD2055980800E5C77F /* RoverLocationTests.xctest */;
+			productReference = DB9DBFBD2055980800E5C77F /* RoverCampaignsLocationTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		DBA015CF217E6DE600268822 /* RoverTelephony */ = {
+		DBA015CF217E6DE600268822 /* RoverCampaignsTelephony */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DBA015E1217E6DE700268822 /* Build configuration list for PBXNativeTarget "RoverTelephony" */;
+			buildConfigurationList = DBA015E1217E6DE700268822 /* Build configuration list for PBXNativeTarget "RoverCampaignsTelephony" */;
 			buildPhases = (
 				DBA015CB217E6DE600268822 /* Headers */,
 				DBA015CC217E6DE600268822 /* Sources */,
@@ -1985,14 +1985,14 @@
 			);
 			dependencies = (
 			);
-			name = RoverTelephony;
+			name = RoverCampaignsTelephony;
 			productName = RoverTelephony;
-			productReference = DBA015D0217E6DE600268822 /* RoverTelephony.framework */;
+			productReference = DBA015D0217E6DE600268822 /* RoverCampaignsTelephony.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		DBA015D7217E6DE700268822 /* RoverTelephonyTests */ = {
+		DBA015D7217E6DE700268822 /* RoverCampaignsTelephonyTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DBA015E4217E6DE700268822 /* Build configuration list for PBXNativeTarget "RoverTelephonyTests" */;
+			buildConfigurationList = DBA015E4217E6DE700268822 /* Build configuration list for PBXNativeTarget "RoverCampaignsTelephonyTests" */;
 			buildPhases = (
 				DBA015D4217E6DE700268822 /* Sources */,
 				DBA015D5217E6DE700268822 /* Frameworks */,
@@ -2003,14 +2003,14 @@
 			dependencies = (
 				DBA015DB217E6DE700268822 /* PBXTargetDependency */,
 			);
-			name = RoverTelephonyTests;
+			name = RoverCampaignsTelephonyTests;
 			productName = RoverTelephonyTests;
-			productReference = DBA015D8217E6DE700268822 /* RoverTelephonyTests.xctest */;
+			productReference = DBA015D8217E6DE700268822 /* RoverCampaignsTelephonyTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		DBA015FA217E71E900268822 /* RoverAdSupport */ = {
+		DBA015FA217E71E900268822 /* RoverCampaignsAdSupport */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DBA01610217E71E900268822 /* Build configuration list for PBXNativeTarget "RoverAdSupport" */;
+			buildConfigurationList = DBA01610217E71E900268822 /* Build configuration list for PBXNativeTarget "RoverCampaignsAdSupport" */;
 			buildPhases = (
 				DBA015F6217E71E900268822 /* Headers */,
 				DBA015F7217E71E900268822 /* Sources */,
@@ -2021,14 +2021,14 @@
 			);
 			dependencies = (
 			);
-			name = RoverAdSupport;
+			name = RoverCampaignsAdSupport;
 			productName = RoverAdSupport;
-			productReference = DBA015FB217E71E900268822 /* RoverAdSupport.framework */;
+			productReference = DBA015FB217E71E900268822 /* RoverCampaignsAdSupport.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		DBA01602217E71E900268822 /* RoverAdSupportTests */ = {
+		DBA01602217E71E900268822 /* RoverCampaignsAdSupportTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DBA01611217E71E900268822 /* Build configuration list for PBXNativeTarget "RoverAdSupportTests" */;
+			buildConfigurationList = DBA01611217E71E900268822 /* Build configuration list for PBXNativeTarget "RoverCampaignsAdSupportTests" */;
 			buildPhases = (
 				DBA015FF217E71E900268822 /* Sources */,
 				DBA01600217E71E900268822 /* Frameworks */,
@@ -2039,14 +2039,14 @@
 			dependencies = (
 				DBA01606217E71E900268822 /* PBXTargetDependency */,
 			);
-			name = RoverAdSupportTests;
+			name = RoverCampaignsAdSupportTests;
 			productName = RoverAdSupportTests;
-			productReference = DBA01603217E71E900268822 /* RoverAdSupportTests.xctest */;
+			productReference = DBA01603217E71E900268822 /* RoverCampaignsAdSupportTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		DBD88A7220C1B21700085AE0 /* RoverData */ = {
+		DBD88A7220C1B21700085AE0 /* RoverCampaignsData */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DBD88A8820C1B21D00085AE0 /* Build configuration list for PBXNativeTarget "RoverData" */;
+			buildConfigurationList = DBD88A8820C1B21D00085AE0 /* Build configuration list for PBXNativeTarget "RoverCampaignsData" */;
 			buildPhases = (
 				DBD88A6E20C1B21700085AE0 /* Sources */,
 				DBD88A6F20C1B21700085AE0 /* Frameworks */,
@@ -2057,14 +2057,14 @@
 			);
 			dependencies = (
 			);
-			name = RoverData;
+			name = RoverCampaignsData;
 			productName = RoverData;
-			productReference = DBD88A7320C1B21700085AE0 /* RoverData.framework */;
+			productReference = DBD88A7320C1B21700085AE0 /* RoverCampaignsData.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		DBD88A7A20C1B21700085AE0 /* RoverDataTests */ = {
+		DBD88A7A20C1B21700085AE0 /* RoverCampaignsDataTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DBD88A8920C1B21D00085AE0 /* Build configuration list for PBXNativeTarget "RoverDataTests" */;
+			buildConfigurationList = DBD88A8920C1B21D00085AE0 /* Build configuration list for PBXNativeTarget "RoverCampaignsDataTests" */;
 			buildPhases = (
 				DBD88A7720C1B21700085AE0 /* Sources */,
 				DBD88A7820C1B21700085AE0 /* Frameworks */,
@@ -2075,14 +2075,14 @@
 			dependencies = (
 				DBD88A7E20C1B21700085AE0 /* PBXTargetDependency */,
 			);
-			name = RoverDataTests;
+			name = RoverCampaignsDataTests;
 			productName = RoverDataTests;
-			productReference = DBD88A7B20C1B21700085AE0 /* RoverDataTests.xctest */;
+			productReference = DBD88A7B20C1B21700085AE0 /* RoverCampaignsDataTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		DBF31B1520E17176005D7C34 /* RoverDebug */ = {
+		DBF31B1520E17176005D7C34 /* RoverCampaignsDebug */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DBF31B2B20E17176005D7C34 /* Build configuration list for PBXNativeTarget "RoverDebug" */;
+			buildConfigurationList = DBF31B2B20E17176005D7C34 /* Build configuration list for PBXNativeTarget "RoverCampaignsDebug" */;
 			buildPhases = (
 				DBF31B1120E17176005D7C34 /* Sources */,
 				DBF31B1220E17176005D7C34 /* Frameworks */,
@@ -2093,14 +2093,14 @@
 			);
 			dependencies = (
 			);
-			name = RoverDebug;
+			name = RoverCampaignsDebug;
 			productName = RoverDebug;
-			productReference = DBF31B1620E17176005D7C34 /* RoverDebug.framework */;
+			productReference = DBF31B1620E17176005D7C34 /* RoverCampaignsDebug.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		DBF31B1D20E17176005D7C34 /* RoverDebugTests */ = {
+		DBF31B1D20E17176005D7C34 /* RoverCampaignsDebugTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DBF31B2C20E17176005D7C34 /* Build configuration list for PBXNativeTarget "RoverDebugTests" */;
+			buildConfigurationList = DBF31B2C20E17176005D7C34 /* Build configuration list for PBXNativeTarget "RoverCampaignsDebugTests" */;
 			buildPhases = (
 				DBF31B1A20E17176005D7C34 /* Sources */,
 				DBF31B1B20E17176005D7C34 /* Frameworks */,
@@ -2111,14 +2111,14 @@
 			dependencies = (
 				DBF31B2120E17176005D7C34 /* PBXTargetDependency */,
 			);
-			name = RoverDebugTests;
+			name = RoverCampaignsDebugTests;
 			productName = RoverDebugTests;
-			productReference = DBF31B1E20E17176005D7C34 /* RoverDebugTests.xctest */;
+			productReference = DBF31B1E20E17176005D7C34 /* RoverCampaignsDebugTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		DBF49DD2203DE00F00B54652 /* RoverFoundation */ = {
+		DBF49DD2203DE00F00B54652 /* RoverCampaignsFoundation */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DBF49DE7203DE00F00B54652 /* Build configuration list for PBXNativeTarget "RoverFoundation" */;
+			buildConfigurationList = DBF49DE7203DE00F00B54652 /* Build configuration list for PBXNativeTarget "RoverCampaignsFoundation" */;
 			buildPhases = (
 				DBF49DCE203DE00F00B54652 /* Sources */,
 				DBF49DCF203DE00F00B54652 /* Frameworks */,
@@ -2129,14 +2129,14 @@
 			);
 			dependencies = (
 			);
-			name = RoverFoundation;
+			name = RoverCampaignsFoundation;
 			productName = RoverFoundation;
-			productReference = DBF49DD3203DE00F00B54652 /* RoverFoundation.framework */;
+			productReference = DBF49DD3203DE00F00B54652 /* RoverCampaignsFoundation.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		DBF49DDB203DE00F00B54652 /* RoverFoundationTests */ = {
+		DBF49DDB203DE00F00B54652 /* RoverCampaignsFoundationTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DBF49DEA203DE00F00B54652 /* Build configuration list for PBXNativeTarget "RoverFoundationTests" */;
+			buildConfigurationList = DBF49DEA203DE00F00B54652 /* Build configuration list for PBXNativeTarget "RoverCampaignsFoundationTests" */;
 			buildPhases = (
 				DBF49DD8203DE00F00B54652 /* Sources */,
 				DBF49DD9203DE00F00B54652 /* Frameworks */,
@@ -2147,14 +2147,14 @@
 			dependencies = (
 				DBF49DDF203DE00F00B54652 /* PBXTargetDependency */,
 			);
-			name = RoverFoundationTests;
+			name = RoverCampaignsFoundationTests;
 			productName = RoverFoundationTests;
-			productReference = DBF49DDC203DE00F00B54652 /* RoverFoundationTests.xctest */;
+			productReference = DBF49DDC203DE00F00B54652 /* RoverCampaignsFoundationTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		DBFDF44120AC84430031EF47 /* RoverExperiences */ = {
+		DBFDF44120AC84430031EF47 /* RoverCampaignsExperiences */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DBFDF45320AC84430031EF47 /* Build configuration list for PBXNativeTarget "RoverExperiences" */;
+			buildConfigurationList = DBFDF45320AC84430031EF47 /* Build configuration list for PBXNativeTarget "RoverCampaignsExperiences" */;
 			buildPhases = (
 				DBFDF43D20AC84430031EF47 /* Sources */,
 				DBFDF43E20AC84430031EF47 /* Frameworks */,
@@ -2165,14 +2165,14 @@
 			);
 			dependencies = (
 			);
-			name = RoverExperiences;
+			name = RoverCampaignsExperiences;
 			productName = RoverExperiences;
-			productReference = DBFDF44220AC84430031EF47 /* RoverExperiences.framework */;
+			productReference = DBFDF44220AC84430031EF47 /* RoverCampaignsExperiences.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		DBFDF44920AC84430031EF47 /* RoverExperiencesTests */ = {
+		DBFDF44920AC84430031EF47 /* RoverCampaignsExperiencesTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DBFDF45620AC84430031EF47 /* Build configuration list for PBXNativeTarget "RoverExperiencesTests" */;
+			buildConfigurationList = DBFDF45620AC84430031EF47 /* Build configuration list for PBXNativeTarget "RoverCampaignsExperiencesTests" */;
 			buildPhases = (
 				DBFDF44620AC84430031EF47 /* Sources */,
 				DBFDF44720AC84430031EF47 /* Frameworks */,
@@ -2183,9 +2183,9 @@
 			dependencies = (
 				DBFDF44D20AC84430031EF47 /* PBXTargetDependency */,
 			);
-			name = RoverExperiencesTests;
+			name = RoverCampaignsExperiencesTests;
 			productName = RoverExperiencesTests;
-			productReference = DBFDF44A20AC84430031EF47 /* RoverExperiencesTests.xctest */;
+			productReference = DBFDF44A20AC84430031EF47 /* RoverCampaignsExperiencesTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -2317,7 +2317,7 @@
 					};
 				};
 			};
-			buildConfigurationList = DBF49DCD203DE00F00B54652 /* Build configuration list for PBXProject "Rover" */;
+			buildConfigurationList = DBF49DCD203DE00F00B54652 /* Build configuration list for PBXProject "RoverCampaigns" */;
 			compatibilityVersion = "Xcode 8.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -2329,30 +2329,30 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				DBF49DD2203DE00F00B54652 /* RoverFoundation */,
-				DBF49DDB203DE00F00B54652 /* RoverFoundationTests */,
-				DBD88A7220C1B21700085AE0 /* RoverData */,
-				DBD88A7A20C1B21700085AE0 /* RoverDataTests */,
-				DB6ADD5920B33EC0002F226C /* RoverUI */,
-				DB6ADD6120B33EC0002F226C /* RoverUITests */,
-				DBFDF44120AC84430031EF47 /* RoverExperiences */,
-				DBFDF44920AC84430031EF47 /* RoverExperiencesTests */,
-				DB9DBF752055974B00E5C77F /* RoverNotifications */,
-				DB9DBF7D2055974B00E5C77F /* RoverNotificationsTests */,
-				DB0C8F2020583A5600E0D860 /* RoverAppExtensions */,
-				DB0C8F2820583A5600E0D860 /* RoverAppExtensionsTests */,
-				DB9DBFB42055980800E5C77F /* RoverLocation */,
-				DB9DBFBC2055980800E5C77F /* RoverLocationTests */,
-				DB1FBEDD2062C0B600850D59 /* RoverBluetooth */,
-				DB1FBEE52062C0B600850D59 /* RoverBluetoothTests */,
-				DBF31B1520E17176005D7C34 /* RoverDebug */,
-				DBF31B1D20E17176005D7C34 /* RoverDebugTests */,
-				DB8C0755215FC4D2000DDD56 /* RoverTicketmaster */,
-				DB8C075D215FC4D2000DDD56 /* RoverTicketmasterTests */,
-				DBA015CF217E6DE600268822 /* RoverTelephony */,
-				DBA015D7217E6DE700268822 /* RoverTelephonyTests */,
-				DBA015FA217E71E900268822 /* RoverAdSupport */,
-				DBA01602217E71E900268822 /* RoverAdSupportTests */,
+				DBF49DD2203DE00F00B54652 /* RoverCampaignsFoundation */,
+				DBF49DDB203DE00F00B54652 /* RoverCampaignsFoundationTests */,
+				DBD88A7220C1B21700085AE0 /* RoverCampaignsData */,
+				DBD88A7A20C1B21700085AE0 /* RoverCampaignsDataTests */,
+				DB6ADD5920B33EC0002F226C /* RoverCampaignsUI */,
+				DB6ADD6120B33EC0002F226C /* RoverCampaignsUITests */,
+				DBFDF44120AC84430031EF47 /* RoverCampaignsExperiences */,
+				DBFDF44920AC84430031EF47 /* RoverCampaignsExperiencesTests */,
+				DB9DBF752055974B00E5C77F /* RoverCampaignsNotifications */,
+				DB9DBF7D2055974B00E5C77F /* RoverCampaignsNotificationsTests */,
+				DB0C8F2020583A5600E0D860 /* RoverCampaignsAppExtensions */,
+				DB0C8F2820583A5600E0D860 /* RoverCampaignsAppExtensionsTests */,
+				DB9DBFB42055980800E5C77F /* RoverCampaignsLocation */,
+				DB9DBFBC2055980800E5C77F /* RoverCampaignsLocationTests */,
+				DB1FBEDD2062C0B600850D59 /* RoverCampaignsBluetooth */,
+				DB1FBEE52062C0B600850D59 /* RoverCampaignsBluetoothTests */,
+				DBF31B1520E17176005D7C34 /* RoverCampaignsDebug */,
+				DBF31B1D20E17176005D7C34 /* RoverCampaignsDebugTests */,
+				DB8C0755215FC4D2000DDD56 /* RoverCampaignsTicketmaster */,
+				DB8C075D215FC4D2000DDD56 /* RoverCampaignsTicketmasterTests */,
+				DBA015CF217E6DE600268822 /* RoverCampaignsTelephony */,
+				DBA015D7217E6DE700268822 /* RoverCampaignsTelephonyTests */,
+				DBA015FA217E71E900268822 /* RoverCampaignsAdSupport */,
+				DBA01602217E71E900268822 /* RoverCampaignsAdSupportTests */,
 			);
 		};
 /* End PBXProject section */
@@ -2917,62 +2917,62 @@
 /* Begin PBXTargetDependency section */
 		DB0C8F2C20583A5600E0D860 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = DB0C8F2020583A5600E0D860 /* RoverAppExtensions */;
+			target = DB0C8F2020583A5600E0D860 /* RoverCampaignsAppExtensions */;
 			targetProxy = DB0C8F2B20583A5600E0D860 /* PBXContainerItemProxy */;
 		};
 		DB1FBEE92062C0B600850D59 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = DB1FBEDD2062C0B600850D59 /* RoverBluetooth */;
+			target = DB1FBEDD2062C0B600850D59 /* RoverCampaignsBluetooth */;
 			targetProxy = DB1FBEE82062C0B600850D59 /* PBXContainerItemProxy */;
 		};
 		DB6ADD6520B33EC0002F226C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = DB6ADD5920B33EC0002F226C /* RoverUI */;
+			target = DB6ADD5920B33EC0002F226C /* RoverCampaignsUI */;
 			targetProxy = DB6ADD6420B33EC0002F226C /* PBXContainerItemProxy */;
 		};
 		DB8C0761215FC4D2000DDD56 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = DB8C0755215FC4D2000DDD56 /* RoverTicketmaster */;
+			target = DB8C0755215FC4D2000DDD56 /* RoverCampaignsTicketmaster */;
 			targetProxy = DB8C0760215FC4D2000DDD56 /* PBXContainerItemProxy */;
 		};
 		DB9DBF812055974B00E5C77F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = DB9DBF752055974B00E5C77F /* RoverNotifications */;
+			target = DB9DBF752055974B00E5C77F /* RoverCampaignsNotifications */;
 			targetProxy = DB9DBF802055974B00E5C77F /* PBXContainerItemProxy */;
 		};
 		DB9DBFC02055980800E5C77F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = DB9DBFB42055980800E5C77F /* RoverLocation */;
+			target = DB9DBFB42055980800E5C77F /* RoverCampaignsLocation */;
 			targetProxy = DB9DBFBF2055980800E5C77F /* PBXContainerItemProxy */;
 		};
 		DBA015DB217E6DE700268822 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = DBA015CF217E6DE600268822 /* RoverTelephony */;
+			target = DBA015CF217E6DE600268822 /* RoverCampaignsTelephony */;
 			targetProxy = DBA015DA217E6DE700268822 /* PBXContainerItemProxy */;
 		};
 		DBA01606217E71E900268822 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = DBA015FA217E71E900268822 /* RoverAdSupport */;
+			target = DBA015FA217E71E900268822 /* RoverCampaignsAdSupport */;
 			targetProxy = DBA01605217E71E900268822 /* PBXContainerItemProxy */;
 		};
 		DBD88A7E20C1B21700085AE0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = DBD88A7220C1B21700085AE0 /* RoverData */;
+			target = DBD88A7220C1B21700085AE0 /* RoverCampaignsData */;
 			targetProxy = DBD88A7D20C1B21700085AE0 /* PBXContainerItemProxy */;
 		};
 		DBF31B2120E17176005D7C34 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = DBF31B1520E17176005D7C34 /* RoverDebug */;
+			target = DBF31B1520E17176005D7C34 /* RoverCampaignsDebug */;
 			targetProxy = DBF31B2020E17176005D7C34 /* PBXContainerItemProxy */;
 		};
 		DBF49DDF203DE00F00B54652 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = DBF49DD2203DE00F00B54652 /* RoverFoundation */;
+			target = DBF49DD2203DE00F00B54652 /* RoverCampaignsFoundation */;
 			targetProxy = DBF49DDE203DE00F00B54652 /* PBXContainerItemProxy */;
 		};
 		DBFDF44D20AC84430031EF47 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = DBFDF44120AC84430031EF47 /* RoverExperiences */;
+			target = DBFDF44120AC84430031EF47 /* RoverCampaignsExperiences */;
 			targetProxy = DBFDF44C20AC84430031EF47 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -4064,7 +4064,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		DB0C8F3220583A5600E0D860 /* Build configuration list for PBXNativeTarget "RoverAppExtensions" */ = {
+		DB0C8F3220583A5600E0D860 /* Build configuration list for PBXNativeTarget "RoverCampaignsAppExtensions" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DB0C8F3320583A5600E0D860 /* Debug */,
@@ -4073,7 +4073,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DB0C8F3520583A5600E0D860 /* Build configuration list for PBXNativeTarget "RoverAppExtensionsTests" */ = {
+		DB0C8F3520583A5600E0D860 /* Build configuration list for PBXNativeTarget "RoverCampaignsAppExtensionsTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DB0C8F3620583A5600E0D860 /* Debug */,
@@ -4082,7 +4082,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DB1FBEEF2062C0B700850D59 /* Build configuration list for PBXNativeTarget "RoverBluetooth" */ = {
+		DB1FBEEF2062C0B700850D59 /* Build configuration list for PBXNativeTarget "RoverCampaignsBluetooth" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DB1FBEF02062C0B700850D59 /* Debug */,
@@ -4091,7 +4091,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DB1FBEF22062C0B700850D59 /* Build configuration list for PBXNativeTarget "RoverBluetoothTests" */ = {
+		DB1FBEF22062C0B700850D59 /* Build configuration list for PBXNativeTarget "RoverCampaignsBluetoothTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DB1FBEF32062C0B700850D59 /* Debug */,
@@ -4100,7 +4100,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DB6ADD6F20B33EC0002F226C /* Build configuration list for PBXNativeTarget "RoverUI" */ = {
+		DB6ADD6F20B33EC0002F226C /* Build configuration list for PBXNativeTarget "RoverCampaignsUI" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DB6ADD6B20B33EC0002F226C /* Debug */,
@@ -4109,7 +4109,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DB6ADD7020B33EC0002F226C /* Build configuration list for PBXNativeTarget "RoverUITests" */ = {
+		DB6ADD7020B33EC0002F226C /* Build configuration list for PBXNativeTarget "RoverCampaignsUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DB6ADD6D20B33EC0002F226C /* Debug */,
@@ -4118,7 +4118,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DB8C076B215FC4D2000DDD56 /* Build configuration list for PBXNativeTarget "RoverTicketmaster" */ = {
+		DB8C076B215FC4D2000DDD56 /* Build configuration list for PBXNativeTarget "RoverCampaignsTicketmaster" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DB8C0767215FC4D2000DDD56 /* Debug */,
@@ -4127,7 +4127,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DB8C076C215FC4D2000DDD56 /* Build configuration list for PBXNativeTarget "RoverTicketmasterTests" */ = {
+		DB8C076C215FC4D2000DDD56 /* Build configuration list for PBXNativeTarget "RoverCampaignsTicketmasterTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DB8C0769215FC4D2000DDD56 /* Debug */,
@@ -4136,7 +4136,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DB9DBF8B2055974B00E5C77F /* Build configuration list for PBXNativeTarget "RoverNotifications" */ = {
+		DB9DBF8B2055974B00E5C77F /* Build configuration list for PBXNativeTarget "RoverCampaignsNotifications" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DB9DBF872055974B00E5C77F /* Debug */,
@@ -4145,7 +4145,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DB9DBF8C2055974B00E5C77F /* Build configuration list for PBXNativeTarget "RoverNotificationsTests" */ = {
+		DB9DBF8C2055974B00E5C77F /* Build configuration list for PBXNativeTarget "RoverCampaignsNotificationsTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DB9DBF892055974B00E5C77F /* Debug */,
@@ -4154,7 +4154,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DB9DBFC62055980800E5C77F /* Build configuration list for PBXNativeTarget "RoverLocation" */ = {
+		DB9DBFC62055980800E5C77F /* Build configuration list for PBXNativeTarget "RoverCampaignsLocation" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DB9DBFC72055980800E5C77F /* Debug */,
@@ -4163,7 +4163,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DB9DBFC92055980800E5C77F /* Build configuration list for PBXNativeTarget "RoverLocationTests" */ = {
+		DB9DBFC92055980800E5C77F /* Build configuration list for PBXNativeTarget "RoverCampaignsLocationTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DB9DBFCA2055980800E5C77F /* Debug */,
@@ -4172,7 +4172,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DBA015E1217E6DE700268822 /* Build configuration list for PBXNativeTarget "RoverTelephony" */ = {
+		DBA015E1217E6DE700268822 /* Build configuration list for PBXNativeTarget "RoverCampaignsTelephony" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DBA015E2217E6DE700268822 /* Debug */,
@@ -4181,7 +4181,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DBA015E4217E6DE700268822 /* Build configuration list for PBXNativeTarget "RoverTelephonyTests" */ = {
+		DBA015E4217E6DE700268822 /* Build configuration list for PBXNativeTarget "RoverCampaignsTelephonyTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DBA015E5217E6DE700268822 /* Debug */,
@@ -4190,7 +4190,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DBA01610217E71E900268822 /* Build configuration list for PBXNativeTarget "RoverAdSupport" */ = {
+		DBA01610217E71E900268822 /* Build configuration list for PBXNativeTarget "RoverCampaignsAdSupport" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DBA0160C217E71E900268822 /* Debug */,
@@ -4199,7 +4199,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DBA01611217E71E900268822 /* Build configuration list for PBXNativeTarget "RoverAdSupportTests" */ = {
+		DBA01611217E71E900268822 /* Build configuration list for PBXNativeTarget "RoverCampaignsAdSupportTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DBA0160E217E71E900268822 /* Debug */,
@@ -4208,7 +4208,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DBD88A8820C1B21D00085AE0 /* Build configuration list for PBXNativeTarget "RoverData" */ = {
+		DBD88A8820C1B21D00085AE0 /* Build configuration list for PBXNativeTarget "RoverCampaignsData" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DBD88A8420C1B21800085AE0 /* Debug */,
@@ -4217,7 +4217,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DBD88A8920C1B21D00085AE0 /* Build configuration list for PBXNativeTarget "RoverDataTests" */ = {
+		DBD88A8920C1B21D00085AE0 /* Build configuration list for PBXNativeTarget "RoverCampaignsDataTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DBD88A8620C1B21800085AE0 /* Debug */,
@@ -4226,7 +4226,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DBF31B2B20E17176005D7C34 /* Build configuration list for PBXNativeTarget "RoverDebug" */ = {
+		DBF31B2B20E17176005D7C34 /* Build configuration list for PBXNativeTarget "RoverCampaignsDebug" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DBF31B2720E17176005D7C34 /* Debug */,
@@ -4235,7 +4235,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DBF31B2C20E17176005D7C34 /* Build configuration list for PBXNativeTarget "RoverDebugTests" */ = {
+		DBF31B2C20E17176005D7C34 /* Build configuration list for PBXNativeTarget "RoverCampaignsDebugTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DBF31B2920E17176005D7C34 /* Debug */,
@@ -4244,7 +4244,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DBF49DCD203DE00F00B54652 /* Build configuration list for PBXProject "Rover" */ = {
+		DBF49DCD203DE00F00B54652 /* Build configuration list for PBXProject "RoverCampaigns" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DBF49DE5203DE00F00B54652 /* Debug */,
@@ -4253,7 +4253,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DBF49DE7203DE00F00B54652 /* Build configuration list for PBXNativeTarget "RoverFoundation" */ = {
+		DBF49DE7203DE00F00B54652 /* Build configuration list for PBXNativeTarget "RoverCampaignsFoundation" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DBF49DE8203DE00F00B54652 /* Debug */,
@@ -4262,7 +4262,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DBF49DEA203DE00F00B54652 /* Build configuration list for PBXNativeTarget "RoverFoundationTests" */ = {
+		DBF49DEA203DE00F00B54652 /* Build configuration list for PBXNativeTarget "RoverCampaignsFoundationTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DBF49DEB203DE00F00B54652 /* Debug */,
@@ -4271,7 +4271,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DBFDF45320AC84430031EF47 /* Build configuration list for PBXNativeTarget "RoverExperiences" */ = {
+		DBFDF45320AC84430031EF47 /* Build configuration list for PBXNativeTarget "RoverCampaignsExperiences" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DBFDF45420AC84430031EF47 /* Debug */,
@@ -4280,7 +4280,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DBFDF45620AC84430031EF47 /* Build configuration list for PBXNativeTarget "RoverExperiencesTests" */ = {
+		DBFDF45620AC84430031EF47 /* Build configuration list for PBXNativeTarget "RoverCampaignsExperiencesTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DBFDF45720AC84430031EF47 /* Debug */,

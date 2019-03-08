@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:Rover.xcodeproj">
+      location = "self:/Users/andrew/code/rover/rover-campaigns-ios/RoverCampaigns.xcodeproj">
    </FileRef>
 </Workspace>

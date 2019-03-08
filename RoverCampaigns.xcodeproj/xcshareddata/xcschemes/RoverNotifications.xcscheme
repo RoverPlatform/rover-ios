@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "DBF49DD2203DE00F00B54652"
-               BuildableName = "RoverFoundation.framework"
-               BlueprintName = "RoverFoundation"
-               ReferencedContainer = "container:Rover.xcodeproj">
+               BlueprintIdentifier = "DB9DBF752055974B00E5C77F"
+               BuildableName = "RoverCampaignsNotifications.framework"
+               BlueprintName = "RoverCampaignsNotifications"
+               ReferencedContainer = "container:RoverCampaigns.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -32,20 +32,20 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "DBF49DDB203DE00F00B54652"
-               BuildableName = "RoverFoundationTests.xctest"
-               BlueprintName = "RoverFoundationTests"
-               ReferencedContainer = "container:Rover.xcodeproj">
+               BlueprintIdentifier = "DB9DBF7D2055974B00E5C77F"
+               BuildableName = "RoverCampaignsNotificationsTests.xctest"
+               BlueprintName = "RoverCampaignsNotificationsTests"
+               ReferencedContainer = "container:RoverCampaigns.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "DBF49DD2203DE00F00B54652"
-            BuildableName = "RoverFoundation.framework"
-            BlueprintName = "RoverFoundation"
-            ReferencedContainer = "container:Rover.xcodeproj">
+            BlueprintIdentifier = "DB9DBF752055974B00E5C77F"
+            BuildableName = "RoverCampaignsNotifications.framework"
+            BlueprintName = "RoverCampaignsNotifications"
+            ReferencedContainer = "container:RoverCampaigns.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -64,10 +64,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "DBF49DD2203DE00F00B54652"
-            BuildableName = "RoverFoundation.framework"
-            BlueprintName = "RoverFoundation"
-            ReferencedContainer = "container:Rover.xcodeproj">
+            BlueprintIdentifier = "DB9DBF752055974B00E5C77F"
+            BuildableName = "RoverCampaignsNotifications.framework"
+            BlueprintName = "RoverCampaignsNotifications"
+            ReferencedContainer = "container:RoverCampaigns.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -82,10 +82,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "DBF49DD2203DE00F00B54652"
-            BuildableName = "RoverFoundation.framework"
-            BlueprintName = "RoverFoundation"
-            ReferencedContainer = "container:Rover.xcodeproj">
+            BlueprintIdentifier = "DB9DBF752055974B00E5C77F"
+            BuildableName = "RoverCampaignsNotifications.framework"
+            BlueprintName = "RoverCampaignsNotifications"
+            ReferencedContainer = "container:RoverCampaigns.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

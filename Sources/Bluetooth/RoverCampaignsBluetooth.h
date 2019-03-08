@@ -6,4 +6,4 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-#import <RoverData/RoverData.h>
+#import <RoverCampaignsData/RoverCampaignsData.h>

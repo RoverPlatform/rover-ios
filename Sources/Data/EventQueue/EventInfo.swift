@@ -1,6 +1,6 @@
 //
 //  EventInfo.swift
-//  RoverData
+//  RoverCampaignsData
 //
 //  Created by Sean Rucker on 2017-11-30.
 //  Copyright © 2017 Rover Labs Inc. All rights reserved.

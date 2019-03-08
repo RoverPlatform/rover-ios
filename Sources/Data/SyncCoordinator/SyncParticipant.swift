@@ -1,6 +1,6 @@
 //
 //  SyncParticipant.swift
-//  RoverData
+//  RoverCampaignsData
 //
 //  Created by Sean Rucker on 2018-06-05.
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.

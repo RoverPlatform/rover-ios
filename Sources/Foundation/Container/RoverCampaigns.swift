@@ -9,8 +9,8 @@
 import Foundation
 import os.log
 
-public class Rover {
-    static var sharedInstance: Rover?
+public class RoverCampaigns {
+    static var sharedInstance: RoverCampaigns?
     
     public static var shared: Resolver? {
         return sharedInstance
@@ -22,7 +22,7 @@ public class Rover {
             return
         }
         
-        let rover = Rover()
+        let rover = RoverCampaigns()
         
         assemblers.forEach { $0.assemble(container: rover) }
         assemblers.forEach { $0.containerDidAssemble(resolver: rover) }
@@ -43,7 +43,7 @@ public class Rover {
 
 // MARK: Container
 
-extension Rover: Container {
+extension RoverCampaigns: Container {
     public func set<Service>(entry: ServiceEntry<Service>, for key: ServiceKey) {
         services[key] = entry
     }
@@ -51,7 +51,7 @@ extension Rover: Container {
 
 // MARK: Resolver
 
-extension Rover: Resolver {
+extension RoverCampaigns: Resolver {
     public func entry<Service>(for key: ServiceKey) -> ServiceEntry<Service>? {
         return services[key] as? ServiceEntry<Service>
     }

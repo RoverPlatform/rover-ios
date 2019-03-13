@@ -8,7 +8,8 @@
 
 import UIKit
 
-class SessionControllerService: SessionController {
+
+public class SessionControllerService: SessionController {
     let eventQueue: EventQueue
     let keepAliveTime: Int
     
@@ -67,7 +68,7 @@ class SessionControllerService: SessionController {
         }
     }
     
-    func registerSession(identifier: String, completionHandler: @escaping (Double) -> EventInfo) {
+    public func registerSession(identifier: String, completionHandler: @escaping (Double) -> EventInfo) {
         if var entry = sessions[identifier] {
             entry.session.start()
             
@@ -92,7 +93,7 @@ class SessionControllerService: SessionController {
         sessions[identifier] = SessionEntry(session: session)
     }
     
-    func unregisterSession(identifier: String) {
+    public func unregisterSession(identifier: String) {
         if var entry = sessions[identifier] {
             entry.isUnregistered = true
             sessions[identifier] = entry

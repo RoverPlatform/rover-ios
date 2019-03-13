@@ -10,13 +10,17 @@ import UIKit
 
 open class ExperienceViewController: UINavigationController {
     public let experience: Experience
-    public let eventQueue: EventQueue
-    public let sessionController: SessionController
+
+    // TODO: START HERE AND ADD A SIMPLE EVENTQUEUE AND KEEPALIVE TIME TO ENVIRONMENT.
+    public let sessionController: SessionController = SessionControllerService(
+
+    ) // TODO: replace with injection
     
-    public init(rootViewController: UIViewController, experience: Experience, eventQueue: EventQueue, sessionController: SessionController) {
+    public init(
+        rootViewController: UIViewController,
+        experience: Experience
+    ) {
         self.experience = experience
-        self.eventQueue = eventQueue
-        self.sessionController = sessionController
         
         super.init(nibName: nil, bundle: nil)
         viewControllers = [rootViewController]
@@ -40,9 +44,12 @@ open class ExperienceViewController: UINavigationController {
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        let attributes: Attributes = ["experience": experience]
-        let event = EventInfo(name: "Experience Presented", namespace: "rover", attributes: attributes)
-        eventQueue.addEvent(event)
+       
+        
+        // TODO: EVENT YO
+         let attributes: Attributes = ["experience": experience]
+//        let event = EventInfo(name: "Experience Presented", namespace: "rover", attributes: attributes)
+//        eventQueue.addEvent(event)
         
         sessionController.registerSession(identifier: sessionIdentifier) { [attributes] duration in
             var attributes = attributes
@@ -54,9 +61,10 @@ open class ExperienceViewController: UINavigationController {
     override open func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
-        let attributes: Attributes = ["experience": experience]
-        let event = EventInfo(name: "Experience Dismissed", namespace: "rover", attributes: attributes)
-        eventQueue.addEvent(event)
+        // TODO: EVENT YO
+//        let attributes: Attributes = ["experience": experience]
+//        let event = EventInfo(name: "Experience Dismissed", namespace: "rover", attributes: attributes)
+//        eventQueue.addEvent(event)
         
         sessionController.unregisterSession(identifier: sessionIdentifier)
     }

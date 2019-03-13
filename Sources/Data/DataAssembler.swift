@@ -29,49 +29,6 @@ public struct DataAssembler: Assembler {
     
     // swiftlint:disable:next function_body_length // Assemblers are fairly declarative.
     public func assemble(container: Container) {
-        // MARK: ContextManager
-        
-        container.register(ContextManager.self) { _ in
-            ContextManager()
-        }
-        
-        // MARK: ContextProvider
-        
-        container.register(ContextProvider.self) { resolver in
-            ModularContextProvider(
-                adSupportContextProvider: resolver.resolve(AdSupportContextProvider.self),
-                bluetoothContextProvider: resolver.resolve(BluetoothContextProvider.self),
-                debugContextProvider: resolver.resolve(DebugContextProvider.self),
-                locationContextProvider: resolver.resolve(LocationContextProvider.self),
-                localeContextProvider: resolver.resolve(LocaleContextProvider.self),
-                notificationsContextProvider: resolver.resolve(NotificationsContextProvider.self),
-                pushTokenContextProvider: resolver.resolve(PushTokenContextProvider.self),
-                reachabilityContextProvider: resolver.resolve(ReachabilityContextProvider.self),
-                staticContextProvider: resolver.resolve(StaticContextProvider.self)!,
-                telephonyContextProvider: resolver.resolve(TelephonyContextProvider.self),
-                timeZoneContextProvider: resolver.resolve(TimeZoneContextProvider.self),
-                userInfoContextProvider: resolver.resolve(UserInfoContextProvider.self)
-            )
-        }
-        
-        // MARK: EventsClient
-        
-        container.register(EventsClient.self) { resolver in
-            resolver.resolve(HTTPClient.self)!
-        }
-        
-        // MARK: EventQueue
-        
-        container.register(EventQueue.self) { [flushEventsAt, flushEventsInterval, maxEventBatchSize, maxEventQueueSize] resolver in
-            EventQueue(
-                client: resolver.resolve(EventsClient.self)!,
-                flushAt: flushEventsAt,
-                flushInterval: flushEventsInterval,
-                maxBatchSize: maxEventBatchSize,
-                maxQueueSize: maxEventQueueSize
-            )
-        }
-        
         // MARK: HTTPClient
         
         container.register(HTTPClient.self) { [accountToken, endpoint] _ in
@@ -82,79 +39,10 @@ public struct DataAssembler: Assembler {
             )
         }
         
-        // MARK: LocaleContextProvider
-        
-        container.register(LocaleContextProvider.self) { resolver in
-            resolver.resolve(ContextManager.self)!
-        }
-        
-        // MARK: PushTokenContextProvider
-        
-        container.register(PushTokenContextProvider.self) { resolver in
-            resolver.resolve(ContextManager.self)!
-        }
-        
-        // MARK: ReachabilityContextProvider
-        
-        container.register(ReachabilityContextProvider.self) { resolver in
-            resolver.resolve(ContextManager.self)!
-        }
-        
-        // MARK: StaticContextProvider
-        
-        container.register(StaticContextProvider.self) { resolver in
-            resolver.resolve(ContextManager.self)!
-        }
-        
-        // MARK: SyncClient
-        
-        container.register(SyncClient.self) {  resolver in
-            resolver.resolve(HTTPClient.self)!
-        }
-        
-        // MARK: SyncCoordinator
-        
-        container.register(SyncCoordinator.self) { resolver in
-            let client = resolver.resolve(SyncClient.self)!
-            return SyncCoordinatorService(client: client)
-        }
-        
-        // MARK: TimeZoneContextProvider
-        
-        container.register(TimeZoneContextProvider.self) { resolver in
-            resolver.resolve(ContextManager.self)!
-        }
-        
-        // MARK: TokenManager
-        
-        container.register(TokenManager.self) { resolver in
-            resolver.resolve(ContextManager.self)!
-        }
-        
         // MARK: URLSession
         
         container.register(URLSession.self) { _ in
             URLSession(configuration: URLSessionConfiguration.default)
         }
-        
-        // MARK: UserInfoManager
-        
-        container.register(UserInfoManager.self) { resolver in
-            resolver.resolve(ContextManager.self)!
-        }
-        
-        // MARK: UserInfoContextProvider
-        
-        container.register(UserInfoContextProvider.self) { resolver in
-            resolver.resolve(ContextManager.self)!
-        }
-    }
-    
-    public func containerDidAssemble(resolver: Resolver) {
-        let eventQueue = resolver.resolve(EventQueue.self)!
-        eventQueue.restore()
-        
-        // Set the context provider on the event queue after assembly to allow circular dependency injection
-        eventQueue.contextProvider = resolver.resolve(ContextProvider.self)!
     }
 }

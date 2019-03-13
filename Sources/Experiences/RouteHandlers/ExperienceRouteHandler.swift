@@ -8,6 +8,8 @@
 
 import Foundation
 
+// TODO: ripout entire routing system and put most of the below in ExperienceViewController.
+
 class ExperienceRouteHandler: RouteHandler {
     typealias ActionProvider = (ExperienceIdentifier) -> Action?
     

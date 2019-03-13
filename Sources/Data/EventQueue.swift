@@ -1,9 +1,9 @@
 //
-//  EventInfo.swift
+//  EventQueue.swift
 //  RoverData
 //
-//  Created by Sean Rucker on 2017-11-30.
-//  Copyright © 2017 Rover Labs Inc. All rights reserved.
+//  Created by Andrew Clunis on 2019-03-13.
+//  Copyright © 2019 Rover Labs Inc. All rights reserved.
 //
 
 import Foundation
@@ -20,4 +20,9 @@ public struct EventInfo {
         self.attributes = attributes
         self.timestamp = timestamp
     }
+}
+
+
+public protocol EventQueue {
+    func addEvent(_ info: EventInfo)
 }

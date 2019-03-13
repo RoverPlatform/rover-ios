@@ -40,9 +40,4 @@ Pod::Spec.new do |s|
     ss.dependency "Rover/UI"
     ss.frameworks = "WebKit"
   end
-
-  s.subspec "Debug" do |ss|
-    ss.source_files = "Sources/Debug/**/*.swift"
-    ss.dependency "Rover/UI"
-  end
 end

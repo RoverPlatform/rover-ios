@@ -8,6 +8,7 @@
 
 import UIKit
 
+// TODO: consider ripping this out and just sending "session start" and "session stop" notification center events to be received by the SessionControllerService in RoverCampaigns
 
 public class SessionControllerService: SessionController {
     let eventQueue: EventQueue

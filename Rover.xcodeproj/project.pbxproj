@@ -8,6 +8,74 @@
 
 /* Begin PBXBuildFile section */
 		4953DD112239925B00286C4B /* NewRover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4953DD102239925B00286C4B /* NewRover.swift */; };
+		4953DD1222399A4400286C4B /* Data.OSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6BE8AF215D433B000A1FDA /* Data.OSLog.swift */; };
+		4953DD1322399A4800286C4B /* Data.URLRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB496E392148544B0026DE6A /* Data.URLRequest.swift */; };
+		4953DD1422399A4D00286C4B /* HTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC3B42A2148A7D10096C74E /* HTTPClient.swift */; };
+		4953DD1522399A4D00286C4B /* HTTPError.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB496E3F214854CF0026DE6A /* HTTPError.swift */; };
+		4953DD1622399A4D00286C4B /* HTTPResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB496E3D214854C50026DE6A /* HTTPResult.swift */; };
+		4953DD1722399A5000286C4B /* Data+Gzip.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF49ECE203DE49500B54652 /* Data+Gzip.swift */; };
+		4953DD1822399A5000286C4B /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF49ECF203DE49500B54652 /* Reachability.swift */; };
+		4953DD1922399A5400286C4B /* DataAssembler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD88ABC20C1BA7C00085AE0 /* DataAssembler.swift */; };
+		4953DD1A22399A5400286C4B /* EventQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4953DD0B2239799200286C4B /* EventQueue.swift */; };
+		4953DD1B22399A5B00286C4B /* OpenURLAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF2585920A36DF400400EA2 /* OpenURLAction.swift */; };
+		4953DD1C22399A5B00286C4B /* PresentViewAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF2585D20A37BF300400EA2 /* PresentViewAction.swift */; };
+		4953DD1D22399A6600286C4B /* VersionTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB4831B720DC38F6003DBF1B /* VersionTracker.swift */; };
+		4953DD1E22399A6600286C4B /* VersionTrackerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB4831B520DC38D8003DBF1B /* VersionTrackerService.swift */; };
+		4953DD1F22399A6900286C4B /* ImageConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FDDB20891153008D1A57 /* ImageConfiguration.swift */; };
+		4953DD2022399A6900286C4B /* ImageOptimization.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB709C72207EB47400F96C2B /* ImageOptimization.swift */; };
+		4953DD2122399A6900286C4B /* ImageStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB709C68207E7EFC00F96C2B /* ImageStore.swift */; };
+		4953DD2222399A6900286C4B /* ImageStoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB709C6B207EAEED00F96C2B /* ImageStoreService.swift */; };
+		4953DD2322399A6D00286C4B /* LifeCycleTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB89B9C20D0160100DD797A /* LifeCycleTracker.swift */; };
+		4953DD2422399A6D00286C4B /* LifeCycleTrackerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB89B9F20D01CC500DD797A /* LifeCycleTrackerService.swift */; };
+		4953DD2522399A7100286C4B /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FDF7208D09AE008D1A57 /* Router.swift */; };
+		4953DD2622399A7100286C4B /* RouterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FDF9208D0A0A008D1A57 /* RouterService.swift */; };
+		4953DD2722399A7100286C4B /* RouteHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7BA91A20D9594500968A30 /* RouteHandler.swift */; };
+		4953DD2822399A7600286C4B /* SessionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6ADD8720B34F81002F226C /* SessionController.swift */; };
+		4953DD2922399A7600286C4B /* SessionControllerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6ADD7E20B3449E002F226C /* SessionControllerService.swift */; };
+		4953DD2A22399A7600286C4B /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB4831B920DC5D18003DBF1B /* Session.swift */; };
+		4953DD2B22399A7900286C4B /* UIAssembler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6ADD7620B33F5D002F226C /* UIAssembler.swift */; };
+		4953DD2C22399A7F00286C4B /* Experiences.Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1B66209CD89400E99F9F /* Experiences.Color.swift */; };
+		4953DD2D22399A7F00286C4B /* Experiences.Text.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1B68209CD8D600E99F9F /* Experiences.Text.swift */; };
+		4953DD2E22399A7F00286C4B /* Experiences.ImageConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFDF48320AC858A0031EF47 /* Experiences.ImageConfiguration.swift */; };
+		4953DD2F22399A7F00286C4B /* Experiences.Barcode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4980D66421307738007267D3 /* Experiences.Barcode.swift */; };
+		4953DD3022399A8500286C4B /* Background.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A69209B8CC500E99F9F /* Background.swift */; };
+		4953DD3122399A8500286C4B /* Barcode.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A65209B8CC500E99F9F /* Barcode.swift */; };
+		4953DD3222399A8500286C4B /* BarcodeBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A74209B8CC500E99F9F /* BarcodeBlock.swift */; };
+		4953DD3322399A8500286C4B /* Block.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A6A209B8CC500E99F9F /* Block.swift */; };
+		4953DD3422399A8500286C4B /* Border.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A71209B8CC500E99F9F /* Border.swift */; };
+		4953DD3522399A8500286C4B /* ButtonBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A67209B8CC500E99F9F /* ButtonBlock.swift */; };
+		4953DD3622399A8500286C4B /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A77209B8CC500E99F9F /* Color.swift */; };
+		4953DD3722399A8500286C4B /* Experience.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A66209B8CC500E99F9F /* Experience.swift */; };
+		4953DD3822399A8500286C4B /* Height.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A73209B8CC500E99F9F /* Height.swift */; };
+		4953DD3922399A8500286C4B /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A6B209B8CC500E99F9F /* Image.swift */; };
+		4953DD3A22399A8500286C4B /* ImageBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A78209B8CC500E99F9F /* ImageBlock.swift */; };
+		4953DD3B22399A8500286C4B /* Insets.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A72209B8CC500E99F9F /* Insets.swift */; };
+		4953DD3C22399A8500286C4B /* Position.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A75209B8CC500E99F9F /* Position.swift */; };
+		4953DD3D22399A8500286C4B /* RectangleBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A68209B8CC500E99F9F /* RectangleBlock.swift */; };
+		4953DD3E22399A8500286C4B /* Row.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A70209B8CC500E99F9F /* Row.swift */; };
+		4953DD3F22399A8500286C4B /* Screen.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A6C209B8CC500E99F9F /* Screen.swift */; };
+		4953DD4022399A8500286C4B /* BlockTapBehavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBADA83120AA03B900225C80 /* BlockTapBehavior.swift */; };
+		4953DD4122399A8500286C4B /* Text.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A76209B8CC500E99F9F /* Text.swift */; };
+		4953DD4222399A8500286C4B /* TextBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A6F209B8CC500E99F9F /* TextBlock.swift */; };
+		4953DD4322399A8500286C4B /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A6E209B8CC500E99F9F /* WebView.swift */; };
+		4953DD4422399A8500286C4B /* WebViewBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A6D209B8CC500E99F9F /* WebViewBlock.swift */; };
+		4953DD4522399A8900286C4B /* ExperienceRouteHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7BA91D20D96C9900968A30 /* ExperienceRouteHandler.swift */; };
+		4953DD4622399A9100286C4B /* FetchExperienceClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC3B42C2148B08D0096C74E /* FetchExperienceClient.swift */; };
+		4953DD4722399A9100286C4B /* ExperienceStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1B0E209CAD9600E99F9F /* ExperienceStore.swift */; };
+		4953DD4822399A9100286C4B /* ExperienceStoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1ACB209BB3D200E99F9F /* ExperienceStoreService.swift */; };
+		4953DD4922399A9700286C4B /* BarcodeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FDDF208A4961008D1A57 /* BarcodeCell.swift */; };
+		4953DD4A22399A9700286C4B /* BlockCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEEE2055964E00E5C77F /* BlockCell.swift */; };
+		4953DD4B22399A9700286C4B /* ButtonCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEED2055964E00E5C77F /* ButtonCell.swift */; };
+		4953DD4C22399A9700286C4B /* ImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEE72055964E00E5C77F /* ImageCell.swift */; };
+		4953DD4D22399A9700286C4B /* RowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEEB2055964E00E5C77F /* RowView.swift */; };
+		4953DD4E22399A9700286C4B /* TextCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEE62055964E00E5C77F /* TextCell.swift */; };
+		4953DD4F22399A9700286C4B /* WebViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEEF2055964E00E5C77F /* WebViewCell.swift */; };
+		4953DD5022399A9C00286C4B /* ExperienceContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEDF2055964E00E5C77F /* ExperienceContainer.swift */; };
+		4953DD5122399A9C00286C4B /* ExperienceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEDE2055964E00E5C77F /* ExperienceViewController.swift */; };
+		4953DD5222399A9C00286C4B /* ScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEE02055964E00E5C77F /* ScreenViewController.swift */; };
+		4953DD5322399A9C00286C4B /* ScreenViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEE32055964E00E5C77F /* ScreenViewLayout.swift */; };
+		4953DD5422399A9C00286C4B /* ScreenViewLayoutAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FDD92087E09F008D1A57 /* ScreenViewLayoutAttributes.swift */; };
+		4953DD5522399A9C00286C4B /* ExperiencesAssembler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1B62209CD46200E99F9F /* ExperiencesAssembler.swift */; };
 		DB1D5DC121079ED70071928F /* AttributeKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1D5DC021079ED70071928F /* AttributeKey.swift */; };
 		DB1D5DC32107C9850071928F /* AttributeValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1D5DC22107C9850071928F /* AttributeValue.swift */; };
 		DB1D5DC52107D32C0071928F /* Attributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1D5DC42107D32C0071928F /* Attributes.swift */; };
@@ -691,34 +759,102 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4953DD4622399A9100286C4B /* FetchExperienceClient.swift in Sources */,
 				DBADA7FC20A4F32500225C80 /* ActionObserver.swift in Sources */,
+				4953DD3422399A8500286C4B /* Border.swift in Sources */,
 				DBF49E02203DE1DE00B54652 /* Assembler.swift in Sources */,
+				4953DD5022399A9C00286C4B /* ExperienceContainer.swift in Sources */,
+				4953DD1922399A5400286C4B /* DataAssembler.swift in Sources */,
 				DBADA7FB20A4F32500225C80 /* Action.swift in Sources */,
+				4953DD3222399A8500286C4B /* BarcodeBlock.swift in Sources */,
+				4953DD4722399A9100286C4B /* ExperienceStore.swift in Sources */,
+				4953DD5422399A9C00286C4B /* ScreenViewLayoutAttributes.swift in Sources */,
+				4953DD4122399A8500286C4B /* Text.swift in Sources */,
+				4953DD2C22399A7F00286C4B /* Experiences.Color.swift in Sources */,
+				4953DD3D22399A8500286C4B /* RectangleBlock.swift in Sources */,
+				4953DD5122399A9C00286C4B /* ExperienceViewController.swift in Sources */,
+				4953DD2722399A7100286C4B /* RouteHandler.swift in Sources */,
+				4953DD3A22399A8500286C4B /* ImageBlock.swift in Sources */,
 				DBFB1AF3209CA82800E99F9F /* ID.swift in Sources */,
+				4953DD2922399A7600286C4B /* SessionControllerService.swift in Sources */,
+				4953DD3122399A8500286C4B /* Barcode.swift in Sources */,
+				4953DD4E22399A9700286C4B /* TextCell.swift in Sources */,
+				4953DD4922399A9700286C4B /* BarcodeCell.swift in Sources */,
+				4953DD2222399A6900286C4B /* ImageStoreService.swift in Sources */,
+				4953DD4322399A8500286C4B /* WebView.swift in Sources */,
+				4953DD4D22399A9700286C4B /* RowView.swift in Sources */,
+				4953DD4A22399A9700286C4B /* BlockCell.swift in Sources */,
+				4953DD2822399A7600286C4B /* SessionController.swift in Sources */,
+				4953DD4222399A8500286C4B /* TextBlock.swift in Sources */,
+				4953DD1422399A4D00286C4B /* HTTPClient.swift in Sources */,
+				4953DD4F22399A9700286C4B /* WebViewCell.swift in Sources */,
+				4953DD1722399A5000286C4B /* Data+Gzip.swift in Sources */,
 				DBC3FBF32155375D00372A65 /* PersistedValue.swift in Sources */,
 				DBF49E05203DE1DE00B54652 /* ServiceFactory.swift in Sources */,
+				4953DD1D22399A6600286C4B /* VersionTracker.swift in Sources */,
+				4953DD5322399A9C00286C4B /* ScreenViewLayout.swift in Sources */,
+				4953DD5222399A9C00286C4B /* ScreenViewController.swift in Sources */,
+				4953DD2322399A6D00286C4B /* LifeCycleTracker.swift in Sources */,
+				4953DD3522399A8500286C4B /* ButtonBlock.swift in Sources */,
+				4953DD1322399A4800286C4B /* Data.URLRequest.swift in Sources */,
+				4953DD2122399A6900286C4B /* ImageStore.swift in Sources */,
+				4953DD1222399A4400286C4B /* Data.OSLog.swift in Sources */,
+				4953DD3022399A8500286C4B /* Background.swift in Sources */,
 				DB71C63021092C120079EDFF /* Scalar.swift in Sources */,
 				DBF2584120A107BD00400EA2 /* ObserverSet.swift in Sources */,
 				DBF49E06203DE1DE00B54652 /* ServiceKey.swift in Sources */,
 				DB6BE8AE215D41F7000A1FDA /* Foundation.OSLog.swift in Sources */,
+				4953DD2D22399A7F00286C4B /* Experiences.Text.swift in Sources */,
+				4953DD5522399A9C00286C4B /* ExperiencesAssembler.swift in Sources */,
 				DBF49E03203DE1DE00B54652 /* ServiceEntry.swift in Sources */,
+				4953DD3C22399A8500286C4B /* Position.swift in Sources */,
 				DBADA80320A4F37C00225C80 /* Dispatcher.swift in Sources */,
+				4953DD2022399A6900286C4B /* ImageOptimization.swift in Sources */,
+				4953DD1F22399A6900286C4B /* ImageConfiguration.swift in Sources */,
 				DB1D5DC121079ED70071928F /* AttributeKey.swift in Sources */,
+				4953DD4C22399A9700286C4B /* ImageCell.swift in Sources */,
+				4953DD3F22399A8500286C4B /* Screen.swift in Sources */,
 				4953DD112239925B00286C4B /* NewRover.swift in Sources */,
+				4953DD2A22399A7600286C4B /* Session.swift in Sources */,
 				DBFDF52420AE2B1C0031EF47 /* Foundation.DateFormatter.swift in Sources */,
 				DBADA7FD20A4F32500225C80 /* BlockObserver.swift in Sources */,
 				DBF49E00203DE1DE00B54652 /* Resolver.swift in Sources */,
+				4953DD1E22399A6600286C4B /* VersionTrackerService.swift in Sources */,
+				4953DD1C22399A5B00286C4B /* PresentViewAction.swift in Sources */,
+				4953DD4022399A8500286C4B /* BlockTapBehavior.swift in Sources */,
+				4953DD1522399A4D00286C4B /* HTTPError.swift in Sources */,
 				DBF49E04203DE1DE00B54652 /* Container.swift in Sources */,
+				4953DD4422399A8500286C4B /* WebViewBlock.swift in Sources */,
+				4953DD3622399A8500286C4B /* Color.swift in Sources */,
+				4953DD3B22399A8500286C4B /* Insets.swift in Sources */,
 				DB71C62E21092B970079EDFF /* ScalarRepresentable.swift in Sources */,
+				4953DD3922399A8500286C4B /* Image.swift in Sources */,
+				4953DD3722399A8500286C4B /* Experience.swift in Sources */,
+				4953DD4B22399A9700286C4B /* ButtonCell.swift in Sources */,
+				4953DD1B22399A5B00286C4B /* OpenURLAction.swift in Sources */,
+				4953DD3E22399A8500286C4B /* Row.swift in Sources */,
 				DB1D5DC52107D32C0071928F /* Attributes.swift in Sources */,
+				4953DD2622399A7100286C4B /* RouterService.swift in Sources */,
 				DB71C62C2109265F0079EDFF /* AttributeRepresentable.swift in Sources */,
+				4953DD1A22399A5400286C4B /* EventQueue.swift in Sources */,
+				4953DD3322399A8500286C4B /* Block.swift in Sources */,
 				DBCBE086216140E6001C7A96 /* Foundation.JSONEncoder.swift in Sources */,
+				4953DD2422399A6D00286C4B /* LifeCycleTrackerService.swift in Sources */,
 				DBCBE088216140F1001C7A96 /* Foundation.JSONDecoder.swift in Sources */,
+				4953DD2522399A7100286C4B /* Router.swift in Sources */,
+				4953DD1822399A5000286C4B /* Reachability.swift in Sources */,
 				DBB89BE820D0415600DD797A /* Rover.swift in Sources */,
 				DBF49DF6203DE18500B54652 /* FoundationAssembler.swift in Sources */,
 				DBF49E07203DE1DE00B54652 /* ServiceScope.swift in Sources */,
+				4953DD2B22399A7900286C4B /* UIAssembler.swift in Sources */,
+				4953DD3822399A8500286C4B /* Height.swift in Sources */,
+				4953DD4822399A9100286C4B /* ExperienceStoreService.swift in Sources */,
+				4953DD2E22399A7F00286C4B /* Experiences.ImageConfiguration.swift in Sources */,
+				4953DD1622399A4D00286C4B /* HTTPResult.swift in Sources */,
+				4953DD4522399A8900286C4B /* ExperienceRouteHandler.swift in Sources */,
 				DB1D5DC32107C9850071928F /* AttributeValue.swift in Sources */,
 				DBADA80420A4F37C00225C80 /* DispatcherService.swift in Sources */,
+				4953DD2F22399A7F00286C4B /* Experiences.Barcode.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -861,7 +997,7 @@
 		DBF49DE8203DE00F00B54652 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = YES;
+				APPLICATION_EXTENSION_API_ONLY = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
@@ -886,7 +1022,7 @@
 		DBF49DE9203DE00F00B54652 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = YES;
+				APPLICATION_EXTENSION_API_ONLY = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;

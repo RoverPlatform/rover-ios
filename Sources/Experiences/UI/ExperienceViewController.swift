@@ -12,9 +12,9 @@ open class ExperienceViewController: UINavigationController {
     public let experience: Experience
 
     // TODO: START HERE AND ADD A SIMPLE EVENTQUEUE AND KEEPALIVE TIME TO ENVIRONMENT.
-    public let sessionController: SessionController = SessionControllerService(
-
-    ) // TODO: replace with injection
+//    public let sessionController: SessionController = SessionControllerService(
+//
+//    ) // TODO: replace with injection
     
     public init(
         rootViewController: UIViewController,
@@ -44,18 +44,18 @@ open class ExperienceViewController: UINavigationController {
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-       
+       Current.
         
         // TODO: EVENT YO
          let attributes: Attributes = ["experience": experience]
 //        let event = EventInfo(name: "Experience Presented", namespace: "rover", attributes: attributes)
 //        eventQueue.addEvent(event)
         
-        sessionController.registerSession(identifier: sessionIdentifier) { [attributes] duration in
-            var attributes = attributes
-            attributes["duration"] = duration
-            return EventInfo(name: "Experience Viewed", namespace: "rover", attributes: attributes)
-        }
+//        sessionController.registerSession(identifier: sessionIdentifier) { [attributes] duration in
+//            var attributes = attributes
+//            attributes["duration"] = duration
+//            return EventInfo(name: "Experience Viewed", namespace: "rover", attributes: attributes)
+//        }
     }
     
     override open func viewWillDisappear(_ animated: Bool) {
@@ -66,7 +66,7 @@ open class ExperienceViewController: UINavigationController {
 //        let event = EventInfo(name: "Experience Dismissed", namespace: "rover", attributes: attributes)
 //        eventQueue.addEvent(event)
         
-        sessionController.unregisterSession(identifier: sessionIdentifier)
+//        sessionController.unregisterSession(identifier: sessionIdentifier)
     }
     
     #if swift(>=4.2)

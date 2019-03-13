@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		492A84A42238351C00B59A5C /* NotificationCenterObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492A84A32238351C00B59A5C /* NotificationCenterObserver.swift */; };
 		DB026279214C300E00893E53 /* Location.CLBeaconRegion.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB026272214C2F5200893E53 /* Location.CLBeaconRegion.swift */; };
 		DB02627A214C301600893E53 /* Location.CLCircularRegion.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB026274214C2F8900893E53 /* Location.CLCircularRegion.swift */; };
 		DB03F9B2214A98A900CBFE11 /* Location.CLLocationCoordinate2D.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB03F9B1214A98A900CBFE11 /* Location.CLLocationCoordinate2D.swift */; };
@@ -283,6 +284,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		492A84A32238351C00B59A5C /* NotificationCenterObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCenterObserver.swift; sourceTree = "<group>"; };
 		DB00FDDB20891153008D1A57 /* ImageConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageConfiguration.swift; sourceTree = "<group>"; };
 		DB00FDF7208D09AE008D1A57 /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 		DB00FDF9208D0A0A008D1A57 /* RouterService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouterService.swift; sourceTree = "<group>"; };
@@ -1342,6 +1344,7 @@
 				DBFB1A88209B8CC500E99F9F /* EventQueueObserver.swift */,
 				DBFB1A84209B8CC500E99F9F /* EventQueue.swift */,
 				DB496E4121486E3D0026DE6A /* EventsClient.swift */,
+				492A84A32238351C00B59A5C /* NotificationCenterObserver.swift */,
 			);
 			path = EventQueue;
 			sourceTree = "<group>";
@@ -2467,6 +2470,7 @@
 				DBC3B42B2148A7D10096C74E /* HTTPClient.swift in Sources */,
 				DBCBE09121614D88001C7A96 /* StaticContextProvider.swift in Sources */,
 				DB75358621595F1000CB5654 /* SyncCoordinatorService.swift in Sources */,
+				492A84A42238351C00B59A5C /* NotificationCenterObserver.swift in Sources */,
 				DBCBE09921614EB3001C7A96 /* LocationContextProvider.swift in Sources */,
 				DB8C0785215FEC0E000DDD56 /* UserInfoManager.swift in Sources */,
 				DB71B7DB2145A7A100FF5034 /* PagingResponse.swift in Sources */,

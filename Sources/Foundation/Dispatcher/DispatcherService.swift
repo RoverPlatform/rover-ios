@@ -9,6 +9,8 @@
 import Foundation
 import os.log
 
+// TODO: will be ripped out alongside Router
+
 class DispatcherService: OperationQueue, Dispatcher {
     func dispatch(_ action: Action, completionHandler: (() -> Void)?) {
         let produceHandler: BlockObserver.ProduceHandler = { [weak self] in

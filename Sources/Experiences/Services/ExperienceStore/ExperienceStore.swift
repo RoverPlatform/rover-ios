@@ -1,6 +1,6 @@
 //
 //  ExperienceStore.swift
-//  RoverExperiences
+//  Rover
 //
 //  Created by Sean Rucker on 2018-05-04.
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.

@@ -1,6 +1,6 @@
 //
 //  Barcode+cgImage.swift
-//  RoverExperiences
+//  Rover
 //
 //  Created by Andrew Clunis on 2018-08-24.
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.

@@ -100,7 +100,7 @@
 		DBA015F2217E706900268822 /* TelephonyAssembler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA015F1217E706900268822 /* TelephonyAssembler.swift */; };
 		DBA01604217E71E900268822 /* RoverCampaignsAdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBA015FB217E71E900268822 /* RoverCampaignsAdSupport.framework */; };
 		DBA01609217E71E900268822 /* RoverAdSupportTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA01608217E71E900268822 /* RoverAdSupportTests.swift */; };
-		DBA0160B217E71E900268822 /* RoverAdSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = DBA015FD217E71E900268822 /* RoverAdSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DBA0160B217E71E900268822 /* RoverCampaignsAdSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = DBA015FD217E71E900268822 /* RoverCampaignsAdSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DBA01612217E724300268822 /* RoverCampaignsData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD88A7320C1B21700085AE0 /* RoverCampaignsData.framework */; };
 		DBA01613217E724300268822 /* RoverCampaignsFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF49DD3203DE00F00B54652 /* RoverCampaignsFoundation.framework */; };
 		DBA01616217E773900268822 /* AdSupportContextProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA01615217E773900268822 /* AdSupportContextProvider.swift */; };
@@ -395,7 +395,7 @@
 		DBA015EF217E6F8100268822 /* Telephony.OSLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Telephony.OSLog.swift; sourceTree = "<group>"; };
 		DBA015F1217E706900268822 /* TelephonyAssembler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelephonyAssembler.swift; sourceTree = "<group>"; };
 		DBA015FB217E71E900268822 /* RoverCampaignsAdSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RoverCampaignsAdSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		DBA015FD217E71E900268822 /* RoverAdSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RoverAdSupport.h; sourceTree = "<group>"; };
+		DBA015FD217E71E900268822 /* RoverCampaignsAdSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RoverCampaignsAdSupport.h; sourceTree = "<group>"; };
 		DBA015FE217E71E900268822 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DBA01603217E71E900268822 /* RoverCampaignsAdSupportTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RoverCampaignsAdSupportTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBA01608217E71E900268822 /* RoverAdSupportTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoverAdSupportTests.swift; sourceTree = "<group>"; };
@@ -1057,7 +1057,7 @@
 		DBA01614217E72A000268822 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				DBA015FD217E71E900268822 /* RoverAdSupport.h */,
+				DBA015FD217E71E900268822 /* RoverCampaignsAdSupport.h */,
 				DBA015FE217E71E900268822 /* Info.plist */,
 			);
 			name = "Supporting Files";
@@ -1478,7 +1478,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DBA0160B217E71E900268822 /* RoverAdSupport.h in Headers */,
+				DBA0160B217E71E900268822 /* RoverCampaignsAdSupport.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

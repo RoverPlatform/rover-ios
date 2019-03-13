@@ -22,16 +22,16 @@ public class RoverCampaigns {
             return
         }
         
-        let rover = RoverCampaigns()
+        let roverCampaigns = RoverCampaigns()
         
-        assemblers.forEach { $0.assemble(container: rover) }
-        assemblers.forEach { $0.containerDidAssemble(resolver: rover) }
+        assemblers.forEach { $0.assemble(container: roverCampaigns) }
+        assemblers.forEach { $0.containerDidAssemble(resolver: roverCampaigns) }
         
         if !Thread.isMainThread {
             os_log("Rover must be initialized on the main thread", log: .general, type: .default)
         }
         
-        sharedInstance = rover
+        sharedInstance = roverCampaigns
     }
     
     public static func deinitialize() {

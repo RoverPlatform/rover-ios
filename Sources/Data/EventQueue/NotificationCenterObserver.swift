@@ -7,7 +7,17 @@
 //
 
 import Foundation
+import os
 
 class NotificationCenterObserver {
+    // The naming convention for NotificationCenter events is "did" or "will".
     
+    // Explicit? ExperienceDidEmitEvent
+    // Open-ended? RoverEmitterDidEmitEvent
+    
+    init() {
+//        NotificationCenter.default.addObserver(forName: "RoverEmitterDidEmitEvent", object: nil, queue: nil) { notification in
+//            os_log("GOT EVENT")
+//        }
+    }
 }

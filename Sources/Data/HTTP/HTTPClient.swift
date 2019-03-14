@@ -18,15 +18,19 @@ public final class HTTPClient {
     public let authContextProvider: () -> AuthContext
     public let session: URLSession
     
-    public init(session: URLSession, authContextProvider: @escaping () -> AuthContext, ) {
+    public init(session: URLSession, authContextProvider: @escaping () -> AuthContext) {
         self.authContextProvider = authContextProvider
         self.session = session
     }
 }
 
 extension HTTPClient {
-    public func downloadRequest(queryItems: [URLQueryItem]) -> URLRequest {
-        var urlComponents = URLComponents(url: endpoint, resolvingAgainstBaseURL: false)!
+    public func downloadRequest(queryItems: [URLQueryItem]) -> URLRequest? {
+        guard let accountToken = authContextProvider().accountToken else {
+            authTokenMissingWarning()
+            return nil
+        }
+        var urlComponents = URLComponents(url: authContextProvider().endpoint, resolvingAgainstBaseURL: false)!
         urlComponents.queryItems = queryItems
         
         var urlRequest = URLRequest(url: urlComponents.url!)
@@ -36,8 +40,12 @@ extension HTTPClient {
         return urlRequest
     }
     
-    public func uploadRequest() -> URLRequest {
-        var urlRequest = URLRequest(url: endpoint)
+    public func uploadRequest() -> URLRequest? {
+        guard let accountToken = authContextProvider().accountToken else {
+            authTokenMissingWarning()
+            return nil
+        }
+        var urlRequest = URLRequest(url: authContextProvider().endpoint)
         urlRequest.httpMethod = "POST"
         urlRequest.setValue("gzip", forHTTPHeaderField: "accept-encoding")
         urlRequest.setValue("gzip", forHTTPHeaderField: "content-encoding")
@@ -78,5 +86,9 @@ extension HTTPClient {
             let result = HTTPResult(data: data, urlResponse: urlResponse, error: error)
             completionHandler(result)
         }
+    }
+    
+    private func authTokenMissingWarning() {
+        os_log("Your Rover auth token has not been set.  Use Rover.accountToken = \"MY_TOKEN\".", type: .error)
     }
 }

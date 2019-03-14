@@ -44,7 +44,6 @@ open class ExperienceViewController: UINavigationController {
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-       Current.
         
         // TODO: EVENT YO
          let attributes: Attributes = ["experience": experience]

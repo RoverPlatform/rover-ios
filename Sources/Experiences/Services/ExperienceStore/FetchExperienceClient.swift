@@ -85,8 +85,13 @@ extension FetchExperienceClient {
 
 extension HTTPClient: FetchExperienceClient {
     public func task(with experienceIdentifier: ExperienceIdentifier, completionHandler: @escaping (FetchExperienceResult) -> Void) -> URLSessionTask {
+
         let queryItems = self.queryItems(experienceIdentifier: experienceIdentifier)
-        let request = self.downloadRequest(queryItems: queryItems)
+        guard let request = self.downloadRequest(queryItems: queryItems) else {
+            completionHandler(FetchExperienceResult.error(error: AuthTokenNotConfiguredError(), isRetryable: false))
+            return URLSessionTask.init()
+        }
+        
         return self.downloadTask(with: request) {
             let result: FetchExperienceResult
             switch $0 {
@@ -137,4 +142,10 @@ public enum ExperienceIdentifier: Equatable, Hashable {
     case campaignID(id: ID)
     case campaignURL(url: URL)
     case experienceID(id: ID)
+}
+
+// MARK: AuthTokenNotConfiguredError
+
+public class AuthTokenNotConfiguredError: Error {
+    
 }

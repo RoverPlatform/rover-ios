@@ -9,8 +9,8 @@
 import Foundation
 import os.log
 
-class DispatcherService: OperationQueue, Dispatcher {
-    func dispatch(_ action: Action, completionHandler: (() -> Void)?) {
+public class DispatcherService: OperationQueue, Dispatcher {
+    public func dispatch(_ action: Action, completionHandler: (() -> Void)?) {
         let produceHandler: BlockObserver.ProduceHandler = { [weak self] in
             self?.addOperation($1)
         }

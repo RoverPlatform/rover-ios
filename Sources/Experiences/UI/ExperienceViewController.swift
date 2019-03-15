@@ -1,5 +1,5 @@
 //
-//  ExperienceContainer.swift
+//  ExperienceViewController.swift
 //  Rover
 //
 //  Created by Sean Rucker on 2018-02-09.
@@ -8,14 +8,10 @@
 
 import UIKit
 
+/// Either present or embed this view in a container to display a Rover experience.
 open class ExperienceViewController: UIViewController {
     public let identifier: ExperienceIdentifier
     public let store: ExperienceStore
-    
-    public typealias ViewControllerProvider = (Experience) -> UIViewController?
-    
-    // TODO: Can I just reach out through Rover. now?
-    public let viewControllerProvider: ViewControllerProvider
     
     #if swift(>=4.2)
     override open var childForStatusBarStyle: UIViewController? {
@@ -49,14 +45,21 @@ open class ExperienceViewController: UIViewController {
         return cancelButton
     }()
     
-    public init(identifier: ExperienceIdentifier, store: ExperienceStore, viewControllerProvider: @escaping ViewControllerProvider) {
-        self.store = store
+    // Note: ExperienceViewController is a special case; it is treated as an entry point to our API, so rather than expecting all its dependencies to be injected through the initializer like all the other types, we will use the global environment.
+    
+    public init(identifier: ExperienceIdentifier) {
         self.identifier = identifier
-        self.viewControllerProvider = viewControllerProvider
+        store = Rover.Config.experienceStore
         super.init(nibName: nil, bundle: nil)
+        
+        
         configureView()
         layoutActivityIndicator()
         layoutCancelButton()
+    }
+    
+    public convenience init(experienceId: String) {
+        self.init(identifier: .experienceID(id: ID(rawValue: experienceId)))
     }
     
     @available(*, unavailable)
@@ -122,9 +125,9 @@ open class ExperienceViewController: UIViewController {
     }
     
     open func didFetchExperience(_ experience: Experience) {
-        guard let viewController = viewControllerProvider(experience) else {
-            return
-        }
+        let viewController = Rover.Config.experienceNavigationViewController(
+            experience: experience
+        )
         
         #if swift(>=4.2)
         addChild(viewController)

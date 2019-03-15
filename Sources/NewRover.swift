@@ -63,6 +63,14 @@ open class Environment {
         )
     }
     
+    open func experienceNavigationViewController(experience: Experience) -> ExperienceNavigationViewController {
+        let homeScreenViewController = screenViewController(experience: experience, screen: experience.homeScreen)
+        return ExperienceNavigationViewController(
+            homeScreenViewController: homeScreenViewController,
+            experience: experience
+        )
+    }
+    
     // TODO: doomed/ripout
     open lazy private(set) var eventQueue = FakeEventQueue()
     open lazy private(set) var sessionController = SessionControllerService(eventQueue: eventQueue, keepAliveTime: 30)

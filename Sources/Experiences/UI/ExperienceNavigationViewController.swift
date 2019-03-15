@@ -1,5 +1,5 @@
 //
-//  ExperienceViewController.swift
+//  ExperienceNavigationViewController.swift
 //  Rover
 //
 //  Created by Sean Rucker on 2017-08-17.
@@ -13,13 +13,13 @@ open class ExperienceNavigationViewController: UINavigationController {
     public let experience: Experience
 
     public init(
-        rootViewController: UIViewController,
+        homeScreenViewController: UIViewController,
         experience: Experience
     ) {
         self.experience = experience
         
         super.init(nibName: nil, bundle: nil)
-        viewControllers = [rootViewController]
+        viewControllers = [homeScreenViewController]
     }
     
     

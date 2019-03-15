@@ -72,6 +72,12 @@ public struct DataAssembler: Assembler {
             )
         }
         
+        // MARK: NotificationCenterObserver
+        
+        container.register(NotificationCenterObserver.self) { resolver in
+            NotificationCenterObserver(eventQueue: resolver.resolve(EventQueue.self)!)
+        }
+        
         // MARK: HTTPClient
         
         container.register(HTTPClient.self) { [accountToken, endpoint] _ in

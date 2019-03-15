@@ -10,13 +10,18 @@ import Foundation
 import UIKit
 import SafariServices
 
-/// 
+/// This is the central entry point to the Rover SDK.  It contains the entire graph of Rover and its internal dependencies, as a global, static singleton.
+public var Config: Environment = Environment()
+
+/// This object encapsulates the entire object graph of the Rover SDK and all of its internal dependencies.
+///
+/// It effectively serves as the backplane of the Rover SDK.
 open class Environment {
+    /// Set your Rover Account Token (API Key) here.
     public var accountToken: String?
+    
     public var endpoint: URL = URL(string: "https://api.rover.io/graphql")!
     
-
-
     open lazy private(set) var urlSession = URLSession(configuration: URLSessionConfiguration.default)
 
     open func presentWebsite(sourceViewController: UIViewController, url: URL) {
@@ -81,10 +86,3 @@ class MyOverriddenRover : Environment {
     private let myCustomDispatcherService = DispatcherService()
     override var dispatcherService: DispatcherService { return self.myCustomDispatcherService }
 }
-
-/// This is the central
-public var Config: Environment = Environment()
-
-
-// I will have to use classes instead of structs for one big reason  With classes, I will be able to self-reference, needed for passing dependencies down, AND also supporting callbacks for lazy values. However, with classes you lose the ability to have synthesized initializers. However, this needs public visibility, so this loses that anyway.
-// Having to reason about all these constraints is arguably something of a misfeature of Swift, but that could maybe be argued on the basis of optimization.

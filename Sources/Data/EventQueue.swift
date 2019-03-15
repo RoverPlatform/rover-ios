@@ -30,7 +30,27 @@ public protocol EventQueue {
 
 public class FakeEventQueue: EventQueue {
     public func addEvent(_ info: EventInfo) {
-        // TODO: REPLACE WITH DISPATCHING EVENTS TO NOTIOFIACTIONCENTER
-        os_log("Event tracked: %s", String(describing: info))
+        let name = Notification.Name("RoverEmitterDidEmitEvent")
+        
+        let userInfoAllFields: [String: Any?] = [
+            "name": info.name,
+            "namespace": info.namespace,
+            "attributes": info.attributes
+        ]
+        
+        // Clear out the nil values.
+        let userInfo = userInfoAllFields.reduce([String:Any]()) { (userInfo, keyValue) in
+            let (key, value) = keyValue
+            if(value != nil) {
+                return userInfo.merging([key: value!], uniquingKeysWith: { (a, b) in
+                    // no duplicates
+                    return a
+                })
+            } else {
+                return userInfo
+            }
+        }
+        
+        NotificationCenter.default.post(name: name, object: nil, userInfo: userInfo)
     }
 }

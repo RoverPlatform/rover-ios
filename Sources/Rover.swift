@@ -71,6 +71,8 @@ open class Environment {
     open func experienceNavigationViewController(experience: Experience) -> ExperienceNavigationViewController {
         let homeScreenViewController = screenViewController(experience: experience, screen: experience.homeScreen)
         return ExperienceNavigationViewController(
+            eventQueue: eventQueue,
+            sessionController: self.sessionController,
             homeScreenViewController: homeScreenViewController,
             experience: experience
         )

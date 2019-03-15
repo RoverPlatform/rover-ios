@@ -95,8 +95,8 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         super.viewDidAppear(animated)
         
         let attributes: [String: Any] = [
-            "experience": experience,
-            "screen": screen
+            "experience": experience.attributes,
+            "screen": screen.attributes
         ]
         
         let event = EventInfo(name: "Screen Presented", namespace: "rover", attributes: attributes)
@@ -113,8 +113,8 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         super.viewWillDisappear(animated)
         
         let attributes: [String: Any] = [
-            "experience": experience,
-            "screen": screen
+            "experience": experience.attributes,
+            "screen": screen.attributes
         ]
         
         let event = EventInfo(name: "Screen Dismissed", namespace: "rover", attributes: attributes)
@@ -408,10 +408,10 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         let block = row.blocks[indexPath.row]
         
         let attributes: [String: Any] = [
-            "experience": experience,
-            "screen": screen,
-            "row": row,
-            "block": block
+            "experience": experience.attributes,
+            "screen": screen.attributes,
+            "row": row.attributes,
+            "block": block.attributes
         ]
         
         switch block.tapBehavior {

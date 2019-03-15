@@ -65,6 +65,11 @@ extension UIAssembler: Assembler {
             return LifeCycleTrackerService(eventQueue: eventQueue, sessionController: sessionController)
         }
         
+        // MARK: NotificationCenterSessionObserver
+        container.register(NotificationCenterSessionObserver.self) { resolver in
+            return NotificationCenterSessionObserver(sessionController: resolver.resolve(SessionController.self)!)
+        }
+        
         // MARK: Router
         
         container.register(Router.self) { resolver in
@@ -104,5 +109,7 @@ extension UIAssembler: Assembler {
         if isLifeCycleTrackingEnabled {
             resolver.resolve(LifeCycleTracker.self)!.enable()
         }
+        
+        resolver.resolve(NotificationCenterSessionObserver.self)?.startListening()
     }
 }

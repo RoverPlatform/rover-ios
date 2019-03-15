@@ -9,17 +9,12 @@
 import Foundation
 import os
 
-/// Responsible for listening to specially crafted events emitted on the iOS Notification Center (an event bus built into iOS) so that affilianted modules that are not linked against RoverCampaigns (and thus do not have access to its types) are still able to track events.
+/// Responsible for listening to specially crafted events emitted on the iOS Notification Center (an event bus built into iOS) so that affilianted modules that are not directly linked against RoverCampaigns (and thus do not have access to its types) are still able to track events.
 public class NotificationCenterObserver {
-    // The naming convention for NotificationCenter events is "did" or "will".
-    
-    // Explicit? ExperienceDidEmitEvent
-    // Open-ended? RoverEmitterDidEmitEvent
-    
     let eventQueue: EventQueue
     var notificationCenterObserverChit: NSObjectProtocol?
     
-    init(
+    public init(
         eventQueue: EventQueue
     ) {
         self.eventQueue = eventQueue
@@ -32,10 +27,11 @@ public class NotificationCenterObserver {
         let name = Notification.Name("RoverEmitterDidEmitEvent")
         self.notificationCenterObserverChit = NotificationCenter.default.addObserver(forName: name, object: nil, queue: nil) { [weak self] notification in
             guard let userInfo = notification.userInfo else {
+                os_log("Rover event sent via Notification Center lacked its `userInfo` field.", log: .events, type: .error)
                 return
             }
             guard let name = userInfo["name"] as? String else {
-                os_log("Rover event sent via Notification Center lacked its `name` field.")
+                os_log("Rover event sent via Notification Center lacked its `name` field.", log: .events, type: .error)
                 return
             }
             let namespace = userInfo["namespace"] as? String

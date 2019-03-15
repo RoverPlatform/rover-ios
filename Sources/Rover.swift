@@ -80,6 +80,6 @@ open class Environment {
     
     // TODO: doomed/ripout
     open lazy private(set) var eventQueue = FakeEventQueue()
-    open lazy private(set) var sessionController = SessionControllerService(eventQueue: eventQueue, keepAliveTime: 30)
+    open lazy private(set) var sessionController = SessionController()
     open lazy private(set) var dispatcherService = DispatcherService()
 }

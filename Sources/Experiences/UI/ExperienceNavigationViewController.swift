@@ -11,12 +11,12 @@ import UIKit
 /// View controller responsible for navigation behaviour between screens of an Experience.
 open class ExperienceNavigationViewController: UINavigationController {
     private let eventQueue: EventQueue
-    private let sessionController: SessionControllerService
+    private let sessionController: SessionController
     public let experience: Experience
 
     public init(
         eventQueue: EventQueue,
-        sessionController: SessionControllerService,
+        sessionController: SessionController,
         homeScreenViewController: UIViewController,
         experience: Experience
     ) {
@@ -51,11 +51,10 @@ open class ExperienceNavigationViewController: UINavigationController {
         let event = EventInfo(name: "Experience Presented", namespace: "rover", attributes: attributes)
         eventQueue.addEvent(event)
         
-        sessionController.registerSession(identifier: sessionIdentifier) { [attributes] duration in
-            var attributes = attributes
-            attributes["duration"] = duration
-            return EventInfo(name: "Experience Viewed", namespace: "rover", attributes: attributes)
-        }
+        sessionController.registerSession(
+            identifier: sessionIdentifier,
+            sessionCompletedInfo: EventInfo(name: "Experience Viewed", namespace: "rover", attributes: attributes)
+        )
     }
     
     override open func viewWillDisappear(_ animated: Bool) {

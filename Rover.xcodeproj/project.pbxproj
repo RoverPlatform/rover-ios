@@ -27,8 +27,7 @@
 		4953DD2522399A7100286C4B /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FDF7208D09AE008D1A57 /* Router.swift */; };
 		4953DD2622399A7100286C4B /* RouterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FDF9208D0A0A008D1A57 /* RouterService.swift */; };
 		4953DD2722399A7100286C4B /* RouteHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7BA91A20D9594500968A30 /* RouteHandler.swift */; };
-		4953DD2822399A7600286C4B /* SessionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6ADD8720B34F81002F226C /* SessionController.swift */; };
-		4953DD2922399A7600286C4B /* SessionControllerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6ADD7E20B3449E002F226C /* SessionControllerService.swift */; };
+		4953DD2922399A7600286C4B /* SessionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6ADD7E20B3449E002F226C /* SessionController.swift */; };
 		4953DD2A22399A7600286C4B /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB4831B920DC5D18003DBF1B /* Session.swift */; };
 		4953DD2C22399A7F00286C4B /* Experiences.Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1B66209CD89400E99F9F /* Experiences.Color.swift */; };
 		4953DD2D22399A7F00286C4B /* Experiences.Text.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1B68209CD8D600E99F9F /* Experiences.Text.swift */; };
@@ -114,8 +113,7 @@
 		DB496E3F214854CF0026DE6A /* HTTPError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPError.swift; sourceTree = "<group>"; };
 		DB6ADD6720B33EC0002F226C /* RoverUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoverUITests.swift; sourceTree = "<group>"; };
 		DB6ADD6920B33EC0002F226C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		DB6ADD7E20B3449E002F226C /* SessionControllerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionControllerService.swift; sourceTree = "<group>"; };
-		DB6ADD8720B34F81002F226C /* SessionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionController.swift; sourceTree = "<group>"; };
+		DB6ADD7E20B3449E002F226C /* SessionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionController.swift; sourceTree = "<group>"; };
 		DB6BE8AD215D41F7000A1FDA /* Foundation.OSLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Foundation.OSLog.swift; sourceTree = "<group>"; };
 		DB6BE8AF215D433B000A1FDA /* Data.OSLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Data.OSLog.swift; sourceTree = "<group>"; };
 		DB709C68207E7EFC00F96C2B /* ImageStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageStore.swift; sourceTree = "<group>"; };
@@ -303,8 +301,7 @@
 		DB6ADD8320B34EE1002F226C /* SessionController */ = {
 			isa = PBXGroup;
 			children = (
-				DB6ADD8720B34F81002F226C /* SessionController.swift */,
-				DB6ADD7E20B3449E002F226C /* SessionControllerService.swift */,
+				DB6ADD7E20B3449E002F226C /* SessionController.swift */,
 				DB4831B920DC5D18003DBF1B /* Session.swift */,
 			);
 			path = SessionController;
@@ -686,7 +683,7 @@
 				4953DD5122399A9C00286C4B /* ExperienceNavigationViewController.swift in Sources */,
 				4953DD2722399A7100286C4B /* RouteHandler.swift in Sources */,
 				4953DD3A22399A8500286C4B /* ImageBlock.swift in Sources */,
-				4953DD2922399A7600286C4B /* SessionControllerService.swift in Sources */,
+				4953DD2922399A7600286C4B /* SessionController.swift in Sources */,
 				4953DD3122399A8500286C4B /* Barcode.swift in Sources */,
 				4953DD4E22399A9700286C4B /* TextCell.swift in Sources */,
 				4953DD4922399A9700286C4B /* BarcodeCell.swift in Sources */,
@@ -694,7 +691,6 @@
 				4953DD4322399A8500286C4B /* WebView.swift in Sources */,
 				4953DD4D22399A9700286C4B /* RowView.swift in Sources */,
 				4953DD4A22399A9700286C4B /* BlockCell.swift in Sources */,
-				4953DD2822399A7600286C4B /* SessionController.swift in Sources */,
 				4953DD4222399A8500286C4B /* TextBlock.swift in Sources */,
 				4953DD1422399A4D00286C4B /* HTTPClient.swift in Sources */,
 				4953DD4F22399A9700286C4B /* WebViewCell.swift in Sources */,

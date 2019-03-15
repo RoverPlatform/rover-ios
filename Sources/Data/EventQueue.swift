@@ -28,29 +28,11 @@ public protocol EventQueue {
     func addEvent(_ info: EventInfo)
 }
 
+// TODO: rename properly
 public class FakeEventQueue: EventQueue {
     public func addEvent(_ info: EventInfo) {
-        let name = Notification.Name("RoverEmitterDidEmitEvent")
-        
-        let userInfoAllFields: [String: Any?] = [
-            "name": info.name,
-            "namespace": info.namespace,
-            "attributes": info.attributes
-        ]
-        
-        // Clear out the nil values.
-        let userInfo = userInfoAllFields.reduce([String:Any]()) { (userInfo, keyValue) in
-            let (key, value) = keyValue
-            if(value != nil) {
-                return userInfo.merging([key: value!], uniquingKeysWith: { (a, b) in
-                    // no duplicates
-                    return a
-                })
-            } else {
-                return userInfo
-            }
-        }
-        
-        NotificationCenter.default.post(name: name, object: nil, userInfo: userInfo)
+        let notification = Notification.init(from: info, withName: "RoverEmitterDidEmitEvent")
+        NotificationCenter.default.post(notification)
     }
 }
+

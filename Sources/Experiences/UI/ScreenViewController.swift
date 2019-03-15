@@ -102,11 +102,10 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         let event = EventInfo(name: "Screen Presented", namespace: "rover", attributes: attributes)
         eventQueue.addEvent(event)
         
-        sessionController.registerSession(identifier: sessionIdentifier) { [attributes] duration in
-            var attributes = attributes
-            attributes["duration"] = duration
-            return EventInfo(name: "Screen Viewed", namespace: "rover", attributes: attributes)
-        }
+        sessionController.registerSession(
+            identifier: sessionIdentifier,
+            sessionCompletedInfo: EventInfo(name: "Screen Viewed", namespace: "rover", attributes: attributes)
+        )
     }
     
     override open func viewWillDisappear(_ animated: Bool) {

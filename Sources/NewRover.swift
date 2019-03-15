@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 import SafariServices
 
-/// This is
+/// 
 open class Environment {
     public var accountToken: String?
     public var endpoint: URL = URL(string: "https://api.rover.io/graphql")!

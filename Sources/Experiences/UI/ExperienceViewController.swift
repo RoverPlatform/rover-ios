@@ -8,7 +8,7 @@
 
 import UIKit
 
-open class ExperienceContainer: UIViewController {
+open class ExperienceViewController: UIViewController {
     public let identifier: ExperienceIdentifier
     public let store: ExperienceStore
     

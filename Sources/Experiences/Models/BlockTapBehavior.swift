@@ -9,16 +9,16 @@
 import Foundation
 
 public enum BlockTapBehavior {
-    case goToScreen(screenID: ID)
+    case goToScreen(screenID: String)
     case none
     case openURL(url: URL, dismiss: Bool)
     case presentWebsite(url: URL)
 }
 
-// MARK: AttributeRepresentable
+// MARK: Attributes
 
-extension BlockTapBehavior: AttributeRepresentable {
-    public var attributeValue: AttributeValue {
+extension BlockTapBehavior {
+    public var attributes: [String: Any] {
         switch self {
         case .goToScreen(let screenID):
             return [
@@ -69,7 +69,7 @@ extension BlockTapBehavior: Codable {
         switch typeName {
         case "GoToScreenBlockTapBehavior":
             let container = try decoder.container(keyedBy: GoToScreenKeys.self)
-            let screenID = try container.decode(ID.self, forKey: .screenID)
+            let screenID = try container.decode(String.self, forKey: .screenID)
             self = .goToScreen(screenID: screenID)
         case "NoneBlockTapBehavior":
             self = .none

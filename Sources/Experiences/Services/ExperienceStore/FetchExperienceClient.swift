@@ -13,6 +13,12 @@ public protocol FetchExperienceClient {
     func task(with experienceIdentifier: ExperienceIdentifier, completionHandler: @escaping (FetchExperienceResult) -> Void) -> URLSessionTask
 }
 
+private struct RequestVariables: Encodable {
+    let campaignID: String?
+    let campaignURL: String?
+    let id: String?
+}
+
 extension FetchExperienceClient {
     // swiftlint:disable function_body_length // Function is decently readable.
     public func queryItems(experienceIdentifier: ExperienceIdentifier) -> [URLQueryItem] {
@@ -53,14 +59,14 @@ extension FetchExperienceClient {
         let queryItem = URLQueryItem(name: "query", value: condensed)
         queryItems.append(queryItem)
         
-        let variables: Attributes
+        let variables: RequestVariables
         switch experienceIdentifier {
         case .campaignID(let id):
-            variables = ["campaignID": id]
+            variables = RequestVariables(campaignID: id, campaignURL: nil, id: nil)
         case .campaignURL(let url):
-            variables = ["campaignURL": url]
+            variables = RequestVariables(campaignID: nil, campaignURL: url.absoluteString, id: nil)
         case .experienceID(let id):
-            variables = ["id": id]
+            variables = RequestVariables(campaignID: nil, campaignURL: nil, id: id)
         }
         
         let encoder = JSONEncoder.default
@@ -139,9 +145,9 @@ public enum FetchExperienceResult {
 // MARK: ExperienceIdentifier
 
 public enum ExperienceIdentifier: Equatable, Hashable {
-    case campaignID(id: ID)
+    case campaignID(id: String)
     case campaignURL(url: URL)
-    case experienceID(id: ID)
+    case experienceID(id: String)
 }
 
 // MARK: AuthTokenNotConfiguredError

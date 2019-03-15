@@ -38,14 +38,14 @@ class ExperienceRouteHandler: RouteHandler {
                 return nil
             }
             
-            let experienceID = ID(rawValue: value)
+            let experienceID = value
             identifier = ExperienceIdentifier.experienceID(id: experienceID)
         } else if let queryItem = components.queryItems?.first(where: { $0.name == "campaignID" }) {
             guard let value = queryItem.value else {
                 return nil
             }
             
-            let campaignID = ID(rawValue: value)
+            let campaignID = value
             identifier = ExperienceIdentifier.campaignID(id: campaignID)
         } else {
             return nil

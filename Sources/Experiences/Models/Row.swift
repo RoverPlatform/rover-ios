@@ -10,12 +10,12 @@ public struct Row {
     public var background: Background
     public var blocks: [Block]
     public var height: Height
-    public var id: ID
+    public var id: String
     public var name: String
     public var keys: [String: String]
     public var tags: [String]
     
-    public init(background: Background, blocks: [Block], height: Height, id: ID, name: String, keys: [String: String], tags: [String]) {
+    public init(background: Background, blocks: [Block], height: Height, id: String, name: String, keys: [String: String], tags: [String]) {
         self.background = background
         self.blocks = blocks
         self.height = height
@@ -77,7 +77,7 @@ extension Row: Decodable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         background = try container.decode(Background.self, forKey: .background)
         height = try container.decode(Height.self, forKey: .height)
-        id = try container.decode(ID.self, forKey: .id)
+        id = try container.decode(String.self, forKey: .id)
         name = try container.decode(String.self, forKey: .name)
         keys = try container.decode([String: String].self, forKey: .keys)
         tags = try container.decode([String].self, forKey: .tags)
@@ -107,13 +107,14 @@ extension Row: Decodable {
     }
 }
 
-extension Row: AttributeRepresentable {
-    public var attributeValue: AttributeValue {
-        let keys = self.keys.reduce(into: Attributes()) { $0[$1.0] = $1.1 }
+// MARK: Attributes
+
+extension Row {
+    public var attributes: [String: Any] {
         return [
             "id": id,
             "name": name,
-            "keys": AttributeValue.object(keys),
+            "keys": keys,
             "tags": tags
         ]
     }

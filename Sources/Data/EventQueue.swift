@@ -12,10 +12,10 @@ import os
 public struct EventInfo {
     public let name: String
     public let namespace: String?
-    public let attributes: Attributes?
+    public let attributes: [String: Any]?
     public let timestamp: Date?
     
-    public init(name: String, namespace: String? = nil, attributes: Attributes? = nil, timestamp: Date? = nil) {
+    public init(name: String, namespace: String? = nil, attributes: [String: Any]? = nil, timestamp: Date? = nil) {
         self.name = name
         self.namespace = namespace
         self.attributes = attributes

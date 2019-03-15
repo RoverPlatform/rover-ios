@@ -9,7 +9,7 @@
 public struct ImageBlock: Block {
     public var background: Background
     public var border: Border
-    public var id: ID
+    public var id: String
     public var name: String
     public var image: Image
     public var insets: Insets
@@ -19,7 +19,7 @@ public struct ImageBlock: Block {
     public var keys: [String: String]
     public var tags: [String]
     
-    public init(background: Background, border: Border, id: ID, name: String, image: Image, insets: Insets, opacity: Double, position: Position, tapBehavior: BlockTapBehavior, keys: [String: String], tags: [String]) {
+    public init(background: Background, border: Border, id: String, name: String, image: Image, insets: Insets, opacity: Double, position: Position, tapBehavior: BlockTapBehavior, keys: [String: String], tags: [String]) {
         self.background = background
         self.border = border
         self.id = id

@@ -59,7 +59,7 @@ open class ExperienceViewController: UIViewController {
     }
     
     public convenience init(experienceId: String) {
-        self.init(identifier: .experienceID(id: ID(rawValue: experienceId)))
+        self.init(identifier: .experienceID(id: experienceId))
     }
     
     @available(*, unavailable)

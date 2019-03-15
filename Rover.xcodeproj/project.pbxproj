@@ -24,8 +24,6 @@
 		4953DD2022399A6900286C4B /* ImageOptimization.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB709C72207EB47400F96C2B /* ImageOptimization.swift */; };
 		4953DD2122399A6900286C4B /* ImageStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB709C68207E7EFC00F96C2B /* ImageStore.swift */; };
 		4953DD2222399A6900286C4B /* ImageStoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB709C6B207EAEED00F96C2B /* ImageStoreService.swift */; };
-		4953DD2322399A6D00286C4B /* LifeCycleTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB89B9C20D0160100DD797A /* LifeCycleTracker.swift */; };
-		4953DD2422399A6D00286C4B /* LifeCycleTrackerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB89B9F20D01CC500DD797A /* LifeCycleTrackerService.swift */; };
 		4953DD2522399A7100286C4B /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FDF7208D09AE008D1A57 /* Router.swift */; };
 		4953DD2622399A7100286C4B /* RouterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FDF9208D0A0A008D1A57 /* RouterService.swift */; };
 		4953DD2722399A7100286C4B /* RouteHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7BA91A20D9594500968A30 /* RouteHandler.swift */; };
@@ -73,13 +71,7 @@
 		4953DD5222399A9C00286C4B /* ScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEE02055964E00E5C77F /* ScreenViewController.swift */; };
 		4953DD5322399A9C00286C4B /* ScreenViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEE32055964E00E5C77F /* ScreenViewLayout.swift */; };
 		4953DD5422399A9C00286C4B /* ScreenViewLayoutAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FDD92087E09F008D1A57 /* ScreenViewLayoutAttributes.swift */; };
-		DB1D5DC121079ED70071928F /* AttributeKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1D5DC021079ED70071928F /* AttributeKey.swift */; };
-		DB1D5DC32107C9850071928F /* AttributeValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1D5DC22107C9850071928F /* AttributeValue.swift */; };
-		DB1D5DC52107D32C0071928F /* Attributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1D5DC42107D32C0071928F /* Attributes.swift */; };
 		DB6BE8AE215D41F7000A1FDA /* Foundation.OSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6BE8AD215D41F7000A1FDA /* Foundation.OSLog.swift */; };
-		DB71C62C2109265F0079EDFF /* AttributeRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB71C62B2109265F0079EDFF /* AttributeRepresentable.swift */; };
-		DB71C62E21092B970079EDFF /* ScalarRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB71C62D21092B970079EDFF /* ScalarRepresentable.swift */; };
-		DB71C63021092C120079EDFF /* Scalar.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB71C62F21092C120079EDFF /* Scalar.swift */; };
 		DBADA7FB20A4F32500225C80 /* Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBADA7F220A4F32500225C80 /* Action.swift */; };
 		DBADA7FC20A4F32500225C80 /* ActionObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBADA7F420A4F32500225C80 /* ActionObserver.swift */; };
 		DBADA7FD20A4F32500225C80 /* BlockObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBADA7F520A4F32500225C80 /* BlockObserver.swift */; };
@@ -92,7 +84,6 @@
 		DBF2584120A107BD00400EA2 /* ObserverSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF2584020A107BD00400EA2 /* ObserverSet.swift */; };
 		DBF49DDD203DE00F00B54652 /* Rover.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF49DD3203DE00F00B54652 /* Rover.framework */; };
 		DBF49DE2203DE00F00B54652 /* RoverFoundationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF49DE1203DE00F00B54652 /* RoverFoundationTests.swift */; };
-		DBFB1AF3209CA82800E99F9F /* ID.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A79209B8CC500E99F9F /* ID.swift */; };
 		DBFDF52420AE2B1C0031EF47 /* Foundation.DateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFDF52320AE2B1C0031EF47 /* Foundation.DateFormatter.swift */; };
 /* End PBXBuildFile section */
 
@@ -115,9 +106,6 @@
 		DB00FDDF208A4961008D1A57 /* BarcodeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarcodeCell.swift; sourceTree = "<group>"; };
 		DB00FDF7208D09AE008D1A57 /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 		DB00FDF9208D0A0A008D1A57 /* RouterService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouterService.swift; sourceTree = "<group>"; };
-		DB1D5DC021079ED70071928F /* AttributeKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributeKey.swift; sourceTree = "<group>"; };
-		DB1D5DC22107C9850071928F /* AttributeValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributeValue.swift; sourceTree = "<group>"; };
-		DB1D5DC42107D32C0071928F /* Attributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Attributes.swift; sourceTree = "<group>"; };
 		DB4831B520DC38D8003DBF1B /* VersionTrackerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersionTrackerService.swift; sourceTree = "<group>"; };
 		DB4831B720DC38F6003DBF1B /* VersionTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersionTracker.swift; sourceTree = "<group>"; };
 		DB4831B920DC5D18003DBF1B /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
@@ -133,9 +121,6 @@
 		DB709C68207E7EFC00F96C2B /* ImageStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageStore.swift; sourceTree = "<group>"; };
 		DB709C6B207EAEED00F96C2B /* ImageStoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageStoreService.swift; sourceTree = "<group>"; };
 		DB709C72207EB47400F96C2B /* ImageOptimization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageOptimization.swift; sourceTree = "<group>"; };
-		DB71C62B2109265F0079EDFF /* AttributeRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributeRepresentable.swift; sourceTree = "<group>"; };
-		DB71C62D21092B970079EDFF /* ScalarRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalarRepresentable.swift; sourceTree = "<group>"; };
-		DB71C62F21092C120079EDFF /* Scalar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scalar.swift; sourceTree = "<group>"; };
 		DB7BA91A20D9594500968A30 /* RouteHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteHandler.swift; sourceTree = "<group>"; };
 		DB7BA91D20D96C9900968A30 /* ExperienceRouteHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperienceRouteHandler.swift; sourceTree = "<group>"; };
 		DB9DBEDE2055964E00E5C77F /* ExperienceNavigationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExperienceNavigationViewController.swift; sourceTree = "<group>"; };
@@ -154,8 +139,6 @@
 		DBADA80120A4F37C00225C80 /* Dispatcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dispatcher.swift; sourceTree = "<group>"; };
 		DBADA80220A4F37C00225C80 /* DispatcherService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DispatcherService.swift; sourceTree = "<group>"; };
 		DBADA83120AA03B900225C80 /* BlockTapBehavior.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockTapBehavior.swift; sourceTree = "<group>"; };
-		DBB89B9C20D0160100DD797A /* LifeCycleTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LifeCycleTracker.swift; sourceTree = "<group>"; };
-		DBB89B9F20D01CC500DD797A /* LifeCycleTrackerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LifeCycleTrackerService.swift; sourceTree = "<group>"; };
 		DBB89C4A20D083AF00DD797A /* RoverFoundation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RoverFoundation.h; sourceTree = "<group>"; };
 		DBC3B42A2148A7D10096C74E /* HTTPClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPClient.swift; sourceTree = "<group>"; };
 		DBC3B42C2148B08D0096C74E /* FetchExperienceClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchExperienceClient.swift; sourceTree = "<group>"; };
@@ -196,7 +179,6 @@
 		DBFB1A76209B8CC500E99F9F /* Text.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Text.swift; sourceTree = "<group>"; };
 		DBFB1A77209B8CC500E99F9F /* Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		DBFB1A78209B8CC500E99F9F /* ImageBlock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageBlock.swift; sourceTree = "<group>"; };
-		DBFB1A79209B8CC500E99F9F /* ID.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ID.swift; sourceTree = "<group>"; };
 		DBFB1ACB209BB3D200E99F9F /* ExperienceStoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperienceStoreService.swift; sourceTree = "<group>"; };
 		DBFB1B0E209CAD9600E99F9F /* ExperienceStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperienceStore.swift; sourceTree = "<group>"; };
 		DBFB1B66209CD89400E99F9F /* Experiences.Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Experiences.Color.swift; sourceTree = "<group>"; };
@@ -261,19 +243,6 @@
 			path = Sources;
 			sourceTree = "<group>";
 		};
-		DB1D5DBF21079ECB0071928F /* Attributes */ = {
-			isa = PBXGroup;
-			children = (
-				DB1D5DC42107D32C0071928F /* Attributes.swift */,
-				DB1D5DC021079ED70071928F /* AttributeKey.swift */,
-				DB1D5DC22107C9850071928F /* AttributeValue.swift */,
-				DB71C62B2109265F0079EDFF /* AttributeRepresentable.swift */,
-				DB71C62F21092C120079EDFF /* Scalar.swift */,
-				DB71C62D21092B970079EDFF /* ScalarRepresentable.swift */,
-			);
-			path = Attributes;
-			sourceTree = "<group>";
-		};
 		DB4831B420DC38C8003DBF1B /* VersionTracker */ = {
 			isa = PBXGroup;
 			children = (
@@ -325,7 +294,6 @@
 			children = (
 				DB4831B420DC38C8003DBF1B /* VersionTracker */,
 				DB709C67207E7EF200F96C2B /* ImageStore */,
-				DBB89B9B20D015F200DD797A /* LifeCycleTracker */,
 				DB00FDF6208D099F008D1A57 /* Router */,
 				DB6ADD8320B34EE1002F226C /* SessionController */,
 			);
@@ -392,15 +360,6 @@
 				DBADA80220A4F37C00225C80 /* DispatcherService.swift */,
 			);
 			path = Dispatcher;
-			sourceTree = "<group>";
-		};
-		DBB89B9B20D015F200DD797A /* LifeCycleTracker */ = {
-			isa = PBXGroup;
-			children = (
-				DBB89B9C20D0160100DD797A /* LifeCycleTracker.swift */,
-				DBB89B9F20D01CC500DD797A /* LifeCycleTrackerService.swift */,
-			);
-			path = LifeCycleTracker;
 			sourceTree = "<group>";
 		};
 		DBCBE08E21614A07001C7A96 /* Supporting Files */ = {
@@ -485,10 +444,8 @@
 		DBF49DD5203DE00F00B54652 /* Foundation */ = {
 			isa = PBXGroup;
 			children = (
-				DB1D5DBF21079ECB0071928F /* Attributes */,
 				DBFDF52220AE2B0B0031EF47 /* Extensions */,
 				DBADA80020A4F37C00225C80 /* Dispatcher */,
-				DBFB1A79209B8CC500E99F9F /* ID.swift */,
 				DBF2584020A107BD00400EA2 /* ObserverSet.swift */,
 				DBC3FBF22155375D00372A65 /* PersistedValue.swift */,
 			);
@@ -729,7 +686,6 @@
 				4953DD5122399A9C00286C4B /* ExperienceNavigationViewController.swift in Sources */,
 				4953DD2722399A7100286C4B /* RouteHandler.swift in Sources */,
 				4953DD3A22399A8500286C4B /* ImageBlock.swift in Sources */,
-				DBFB1AF3209CA82800E99F9F /* ID.swift in Sources */,
 				4953DD2922399A7600286C4B /* SessionControllerService.swift in Sources */,
 				4953DD3122399A8500286C4B /* Barcode.swift in Sources */,
 				4953DD4E22399A9700286C4B /* TextCell.swift in Sources */,
@@ -747,13 +703,11 @@
 				4953DD1D22399A6600286C4B /* VersionTracker.swift in Sources */,
 				4953DD5322399A9C00286C4B /* ScreenViewLayout.swift in Sources */,
 				4953DD5222399A9C00286C4B /* ScreenViewController.swift in Sources */,
-				4953DD2322399A6D00286C4B /* LifeCycleTracker.swift in Sources */,
 				4953DD3522399A8500286C4B /* ButtonBlock.swift in Sources */,
 				4953DD1322399A4800286C4B /* Data.URLRequest.swift in Sources */,
 				4953DD2122399A6900286C4B /* ImageStore.swift in Sources */,
 				4953DD1222399A4400286C4B /* Data.OSLog.swift in Sources */,
 				4953DD3022399A8500286C4B /* Background.swift in Sources */,
-				DB71C63021092C120079EDFF /* Scalar.swift in Sources */,
 				DBF2584120A107BD00400EA2 /* ObserverSet.swift in Sources */,
 				DB6BE8AE215D41F7000A1FDA /* Foundation.OSLog.swift in Sources */,
 				4953DD2D22399A7F00286C4B /* Experiences.Text.swift in Sources */,
@@ -761,7 +715,6 @@
 				DBADA80320A4F37C00225C80 /* Dispatcher.swift in Sources */,
 				4953DD2022399A6900286C4B /* ImageOptimization.swift in Sources */,
 				4953DD1F22399A6900286C4B /* ImageConfiguration.swift in Sources */,
-				DB1D5DC121079ED70071928F /* AttributeKey.swift in Sources */,
 				4953DD4C22399A9700286C4B /* ImageCell.swift in Sources */,
 				4953DD3F22399A8500286C4B /* Screen.swift in Sources */,
 				4953DD112239925B00286C4B /* Rover.swift in Sources */,
@@ -775,19 +728,15 @@
 				4953DD4422399A8500286C4B /* WebViewBlock.swift in Sources */,
 				4953DD3622399A8500286C4B /* Color.swift in Sources */,
 				4953DD3B22399A8500286C4B /* Insets.swift in Sources */,
-				DB71C62E21092B970079EDFF /* ScalarRepresentable.swift in Sources */,
 				4953DD3922399A8500286C4B /* Image.swift in Sources */,
 				4953DD3722399A8500286C4B /* Experience.swift in Sources */,
 				4953DD4B22399A9700286C4B /* ButtonCell.swift in Sources */,
 				4953DD1B22399A5B00286C4B /* OpenURLAction.swift in Sources */,
 				4953DD3E22399A8500286C4B /* Row.swift in Sources */,
-				DB1D5DC52107D32C0071928F /* Attributes.swift in Sources */,
 				4953DD2622399A7100286C4B /* RouterService.swift in Sources */,
-				DB71C62C2109265F0079EDFF /* AttributeRepresentable.swift in Sources */,
 				4953DD1A22399A5400286C4B /* EventQueue.swift in Sources */,
 				4953DD3322399A8500286C4B /* Block.swift in Sources */,
 				DBCBE086216140E6001C7A96 /* Foundation.JSONEncoder.swift in Sources */,
-				4953DD2422399A6D00286C4B /* LifeCycleTrackerService.swift in Sources */,
 				DBCBE088216140F1001C7A96 /* Foundation.JSONDecoder.swift in Sources */,
 				4953DD2522399A7100286C4B /* Router.swift in Sources */,
 				4953DD1822399A5000286C4B /* Reachability.swift in Sources */,
@@ -796,7 +745,6 @@
 				4953DD2E22399A7F00286C4B /* Experiences.ImageConfiguration.swift in Sources */,
 				4953DD1622399A4D00286C4B /* HTTPResult.swift in Sources */,
 				4953DD4522399A8900286C4B /* ExperienceRouteHandler.swift in Sources */,
-				DB1D5DC32107C9850071928F /* AttributeValue.swift in Sources */,
 				DBADA80420A4F37C00225C80 /* DispatcherService.swift in Sources */,
 				4953DD2F22399A7F00286C4B /* Experiences.Barcode.swift in Sources */,
 			);

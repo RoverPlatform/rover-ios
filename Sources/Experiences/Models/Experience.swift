@@ -7,15 +7,15 @@
 //
 
 public struct Experience {
-    public var id: ID
+    public var id: String
     public var name: String
-    public var campaignID: ID?
+    public var campaignID: String?
     public var homeScreen: Screen
     public var screens: [Screen]
     public var keys: [String: String]
     public var tags: [String]
     
-    public init(id: ID, name: String, campaignID: ID?, homeScreen: Screen, screens: [Screen], keys: [String: String], tags: [String]) {
+    public init(id: String, name: String, campaignID: String?, homeScreen: Screen, screens: [Screen], keys: [String: String], tags: [String]) {
         self.id = id
         self.name = name
         self.campaignID = campaignID
@@ -41,14 +41,14 @@ extension Experience: Decodable {
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        id = try container.decode(ID.self, forKey: .id)
+        id = try container.decode(String.self, forKey: .id)
         name = try container.decode(String.self, forKey: .name)
-        campaignID = try container.decode(ID?.self, forKey: .campaignID)
+        campaignID = try container.decode(String?.self, forKey: .campaignID)
         screens = try container.decode([Screen].self, forKey: .screens)
         keys = try container.decode([String: String].self, forKey: .keys)
         tags = try container.decode([String].self, forKey: .tags)
         
-        let homeScreenID = try container.decode(ID.self, forKey: .homeScreenID)
+        let homeScreenID = try container.decode(String.self, forKey: .homeScreenID)
         
         guard let homeScreen = screens.first(where: { $0.id == homeScreenID }) else {
             throw DecodingError.dataCorruptedError(forKey: .homeScreenID, in: container, debugDescription: "No screen found with homeScreenID \(homeScreenID)")
@@ -58,15 +58,14 @@ extension Experience: Decodable {
     }
 }
 
-// MARK: AttributeRepresentable
+// MARK: Attributes
 
-extension Experience: AttributeRepresentable {
-    public var attributeValue: AttributeValue {
-        let keys = self.keys.reduce(into: Attributes()) { $0[$1.0] = $1.1 }
-        var attributes: Attributes = [
+extension Experience {
+    public var attributes: [String: Any] {
+        var attributes: [String: Any] = [
             "id": id,
             "name": name,
-            "keys": AttributeValue.object(keys),
+            "keys": keys,
             "tags": tags
         ]
         
@@ -74,6 +73,6 @@ extension Experience: AttributeRepresentable {
             attributes["campaignID"] = campaignID
         }
         
-        return .object(attributes)
+        return attributes
     }
 }

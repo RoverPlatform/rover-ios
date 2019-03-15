@@ -10,21 +10,27 @@ import Foundation
 import os
 
 /// Responsible for listening to specially crafted events emitted on the iOS Notification Center (an event bus built into iOS) so that affilianted modules that are not linked against RoverCampaigns (and thus do not have access to its types) are still able to track events.
-class NotificationCenterObserver {
+public class NotificationCenterObserver {
     // The naming convention for NotificationCenter events is "did" or "will".
     
     // Explicit? ExperienceDidEmitEvent
     // Open-ended? RoverEmitterDidEmitEvent
     
     let eventQueue: EventQueue
-    let notificationCenterObserverChit: NSObjectProtocol?
+    var notificationCenterObserverChit: NSObjectProtocol?
     
     init(
         eventQueue: EventQueue
     ) {
         self.eventQueue = eventQueue
+    }
+    
+    public func startListening() {
+        if notificationCenterObserverChit != nil {
+            return
+        }
         let name = Notification.Name("RoverEmitterDidEmitEvent")
-        self.notificationCenterObserverChit = NotificationCenter.default.addObserver(forName: name, object: nil, queue: nil) { notification in
+        self.notificationCenterObserverChit = NotificationCenter.default.addObserver(forName: name, object: nil, queue: nil) { [weak self] notification in
             guard let userInfo = notification.userInfo else {
                 return
             }
@@ -34,20 +40,20 @@ class NotificationCenterObserver {
             }
             let namespace = userInfo["namespace"] as? String
             
-            //let attributes = Attributes(dictionaryLiteral: ["fd": 42])
-            
-            // let attributesHash: [String: Any] = userInfo["attributes"]!
-            
-            
-            // TODO: attributes hash waiting on new version of Attributes.
+            let attributes: Attributes?
+            if let attributesHash = userInfo["attributes"] as? [String: Any] {
+                attributes = Attributes(rawValue: attributesHash)
+            } else {
+                attributes = nil
+            }
             
             let eventInfo = EventInfo(
                 name: name,
                 namespace: namespace,
-                attributes: nil, // TODO
+                attributes: attributes,
                 timestamp: Date()
             )
-            eventQueue.addEvent(eventInfo)
+            self?.eventQueue.addEvent(eventInfo)
         }
     }
 }

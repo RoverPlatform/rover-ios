@@ -162,5 +162,7 @@ public struct DataAssembler: Assembler {
         
         // Set the context provider on the event queue after assembly to allow circular dependency injection
         eventQueue.contextProvider = resolver.resolve(ContextProvider.self)!
+        
+        resolver.resolve(NotificationCenterObserver.self)!.startListening()
     }
 }

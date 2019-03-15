@@ -133,7 +133,7 @@ class NotificationStoreService: NotificationStore {
             return
         }
         
-        let attributes: Attributes = ["notification": notification]
+        let attributes: Attributes = ["notification": notification.attributes]
         let event = EventInfo(name: "Notification Marked Deleted", namespace: "rover", attributes: attributes)
         eventQueue.addEvent(event)
     }
@@ -159,7 +159,7 @@ class NotificationStoreService: NotificationStore {
             return
         }
         
-        let attributes: Attributes = ["notification": notification]
+        let attributes: Attributes = ["notification": notification.attributes]
         let event = EventInfo(name: "Notification Marked Read", namespace: "rover", attributes: attributes)
         eventQueue.addEvent(event)
     }

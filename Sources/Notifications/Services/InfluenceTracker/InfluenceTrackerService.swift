@@ -59,7 +59,7 @@ class InfluenceTrackerService: InfluenceTracker {
             var campaignID: String
             var receivedAt: Date
             
-            var attributeValue: Attributes {
+            var attributes: Attributes {
                 return [
                     "id": notificationID,
                     "campaignID": campaignID
@@ -84,7 +84,7 @@ class InfluenceTrackerService: InfluenceTracker {
         }
         
         let attributes: Attributes = [
-            "notification": lastReceivedNotification,
+            "notification": lastReceivedNotification.attributes,
             "source": NotificationSource.influencedOpen.rawValue
         ]
         

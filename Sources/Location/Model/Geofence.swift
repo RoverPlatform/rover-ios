@@ -78,7 +78,7 @@ extension Geofence {
         return EventInfo(
             name: "Geofence Entered",
             namespace: "rover",
-            attributes: ["geofence": self]
+            attributes: ["geofence": self.attributes]
         )
     }
     
@@ -86,7 +86,7 @@ extension Geofence {
         return EventInfo(
             name: "Geofence Exited",
             namespace: "rover",
-            attributes: ["geofence": self]
+            attributes: ["geofence": self.attributes]
         )
     }
 }

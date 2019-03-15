@@ -72,7 +72,7 @@ extension Beacon {
         return EventInfo(
             name: "Beacon Entered",
             namespace: "rover",
-            attributes: ["beacon": self]
+            attributes: ["beacon": self.attributes]
         )
     }
     
@@ -80,7 +80,7 @@ extension Beacon {
         return EventInfo(
             name: "Beacon Exited",
             namespace: "rover",
-            attributes: ["beacon": self]
+            attributes: ["beacon": self.attributes]
         )
     }
 }

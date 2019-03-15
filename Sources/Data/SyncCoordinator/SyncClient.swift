@@ -42,15 +42,17 @@ extension SyncClient {
             return Array(fragments)
         }()
         
-        let variables: Attributes = {
-            syncRequests.reduce(Attributes()) { result, request in
-                request.variables.reduce(result) { result, element in
+        let variablesDict: [String: Any] = {
+            syncRequests.reduce([String: Any]()) { result, request in
+                request.variables.rawValue.reduce(result) { result, element in
                     var nextResult = result
-                    nextResult["\(request.query.name)\(element.key.rawValue.capitalized)"] = element.value
+                    nextResult["\(request.query.name)\(element.key.capitalized)"] = element.value
                     return nextResult
                 }
             }
         }()
+        
+        let variables = Attributes(rawValue: variablesDict)
         
         let condensed = query.components(separatedBy: .whitespacesAndNewlines).filter { !$0.isEmpty }.joined(separator: " ")
         var queryItems: [URLQueryItem] = [

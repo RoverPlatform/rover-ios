@@ -32,7 +32,7 @@ class GeofencesSyncParticipant: PagingSyncParticipant {
             "direction": "ASC"
         ]
         
-        var values: [String: AttributeRepresentable] = [
+        var values: [String: Any] = [
             "first": 500,
             "orderBy": orderBy
         ]
@@ -46,7 +46,7 @@ class GeofencesSyncParticipant: PagingSyncParticipant {
 
     func insertObject(from node: GeofencesSyncResponse.Data.Geofences.Node) {
         let geofence = Geofence(context: context)
-        geofence.id = node.id.rawValue
+        geofence.id = node.id
         geofence.name = node.name
         geofence.latitude = node.center.latitude
         geofence.longitude = node.center.longitude
@@ -66,7 +66,7 @@ struct GeofencesSyncResponse: Decodable {
                     var longitude: Double
                 }
                 
-                var id: ID
+                var id: String
                 var name: String
                 var center: Center
                 var radius: Double

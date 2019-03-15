@@ -34,9 +34,9 @@ class NotificationCenterObserver {
             }
             let namespace = userInfo["namespace"] as? String
             
-            let attributes = Attributes(dictionaryLiteral: ["fd": 42])
+            //let attributes = Attributes(dictionaryLiteral: ["fd": 42])
             
-            let attributesHash: [String: Any] = userInfo["attributes"]!
+            // let attributesHash: [String: Any] = userInfo["attributes"]!
             
             
             // TODO: attributes hash waiting on new version of Attributes.
@@ -44,7 +44,7 @@ class NotificationCenterObserver {
             let eventInfo = EventInfo(
                 name: name,
                 namespace: namespace,
-                attributes: attributesHash, // TODO
+                attributes: nil, // TODO
                 timestamp: Date()
             )
             eventQueue.addEvent(eventInfo)

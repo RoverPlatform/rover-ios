@@ -16,8 +16,8 @@ public protocol NotificationStore {
     
     func restore()
     func addNotifications(_ notifications: [Notification])
-    func markNotificationDeleted(_ notificationID: ID)
-    func markNotificationRead(_ notificationID: ID)
+    func markNotificationDeleted(_ notificationID: String)
+    func markNotificationRead(_ notificationID: String)
 }
 
 extension NotificationStore {

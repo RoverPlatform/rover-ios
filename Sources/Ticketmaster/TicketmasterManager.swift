@@ -34,7 +34,7 @@ extension TicketmasterManager: TicketmasterAuthorizer {
     func clearCredentials() {
         self.member.value = nil
         self.userInfoManager.updateUserInfo { attributes in
-            attributes["ticketmaster"] = nil
+            attributes.rawValue["ticketmaster"] = nil
         }
     }
 }
@@ -96,7 +96,7 @@ extension TicketmasterManager: SyncParticipant {
         }
         
         self.userInfoManager.updateUserInfo {
-            $0["ticketmaster"] = attributes
+            $0.rawValue["ticketmaster"] = attributes
         }
         
         return .newData(nextRequest: nil)

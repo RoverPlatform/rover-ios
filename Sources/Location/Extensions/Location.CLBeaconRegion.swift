@@ -8,9 +8,9 @@
 
 import CoreLocation
 
-extension CLBeaconRegion: AttributeRepresentable {
-    public var attributeValue: AttributeValue {
-        var attributes: Attributes = [
+extension CLBeaconRegion {
+    public var attributes: Attributes {
+        var attributes: [String: Any] = [
             "uuid": proximityUUID.uuidString
         ]
         
@@ -22,6 +22,6 @@ extension CLBeaconRegion: AttributeRepresentable {
             attributes["minor"] = minor.intValue
         }
         
-        return .object(attributes)
+        return Attributes(rawValue: attributes)
     }
 }

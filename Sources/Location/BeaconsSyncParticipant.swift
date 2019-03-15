@@ -32,7 +32,7 @@ class BeaconsSyncParticipant: PagingSyncParticipant {
             "direction": "ASC"
         ]
         
-        var values: [String: AttributeRepresentable] = [
+        var values: [String: Any] = [
             "first": 500,
             "orderBy": orderBy
         ]
@@ -46,7 +46,7 @@ class BeaconsSyncParticipant: PagingSyncParticipant {
     
     func insertObject(from node: BeaconsSyncResponse.Data.Beacons.Node) {
         let beacon = Beacon(context: context)
-        beacon.id = node.id.rawValue
+        beacon.id = node.id
         beacon.name = node.name
         beacon.uuid = node.uuid
         beacon.major = node.major
@@ -59,7 +59,7 @@ struct BeaconsSyncResponse: Decodable {
     struct Data: Decodable {
         struct Beacons: Decodable {
             struct Node: Decodable {
-                var id: ID
+                var id: String
                 var name: String
                 var uuid: UUID
                 var major: Int32

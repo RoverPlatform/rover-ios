@@ -81,8 +81,3 @@ open class Environment {
     open lazy private(set) var sessionController = SessionControllerService(eventQueue: eventQueue, keepAliveTime: 30)
     open lazy private(set) var dispatcherService = DispatcherService()
 }
-
-class MyOverriddenRover : Environment {
-    private let myCustomDispatcherService = DispatcherService()
-    override var dispatcherService: DispatcherService { return self.myCustomDispatcherService }
-}

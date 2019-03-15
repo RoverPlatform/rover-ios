@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import os
 
 public struct EventInfo {
     public let name: String
@@ -25,4 +26,11 @@ public struct EventInfo {
 
 public protocol EventQueue {
     func addEvent(_ info: EventInfo)
+}
+
+public class FakeEventQueue: EventQueue {
+    public func addEvent(_ info: EventInfo) {
+        // TODO: REPLACE WITH DISPATCHING EVENTS TO NOTIOFIACTIONCENTER
+        os_log("Event tracked: %s", String(describing: info))
+    }
 }

@@ -13,6 +13,8 @@ open class ExperienceContainer: UIViewController {
     public let store: ExperienceStore
     
     public typealias ViewControllerProvider = (Experience) -> UIViewController?
+    
+    // TODO: Can I just reach out through Rover. now?
     public let viewControllerProvider: ViewControllerProvider
     
     #if swift(>=4.2)

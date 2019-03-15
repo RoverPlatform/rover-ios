@@ -7,13 +7,13 @@
 //
 
 import UIKit
-//
-//public struct ExperiencesAssembler: Assembler {
-//    public init() { }
-//
-//    // swiftlint:disable:next function_body_length // Assemblers are fairly declarative.
-//    public func assemble(container: Container) {
-//        // MARK: Action (presentExperience)
+
+public struct ExperiencesAssembler: Assembler {
+    public init() { }
+
+    // swiftlint:disable:next function_body_length // Assemblers are fairly declarative.
+    public func assemble(container: Container) {
+        // MARK: Action (presentExperience)
 //
 //        container.register(Action.self, name: "presentExperience", scope: .transient) { (resolver, campaignID: ID) in
 //            let identifier = ExperienceIdentifier.campaignID(id: campaignID)
@@ -24,8 +24,8 @@ import UIKit
 //            let viewControllerToPresent = resolver.resolve(UIViewController.self, name: "experience", arguments: identifier)!
 //            return resolver.resolve(Action.self, name: "presentView", arguments: viewControllerToPresent)!
 //        }
-//
-//        // MARK: ExperienceStore
+
+        // MARK: ExperienceStore
 //
 //        container.register(ExperienceStore.self) { resolver in
 //            let client = resolver.resolve(FetchExperienceClient.self)!
@@ -76,9 +76,9 @@ import UIKit
 //                sessionController: resolver.resolve(SessionController.self)!
 //            )
 //        }
-//
-//        // MARK: UIViewController (screen)
-//
+
+        // MARK: UIViewController (screen)
+
 //        container.register(UIViewController.self, name: "screen", scope: .transient) { (resolver, experience: Experience, screen: Screen) in
 //            let viewControllerProvider: ScreenViewController.ViewControllerProvider = { [weak resolver] experience, screen in
 //                resolver?.resolve(UIViewController.self, name: "screen", arguments: experience, screen)
@@ -100,12 +100,12 @@ import UIKit
 //                presentWebsiteActionProvider: presentWebsiteActionProvider
 //            )
 //        }
-//    }
-//
+    }
+
 //    public func containerDidAssemble(resolver: Resolver) {
 //        if let router = resolver.resolve(Router.self) {
 //            let handler = resolver.resolve(RouteHandler.self, name: "experience")!
 //            router.addHandler(handler)
 //        }
 //    }
-//}
+}

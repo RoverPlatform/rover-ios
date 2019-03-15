@@ -17,7 +17,6 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     public let experience: Experience
     public let screen: Screen
     
-    public let dispatcher: Dispatcher
     public let eventQueue: EventQueue
     public let imageStore: ImageStore
     public let sessionController: SessionController
@@ -25,8 +24,8 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     public typealias ViewControllerProvider = (Experience, Screen) -> UIViewController?
     public let viewControllerProvider: ViewControllerProvider
     
-    public typealias ActionProvider = (URL) -> Action?
-    public let presentWebsiteActionProvider: ActionProvider
+    public typealias PresentWebsite = (URL, UIViewController) -> Void
+    public let presentWebsite: PresentWebsite
     
     override open var preferredStatusBarStyle: UIStatusBarStyle {
         switch screen.statusBar.style {
@@ -37,15 +36,23 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         }
     }
     
-    public init(collectionViewLayout: UICollectionViewLayout, experience: Experience, screen: Screen, dispatcher: Dispatcher, eventQueue: EventQueue, imageStore: ImageStore, sessionController: SessionController, viewControllerProvider: @escaping ViewControllerProvider, presentWebsiteActionProvider: @escaping ActionProvider) {
+    public init(
+        collectionViewLayout: UICollectionViewLayout,
+        experience: Experience,
+        screen: Screen,
+        eventQueue: EventQueue,
+        imageStore: ImageStore,
+        sessionController: SessionController,
+        viewControllerProvider: @escaping ViewControllerProvider,
+        presentWebsite: @escaping PresentWebsite
+    ) {
         self.experience = experience
         self.screen = screen
-        self.dispatcher = dispatcher
         self.eventQueue = eventQueue
         self.imageStore = imageStore
         self.sessionController = sessionController
         self.viewControllerProvider = viewControllerProvider
-        self.presentWebsiteActionProvider = presentWebsiteActionProvider
+        self.presentWebsite = presentWebsite
         
         super.init(collectionViewLayout: collectionViewLayout)
         collectionView?.prefetchDataSource = self
@@ -417,15 +424,14 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         case .none:
             break
         case let .openURL(url, dismiss):
+            // TODO: consider lifting this out into container so it can be overridden.
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
             
             if dismiss {
                 self.dismiss(animated: true, completion: nil)
             }
         case .presentWebsite(let url):
-            if let action = presentWebsiteActionProvider(url) {
-                dispatcher.dispatch(action, completionHandler: nil)
-            }
+            presentWebsite(url, self)
         }
         
         let event = EventInfo(name: "Block Tapped", namespace: "rover", attributes: attributes)

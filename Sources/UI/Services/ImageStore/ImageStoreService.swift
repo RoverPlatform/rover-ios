@@ -9,7 +9,7 @@
 import os.log
 import UIKit
 
-class ImageStoreService: ImageStore {
+public class ImageStoreService: ImageStore {
     let session: URLSession
     
     var tasks = [ImageConfiguration: URLSessionTask]()
@@ -38,11 +38,11 @@ class ImageStoreService: ImageStore {
     
     var cache = NSCache<CacheKey, UIImage>()
     
-    init(session: URLSession) {
+    public init(session: URLSession) {
         self.session = session
     }
     
-    func fetchImage(for configuration: ImageConfiguration, completionHandler: ((UIImage?) -> Void)?) {
+    public func fetchImage(for configuration: ImageConfiguration, completionHandler: ((UIImage?) -> Void)?) {
         if !Thread.isMainThread {
             os_log("ImageStoreService is not thread-safe – fetchImage only be called from main thread", log: .general, type: .default)
         }
@@ -80,12 +80,12 @@ class ImageStoreService: ImageStore {
         }
     }
     
-    func fetchedImage(for configuration: ImageConfiguration) -> UIImage? {
+    public func fetchedImage(for configuration: ImageConfiguration) -> UIImage? {
         let key = CacheKey(imageConfiguration: configuration)
         return cache.object(forKey: key)
     }
         
-    func invokeCompletionHandlers(for configuration: ImageConfiguration, with fetchedImage: UIImage) {
+    public func invokeCompletionHandlers(for configuration: ImageConfiguration, with fetchedImage: UIImage) {
         let completionHandlers = self.completionHandlers[configuration, default: []]
         self.completionHandlers[configuration] = nil
         

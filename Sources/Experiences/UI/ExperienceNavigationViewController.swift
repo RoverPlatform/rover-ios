@@ -8,14 +8,10 @@
 
 import UIKit
 
-open class ExperienceViewController: UINavigationController {
+/// View controller responsible for navigation behaviour between screens of an Experience.
+open class ExperienceNavigationViewController: UINavigationController {
     public let experience: Experience
 
-    // TODO: START HERE AND ADD A SIMPLE EVENTQUEUE AND KEEPALIVE TIME TO ENVIRONMENT.
-//    public let sessionController: SessionController = SessionControllerService(
-//
-//    ) // TODO: replace with injection
-    
     public init(
         rootViewController: UIViewController,
         experience: Experience
@@ -25,6 +21,7 @@ open class ExperienceViewController: UINavigationController {
         super.init(nibName: nil, bundle: nil)
         viewControllers = [rootViewController]
     }
+    
     
     @available(*, unavailable)
     public required init?(coder aDecoder: NSCoder) {

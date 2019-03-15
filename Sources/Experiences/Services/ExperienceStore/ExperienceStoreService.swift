@@ -9,14 +9,16 @@
 import Foundation
 import os.log
 
-class ExperienceStoreService: ExperienceStore {
+public class ExperienceStoreService: ExperienceStore {
     let client: FetchExperienceClient
     
     init(client: FetchExperienceClient) {
         self.client = client
     }
     
-    func experience(for identifier: ExperienceIdentifier) -> Experience? {
+    /// Return the experience for the given identifier from the cache, provided that it has already been retrieved once in this session.
+    /// Returns nil if experience is not present in the cache.
+    public func experience(for identifier: ExperienceIdentifier) -> Experience? {
         let key = CacheKey(experienceIdentifier: identifier)
         return cache.object(forKey: key)?.experience
     }
@@ -59,7 +61,8 @@ class ExperienceStoreService: ExperienceStore {
     var tasks = [ExperienceIdentifier: URLSessionTask]()
     var completionHandlers = [ExperienceIdentifier: [(FetchExperienceResult) -> Void]]()
     
-    func fetchExperience(for identifier: ExperienceIdentifier, completionHandler: ((FetchExperienceResult) -> Void)?) {
+    /// Asynchronously retrieve the given experience from the network.
+    public func fetchExperience(for identifier: ExperienceIdentifier, completionHandler: ((FetchExperienceResult) -> Void)?) {
         if !Thread.isMainThread {
             os_log("ExperienceStore is not thread-safe – fetchExperience should only be called from main thread.", log: .general, type: .default)
         }

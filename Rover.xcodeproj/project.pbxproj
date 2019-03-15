@@ -70,7 +70,7 @@
 		4953DD4E22399A9700286C4B /* TextCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEE62055964E00E5C77F /* TextCell.swift */; };
 		4953DD4F22399A9700286C4B /* WebViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEEF2055964E00E5C77F /* WebViewCell.swift */; };
 		4953DD5022399A9C00286C4B /* ExperienceContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEDF2055964E00E5C77F /* ExperienceContainer.swift */; };
-		4953DD5122399A9C00286C4B /* ExperienceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEDE2055964E00E5C77F /* ExperienceViewController.swift */; };
+		4953DD5122399A9C00286C4B /* ExperienceNavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEDE2055964E00E5C77F /* ExperienceNavigationViewController.swift */; };
 		4953DD5222399A9C00286C4B /* ScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEE02055964E00E5C77F /* ScreenViewController.swift */; };
 		4953DD5322399A9C00286C4B /* ScreenViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEE32055964E00E5C77F /* ScreenViewLayout.swift */; };
 		4953DD5422399A9C00286C4B /* ScreenViewLayoutAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FDD92087E09F008D1A57 /* ScreenViewLayoutAttributes.swift */; };
@@ -150,7 +150,7 @@
 		DB71C62F21092C120079EDFF /* Scalar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scalar.swift; sourceTree = "<group>"; };
 		DB7BA91A20D9594500968A30 /* RouteHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteHandler.swift; sourceTree = "<group>"; };
 		DB7BA91D20D96C9900968A30 /* ExperienceRouteHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperienceRouteHandler.swift; sourceTree = "<group>"; };
-		DB9DBEDE2055964E00E5C77F /* ExperienceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExperienceViewController.swift; sourceTree = "<group>"; };
+		DB9DBEDE2055964E00E5C77F /* ExperienceNavigationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExperienceNavigationViewController.swift; sourceTree = "<group>"; };
 		DB9DBEDF2055964E00E5C77F /* ExperienceContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExperienceContainer.swift; sourceTree = "<group>"; };
 		DB9DBEE02055964E00E5C77F /* ScreenViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScreenViewController.swift; sourceTree = "<group>"; };
 		DB9DBEE32055964E00E5C77F /* ScreenViewLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScreenViewLayout.swift; sourceTree = "<group>"; };
@@ -478,7 +478,7 @@
 			children = (
 				DB9DBEE52055964E00E5C77F /* Views */,
 				DB9DBEDF2055964E00E5C77F /* ExperienceContainer.swift */,
-				DB9DBEDE2055964E00E5C77F /* ExperienceViewController.swift */,
+				DB9DBEDE2055964E00E5C77F /* ExperienceNavigationViewController.swift */,
 				DB9DBEE02055964E00E5C77F /* ScreenViewController.swift */,
 				DB9DBEE32055964E00E5C77F /* ScreenViewLayout.swift */,
 				DB00FDD92087E09F008D1A57 /* ScreenViewLayoutAttributes.swift */,
@@ -768,7 +768,7 @@
 				4953DD4122399A8500286C4B /* Text.swift in Sources */,
 				4953DD2C22399A7F00286C4B /* Experiences.Color.swift in Sources */,
 				4953DD3D22399A8500286C4B /* RectangleBlock.swift in Sources */,
-				4953DD5122399A9C00286C4B /* ExperienceViewController.swift in Sources */,
+				4953DD5122399A9C00286C4B /* ExperienceNavigationViewController.swift in Sources */,
 				4953DD2722399A7100286C4B /* RouteHandler.swift in Sources */,
 				4953DD3A22399A8500286C4B /* ImageBlock.swift in Sources */,
 				DBFB1AF3209CA82800E99F9F /* ID.swift in Sources */,

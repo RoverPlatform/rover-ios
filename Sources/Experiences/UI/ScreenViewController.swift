@@ -101,7 +101,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         )
         
         sessionController.registerSession(identifier: sessionIdentifier) { duration in
-            return Notification(forRoverEvent: .screenViewed, withAttributes: attributes)
+            Notification(forRoverEvent: .screenViewed, withAttributes: attributes.merging(["duration": duration]) { a, _ in a })
         }
     }
     

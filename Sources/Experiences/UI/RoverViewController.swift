@@ -52,7 +52,6 @@ open class RoverViewController: UIViewController {
         store = Rover.Environment.shared.experienceStore
         super.init(nibName: nil, bundle: nil)
         
-        
         configureView()
         layoutActivityIndicator()
         layoutCancelButton()

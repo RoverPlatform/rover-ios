@@ -25,7 +25,6 @@ open class ExperienceNavigationViewController: UINavigationController {
         viewControllers = [homeScreenViewController]
     }
     
-    
     @available(*, unavailable)
     public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -51,7 +50,7 @@ open class ExperienceNavigationViewController: UINavigationController {
         )
         
         sessionController.registerSession(identifier: sessionIdentifier) { duration in
-            return Notification(forRoverEvent: .experienceViewed, withAttributes: attributes)
+            Notification(forRoverEvent: .experienceViewed, withAttributes: attributes.merging(["duration": duration]) { a, _ in a })
         }
     }
     
@@ -83,4 +82,3 @@ extension RoverEventName {
     static var experienceDismissed = "Experience Dismissed"
     static var experienceViewed = "Experience Viewed"
 }
-

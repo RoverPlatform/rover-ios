@@ -69,7 +69,6 @@ public struct Screen: Decodable {
     }
 }
 
-
 // MARK: Attributes
 
 extension Screen {

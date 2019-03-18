@@ -7,8 +7,8 @@
 //
 
 import Foundation
-import UIKit
 import SafariServices
+import UIKit
 
 /// Set your Rover Account Token (API Key) here.
 public var accountToken: String?
@@ -19,7 +19,7 @@ public var accountToken: String?
 open class Environment {
     public var endpoint: URL = URL(string: "https://api.rover.io/graphql")!
     
-    open lazy private(set) var urlSession = URLSession(configuration: URLSessionConfiguration.default)
+    open private(set) lazy var urlSession = URLSession(configuration: URLSessionConfiguration.default)
 
     open func presentWebsite(sourceViewController: UIViewController, url: URL) {
         // open a link using an embedded web browser controller.
@@ -27,18 +27,18 @@ open class Environment {
         sourceViewController.present(webViewController, animated: true, completion: nil)
     }
 
-    open lazy private(set) var httpClient = HTTPClient(session: urlSession) {
-        return AuthContext(
+    open private(set) lazy var httpClient = HTTPClient(session: urlSession) {
+        AuthContext(
             accountToken: accountToken,
             endpoint: URL(string: "https://api.rover.io/graphql")!
         )
     }
     
-    open lazy private(set) var experienceStore = ExperienceStoreService(
+    open private(set) lazy var experienceStore = ExperienceStoreService(
         client: httpClient
     )
     
-    open lazy private(set) var imageStore = ImageStoreService(session: urlSession)
+    open private(set) lazy var imageStore = ImageStoreService(session: urlSession)
     
     // TODO: move UI factories to top-level view controller
     
@@ -58,7 +58,7 @@ open class Environment {
             imageStore: imageStore,
             sessionController: sessionController,
             viewControllerProvider: { (experience: Experience, screen: Screen) in
-                return self.screenViewController(experience: experience, screen: screen)
+                self.screenViewController(experience: experience, screen: screen)
             },
             presentWebsite: { (url: URL, sourceViewController: UIViewController) in
                 self.presentWebsite(sourceViewController: sourceViewController, url: url)
@@ -75,7 +75,7 @@ open class Environment {
         )
     }
     
-    open lazy private(set) var sessionController = SessionController(keepAliveTime: 10)
+    open private(set) lazy var sessionController = SessionController(keepAliveTime: 10)
     
     /// This is the central entry point to the Rover SDK.  It contains the entire graph of Rover and its internal dependencies, as a global, static singleton.
     public static var shared: Environment = Environment()

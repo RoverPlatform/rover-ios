@@ -44,7 +44,7 @@ public class ImageStoreService: ImageStore {
     
     public func fetchImage(for configuration: ImageConfiguration, completionHandler: ((UIImage?) -> Void)?) {
         if !Thread.isMainThread {
-            os_log("ImageStoreService is not thread-safe – fetchImage only be called from main thread", log: .general, type: .default)
+            os_log("ImageStoreService is not thread-safe – fetchImage only be called from main thread", log: .rover, type: .default)
         }
         
         if let newHandler = completionHandler {

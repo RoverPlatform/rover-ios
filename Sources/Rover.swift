@@ -10,16 +10,13 @@ import Foundation
 import UIKit
 import SafariServices
 
-/// This is the central entry point to the Rover SDK.  It contains the entire graph of Rover and its internal dependencies, as a global, static singleton.
-public var Config: Environment = Environment()
+/// Set your Rover Account Token (API Key) here.
+public var accountToken: String?
 
 /// This object encapsulates the entire object graph of the Rover SDK and all of its internal dependencies.
 ///
 /// It effectively serves as the backplane of the Rover SDK.
 open class Environment {
-    /// Set your Rover Account Token (API Key) here.
-    public var accountToken: String?
-    
     public var endpoint: URL = URL(string: "https://api.rover.io/graphql")!
     
     open lazy private(set) var urlSession = URLSession(configuration: URLSessionConfiguration.default)
@@ -32,7 +29,7 @@ open class Environment {
 
     open lazy private(set) var httpClient = HTTPClient(session: urlSession) {
         return AuthContext(
-            accountToken: self.accountToken,
+            accountToken: accountToken,
             endpoint: URL(string: "https://api.rover.io/graphql")!
         )
     }
@@ -42,6 +39,8 @@ open class Environment {
     )
     
     open lazy private(set) var imageStore = ImageStoreService(session: urlSession)
+    
+    // TODO: move UI factories to top-level view controller
     
     open func presentWebsiteViewController(url: URL) -> UIViewController {
         return SFSafariViewController(url: url)
@@ -56,7 +55,6 @@ open class Environment {
             collectionViewLayout: screenViewLayout(screen: screen),
             experience: experience,
             screen: screen,
-            eventQueue: eventQueue,
             imageStore: imageStore,
             sessionController: sessionController,
             viewControllerProvider: { (experience: Experience, screen: Screen) in
@@ -71,13 +69,14 @@ open class Environment {
     open func experienceNavigationViewController(experience: Experience) -> ExperienceNavigationViewController {
         let homeScreenViewController = screenViewController(experience: experience, screen: experience.homeScreen)
         return ExperienceNavigationViewController(
-            eventQueue: eventQueue,
             sessionController: self.sessionController,
             homeScreenViewController: homeScreenViewController,
             experience: experience
         )
     }
     
-    open lazy private(set) var eventQueue = NotificationCenterEventQueue()
-    open lazy private(set) var sessionController = SessionController()
+    open lazy private(set) var sessionController = SessionController(keepAliveTime: 10)
+    
+    /// This is the central entry point to the Rover SDK.  It contains the entire graph of Rover and its internal dependencies, as a global, static singleton.
+    public static var shared: Environment = Environment()
 }

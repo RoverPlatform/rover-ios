@@ -59,7 +59,7 @@ extension HTTPClient {
         do {
             encoded = try JSONEncoder.default.encode(payload)
         } catch {
-            os_log("Failed to encode events: %@", log: .networking, type: .error, error.localizedDescription)
+            os_log("Failed to encode events: %@", log: .rover, type: .error, error.localizedDescription)
             return nil
         }
         
@@ -67,7 +67,7 @@ extension HTTPClient {
         do {
             compressed = try encoded.gzipped()
         } catch {
-            os_log("Failed to gzip events: %@", log: .networking, type: .error, error.localizedDescription)
+            os_log("Failed to gzip events: %@", log: .rover, type: .error, error.localizedDescription)
             return nil
         }
         
@@ -90,5 +90,13 @@ extension HTTPClient {
     
     private func authTokenMissingWarning() {
         os_log("Your Rover auth token has not been set.  Use Rover.accountToken = \"MY_TOKEN\".", type: .error)
+    }
+}
+
+// MARK: Authentication
+
+extension URLRequest {
+    public mutating func setAccountToken(_ accountToken: String) {
+        self.setValue(accountToken, forHTTPHeaderField: "x-rover-account-token")
     }
 }

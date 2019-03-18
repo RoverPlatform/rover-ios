@@ -64,7 +64,7 @@ public class ExperienceStoreService: ExperienceStore {
     /// Asynchronously retrieve the given experience from the network.
     public func fetchExperience(for identifier: ExperienceIdentifier, completionHandler: ((FetchExperienceResult) -> Void)?) {
         if !Thread.isMainThread {
-            os_log("ExperienceStore is not thread-safe – fetchExperience should only be called from main thread.", log: .general, type: .default)
+            os_log("ExperienceStore is not thread-safe – fetchExperience should only be called from main thread.", log: .rover, type: .default)
         }
         
         if let newHandler = completionHandler {

@@ -9,6 +9,5 @@
 import os.log
 
 extension OSLog {
-    public static let dispatching = OSLog(subsystem: "io.rover", category: "Routing")
-    public static let general = OSLog(subsystem: "io.rover", category: "General")
+    public static let rover = OSLog(subsystem: "io.rover", category: "Rover")
 }

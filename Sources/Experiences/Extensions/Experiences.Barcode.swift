@@ -71,7 +71,7 @@ extension Barcode {
         #endif
 
         guard let outputImage = filter.outputImage else {
-            os_log("Unable to render barcode - see logs emitted directly by CIFilter for details", log: .general, type: .error)
+            os_log("Unable to render barcode - see logs emitted directly by CIFilter for details", log: .rover, type: .error)
             return nil
         }
         

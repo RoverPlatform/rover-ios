@@ -9,49 +9,96 @@
 import UIKit
 
 public class SessionController {
-
-    public func registerSession(identifier: String, sessionCompletedInfo: EventInfo) {
-        // session duration will be added for us on the other end.
-        var notification = Notification.init(from: sessionCompletedInfo, withName: "RoverSessionDidOpen")
-        var userInfo: [AnyHashable: Any] = notification.userInfo ?? [AnyHashable: Any]()
-        userInfo["sessionIdentifier"] = identifier
-        notification.userInfo = userInfo
-        NotificationCenter.default.post(notification)
+    let keepAliveTime: Int
+    
+    struct SessionEntry {
+        let session: Session
+        
+        var isUnregistered = false
+        
+        init(session: Session) {
+            self.session = session
+        }
     }
     
-    public func unregisterSession(identifier: String) {
-        NotificationCenter.default.post(
-            name: Notification.Name(rawValue: "RoverSessionDidClose"),
-            object: nil,
-            userInfo: ["sessionIdentifier": identifier]
-        )
-    }
-}
-
-
-extension Notification {
-    init(from info: EventInfo, withName name: String) {
-        let name = Notification.Name(name)
+    var sessions = [String: SessionEntry]()
+    
+    var didBecomeActiveObserver: NSObjectProtocol?
+    var willResignActiveObserver: NSObjectProtocol?
+    
+    public init(keepAliveTime: Int) {
+        self.keepAliveTime = keepAliveTime
         
-        let userInfoAllFields: [String: Any?] = [
-            "name": info.name,
-            "namespace": info.namespace,
-            "attributes": info.attributes
-        ]
-        
-        // Clear out the nil values.
-        let userInfo = userInfoAllFields.reduce([String:Any]()) { (userInfo, keyValue) in
-            let (key, value) = keyValue
-            if(value != nil) {
-                return userInfo.merging([key: value!], uniquingKeysWith: { (a, b) in
-                    // no duplicates
-                    return a
-                })
-            } else {
-                return userInfo
+        #if swift(>=4.2)
+        self.didBecomeActiveObserver = NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: OperationQueue.main) { [weak self] _ in
+            self?.sessions.forEach {
+                $0.value.session.start()
             }
         }
         
-        self.init(name: name, object: nil, userInfo: userInfo)
+        self.willResignActiveObserver = NotificationCenter.default.addObserver(forName: UIApplication.willResignActiveNotification, object: nil, queue: OperationQueue.main) { [weak self] _ in
+            self?.sessions.forEach {
+                $0.value.session.end()
+            }
+        }
+        #else
+        self.didBecomeActiveObserver = NotificationCenter.default.addObserver(forName: .UIApplicationDidBecomeActive, object: nil, queue: OperationQueue.main) { [weak self] _ in
+            self?.sessions.forEach {
+                $0.value.session.start()
+            }
+        }
+        
+        self.willResignActiveObserver = NotificationCenter.default.addObserver(forName: .UIApplicationWillResignActive, object: nil, queue: OperationQueue.main) { [weak self] _ in
+            self?.sessions.forEach {
+                $0.value.session.end()
+            }
+        }
+        #endif
+    }
+    
+    deinit {
+        if let observer = didBecomeActiveObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
+        if let observer = willResignActiveObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
+    }
+    
+    public func registerSession(identifier: String, completionHandler: @escaping (Double) -> Notification) {
+        if var entry = sessions[identifier] {
+            entry.session.start()
+            
+            if entry.isUnregistered {
+                entry.isUnregistered = false
+                sessions[identifier] = entry
+            }
+            
+            return
+        }
+        
+        let session = Session(keepAliveTime: keepAliveTime) { [weak self] result in
+            let notification = completionHandler(result.duration)
+            
+            NotificationCenter.default.post(notification)
+            
+            if let entry = self?.sessions[identifier], entry.isUnregistered {
+                self?.sessions[identifier] = nil
+            }
+        }
+        
+        session.start()
+        sessions[identifier] = SessionEntry(session: session)
+    }
+    
+    public func unregisterSession(identifier: String) {
+        if var entry = sessions[identifier] {
+            entry.isUnregistered = true
+            sessions[identifier] = entry
+            entry.session.end()
+        }
     }
 }
+
+
+

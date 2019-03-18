@@ -17,7 +17,6 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     public let experience: Experience
     public let screen: Screen
     
-    public let eventQueue: EventQueue
     public let imageStore: ImageStore
     public let sessionController: SessionController
     
@@ -40,7 +39,6 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         collectionViewLayout: UICollectionViewLayout,
         experience: Experience,
         screen: Screen,
-        eventQueue: EventQueue,
         imageStore: ImageStore,
         sessionController: SessionController,
         viewControllerProvider: @escaping ViewControllerProvider,
@@ -48,7 +46,6 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     ) {
         self.experience = experience
         self.screen = screen
-        self.eventQueue = eventQueue
         self.imageStore = imageStore
         self.sessionController = sessionController
         self.viewControllerProvider = viewControllerProvider
@@ -99,13 +96,13 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
             "screen": screen.attributes
         ]
         
-        let event = EventInfo(name: "Screen Presented", namespace: "rover", attributes: attributes)
-        eventQueue.addEvent(event)
-        
-        sessionController.registerSession(
-            identifier: sessionIdentifier,
-            sessionCompletedInfo: EventInfo(name: "Screen Viewed", namespace: "rover", attributes: attributes)
+        NotificationCenter.default.post(
+            Notification(forRoverEvent: .screenPresented, withAttributes: attributes)
         )
+        
+        sessionController.registerSession(identifier: sessionIdentifier) { duration in
+            return Notification(forRoverEvent: .screenViewed, withAttributes: attributes)
+        }
     }
     
     override open func viewWillDisappear(_ animated: Bool) {
@@ -116,8 +113,9 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
             "screen": screen.attributes
         ]
         
-        let event = EventInfo(name: "Screen Dismissed", namespace: "rover", attributes: attributes)
-        eventQueue.addEvent(event)
+        NotificationCenter.default.post(
+            Notification(forRoverEvent: .screenDismissed, withAttributes: attributes)
+        )
         
         sessionController.unregisterSession(identifier: sessionIdentifier)
     }
@@ -433,7 +431,15 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
             presentWebsite(url, self)
         }
         
-        let event = EventInfo(name: "Block Tapped", namespace: "rover", attributes: attributes)
-        eventQueue.addEvent(event)
+        NotificationCenter.default.post(
+            Notification(forRoverEvent: .blockTapped, withAttributes: attributes)
+        )
     }
+}
+
+extension RoverEventName {
+    static var screenPresented = "Screen Presented"
+    static var screenDismissed = "Screen Dismissed"
+    static var blockTapped = "Block Tapped"
+    static var screenViewed = "Screen Viewed"
 }

@@ -103,9 +103,9 @@ extension HTTPClient: FetchExperienceClient {
             switch $0 {
             case let .error(error, isRetryable):
                 if let error = error {
-                    os_log("Failed to fetch experience: %@", log: .networking, type: .error, error.localizedDescription)
+                    os_log("Failed to fetch experience: %@", log: .rover, type: .error, error.localizedDescription)
                 } else {
-                    os_log("Failed to fetch experience", log: .networking, type: .error)
+                    os_log("Failed to fetch experience", log: .rover, type: .error)
                 }
                 
                 result = .error(error: error, isRetryable: isRetryable)
@@ -115,7 +115,7 @@ extension HTTPClient: FetchExperienceClient {
                     response = try JSONDecoder.default.decode(Response.self, from: data)
                     result = .success(experience: response.data.experience)
                 } catch {
-                    os_log("Failed to decode experience: %@", log: .networking, type: .error, error.localizedDescription)
+                    os_log("Failed to decode experience: %@", log: .rover, type: .error, error.localizedDescription)
                     result = .error(error: error, isRetryable: false)
                 }
             }
@@ -154,4 +154,33 @@ public enum ExperienceIdentifier: Equatable, Hashable {
 
 public class AuthTokenNotConfiguredError: Error {
     
+}
+
+// MARK: Serialization
+
+extension DateFormatter {
+    public static let rfc3339: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ"
+        formatter.calendar = Calendar(identifier: .iso8601)
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        return formatter
+    }()
+}
+
+extension JSONDecoder {
+    public static let `default`: JSONDecoder = {
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .formatted(DateFormatter.rfc3339)
+        return decoder
+    }()
+}
+
+extension JSONEncoder {
+    public static let `default`: JSONEncoder = {
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .formatted(DateFormatter.rfc3339)
+        return encoder
+    }()
 }

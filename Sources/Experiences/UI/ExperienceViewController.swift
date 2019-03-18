@@ -8,6 +8,7 @@
 
 import UIKit
 
+// TODO: rename to RoverViewController.
 /// Either present or embed this view in a container to display a Rover experience.
 open class ExperienceViewController: UIViewController {
     public let identifier: ExperienceIdentifier
@@ -49,7 +50,7 @@ open class ExperienceViewController: UIViewController {
     
     public init(identifier: ExperienceIdentifier) {
         self.identifier = identifier
-        store = Rover.Config.experienceStore
+        store = Rover.Environment.shared.experienceStore
         super.init(nibName: nil, bundle: nil)
         
         
@@ -125,7 +126,7 @@ open class ExperienceViewController: UIViewController {
     }
     
     open func didFetchExperience(_ experience: Experience) {
-        let viewController = Rover.Config.experienceNavigationViewController(
+        let viewController = Rover.Environment.shared.experienceNavigationViewController(
             experience: experience
         )
         

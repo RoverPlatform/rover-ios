@@ -6,8 +6,6 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-// TODO: CONSIDER DESTROY
-
 public protocol ExperienceStore {
     func experience(for identifier: ExperienceIdentifier) -> Experience?
     func fetchExperience(for identifier: ExperienceIdentifier, completionHandler: ((FetchExperienceResult) -> Void)?)

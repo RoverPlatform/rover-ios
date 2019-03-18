@@ -10,17 +10,14 @@ import UIKit
 
 /// View controller responsible for navigation behaviour between screens of an Experience.
 open class ExperienceNavigationViewController: UINavigationController {
-    private let eventQueue: EventQueue
     private let sessionController: SessionController
     public let experience: Experience
 
     public init(
-        eventQueue: EventQueue,
         sessionController: SessionController,
         homeScreenViewController: UIViewController,
         experience: Experience
     ) {
-        self.eventQueue = eventQueue
         self.experience = experience
         self.sessionController = sessionController
         
@@ -48,21 +45,24 @@ open class ExperienceNavigationViewController: UINavigationController {
         super.viewDidAppear(animated)
         
         let attributes: [String: Any] = ["experience": experience.attributes]
-        let event = EventInfo(name: "Experience Presented", namespace: "rover", attributes: attributes)
-        eventQueue.addEvent(event)
         
-        sessionController.registerSession(
-            identifier: sessionIdentifier,
-            sessionCompletedInfo: EventInfo(name: "Experience Viewed", namespace: "rover", attributes: attributes)
+        NotificationCenter.default.post(
+            Notification(forRoverEvent: .experiencePresented, withAttributes: attributes)
         )
+        
+        sessionController.registerSession(identifier: sessionIdentifier) { duration in
+            return Notification(forRoverEvent: .experienceViewed, withAttributes: attributes)
+        }
     }
     
     override open func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
         let attributes = ["experience": experience.attributes]
-        let event = EventInfo(name: "Experience Dismissed", namespace: "rover", attributes: attributes)
-        eventQueue.addEvent(event)
+        
+        NotificationCenter.default.post(
+            Notification(forRoverEvent: .experienceDismissed, withAttributes: attributes)
+        )
         
         sessionController.unregisterSession(identifier: sessionIdentifier)
     }
@@ -77,3 +77,10 @@ open class ExperienceNavigationViewController: UINavigationController {
     }
     #endif
 }
+
+extension RoverEventName {
+    static var experiencePresented = "Experience Presented"
+    static var experienceDismissed = "Experience Dismissed"
+    static var experienceViewed = "Experience Viewed"
+}
+

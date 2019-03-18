@@ -28,8 +28,7 @@ public protocol EventQueue {
     func addEvent(_ info: EventInfo)
 }
 
-// TODO: rename properly
-public class FakeEventQueue: EventQueue {
+public class NotificationCenterEventQueue: EventQueue {
     public func addEvent(_ info: EventInfo) {
         let notification = Notification.init(from: info, withName: "RoverEmitterDidEmitEvent")
         NotificationCenter.default.post(notification)

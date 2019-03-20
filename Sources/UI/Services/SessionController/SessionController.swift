@@ -1,5 +1,5 @@
 //
-//  SessionControllerService.swift
+//  SessionController.swift
 //  Rover
 //
 //  Created by Sean Rucker on 2018-05-21.

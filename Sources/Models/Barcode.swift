@@ -1,13 +1,32 @@
 //
-//  Barcode+Experiences.swift
+//  Barcode.swift
 //  Rover
 //
-//  Created by Andrew Clunis on 2018-08-24.
+//  Created by Sean Rucker on 2018-04-13.
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
+import CoreImage
 import os
-import UIKit
+
+public struct Barcode: Decodable {
+    public enum Format: String, Decodable {
+        case qrCode = "QR_CODE"
+        case aztecCode = "AZTEC_CODE"
+        case pdf417 = "PDF417"
+        case code128 = "CODE_128"
+    }
+
+    public var text: String
+    public var format: Format
+    
+    public init(text: String, format: Format) {
+        self.text = text
+        self.format = format
+    }
+}
+
+// MARK: Convenience Initializers
 
 extension Barcode {
     /**
@@ -29,7 +48,7 @@ extension Barcode {
         case .qrCode:
             filterName = "CIQRCodeGenerator"
         }
-
+        
         let data = text.data(using: String.Encoding.ascii)!
         
         var params: [String: Any] = {
@@ -69,7 +88,7 @@ extension Barcode {
         #else
         let filter = CIFilter(name: filterName, withInputParameters: params)!
         #endif
-
+        
         guard let outputImage = filter.outputImage else {
             os_log("Unable to render barcode - see logs emitted directly by CIFilter for details", log: .rover, type: .error)
             return nil
@@ -78,7 +97,7 @@ extension Barcode {
         let context = CIContext(options: nil)
         
         let renderedBarcode = context.createCGImage(outputImage, from: outputImage.extent)!
-
+        
         return renderedBarcode
     }
 }

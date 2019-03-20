@@ -1,12 +1,56 @@
 //
-//  Text+Experiences.swift
+//  Text.swift
 //  Rover
 //
-//  Created by Sean Rucker on 2018-05-04.
-//  Copyright © 2018 Rover Labs Inc. All rights reserved.
+//  Created by Sean Rucker on 2017-10-19.
+//  Copyright © 2017 Rover Labs Inc. All rights reserved.
 //
 
 import UIKit
+
+public struct Text: Decodable {
+    public enum Alignment: String, Decodable {
+        case center = "CENTER"
+        case left = "LEFT"
+        case right = "RIGHT"
+    }
+    
+    public struct Font: Decodable {
+        public enum Weight: String, Decodable {
+            case ultraLight = "ULTRA_LIGHT"
+            case thin = "THIN"
+            case light = "LIGHT"
+            case regular = "REGULAR"
+            case medium = "MEDIUM"
+            case semiBold = "SEMI_BOLD"
+            case bold = "BOLD"
+            case heavy = "HEAVY"
+            case black = "BLACK"
+        }
+        
+        public var size: Int
+        public var weight: Weight
+        
+        public init(size: Int, weight: Weight) {
+            self.size = size
+            self.weight = weight
+        }
+    }
+    
+    public var rawValue: String
+    public var alignment: Alignment
+    public var color: Color
+    public var font: Font
+    
+    public init(rawValue: String, alignment: Alignment, color: Color, font: Font) {
+        self.rawValue = rawValue
+        self.alignment = alignment
+        self.color = color
+        self.font = font
+    }
+}
+
+// MARK: Convenience Initializers
 
 extension Text {
     var attributedText: NSAttributedString? {
@@ -48,26 +92,26 @@ extension Text {
                           NSAttributedString.Key.paragraphStyle: alignment.paragraphStyle]
         #else
         attributedString.enumerateAttribute(NSAttributedStringKey.font, in: range, options: []) { value, range, stop in
-            guard let value = value as? UIFont else {
-                return
-            }
-            
-            let traits = value.fontDescriptor.symbolicTraits
-            let fontSize = CGFloat(self.font.size)
-            let fontWeight = traits.contains(.traitBold) ? self.font.weight.uiFontWeightBold : self.font.weight.uiFontWeight
-            var font = UIFont.systemFont(ofSize: fontSize, weight: fontWeight)
-            
-            if traits.contains(.traitItalic) {
-                let descriptor = font.fontDescriptor.withSymbolicTraits(.traitItalic)!
-                font = UIFont(descriptor: descriptor, size: fontSize)
-            }
-            
-            attributedString.removeAttribute(NSAttributedStringKey.font, range: range)
-            attributedString.addAttribute(NSAttributedStringKey.font, value: font, range: range)
+        guard let value = value as? UIFont else {
+        return
+        }
+        
+        let traits = value.fontDescriptor.symbolicTraits
+        let fontSize = CGFloat(self.font.size)
+        let fontWeight = traits.contains(.traitBold) ? self.font.weight.uiFontWeightBold : self.font.weight.uiFontWeight
+        var font = UIFont.systemFont(ofSize: fontSize, weight: fontWeight)
+        
+        if traits.contains(.traitItalic) {
+        let descriptor = font.fontDescriptor.withSymbolicTraits(.traitItalic)!
+        font = UIFont(descriptor: descriptor, size: fontSize)
+        }
+        
+        attributedString.removeAttribute(NSAttributedStringKey.font, range: range)
+        attributedString.addAttribute(NSAttributedStringKey.font, value: font, range: range)
         }
         
         let attributes = [NSAttributedStringKey.foregroundColor: color.uiColor,
-                          NSAttributedStringKey.paragraphStyle: alignment.paragraphStyle]
+        NSAttributedStringKey.paragraphStyle: alignment.paragraphStyle]
         #endif
         
         attributedString.addAttributes(attributes, range: range)

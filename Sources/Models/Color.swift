@@ -1,12 +1,28 @@
 //
-//  Color+Experiences.swift
+//  Color.swift
 //  Rover
 //
-//  Created by Sean Rucker on 2018-05-04.
-//  Copyright © 2018 Rover Labs Inc. All rights reserved.
+//  Created by Sean Rucker on 2017-10-19.
+//  Copyright © 2017 Rover Labs Inc. All rights reserved.
 //
 
 import UIKit
+
+public struct Color: Decodable {
+    public var red: Int
+    public var green: Int
+    public var blue: Int
+    public var alpha: Double
+    
+    public init(red: Int, green: Int, blue: Int, alpha: Double) {
+        self.red = red
+        self.green = green
+        self.blue = blue
+        self.alpha = alpha
+    }
+}
+
+// MARK: Convenience Initializers
 
 extension Color {
     var uiColor: UIColor {

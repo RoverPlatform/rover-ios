@@ -9,7 +9,7 @@
 import SafariServices
 import UIKit
 
-/// Either present or embed this view in a container to display a Rover experience.
+/// Either present or embed this view in a container to display a Rover experience.  Make sure you set Rover.accountToken first!
 open class RoverViewController: UIViewController {    
     public let identifier: ExperienceIdentifier
     public let store: ExperienceStore

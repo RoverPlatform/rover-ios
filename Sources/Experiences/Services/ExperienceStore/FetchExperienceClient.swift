@@ -13,12 +13,6 @@ public protocol FetchExperienceClient {
     func task(with experienceIdentifier: ExperienceIdentifier, completionHandler: @escaping (FetchExperienceResult) -> Void) -> URLSessionTask
 }
 
-private struct RequestVariables: Encodable {
-    let campaignID: String?
-    let campaignURL: String?
-    let id: String?
-}
-
 extension FetchExperienceClient {
     // swiftlint:disable function_body_length // Function is decently readable.
     public func queryItems(experienceIdentifier: ExperienceIdentifier) -> [URLQueryItem] {
@@ -124,7 +118,13 @@ extension HTTPClient: FetchExperienceClient {
     }
 }
 
-// MARK: Response
+// MARK: Responses
+
+private struct RequestVariables: Encodable {
+    let campaignID: String?
+    let campaignURL: String?
+    let id: String?
+}
 
 private struct Response: Decodable {
     struct Data: Decodable {

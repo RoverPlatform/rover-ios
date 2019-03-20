@@ -421,7 +421,6 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         case .none:
             break
         case let .openURL(url, dismiss):
-            // TODO: consider lifting this out into container so it can be overridden.
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
             
             if dismiss {

@@ -9,11 +9,6 @@
 import Foundation
 import os.log
 
-public struct AuthContext {
-    var accountToken: String?
-    var endpoint: URL
-}
-
 public final class HTTPClient {
     public let authContextProvider: () -> AuthContext
     public let session: URLSession

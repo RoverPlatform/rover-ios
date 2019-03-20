@@ -12,4 +12,5 @@ Pod::Spec.new do |s|
   s.default_subspec   = "Core"
 
   s.source_files "sources/**/*.swift"
+  s.frameworks = "SafariServices", "WebKit"
 end

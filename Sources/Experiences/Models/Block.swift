@@ -19,7 +19,7 @@ public protocol Block: Decodable {
     var tags: [String] { get }
 }
 
-// Attributes
+// MARK: Attributes
 
 extension Block {
     public var attributes: [String: Any] {

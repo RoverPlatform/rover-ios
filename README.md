@@ -22,15 +22,4 @@ target 'MyAppTarget' do
 end
 ```
 
-Alternatively you can specify the exact set of subspecs you want to include.
-
-```ruby
-target 'MyAppTarget' do
-    pod 'Rover/Foundation',    '~> 3.0.0-beta1'
-    pod 'Rover/Data',          '~> 3.0.0-beta1'
-    pod 'Rover/UI',            '~> 3.0.0-beta1'
-    pod 'Rover/Experiences',   '~> 3.0.0-beta1'
-end
-```
-
 Please continue onwards from https://developer.rover.io/ios/.

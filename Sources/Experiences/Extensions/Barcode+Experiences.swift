@@ -1,5 +1,5 @@
 //
-//  Barcode+cgImage.swift
+//  Barcode+Experiences.swift
 //  Rover
 //
 //  Created by Andrew Clunis on 2018-08-24.

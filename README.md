@@ -1,15 +1,10 @@
 # Rover iOS SDK
 
-Create engaging mobile experiences, designed in the browser and delivered
-natively in your app. No dev resources or app updates required.
-
-
+Create engaging mobile experiences, designed in the browser and delivered natively in your app.
 
 <hr />
 
 The Rover SDK is a collection of Cocoa Touch Frameworks written in Swift. Instead of a single monolithic framework, the Rover SDK takes a modular approach, allowing you to include only the functionality relevant to your application. The SDK is 100% open-source and available on [GitHub](https://github.com/RoverPlatform/rover-ios).
-
-Note: if you are looking to include our Campaigns/marketing automation functionality (formerly bundled within this SDK), please additionally add the [Rover Campaigns SDK](https://github.com/RoverPlatform/rover-campaigns-ios).
 
 ---
 

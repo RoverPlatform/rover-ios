@@ -108,8 +108,6 @@
 		DBC3B42C2148B08D0096C74E /* FetchExperienceClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchExperienceClient.swift; sourceTree = "<group>"; };
 		DBD88A8020C1B21700085AE0 /* RoverDataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoverDataTests.swift; sourceTree = "<group>"; };
 		DBD88A8220C1B21700085AE0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		DBF31B2320E17176005D7C34 /* RoverDebugTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoverDebugTests.swift; sourceTree = "<group>"; };
-		DBF31B2520E17176005D7C34 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DBF49DD3203DE00F00B54652 /* Rover.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Rover.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBF49DDC203DE00F00B54652 /* RoverTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RoverTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBF49ECE203DE49500B54652 /* Data+Gzip.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+Gzip.swift"; sourceTree = "<group>"; };
@@ -167,7 +165,6 @@
 				DBD88A7F20C1B21700085AE0 /* DataTests */,
 				DB6ADD6620B33EC0002F226C /* UITests */,
 				DBFDF44E20AC84430031EF47 /* ExperiencesTests */,
-				DBF31B2220E17176005D7C34 /* DebugTests */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -279,15 +276,6 @@
 				DBD88A8220C1B21700085AE0 /* Info.plist */,
 			);
 			path = DataTests;
-			sourceTree = "<group>";
-		};
-		DBF31B2220E17176005D7C34 /* DebugTests */ = {
-			isa = PBXGroup;
-			children = (
-				DBF31B2320E17176005D7C34 /* RoverDebugTests.swift */,
-				DBF31B2520E17176005D7C34 /* Info.plist */,
-			);
-			path = DebugTests;
 			sourceTree = "<group>";
 		};
 		DBF31B5420E41A38005D7C34 /* Services */ = {

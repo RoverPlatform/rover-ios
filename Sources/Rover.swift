@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import SafariServices
 import UIKit
 
 /// Set your Rover Account Token (API Key) here.
@@ -21,12 +20,6 @@ open class Environment {
     
     open private(set) lazy var urlSession = URLSession(configuration: URLSessionConfiguration.default)
 
-    open func presentWebsite(sourceViewController: UIViewController, url: URL) {
-        // open a link using an embedded web browser controller.
-        let webViewController = SFSafariViewController(url: url)
-        sourceViewController.present(webViewController, animated: true, completion: nil)
-    }
-
     open private(set) lazy var httpClient = HTTPClient(session: urlSession) {
         AuthContext(
             accountToken: accountToken,
@@ -39,41 +32,6 @@ open class Environment {
     )
     
     open private(set) lazy var imageStore = ImageStoreService(session: urlSession)
-    
-    // TODO: move UI factories to top-level view controller
-    
-    open func presentWebsiteViewController(url: URL) -> UIViewController {
-        return SFSafariViewController(url: url)
-    }
-    
-    open func screenViewLayout(screen: Screen) -> UICollectionViewLayout {
-        return ScreenViewLayout(screen: screen)
-    }
-
-    open func screenViewController(experience: Experience, screen: Screen) -> ScreenViewController {
-        return ScreenViewController(
-            collectionViewLayout: screenViewLayout(screen: screen),
-            experience: experience,
-            screen: screen,
-            imageStore: imageStore,
-            sessionController: sessionController,
-            viewControllerProvider: { (experience: Experience, screen: Screen) in
-                self.screenViewController(experience: experience, screen: screen)
-            },
-            presentWebsite: { (url: URL, sourceViewController: UIViewController) in
-                self.presentWebsite(sourceViewController: sourceViewController, url: url)
-            }
-        )
-    }
-    
-    open func experienceNavigationViewController(experience: Experience) -> ExperienceNavigationViewController {
-        let homeScreenViewController = screenViewController(experience: experience, screen: experience.homeScreen)
-        return ExperienceNavigationViewController(
-            sessionController: self.sessionController,
-            homeScreenViewController: homeScreenViewController,
-            experience: experience
-        )
-    }
     
     open private(set) lazy var sessionController = SessionController(keepAliveTime: 10)
     

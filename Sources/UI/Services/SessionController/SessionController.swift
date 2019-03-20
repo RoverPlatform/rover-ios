@@ -8,6 +8,7 @@
 
 import UIKit
 
+/// Responsible for emitting events including a view duration for open and closable registered sessions, such as Experience Viewed or Screen Viewed.  Includes some basic hysteresis for ensuring that rapidly re-opened sessions are aggregated into a single session.
 public class SessionController {
     let keepAliveTime: Int
     

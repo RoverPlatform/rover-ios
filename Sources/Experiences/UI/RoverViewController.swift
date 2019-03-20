@@ -6,10 +6,11 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
+import SafariServices
 import UIKit
 
 /// Either present or embed this view in a container to display a Rover experience.
-open class RoverViewController: UIViewController {
+open class RoverViewController: UIViewController {    
     public let identifier: ExperienceIdentifier
     public let store: ExperienceStore
     
@@ -44,8 +45,6 @@ open class RoverViewController: UIViewController {
         cancelButton.addTarget(self, action: #selector(cancel), for: .touchUpInside)
         return cancelButton
     }()
-    
-    // Note: ExperienceViewController is a special case; it is treated as an entry point to our API, so rather than expecting all its dependencies to be injected through the initializer like all the other types, we will use the global environment.
     
     public init(identifier: ExperienceIdentifier) {
         self.identifier = identifier
@@ -123,8 +122,47 @@ open class RoverViewController: UIViewController {
         }
     }
     
+    open func presentWebsiteViewController(url: URL) -> UIViewController {
+        return SFSafariViewController(url: url)
+    }
+
+    open func screenViewLayout(screen: Screen) -> UICollectionViewLayout {
+        return ScreenViewLayout(screen: screen)
+    }
+
+    open func presentWebsite(sourceViewController: UIViewController, url: URL) {
+        // open a link using an embedded web browser controller.
+        let webViewController = SFSafariViewController(url: url)
+        sourceViewController.present(webViewController, animated: true, completion: nil)
+    }
+
+    open func screenViewController(experience: Experience, screen: Screen) -> ScreenViewController {
+        return ScreenViewController(
+            collectionViewLayout: screenViewLayout(screen: screen),
+            experience: experience,
+            screen: screen,
+            imageStore: Rover.Environment.shared.imageStore,
+            sessionController: Rover.Environment.shared.sessionController,
+            viewControllerProvider: { (experience: Experience, screen: Screen) in
+                self.screenViewController(experience: experience, screen: screen)
+            },
+            presentWebsite: { (url: URL, sourceViewController: UIViewController) in
+                self.presentWebsite(sourceViewController: sourceViewController, url: url)
+            }
+        )
+    }
+
+    open func experienceNavigationViewController(experience: Experience) -> ExperienceNavigationViewController {
+        let homeScreenViewController = screenViewController(experience: experience, screen: experience.homeScreen)
+        return ExperienceNavigationViewController(
+            sessionController: Rover.Environment.shared.sessionController,
+            homeScreenViewController: homeScreenViewController,
+            experience: experience
+        )
+    }
+    
     open func didFetchExperience(_ experience: Experience) {
-        let viewController = Rover.Environment.shared.experienceNavigationViewController(
+        let viewController = self.experienceNavigationViewController(
             experience: experience
         )
         

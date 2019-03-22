@@ -9,7 +9,7 @@
 import UIKit
 
 /// View controller responsible for navigation behaviour between screens of an Experience.
-open class ExperienceNavigationViewController: UINavigationController {
+open class NavigationController: UINavigationController {
     private let sessionController: SessionController
     public let experience: Experience
 

@@ -170,7 +170,6 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         
         // Title color
         
-        #if swift(>=4.2)
         var nextAttributes = navigationBar.titleTextAttributes ?? [NSAttributedString.Key: Any]()
         nextAttributes[NSAttributedString.Key.foregroundColor] = {
             if !screen.titleBar.useDefaultStyle {
@@ -187,24 +186,6 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
             
             return UIColor.black
         }()
-        #else
-        var nextAttributes = navigationBar.titleTextAttributes ?? [NSAttributedStringKey: Any]()
-        nextAttributes[NSAttributedStringKey.foregroundColor] = {
-            if !screen.titleBar.useDefaultStyle {
-                return screen.titleBar.textColor.uiColor
-            }
-            
-            if let appearanceColor = UINavigationBar.appearance().titleTextAttributes?[NSAttributedStringKey.foregroundColor] as? UIColor {
-                return appearanceColor
-            }
-            
-            if let defaultColor = UINavigationBar().titleTextAttributes?[NSAttributedStringKey.foregroundColor] as? UIColor {
-                return defaultColor
-            }
-            
-            return UIColor.black
-        }()
-        #endif
         
         navigationBar.titleTextAttributes = nextAttributes
     }

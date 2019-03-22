@@ -14,13 +14,8 @@ class ScreenLayoutAttributes: UICollectionViewLayoutAttributes {
      * this item should be placed.
      */
     var referenceFrame = CGRect.zero
-    
-    #if swift(>=4.2)
     var verticalAlignment = UIControl.ContentVerticalAlignment.top
-    #else
-    var verticalAlignment = UIControlContentVerticalAlignment.top
-    #endif
-    
+        
     /**
      * An optional clip area, in the coordinate space of the block view itself (ie., top left of the view
      * is origin).

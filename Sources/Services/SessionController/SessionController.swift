@@ -17,7 +17,6 @@ public class SessionController {
     public init(keepAliveTime: Int) {
         self.keepAliveTime = keepAliveTime
         
-        #if swift(>=4.2)
         self.didBecomeActiveObserver = NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: OperationQueue.main) { _ in
             SessionState.shared.forEach {
                 $0.value.session.start()
@@ -29,19 +28,6 @@ public class SessionController {
                 $0.value.session.end()
             }
         }
-        #else
-        self.didBecomeActiveObserver = NotificationCenter.default.addObserver(forName: .UIApplicationDidBecomeActive, object: nil, queue: OperationQueue.main) { [weak self] _ in
-            self?.sessions.forEach {
-                $0.value.session.start()
-            }
-        }
-        
-        self.willResignActiveObserver = NotificationCenter.default.addObserver(forName: .UIApplicationWillResignActive, object: nil, queue: OperationQueue.main) { [weak self] _ in
-            self?.sessions.forEach {
-                $0.value.session.end()
-            }
-        }
-        #endif
     }
     
     deinit {

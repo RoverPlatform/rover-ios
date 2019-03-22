@@ -30,23 +30,12 @@ open class RoverViewController: UIViewController {
     
     open private(set) lazy var sessionController = SessionController(keepAliveTime: 10)
     
-    #if swift(>=4.2)
     override open var childForStatusBarStyle: UIViewController? {
         return self.children.first
     }
-    #else
-    open override var childViewControllerForStatusBarStyle: UIViewController? {
-        return self.childViewControllers.first
-    }
-    #endif
     
     open var activityIndicator: UIActivityIndicatorView = {
-        #if swift(>=4.2)
         let activityIndicator = UIActivityIndicatorView(style: .whiteLarge)
-        #else
-        let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
-        #endif
-        
         activityIndicator.color = UIColor.gray
         activityIndicator.hidesWhenStopped = true
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
@@ -183,16 +172,9 @@ open class RoverViewController: UIViewController {
             experience: experience
         )
         
-        #if swift(>=4.2)
         addChild(viewController)
         view.addSubview(viewController.view)
         viewController.didMove(toParent: self)
-        #else
-        addChildViewController(viewController)
-        view.addSubview(viewController.view)
-        viewController.didMove(toParentViewController: self)
-        #endif
-        
         setNeedsStatusBarAppearanceUpdate()
     }
     
@@ -232,7 +214,6 @@ open class RoverViewController: UIViewController {
         let alertController: UIAlertController
         
         if shouldRetry {
-            #if swift(>=4.2)
             alertController = UIAlertController(title: "Error", message: "Failed to load experience", preferredStyle: UIAlertController.Style.alert)
             let cancel = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel) { _ in
                 alertController.dismiss(animated: true, completion: nil)
@@ -242,35 +223,16 @@ open class RoverViewController: UIViewController {
                 alertController.dismiss(animated: true, completion: nil)
                 self.fetchExperience()
             }
-            #else
-            alertController = UIAlertController(title: "Error", message: "Failed to load experience", preferredStyle: UIAlertControllerStyle.alert)
-            let cancel = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel) { _ in
-                alertController.dismiss(animated: true, completion: nil)
-                self.dismiss(animated: true, completion: nil)
-            }
-            let retry = UIAlertAction(title: "Try Again", style: UIAlertActionStyle.default) { _ in
-                alertController.dismiss(animated: true, completion: nil)
-                self.fetchExperience()
-            }
-            #endif
             
             alertController.addAction(cancel)
             alertController.addAction(retry)
         } else {
-            #if swift(>=4.2)
             alertController = UIAlertController(title: "Error", message: "Something went wrong", preferredStyle: UIAlertController.Style.alert)
             let ok = UIAlertAction(title: "Ok", style: UIAlertAction.Style.default) { _ in
                 alertController.dismiss(animated: false, completion: nil)
                 self.dismiss(animated: true, completion: nil)
             }
-            #else
-            alertController = UIAlertController(title: "Error", message: "Something went wrong", preferredStyle: UIAlertControllerStyle.alert)
-            let ok = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default) { _ in
-                alertController.dismiss(animated: false, completion: nil)
-                self.dismiss(animated: true, completion: nil)
-            }
-            #endif
-            
+                        
             alertController.addAction(ok)
         }
         

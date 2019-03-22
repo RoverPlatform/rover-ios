@@ -68,7 +68,6 @@ extension Text {
         
         // Bold and italicize
         
-        #if swift(>=4.2)
         attributedString.enumerateAttribute(NSAttributedString.Key.font, in: range, options: []) { value, range, _ in
             guard let value = value as? UIFont else {
                 return
@@ -90,29 +89,6 @@ extension Text {
         
         let attributes = [NSAttributedString.Key.foregroundColor: color.uiColor,
                           NSAttributedString.Key.paragraphStyle: alignment.paragraphStyle]
-        #else
-        attributedString.enumerateAttribute(NSAttributedStringKey.font, in: range, options: []) { value, range, stop in
-        guard let value = value as? UIFont else {
-        return
-        }
-        
-        let traits = value.fontDescriptor.symbolicTraits
-        let fontSize = CGFloat(self.font.size)
-        let fontWeight = traits.contains(.traitBold) ? self.font.weight.uiFontWeightBold : self.font.weight.uiFontWeight
-        var font = UIFont.systemFont(ofSize: fontSize, weight: fontWeight)
-        
-        if traits.contains(.traitItalic) {
-        let descriptor = font.fontDescriptor.withSymbolicTraits(.traitItalic)!
-        font = UIFont(descriptor: descriptor, size: fontSize)
-        }
-        
-        attributedString.removeAttribute(NSAttributedStringKey.font, range: range)
-        attributedString.addAttribute(NSAttributedStringKey.font, value: font, range: range)
-        }
-        
-        let attributes = [NSAttributedStringKey.foregroundColor: color.uiColor,
-        NSAttributedStringKey.paragraphStyle: alignment.paragraphStyle]
-        #endif
         
         attributedString.addAttributes(attributes, range: range)
         

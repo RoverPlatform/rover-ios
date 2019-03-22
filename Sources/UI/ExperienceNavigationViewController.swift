@@ -66,15 +66,9 @@ open class NavigationController: UINavigationController {
         sessionController.unregisterSession(identifier: sessionIdentifier)
     }
     
-    #if swift(>=4.2)
     override open var childForStatusBarStyle: UIViewController? {
         return self.topViewController
     }
-    #else
-    open override var childViewControllerForStatusBarStyle: UIViewController? {
-        return self.topViewController
-    }
-    #endif
 }
 
 extension RoverEventName {

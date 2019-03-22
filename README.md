@@ -1,7 +1,6 @@
 # Rover iOS SDK
 
-NOTE: If you are currently using Rover SDK 1.x, please see the latest [1.x release
-README](https://github.com/RoverPlatform/rover-ios/tree/f7b585f1bc3019da162522c5244a86fd93b2d8e9).
+Create engaging mobile experiences, designed in the browser and delivered natively in your app.
 
 <hr />
 
@@ -19,22 +18,7 @@ The simplest approach is to specify `Rover` as a dependency of your app's target
 
 ```ruby
 target 'MyAppTarget' do
-  pod 'Rover', '~> 2.1.0'
-end
-```
-
-Alternatively you can specify the exact set of subspecs you want to include.
-
-```ruby
-target 'MyAppTarget' do
-    pod 'Rover/Foundation',    '~> 2.1.0'
-    pod 'Rover/Data',          '~> 2.1.0'
-    pod 'Rover/UI',            '~> 2.1.0'
-    pod 'Rover/Experiences',   '~> 2.1.0'
-    pod 'Rover/Notifications', '~> 2.1.0'
-    pod 'Rover/Location',      '~> 2.1.0'
-    pod 'Rover/Bluetooth',     '~> 2.1.0'
-    pod 'Rover/Debug',         '~> 2.1.0'
+  pod 'Rover', '~> 3.0.0-beta1
 end
 ```
 

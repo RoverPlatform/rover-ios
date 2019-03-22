@@ -15,29 +15,6 @@ public class ImageStoreService: ImageStore {
     var tasks = [ImageConfiguration: URLSessionTask]()
     var completionHandlers = [ImageConfiguration: [(UIImage?) -> Void]]()
     
-    class CacheKey: NSObject {
-        let imageConfiguration: ImageConfiguration
-        
-        init(imageConfiguration: ImageConfiguration) {
-            self.imageConfiguration = imageConfiguration
-        }
-        
-        override func isEqual(_ object: Any?) -> Bool {
-            guard let rhs = object as? CacheKey else {
-                return false
-            }
-            
-            let lhs = self
-            return lhs.imageConfiguration == rhs.imageConfiguration
-        }
-        
-        override var hash: Int {
-            return imageConfiguration.hashValue
-        }
-    }
-    
-    var cache = NSCache<CacheKey, UIImage>()
-    
     public init(session: URLSession) {
         self.session = session
     }
@@ -61,8 +38,8 @@ public class ImageStoreService: ImageStore {
         } else {
             let task = session.dataTask(with: configuration.optimizedURL) { data, _, _ in
                 if let data = data, let image = UIImage(data: data, scale: configuration.scale) {
-                    let key = CacheKey(imageConfiguration: configuration)
-                    self.cache.setObject(image, forKey: key)
+                    let key = ImageCache.Key(imageConfiguration: configuration)
+                    ImageCache.shared.setObject(image, forKey: key)
                     
                     DispatchQueue.main.async {
                         self.tasks[configuration] = nil
@@ -81,8 +58,8 @@ public class ImageStoreService: ImageStore {
     }
     
     public func fetchedImage(for configuration: ImageConfiguration) -> UIImage? {
-        let key = CacheKey(imageConfiguration: configuration)
-        return cache.object(forKey: key)
+        let key = ImageCache.Key(imageConfiguration: configuration)
+        return ImageCache.shared.object(forKey: key)
     }
         
     public func invokeCompletionHandlers(for configuration: ImageConfiguration, with fetchedImage: UIImage) {

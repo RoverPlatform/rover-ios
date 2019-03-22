@@ -19,42 +19,9 @@ public class ExperienceStoreService: ExperienceStore {
     /// Return the experience for the given identifier from the cache, provided that it has already been retrieved once in this session.
     /// Returns nil if experience is not present in the cache.
     public func experience(for identifier: ExperienceIdentifier) -> Experience? {
-        let key = CacheKey(experienceIdentifier: identifier)
-        return cache.object(forKey: key)?.experience
+        let key = ExperienceCache.Key(experienceIdentifier: identifier)
+        return ExperienceCache.shared.object(forKey: key)?.experience
     }
-    
-    // MARK: Cache
-    
-    class CacheKey: NSObject {
-        let experienceIdentifier: ExperienceIdentifier
-        
-        init(experienceIdentifier: ExperienceIdentifier) {
-            self.experienceIdentifier = experienceIdentifier
-        }
-        
-        override func isEqual(_ object: Any?) -> Bool {
-            guard let rhs = object as? CacheKey else {
-                return false
-            }
-            
-            let lhs = self
-            return lhs.experienceIdentifier == rhs.experienceIdentifier
-        }
-        
-        override var hash: Int {
-            return experienceIdentifier.hashValue
-        }
-    }
-    
-    class CacheValue: NSObject {
-        let experience: Experience
-        
-        init(experience: Experience) {
-            self.experience = experience
-        }
-    }
-    
-    var cache = NSCache<CacheKey, CacheValue>()
     
     // MARK: Fetching Experiences
     
@@ -92,9 +59,9 @@ public class ExperienceStoreService: ExperienceStore {
                 return
             }
             
-            let key = CacheKey(experienceIdentifier: identifier)
-            let value = CacheValue(experience: experience)
-            self.cache.setObject(value, forKey: key)
+            let key = ExperienceCache.Key(experienceIdentifier: identifier)
+            let value = ExperienceCache.Value(experience: experience)
+            ExperienceCache.shared.setObject(value, forKey: key)
         }
         
         tasks[identifier] = task

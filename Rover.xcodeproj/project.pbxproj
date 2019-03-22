@@ -56,6 +56,8 @@
 		4953DD5322399A9C00286C4B /* ScreenViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEE32055964E00E5C77F /* ScreenViewLayout.swift */; };
 		4953DD5422399A9C00286C4B /* ScreenViewLayoutAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FDD92087E09F008D1A57 /* ScreenViewLayoutAttributes.swift */; };
 		49E752D4224017A4005CF00F /* Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E752D3224017A4005CF00F /* Notification.swift */; };
+		DB640B6D2245289800CFA795 /* ExperienceCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB640B6C2245289800CFA795 /* ExperienceCache.swift */; };
+		DB640B6F22452AB000CFA795 /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB640B6E22452AB000CFA795 /* ImageCache.swift */; };
 		DB6BE8AE215D41F7000A1FDA /* OSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6BE8AD215D41F7000A1FDA /* OSLog.swift */; };
 		DBF49DDD203DE00F00B54652 /* Rover.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF49DD3203DE00F00B54652 /* Rover.framework */; };
 /* End PBXBuildFile section */
@@ -81,6 +83,8 @@
 		DB4831B920DC5D18003DBF1B /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
 		DB496E3D214854C50026DE6A /* HTTPResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPResult.swift; sourceTree = "<group>"; };
 		DB496E3F214854CF0026DE6A /* HTTPError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPError.swift; sourceTree = "<group>"; };
+		DB640B6C2245289800CFA795 /* ExperienceCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperienceCache.swift; sourceTree = "<group>"; };
+		DB640B6E22452AB000CFA795 /* ImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
 		DB6ADD6720B33EC0002F226C /* RoverUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoverUITests.swift; sourceTree = "<group>"; };
 		DB6ADD6920B33EC0002F226C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DB6ADD7E20B3449E002F226C /* SessionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionController.swift; sourceTree = "<group>"; };
@@ -222,6 +226,7 @@
 				DB709C72207EB47400F96C2B /* ImageOptimization.swift */,
 				DB709C68207E7EFC00F96C2B /* ImageStore.swift */,
 				DB709C6B207EAEED00F96C2B /* ImageStoreService.swift */,
+				DB640B6E22452AB000CFA795 /* ImageCache.swift */,
 			);
 			path = ImageStore;
 			sourceTree = "<group>";
@@ -294,6 +299,7 @@
 				DBC3B42C2148B08D0096C74E /* FetchExperienceClient.swift */,
 				DBFB1B0E209CAD9600E99F9F /* ExperienceStore.swift */,
 				DBFB1ACB209BB3D200E99F9F /* ExperienceStoreService.swift */,
+				DB640B6C2245289800CFA795 /* ExperienceCache.swift */,
 			);
 			path = ExperienceStore;
 			sourceTree = "<group>";
@@ -477,6 +483,7 @@
 				4953DD2922399A7600286C4B /* SessionController.swift in Sources */,
 				4953DD3122399A8500286C4B /* Barcode.swift in Sources */,
 				4953DD4E22399A9700286C4B /* TextCell.swift in Sources */,
+				DB640B6F22452AB000CFA795 /* ImageCache.swift in Sources */,
 				4953DD4922399A9700286C4B /* BarcodeCell.swift in Sources */,
 				4953DD2222399A6900286C4B /* ImageStoreService.swift in Sources */,
 				4953DD4322399A8500286C4B /* WebView.swift in Sources */,
@@ -486,6 +493,7 @@
 				4953DD1422399A4D00286C4B /* HTTPClient.swift in Sources */,
 				4953DD4F22399A9700286C4B /* WebViewCell.swift in Sources */,
 				4953DD1722399A5000286C4B /* Data+Gzip.swift in Sources */,
+				DB640B6D2245289800CFA795 /* ExperienceCache.swift in Sources */,
 				4953DD5322399A9C00286C4B /* ScreenViewLayout.swift in Sources */,
 				4953DD5222399A9C00286C4B /* ScreenViewController.swift in Sources */,
 				4953DD3522399A8500286C4B /* ButtonBlock.swift in Sources */,

@@ -12,7 +12,23 @@ import UIKit
 /// Either present or embed this view in a container to display a Rover experience.  Make sure you set Rover.accountToken first!
 open class RoverViewController: UIViewController {    
     public let identifier: ExperienceIdentifier
-    public let store: ExperienceStore
+    
+    open private(set) lazy var urlSession = URLSession(configuration: URLSessionConfiguration.default)
+    
+    open private(set) lazy var httpClient = HTTPClient(session: urlSession) {
+        AuthContext(
+            accountToken: accountToken,
+            endpoint: URL(string: "https://api.rover.io/graphql")!
+        )
+    }
+    
+    open private(set) lazy var experienceStore = ExperienceStoreService(
+        client: self.httpClient
+    )
+    
+    open private(set) lazy var imageStore = ImageStoreService(session: urlSession)
+    
+    open private(set) lazy var sessionController = SessionController(keepAliveTime: 10)
     
     #if swift(>=4.2)
     override open var childForStatusBarStyle: UIViewController? {
@@ -48,7 +64,6 @@ open class RoverViewController: UIViewController {
     
     public init(identifier: ExperienceIdentifier) {
         self.identifier = identifier
-        store = Rover.Environment.shared.experienceStore
         super.init(nibName: nil, bundle: nil)
         
         configureView()
@@ -102,7 +117,7 @@ open class RoverViewController: UIViewController {
     open func fetchExperience() {
         startLoading()
         
-        store.fetchExperience(for: identifier) { [weak self] result in
+        experienceStore.fetchExperience(for: identifier) { [weak self] result in
             // If the user cancels loading, the view controller may have been dismissed and garbage collected before the fetch completes
             
             guard let container = self else {
@@ -121,6 +136,8 @@ open class RoverViewController: UIViewController {
             }
         }
     }
+    
+    // MARK: View Controller Factories
     
     open func presentWebsiteViewController(url: URL) -> UIViewController {
         return SFSafariViewController(url: url)
@@ -141,8 +158,8 @@ open class RoverViewController: UIViewController {
             collectionViewLayout: screenViewLayout(screen: screen),
             experience: experience,
             screen: screen,
-            imageStore: Rover.Environment.shared.imageStore,
-            sessionController: Rover.Environment.shared.sessionController,
+            imageStore: imageStore,
+            sessionController: sessionController,
             viewControllerProvider: { (experience: Experience, screen: Screen) in
                 self.screenViewController(experience: experience, screen: screen)
             },
@@ -155,7 +172,7 @@ open class RoverViewController: UIViewController {
     open func experienceNavigationViewController(experience: Experience) -> ExperienceNavigationViewController {
         let homeScreenViewController = screenViewController(experience: experience, screen: experience.homeScreen)
         return ExperienceNavigationViewController(
-            sessionController: Rover.Environment.shared.sessionController,
+            sessionController: sessionController,
             homeScreenViewController: homeScreenViewController,
             experience: experience
         )

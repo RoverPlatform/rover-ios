@@ -58,6 +58,7 @@
 		49E752D4224017A4005CF00F /* Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E752D3224017A4005CF00F /* Notification.swift */; };
 		DB640B6D2245289800CFA795 /* ExperienceCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB640B6C2245289800CFA795 /* ExperienceCache.swift */; };
 		DB640B6F22452AB000CFA795 /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB640B6E22452AB000CFA795 /* ImageCache.swift */; };
+		DB640B712245343F00CFA795 /* SessionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB640B702245343F00CFA795 /* SessionState.swift */; };
 		DB6BE8AE215D41F7000A1FDA /* OSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6BE8AD215D41F7000A1FDA /* OSLog.swift */; };
 		DBF49DDD203DE00F00B54652 /* Rover.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF49DD3203DE00F00B54652 /* Rover.framework */; };
 /* End PBXBuildFile section */
@@ -85,6 +86,7 @@
 		DB496E3F214854CF0026DE6A /* HTTPError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPError.swift; sourceTree = "<group>"; };
 		DB640B6C2245289800CFA795 /* ExperienceCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperienceCache.swift; sourceTree = "<group>"; };
 		DB640B6E22452AB000CFA795 /* ImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
+		DB640B702245343F00CFA795 /* SessionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionState.swift; sourceTree = "<group>"; };
 		DB6ADD6720B33EC0002F226C /* RoverUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoverUITests.swift; sourceTree = "<group>"; };
 		DB6ADD6920B33EC0002F226C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DB6ADD7E20B3449E002F226C /* SessionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionController.swift; sourceTree = "<group>"; };
@@ -215,6 +217,7 @@
 			children = (
 				DB6ADD7E20B3449E002F226C /* SessionController.swift */,
 				DB4831B920DC5D18003DBF1B /* Session.swift */,
+				DB640B702245343F00CFA795 /* SessionState.swift */,
 			);
 			path = SessionController;
 			sourceTree = "<group>";
@@ -509,6 +512,7 @@
 				4953DD112239925B00286C4B /* Rover.swift in Sources */,
 				4953DD2A22399A7600286C4B /* Session.swift in Sources */,
 				4953DD4022399A8500286C4B /* BlockTapBehavior.swift in Sources */,
+				DB640B712245343F00CFA795 /* SessionState.swift in Sources */,
 				4953DD1522399A4D00286C4B /* HTTPError.swift in Sources */,
 				4953DD4422399A8500286C4B /* WebViewBlock.swift in Sources */,
 				4953DD3622399A8500286C4B /* Color.swift in Sources */,

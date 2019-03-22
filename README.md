@@ -18,7 +18,7 @@ The simplest approach is to specify `Rover` as a dependency of your app's target
 
 ```ruby
 target 'MyAppTarget' do
-  pod 'Rover', '~> 3.0.0-beta1
+  pod 'Rover', '~> 3.0.0-beta1'
 end
 ```
 

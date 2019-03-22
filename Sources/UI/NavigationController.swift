@@ -43,24 +43,34 @@ open class NavigationController: UINavigationController {
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        let attributes: [String: Any] = ["experience": experience.attributes]
+        let userInfo: [String: Any] = [
+            "experience": experience.attributes
+        ]
         
         NotificationCenter.default.post(
-            Notification(forRoverEvent: .experiencePresented, withAttributes: attributes)
+            name: .RVExperiencePresented,
+            object: self,
+            userInfo: userInfo
         )
         
         sessionController.registerSession(identifier: sessionIdentifier) { duration in
-            Notification(forRoverEvent: .experienceViewed, withAttributes: attributes.merging(["duration": duration]) { a, _ in a })
+            Notification(
+                name: .RVExperienceViewed,
+                object: self,
+                userInfo: userInfo.merging(["duration": duration]) { a, _ in a }
+            )
         }
     }
     
     override open func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-
-        let attributes = ["experience": experience.attributes]
         
         NotificationCenter.default.post(
-            Notification(forRoverEvent: .experienceDismissed, withAttributes: attributes)
+            name: .RVExperienceDismissed,
+            object: self,
+            userInfo: [
+                "experience": experience.attributes
+            ]
         )
         
         sessionController.unregisterSession(identifier: sessionIdentifier)
@@ -69,10 +79,4 @@ open class NavigationController: UINavigationController {
     override open var childForStatusBarStyle: UIViewController? {
         return self.topViewController
     }
-}
-
-extension RoverEventName {
-    static var experiencePresented = "Experience Presented"
-    static var experienceDismissed = "Experience Dismissed"
-    static var experienceViewed = "Experience Viewed"
 }

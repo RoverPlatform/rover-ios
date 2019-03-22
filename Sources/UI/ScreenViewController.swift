@@ -91,30 +91,36 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        let attributes: [String: Any] = [
+        let userInfo: [String: Any] = [
             "experience": experience.attributes,
             "screen": screen.attributes
         ]
         
         NotificationCenter.default.post(
-            Notification(forRoverEvent: .screenPresented, withAttributes: attributes)
+            name: .RVScreenPresented,
+            object: self,
+            userInfo: userInfo
         )
         
         sessionController.registerSession(identifier: sessionIdentifier) { duration in
-            Notification(forRoverEvent: .screenViewed, withAttributes: attributes.merging(["duration": duration]) { a, _ in a })
+            Notification(
+                name: .RVScreenViewed,
+                object: self,
+                userInfo: userInfo.merging(["duration": duration]) { a, _ in a }
+            )
         }
     }
     
     override open func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
-        let attributes: [String: Any] = [
-            "experience": experience.attributes,
-            "screen": screen.attributes
-        ]
-        
         NotificationCenter.default.post(
-            Notification(forRoverEvent: .screenDismissed, withAttributes: attributes)
+            name: .RVScreenDismissed,
+            object: self,
+            userInfo: [
+                "experience": experience.attributes,
+                "screen": screen.attributes
+            ]
         )
         
         sessionController.unregisterSession(identifier: sessionIdentifier)
@@ -385,13 +391,6 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         let row = screen.rows[indexPath.section]
         let block = row.blocks[indexPath.row]
         
-        let attributes: [String: Any] = [
-            "experience": experience.attributes,
-            "screen": screen.attributes,
-            "row": row.attributes,
-            "block": block.attributes
-        ]
-        
         switch block.tapBehavior {
         case .goToScreen(let screenID):
             if let nextScreen = experience.screens.first(where: { $0.id == screenID }), let navigationController = navigationController {
@@ -412,14 +411,14 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         }
         
         NotificationCenter.default.post(
-            Notification(forRoverEvent: .blockTapped, withAttributes: attributes)
+            name: .RVBlockTapped,
+            object: self,
+            userInfo: [
+                "experience": experience.attributes,
+                "screen": screen.attributes,
+                "row": row.attributes,
+                "block": block.attributes
+            ]
         )
     }
-}
-
-extension RoverEventName {
-    static var screenPresented = "Screen Presented"
-    static var screenDismissed = "Screen Dismissed"
-    static var blockTapped = "Block Tapped"
-    static var screenViewed = "Screen Viewed"
 }

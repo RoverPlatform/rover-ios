@@ -1,12 +1,11 @@
 //
 //  Data+Gzip.swift
 //
-//  Version 3.1.5
 
 /*
  The MIT License (MIT)
  
- © 2014-2017 1024jp <wolfrosch.com>
+ © 2014-2019 1024jp <wolfrosch.com>
  
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -28,154 +27,146 @@
  */
 
 import Foundation
-import zlib
 
-/**
- Compression level with constants based on the zlib's constants.
- */
-typealias CompressionLevel = Int32
-extension CompressionLevel {
-    static let noCompression = Z_NO_COMPRESSION
-    static let bestSpeed = Z_BEST_SPEED
-    static let bestCompression = Z_BEST_COMPRESSION
+#if os(Linux)
+import zlibLinux
+#else
+import zlib
+#endif
+
+/// Compression level whose rawValue is based on the zlib's constants.
+public struct CompressionLevel: RawRepresentable {
     
-    static let defaultCompression = Z_DEFAULT_COMPRESSION
+    /// Compression level in the range of `0` (no compression) to `9` (maximum compression).
+    public let rawValue: Int32
+    
+    public static let noCompression = CompressionLevel(Z_NO_COMPRESSION)
+    public static let bestSpeed = CompressionLevel(Z_BEST_SPEED)
+    public static let bestCompression = CompressionLevel(Z_BEST_COMPRESSION)
+    
+    public static let defaultCompression = CompressionLevel(Z_DEFAULT_COMPRESSION)
+    
+    
+    public init(rawValue: Int32) {
+        
+        self.rawValue = rawValue
+    }
+    
+    
+    public init(_ rawValue: Int32) {
+        
+        self.rawValue = rawValue
+    }
+    
 }
 
-/**
- Errors on gzipping/gunzipping based on the zlib error codes.
- */
-enum GzipError: Error {
+
+/// Errors on gzipping/gunzipping based on the zlib error codes.
+public struct GzipError: Swift.Error {
     // cf. http://www.zlib.net/manual.html
     
-    /**
-     The stream structure was inconsistent.
-     
-     - underlying zlib error: `Z_STREAM_ERROR` (-2)
-     - parameter message: returned message by zlib
-     */
-    case stream(message: String)
+    public enum Kind: Equatable {
+        /// The stream structure was inconsistent.
+        ///
+        /// - underlying zlib error: `Z_STREAM_ERROR` (-2)
+        case stream
+        
+        /// The input data was corrupted
+        /// (input stream not conforming to the zlib format or incorrect check value).
+        ///
+        /// - underlying zlib error: `Z_DATA_ERROR` (-3)
+        case data
+        
+        /// There was not enough memory.
+        ///
+        /// - underlying zlib error: `Z_MEM_ERROR` (-4)
+        case memory
+        
+        /// No progress is possible or there was not enough room in the output buffer.
+        ///
+        /// - underlying zlib error: `Z_BUF_ERROR` (-5)
+        case buffer
+        
+        /// The zlib library version is incompatible with the version assumed by the caller.
+        ///
+        /// - underlying zlib error: `Z_VERSION_ERROR` (-6)
+        case version
+        
+        /// An unknown error occurred.
+        ///
+        /// - parameter code: return error by zlib
+        case unknown(code: Int)
+    }
     
-    /**
-     The input data was corrupted (input stream not conforming to the zlib format or incorrect check value).
-     
-     - underlying zlib error: `Z_DATA_ERROR` (-3)
-     - parameter message: returned message by zlib
-     */
-    case data(message: String)
+    /// Error kind.
+    public let kind: Kind
     
-    /**
-     There was not enough memory.
-     
-     - underlying zlib error: `Z_MEM_ERROR` (-4)
-     - parameter message: returned message by zlib
-     */
-    case memory(message: String)
+    /// Returned message by zlib.
+    public let message: String
     
-    /**
-     No progress is possible or there was not enough room in the output buffer.
-     
-     - underlying zlib error: `Z_BUF_ERROR` (-5)
-     - parameter message: returned message by zlib
-     */
-    case buffer(message: String)
-    
-    /**
-     The zlib library version is incompatible with the version assumed by the caller.
-     
-     - underlying zlib error: `Z_VERSION_ERROR` (-6)
-     - parameter message: returned message by zlib
-     */
-    case version(message: String)
-    
-    /**
-     An unknown error occurred.
-     
-     - parameter message: returned message by zlib
-     - parameter code: return error by zlib
-     */
-    case unknown(message: String, code: Int)
     
     internal init(code: Int32, msg: UnsafePointer<CChar>?) {
-        let message: String = {
+        
+        self.message = {
             guard let msg = msg, let message = String(validatingUTF8: msg) else {
                 return "Unknown gzip error"
             }
             return message
         }()
         
-        self = {
+        self.kind = {
             switch code {
             case Z_STREAM_ERROR:
-                return .stream(message: message)
-                
+                return .stream
             case Z_DATA_ERROR:
-                return .data(message: message)
-                
+                return .data
             case Z_MEM_ERROR:
-                return .memory(message: message)
-                
+                return .memory
             case Z_BUF_ERROR:
-                return .buffer(message: message)
-                
+                return .buffer
             case Z_VERSION_ERROR:
-                return .version(message: message)
-                
+                return .version
             default:
-                return .unknown(message: message, code: Int(code))
+                return .unknown(code: Int(code))
             }
         }()
     }
     
-    var localizedDescription: String {
-        let description: String = {
-            switch self {
-            case .stream(let message):
-                return message
-            case .data(let message):
-                return message
-            case .memory(let message):
-                return message
-            case .buffer(let message):
-                return message
-            case .version(let message):
-                return message
-            case .unknown(let message, _):
-                return message
-            }
-        }()
+    
+    public var localizedDescription: String {
         
-        return description
+        return self.message
     }
+    
 }
 
+
 extension Data {
-    /**
-     Whether the data is compressed in gzip format.
-     */
-    var isGzipped: Bool {
+    
+    /// Whether the receiver is compressed in gzip format.
+    public var isGzipped: Bool {
+        
         return self.starts(with: [0x1f, 0x8b])  // check magic number
     }
     
-    /**
-     Create a new `Data` object by compressing the receiver using zlib.
-     Throws an error if compression failed.
-     
-     - parameters:
-     - level: Compression level in the range of `0` (no compression) to `9` (maximum compression).
-     
-     - throws: `GzipError`
-     - returns: Gzip-compressed `Data` object.
-     */
-    func gzipped(level: CompressionLevel = .defaultCompression) throws -> Data {
+    
+    /// Create a new `Data` object by compressing the receiver using zlib.
+    /// Throws an error if compression failed.
+    ///
+    /// - Parameter level: Compression level.
+    /// - Returns: Gzip-compressed `Data` object.
+    /// - Throws: `GzipError`
+    public func gzipped(level: CompressionLevel = .defaultCompression) throws -> Data {
+        
         guard !self.isEmpty else {
             return Data()
         }
         
-        var stream = self.createZStream()
+        let contiguousData = self.withUnsafeBytes { Data(bytes: $0, count: self.count) }
+        var stream = contiguousData.createZStream()
         var status: Int32
         
-        status = deflateInit2_(&stream, level, Z_DEFLATED, MAX_WBITS + 16, MAX_MEM_LEVEL, Z_DEFAULT_STRATEGY, ZLIB_VERSION, Int32(DataSize.stream))
+        status = deflateInit2_(&stream, level.rawValue, Z_DEFLATED, MAX_WBITS + 16, MAX_MEM_LEVEL, Z_DEFAULT_STRATEGY, ZLIB_VERSION, Int32(DataSize.stream))
         
         guard status == Z_OK else {
             // deflateInit2 returns:
@@ -206,19 +197,20 @@ extension Data {
         return data
     }
     
-    /**
-     Create a new `Data` object by decompressing the receiver using zlib.
-     Throws an error if decompression failed.
-     
-     - throws: `GzipError`
-     - returns: Gzip-decompressed `Data` object.
-     */
-    func gunzipped() throws -> Data {
+    
+    /// Create a new `Data` object by decompressing the receiver using zlib.
+    /// Throws an error if decompression failed.
+    ///
+    /// - Returns: Gzip-decompressed `Data` object.
+    /// - Throws: `GzipError`
+    public func gunzipped() throws -> Data {
+        
         guard !self.isEmpty else {
             return Data()
         }
         
-        var stream = self.createZStream()
+        let contiguousData = self.withUnsafeBytes { Data(bytes: $0, count: self.count) }
+        var stream = contiguousData.createZStream()
         var status: Int32
         
         status = inflateInit2_(&stream, MAX_WBITS + 32, ZLIB_VERSION, Int32(DataSize.stream))
@@ -232,11 +224,11 @@ extension Data {
             throw GzipError(code: status, msg: stream.msg)
         }
         
-        var data = Data(capacity: self.count * 2)
+        var data = Data(capacity: contiguousData.count * 2)
         
         repeat {
             if Int(stream.total_out) >= data.count {
-                data.count += self.count / 2
+                data.count += contiguousData.count / 2
             }
             
             data.withUnsafeMutableBytes { (bytes: UnsafeMutablePointer<Bytef>) in
@@ -245,6 +237,7 @@ extension Data {
             stream.avail_out = uInt(data.count) - uInt(stream.total_out)
             
             status = inflate(&stream, Z_SYNC_FLUSH)
+            
         } while status == Z_OK
         
         guard inflateEnd(&stream) == Z_OK && status == Z_STREAM_END else {
@@ -262,7 +255,9 @@ extension Data {
         return data
     }
     
+    
     private func createZStream() -> z_stream {
+        
         var stream = z_stream()
         
         self.withUnsafeBytes { (bytes: UnsafePointer<Bytef>) in
@@ -272,9 +267,12 @@ extension Data {
         
         return stream
     }
+    
 }
 
+
 private struct DataSize {
+    
     static let chunk = 2 ^ 14
     static let stream = MemoryLayout<z_stream>.size
     

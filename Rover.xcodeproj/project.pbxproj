@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4919E8E82252A5A40001CA89 /* Data+Compression.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4919E8E72252A5A40001CA89 /* Data+Compression.swift */; };
 		4980D66521307738007267D3 /* Experiences.Barcode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4980D66421307738007267D3 /* Experiences.Barcode.swift */; };
 		DB026279214C300E00893E53 /* Location.CLBeaconRegion.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB026272214C2F5200893E53 /* Location.CLBeaconRegion.swift */; };
 		DB02627A214C301600893E53 /* Location.CLCircularRegion.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB026274214C2F8900893E53 /* Location.CLCircularRegion.swift */; };
@@ -173,7 +174,6 @@
 		DBD88A9920C1B58E00085AE0 /* EventQueueObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A88209B8CC500E99F9F /* EventQueueObserver.swift */; };
 		DBD88A9A20C1B58E00085AE0 /* EventQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A84209B8CC500E99F9F /* EventQueue.swift */; };
 		DBD88AA820C1B61200085AE0 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF49ECF203DE49500B54652 /* Reachability.swift */; };
-		DBD88AA920C1B61800085AE0 /* Data+Gzip.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF49ECE203DE49500B54652 /* Data+Gzip.swift */; };
 		DBD88AB620C1B99C00085AE0 /* ContextManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF49EC3203DE3EB00B54652 /* ContextManager.swift */; };
 		DBD88ABE20C1BACF00085AE0 /* DataAssembler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD88ABC20C1BA7C00085AE0 /* DataAssembler.swift */; };
 		DBD88AC620C1BE1C00085AE0 /* RoverData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD88A7320C1B21700085AE0 /* RoverData.framework */; };
@@ -338,6 +338,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4919E8E72252A5A40001CA89 /* Data+Compression.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Compression.swift"; sourceTree = "<group>"; };
 		4980D66421307738007267D3 /* Experiences.Barcode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Experiences.Barcode.swift; sourceTree = "<group>"; };
 		DB00FDD92087E09F008D1A57 /* ScreenViewLayoutAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenViewLayoutAttributes.swift; sourceTree = "<group>"; };
 		DB00FDDB20891153008D1A57 /* ImageConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageConfiguration.swift; sourceTree = "<group>"; };
@@ -550,7 +551,6 @@
 		DBF49DFE203DE1DE00B54652 /* ServiceKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceKey.swift; sourceTree = "<group>"; };
 		DBF49DFF203DE1DE00B54652 /* ServiceScope.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceScope.swift; sourceTree = "<group>"; };
 		DBF49EC3203DE3EB00B54652 /* ContextManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContextManager.swift; sourceTree = "<group>"; };
-		DBF49ECE203DE49500B54652 /* Data+Gzip.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+Gzip.swift"; sourceTree = "<group>"; };
 		DBF49ECF203DE49500B54652 /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		DBFB1A65209B8CC500E99F9F /* Barcode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Barcode.swift; sourceTree = "<group>"; };
 		DBFB1A66209B8CC500E99F9F /* Experience.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Experience.swift; sourceTree = "<group>"; };
@@ -1627,8 +1627,8 @@
 		DBFDF4B920AC95FD0031EF47 /* Vendor */ = {
 			isa = PBXGroup;
 			children = (
-				DBF49ECE203DE49500B54652 /* Data+Gzip.swift */,
 				DBF49ECF203DE49500B54652 /* Reachability.swift */,
+				4919E8E72252A5A40001CA89 /* Data+Compression.swift */,
 			);
 			path = Vendor;
 			sourceTree = "<group>";
@@ -2724,7 +2724,6 @@
 				DBC3FBE82154680600372A65 /* Context.swift in Sources */,
 				DBCBE09721614E9A001C7A96 /* NotificationsContextProvider.swift in Sources */,
 				DB8C0787215FEE46000DDD56 /* TokenManager.swift in Sources */,
-				DBD88AA920C1B61800085AE0 /* Data+Gzip.swift in Sources */,
 				DBD88AB620C1B99C00085AE0 /* ContextManager.swift in Sources */,
 				DBC3FBF8215581E500372A65 /* DeviceModel.swift in Sources */,
 				DBD88A9420C1B58E00085AE0 /* Event.swift in Sources */,
@@ -2795,6 +2794,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4919E8E82252A5A40001CA89 /* Data+Compression.swift in Sources */,
 				DBADA7FC20A4F32500225C80 /* ActionObserver.swift in Sources */,
 				DBF49E02203DE1DE00B54652 /* Assembler.swift in Sources */,
 				DBADA7FB20A4F32500225C80 /* Action.swift in Sources */,

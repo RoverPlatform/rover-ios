@@ -24,14 +24,13 @@ class SessionControllerService: SessionController {
     
     var sessions = [String: SessionEntry]()
     
-    var didBecomeActiveObserver: NSObjectProtocol!
-    var willResignActiveObserver: NSObjectProtocol!
+    var didBecomeActiveObserver: NSObjectProtocol?
+    var willResignActiveObserver: NSObjectProtocol?
     
     init(eventQueue: EventQueue, keepAliveTime: Int) {
         self.eventQueue = eventQueue
         self.keepAliveTime = keepAliveTime
         
-        #if swift(>=4.2)
         self.didBecomeActiveObserver = NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: OperationQueue.main) { [weak self] _ in
             self?.sessions.forEach {
                 $0.value.session.start()
@@ -43,24 +42,15 @@ class SessionControllerService: SessionController {
                 $0.value.session.end()
             }
         }
-        #else
-        self.didBecomeActiveObserver = NotificationCenter.default.addObserver(forName: .UIApplicationDidBecomeActive, object: nil, queue: OperationQueue.main) { [weak self] _ in
-            self?.sessions.forEach {
-                $0.value.session.start()
-            }
-        }
-        
-        self.willResignActiveObserver = NotificationCenter.default.addObserver(forName: .UIApplicationWillResignActive, object: nil, queue: OperationQueue.main) { [weak self] _ in
-            self?.sessions.forEach {
-                $0.value.session.end()
-            }
-        }
-        #endif
     }
     
     deinit {
-        NotificationCenter.default.removeObserver(didBecomeActiveObserver)
-        NotificationCenter.default.removeObserver(willResignActiveObserver)
+        if let observer = didBecomeActiveObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
+        if let observer = willResignActiveObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
     }
     
     func registerSession(identifier: String, completionHandler: @escaping (Double) -> EventInfo) {

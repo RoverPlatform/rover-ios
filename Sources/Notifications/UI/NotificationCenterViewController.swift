@@ -113,19 +113,11 @@ open class NotificationCenterViewController: UIViewController {
         
         registerReusableViews()
 
-        #if swift(>=4.2)
         self.didBecomeActiveObserver = NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: OperationQueue.main) { [weak self] _ in
             if self?.viewIfLoaded?.window != nil {
                 self?.resetApplicationIconBadgeNumber()
             }
         }
-        #else
-        self.didBecomeActiveObserver = NotificationCenter.default.addObserver(forName: .UIApplicationDidBecomeActive, object: nil, queue: OperationQueue.main) { [weak self] _ in
-            if self?.viewIfLoaded?.window != nil {
-                self?.resetApplicationIconBadgeNumber()
-            }
-        }
-        #endif
     }
     
     /// Reset the application icon badge number to 0 any time the notification center is viewed, regardless of the number of unread messages

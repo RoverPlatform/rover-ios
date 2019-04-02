@@ -21,8 +21,8 @@ public struct Notification: Codable, Equatable, Hashable {
     public var isNotificationCenterEnabled: Bool
     public var isDeleted: Bool
     
-    public var hashValue: Int {
-        return id.hashValue
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id.hashValue)
     }
     
     public init(id: ID, campaignID: ID, title: String?, body: String, attachment: NotificationAttachment?, tapBehavior: NotificationTapBehavior, action: Action?, deliveredAt: Date, expiresAt: Date?, isRead: Bool, isNotificationCenterEnabled: Bool, isDeleted: Bool) {

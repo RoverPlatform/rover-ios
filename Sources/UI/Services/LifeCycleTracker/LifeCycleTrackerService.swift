@@ -26,7 +26,6 @@ class LifeCycleTrackerService: LifeCycleTracker {
             return EventInfo(name: "App Viewed", namespace: "rover", attributes: attributes)
         }
         
-        #if swift(>=4.2)
         self.didBecomeActiveObserver = NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: OperationQueue.main) { [weak self] _ in
             let event = EventInfo(name: "App Opened", namespace: "rover")
             self?.eventQueue.addEvent(event)
@@ -36,17 +35,6 @@ class LifeCycleTrackerService: LifeCycleTracker {
             let event = EventInfo(name: "App Closed", namespace: "rover")
             self?.eventQueue.addEvent(event)
         }
-        #else
-        self.didBecomeActiveObserver = NotificationCenter.default.addObserver(forName: .UIApplicationDidBecomeActive, object: nil, queue: OperationQueue.main) { [weak self] _ in
-            let event = EventInfo(name: "App Opened", namespace: "rover")
-            self?.eventQueue.addEvent(event)
-        }
-        
-        self.willResignActiveObserver = NotificationCenter.default.addObserver(forName: .UIApplicationWillResignActive, object: nil, queue: OperationQueue.main) { [weak self] _ in
-            let event = EventInfo(name: "App Closed", namespace: "rover")
-            self?.eventQueue.addEvent(event)
-        }
-        #endif
     }
     
     func disable() {

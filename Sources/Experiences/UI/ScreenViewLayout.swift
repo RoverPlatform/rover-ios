@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import os
 
 class ScreenViewLayout: UICollectionViewLayout {
     let screen: Screen
@@ -328,6 +329,9 @@ class ScreenViewLayout: UICollectionViewLayout {
                 frame.size.height += deltaY
             case .top:
                 frame.origin.y -= deltaY
+            @unknown default:
+                os_log("Unexpected UIControl.ContentVerticalAlignment value type appeared: %@", String(describing: attributes.verticalAlignment))
+                break
             }
             
             attributes.frame = frame

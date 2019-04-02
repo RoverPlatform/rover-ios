@@ -134,11 +134,7 @@ extension Collection where Element == Beacon {
         let uuids = self.map({ $0.uuid })
         let unique = Set(uuids)
         
-        #if swift(>=4.2)
         let regions = unique.shuffled().prefix(maxLength).map { $0.region }
-        #else
-        let regions = unique.prefix(maxLength).map { $0.region }
-        #endif
         
         return Set<CLBeaconRegion>(regions)
     }

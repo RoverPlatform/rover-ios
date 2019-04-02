@@ -72,11 +72,9 @@ extension PagingSyncParticipant {
         
         os_log("Inserting %d objects", log: .sync, type: .debug, nodes.count)
         
-        #if swift(>=4.2)
         if #available(iOS 12.0, *) {
             os_signpost(.begin, log: .sync, name: "insertObjects", "count=%d", nodes.count)
         }
-        #endif
         
         var saveError: Error?
         context.performAndWait { [context] in
@@ -107,11 +105,9 @@ extension PagingSyncParticipant {
         
         os_log("Successfully inserted %d objects", log: .sync, type: .debug, nodes.count)
         
-        #if swift(>=4.2)
         if #available(iOS 12.0, *) {
             os_signpost(.end, log: .sync, name: "insertObjects", "count=%d", nodes.count)
         }
-        #endif
         
         return true
     }

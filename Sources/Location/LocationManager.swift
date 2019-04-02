@@ -70,6 +70,8 @@ extension LocationManager: LocationContextProvider {
             authorizationStatus = "notDetermined"
         case .restricted:
             authorizationStatus = "restricted"
+        @unknown default:
+            authorizationStatus = "notDetermined"
         }
         
         return authorizationStatus

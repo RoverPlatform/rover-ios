@@ -37,8 +37,8 @@ public struct Event: Codable, Equatable {
 
 // MARK: Hashable
 
-extension Event: Hashable {
-    public var hashValue: Int {
-        return id.hashValue
+extension Event: Hashable {    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id.hashValue)
     }
 }

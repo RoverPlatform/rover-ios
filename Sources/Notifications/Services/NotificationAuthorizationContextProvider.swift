@@ -30,8 +30,7 @@ extension NotificationAuthorizationManager: NotificationsContextProvider {
             
             return authorizationStatus
         }()
-                
-        #if swift(>=4.2)
+
         switch authorizationStatus {
         case .authorized:
             return "authorized"
@@ -41,16 +40,8 @@ extension NotificationAuthorizationManager: NotificationsContextProvider {
             return "notDetermined"
         case .provisional:
             return "provisional"
-        }
-        #else
-        switch authorizationStatus {
-        case .authorized:
-            return "authorized"
-        case .denied:
-            return "denied"
-        default:
+        @unknown default:
             return "notDetermined"
         }
-        #endif
     }
 }

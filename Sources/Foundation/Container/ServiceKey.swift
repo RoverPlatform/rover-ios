@@ -14,9 +14,9 @@ public struct ServiceKey: Hashable, Equatable {
         self.factoryType = factoryType
         self.name = name
     }
-    
-    public var hashValue: Int {
-        return ObjectIdentifier(factoryType).hashValue ^ (name?.hashValue ?? 0)
+        
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(ObjectIdentifier(factoryType).hashValue ^ (name?.hashValue ?? 0))
     }
     
     public static func == (lhs: ServiceKey, rhs: ServiceKey) -> Bool {

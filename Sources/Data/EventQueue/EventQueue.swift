@@ -41,11 +41,7 @@ public class EventQueue {
     var uploadTask: URLSessionTask?
     var timer: Timer?
     
-    #if swift(>=4.2)
     var backgroundTask = UIBackgroundTaskIdentifier.invalid
-    #else
-    var backgroundTask = UIBackgroundTaskInvalid
-    #endif
     
     var cache: URL? {
         return FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first?.appendingPathComponent("events").appendingPathExtension("plist")
@@ -66,7 +62,6 @@ public class EventQueue {
     public func restore() {
         restoreEvents()
         
-        #if swift(>=4.2)
         self.didBecomeActiveObserver = NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: OperationQueue.main) { [weak self] _ in
             self?.startTimer()
         }
@@ -79,20 +74,6 @@ public class EventQueue {
             self?.beginBackgroundTask()
             self?.flushEvents()
         }
-        #else
-        self.didBecomeActiveObserver = NotificationCenter.default.addObserver(forName: .UIApplicationDidBecomeActive, object: nil, queue: OperationQueue.main) { [weak self] _ in
-            self?.startTimer()
-        }
-        
-        self.willResignActiveObserver = NotificationCenter.default.addObserver(forName: .UIApplicationWillResignActive, object: nil, queue: OperationQueue.main) { [weak self] _ in
-            self?.stopTimer()
-        }
-        
-        self.didEnterBackgroundObserver = NotificationCenter.default.addObserver(forName: .UIApplicationDidEnterBackground, object: nil, queue: OperationQueue.main) { [weak self] _ in
-            self?.beginBackgroundTask()
-            self?.flushEvents()
-        }
-        #endif
         
         if (UIApplication.shared.applicationState == .active) {
             self.startTimer()
@@ -329,18 +310,11 @@ extension EventQueue {
     
     func endBackgroundTask() {
         serialQueue.addOperation {
-            #if swift(>=4.2)
             if (self.backgroundTask != UIBackgroundTaskIdentifier.invalid) {
                 let taskIdentifier = UIBackgroundTaskIdentifier(rawValue: self.backgroundTask.rawValue)
                 UIApplication.shared.endBackgroundTask(taskIdentifier)
                 self.backgroundTask = UIBackgroundTaskIdentifier.invalid
             }
-            #else
-            if (self.backgroundTask != UIBackgroundTaskInvalid) {
-                UIApplication.shared.endBackgroundTask(self.backgroundTask)
-                self.backgroundTask = UIBackgroundTaskInvalid
-            }
-            #endif
         }
     }
 }

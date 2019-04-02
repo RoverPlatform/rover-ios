@@ -31,18 +31,9 @@ extension HTTPResult {
             return
         }
         
-        guard var data = data else {
+        guard let data = data else {
             self = .error(error: HTTPError.emptyResponseData, isRetryable: true)
             return
-        }
-        
-        if data.isGzipped {
-            do {
-                try data = data.gunzipped()
-            } catch {
-                self = .error(error: HTTPError.failedToUnzipResponseData, isRetryable: true)
-                return
-            }
         }
         
         self = .success(data: data)

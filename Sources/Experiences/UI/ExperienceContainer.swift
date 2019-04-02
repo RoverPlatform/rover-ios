@@ -15,22 +15,12 @@ open class ExperienceContainer: UIViewController {
     public typealias ViewControllerProvider = (Experience) -> UIViewController?
     public let viewControllerProvider: ViewControllerProvider
     
-    #if swift(>=4.2)
     open override var childForStatusBarStyle: UIViewController? {
         return self.children.first
     }
-    #else
-    open override var childViewControllerForStatusBarStyle: UIViewController? {
-        return self.childViewControllers.first
-    }
-    #endif
     
     open var activityIndicator: UIActivityIndicatorView = {
-        #if swift(>=4.2)
         let activityIndicator = UIActivityIndicatorView(style: .whiteLarge)
-        #else
-        let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
-        #endif
         
         activityIndicator.color = UIColor.gray
         activityIndicator.hidesWhenStopped = true
@@ -122,16 +112,10 @@ open class ExperienceContainer: UIViewController {
         guard let viewController = viewControllerProvider(experience) else {
             return
         }
-        
-        #if swift(>=4.2)
+    
         addChild(viewController)
         view.addSubview(viewController.view)
         viewController.didMove(toParent: self)
-        #else
-        addChildViewController(viewController)
-        view.addSubview(viewController.view)
-        viewController.didMove(toParentViewController: self)
-        #endif
         
         setNeedsStatusBarAppearanceUpdate()
     }
@@ -172,7 +156,6 @@ open class ExperienceContainer: UIViewController {
         let alertController: UIAlertController
         
         if shouldRetry {
-            #if swift(>=4.2)
             alertController = UIAlertController(title: "Error", message: "Failed to load experience", preferredStyle: UIAlertController.Style.alert)
             let cancel = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: { _ in
                 alertController.dismiss(animated: true, completion: nil)
@@ -182,34 +165,15 @@ open class ExperienceContainer: UIViewController {
                 alertController.dismiss(animated: true, completion: nil)
                 self.fetchExperience()
             })
-            #else
-            alertController = UIAlertController(title: "Error", message: "Failed to load experience", preferredStyle: UIAlertControllerStyle.alert)
-            let cancel = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: { _ in
-                alertController.dismiss(animated: true, completion: nil)
-                self.dismiss(animated: true, completion: nil)
-            })
-            let retry = UIAlertAction(title: "Try Again", style: UIAlertActionStyle.default, handler: { _ in
-                alertController.dismiss(animated: true, completion: nil)
-                self.fetchExperience()
-            })
-            #endif
             
             alertController.addAction(cancel)
             alertController.addAction(retry)
         } else {
-            #if swift(>=4.2)
             alertController = UIAlertController(title: "Error", message: "Something went wrong", preferredStyle: UIAlertController.Style.alert)
             let ok = UIAlertAction(title: "Ok", style: UIAlertAction.Style.default, handler: { _ in
                 alertController.dismiss(animated: false, completion: nil)
                 self.dismiss(animated: true, completion: nil)
             })
-            #else
-            alertController = UIAlertController(title: "Error", message: "Something went wrong", preferredStyle: UIAlertControllerStyle.alert)
-            let ok = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: { _ in
-                alertController.dismiss(animated: false, completion: nil)
-                self.dismiss(animated: true, completion: nil)
-            })
-            #endif
             
             alertController.addAction(ok)
         }

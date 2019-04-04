@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import os
 
 // swiftlint:disable:next type_body_length
 class ScreenViewLayout: UICollectionViewLayout {
@@ -333,6 +334,9 @@ class ScreenViewLayout: UICollectionViewLayout {
                 frame.size.height += deltaY
             case .top:
                 frame.origin.y -= deltaY
+            @unknown default:
+                os_log("Unexpected UIControl.ContentVerticalAlignment value type appeared: %@", String(describing: attributes.verticalAlignment))
+                break
             }
             
             attributes.frame = frame

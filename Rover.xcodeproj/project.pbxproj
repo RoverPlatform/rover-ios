@@ -7,12 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0DB7648F2256C57900038605 /* Data+Compression.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DB7648E2256C57900038605 /* Data+Compression.swift */; };
 		492226D22242BC1500AE27DD /* AuthContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492226D12242BC1500AE27DD /* AuthContext.swift */; };
 		4953DD112239925B00286C4B /* Rover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4953DD102239925B00286C4B /* Rover.swift */; };
 		4953DD1422399A4D00286C4B /* HTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC3B42A2148A7D10096C74E /* HTTPClient.swift */; };
 		4953DD1522399A4D00286C4B /* HTTPError.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB496E3F214854CF0026DE6A /* HTTPError.swift */; };
 		4953DD1622399A4D00286C4B /* HTTPResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB496E3D214854C50026DE6A /* HTTPResult.swift */; };
-		4953DD1722399A5000286C4B /* Data+Gzip.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF49ECE203DE49500B54652 /* Data+Gzip.swift */; };
 		4953DD1F22399A6900286C4B /* ImageConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FDDB20891153008D1A57 /* ImageConfiguration.swift */; };
 		4953DD2022399A6900286C4B /* ImageOptimization.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB709C72207EB47400F96C2B /* ImageOptimization.swift */; };
 		4953DD2122399A6900286C4B /* ImageStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB709C68207E7EFC00F96C2B /* ImageStore.swift */; };
@@ -74,6 +74,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0DB7648E2256C57900038605 /* Data+Compression.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+Compression.swift"; sourceTree = "<group>"; };
 		492226D12242BC1500AE27DD /* AuthContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthContext.swift; sourceTree = "<group>"; };
 		4953DD102239925B00286C4B /* Rover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rover.swift; sourceTree = "<group>"; };
 		49952B452242B73A004C5521 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -111,7 +112,6 @@
 		DBD88A8220C1B21700085AE0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DBF49DD3203DE00F00B54652 /* Rover.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Rover.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBF49DDC203DE00F00B54652 /* RoverTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RoverTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		DBF49ECE203DE49500B54652 /* Data+Gzip.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+Gzip.swift"; sourceTree = "<group>"; };
 		DBFB1A65209B8CC500E99F9F /* Barcode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Barcode.swift; sourceTree = "<group>"; };
 		DBFB1A66209B8CC500E99F9F /* Experience.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Experience.swift; sourceTree = "<group>"; };
 		DBFB1A67209B8CC500E99F9F /* ButtonBlock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ButtonBlock.swift; sourceTree = "<group>"; };
@@ -347,7 +347,7 @@
 		DBFDF4B920AC95FD0031EF47 /* Vendor */ = {
 			isa = PBXGroup;
 			children = (
-				DBF49ECE203DE49500B54652 /* Data+Gzip.swift */,
+				0DB7648E2256C57900038605 /* Data+Compression.swift */,
 			);
 			path = Vendor;
 			sourceTree = "<group>";
@@ -422,7 +422,7 @@
 				TargetAttributes = {
 					DBF49DD2203DE00F00B54652 = {
 						CreatedOnToolsVersion = 9.2;
-						LastSwiftMigration = 1000;
+						LastSwiftMigration = 1020;
 						ProvisioningStyle = Automatic;
 					};
 					DBF49DDB203DE00F00B54652 = {
@@ -494,9 +494,9 @@
 				4953DD4D22399A9700286C4B /* RowView.swift in Sources */,
 				4953DD4A22399A9700286C4B /* BlockCell.swift in Sources */,
 				4953DD4222399A8500286C4B /* TextBlock.swift in Sources */,
+				0DB7648F2256C57900038605 /* Data+Compression.swift in Sources */,
 				4953DD1422399A4D00286C4B /* HTTPClient.swift in Sources */,
 				4953DD4F22399A9700286C4B /* WebViewCell.swift in Sources */,
-				4953DD1722399A5000286C4B /* Data+Gzip.swift in Sources */,
 				DB640B6D2245289800CFA795 /* ExperienceCache.swift in Sources */,
 				4953DD5322399A9C00286C4B /* ScreenViewLayout.swift in Sources */,
 				4953DD5222399A9C00286C4B /* ScreenViewController.swift in Sources */,
@@ -684,7 +684,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -708,7 +708,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.rover.Rover;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

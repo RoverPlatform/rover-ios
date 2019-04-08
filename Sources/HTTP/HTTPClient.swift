@@ -58,11 +58,8 @@ extension HTTPClient {
             return nil
         }
         
-        let compressed: Data
-        do {
-            compressed = try encoded.gzipped()
-        } catch {
-            os_log("Failed to gzip events: %@", log: .rover, type: .error, error.localizedDescription)
+        guard let compressed: Data = encoded.gzip() else {
+            os_log("Failed to gzip events.", log: .rover, type: .error)
             return nil
         }
         

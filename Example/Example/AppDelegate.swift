@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Rover
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {

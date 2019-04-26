@@ -12,6 +12,7 @@ import UIKit
 /// Either present or embed this view in a container to display a Rover experience.  Make sure you set Rover.accountToken first!
 open class RoverViewController: UIViewController {    
     public let identifier: ExperienceIdentifier
+    public let campaignID: String
     
     open private(set) lazy var urlSession = URLSession(configuration: URLSessionConfiguration.default)
     
@@ -60,8 +61,12 @@ open class RoverViewController: UIViewController {
         layoutCancelButton()
     }
     
-    public convenience init(experienceId: String) {
+    public convenience init(experienceId: String, campaignId: String? = nil) {
         self.init(identifier: .experienceID(id: experienceId))
+    }
+    
+    public convenience init(experienceUrl: String, campaignId: String? = nil) {
+        
     }
     
     @available(*, unavailable)

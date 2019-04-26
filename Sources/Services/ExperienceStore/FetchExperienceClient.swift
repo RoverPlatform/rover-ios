@@ -144,7 +144,7 @@ public enum FetchExperienceResult {
 // MARK: ExperienceIdentifier
 
 public enum ExperienceIdentifier: Equatable, Hashable {
-    case campaignID(id: String)
+//    case campaignID(id: String) DOOOOMED
     case campaignURL(url: URL)
     case experienceID(id: String)
 }

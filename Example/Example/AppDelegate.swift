@@ -16,6 +16,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        Rover.accountToken = "blank"
         return true
     }
     
@@ -30,7 +31,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
             // TODO: conversation with Sean here about what guidance to provide to iOS developers about launching the freshly minted RoverViewController.
             // Do we include boilerplate analagous to the Action object in 2.x, which has "smarts" in it for discovering the kind of active view controller is up (tab bar, nav, or modal "presented" view controller), and grabbing what it's currently showing, and presenting on top of it?  or just leave that up to the customers?
-            RoverViewController(experienceId: experienceId, campaignId: campaignId)
+            app.present(
+                RoverViewController(experienceId: experienceId, campaignId: campaignId),
+                animated: true
+            )
         }
         return false
     }

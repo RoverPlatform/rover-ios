@@ -23,12 +23,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
         if url.host == "presentExperience" {
             let components = URLComponents.init(url: url, resolvingAgainstBaseURL: false)
-            guard let experienceId = components?.queryItems?.first { $0.name == "id" }?.value {
+            guard let experienceId = (components?.queryItems?.first { $0.name == "id" })?.value else {
                 return false
             }
             let campaignId = components?.queryItems?.first { $0.name == "campaignID" }?.value
             
-            RoverViewController(identifier: <#T##ExperienceIdentifier#>)
+            // TODO: conversation with Sean here about what guidance to provide to iOS developers about launching the freshly minted RoverViewController.
+            // Do we include boilerplate analagous to the Action object in 2.x, which has "smarts" in it for discovering the kind of active view controller is up (tab bar, nav, or modal "presented" view controller), and grabbing what it's currently showing, and presenting on top of it?  or just leave that up to the customers?
+            RoverViewController(experienceId: experienceId, campaignId: campaignId)
         }
         return false
     }

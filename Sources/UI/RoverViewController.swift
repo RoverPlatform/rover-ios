@@ -7,12 +7,13 @@
 //
 
 import SafariServices
+import os
 import UIKit
 
 /// Either present or embed this view in a container to display a Rover experience.  Make sure you set Rover.accountToken first!
 open class RoverViewController: UIViewController {    
     public let identifier: ExperienceIdentifier
-    public let campaignID: String
+    public let campaignId: String?
     
     open private(set) lazy var urlSession = URLSession(configuration: URLSessionConfiguration.default)
     
@@ -52,8 +53,9 @@ open class RoverViewController: UIViewController {
         return cancelButton
     }()
     
-    public init(identifier: ExperienceIdentifier) {
+    public init(identifier: ExperienceIdentifier, campaignId: String? = nil) {
         self.identifier = identifier
+        self.campaignId = campaignId
         super.init(nibName: nil, bundle: nil)
         
         configureView()
@@ -62,11 +64,15 @@ open class RoverViewController: UIViewController {
     }
     
     public convenience init(experienceId: String, campaignId: String? = nil) {
-        self.init(identifier: .experienceID(id: experienceId))
+        self.init(identifier: .experienceID(id: experienceId), campaignId: campaignId)
     }
     
-    public convenience init(experienceUrl: String, campaignId: String? = nil) {
-        
+    public convenience init?(experienceUrl: String, campaignId: String? = nil) {
+        guard let url = URL(string: experienceUrl) else {
+            os_log("Invalid URL given to RoverViewController: '%s'", experienceUrl)
+            return nil
+        }
+        self.init(identifier: .experienceURL(url: url), campaignId: campaignId)
     }
     
     @available(*, unavailable)

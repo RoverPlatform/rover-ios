@@ -94,13 +94,14 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        let userInfoWithOptionalCampaignId: [String: Any?] = [
+        var userInfo: [String: Any] = [
             "experience": experience.attributes,
-            "campaignID": self.campaignID,
             "screen": screen.attributes
         ]
         
-        let userInfo = userInfoWithOptionalCampaignId.compactMapValues { $0 }
+        if let campaignID = self.campaignID {
+            userInfo["campaignID"] = campaignID
+        }
         
         NotificationCenter.default.post(
             name: .RVScreenPresented,
@@ -109,10 +110,11 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         )
         
         sessionController.registerSession(identifier: sessionIdentifier) { duration in
-            Notification(
+            userInfo["duration"] = duration
+            return Notification(
                 name: .RVScreenViewed,
                 object: self,
-                userInfo: userInfo.merging(["duration": duration]) { a, _ in a }
+                userInfo: userInfo
             )
         }
     }
@@ -120,16 +122,19 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     override open func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
-        let userInfo: [String: Any?] = [
+        var userInfo: [String: Any] = [
             "experience": experience.attributes,
-            "campaignID": self.campaignID,
             "screen": screen.attributes
         ]
+        
+        if let campaignID = self.campaignID {
+            userInfo["campaignID"] = campaignID
+        }
         
         NotificationCenter.default.post(
             name: .RVScreenDismissed,
             object: self,
-            userInfo: userInfo.compactMapValues { $0 }
+            userInfo: userInfo
         )
         
         sessionController.unregisterSession(identifier: sessionIdentifier)
@@ -419,18 +424,21 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
             presentWebsite(url, self)
         }
         
-        let userInfo: [String: Any?] = [
+        var userInfo: [String: Any] = [
             "experience": experience.attributes,
-            "campaignID": self.campaignID,
             "screen": screen.attributes,
             "row": row.attributes,
             "block": block.attributes
         ]
         
+        if let campaignID = self.campaignID {
+            userInfo["campaignID"] = campaignID
+        }
+        
         NotificationCenter.default.post(
             name: .RVBlockTapped,
             object: self,
-            userInfo: userInfo.compactMapValues { $0 }
+            userInfo: userInfo
         )
     }
 }

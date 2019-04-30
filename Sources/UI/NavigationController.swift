@@ -46,22 +46,26 @@ open class NavigationController: UINavigationController {
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        let userInfo: [String: Any?] = [
-            "experience": experience.attributes,
-            "campaignID": self.campaignID
+        var userInfo: [String: Any] = [
+            "experience": experience.attributes
         ]
+        
+        if let campaignID = self.campaignID {
+            userInfo["campaignID"] = campaignID
+        }
         
         NotificationCenter.default.post(
             name: .RVExperiencePresented,
             object: self,
-            userInfo: userInfo.compactMapValues { $0 }
+            userInfo: userInfo
         )
         
         sessionController.registerSession(identifier: sessionIdentifier) { duration in
-            Notification(
+            userInfo["duration"] = duration
+            return Notification(
                 name: .RVExperienceViewed,
                 object: self,
-                userInfo: userInfo.merging(["duration": duration]) { a, _ in a }.compactMapValues { $0 }
+                userInfo: userInfo
             )
         }
     }
@@ -69,15 +73,18 @@ open class NavigationController: UINavigationController {
     override open func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
-        let userInfo: [String: Any?] = [
-            "experience": experience.attributes,
-            "campaignID": self.campaignID
+        var userInfo: [String: Any] = [
+            "experience": experience.attributes
         ]
+        
+        if let campaignID = self.campaignID {
+            userInfo["campaignID"] = campaignID
+        }
         
         NotificationCenter.default.post(
             name: .RVExperienceDismissed,
             object: self,
-            userInfo: userInfo.compactMapValues { $0 }
+            userInfo: userInfo
         )
         
         sessionController.unregisterSession(identifier: sessionIdentifier)

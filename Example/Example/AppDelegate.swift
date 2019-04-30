@@ -20,25 +20,50 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
     
-    // This AppDelegate overrides receives 
+    // This AppDelegate method receives deep links.
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
-        if url.host == "presentExperience" {
+        // Your app will likely have its own bespoke routing system for handling links. For the purposes of demonstration, a simple boilerplate example of how to handle deep links follows.  See the documentation for greater details.
+        // 'rover-example-app' given here is set in Example/Example/Info.plist as a URL Scheme.
+        if url.scheme == "rover-example-app" && url.host == "presentExperience" {
+            // The following code demonstrates an simple example for parsing an arbitrarily selected URI scheme.
             let components = URLComponents.init(url: url, resolvingAgainstBaseURL: false)
             guard let experienceId = (components?.queryItems?.first { $0.name == "id" })?.value else {
                 return false
             }
             let campaignId = components?.queryItems?.first { $0.name == "campaignID" }?.value
             
-            // TODO: conversation with Sean here about what guidance to provide to iOS developers about launching the freshly minted RoverViewController.
-            // Do we include boilerplate analagous to the Action object in 2.x, which has "smarts" in it for discovering the kind of active view controller is up (tab bar, nav, or modal "presented" view controller), and grabbing what it's currently showing, and presenting on top of it?  or just leave that up to the customers?
+            let roverViewController = RoverViewController(experienceId: experienceId, campaignId: campaignId)
+            
+            // Use our UIApplication.present() helper extension method to find the currently active view controller, and present RoverViewController on top.
             app.present(
-                RoverViewController(experienceId: experienceId, campaignId: campaignId),
+                roverViewController,
                 animated: true
             )
         }
         return false
     }
-
-
+    
+    // This AppDelegate method receives receives universal links, among other things such as Handoff.
+    func application(_ app: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+        // Your app will likely have its own bespoke routing system for handling links. For the purposes of demonstration, a simple boilerplate example of how to handle universal links follows.  See the documentation for greater details.
+        guard userActivity.activityType == NSUserActivityTypeBrowsingWeb, let url = userActivity.webpageURL else {
+            return false
+        }
+        
+        // 'example.rover.io' given here needs to be set
+        if url.host == "example.rover.io" {
+            guard let roverViewController = RoverViewController(experienceUrl: url.absoluteString, campaignId: nil) else {
+                // the URL did not parse properly, which should not occur here since the URL has arrived from the iOS framework.
+                return false
+            }
+            
+            // Use our UIApplication.present() helper extension method to find the currently active view controller, and present RoverViewController on top.
+            app.present(
+                roverViewController,
+                animated: true
+            )
+            return true
+        }
+        return false
+    }
 }
-

@@ -63,8 +63,8 @@ open class RoverViewController: UIViewController {
         layoutCancelButton()
     }
     
-    public convenience init(experienceId: String, campaignID: String? = nil) {
-        self.init(identifier: .experienceID(id: experienceId), campaignID: campaignID)
+    public convenience init(experienceID: String, campaignID: String? = nil) {
+        self.init(identifier: .experienceID(id: experienceID), campaignID: campaignID)
     }
     
     public convenience init?(experienceURL: String, campaignID: String? = nil) {

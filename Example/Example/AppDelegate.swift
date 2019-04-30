@@ -27,12 +27,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if url.scheme == "rover-example-app" && url.host == "presentExperience" {
             // The following code demonstrates an simple example for parsing an arbitrarily selected URI scheme.
             let components = URLComponents.init(url: url, resolvingAgainstBaseURL: false)
-            guard let experienceId = (components?.queryItems?.first { $0.name == "id" })?.value else {
+            guard let experienceID = (components?.queryItems?.first { $0.name == "id" })?.value else {
                 return false
             }
             let campaignID = components?.queryItems?.first { $0.name == "campaignID" }?.value
             
-            let roverViewController = RoverViewController(experienceId: experienceId, campaignID: campaignID)
+            let roverViewController = RoverViewController(experienceID: experienceID, campaignID: campaignID)
             
             // Use our UIApplication.present() helper extension method to find the currently active view controller, and present RoverViewController on top.
             app.present(

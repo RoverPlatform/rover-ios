@@ -61,7 +61,7 @@ open class NavigationController: UINavigationController {
             Notification(
                 name: .RVExperienceViewed,
                 object: self,
-                userInfo: userInfo.compactMapValues { $0 }
+                userInfo: userInfo.merging(["duration": duration]) { a, _ in a }.compactMapValues { $0 }
             )
         }
     }

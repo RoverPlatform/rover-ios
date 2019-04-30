@@ -43,7 +43,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return false
     }
     
-    // This AppDelegate method receives receives universal links, among other things such as Handoff.
+    // This AppDelegate method receives receives universal links, amongst other things such as Handoff.
     func application(_ app: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
         // Your app will likely have its own bespoke routing system for handling links. For the purposes of demonstration, a simple boilerplate example of how to handle universal links follows.  See the documentation for greater details.
         guard userActivity.activityType == NSUserActivityTypeBrowsingWeb, let url = userActivity.webpageURL else {

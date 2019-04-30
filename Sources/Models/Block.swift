@@ -26,7 +26,6 @@ extension Block {
         return [
             "id": id,
             "name": name,
-            "tapBehavior": tapBehavior.attributes,
             "keys": keys,
             "tags": tags
         ]

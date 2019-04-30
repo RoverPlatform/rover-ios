@@ -157,6 +157,7 @@ open class RoverViewController: UIViewController {
         return ScreenViewController(
             collectionViewLayout: screenViewLayout(screen: screen),
             experience: experience,
+            campaignId: self.campaignId,
             screen: screen,
             imageStore: imageStore,
             sessionController: sessionController,
@@ -174,7 +175,8 @@ open class RoverViewController: UIViewController {
         return NavigationController(
             sessionController: sessionController,
             homeScreenViewController: homeScreenViewController,
-            experience: experience
+            experience: experience,
+            campaignId: self.campaignId
         )
     }
     

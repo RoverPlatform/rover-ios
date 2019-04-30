@@ -9,16 +9,14 @@
 public struct Experience {
     public var id: String
     public var name: String
-    public var campaignID: String?
     public var homeScreen: Screen
     public var screens: [Screen]
     public var keys: [String: String]
     public var tags: [String]
     
-    public init(id: String, name: String, campaignID: String?, homeScreen: Screen, screens: [Screen], keys: [String: String], tags: [String]) {
+    public init(id: String, name: String, homeScreen: Screen, screens: [Screen], keys: [String: String], tags: [String]) {
         self.id = id
         self.name = name
-        self.campaignID = campaignID
         self.homeScreen = homeScreen
         self.screens = screens
         self.keys = keys
@@ -43,7 +41,6 @@ extension Experience: Decodable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(String.self, forKey: .id)
         name = try container.decode(String.self, forKey: .name)
-        campaignID = try container.decode(String?.self, forKey: .campaignID)
         screens = try container.decode([Screen].self, forKey: .screens)
         keys = try container.decode([String: String].self, forKey: .keys)
         tags = try container.decode([String].self, forKey: .tags)
@@ -68,10 +65,6 @@ extension Experience {
             "keys": keys,
             "tags": tags
         ]
-        
-        if let campaignID = campaignID {
-            attributes["campaignID"] = campaignID
-        }
         
         return attributes
     }

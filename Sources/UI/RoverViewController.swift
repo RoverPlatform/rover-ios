@@ -7,11 +7,13 @@
 //
 
 import SafariServices
+import os
 import UIKit
 
 /// Either present or embed this view in a container to display a Rover experience.  Make sure you set Rover.accountToken first!
 open class RoverViewController: UIViewController {    
     public let identifier: ExperienceIdentifier
+    public let campaignID: String?
     
     open private(set) lazy var urlSession = URLSession(configuration: URLSessionConfiguration.default)
     
@@ -51,8 +53,9 @@ open class RoverViewController: UIViewController {
         return cancelButton
     }()
     
-    public init(identifier: ExperienceIdentifier) {
+    init(identifier: ExperienceIdentifier, campaignID: String? = nil) {
         self.identifier = identifier
+        self.campaignID = campaignID
         super.init(nibName: nil, bundle: nil)
         
         configureView()
@@ -60,8 +63,12 @@ open class RoverViewController: UIViewController {
         layoutCancelButton()
     }
     
-    public convenience init(experienceId: String) {
-        self.init(identifier: .experienceID(id: experienceId))
+    public convenience init(experienceID: String, campaignID: String? = nil) {
+        self.init(identifier: .experienceID(id: experienceID), campaignID: campaignID)
+    }
+    
+    public convenience init(experienceURL: URL, campaignID: String? = nil) {
+        self.init(identifier: .experienceURL(url: experienceURL), campaignID: campaignID)
     }
     
     @available(*, unavailable)
@@ -146,6 +153,7 @@ open class RoverViewController: UIViewController {
         return ScreenViewController(
             collectionViewLayout: screenViewLayout(screen: screen),
             experience: experience,
+            campaignID: self.campaignID,
             screen: screen,
             imageStore: imageStore,
             sessionController: sessionController,
@@ -163,7 +171,8 @@ open class RoverViewController: UIViewController {
         return NavigationController(
             sessionController: sessionController,
             homeScreenViewController: homeScreenViewController,
-            experience: experience
+            experience: experience,
+            campaignID: self.campaignID
         )
     }
     

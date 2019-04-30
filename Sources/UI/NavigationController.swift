@@ -12,13 +12,16 @@ import UIKit
 open class NavigationController: UINavigationController {
     private let sessionController: SessionController
     public let experience: Experience
+    public let campaignID: String?
 
     public init(
         sessionController: SessionController,
         homeScreenViewController: UIViewController,
-        experience: Experience
+        experience: Experience,
+        campaignID: String?
     ) {
         self.experience = experience
+        self.campaignID = campaignID
         self.sessionController = sessionController
         
         super.init(nibName: nil, bundle: nil)
@@ -33,7 +36,7 @@ open class NavigationController: UINavigationController {
     lazy var sessionIdentifier: String = {
         var identifier = "experience-\(experience.id)"
         
-        if let campaignID = experience.campaignID {
+        if let campaignID = self.campaignID {
             identifier = "\(identifier)-campaign-\(campaignID)"
         }
         
@@ -43,9 +46,13 @@ open class NavigationController: UINavigationController {
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        let userInfo: [String: Any] = [
+        var userInfo: [String: Any] = [
             "experience": experience.attributes
         ]
+        
+        if let campaignID = self.campaignID {
+            userInfo["campaignID"] = campaignID
+        }
         
         NotificationCenter.default.post(
             name: .RVExperiencePresented,
@@ -54,10 +61,11 @@ open class NavigationController: UINavigationController {
         )
         
         sessionController.registerSession(identifier: sessionIdentifier) { duration in
-            Notification(
+            userInfo["duration"] = duration
+            return Notification(
                 name: .RVExperienceViewed,
                 object: self,
-                userInfo: userInfo.merging(["duration": duration]) { a, _ in a }
+                userInfo: userInfo
             )
         }
     }
@@ -65,12 +73,18 @@ open class NavigationController: UINavigationController {
     override open func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
+        var userInfo: [String: Any] = [
+            "experience": experience.attributes
+        ]
+        
+        if let campaignID = self.campaignID {
+            userInfo["campaignID"] = campaignID
+        }
+        
         NotificationCenter.default.post(
             name: .RVExperienceDismissed,
             object: self,
-            userInfo: [
-                "experience": experience.attributes
-            ]
+            userInfo: userInfo
         )
         
         sessionController.unregisterSession(identifier: sessionIdentifier)

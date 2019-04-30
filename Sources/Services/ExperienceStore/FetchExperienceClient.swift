@@ -20,15 +20,7 @@ extension FetchExperienceClient {
         
         let query: String
         switch experienceIdentifier {
-        case .campaignID:
-            query = """
-                query FetchExperienceByCampaignID($campaignID: ID!) {
-                    experience(campaignID: $campaignID) {
-                        ...experienceFields
-                    }
-                }
-                """
-        case .campaignURL:
+        case .experienceURL:
             query = """
                 query FetchExperienceByCampaignURL($campaignURL: String!) {
                     experience(campaignURL: $campaignURL) {
@@ -55,12 +47,10 @@ extension FetchExperienceClient {
         
         let variables: RequestVariables
         switch experienceIdentifier {
-        case .campaignID(let id):
-            variables = RequestVariables(campaignID: id, campaignURL: nil, id: nil)
-        case .campaignURL(let url):
-            variables = RequestVariables(campaignID: nil, campaignURL: url.absoluteString, id: nil)
+        case .experienceURL(let url):
+            variables = RequestVariables(campaignURL: url.absoluteString, id: nil)
         case .experienceID(let id):
-            variables = RequestVariables(campaignID: nil, campaignURL: nil, id: id)
+            variables = RequestVariables(campaignURL: nil, id: id)
         }
         
         let encoder = JSONEncoder.default
@@ -121,7 +111,6 @@ extension HTTPClient: FetchExperienceClient {
 // MARK: Responses
 
 private struct RequestVariables: Encodable {
-    let campaignID: String?
     let campaignURL: String?
     let id: String?
 }
@@ -144,8 +133,7 @@ public enum FetchExperienceResult {
 // MARK: ExperienceIdentifier
 
 public enum ExperienceIdentifier: Equatable, Hashable {
-    case campaignID(id: String)
-    case campaignURL(url: URL)
+    case experienceURL(url: URL)
     case experienceID(id: String)
 }
 

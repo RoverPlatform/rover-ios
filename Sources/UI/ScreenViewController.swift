@@ -15,6 +15,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     static var fetchImageTaskKey: Void?
     
     public let experience: Experience
+    public let campaignID: String?
     public let screen: Screen
     
     public let imageStore: ImageStore
@@ -38,6 +39,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     public init(
         collectionViewLayout: UICollectionViewLayout,
         experience: Experience,
+        campaignID: String?,
         screen: Screen,
         imageStore: ImageStore,
         sessionController: SessionController,
@@ -45,6 +47,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         presentWebsite: @escaping PresentWebsite
     ) {
         self.experience = experience
+        self.campaignID = campaignID
         self.screen = screen
         self.imageStore = imageStore
         self.sessionController = sessionController
@@ -81,7 +84,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     lazy var sessionIdentifier: String = {
         var identifier = "experience-\(experience.id)-screen-\(screen.id)"
         
-        if let campaignID = experience.campaignID {
+        if let campaignID = self.campaignID {
             identifier = "\(identifier)-campaign-\(campaignID)"
         }
         
@@ -91,10 +94,14 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        let userInfo: [String: Any] = [
+        var userInfo: [String: Any] = [
             "experience": experience.attributes,
             "screen": screen.attributes
         ]
+        
+        if let campaignID = self.campaignID {
+            userInfo["campaignID"] = campaignID
+        }
         
         NotificationCenter.default.post(
             name: .RVScreenPresented,
@@ -103,10 +110,11 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         )
         
         sessionController.registerSession(identifier: sessionIdentifier) { duration in
-            Notification(
+            userInfo["duration"] = duration
+            return Notification(
                 name: .RVScreenViewed,
                 object: self,
-                userInfo: userInfo.merging(["duration": duration]) { a, _ in a }
+                userInfo: userInfo
             )
         }
     }
@@ -114,13 +122,19 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     override open func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
+        var userInfo: [String: Any] = [
+            "experience": experience.attributes,
+            "screen": screen.attributes
+        ]
+        
+        if let campaignID = self.campaignID {
+            userInfo["campaignID"] = campaignID
+        }
+        
         NotificationCenter.default.post(
             name: .RVScreenDismissed,
             object: self,
-            userInfo: [
-                "experience": experience.attributes,
-                "screen": screen.attributes
-            ]
+            userInfo: userInfo
         )
         
         sessionController.unregisterSession(identifier: sessionIdentifier)
@@ -410,15 +424,21 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
             presentWebsite(url, self)
         }
         
+        var userInfo: [String: Any] = [
+            "experience": experience.attributes,
+            "screen": screen.attributes,
+            "row": row.attributes,
+            "block": block.attributes
+        ]
+        
+        if let campaignID = self.campaignID {
+            userInfo["campaignID"] = campaignID
+        }
+        
         NotificationCenter.default.post(
             name: .RVBlockTapped,
             object: self,
-            userInfo: [
-                "experience": experience.attributes,
-                "screen": screen.attributes,
-                "row": row.attributes,
-                "block": block.attributes
-            ]
+            userInfo: userInfo
         )
     }
 }

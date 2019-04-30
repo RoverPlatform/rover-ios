@@ -53,7 +53,7 @@ open class RoverViewController: UIViewController {
         return cancelButton
     }()
     
-    public init(identifier: ExperienceIdentifier, campaignID: String? = nil) {
+    init(identifier: ExperienceIdentifier, campaignID: String? = nil) {
         self.identifier = identifier
         self.campaignID = campaignID
         super.init(nibName: nil, bundle: nil)

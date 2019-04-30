@@ -15,7 +15,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     static var fetchImageTaskKey: Void?
     
     public let experience: Experience
-    public let campaignId: String?
+    public let campaignID: String?
     public let screen: Screen
     
     public let imageStore: ImageStore
@@ -39,7 +39,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     public init(
         collectionViewLayout: UICollectionViewLayout,
         experience: Experience,
-        campaignId: String?,
+        campaignID: String?,
         screen: Screen,
         imageStore: ImageStore,
         sessionController: SessionController,
@@ -47,7 +47,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         presentWebsite: @escaping PresentWebsite
     ) {
         self.experience = experience
-        self.campaignId = campaignId
+        self.campaignID = campaignID
         self.screen = screen
         self.imageStore = imageStore
         self.sessionController = sessionController
@@ -84,8 +84,8 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     lazy var sessionIdentifier: String = {
         var identifier = "experience-\(experience.id)-screen-\(screen.id)"
         
-        if let campaignId = self.campaignId {
-            identifier = "\(identifier)-campaign-\(campaignId)"
+        if let campaignID = self.campaignID {
+            identifier = "\(identifier)-campaign-\(campaignID)"
         }
         
         return identifier
@@ -96,7 +96,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         
         let userInfoWithOptionalCampaignId: [String: Any?] = [
             "experience": experience.attributes,
-            "campaignID": self.campaignId,
+            "campaignID": self.campaignID,
             "screen": screen.attributes
         ]
         
@@ -122,7 +122,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         
         let userInfo: [String: Any?] = [
             "experience": experience.attributes,
-            "campaignID": self.campaignId,
+            "campaignID": self.campaignID,
             "screen": screen.attributes
         ]
         
@@ -421,7 +421,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         
         let userInfo: [String: Any?] = [
             "experience": experience.attributes,
-            "campaignID": self.campaignId,
+            "campaignID": self.campaignID,
             "screen": screen.attributes,
             "row": row.attributes,
             "block": block.attributes

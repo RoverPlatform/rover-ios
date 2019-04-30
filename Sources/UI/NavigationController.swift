@@ -12,16 +12,16 @@ import UIKit
 open class NavigationController: UINavigationController {
     private let sessionController: SessionController
     public let experience: Experience
-    public let campaignId: String?
+    public let campaignID: String?
 
     public init(
         sessionController: SessionController,
         homeScreenViewController: UIViewController,
         experience: Experience,
-        campaignId: String?
+        campaignID: String?
     ) {
         self.experience = experience
-        self.campaignId = campaignId
+        self.campaignID = campaignID
         self.sessionController = sessionController
         
         super.init(nibName: nil, bundle: nil)
@@ -36,8 +36,8 @@ open class NavigationController: UINavigationController {
     lazy var sessionIdentifier: String = {
         var identifier = "experience-\(experience.id)"
         
-        if let campaignId = self.campaignId {
-            identifier = "\(identifier)-campaign-\(campaignId)"
+        if let campaignID = self.campaignID {
+            identifier = "\(identifier)-campaign-\(campaignID)"
         }
         
         return identifier
@@ -48,7 +48,7 @@ open class NavigationController: UINavigationController {
         
         let userInfo: [String: Any?] = [
             "experience": experience.attributes,
-            "campaignID": self.campaignId
+            "campaignID": self.campaignID
         ]
         
         NotificationCenter.default.post(
@@ -71,7 +71,7 @@ open class NavigationController: UINavigationController {
         
         let userInfo: [String: Any?] = [
             "experience": experience.attributes,
-            "campaignID": self.campaignId
+            "campaignID": self.campaignID
         ]
         
         NotificationCenter.default.post(

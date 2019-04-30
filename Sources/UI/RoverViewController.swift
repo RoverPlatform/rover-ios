@@ -13,7 +13,7 @@ import UIKit
 /// Either present or embed this view in a container to display a Rover experience.  Make sure you set Rover.accountToken first!
 open class RoverViewController: UIViewController {    
     public let identifier: ExperienceIdentifier
-    public let campaignId: String?
+    public let campaignID: String?
     
     open private(set) lazy var urlSession = URLSession(configuration: URLSessionConfiguration.default)
     
@@ -53,9 +53,9 @@ open class RoverViewController: UIViewController {
         return cancelButton
     }()
     
-    public init(identifier: ExperienceIdentifier, campaignId: String? = nil) {
+    public init(identifier: ExperienceIdentifier, campaignID: String? = nil) {
         self.identifier = identifier
-        self.campaignId = campaignId
+        self.campaignID = campaignID
         super.init(nibName: nil, bundle: nil)
         
         configureView()
@@ -63,16 +63,16 @@ open class RoverViewController: UIViewController {
         layoutCancelButton()
     }
     
-    public convenience init(experienceId: String, campaignId: String? = nil) {
-        self.init(identifier: .experienceID(id: experienceId), campaignId: campaignId)
+    public convenience init(experienceId: String, campaignID: String? = nil) {
+        self.init(identifier: .experienceID(id: experienceId), campaignID: campaignID)
     }
     
-    public convenience init?(experienceUrl: String, campaignId: String? = nil) {
-        guard let url = URL(string: experienceUrl) else {
-            os_log("Invalid URL given to RoverViewController: '%s'", experienceUrl)
+    public convenience init?(experienceURL: String, campaignID: String? = nil) {
+        guard let url = URL(string: experienceURL) else {
+            os_log("Invalid URL given to RoverViewController: '%s'", experienceURL)
             return nil
         }
-        self.init(identifier: .experienceURL(url: url), campaignId: campaignId)
+        self.init(identifier: .experienceURL(url: url), campaignID: campaignID)
     }
     
     @available(*, unavailable)
@@ -157,7 +157,7 @@ open class RoverViewController: UIViewController {
         return ScreenViewController(
             collectionViewLayout: screenViewLayout(screen: screen),
             experience: experience,
-            campaignId: self.campaignId,
+            campaignID: self.campaignID,
             screen: screen,
             imageStore: imageStore,
             sessionController: sessionController,
@@ -176,7 +176,7 @@ open class RoverViewController: UIViewController {
             sessionController: sessionController,
             homeScreenViewController: homeScreenViewController,
             experience: experience,
-            campaignId: self.campaignId
+            campaignID: self.campaignID
         )
     }
     

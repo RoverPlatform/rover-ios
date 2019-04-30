@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0DB7648F2256C57900038605 /* Data+Compression.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DB7648E2256C57900038605 /* Data+Compression.swift */; };
-		49005D0422776283009D62F9 /* UIApplication+present.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49005D0322776283009D62F9 /* UIApplication+present.swift */; };
+		49005D0422776283009D62F9 /* UIApplication.present.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49005D0322776283009D62F9 /* UIApplication.present.swift */; };
 		492226D22242BC1500AE27DD /* AuthContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492226D12242BC1500AE27DD /* AuthContext.swift */; };
 		4953DD112239925B00286C4B /* Rover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4953DD102239925B00286C4B /* Rover.swift */; };
 		4953DD1422399A4D00286C4B /* HTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC3B42A2148A7D10096C74E /* HTTPClient.swift */; };
@@ -76,7 +76,7 @@
 
 /* Begin PBXFileReference section */
 		0DB7648E2256C57900038605 /* Data+Compression.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+Compression.swift"; sourceTree = "<group>"; };
-		49005D0322776283009D62F9 /* UIApplication+present.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+present.swift"; sourceTree = "<group>"; };
+		49005D0322776283009D62F9 /* UIApplication.present.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplication.present.swift; sourceTree = "<group>"; };
 		492226D12242BC1500AE27DD /* AuthContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthContext.swift; sourceTree = "<group>"; };
 		4953DD102239925B00286C4B /* Rover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rover.swift; sourceTree = "<group>"; };
 		49952B452242B73A004C5521 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -359,7 +359,7 @@
 			children = (
 				DB6BE8AD215D41F7000A1FDA /* OSLog.swift */,
 				49E752D3224017A4005CF00F /* Notification.Name.swift */,
-				49005D0322776283009D62F9 /* UIApplication+present.swift */,
+				49005D0322776283009D62F9 /* UIApplication.present.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -502,7 +502,7 @@
 				4953DD4F22399A9700286C4B /* WebViewCell.swift in Sources */,
 				DB640B6D2245289800CFA795 /* ExperienceCache.swift in Sources */,
 				4953DD5322399A9C00286C4B /* ScreenViewLayout.swift in Sources */,
-				49005D0422776283009D62F9 /* UIApplication+present.swift in Sources */,
+				49005D0422776283009D62F9 /* UIApplication.present.swift in Sources */,
 				4953DD5222399A9C00286C4B /* ScreenViewController.swift in Sources */,
 				4953DD3522399A8500286C4B /* ButtonBlock.swift in Sources */,
 				4953DD2122399A6900286C4B /* ImageStore.swift in Sources */,

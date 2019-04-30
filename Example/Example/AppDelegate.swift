@@ -52,10 +52,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // 'example.rover.io' given here needs to be set in your App Links configuration and entitlements. See the documentation for further details.
         if url.host == "example.rover.io" {
-            guard let roverViewController = RoverViewController(experienceURL: url.absoluteString, campaignID: nil) else {
-                // the URL did not parse properly, which should not occur here since the URL has arrived from the iOS framework.
-                return false
-            }
+            let roverViewController = RoverViewController(experienceURL: url)
             
             // Use our UIApplication.present() helper extension method to find the currently active view controller, and present RoverViewController on top.
             app.present(

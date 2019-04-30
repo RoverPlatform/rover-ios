@@ -67,12 +67,8 @@ open class RoverViewController: UIViewController {
         self.init(identifier: .experienceID(id: experienceID), campaignID: campaignID)
     }
     
-    public convenience init?(experienceURL: String, campaignID: String? = nil) {
-        guard let url = URL(string: experienceURL) else {
-            os_log("Invalid URL given to RoverViewController: '%s'", experienceURL)
-            return nil
-        }
-        self.init(identifier: .experienceURL(url: url), campaignID: campaignID)
+    public convenience init(experienceURL: URL, campaignID: String? = nil) {
+        self.init(identifier: .experienceURL(url: experienceURL), campaignID: campaignID)
     }
     
     @available(*, unavailable)

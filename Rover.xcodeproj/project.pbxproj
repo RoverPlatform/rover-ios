@@ -56,6 +56,7 @@
 		4953DD5222399A9C00286C4B /* ScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEE02055964E00E5C77F /* ScreenViewController.swift */; };
 		4953DD5322399A9C00286C4B /* ScreenViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEE32055964E00E5C77F /* ScreenViewLayout.swift */; };
 		4953DD5422399A9C00286C4B /* ScreenViewLayoutAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FDD92087E09F008D1A57 /* ScreenViewLayoutAttributes.swift */; };
+		49D81F6E2278D03D0002054C /* EventAnalyticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D81F6D2278D03D0002054C /* EventAnalyticsService.swift */; };
 		49E752D4224017A4005CF00F /* Notification.Name.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E752D3224017A4005CF00F /* Notification.Name.swift */; };
 		DB640B6D2245289800CFA795 /* ExperienceCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB640B6C2245289800CFA795 /* ExperienceCache.swift */; };
 		DB640B6F22452AB000CFA795 /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB640B6E22452AB000CFA795 /* ImageCache.swift */; };
@@ -80,6 +81,7 @@
 		492226D12242BC1500AE27DD /* AuthContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthContext.swift; sourceTree = "<group>"; };
 		4953DD102239925B00286C4B /* Rover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rover.swift; sourceTree = "<group>"; };
 		49952B452242B73A004C5521 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		49D81F6D2278D03D0002054C /* EventAnalyticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventAnalyticsService.swift; sourceTree = "<group>"; };
 		49E752D3224017A4005CF00F /* Notification.Name.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notification.Name.swift; sourceTree = "<group>"; };
 		DB00FDD92087E09F008D1A57 /* ScreenViewLayoutAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenViewLayoutAttributes.swift; sourceTree = "<group>"; };
 		DB00FDDB20891153008D1A57 /* ImageConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageConfiguration.swift; sourceTree = "<group>"; };
@@ -210,6 +212,7 @@
 				DBFB1B09209CACAC00E99F9F /* ExperienceStore */,
 				DB709C67207E7EF200F96C2B /* ImageStore */,
 				DB6ADD8320B34EE1002F226C /* SessionController */,
+				49D81F6D2278D03D0002054C /* EventAnalyticsService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -518,6 +521,7 @@
 				4953DD2A22399A7600286C4B /* Session.swift in Sources */,
 				4953DD4022399A8500286C4B /* BlockTapBehavior.swift in Sources */,
 				DB640B712245343F00CFA795 /* SessionState.swift in Sources */,
+				49D81F6E2278D03D0002054C /* EventAnalyticsService.swift in Sources */,
 				4953DD1522399A4D00286C4B /* HTTPError.swift in Sources */,
 				4953DD4422399A8500286C4B /* WebViewBlock.swift in Sources */,
 				4953DD3622399A8500286C4B /* Color.swift in Sources */,

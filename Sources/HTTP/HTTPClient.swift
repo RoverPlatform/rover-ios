@@ -48,7 +48,7 @@ extension HTTPClient {
         urlRequest.setAccountToken(accountToken)
         return urlRequest
     }
-    
+
     public func bodyData<T>(payload: T) -> Data? where T: Encodable {
         let encoded: Data
         do {

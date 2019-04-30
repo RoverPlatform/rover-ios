@@ -103,14 +103,14 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         let userInfo = userInfoWithOptionalCampaignId.compactMapValues { $0 }
         
         NotificationCenter.default.post(
-            name: .RVScreenPresented,
+            name: Notification.Name(roverNotification: .screenPresented),
             object: self,
             userInfo: userInfo
         )
         
         sessionController.registerSession(identifier: sessionIdentifier) { duration in
             Notification(
-                name: .RVScreenViewed,
+                name: Notification.Name(roverNotification: .screenViewed),
                 object: self,
                 userInfo: userInfo.merging(["duration": duration]) { a, _ in a }
             )
@@ -127,7 +127,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         ]
         
         NotificationCenter.default.post(
-            name: .RVScreenDismissed,
+            name: Notification.Name(roverNotification: .screenDismissed),
             object: self,
             userInfo: userInfo.compactMapValues { $0 }
         )
@@ -428,7 +428,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         ]
         
         NotificationCenter.default.post(
-            name: .RVBlockTapped,
+            name: Notification.Name(roverNotification: .blockTapped),
             object: self,
             userInfo: userInfo.compactMapValues { $0 }
         )

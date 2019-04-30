@@ -52,14 +52,14 @@ open class NavigationController: UINavigationController {
         ]
         
         NotificationCenter.default.post(
-            name: .RVExperiencePresented,
+            name: Notification.Name(roverNotification: .experiencePresented),
             object: self,
             userInfo: userInfo.compactMapValues { $0 }
         )
         
         sessionController.registerSession(identifier: sessionIdentifier) { duration in
             Notification(
-                name: .RVExperienceViewed,
+                name: Notification.Name(roverNotification: .experienceViewed),
                 object: self,
                 userInfo: userInfo.merging(["duration": duration]) { a, _ in a }.compactMapValues { $0 }
             )
@@ -75,7 +75,7 @@ open class NavigationController: UINavigationController {
         ]
         
         NotificationCenter.default.post(
-            name: .RVExperienceDismissed,
+            name: Notification.Name(roverNotification: .experienceDismissed),
             object: self,
             userInfo: userInfo.compactMapValues { $0 }
         )

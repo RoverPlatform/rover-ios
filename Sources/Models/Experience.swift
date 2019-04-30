@@ -59,7 +59,7 @@ extension Experience: Decodable {
 
 extension Experience {
     public var attributes: [String: Any] {
-        var attributes: [String: Any] = [
+        let attributes: [String: Any] = [
             "id": id,
             "name": name,
             "keys": keys,

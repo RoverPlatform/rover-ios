@@ -94,11 +94,13 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        let userInfo: [String: Any] = [
+        let userInfoWithOptionalCampaignId: [String: Any?] = [
             "experience": experience.attributes,
             "campaignID": self.campaignId,
             "screen": screen.attributes
         ]
+        
+        let userInfo = userInfoWithOptionalCampaignId.compactMapValues { $0 }
         
         NotificationCenter.default.post(
             name: .RVScreenPresented,
@@ -118,14 +120,16 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     override open func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
+        let userInfo: [String: Any?] = [
+            "experience": experience.attributes,
+            "campaignID": self.campaignId,
+            "screen": screen.attributes
+        ]
+        
         NotificationCenter.default.post(
             name: .RVScreenDismissed,
             object: self,
-            userInfo: [
-                "experience": experience.attributes,
-                "campaignID": self.campaignId,
-                "screen": screen.attributes
-            ]
+            userInfo: userInfo.compactMapValues { $0 }
         )
         
         sessionController.unregisterSession(identifier: sessionIdentifier)
@@ -415,16 +419,18 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
             presentWebsite(url, self)
         }
         
+        let userInfo: [String: Any?] = [
+            "experience": experience.attributes,
+            "campaignID": self.campaignId,
+            "screen": screen.attributes,
+            "row": row.attributes,
+            "block": block.attributes
+        ]
+        
         NotificationCenter.default.post(
             name: .RVBlockTapped,
             object: self,
-            userInfo: [
-                "experience": experience.attributes,
-                "campaignID": self.campaignId,
-                "screen": screen.attributes,
-                "row": row.attributes,
-                "block": block.attributes
-            ]
+            userInfo: userInfo.compactMapValues { $0 }
         )
     }
 }

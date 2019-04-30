@@ -46,7 +46,7 @@ open class NavigationController: UINavigationController {
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        let userInfo: [String: Any] = [
+        let userInfo: [String: Any?] = [
             "experience": experience.attributes,
             "campaignID": self.campaignId
         ]
@@ -54,14 +54,14 @@ open class NavigationController: UINavigationController {
         NotificationCenter.default.post(
             name: .RVExperiencePresented,
             object: self,
-            userInfo: userInfo
+            userInfo: userInfo.compactMapValues { $0 }
         )
         
         sessionController.registerSession(identifier: sessionIdentifier) { duration in
             Notification(
                 name: .RVExperienceViewed,
                 object: self,
-                userInfo: userInfo.merging(["duration": duration]) { a, _ in a }
+                userInfo: userInfo.compactMapValues { $0 }
             )
         }
     }
@@ -69,13 +69,15 @@ open class NavigationController: UINavigationController {
     override open func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
+        let userInfo: [String: Any?] = [
+            "experience": experience.attributes,
+            "campaignID": self.campaignId
+        ]
+        
         NotificationCenter.default.post(
             name: .RVExperienceDismissed,
             object: self,
-            userInfo: [
-                "experience": experience.attributes,
-                "campaignID": self.campaignId
-            ]
+            userInfo: userInfo.compactMapValues { $0 }
         )
         
         sessionController.unregisterSession(identifier: sessionIdentifier)

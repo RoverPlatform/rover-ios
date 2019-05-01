@@ -82,7 +82,7 @@ class Analytics {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "content-type")
-        request.setValue(UIDevice.current.identifierForVendor?.uuidString, forHTTPHeaderField: "x-rover-account-token")
+        request.setValue(Rover.accountToken, forHTTPHeaderField: "x-rover-account-token")
         
         session.uploadTask(with: request, from: data).resume()
     }
@@ -92,11 +92,13 @@ fileprivate struct Event: Encodable {
     let name: String
     let properties: Properties
     let timestamp = Date()
+    let anonymousID = UIDevice.current.identifierForVendor?.uuidString
     
     enum CodingKeys: String, CodingKey {
         case name = "event"
         case properties
         case timestamp
+        case anonymousID
     }
 }
 

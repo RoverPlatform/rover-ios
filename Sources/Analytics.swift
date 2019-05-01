@@ -70,7 +70,9 @@ class Analytics {
         let event = Event(name: name, properties: properties)
         let data: Data
         do {
-            data = try JSONEncoder.default.encode(event)
+            let encoder = JSONEncoder()
+            encoder.dateEncodingStrategy = .formatted(DateFormatter.rfc3339)
+            data = try encoder.encode(event)
         } catch {
             os_log("Failed to encode event: %@", log: .rover, type: .error, error.localizedDescription)
             return

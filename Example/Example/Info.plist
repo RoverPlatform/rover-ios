@@ -41,7 +41,7 @@
 			<string>io.rover.Example</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>rover-example-app</string>
+				<string>example</string>
 			</array>
 		</dict>
 	</array>

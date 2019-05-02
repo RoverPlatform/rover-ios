@@ -16,27 +16,52 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Pass your account token from the Rover Settings app to the Rover SDK.
-        Rover.accountToken = "YOUR_SDK_TOKEN"
+        Rover.accountToken = "<YOUR_SDK_TOKEN>"
         return true
     }
     
+    // This app delegate method is called when any app (your own included) calls the
+    // `open(_:options:completionHandler:)` method on `UIApplication` with a URL that matches one of the schemes setup
+    // in your `Info.plist` file. These custom URL schemes are commonly referred to as "deep links". This Example app
+    // uses a custom URL scheme `example`  which is configured in Example/Example/Info.plist.
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
-        // This app delegate method is called when any app (your own included) calls the `open(_:options:completionHandler:)` method on `UIApplication` with a URL that matches one of the schemes setup in your `Info.plist` file. These custom URL schemes are commonly referred to as "deep links". The `rover-example-app` scheme used below is set in Example/Example/Info.plist as a URL Scheme. Your app will likely have its own bespoke routing system for handling "deep links". For the purposes of demonstration, a simple boilerplate example follows. See the documentation for greater details.
         
-        if url.scheme == "rover-example-app" && url.host == "presentExperience" {
-            // Capture the ID of the Rover experience from the URL.
-            let components = URLComponents.init(url: url, resolvingAgainstBaseURL: false)
-            guard let experienceID = components?.queryItems?.first(where: { $0.name == "id" })?.value else {
+        // You will need to setup a specific URL structure to be used for presenting Rover experiences in your app. The
+        // simplest approach is to use a specific URL path/host and include the experience ID and (optional) campaign
+        // ID as query parameters. The below example demonstrates how to route URLs in the format
+        // `example://experience?id=<EXPERIENCE_ID>&campaignID=<CAMPAIGN_ID>` to a Rover experience.
+        if url.host == "experience" {
+            guard let queryItems = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems else {
                 return false
             }
             
-            // Capture the (optional) campaign ID from the URL.
-            let campaignID = components?.queryItems?.first(where: { $0.name == "campaignID" })?.value
+            guard let experienceID = queryItems.first(where: { $0.name == "id" })?.value else {
+                return false
+            }
             
-            // Instantiate a `RoverViewController` with the experience and (optional) campaign ID.
+            let campaignID = queryItems.first(where: { $0.name == "campaignID" })?.value
+            let viewController = RoverViewController(experienceID: experienceID, campaignID: campaignID)
+            app.present(viewController, animated: true)
+            return true
+        }
+        
+        // If the standard approach above does not meet your needs you can setup any arbitrary URL to launch a Rover
+        // experience as long as you can extract the experience ID from it. For example you could use a path based
+        // approach which includes the experience ID and optional campaign ID as path components instead of query
+        // string parameters. The below example demonstrates how to route URLs in the format
+        // `example://experience/<EXPERIENCE_ID>/<CAMPAIGN_ID>` to a Rover experience.
+        if let host = url.host, host.starts(with: "experience") {
+            let components = host.components(separatedBy: "/")
+            guard components.indices.contains(1) else {
+                return false
+            }
+            
+            let experienceID = components[1]
+            let campaignID = components.indices.contains(2) ? components[2] : nil
             let viewController = RoverViewController(experienceID: experienceID, campaignID: campaignID)
             
-            // Use our UIApplication.present() helper extension method to find the currently active view controller, and present RoverViewController on top.
+            // Use our UIApplication.present() helper extension method to find the currently active view controller,
+            // and present RoverViewController on top.
             app.present(viewController, animated: true)
             return true
         }
@@ -44,17 +69,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return false
     }
     
+    // This app delegate method is called in response to the user opening a Universal Link, amongst other things such
+    // as Handoff.
     func application(_ app: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
-        // This app delegate method is called in response to the user opening a Universal Link, amongst other things such as Handoff. Before we continue, check `activityType` to see if this method was called in response to a Universal Link.
+        
+        // Check `activityType` to see if this method was called in response to a Universal Link.
         guard userActivity.activityType == NSUserActivityTypeBrowsingWeb, let url = userActivity.webpageURL else {
             return false
         }
         
-        // Check the URL to see if the domain matches the one assigned to your Rover account. the `example.rover.io` domain used below needs to be set in your App Links configuration and entitlements. See the documentation for further details.
+        // Check the URL to see if the domain matches the one assigned to your Rover account. The `example.rover.io`
+        // domain used below needs to be set in your App Links configuration and entitlements. See the documentation
+        // for further details.
         if url.host == "example.rover.io" {
             let roverViewController = RoverViewController(experienceURL: url)
             
-            // Use our UIApplication.present() helper extension method to find the currently active view controller, and present RoverViewController on top.
+            // Use our UIApplication.present() helper extension method to find the currently active view controller,
+            // and present RoverViewController on top.
             app.present(roverViewController, animated: true)
             return true
         }

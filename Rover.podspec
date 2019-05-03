@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name              = "Rover"
-  s.version           = "3.0.0-beta1"
+  s.version           = "3.0.0-beta.1"
   s.summary           = "iOS framework for the Rover platform"
   s.homepage          = "https://www.rover.io"
   s.license           = "Apache License, Version 2.0"
@@ -8,8 +8,6 @@ Pod::Spec.new do |s|
   s.platform          = :ios, "10.0"
   s.source            = { :git => "https://github.com/RoverPlatform/rover-ios.git", :tag => "v#{s.version}" }
   s.cocoapods_version = ">= 1.4.0"
-  s.default_subspec   = "Core"
-
-  s.source_files "sources/**/*.swift"
-  s.frameworks = "SafariServices", "WebKit"
+  s.source_files      = "Sources/**/*.swift"
+  s.frameworks        = "SafariServices", "WebKit"
 end

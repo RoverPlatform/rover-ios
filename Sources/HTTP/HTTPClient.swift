@@ -20,33 +20,33 @@ public final class HTTPClient {
 }
 
 extension HTTPClient {
-    public func downloadRequest(queryItems: [URLQueryItem]) -> URLRequest? {
-        guard let accountToken = authContextProvider().accountToken else {
-            authTokenMissingWarning()
-            return nil
-        }
+    public func downloadRequest(queryItems: [URLQueryItem]) -> URLRequest {
         var urlComponents = URLComponents(url: authContextProvider().endpoint, resolvingAgainstBaseURL: false)!
         urlComponents.queryItems = queryItems
         
         var urlRequest = URLRequest(url: urlComponents.url!)
         urlRequest.httpMethod = "GET"
         urlRequest.setValue("gzip", forHTTPHeaderField: "accept-encoding")
-        urlRequest.setAccountToken(accountToken)
+        
+        setAccountToken(urlRequest: &urlRequest)
         return urlRequest
     }
     
-    public func uploadRequest() -> URLRequest? {
-        guard let accountToken = authContextProvider().accountToken else {
-            authTokenMissingWarning()
-            return nil
-        }
+    public func uploadRequest() -> URLRequest {
         var urlRequest = URLRequest(url: authContextProvider().endpoint)
         urlRequest.httpMethod = "POST"
         urlRequest.setValue("gzip", forHTTPHeaderField: "accept-encoding")
         urlRequest.setValue("gzip", forHTTPHeaderField: "content-encoding")
         urlRequest.setValue("application/json", forHTTPHeaderField: "content-type")
-        urlRequest.setAccountToken(accountToken)
+        
+        setAccountToken(urlRequest: &urlRequest)
         return urlRequest
+    }
+    
+    private func setAccountToken(urlRequest: inout URLRequest) {
+        let accountToken = authContextProvider().accountToken
+        assert(accountToken != nil, "Your Rover auth token has not been set.  Use Rover.accountToken = \"MY_TOKEN\".")
+        urlRequest.setValue(accountToken, forHTTPHeaderField: "x-rover-account-token")
     }
     
     public func bodyData<T>(payload: T) -> Data? where T: Encodable {
@@ -78,17 +78,5 @@ extension HTTPClient {
             let result = HTTPResult(data: data, urlResponse: urlResponse, error: error)
             completionHandler(result)
         }
-    }
-    
-    private func authTokenMissingWarning() {
-        os_log("Your Rover auth token has not been set.  Use Rover.accountToken = \"MY_TOKEN\".", type: .error)
-    }
-}
-
-// MARK: Authentication
-
-extension URLRequest {
-    public mutating func setAccountToken(_ accountToken: String) {
-        self.setValue(accountToken, forHTTPHeaderField: "x-rover-account-token")
     }
 }

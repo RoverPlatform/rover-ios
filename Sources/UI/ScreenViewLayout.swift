@@ -212,7 +212,7 @@ class ScreenViewLayout: UICollectionViewLayout {
                 
                 let blockHeight = partialRect.height ?? {
                     guard case .fill(let topOffset, let bottomOffset) = block.position.verticalAlignment else {
-                        fatalError("Vertical alignment must be fill.")
+                        return 0
                     }
                     
                     return rowHeight - CGFloat(topOffset) - CGFloat(bottomOffset)

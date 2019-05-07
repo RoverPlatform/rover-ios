@@ -94,48 +94,49 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        if let viewController = navigationController?.parent as? RoverViewController {
-            viewController.delegate?.viewController(
-                viewController,
-                didPresentScreen: screen,
-                experience: experience,
-                campaignID: campaignID
-            )
+        guard let viewController = navigationController?.parent as? RoverViewController else {
+            return
         }
         
+        viewController.delegate?.viewController(
+            viewController,
+            didPresentScreen: screen,
+            experience: experience,
+            campaignID: campaignID
+        )
+        
         var userInfo: [String: Any] = [
-            "experience": experience.attributes,
-            "screen": screen.attributes
+            RoverViewController.experienceUserInfoKey: experience,
+            RoverViewController.screenUserInfoKey: screen
         ]
         
         if let campaignID = self.campaignID {
-            userInfo["campaignID"] = campaignID
+            userInfo[RoverViewController.campaignIDUserInfoKey] = campaignID
         }
         
         NotificationCenter.default.post(
-            name: .RVScreenPresented,
-            object: self,
+            name: RoverViewController.screenPresentedNotification,
+            object: viewController,
             userInfo: userInfo
         )
         
-        sessionController.registerSession(identifier: sessionIdentifier) { [weak self] duration in
-            if let viewController = self?.navigationController?.parent as? RoverViewController,
-                let screen = self?.screen,
-                let experience = self?.experience {
-                
-                viewController.delegate?.viewController(
-                    viewController,
-                    didViewScreen: screen,
-                    experience: experience,
-                    campaignID: self?.campaignID,
-                    duration: duration
-                )
+        sessionController.registerSession(identifier: sessionIdentifier) { [weak viewController, screen, experience, campaignID] duration in
+            guard let viewController = viewController else {
+                return nil
             }
             
-            userInfo["duration"] = duration
+            viewController.delegate?.viewController(
+                viewController,
+                didViewScreen: screen,
+                experience: experience,
+                campaignID: campaignID,
+                duration: duration
+            )
+            
+            userInfo[RoverViewController.durationUserInfoKey] = duration
             return Notification(
-                name: .RVScreenViewed,
-                object: self,
+                name: RoverViewController.screenViewedNotification,
+                object: viewController,
                 userInfo: userInfo
             )
         }
@@ -144,27 +145,29 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     override open func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
-        if let viewController = navigationController?.parent as? RoverViewController {
-            viewController.delegate?.viewController(
-                viewController,
-                didDismissScreen: screen,
-                experience: experience,
-                campaignID: campaignID
-            )
+        guard let viewController = navigationController?.parent as? RoverViewController else {
+            return
         }
         
+        viewController.delegate?.viewController(
+            viewController,
+            didDismissScreen: screen,
+            experience: experience,
+            campaignID: campaignID
+        )
+        
         var userInfo: [String: Any] = [
-            "experience": experience.attributes,
-            "screen": screen.attributes
+            RoverViewController.experienceUserInfoKey: experience,
+            RoverViewController.screenUserInfoKey: screen
         ]
         
         if let campaignID = self.campaignID {
-            userInfo["campaignID"] = campaignID
+            userInfo[RoverViewController.campaignIDUserInfoKey] = campaignID
         }
         
         NotificationCenter.default.post(
-            name: .RVScreenDismissed,
-            object: self,
+            name: RoverViewController.screenDismissedNotification,
+            object: viewController,
             userInfo: userInfo
         )
         
@@ -455,30 +458,32 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
             presentWebsite(url, self)
         }
         
-        if let viewController = navigationController?.parent as? RoverViewController {
-            viewController.delegate?.viewController(
-                viewController,
-                didTapBlock: block,
-                screen: screen,
-                experience: experience,
-                campaignID: campaignID
-            )
+        guard let viewController = navigationController?.parent as? RoverViewController else {
+            return
         }
         
+        viewController.delegate?.viewController(
+            viewController,
+            didTapBlock: block,
+            screen: screen,
+            experience: experience,
+            campaignID: campaignID
+        )
+        
         var userInfo: [String: Any] = [
-            "experience": experience.attributes,
-            "screen": screen.attributes,
-            "row": row.attributes,
-            "block": block.attributes
+            RoverViewController.experienceUserInfoKey: experience,
+            RoverViewController.screenUserInfoKey: screen,
+            RoverViewController.rowUserInfoKey: row,
+            RoverViewController.blockUserInfoKey: block
         ]
         
         if let campaignID = self.campaignID {
-            userInfo["campaignID"] = campaignID
+            userInfo[RoverViewController.campaignIDUserInfoKey] = campaignID
         }
         
         NotificationCenter.default.post(
-            name: .RVBlockTapped,
-            object: self,
+            name: RoverViewController.blockTappedNotification,
+            object: viewController,
             userInfo: userInfo
         )
     }

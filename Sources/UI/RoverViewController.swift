@@ -10,40 +10,6 @@ import SafariServices
 import os
 import UIKit
 
-public protocol RoverViewControllerDelegate: AnyObject {
-    /// Tells the delegate that the view controller for a given experience was presented.
-    func viewController(_ viewController: RoverViewController, didPresentExperience experience: Experience, campaignID: String?)
-    
-    /// Tells the delegate that the view controller for a given experience was dismissed.
-    func viewController(_ viewController: RoverViewController, didDismissExperience experience: Experience, campaignID: String?)
-    
-    /// Tells the delegate that the view controller for a given experience was viewed for a period of time. The view controller keeps the viewing "session" alive if it is dismissed and presented again within a short period time. It also keeps the session alive if the app is put to the background and restored again within a short period of time. For this reason, this delegate method is only called after the view controller is certain the session has ended. If the duration of time the experience was viewed is important you should use this method. However if you only need to be notified when the experience is initially presented, you are better suited to use the `viewController(_:, didPresentExperience:)` method.
-    func viewController(_ viewController: RoverViewController, didViewExperience experience: Experience, campaignID: String?, duration: Double)
-    
-    /// Tells the delegate that the view controller presented a chid view controller for a specific screen.
-    func viewController(_ viewController: RoverViewController, didPresentScreen screen: Screen, experience: Experience, campaignID: String?)
-    
-    /// Tells the delegate that the view controller dismissed a child view controller for a specific screen.
-    func viewController(_ viewController: RoverViewController, didDismissScreen screen: Screen, experience: Experience, campaignID: String?)
-    
-    /// Tells the delegate that the chid view controller for a given screen was viewed for a period of time. The child view controller keeps the viewing "session" alive if it is dismissed and presented again within a short period time. It also keeps the session alive if the app is put to the background and restored again within a short period of time. For this reason, this delegate method is only called after the child view controller is certain the session has ended. If the duration of time the screen was viewed is important you should use this method. However if you only need to be notified when the screen is initially presented, you are better suited to use the `viewController(_:, didPresentScreen:experience:)` method.
-    func viewController(_ viewController: RoverViewController, didViewScreen screen: Screen, experience: Experience, campaignID: String?, duration: Double)
-    
-    /// Tells the delegate that a `UIView` representing a specific block somewhere within the view controller's hierarchy was tapped by the user.
-    func viewController(_ viewController: RoverViewController, didTapBlock block: Block, screen: Screen, experience: Experience, campaignID: String?)
-}
-
-// Default "no-op" implementations to make all delegate methods optional.
-extension RoverViewControllerDelegate {
-    func viewController(_ viewController: RoverViewController, didPresentExperience experience: Experience, campaignID: String?) { }
-    func viewController(_ viewController: RoverViewController, didDismissExperience experience: Experience, campaignID: String?) { }
-    func viewController(_ viewController: RoverViewController, didViewExperience experience: Experience, campaignID: String?, duration: Double) { }
-    func viewController(_ viewController: RoverViewController, didPresentScreen screen: Screen, experience: Experience, campaignID: String?) { }
-    func viewController(_ viewController: RoverViewController, didDismissScreen screen: Screen, experience: Experience, campaignID: String?) { }
-    func viewController(_ viewController: RoverViewController, didViewScreen screen: Screen, experience: Experience, campaignID: String?, duration: Double) { }
-    func viewController(_ viewController: RoverViewController, didTapBlock block: Block, screen: Screen, experience: Experience, campaignID: String?) { }
-}
-
 /// Either present or embed this view in a container to display a Rover experience.  Make sure you set Rover.accountToken first!
 open class RoverViewController: UIViewController {    
     public let identifier: ExperienceIdentifier
@@ -286,4 +252,102 @@ open class RoverViewController: UIViewController {
         
         self.present(alertController, animated: true, completion: nil)
     }
+}
+
+// MARK: Notification Names
+
+extension RoverViewController {
+    /// The `RoverViewController` sends this notification when it is presented.
+    public static let experiencePresentedNotification = Notification.Name("io.rover.experiencePresentedNotification")
+    
+    /// The `RoverViewController` sends this notification when it is dismissed.
+    public static let experienceDismissedNotification = Notification.Name("io.rover.experienceDismissedNotification")
+    
+    /// The `RoverViewController` sends this notification when it has been viewed for a period of time. The view
+    /// controller keeps the viewing "session" alive if it is dismissed and presented again within a short period time.
+    /// It also keeps the session alive if the app is put to the background and restored again within a short period of
+    /// time. For this reason, this notification is only sent after the view controller is certain the session has
+    /// ended. If the duration of time the experience was viewed is important you should observe this notification.
+    /// However if you only need to be notified when the experience is initially presented, you are better suited to
+    /// observe the `experiencePresentedNotification` notification.
+    public static let experienceViewedNotification = Notification.Name("io.rover.experienceViewedNotification")
+    
+    /// The `RoverViewController` sends this notification when it presents a chid view controller for a specific
+    /// screen.
+    public static let screenPresentedNotification = Notification.Name("io.rover.screenPresentedNotification")
+    
+    /// The `RoverViewController` sends this notification when it dismisses a chid view controller for a specific
+    /// screen.
+    public static let screenDismissedNotification = Notification.Name("io.rover.screenDismissedNotification")
+    
+    /// The `RoverViewController` sends this notification when a chid view controller for a given screen has been viewed
+    /// for a period of time. The child view controller keeps the viewing "session" alive if it is dismissed and
+    /// presented again within a short period time. It also keeps the session alive if the app is put to the background
+    /// and restored again within a short period of time. For this reason, this notification is only sent after the
+    /// child view controller is certain the session has ended. If the duration of time the screen was viewed is
+    /// important you should observe this notification. However if you only need to be notified when the screen is
+    /// initially presented, you are better suited to observe the `screenPresentedNotification` notification.
+    public static let screenViewedNotification = Notification.Name("io.rover.screenViewedNotification")
+    
+    /// The `RoverViewController` sends this a `UIView` representing a specific block somewhere within the view
+    /// controller's hierarchy was tapped by the user.
+    public static let blockTappedNotification = Notification.Name("io.rover.blockTappedNotification")
+}
+
+// MARK: User Info Keys
+
+extension RoverViewController {
+    /// A key whose value is an `Experience` associated with the event that triggered the `Notification`.
+    public static let experienceUserInfoKey = "experienceUserInfoKey"
+    
+    /// A key whose value is a `Screen` associated with the event that triggered the `Notification`
+    public static let screenUserInfoKey = "screenUserInfoKey"
+    
+    /// A key whose value is a `Row` associated with the event that triggered the `Notification`
+    public static let rowUserInfoKey = "rowUserInfoKey"
+    
+    /// A key whose value is a `Block` associated with the event that triggered the `Notification`
+    public static let blockUserInfoKey = "blockUserInfoKey"
+    
+    /// A key whose value is a `Double` representing the length of time an experience or screen was viewed. This key is used by the `experienceViewedNotification` and `screenViewedNotification`s.
+    public static let durationUserInfoKey = "durationUserInfoKey"
+    
+    /// A key whose value is an optional `String` containing the campaign ID associated with the `RoverViewController` when it was presented.
+    public static let campaignIDUserInfoKey = "campaignIDUserInfoKey"
+}
+
+// MARK: RoverViewControllerDelegate
+
+public protocol RoverViewControllerDelegate: AnyObject {
+    /// Tells the delegate that the view controller for a given experience was presented.
+    func viewController(_ viewController: RoverViewController, didPresentExperience experience: Experience, campaignID: String?)
+    
+    /// Tells the delegate that the view controller for a given experience was dismissed.
+    func viewController(_ viewController: RoverViewController, didDismissExperience experience: Experience, campaignID: String?)
+    
+    /// Tells the delegate that the view controller for a given experience was viewed for a period of time. The view controller keeps the viewing "session" alive if it is dismissed and presented again within a short period time. It also keeps the session alive if the app is put to the background and restored again within a short period of time. For this reason, this delegate method is only called after the view controller is certain the session has ended. If the duration of time the experience was viewed is important you should use this method. However if you only need to be notified when the experience is initially presented, you are better suited to use the `viewController(_:, didPresentExperience:)` method.
+    func viewController(_ viewController: RoverViewController, didViewExperience experience: Experience, campaignID: String?, duration: Double)
+    
+    /// Tells the delegate that the view controller presented a chid view controller for a specific screen.
+    func viewController(_ viewController: RoverViewController, didPresentScreen screen: Screen, experience: Experience, campaignID: String?)
+    
+    /// Tells the delegate that the view controller dismissed a child view controller for a specific screen.
+    func viewController(_ viewController: RoverViewController, didDismissScreen screen: Screen, experience: Experience, campaignID: String?)
+    
+    /// Tells the delegate that the chid view controller for a given screen was viewed for a period of time. The child view controller keeps the viewing "session" alive if it is dismissed and presented again within a short period time. It also keeps the session alive if the app is put to the background and restored again within a short period of time. For this reason, this delegate method is only called after the child view controller is certain the session has ended. If the duration of time the screen was viewed is important you should use this method. However if you only need to be notified when the screen is initially presented, you are better suited to use the `viewController(_:, didPresentScreen:experience:)` method.
+    func viewController(_ viewController: RoverViewController, didViewScreen screen: Screen, experience: Experience, campaignID: String?, duration: Double)
+    
+    /// Tells the delegate that a `UIView` representing a specific block somewhere within the view controller's hierarchy was tapped by the user.
+    func viewController(_ viewController: RoverViewController, didTapBlock block: Block, screen: Screen, experience: Experience, campaignID: String?)
+}
+
+// Default "no-op" implementations to make all delegate methods optional.
+extension RoverViewControllerDelegate {
+    func viewController(_ viewController: RoverViewController, didPresentExperience experience: Experience, campaignID: String?) { }
+    func viewController(_ viewController: RoverViewController, didDismissExperience experience: Experience, campaignID: String?) { }
+    func viewController(_ viewController: RoverViewController, didViewExperience experience: Experience, campaignID: String?, duration: Double) { }
+    func viewController(_ viewController: RoverViewController, didPresentScreen screen: Screen, experience: Experience, campaignID: String?) { }
+    func viewController(_ viewController: RoverViewController, didDismissScreen screen: Screen, experience: Experience, campaignID: String?) { }
+    func viewController(_ viewController: RoverViewController, didViewScreen screen: Screen, experience: Experience, campaignID: String?, duration: Double) { }
+    func viewController(_ viewController: RoverViewController, didTapBlock block: Block, screen: Screen, experience: Experience, campaignID: String?) { }
 }

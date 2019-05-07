@@ -54,18 +54,3 @@ extension Experience: Decodable {
         self.homeScreen = homeScreen
     }
 }
-
-// MARK: Attributes
-
-extension Experience {
-    public var attributes: [String: Any] {
-        let attributes: [String: Any] = [
-            "id": id,
-            "name": name,
-            "keys": keys,
-            "tags": tags
-        ]
-        
-        return attributes
-    }
-}

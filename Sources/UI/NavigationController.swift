@@ -46,69 +46,78 @@ open class NavigationController: UINavigationController {
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        if let viewController = parent as? RoverViewController {
-            viewController.delegate?.viewController(
-                viewController,
-                didPresentExperience: experience,
-                campaignID: campaignID
-            )
+        guard let viewController = parent as? RoverViewController else {
+            return
         }
         
+        viewController.delegate?.viewController(
+            viewController,
+            didPresentExperience: experience,
+            campaignID: campaignID
+        )
+        
         var userInfo: [String: Any] = [
-            "experience": experience.attributes
+            RoverViewController.experienceUserInfoKey: experience
         ]
         
         if let campaignID = self.campaignID {
-            userInfo["campaignID"] = campaignID
+            userInfo[RoverViewController.campaignIDUserInfoKey] = campaignID
         }
         
         NotificationCenter.default.post(
-            name: .RVExperiencePresented,
-            object: self,
+            name: RoverViewController.experiencePresentedNotification,
+            object: viewController,
             userInfo: userInfo
         )
         
-        sessionController.registerSession(identifier: sessionIdentifier) { [weak self] duration in
-            if let viewController = self?.parent as? RoverViewController, let experience = self?.experience {
+        sessionController.registerSession(
+            identifier: sessionIdentifier,
+            completionHandler: { [weak viewController, experience, campaignID] duration in
+                guard let viewController = viewController else {
+                    return nil
+                }
+                
                 viewController.delegate?.viewController(
                     viewController,
                     didViewExperience: experience,
-                    campaignID: self?.campaignID,
+                    campaignID: campaignID,
                     duration: duration
                 )
+                
+                userInfo[RoverViewController.durationUserInfoKey] = duration
+                return Notification(
+                    name: RoverViewController.experienceViewedNotification,
+                    object: viewController,
+                    userInfo: userInfo
+                )
             }
-            
-            userInfo["duration"] = duration
-            return Notification(
-                name: .RVExperienceViewed,
-                object: self,
-                userInfo: userInfo
-            )
-        }
+        )
     }
     
     override open func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
-        if let viewController = parent as? RoverViewController {
-            viewController.delegate?.viewController(
-                viewController,
-                didDismissExperience: experience,
-                campaignID: campaignID
-            )
+        guard let viewController = parent as? RoverViewController else {
+            return
         }
         
+        viewController.delegate?.viewController(
+            viewController,
+            didDismissExperience: experience,
+            campaignID: campaignID
+        )
+        
         var userInfo: [String: Any] = [
-            "experience": experience.attributes
+            RoverViewController.experienceUserInfoKey: experience
         ]
         
         if let campaignID = self.campaignID {
-            userInfo["campaignID"] = campaignID
+            userInfo[RoverViewController.campaignIDUserInfoKey] = campaignID
         }
         
         NotificationCenter.default.post(
-            name: .RVExperienceDismissed,
-            object: self,
+            name: RoverViewController.experienceDismissedNotification,
+            object: viewController,
             userInfo: userInfo
         )
         

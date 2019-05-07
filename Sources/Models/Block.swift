@@ -18,16 +18,3 @@ public protocol Block: Decodable {
     var keys: [String: String] { get }
     var tags: [String] { get }
 }
-
-// MARK: Attributes
-
-extension Block {
-    public var attributes: [String: Any] {
-        return [
-            "id": id,
-            "name": name,
-            "keys": keys,
-            "tags": tags
-        ]
-    }
-}

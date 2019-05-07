@@ -106,16 +106,3 @@ extension Row: Decodable {
         }
     }
 }
-
-// MARK: Attributes
-
-extension Row {
-    public var attributes: [String: Any] {
-        return [
-            "id": id,
-            "name": name,
-            "keys": keys,
-            "tags": tags
-        ]
-    }
-}

@@ -45,7 +45,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             // Optionally assign a delegate to the view controller to be notified when certain experience "events"
             // occur. E.g. when a screen is displayed or a block is tapped. This example assigns the app delegate itself
             // as the `RoverViewController`'s delegate. This of course requires your app delegate to implement the
-            // `RoverViewControllerDelegate` protocol. 
+            // `RoverViewControllerDelegate` protocol.
             viewController.delegate = self
             
             // Use Rover's UIApplication.present() helper extension method to find the currently active view controller,
@@ -100,13 +100,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 }
 
-// Extending your app delegate to implement the `RoverViewControllerDelegate` allows it app to be notified when certain
+// Extending your app delegate to implement the `RoverViewControllerDelegate` allows it to be notified when certain
 // experience "events" occur. E.g. when a screen is displayed or a block is tapped. In order for this to function you
 // must assign your app delegate as the `RoverViewController` delegate after it is instantiated. An example of this can
 // be found in the `application(_:open:options:)` implementation above where we are handling deep links and presenting
 // the `RoverViewController`.
-//
-// E.g. viewController.delegate = self
 extension AppDelegate: RoverViewControllerDelegate {
     func viewController(_ viewController: RoverViewController, didPresentExperience experience: Experience) {
         print("Experience Presented", experience.name)

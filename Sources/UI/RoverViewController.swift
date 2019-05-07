@@ -12,36 +12,36 @@ import UIKit
 
 public protocol RoverViewControllerDelegate: AnyObject {
     /// Tells the delegate that the view controller for a given experience was presented.
-    func viewController(_ viewController: RoverViewController, didPresentExperience experience: Experience)
+    func viewController(_ viewController: RoverViewController, didPresentExperience experience: Experience, campaignID: String?)
     
     /// Tells the delegate that the view controller for a given experience was dismissed.
-    func viewController(_ viewController: RoverViewController, didDismissExperience experience: Experience)
+    func viewController(_ viewController: RoverViewController, didDismissExperience experience: Experience, campaignID: String?)
     
     /// Tells the delegate that the view controller for a given experience was viewed for a period of time. The view controller keeps the viewing "session" alive if it is dismissed and presented again within a short period time. It also keeps the session alive if the app is put to the background and restored again within a short period of time. For this reason, this delegate method is only called after the view controller is certain the session has ended. If the duration of time the experience was viewed is important you should use this method. However if you only need to be notified when the experience is initially presented, you are better suited to use the `viewController(_:, didPresentExperience:)` method.
-    func viewController(_ viewController: RoverViewController, didViewExperience experience: Experience, duration: Double)
+    func viewController(_ viewController: RoverViewController, didViewExperience experience: Experience, campaignID: String?, duration: Double)
     
     /// Tells the delegate that the view controller presented a chid view controller for a specific screen.
-    func viewController(_ viewController: RoverViewController, didPresentScreen screen: Screen, experience: Experience)
+    func viewController(_ viewController: RoverViewController, didPresentScreen screen: Screen, experience: Experience, campaignID: String?)
     
     /// Tells the delegate that the view controller dismissed a child view controller for a specific screen.
-    func viewController(_ viewController: RoverViewController, didDismissScreen screen: Screen, experience: Experience)
+    func viewController(_ viewController: RoverViewController, didDismissScreen screen: Screen, experience: Experience, campaignID: String?)
     
     /// Tells the delegate that the chid view controller for a given screen was viewed for a period of time. The child view controller keeps the viewing "session" alive if it is dismissed and presented again within a short period time. It also keeps the session alive if the app is put to the background and restored again within a short period of time. For this reason, this delegate method is only called after the child view controller is certain the session has ended. If the duration of time the screen was viewed is important you should use this method. However if you only need to be notified when the screen is initially presented, you are better suited to use the `viewController(_:, didPresentScreen:experience:)` method.
-    func viewController(_ viewController: RoverViewController, didViewScreen screen: Screen, experience: Experience, duration: Double)
+    func viewController(_ viewController: RoverViewController, didViewScreen screen: Screen, experience: Experience, campaignID: String?, duration: Double)
     
     /// Tells the delegate that a `UIView` representing a specific block somewhere within the view controller's hierarchy was tapped by the user.
-    func viewController(_ viewController: RoverViewController, didTapBlock block: Block, screen: Screen, experience: Experience)
+    func viewController(_ viewController: RoverViewController, didTapBlock block: Block, screen: Screen, experience: Experience, campaignID: String?)
 }
 
 // Default "no-op" implementations to make all delegate methods optional.
 extension RoverViewControllerDelegate {
-    public func viewController(_ viewController: RoverViewController, didPresentExperience experience: Experience) { }
-    public func viewController(_ viewController: RoverViewController, didDismissExperience experience: Experience) { }
-    public func viewController(_ viewController: RoverViewController, didViewExperience experience: Experience, duration: Double) { }
-    public func viewController(_ viewController: RoverViewController, didPresentScreen screen: Screen, experience: Experience) { }
-    public func viewController(_ viewController: RoverViewController, didDismissScreen screen: Screen, experience: Experience) { }
-    public func viewController(_ viewController: RoverViewController, didViewScreen screen: Screen, experience: Experience, duration: Double) { }
-    public func viewController(_ viewController: RoverViewController, didTapBlock block: Block, screen: Screen, experience: Experience) { }
+    func viewController(_ viewController: RoverViewController, didPresentExperience experience: Experience, campaignID: String?) { }
+    func viewController(_ viewController: RoverViewController, didDismissExperience experience: Experience, campaignID: String?) { }
+    func viewController(_ viewController: RoverViewController, didViewExperience experience: Experience, campaignID: String?, duration: Double) { }
+    func viewController(_ viewController: RoverViewController, didPresentScreen screen: Screen, experience: Experience, campaignID: String?) { }
+    func viewController(_ viewController: RoverViewController, didDismissScreen screen: Screen, experience: Experience, campaignID: String?) { }
+    func viewController(_ viewController: RoverViewController, didViewScreen screen: Screen, experience: Experience, campaignID: String?, duration: Double) { }
+    func viewController(_ viewController: RoverViewController, didTapBlock block: Block, screen: Screen, experience: Experience, campaignID: String?) { }
 }
 
 /// Either present or embed this view in a container to display a Rover experience.  Make sure you set Rover.accountToken first!

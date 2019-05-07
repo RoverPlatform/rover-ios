@@ -47,7 +47,11 @@ open class NavigationController: UINavigationController {
         super.viewDidAppear(animated)
         
         if let viewController = parent as? RoverViewController {
-            viewController.delegate?.viewController(viewController, didPresentExperience: experience)
+            viewController.delegate?.viewController(
+                viewController,
+                didPresentExperience: experience,
+                campaignID: campaignID
+            )
         }
         
         var userInfo: [String: Any] = [
@@ -66,7 +70,12 @@ open class NavigationController: UINavigationController {
         
         sessionController.registerSession(identifier: sessionIdentifier) { [weak self] duration in
             if let viewController = self?.parent as? RoverViewController, let experience = self?.experience {
-                viewController.delegate?.viewController(viewController, didViewExperience: experience, duration: duration)
+                viewController.delegate?.viewController(
+                    viewController,
+                    didViewExperience: experience,
+                    campaignID: self?.campaignID,
+                    duration: duration
+                )
             }
             
             userInfo["duration"] = duration
@@ -82,7 +91,11 @@ open class NavigationController: UINavigationController {
         super.viewWillDisappear(animated)
         
         if let viewController = parent as? RoverViewController {
-            viewController.delegate?.viewController(viewController, didDismissExperience: experience)
+            viewController.delegate?.viewController(
+                viewController,
+                didDismissExperience: experience,
+                campaignID: campaignID
+            )
         }
         
         var userInfo: [String: Any] = [

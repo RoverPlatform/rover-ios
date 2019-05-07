@@ -106,31 +106,31 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 // be found in the `application(_:open:options:)` implementation above where we are handling deep links and presenting
 // the `RoverViewController`.
 extension AppDelegate: RoverViewControllerDelegate {
-    func viewController(_ viewController: RoverViewController, didPresentExperience experience: Experience) {
-        print("Experience Presented", experience.name)
+    func viewController(_ viewController: RoverViewController, didPresentExperience experience: Experience, campaignID: String?) {
+        print("Experience Presented", experience.name, String(describing: campaignID))
     }
     
-    func viewController(_ viewController: RoverViewController, didDismissExperience experience: Experience) {
-        print("Experience Dismissed", experience.name)
+    func viewController(_ viewController: RoverViewController, didDismissExperience experience: Experience, campaignID: String?) {
+        print("Experience Dismissed", experience.name, String(describing: campaignID))
     }
     
-    func viewController(_ viewController: RoverViewController, didViewExperience experience: Experience, duration: Double) {
-        print("Experience Viewed", experience.name, duration)
+    func viewController(_ viewController: RoverViewController, didViewExperience experience: Experience, campaignID: String?, duration: Double) {
+        print("Experience Viewed", experience.name, String(describing: campaignID), duration)
     }
     
-    func viewController(_ viewController: RoverViewController, didPresentScreen screen: Screen, experience: Experience) {
-        print("Screen Presented", screen.name, experience.name)
+    func viewController(_ viewController: RoverViewController, didPresentScreen screen: Screen, experience: Experience, campaignID: String?) {
+        print("Screen Presented", screen.name, experience.name, String(describing: campaignID))
     }
     
-    func viewController(_ viewController: RoverViewController, didDismissScreen screen: Screen, experience: Experience) {
-        print("Screen Dismissed", screen.name, experience.name)
+    func viewController(_ viewController: RoverViewController, didDismissScreen screen: Screen, experience: Experience, campaignID: String?) {
+        print("Screen Dismissed", screen.name, experience.name, String(describing: campaignID))
     }
     
-    func viewController(_ viewController: RoverViewController, didViewScreen screen: Screen, experience: Experience, duration: Double) {
-        print("Screen Viewed", screen.name, experience.name, duration)
+    func viewController(_ viewController: RoverViewController, didViewScreen screen: Screen, experience: Experience, campaignID: String?, duration: Double) {
+        print("Screen Viewed", screen.name, experience.name, String(describing: campaignID), duration)
     }
     
-    func viewController(_ viewController: RoverViewController, didTapBlock block: Block, screen: Screen, experience: Experience) {
-        print("Block Tapped", block.name, screen.name, experience.name)
+    func viewController(_ viewController: RoverViewController, didTapBlock block: Block, screen: Screen, experience: Experience, campaignID: String?) {
+        print("Block Tapped", block.name, screen.name, experience.name, String(describing: campaignID))
     }
 }

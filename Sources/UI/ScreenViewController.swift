@@ -95,7 +95,12 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         super.viewDidAppear(animated)
         
         if let viewController = navigationController?.parent as? RoverViewController {
-            viewController.delegate?.viewController(viewController, didPresentScreen: screen, experience: experience)
+            viewController.delegate?.viewController(
+                viewController,
+                didPresentScreen: screen,
+                experience: experience,
+                campaignID: campaignID
+            )
         }
         
         var userInfo: [String: Any] = [
@@ -122,6 +127,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
                     viewController,
                     didViewScreen: screen,
                     experience: experience,
+                    campaignID: self?.campaignID,
                     duration: duration
                 )
             }
@@ -139,7 +145,12 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         super.viewWillDisappear(animated)
         
         if let viewController = navigationController?.parent as? RoverViewController {
-            viewController.delegate?.viewController(viewController, didDismissScreen: screen, experience: experience)
+            viewController.delegate?.viewController(
+                viewController,
+                didDismissScreen: screen,
+                experience: experience,
+                campaignID: campaignID
+            )
         }
         
         var userInfo: [String: Any] = [
@@ -449,7 +460,8 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
                 viewController,
                 didTapBlock: block,
                 screen: screen,
-                experience: experience
+                experience: experience,
+                campaignID: campaignID
             )
         }
         

@@ -94,6 +94,10 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
+        if let viewController = navigationController?.parent as? RoverViewController {
+            viewController.delegate?.viewController(viewController, didPresentScreen: screen, experience: experience)
+        }
+        
         var userInfo: [String: Any] = [
             "experience": experience.attributes,
             "screen": screen.attributes
@@ -109,7 +113,19 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
             userInfo: userInfo
         )
         
-        sessionController.registerSession(identifier: sessionIdentifier) { duration in
+        sessionController.registerSession(identifier: sessionIdentifier) { [weak self] duration in
+            if let viewController = self?.navigationController?.parent as? RoverViewController,
+                let screen = self?.screen,
+                let experience = self?.experience {
+                
+                viewController.delegate?.viewController(
+                    viewController,
+                    didViewScreen: screen,
+                    experience: experience,
+                    duration: duration
+                )
+            }
+            
             userInfo["duration"] = duration
             return Notification(
                 name: .RVScreenViewed,
@@ -121,6 +137,10 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     
     override open func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        
+        if let viewController = navigationController?.parent as? RoverViewController {
+            viewController.delegate?.viewController(viewController, didDismissScreen: screen, experience: experience)
+        }
         
         var userInfo: [String: Any] = [
             "experience": experience.attributes,
@@ -422,6 +442,15 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
             }
         case .presentWebsite(let url):
             presentWebsite(url, self)
+        }
+        
+        if let viewController = navigationController?.parent as? RoverViewController {
+            viewController.delegate?.viewController(
+                viewController,
+                didTapBlock: block,
+                screen: screen,
+                experience: experience
+            )
         }
         
         var userInfo: [String: Any] = [

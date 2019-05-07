@@ -46,6 +46,10 @@ open class NavigationController: UINavigationController {
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
+        if let viewController = parent as? RoverViewController {
+            viewController.delegate?.viewController(viewController, didPresentExperience: experience)
+        }
+        
         var userInfo: [String: Any] = [
             "experience": experience.attributes
         ]
@@ -60,7 +64,11 @@ open class NavigationController: UINavigationController {
             userInfo: userInfo
         )
         
-        sessionController.registerSession(identifier: sessionIdentifier) { duration in
+        sessionController.registerSession(identifier: sessionIdentifier) { [weak self] duration in
+            if let viewController = self?.parent as? RoverViewController, let experience = self?.experience {
+                viewController.delegate?.viewController(viewController, didViewExperience: experience, duration: duration)
+            }
+            
             userInfo["duration"] = duration
             return Notification(
                 name: .RVExperienceViewed,
@@ -72,6 +80,10 @@ open class NavigationController: UINavigationController {
     
     override open func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        
+        if let viewController = parent as? RoverViewController {
+            viewController.delegate?.viewController(viewController, didDismissExperience: experience)
+        }
         
         var userInfo: [String: Any] = [
             "experience": experience.attributes

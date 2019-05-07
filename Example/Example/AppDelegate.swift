@@ -41,6 +41,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
             let campaignID = queryItems.first(where: { $0.name == "campaignID" })?.value
             let viewController = RoverViewController(experienceID: experienceID, campaignID: campaignID)
+            
+            // Optionally assign a delegate to the view controller to be notified when certain experience "events"
+            // occur. E.g. when a screen is displayed or a block is tapped. This example assigns the app delegate itself
+            // as the `RoverViewController`'s delegate. This of course requires your app delegate to implement the
+            // `RoverViewControllerDelegate` protocol. 
+            viewController.delegate = self
+            
+            // Use Rover's UIApplication.present() helper extension method to find the currently active view controller,
+            // and present the RoverViewController on top.
             app.present(viewController, animated: true)
             return true
         }
@@ -59,9 +68,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let experienceID = components[1]
             let campaignID = components.indices.contains(2) ? components[2] : nil
             let viewController = RoverViewController(experienceID: experienceID, campaignID: campaignID)
-            
-            // Use our UIApplication.present() helper extension method to find the currently active view controller,
-            // and present RoverViewController on top.
             app.present(viewController, animated: true)
             return true
         }
@@ -91,5 +97,42 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         return false
+    }
+}
+
+// Extending your app delegate to implement the `RoverViewControllerDelegate` allows it app to be notified when certain
+// experience "events" occur. E.g. when a screen is displayed or a block is tapped. In order for this to function you
+// must assign your app delegate as the `RoverViewController` delegate after it is instantiated. An example of this can
+// be found in the `application(_:open:options:)` implementation above where we are handling deep links and presenting
+// the `RoverViewController`.
+//
+// E.g. viewController.delegate = self
+extension AppDelegate: RoverViewControllerDelegate {
+    func viewController(_ viewController: RoverViewController, didPresentExperience experience: Experience) {
+        print("Experience Presented", experience.name)
+    }
+    
+    func viewController(_ viewController: RoverViewController, didDismissExperience experience: Experience) {
+        print("Experience Dismissed", experience.name)
+    }
+    
+    func viewController(_ viewController: RoverViewController, didViewExperience experience: Experience, duration: Double) {
+        print("Experience Viewed", experience.name, duration)
+    }
+    
+    func viewController(_ viewController: RoverViewController, didPresentScreen screen: Screen, experience: Experience) {
+        print("Screen Presented", screen.name, experience.name)
+    }
+    
+    func viewController(_ viewController: RoverViewController, didDismissScreen screen: Screen, experience: Experience) {
+        print("Screen Dismissed", screen.name, experience.name)
+    }
+    
+    func viewController(_ viewController: RoverViewController, didViewScreen screen: Screen, experience: Experience, duration: Double) {
+        print("Screen Viewed", screen.name, experience.name, duration)
+    }
+    
+    func viewController(_ viewController: RoverViewController, didTapBlock block: Block, screen: Screen, experience: Experience) {
+        print("Block Tapped", block.name, screen.name, experience.name)
     }
 }

@@ -1,5 +1,5 @@
 //
-//  NavigationController.swift
+//  ExperienceViewController.swift
 //  Rover
 //
 //  Created by Sean Rucker on 2017-08-17.
@@ -9,7 +9,7 @@
 import UIKit
 
 /// View controller responsible for navigation behaviour between screens of an Experience.
-open class NavigationController: UINavigationController {
+open class ExperienceViewController: UINavigationController {
     private let sessionController: SessionController
     public let experience: Experience
     public let campaignID: String?

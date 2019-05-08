@@ -13,10 +13,15 @@ import Rover
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-
+    var observerTokens: [NSObjectProtocol] = []
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Pass your account token from the Rover Settings app to the Rover SDK.
         Rover.accountToken = "<YOUR_SDK_TOKEN>"
+        
+        // Uncomment this line and look at the method implementation for an example of observing `Notification`s sent by
+        // the `RoverViewController`.
+        observeRoverNotifications()
         return true
     }
     
@@ -102,35 +107,176 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 // Extending your app delegate to implement the `RoverViewControllerDelegate` allows it to be notified when certain
 // experience "events" occur. E.g. when a screen is displayed or a block is tapped. In order for this to function you
-// must assign your app delegate as the `RoverViewController` delegate after it is instantiated. An example of this can
-// be found in the `application(_:open:options:)` implementation above where we are handling deep links and presenting
-// the `RoverViewController`.
+// must assign your app delegate as the `RoverViewController` delegate after it is instantiated.
 extension AppDelegate: RoverViewControllerDelegate {
-    func viewController(_ viewController: RoverViewController, didPresentExperience experience: Experience, campaignID: String?) {
-        print("Experience Presented", experience.name, String(describing: campaignID))
+    func viewController(_ viewController: RoverViewController, didPresentExperience experience: Experience) {
+        print("[Delegate] Experience Presented")
+        print("    - Experience: \(experience.name)")
+        print("    - Campaign ID: \(viewController.campaignID ?? "none")")
+        print("")
     }
     
-    func viewController(_ viewController: RoverViewController, didDismissExperience experience: Experience, campaignID: String?) {
-        print("Experience Dismissed", experience.name, String(describing: campaignID))
+    func viewController(_ viewController: RoverViewController, didDismissExperience experience: Experience) {
+        print("[Delegate] Experience Dismissed")
+        print("    - Experience: \(experience.name)")
+        print("    - Campaign ID: \(viewController.campaignID ?? "none")")
+        print("")
     }
     
-    func viewController(_ viewController: RoverViewController, didViewExperience experience: Experience, campaignID: String?, duration: Double) {
-        print("Experience Viewed", experience.name, String(describing: campaignID), duration)
+    func viewController(_ viewController: RoverViewController, didViewExperience experience: Experience, duration: Double) {
+        print("[Delegate] Experience Viewed")
+        print("    - Experience: \(experience.name)")
+        print("    - Campaign ID: \(viewController.campaignID ?? "none")")
+        print("    - Duration: \(duration.rounded())s")
+        print("")
     }
     
-    func viewController(_ viewController: RoverViewController, didPresentScreen screen: Screen, experience: Experience, campaignID: String?) {
-        print("Screen Presented", screen.name, experience.name, String(describing: campaignID))
+    func viewController(_ viewController: RoverViewController, didPresentScreen screen: Screen, experience: Experience) {
+        print("[Delegate] Screen Presented")
+        print("    - Experience: \(experience.name)")
+        print("    - Campaign ID: \(viewController.campaignID ?? "none")")
+        print("    - Screen: \(screen.name)")
+        print("")
     }
     
-    func viewController(_ viewController: RoverViewController, didDismissScreen screen: Screen, experience: Experience, campaignID: String?) {
-        print("Screen Dismissed", screen.name, experience.name, String(describing: campaignID))
+    func viewController(_ viewController: RoverViewController, didDismissScreen screen: Screen, experience: Experience) {
+        print("[Delegate] Screen Dismissed")
+        print("    - Experience: \(experience.name)")
+        print("    - Campaign ID: \(viewController.campaignID ?? "none")")
+        print("    - Screen: \(screen.name)")
+        print("")
     }
     
-    func viewController(_ viewController: RoverViewController, didViewScreen screen: Screen, experience: Experience, campaignID: String?, duration: Double) {
-        print("Screen Viewed", screen.name, experience.name, String(describing: campaignID), duration)
+    func viewController(_ viewController: RoverViewController, didViewScreen screen: Screen, experience: Experience, duration: Double) {
+        print("[Delegate] Screen Viewed")
+        print("    - Experience: \(experience.name)")
+        print("    - Campaign ID: \(viewController.campaignID ?? "none")")
+        print("    - Screen: \(screen.name)")
+        print("    - Duration: \(duration.rounded())s")
+        print("")
     }
     
-    func viewController(_ viewController: RoverViewController, didTapBlock block: Block, screen: Screen, experience: Experience, campaignID: String?) {
-        print("Block Tapped", block.name, screen.name, experience.name, String(describing: campaignID))
+    func viewController(_ viewController: RoverViewController, didTapBlock block: Block, screen: Screen, experience: Experience) {
+        print("[Delegate] Block Tapped")
+        print("    - Experience: \(experience.name)")
+        print("    - Campaign ID: \(viewController.campaignID ?? "none")")
+        print("    - Screen: \(screen.name)")
+        print("    - Block: \(block.name)")
+        print("")
+    }
+}
+
+/// As an alternative to implementing a `RoverViewControllerDelegate` you can observe `Notification`s sent by the
+/// `RoverViewController` through the default `NotificationCenter`. The below example shows how you can observe these
+/// `Notification`s and extract data from the `userInfo`.
+extension AppDelegate {
+    func observeRoverNotifications() {
+        observerTokens = [
+            NotificationCenter.default.addObserver(
+                forName: RoverViewController.experiencePresentedNotification,
+                object: nil,
+                queue: nil,
+                using: { notification in
+                    let viewController = notification.object as! RoverViewController
+                    let experience = notification.userInfo?[RoverViewController.experienceUserInfoKey] as! Experience
+                    print("[Observer] Experience Presented")
+                    print("    - Experience: \(experience.name)")
+                    print("    - Campaign ID: \(viewController.campaignID ?? "none")")
+                    print("")
+                }
+            ),
+            NotificationCenter.default.addObserver(
+                forName: RoverViewController.experienceDismissedNotification,
+                object: nil,
+                queue: nil,
+                using: { notification in
+                    let viewController = notification.object as! RoverViewController
+                    let experience = notification.userInfo?[RoverViewController.experienceUserInfoKey] as! Experience
+                    print("[Observer] Experience Dismissed")
+                    print("    - Experience: \(experience.name)")
+                    print("    - Campaign ID: \(viewController.campaignID ?? "none")")
+                    print("")
+                }
+            ),
+            NotificationCenter.default.addObserver(
+                forName: RoverViewController.experienceViewedNotification,
+                object: nil,
+                queue: nil,
+                using: { notification in
+                    let viewController = notification.object as! RoverViewController
+                    let experience = notification.userInfo?[RoverViewController.experienceUserInfoKey] as! Experience
+                    let duration = notification.userInfo?[RoverViewController.durationUserInfoKey] as! Double
+                    print("[Observer] Experience Viewed")
+                    print("    - Experience: \(experience.name)")
+                    print("    - Campaign ID: \(viewController.campaignID ?? "none")")
+                    print("    - Duration: \(duration.rounded())s")
+                    print("")
+                }
+            ),
+            NotificationCenter.default.addObserver(
+                forName: RoverViewController.screenPresentedNotification,
+                object: nil,
+                queue: nil,
+                using: { notification in
+                    let viewController = notification.object as! RoverViewController
+                    let screen = notification.userInfo?[RoverViewController.screenUserInfoKey] as! Screen
+                    let experience = notification.userInfo?[RoverViewController.experienceUserInfoKey] as! Experience
+                    print("[Observer] Screen Presented")
+                    print("    - Experience: \(experience.name)")
+                    print("    - Campaign ID: \(viewController.campaignID ?? "none")")
+                    print("    - Screen: \(screen.name)")
+                    print("")
+                }
+            ),
+            NotificationCenter.default.addObserver(
+                forName: RoverViewController.screenDismissedNotification,
+                object: nil,
+                queue: nil,
+                using: { notification in
+                    let viewController = notification.object as! RoverViewController
+                    let screen = notification.userInfo?[RoverViewController.screenUserInfoKey] as! Screen
+                    let experience = notification.userInfo?[RoverViewController.experienceUserInfoKey] as! Experience
+                    print("[Observer] Screen Dismissed")
+                    print("    - Experience: \(experience.name)")
+                    print("    - Campaign ID: \(viewController.campaignID ?? "none")")
+                    print("    - Screen: \(screen.name)")
+                    print("")
+                }
+            ),
+            NotificationCenter.default.addObserver(
+                forName: RoverViewController.screenViewedNotification,
+                object: nil,
+                queue: nil,
+                using: { notification in
+                    let viewController = notification.object as! RoverViewController
+                    let screen = notification.userInfo?[RoverViewController.screenUserInfoKey] as! Screen
+                    let experience = notification.userInfo?[RoverViewController.experienceUserInfoKey] as! Experience
+                    let duration = notification.userInfo?[RoverViewController.durationUserInfoKey] as! Double
+                    print("[Observer] Screen Viewed")
+                    print("    - Experience: \(experience.name)")
+                    print("    - Campaign ID: \(viewController.campaignID ?? "none")")
+                    print("    - Screen: \(screen.name)")
+                    print("    - Duration: \(duration.rounded())s")
+                    print("")
+                }
+            ),
+            NotificationCenter.default.addObserver(
+                forName: RoverViewController.blockTappedNotification,
+                object: nil,
+                queue: nil,
+                using: { notification in
+                    let viewController = notification.object as! RoverViewController
+                    let block = notification.userInfo?[RoverViewController.blockUserInfoKey] as! Block
+                    let screen = notification.userInfo?[RoverViewController.screenUserInfoKey] as! Screen
+                    let experience = notification.userInfo?[RoverViewController.experienceUserInfoKey] as! Experience
+                    print("[Observer] Block Tapped")
+                    print("    - Experience: \(experience.name)")
+                    print("    - Campaign ID: \(viewController.campaignID ?? "none")")
+                    print("    - Screen: \(screen.name)")
+                    print("    - Block: \(block.name)")
+                    print("")
+                }
+            )
+        ]
     }
 }

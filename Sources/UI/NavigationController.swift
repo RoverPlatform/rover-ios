@@ -50,29 +50,19 @@ open class NavigationController: UINavigationController {
             return
         }
         
-        viewController.delegate?.viewController(
-            viewController,
-            didPresentExperience: experience,
-            campaignID: campaignID
-        )
-        
-        var userInfo: [String: Any] = [
-            RoverViewController.experienceUserInfoKey: experience
-        ]
-        
-        if let campaignID = self.campaignID {
-            userInfo[RoverViewController.campaignIDUserInfoKey] = campaignID
-        }
+        viewController.delegate?.viewController(viewController, didPresentExperience: experience)
         
         NotificationCenter.default.post(
             name: RoverViewController.experiencePresentedNotification,
             object: viewController,
-            userInfo: userInfo
+            userInfo: [
+                RoverViewController.experienceUserInfoKey: experience
+            ]
         )
         
         sessionController.registerSession(
             identifier: sessionIdentifier,
-            completionHandler: { [weak viewController, experience, campaignID] duration in
+            completionHandler: { [weak viewController, experience] duration in
                 guard let viewController = viewController else {
                     return nil
                 }
@@ -80,15 +70,16 @@ open class NavigationController: UINavigationController {
                 viewController.delegate?.viewController(
                     viewController,
                     didViewExperience: experience,
-                    campaignID: campaignID,
                     duration: duration
                 )
                 
-                userInfo[RoverViewController.durationUserInfoKey] = duration
                 return Notification(
                     name: RoverViewController.experienceViewedNotification,
                     object: viewController,
-                    userInfo: userInfo
+                    userInfo: [
+                        RoverViewController.experienceUserInfoKey: experience,
+                        RoverViewController.durationUserInfoKey: duration
+                    ]
                 )
             }
         )
@@ -101,24 +92,14 @@ open class NavigationController: UINavigationController {
             return
         }
         
-        viewController.delegate?.viewController(
-            viewController,
-            didDismissExperience: experience,
-            campaignID: campaignID
-        )
-        
-        var userInfo: [String: Any] = [
-            RoverViewController.experienceUserInfoKey: experience
-        ]
-        
-        if let campaignID = self.campaignID {
-            userInfo[RoverViewController.campaignIDUserInfoKey] = campaignID
-        }
+        viewController.delegate?.viewController(viewController, didDismissExperience: experience)
         
         NotificationCenter.default.post(
             name: RoverViewController.experienceDismissedNotification,
             object: viewController,
-            userInfo: userInfo
+            userInfo: [
+                RoverViewController.experienceUserInfoKey: experience
+            ]
         )
         
         sessionController.unregisterSession(identifier: sessionIdentifier)

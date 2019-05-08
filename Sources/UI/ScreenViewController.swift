@@ -36,6 +36,20 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         }
     }
     
+    var roverViewController: RoverViewController? {
+        return navigationController?.parent as? RoverViewController
+    }
+    
+    var sessionIdentifier: String {
+        var identifier = "experience-\(experience.id)-screen-\(screen.id)"
+        
+        if let campaignID = self.campaignID {
+            identifier = "\(identifier)-campaign-\(campaignID)"
+        }
+        
+        return identifier
+    }
+    
     public init(
         collectionViewLayout: UICollectionViewLayout,
         experience: Experience,
@@ -81,80 +95,17 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         configureNavigationBar()
     }
     
-    lazy var sessionIdentifier: String = {
-        var identifier = "experience-\(experience.id)-screen-\(screen.id)"
-        
-        if let campaignID = self.campaignID {
-            identifier = "\(identifier)-campaign-\(campaignID)"
-        }
-        
-        return identifier
-    }()
-    
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
-        guard let viewController = navigationController?.parent as? RoverViewController else {
-            return
-        }
-        
-        viewController.delegate?.viewController(viewController, didPresentScreen: screen, experience: experience)
-        
-        NotificationCenter.default.post(
-            name: RoverViewController.screenPresentedNotification,
-            object: viewController,
-            userInfo: [
-                RoverViewController.experienceUserInfoKey: experience,
-                RoverViewController.screenUserInfoKey: screen
-            ]
-        )
-        
-        sessionController.registerSession(identifier: sessionIdentifier) { [weak viewController, screen, experience] duration in
-            guard let viewController = viewController else {
-                return nil
-            }
-            
-            viewController.delegate?.viewController(
-                viewController,
-                didViewScreen: screen,
-                experience: experience,
-                duration: duration
-            )
-            
-            return Notification(
-                name: RoverViewController.screenViewedNotification,
-                object: viewController,
-                userInfo: [
-                    RoverViewController.experienceUserInfoKey: experience,
-                    RoverViewController.screenUserInfoKey: screen,
-                    RoverViewController.durationUserInfoKey: duration
-                ]
-            )
+        roverViewController?.didPresentScreen(screen, experience: experience)
+        sessionController.registerSession(identifier: sessionIdentifier) { [weak self, screen, experience] duration in
+            self?.roverViewController?.didViewScreen(screen, experience: experience, duration: duration)
         }
     }
     
     override open func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
-        guard let viewController = navigationController?.parent as? RoverViewController else {
-            return
-        }
-        
-        viewController.delegate?.viewController(
-            viewController,
-            didDismissScreen: screen,
-            experience: experience
-        )
-        
-        NotificationCenter.default.post(
-            name: RoverViewController.screenDismissedNotification,
-            object: viewController,
-            userInfo: [
-                RoverViewController.experienceUserInfoKey: experience,
-                RoverViewController.screenUserInfoKey: screen
-            ]
-        )
-        
+        roverViewController?.didDismissScreen(screen, experience: experience)
         sessionController.unregisterSession(identifier: sessionIdentifier)
     }
     
@@ -442,21 +393,6 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
             presentWebsite(url, self)
         }
         
-        guard let viewController = navigationController?.parent as? RoverViewController else {
-            return
-        }
-        
-        viewController.delegate?.viewController(viewController, didTapBlock: block, screen: screen, experience: experience)
-        
-        NotificationCenter.default.post(
-            name: RoverViewController.blockTappedNotification,
-            object: viewController,
-            userInfo: [
-                RoverViewController.experienceUserInfoKey: experience,
-                RoverViewController.screenUserInfoKey: screen,
-                RoverViewController.rowUserInfoKey: row,
-                RoverViewController.blockUserInfoKey: block
-            ]
-        )
+        roverViewController?.didTapBlock(block, screen: screen, experience: experience)
     }
 }

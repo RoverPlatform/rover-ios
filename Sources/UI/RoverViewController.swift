@@ -254,6 +254,101 @@ open class RoverViewController: UIViewController {
     }
 }
 
+// MARK: Events
+
+extension RoverViewController {
+    func didPresentExperience(_ experience: Experience) {
+        delegate?.viewController(self, didPresentExperience: experience)
+        
+        NotificationCenter.default.post(
+            name: RoverViewController.experiencePresentedNotification,
+            object: self,
+            userInfo: [
+                RoverViewController.experienceUserInfoKey: experience
+            ]
+        )
+    }
+    
+    func didViewExperience(_ experience: Experience, duration: Double) {
+        delegate?.viewController(self, didViewExperience: experience, duration: duration)
+        
+        NotificationCenter.default.post(
+            name: RoverViewController.experienceViewedNotification,
+            object: self,
+            userInfo: [
+                RoverViewController.experienceUserInfoKey: experience,
+                RoverViewController.durationUserInfoKey: duration
+            ]
+        )
+    }
+    
+    func didDismissExperience(_ experience: Experience) {
+        delegate?.viewController(self, didDismissExperience: experience)
+        
+        NotificationCenter.default.post(
+            name: RoverViewController.experienceDismissedNotification,
+            object: self,
+            userInfo: [
+                RoverViewController.experienceUserInfoKey: experience
+            ]
+        )
+    }
+    
+    func didPresentScreen(_ screen: Screen, experience: Experience) {
+        delegate?.viewController(self, didPresentScreen: screen, experience: experience)
+        
+        NotificationCenter.default.post(
+            name: RoverViewController.screenPresentedNotification,
+            object: self,
+            userInfo: [
+                RoverViewController.experienceUserInfoKey: experience,
+                RoverViewController.screenUserInfoKey: screen
+            ]
+        )
+    }
+    
+    func didViewScreen(_ screen: Screen, experience: Experience, duration: Double) {
+        delegate?.viewController(self, didViewScreen: screen, experience: experience, duration: duration)
+        
+        NotificationCenter.default.post(
+            name: RoverViewController.screenViewedNotification,
+            object: self,
+            userInfo: [
+                RoverViewController.experienceUserInfoKey: experience,
+                RoverViewController.screenUserInfoKey: screen,
+                RoverViewController.durationUserInfoKey: duration
+            ]
+        )
+    }
+    
+    func didDismissScreen(_ screen: Screen, experience: Experience) {
+        delegate?.viewController(self, didDismissScreen: screen, experience: experience)
+        
+        NotificationCenter.default.post(
+            name: RoverViewController.screenDismissedNotification,
+            object: self,
+            userInfo: [
+                RoverViewController.experienceUserInfoKey: experience,
+                RoverViewController.screenUserInfoKey: screen
+            ]
+        )
+    }
+    
+    func didTapBlock(_ block: Block, screen: Screen, experience: Experience) {
+        delegate?.viewController(self, didTapBlock: block, screen: screen, experience: experience)
+        
+        NotificationCenter.default.post(
+            name: RoverViewController.blockTappedNotification,
+            object: self,
+            userInfo: [
+                RoverViewController.experienceUserInfoKey: experience,
+                RoverViewController.screenUserInfoKey: screen,
+                RoverViewController.blockUserInfoKey: block
+            ]
+        )
+    }
+}
+
 // MARK: Notification Names
 
 extension RoverViewController {
@@ -302,9 +397,6 @@ extension RoverViewController {
     
     /// A key whose value is a `Screen` associated with the event that triggered the `Notification`
     public static let screenUserInfoKey = "screenUserInfoKey"
-    
-    /// A key whose value is a `Row` associated with the event that triggered the `Notification`
-    public static let rowUserInfoKey = "rowUserInfoKey"
     
     /// A key whose value is a `Block` associated with the event that triggered the `Notification`
     public static let blockUserInfoKey = "blockUserInfoKey"

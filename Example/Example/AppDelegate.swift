@@ -21,7 +21,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Uncomment this line and look at the method implementation for an example of observing `Notification`s sent by
         // the `RoverViewController`.
-        observeRoverNotifications()
+//        observeRoverNotifications()
         return true
     }
     

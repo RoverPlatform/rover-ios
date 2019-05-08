@@ -14,10 +14,6 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     
-    // An example implementation of a `RoverViewControllerDelegate`. It must be set as the value of the delegate
-    // property on the `RoverViewController` before it will be notified of experience events.
-    let exampleRoverViewControllerDelegate = ExampleRoverViewControllerDelegate()
-    
     // As an alternative to implementing a `RoverViewControllerDelegate` you can observe `Notification`s sent by the
     // `RoverViewController` through the default `NotificationCenter`. The `ExampleRoverViewControllerObserver` shows
     // how you can observe these `Notification`s and extract data from the `userInfo`.
@@ -50,10 +46,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
             let campaignID = queryItems.first(where: { $0.name == "campaignID" })?.value
             let viewController = RoverViewController(experienceID: experienceID, campaignID: campaignID)
-            
-            // Optionally assign a delegate to the view controller to be notified when certain experience "events"
-            // occur. E.g. when a screen is displayed or a block is tapped. 
-            viewController.delegate = exampleRoverViewControllerDelegate
             
             // Use Rover's UIApplication.present() helper extension method to find the currently active view controller,
             // and present the RoverViewController on top.

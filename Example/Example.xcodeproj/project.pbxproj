@@ -14,7 +14,6 @@
 		49D8913822738FC900332E67 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 49D8913622738FC900332E67 /* Main.storyboard */; };
 		49D8913A22738FCA00332E67 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 49D8913922738FCA00332E67 /* Assets.xcassets */; };
 		49D8913D22738FCA00332E67 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 49D8913B22738FCA00332E67 /* LaunchScreen.storyboard */; };
-		DB25A5042283124B0076CFDE /* ExampleRoverViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB25A5032283124B0076CFDE /* ExampleRoverViewControllerDelegate.swift */; };
 		DB25A506228312A20076CFDE /* ExampleRoverViewControllerObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB25A505228312A20076CFDE /* ExampleRoverViewControllerObserver.swift */; };
 /* End PBXBuildFile section */
 
@@ -41,7 +40,6 @@
 		49D8913922738FCA00332E67 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		49D8913C22738FCA00332E67 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		49D8913E22738FCA00332E67 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		DB25A5032283124B0076CFDE /* ExampleRoverViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleRoverViewControllerDelegate.swift; sourceTree = "<group>"; };
 		DB25A505228312A20076CFDE /* ExampleRoverViewControllerObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleRoverViewControllerObserver.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -78,7 +76,6 @@
 			isa = PBXGroup;
 			children = (
 				49D8913222738FC900332E67 /* AppDelegate.swift */,
-				DB25A5032283124B0076CFDE /* ExampleRoverViewControllerDelegate.swift */,
 				DB25A505228312A20076CFDE /* ExampleRoverViewControllerObserver.swift */,
 				49D8913422738FC900332E67 /* ViewController.swift */,
 				49D8913622738FC900332E67 /* Main.storyboard */,
@@ -163,7 +160,6 @@
 			files = (
 				DB25A506228312A20076CFDE /* ExampleRoverViewControllerObserver.swift in Sources */,
 				49D8913522738FC900332E67 /* ViewController.swift in Sources */,
-				DB25A5042283124B0076CFDE /* ExampleRoverViewControllerDelegate.swift in Sources */,
 				49D8913322738FC900332E67 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -11,32 +11,37 @@ import UIKit
 /// Responsible for emitting events including a view duration for open and closable registered sessions, such as Experience Viewed or Screen Viewed.  Includes some basic hysteresis for ensuring that rapidly re-opened sessions are aggregated into a single session.
 public class SessionController {
     let keepAliveTime: Int
-    var didBecomeActiveObserver: NSObjectProtocol?
-    var willResignActiveObserver: NSObjectProtocol?
+    let observers: [NSObjectProtocol]
     
     public init(keepAliveTime: Int) {
         self.keepAliveTime = keepAliveTime
         
-        self.didBecomeActiveObserver = NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: OperationQueue.main) { _ in
-            SessionState.shared.forEach {
-                $0.value.session.start()
-            }
-        }
-        
-        self.willResignActiveObserver = NotificationCenter.default.addObserver(forName: UIApplication.willResignActiveNotification, object: nil, queue: OperationQueue.main) { _ in
-            SessionState.shared.forEach {
-                $0.value.session.end()
-            }
-        }
+        observers = [
+            NotificationCenter.default.addObserver(
+                forName: UIApplication.didBecomeActiveNotification,
+                object: nil,
+                queue: OperationQueue.main,
+                using: { _ in
+                    SessionState.shared.forEach {
+                        $0.value.session.start()
+                    }
+                }
+            ),
+            NotificationCenter.default.addObserver(
+                forName: UIApplication.willResignActiveNotification,
+                object: nil,
+                queue: OperationQueue.main,
+                using: { _ in
+                    SessionState.shared.forEach {
+                        $0.value.session.end()
+                    }
+                }
+            )
+        ]
     }
     
     deinit {
-        if let observer = didBecomeActiveObserver {
-            NotificationCenter.default.removeObserver(observer)
-        }
-        if let observer = willResignActiveObserver {
-            NotificationCenter.default.removeObserver(observer)
-        }
+        observers.forEach(NotificationCenter.default.removeObserver)
     }
     
     public func registerSession(identifier: String, completionHandler: @escaping (Double) -> Void) {

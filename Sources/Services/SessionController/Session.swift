@@ -6,7 +6,7 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 class Session {
     let keepAliveTime: Int
@@ -72,21 +72,31 @@ class Session {
         case .started(let startedAt):
             // Capture endedAt now, as opposed to when the timer fires
             let endedAt = Date()
+            
+            var backgroundTaskID: UIBackgroundTaskIdentifier!
+            backgroundTaskID = UIApplication.shared.beginBackgroundTask(withName: "Keep Alive Timer") { [weak self] in
+                self?.finish(endedAt: endedAt)
+                UIApplication.shared.endBackgroundTask(backgroundTaskID)
+            }
+            
             let timeInterval = TimeInterval(keepAliveTime)
-            let timer = Timer.scheduledTimer(withTimeInterval: timeInterval, repeats: false, block: { [weak self, startedAt, endedAt] _ in
-                guard let session = self else {
-                    return
-                }
-                
-                let result = Result(startedAt: startedAt, endedAt: endedAt)
-                session.state = .complete(result: result)
+            let timer = Timer.scheduledTimer(withTimeInterval: timeInterval, repeats: false, block: { [weak self] _ in
+                self?.finish(endedAt: endedAt)
+                UIApplication.shared.endBackgroundTask(backgroundTaskID)
             })
             
             state = .ending(startedAt: startedAt, timer: timer)
         }
     }
     
-    func finish() {
-        end()
+    func finish(endedAt: Date) {
+        switch state {
+        case let .ending(startedAt, timer):
+            timer.invalidate()
+            let result = Result(startedAt: startedAt, endedAt: endedAt)
+            state = .complete(result: result)
+        default:
+            break
+        }
     }
 }

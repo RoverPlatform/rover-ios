@@ -73,6 +73,7 @@ class Session {
             // Capture endedAt now, as opposed to when the timer fires
             let endedAt = Date()
             
+            // Start a background task before running the timer to allow it to run its course if the app is backgrounded while ending the session.
             var backgroundTaskID: UIBackgroundTaskIdentifier!
             backgroundTaskID = UIApplication.shared.beginBackgroundTask(withName: "Keep Alive Timer") { [weak self] in
                 self?.finish(endedAt: endedAt)

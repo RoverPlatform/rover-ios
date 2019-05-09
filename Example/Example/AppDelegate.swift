@@ -18,6 +18,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Pass your account token from the Rover Settings app to the Rover SDK.
         Rover.accountToken = "<YOUR_SDK_TOKEN>"
         
+        // This method demonstrates how to observe various Rover "events" such as when an experience is viewed or a
+        // button in a Rover experience is tapped.
         observeRoverNotifications()
         return true
     }
@@ -91,7 +93,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         return false
     }
-    
+   
+    // This method demonstrates how to observe various Rover "events" such as when an experience is viewed or a
+    // button in a Rover experience is tapped. This is particularly useful for integrating with your mobile analytics
+    // or marketing auotmation provider. The Rover documentation provides specific examples for many of the popular
+    // providers.
     func observeRoverNotifications() {
         NotificationCenter.default.addObserver(forName: ExperienceViewController.experiencePresentedNotification, object: nil, queue: nil) { notification in
             let campaignID = notification.userInfo?[ExperienceViewController.campaignIDUserInfoKey] as? String

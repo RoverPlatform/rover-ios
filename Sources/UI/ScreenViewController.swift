@@ -36,16 +36,6 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         }
     }
     
-    var sessionIdentifier: String {
-        var identifier = "experience-\(experience.id)-screen-\(screen.id)"
-        
-        if let campaignID = self.campaignID {
-            identifier = "\(identifier)-campaign-\(campaignID)"
-        }
-        
-        return identifier
-    }
-    
     public init(
         collectionViewLayout: UICollectionViewLayout,
         experience: Experience,
@@ -90,6 +80,16 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         super.viewWillAppear(animated)
         configureNavigationBar()
     }
+    
+    lazy var sessionIdentifier: String = {
+        var identifier = "experience-\(experience.id)-screen-\(screen.id)"
+        
+        if let campaignID = self.campaignID {
+            identifier = "\(identifier)-campaign-\(campaignID)"
+        }
+        
+        return identifier
+    }()
     
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)

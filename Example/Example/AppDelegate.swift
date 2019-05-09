@@ -14,14 +14,11 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     
-    // As an alternative to implementing a `RoverViewControllerDelegate` you can observe `Notification`s sent by the
-    // `RoverViewController` through the default `NotificationCenter`. The `ExampleRoverViewControllerObserver` shows
-    // how you can observe these `Notification`s and extract data from the `userInfo`.
-    let exampleRoverViewControllerObserver = ExampleRoverViewControllerObserver()
-    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Pass your account token from the Rover Settings app to the Rover SDK.
         Rover.accountToken = "<YOUR_SDK_TOKEN>"
+        
+        observeRoverNotifications()
         return true
     }
     
@@ -93,5 +90,47 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         return false
+    }
+    
+    func observeRoverNotifications() {
+        NotificationCenter.default.addObserver(forName: ExperienceViewController.experiencePresentedNotification, object: nil, queue: nil) { notification in
+            let campaignID = notification.userInfo?[ExperienceViewController.campaignIDUserInfoKey] as? String
+            let experience = notification.userInfo?[ExperienceViewController.experienceUserInfoKey] as! Experience
+            os_log("Experience Presented: \"%@\" (campaignID=%@)", experience.name, campaignID ?? "none")
+        }
+        
+        NotificationCenter.default.addObserver(forName: ExperienceViewController.experienceDismissedNotification, object: nil, queue: nil) { notification in
+            let campaignID = notification.userInfo?[ExperienceViewController.campaignIDUserInfoKey] as? String
+            let experience = notification.userInfo?[ExperienceViewController.experienceUserInfoKey] as! Experience
+            os_log("Experience Dismissed: \"%@\" (campaignID=%@)", experience.name, campaignID ?? "none")
+        }
+        
+        NotificationCenter.default.addObserver(forName: ExperienceViewController.experienceViewedNotification, object: nil, queue: nil) { notification in
+            let campaignID = notification.userInfo?[ExperienceViewController.campaignIDUserInfoKey] as? String
+            let experience = notification.userInfo?[ExperienceViewController.experienceUserInfoKey] as! Experience
+            let duration = notification.userInfo?[ExperienceViewController.durationUserInfoKey] as! Double
+            os_log("Experience Viewed: \"%@\" (campaignID=%@), for %f seconds", experience.name, campaignID ?? "none", duration)
+        }
+        
+        NotificationCenter.default.addObserver(forName: ScreenViewController.screenPresentedNotification, object: nil, queue: nil) { notification in
+            let screen = notification.userInfo?[ScreenViewController.screenUserInfoKey] as! Screen
+            os_log("Screen Presented: \"%@\"", screen.name)
+        }
+        
+        NotificationCenter.default.addObserver(forName: ScreenViewController.screenDismissedNotification, object: nil, queue: nil) { notification in
+            let screen = notification.userInfo?[ScreenViewController.screenUserInfoKey] as! Screen
+            os_log("Screen Dismissed: \"%@\"", screen.name)
+        }
+        
+        NotificationCenter.default.addObserver(forName: ScreenViewController.screenViewedNotification, object: nil, queue: nil) { notification in
+            let screen = notification.userInfo?[ScreenViewController.screenUserInfoKey] as! Screen
+            let duration = notification.userInfo?[ScreenViewController.durationUserInfoKey] as! Double
+            os_log("Screen Viewed: \"%@\", for %f seconds", screen.name, duration)
+        }
+        
+        NotificationCenter.default.addObserver(forName: ScreenViewController.blockTappedNotification, object: nil, queue: nil) { notification in
+            let block = notification.userInfo?[ScreenViewController.blockUserInfoKey] as! Block
+            os_log("Block Tapped: \"%@\"", block.name)
+        }
     }
 }

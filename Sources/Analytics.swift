@@ -103,6 +103,7 @@ public class Analytics {
     
     public func disable() {
         tokens.forEach(NotificationCenter.default.removeObserver)
+        tokens = []
     }
     
     deinit {
@@ -127,7 +128,21 @@ public class Analytics {
         request.setValue("application/json", forHTTPHeaderField: "content-type")
         request.setValue(Rover.accountToken, forHTTPHeaderField: "x-rover-account-token")
         
-        session.uploadTask(with: request, from: data).resume()
+        var backgroundTaskID: UIBackgroundTaskIdentifier!
+        backgroundTaskID = UIApplication.shared.beginBackgroundTask(withName: "Upload Analytics Event") {
+            os_log("Failed to upload analytics event: %@", log: .rover, type: .error, "App was suspended during upload")
+            UIApplication.shared.endBackgroundTask(backgroundTaskID)
+        }
+        
+        let sessionTask = session.uploadTask(with: request, from: data) { _, _, error in
+            if let error = error {
+                os_log("Failed to upload analytics event: %@", log: .rover, type: .error, error.localizedDescription)
+            }
+            
+            UIApplication.shared.endBackgroundTask(backgroundTaskID)
+        }
+        
+        sessionTask.resume()
     }
 }
 

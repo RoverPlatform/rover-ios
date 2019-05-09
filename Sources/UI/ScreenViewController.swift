@@ -455,7 +455,7 @@ extension ScreenViewController {
     ///
     /// If the user quickly dismisses the view controller and presents it again (or backgrounds the app and restores it)
     /// the view controller considers this part of the same "viewing session". The notification is not sent until the
-    /// user dismisses the view controller and a specified time passes (default is 15 seconds).
+    /// user dismisses the view controller and a specified time passes (default is 10 seconds).
     ///
     /// This notification is useful for tracking the amount of time users spend viewing a screen. However if you want to
     /// be notified immediately when a user views a screen you should use the `screenPresentedNotification`.

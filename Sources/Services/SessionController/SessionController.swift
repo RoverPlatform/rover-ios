@@ -42,6 +42,7 @@ public class SessionController {
     
     deinit {
         observers.forEach(NotificationCenter.default.removeObserver)
+        observers = []
     }
     
     public func registerSession(identifier: String, completionHandler: @escaping (Double) -> Void) {

@@ -103,6 +103,7 @@ public class Analytics {
     
     public func disable() {
         tokens.forEach(NotificationCenter.default.removeObserver)
+        tokens = []
     }
     
     deinit {

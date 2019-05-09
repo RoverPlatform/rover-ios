@@ -58,8 +58,6 @@ open class RoverViewController: UIViewController {
         self.campaignID = campaignID
         super.init(nibName: nil, bundle: nil)
         
-        Analytics.shared.enable()
-        
         configureView()
         layoutActivityIndicator()
         layoutCancelButton()

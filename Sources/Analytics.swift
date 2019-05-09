@@ -129,6 +129,7 @@ public class Analytics {
         
         var backgroundTaskID: UIBackgroundTaskIdentifier!
         backgroundTaskID = UIApplication.shared.beginBackgroundTask(withName: "Upload Analytics Event") {
+            os_log("Failed to upload analytics event: %@", log: .rover, type: .error, "App was suspended during upload")
             UIApplication.shared.endBackgroundTask(backgroundTaskID)
         }
         

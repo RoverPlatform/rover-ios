@@ -9,13 +9,13 @@
 import os.log
 import UIKit
 
-class Analytics {
-    static var shared = Analytics()
+public class Analytics {
+    public static var shared = Analytics()
     
     private let session = URLSession(configuration: URLSessionConfiguration.default)
     private var tokens: [NSObjectProtocol] = []
     
-    func enable() {
+    public func enable() {
         guard tokens.isEmpty else {
             return
         }
@@ -26,7 +26,10 @@ class Analytics {
                 object: nil,
                 queue: nil,
                 using: { [weak self] in
-                    self?.trackEvent(name: "Experience Presented", userInfo: $0.userInfo)
+                    self?.trackEvent(
+                        name: "Experience Presented",
+                        properties: ExperiencePresentedProperties(userInfo: $0.userInfo)
+                    )
                 }
             ),
             NotificationCenter.default.addObserver(
@@ -34,7 +37,10 @@ class Analytics {
                 object: nil,
                 queue: nil,
                 using: { [weak self] in
-                    self?.trackEvent(name: "Experience Dismissed", userInfo: $0.userInfo)
+                    self?.trackEvent(
+                        name: "Experience Dismissed",
+                        properties: ExperienceDismissedProperties(userInfo: $0.userInfo)
+                    )
                 }
             ),
             NotificationCenter.default.addObserver(
@@ -42,7 +48,10 @@ class Analytics {
                 object: nil,
                 queue: nil,
                 using: { [weak self] in
-                    self?.trackEvent(name: "Experience Viewed", userInfo: $0.userInfo)
+                    self?.trackEvent(
+                        name: "Experience Viewed",
+                        properties: ExperienceViewedProperties(userInfo: $0.userInfo)
+                    )
                 }
             ),
             NotificationCenter.default.addObserver(
@@ -50,7 +59,10 @@ class Analytics {
                 object: nil,
                 queue: nil,
                 using: { [weak self] in
-                    self?.trackEvent(name: "Screen Presented", userInfo: $0.userInfo)
+                    self?.trackEvent(
+                        name: "Screen Presented",
+                        properties: ScreenPresentedProperties(userInfo: $0.userInfo)
+                    )
                 }
             ),
             NotificationCenter.default.addObserver(
@@ -58,7 +70,10 @@ class Analytics {
                 object: nil,
                 queue: nil,
                 using: { [weak self] in
-                    self?.trackEvent(name: "Screen Dismissed", userInfo: $0.userInfo)
+                    self?.trackEvent(
+                        name: "Screen Dismissed",
+                        properties: ScreenDismissedProperties(userInfo: $0.userInfo)
+                    )
                 }
             ),
             NotificationCenter.default.addObserver(
@@ -66,7 +81,10 @@ class Analytics {
                 object: nil,
                 queue: nil,
                 using: { [weak self] in
-                    self?.trackEvent(name: "Screen Viewed", userInfo: $0.userInfo)
+                    self?.trackEvent(
+                        name: "Screen Viewed",
+                        properties: ScreenViewedProperties(userInfo: $0.userInfo)
+                    )
                 }
             ),
             NotificationCenter.default.addObserver(
@@ -74,13 +92,16 @@ class Analytics {
                 object: nil,
                 queue: nil,
                 using: { [weak self] in
-                    self?.trackEvent(name: "Block Tapped", userInfo: $0.userInfo)
+                    self?.trackEvent(
+                        name: "Block Tapped",
+                        properties: BlockTappedProperties(userInfo: $0.userInfo)
+                    )
                 }
-            )
+            ),
         ]
     }
     
-    func disable() {
+    public func disable() {
         tokens.forEach(NotificationCenter.default.removeObserver)
     }
     
@@ -88,20 +109,7 @@ class Analytics {
         disable()
     }
     
-    private func trackEvent(name: String, userInfo: [AnyHashable: Any]?) {
-        let rawValue: [String: Any] = {
-            guard let userInfo = userInfo else {
-                return [:]
-            }
-            
-            return userInfo.reduce(into: [:], { (result, element) in
-                if let key = element.key as? String {
-                    result[key] = element.value
-                }
-            })
-        }()
-        
-        let properties = Properties(rawValue: rawValue)
+    private func trackEvent<Properties>(name: String, properties: Properties) where Properties: Encodable {
         let event = Event(name: name, properties: properties)
         let data: Data
         do {
@@ -109,7 +117,7 @@ class Analytics {
             encoder.dateEncodingStrategy = .formatted(DateFormatter.rfc3339)
             data = try encoder.encode(event)
         } catch {
-            os_log("Failed to encode event: %@", log: .rover, type: .error, error.localizedDescription)
+            os_log("Failed to encode analytics event: %@", log: .rover, type: .error, error.localizedDescription)
             return
         }
         
@@ -123,7 +131,7 @@ class Analytics {
     }
 }
 
-fileprivate struct Event: Encodable {
+fileprivate struct Event<Properties>: Encodable where Properties: Encodable {
     let name: String
     let properties: Properties
     let timestamp = Date()
@@ -137,61 +145,197 @@ fileprivate struct Event: Encodable {
     }
 }
 
-fileprivate struct Properties: Encodable, RawRepresentable {
-    let rawValue: [String: Any]
+fileprivate struct ExperiencePresentedProperties: Encodable {
+    var experienceID: String
+    var experienceName: String
+    var experienceTags: [String]
+    var campaignID: String?
     
-    struct DynamicCodingKey: CodingKey {
-        var stringValue: String
-        
-        init(stringValue: String) {
-            self.stringValue = stringValue
+    init?(userInfo: [AnyHashable: Any]?) {
+        guard let userInfo = userInfo,
+            let experience = userInfo[ExperienceViewController.experienceUserInfoKey] as? Experience else {
+                return nil
         }
         
-        var intValue: Int?
+        self.experienceID = experience.id
+        self.experienceName = experience.name
+        self.experienceTags = experience.tags
         
-        init?(intValue: Int) {
-            fatalError()
-        }
-    }
-    
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: DynamicCodingKey.self)
-        try rawValue.forEach { element in
-            let key = DynamicCodingKey(stringValue: element.key)
-            try container.encode(element.value, forKey: key)
+        if let campaignID = userInfo[ExperienceViewController.campaignIDUserInfoKey] as? String {
+            self.campaignID = campaignID
         }
     }
 }
 
-fileprivate extension KeyedEncodingContainer {
-    mutating func encode(_ value: Any, forKey key: Key) throws {
-        switch value {
-        case let value as Int:
-            try encode(value, forKey: key)
-        case let value as Bool:
-            try encode(value, forKey: key)
-        case let value as String:
-            try encode(value, forKey: key)
-        case let value as Double:
-            try encode(value, forKey: key)
-        case let value as [Int]:
-            try encode(value, forKey: key)
-        case let value as [Bool]:
-            try encode(value, forKey: key)
-        case let value as [Double]:
-            try encode(value, forKey: key)
-        case let value as [String]:
-            try encode(value, forKey: key)
-        case let value as [String: Any]:
-            var container = nestedContainer(keyedBy: Key.self, forKey: key)
-            try value.forEach { element in
-                if let key = Key(stringValue: element.key) {
-                    try container.encode(element.value, forKey: key)
-                }
-            }
-        default:
-            let context = EncodingError.Context(codingPath: codingPath, debugDescription: "Unexpected value type. Expected one of Int, String, Double, Boolean, or an array thereof, or a dictionary of all of the above including arrays.")
-            throw EncodingError.invalidValue(value, context)
+fileprivate struct ExperienceDismissedProperties: Encodable {
+    var experienceID: String
+    var experienceName: String
+    var experienceTags: [String]
+    var campaignID: String?
+    
+    init?(userInfo: [AnyHashable: Any]?) {
+        guard let userInfo = userInfo,
+            let experience = userInfo[ExperienceViewController.experienceUserInfoKey] as? Experience else {
+                return nil
+        }
+        
+        self.experienceID = experience.id
+        self.experienceName = experience.name
+        self.experienceTags = experience.tags
+        
+        if let campaignID = userInfo[ExperienceViewController.campaignIDUserInfoKey] as? String {
+            self.campaignID = campaignID
+        }
+    }
+}
+
+fileprivate struct ExperienceViewedProperties: Encodable {
+    var experienceID: String
+    var experienceName: String
+    var experienceTags: [String]
+    var duration: Double
+    var campaignID: String?
+    
+    init?(userInfo: [AnyHashable: Any]?) {
+        guard let userInfo = userInfo,
+            let experience = userInfo[ExperienceViewController.experienceUserInfoKey] as? Experience,
+            let duration = userInfo[ExperienceViewController.durationUserInfoKey] as? Double else {
+                return nil
+        }
+        
+        self.experienceID = experience.id
+        self.experienceName = experience.name
+        self.experienceTags = experience.tags
+        self.duration = duration
+        
+        if let campaignID = userInfo[ExperienceViewController.campaignIDUserInfoKey] as? String {
+            self.campaignID = campaignID
+        }
+    }
+}
+
+fileprivate struct ScreenPresentedProperties: Encodable {
+    var experienceID: String
+    var experienceName: String
+    var experienceTags: [String]
+    var screenID: String
+    var screenName: String
+    var screenTags: [String]
+    var campaignID: String?
+    
+    init?(userInfo: [AnyHashable: Any]?) {
+        guard let userInfo = userInfo,
+            let experience = userInfo[ScreenViewController.experienceUserInfoKey] as? Experience,
+            let screen = userInfo[ScreenViewController.screenUserInfoKey] as? Screen else {
+                return nil
+        }
+        
+        self.experienceID = experience.id
+        self.experienceName = experience.name
+        self.experienceTags = experience.tags
+        self.screenID = screen.id
+        self.screenName = screen.name
+        self.screenTags = screen.tags
+        
+        if let campaignID = userInfo[ScreenViewController.campaignIDUserInfoKey] as? String {
+            self.campaignID = campaignID
+        }
+    }
+}
+
+fileprivate struct ScreenDismissedProperties: Encodable {
+    var experienceID: String
+    var experienceName: String
+    var experienceTags: [String]
+    var screenID: String
+    var screenName: String
+    var screenTags: [String]
+    var campaignID: String?
+    
+    init?(userInfo: [AnyHashable: Any]?) {
+        guard let userInfo = userInfo,
+            let experience = userInfo[ScreenViewController.experienceUserInfoKey] as? Experience,
+            let screen = userInfo[ScreenViewController.screenUserInfoKey] as? Screen else {
+                return nil
+        }
+        
+        self.experienceID = experience.id
+        self.experienceName = experience.name
+        self.experienceTags = experience.tags
+        self.screenID = screen.id
+        self.screenName = screen.name
+        self.screenTags = screen.tags
+        
+        if let campaignID = userInfo[ScreenViewController.campaignIDUserInfoKey] as? String {
+            self.campaignID = campaignID
+        }
+    }
+}
+
+fileprivate struct ScreenViewedProperties: Encodable {
+    var experienceID: String
+    var experienceName: String
+    var experienceTags: [String]
+    var screenID: String
+    var screenName: String
+    var screenTags: [String]
+    var duration: Double
+    var campaignID: String?
+    
+    init?(userInfo: [AnyHashable: Any]?) {
+        guard let userInfo = userInfo,
+            let experience = userInfo[ScreenViewController.experienceUserInfoKey] as? Experience,
+            let screen = userInfo[ScreenViewController.screenUserInfoKey] as? Screen,
+            let duration = userInfo[ScreenViewController.durationUserInfoKey] as? Double else {
+                return nil
+        }
+        
+        self.experienceID = experience.id
+        self.experienceName = experience.name
+        self.experienceTags = experience.tags
+        self.screenID = screen.id
+        self.screenName = screen.name
+        self.screenTags = screen.tags
+        self.duration = duration
+        
+        if let campaignID = userInfo[ScreenViewController.campaignIDUserInfoKey] as? String {
+            self.campaignID = campaignID
+        }
+    }
+}
+
+fileprivate struct BlockTappedProperties: Encodable {
+    var experienceID: String
+    var experienceName: String
+    var experienceTags: [String]
+    var screenID: String
+    var screenName: String
+    var screenTags: [String]
+    var blockID: String
+    var blockName: String
+    var blockTags: [String]
+    var campaignID: String?
+    
+    init?(userInfo: [AnyHashable: Any]?) {
+        guard let userInfo = userInfo,
+            let experience = userInfo[ScreenViewController.experienceUserInfoKey] as? Experience,
+            let screen = userInfo[ScreenViewController.screenUserInfoKey] as? Screen,
+            let block = userInfo[ScreenViewController.blockUserInfoKey] as? Block else {
+                return nil
+        }
+        
+        self.experienceID = experience.id
+        self.experienceName = experience.name
+        self.experienceTags = experience.tags
+        self.screenID = screen.id
+        self.screenName = screen.name
+        self.screenTags = screen.tags
+        self.blockID = block.id
+        self.blockName = block.name
+        self.blockTags = block.tags
+        
+        if let campaignID = userInfo[ScreenViewController.campaignIDUserInfoKey] as? String {
+            self.campaignID = campaignID
         }
     }
 }

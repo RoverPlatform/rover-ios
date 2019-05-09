@@ -142,7 +142,7 @@ public class AuthTokenNotConfiguredError: Error {
 // MARK: Serialization
 
 extension DateFormatter {
-    public static let rfc3339: DateFormatter = {
+    static let rfc3339: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ"
         formatter.calendar = Calendar(identifier: .iso8601)
@@ -153,7 +153,7 @@ extension DateFormatter {
 }
 
 extension JSONDecoder {
-    public static let `default`: JSONDecoder = {
+    static let `default`: JSONDecoder = {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .formatted(DateFormatter.rfc3339)
         return decoder
@@ -161,7 +161,7 @@ extension JSONDecoder {
 }
 
 extension JSONEncoder {
-    public static let `default`: JSONEncoder = {
+    static let `default`: JSONEncoder = {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .formatted(DateFormatter.rfc3339)
         return encoder

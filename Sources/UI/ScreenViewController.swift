@@ -36,10 +36,6 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         }
     }
     
-    var roverViewController: RoverViewController? {
-        return navigationController?.parent as? RoverViewController
-    }
-    
     var sessionIdentifier: String {
         var identifier = "experience-\(experience.id)-screen-\(screen.id)"
         
@@ -97,15 +93,41 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        roverViewController?.didPresentScreen(screen, experience: experience)
-        sessionController.registerSession(identifier: sessionIdentifier) { [weak self, screen, experience] duration in
-            self?.roverViewController?.didViewScreen(screen, experience: experience, duration: duration)
+        
+        NotificationCenter.default.post(
+            name: ScreenViewController.screenPresentedNotification,
+            object: self,
+            userInfo: [
+                ScreenViewController.experienceUserInfoKey: experience,
+                ScreenViewController.screenUserInfoKey: screen
+            ]
+        )
+        
+        sessionController.registerSession(identifier: sessionIdentifier) { [weak self, experience, screen] duration in
+            NotificationCenter.default.post(
+                name: ScreenViewController.screenViewedNotification,
+                object: self,
+                userInfo: [
+                    ScreenViewController.experienceUserInfoKey: experience,
+                    ScreenViewController.screenUserInfoKey: screen,
+                    ScreenViewController.durationUserInfoKey: duration
+                ]
+            )
         }
     }
     
     override open func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        roverViewController?.didDismissScreen(screen, experience: experience)
+        
+        NotificationCenter.default.post(
+            name: ScreenViewController.screenDismissedNotification,
+            object: self,
+            userInfo: [
+                ScreenViewController.experienceUserInfoKey: experience,
+                ScreenViewController.screenUserInfoKey: screen
+            ]
+        )
+        
         sessionController.unregisterSession(identifier: sessionIdentifier)
     }
     
@@ -393,6 +415,54 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
             presentWebsite(url, self)
         }
         
-        roverViewController?.didTapBlock(block, screen: screen, experience: experience)
+        NotificationCenter.default.post(
+            name: ScreenViewController.blockTappedNotification,
+            object: self,
+            userInfo: [
+                ScreenViewController.experienceUserInfoKey: experience,
+                ScreenViewController.screenUserInfoKey: screen,
+                ScreenViewController.blockUserInfoKey: block
+            ]
+        )
     }
+}
+
+extension ScreenViewController {
+    /// The `ScreenViewController` sends this notification when it is presented.
+    public static let screenPresentedNotification = Notification.Name("io.rover.screenPresentedNotification")
+    
+    /// The `ScreenViewController` sends this notification when it is dismissed.
+    public static let screenDismissedNotification = Notification.Name("io.rover.screenDismissedNotification")
+    
+    /// The `ScreenViewController` sends this notification when a user finishes viewing a screen. The user starts
+    /// viewing a screen when the view controller is presented and finishes when it is dismissed. The duration the
+    /// user viewed the screen is included in the `durationUserInfoKey`.
+    ///
+    /// If the user quickly dismisses the view controller and presents it again (or backgrounds the app and restores it)
+    /// the view controller considers this part of the same "viewing session". The notification is not sent until the
+    /// user dismisses the view controller and a specified time passes (default is 15 seconds).
+    ///
+    /// This notification is useful for tracking the amount of time users spend viewing a screen. However if you want to
+    /// be notified immediately when a user views a screen you should use the `screenPresentedNotification`.
+    public static let screenViewedNotification = Notification.Name("io.rover.screenViewedNotification")
+    
+    /// The `ScreenViewController` sends this when a `UIView` representing a specific block somewhere within the view
+    /// controller's hierarchy was tapped by the user.
+    public static let blockTappedNotification = Notification.Name("io.rover.blockTappedNotification")
+}
+
+// MARK: User Info Keys
+
+extension ScreenViewController {
+    /// A key whose value is the `Experience` associated with the `ScreenViewController`.
+    public static let experienceUserInfoKey = "experienceUserInfoKey"
+    
+    /// A key whose value is the `Screen` associated with the `ScreenViewController`.
+    public static let screenUserInfoKey = "screenUserInfoKey"
+    
+    /// A key whose value is the `Block` that was tapped which triggered a `blockTappedNotification`.
+    public static let blockUserInfoKey = "blockUserInfoKey"
+    
+    /// A key whose value is a `Double` representing the duration of an experience session.
+    public static let durationUserInfoKey = "durationUserInfoKey"
 }

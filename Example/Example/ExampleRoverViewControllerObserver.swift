@@ -17,42 +17,40 @@ class ExampleRoverViewControllerObserver {
         startObservingRoverNotifications()
     }
     
-    func startObservingRoverNotifications() {
-        let log = OSLog(subsystem: "io.rover.Example", category: "Observer")
-        
+    func startObservingRoverNotifications() {        
         observerTokens = [
-            NotificationCenter.default.addObserver(forName: RoverViewController.experiencePresentedNotification, object: nil, queue: nil) { notification in
-                let viewController = notification.object as! RoverViewController
-                let experience = notification.userInfo?[RoverViewController.experienceUserInfoKey] as! Experience
-                os_log(.default, log: log, "Experience Presented: \"%@\" (campaignID=%@)", experience.name, viewController.campaignID ?? "none")
+            NotificationCenter.default.addObserver(forName: ExperienceViewController.experiencePresentedNotification, object: nil, queue: nil) { notification in
+                let campaignID: String? = nil
+                let experience = notification.userInfo?[ExperienceViewController.experienceUserInfoKey] as! Experience
+                os_log("Experience Presented: \"%@\" (campaignID=%@)", experience.name, campaignID ?? "none")
             },
-            NotificationCenter.default.addObserver(forName: RoverViewController.experienceDismissedNotification, object: nil, queue: nil) { notification in
-                let viewController = notification.object as! RoverViewController
-                let experience = notification.userInfo?[RoverViewController.experienceUserInfoKey] as! Experience
-                os_log(.default, log: log, "Experience Dismissed: \"%@\" (campaignID=%@)", experience.name, viewController.campaignID ?? "none")
+            NotificationCenter.default.addObserver(forName: ExperienceViewController.experienceDismissedNotification, object: nil, queue: nil) { notification in
+                let campaignID: String? = nil
+                let experience = notification.userInfo?[ExperienceViewController.experienceUserInfoKey] as! Experience
+                os_log("Experience Dismissed: \"%@\" (campaignID=%@)", experience.name, campaignID ?? "none")
             },
-            NotificationCenter.default.addObserver(forName: RoverViewController.experienceViewedNotification, object: nil, queue: nil) { notification in
-                let viewController = notification.object as! RoverViewController
-                let experience = notification.userInfo?[RoverViewController.experienceUserInfoKey] as! Experience
-                let duration = notification.userInfo?[RoverViewController.durationUserInfoKey] as! Double
-                os_log(.default, log: log, "Experience Viewed: \"%@\" (campaignID=%@), for %f seconds", experience.name, viewController.campaignID ?? "none", duration)
+            NotificationCenter.default.addObserver(forName: ExperienceViewController.experienceViewedNotification, object: nil, queue: nil) { notification in
+                let campaignID: String? = nil
+                let experience = notification.userInfo?[ExperienceViewController.experienceUserInfoKey] as! Experience
+                let duration = notification.userInfo?[ExperienceViewController.durationUserInfoKey] as! Double
+                os_log("Experience Viewed: \"%@\" (campaignID=%@), for %f seconds", experience.name, campaignID ?? "none", duration)
             },
-            NotificationCenter.default.addObserver(forName: RoverViewController.screenPresentedNotification, object: nil, queue: nil) { notification in
-                let screen = notification.userInfo?[RoverViewController.screenUserInfoKey] as! Screen
-                os_log(.default, log: log, "Screen Presented: \"%@\"", screen.name)
+            NotificationCenter.default.addObserver(forName: ScreenViewController.screenPresentedNotification, object: nil, queue: nil) { notification in
+                let screen = notification.userInfo?[ScreenViewController.screenUserInfoKey] as! Screen
+                os_log("Screen Presented: \"%@\"", screen.name)
             },
-            NotificationCenter.default.addObserver(forName: RoverViewController.screenDismissedNotification, object: nil, queue: nil) { notification in
-                let screen = notification.userInfo?[RoverViewController.screenUserInfoKey] as! Screen
-                os_log(.default, log: log, "Screen Dismissed: \"%@\"", screen.name)
+            NotificationCenter.default.addObserver(forName: ScreenViewController.screenDismissedNotification, object: nil, queue: nil) { notification in
+                let screen = notification.userInfo?[ScreenViewController.screenUserInfoKey] as! Screen
+                os_log("Screen Dismissed: \"%@\"", screen.name)
             },
-            NotificationCenter.default.addObserver(forName: RoverViewController.screenViewedNotification, object: nil, queue: nil) { notification in
-                let screen = notification.userInfo?[RoverViewController.screenUserInfoKey] as! Screen
-                let duration = notification.userInfo?[RoverViewController.durationUserInfoKey] as! Double
-                os_log(.default, log: log, "Screen Viewed: \"%@\", for %f seconds", screen.name, duration)
+            NotificationCenter.default.addObserver(forName: ScreenViewController.screenViewedNotification, object: nil, queue: nil) { notification in
+                let screen = notification.userInfo?[ScreenViewController.screenUserInfoKey] as! Screen
+                let duration = notification.userInfo?[ScreenViewController.durationUserInfoKey] as! Double
+                os_log("Screen Viewed: \"%@\", for %f seconds", screen.name, duration)
             },
-            NotificationCenter.default.addObserver(forName: RoverViewController.blockTappedNotification, object: nil, queue: nil) { notification in
-                let block = notification.userInfo?[RoverViewController.blockUserInfoKey] as! Block
-                os_log(.default, log: log, "Block Tapped: \"%@\"", block.name)
+            NotificationCenter.default.addObserver(forName: ScreenViewController.blockTappedNotification, object: nil, queue: nil) { notification in
+                let block = notification.userInfo?[ScreenViewController.blockUserInfoKey] as! Block
+                os_log("Block Tapped: \"%@\"", block.name)
             }
         ]
     }

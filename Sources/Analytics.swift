@@ -22,7 +22,7 @@ class Analytics {
         
         tokens = [
             NotificationCenter.default.addObserver(
-                forName: RoverViewController.experiencePresentedNotification,
+                forName: ExperienceViewController.experiencePresentedNotification,
                 object: nil,
                 queue: nil,
                 using: { [weak self] in
@@ -30,7 +30,7 @@ class Analytics {
                 }
             ),
             NotificationCenter.default.addObserver(
-                forName: RoverViewController.experienceDismissedNotification,
+                forName: ExperienceViewController.experienceDismissedNotification,
                 object: nil,
                 queue: nil,
                 using: { [weak self] in
@@ -38,7 +38,7 @@ class Analytics {
                 }
             ),
             NotificationCenter.default.addObserver(
-                forName: RoverViewController.experienceViewedNotification,
+                forName: ExperienceViewController.experienceViewedNotification,
                 object: nil,
                 queue: nil,
                 using: { [weak self] in
@@ -46,7 +46,7 @@ class Analytics {
                 }
             ),
             NotificationCenter.default.addObserver(
-                forName: RoverViewController.screenPresentedNotification,
+                forName: ScreenViewController.screenPresentedNotification,
                 object: nil,
                 queue: nil,
                 using: { [weak self] in
@@ -54,7 +54,7 @@ class Analytics {
                 }
             ),
             NotificationCenter.default.addObserver(
-                forName: RoverViewController.screenDismissedNotification,
+                forName: ScreenViewController.screenDismissedNotification,
                 object: nil,
                 queue: nil,
                 using: { [weak self] in
@@ -62,7 +62,7 @@ class Analytics {
                 }
             ),
             NotificationCenter.default.addObserver(
-                forName: RoverViewController.screenViewedNotification,
+                forName: ScreenViewController.screenViewedNotification,
                 object: nil,
                 queue: nil,
                 using: { [weak self] in
@@ -70,7 +70,7 @@ class Analytics {
                 }
             ),
             NotificationCenter.default.addObserver(
-                forName: RoverViewController.blockTappedNotification,
+                forName: ScreenViewController.blockTappedNotification,
                 object: nil,
                 queue: nil,
                 using: { [weak self] in

@@ -94,24 +94,27 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
+        var userInfo: [String: Any] = [
+            ScreenViewController.experienceUserInfoKey: experience,
+            ScreenViewController.screenUserInfoKey: screen
+        ]
+        
+        if let campaignID = campaignID {
+            userInfo[ScreenViewController.campaignIDUserInfoKey] = campaignID
+        }
+        
         NotificationCenter.default.post(
             name: ScreenViewController.screenPresentedNotification,
             object: self,
-            userInfo: [
-                ScreenViewController.experienceUserInfoKey: experience,
-                ScreenViewController.screenUserInfoKey: screen
-            ]
+            userInfo: userInfo
         )
         
-        sessionController.registerSession(identifier: sessionIdentifier) { [weak self, experience, screen] duration in
+        sessionController.registerSession(identifier: sessionIdentifier) { [weak self] duration in
+            userInfo[ScreenViewController.durationUserInfoKey] = duration
             NotificationCenter.default.post(
                 name: ScreenViewController.screenViewedNotification,
                 object: self,
-                userInfo: [
-                    ScreenViewController.experienceUserInfoKey: experience,
-                    ScreenViewController.screenUserInfoKey: screen,
-                    ScreenViewController.durationUserInfoKey: duration
-                ]
+                userInfo: userInfo
             )
         }
     }
@@ -119,13 +122,19 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     override open func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
+        var userInfo: [String: Any] = [
+            ScreenViewController.experienceUserInfoKey: experience,
+            ScreenViewController.screenUserInfoKey: screen
+        ]
+        
+        if let campaignID = campaignID {
+            userInfo[ScreenViewController.campaignIDUserInfoKey] = campaignID
+        }
+        
         NotificationCenter.default.post(
             name: ScreenViewController.screenDismissedNotification,
             object: self,
-            userInfo: [
-                ScreenViewController.experienceUserInfoKey: experience,
-                ScreenViewController.screenUserInfoKey: screen
-            ]
+            userInfo: userInfo
         )
         
         sessionController.unregisterSession(identifier: sessionIdentifier)
@@ -462,6 +471,10 @@ extension ScreenViewController {
     
     /// A key whose value is the `Block` that was tapped which triggered a `blockTappedNotification`.
     public static let blockUserInfoKey = "blockUserInfoKey"
+    
+    /// A key whose value is an optional `String` containing the `campaignID` passed into the `RoverViewController` when
+    /// it was initialized.
+    public static let campaignIDUserInfoKey = "campaignIDUserInfoKey"
     
     /// A key whose value is a `Double` representing the duration of an experience session.
     public static let durationUserInfoKey = "durationUserInfoKey"

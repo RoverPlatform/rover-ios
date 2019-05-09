@@ -50,22 +50,26 @@ open class ExperienceViewController: UINavigationController {
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
+        var userInfo: [String: Any] = [
+            ExperienceViewController.experienceUserInfoKey: experience
+        ]
+        
+        if let campaignID = campaignID {
+            userInfo[ExperienceViewController.campaignIDUserInfoKey] = campaignID
+        }
+        
         NotificationCenter.default.post(
             name: ExperienceViewController.experiencePresentedNotification,
             object: self,
-            userInfo: [
-                ExperienceViewController.experienceUserInfoKey: experience
-            ]
+            userInfo: userInfo
         )
         
-        sessionController.registerSession(identifier: sessionIdentifier) { [weak self, experience] duration in
+        sessionController.registerSession(identifier: sessionIdentifier) { [weak self] duration in
+            userInfo[ExperienceViewController.durationUserInfoKey] = duration
             NotificationCenter.default.post(
                 name: ExperienceViewController.experienceViewedNotification,
                 object: self,
-                userInfo: [
-                    ExperienceViewController.experienceUserInfoKey: experience,
-                    ExperienceViewController.durationUserInfoKey: duration
-                ]
+                userInfo: userInfo
             )
         }
     }
@@ -73,12 +77,18 @@ open class ExperienceViewController: UINavigationController {
     override open func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
+        var userInfo: [String: Any] = [
+            ExperienceViewController.experienceUserInfoKey: experience
+        ]
+        
+        if let campaignID = campaignID {
+            userInfo[ExperienceViewController.campaignIDUserInfoKey] = campaignID
+        }
+        
         NotificationCenter.default.post(
             name: ExperienceViewController.experienceDismissedNotification,
             object: self,
-            userInfo: [
-                ExperienceViewController.experienceUserInfoKey: experience
-            ]
+            userInfo: userInfo
         )
         
         sessionController.unregisterSession(identifier: sessionIdentifier)
@@ -113,6 +123,10 @@ extension ExperienceViewController {
 extension ExperienceViewController {
     /// A key whose value is the `Experience` associated with the `ExperienceViewController`.
     public static let experienceUserInfoKey = "experienceUserInfoKey"
+    
+    /// A key whose value is an optional `String` containing the `campaignID` passed into the `RoverViewController` when
+    /// it was initialized.
+    public static let campaignIDUserInfoKey = "campaignIDUserInfoKey"
     
     /// A key whose value is a `Double` representing the duration of an experience session.
     public static let durationUserInfoKey = "durationUserInfoKey"

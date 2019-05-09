@@ -20,17 +20,17 @@ class ExampleRoverViewControllerObserver {
     func startObservingRoverNotifications() {        
         observerTokens = [
             NotificationCenter.default.addObserver(forName: ExperienceViewController.experiencePresentedNotification, object: nil, queue: nil) { notification in
-                let campaignID: String? = nil
+                let campaignID = notification.userInfo?[ExperienceViewController.campaignIDUserInfoKey] as? String
                 let experience = notification.userInfo?[ExperienceViewController.experienceUserInfoKey] as! Experience
                 os_log("Experience Presented: \"%@\" (campaignID=%@)", experience.name, campaignID ?? "none")
             },
             NotificationCenter.default.addObserver(forName: ExperienceViewController.experienceDismissedNotification, object: nil, queue: nil) { notification in
-                let campaignID: String? = nil
+                let campaignID = notification.userInfo?[ExperienceViewController.campaignIDUserInfoKey] as? String
                 let experience = notification.userInfo?[ExperienceViewController.experienceUserInfoKey] as! Experience
                 os_log("Experience Dismissed: \"%@\" (campaignID=%@)", experience.name, campaignID ?? "none")
             },
             NotificationCenter.default.addObserver(forName: ExperienceViewController.experienceViewedNotification, object: nil, queue: nil) { notification in
-                let campaignID: String? = nil
+                let campaignID = notification.userInfo?[ExperienceViewController.campaignIDUserInfoKey] as? String
                 let experience = notification.userInfo?[ExperienceViewController.experienceUserInfoKey] as! Experience
                 let duration = notification.userInfo?[ExperienceViewController.durationUserInfoKey] as! Double
                 os_log("Experience Viewed: \"%@\" (campaignID=%@), for %f seconds", experience.name, campaignID ?? "none", duration)

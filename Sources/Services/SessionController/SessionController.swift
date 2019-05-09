@@ -39,7 +39,7 @@ public class SessionController {
         }
     }
     
-    public func registerSession(identifier: String, completionHandler: @escaping (Double) -> Notification) {
+    public func registerSession(identifier: String, completionHandler: @escaping (Double) -> Void) {
         if var entry = SessionState.shared[identifier] {
             entry.session.start()
             
@@ -52,9 +52,7 @@ public class SessionController {
         }
         
         let session = Session(keepAliveTime: keepAliveTime) { result in
-            let notification = completionHandler(result.duration)
-            
-            NotificationCenter.default.post(notification)
+            completionHandler(result.duration)
             
             if let entry = SessionState.shared[identifier], entry.isUnregistered {
                 SessionState.shared[identifier] = nil

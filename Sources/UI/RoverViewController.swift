@@ -168,9 +168,9 @@ open class RoverViewController: UIViewController {
         )
     }
 
-    open func navigationController(experience: Experience) -> NavigationController {
+    open func experienceViewController(experience: Experience) -> ExperienceViewController {
         let homeScreenViewController = screenViewController(experience: experience, screen: experience.homeScreen)
-        return NavigationController(
+        return ExperienceViewController(
             sessionController: sessionController,
             homeScreenViewController: homeScreenViewController,
             experience: experience,
@@ -179,7 +179,7 @@ open class RoverViewController: UIViewController {
     }
     
     open func didFetchExperience(_ experience: Experience) {
-        let viewController = self.navigationController(
+        let viewController = self.experienceViewController(
             experience: experience
         )
         

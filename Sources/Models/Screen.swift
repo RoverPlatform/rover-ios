@@ -68,16 +68,3 @@ public struct Screen: Decodable {
         self.tags = tags
     }
 }
-
-// MARK: Attributes
-
-extension Screen {
-    public var attributes: [String: Any] {
-        return [
-            "id": id,
-            "name": name,
-            "keys": keys,
-            "tags": tags
-        ]
-    }
-}

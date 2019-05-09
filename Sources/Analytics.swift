@@ -21,27 +21,62 @@ class Analytics {
         }
         
         tokens = [
-            NotificationCenter.default.addObserver(forName: .RVExperiencePresented, object: nil, queue: nil) { [weak self] in
-                self?.trackEvent(name: "Experience Presented", userInfo: $0.userInfo)
-            },
-            NotificationCenter.default.addObserver(forName: .RVExperienceDismissed, object: nil, queue: nil) { [weak self] in
-                self?.trackEvent(name: "Experience Dismissed", userInfo: $0.userInfo)
-            },
-            NotificationCenter.default.addObserver(forName: .RVExperienceViewed, object: nil, queue: nil) { [weak self] in
-                self?.trackEvent(name: "Experience Viewed", userInfo: $0.userInfo)
-            },
-            NotificationCenter.default.addObserver(forName: .RVScreenPresented, object: nil, queue: nil) { [weak self] in
-                self?.trackEvent(name: "Screen Presented", userInfo: $0.userInfo)
-            },
-            NotificationCenter.default.addObserver(forName: .RVScreenDismissed, object: nil, queue: nil) { [weak self] in
-                self?.trackEvent(name: "Screen Dismissed", userInfo: $0.userInfo)
-            },
-            NotificationCenter.default.addObserver(forName: .RVScreenViewed, object: nil, queue: nil) { [weak self] in
-                self?.trackEvent(name: "Screen Viewed", userInfo: $0.userInfo)
-            },
-            NotificationCenter.default.addObserver(forName: .RVBlockTapped, object: nil, queue: nil) { [weak self] in
-                self?.trackEvent(name: "Block Tapped", userInfo: $0.userInfo)
-            }
+            NotificationCenter.default.addObserver(
+                forName: ExperienceViewController.experiencePresentedNotification,
+                object: nil,
+                queue: nil,
+                using: { [weak self] in
+                    self?.trackEvent(name: "Experience Presented", userInfo: $0.userInfo)
+                }
+            ),
+            NotificationCenter.default.addObserver(
+                forName: ExperienceViewController.experienceDismissedNotification,
+                object: nil,
+                queue: nil,
+                using: { [weak self] in
+                    self?.trackEvent(name: "Experience Dismissed", userInfo: $0.userInfo)
+                }
+            ),
+            NotificationCenter.default.addObserver(
+                forName: ExperienceViewController.experienceViewedNotification,
+                object: nil,
+                queue: nil,
+                using: { [weak self] in
+                    self?.trackEvent(name: "Experience Viewed", userInfo: $0.userInfo)
+                }
+            ),
+            NotificationCenter.default.addObserver(
+                forName: ScreenViewController.screenPresentedNotification,
+                object: nil,
+                queue: nil,
+                using: { [weak self] in
+                    self?.trackEvent(name: "Screen Presented", userInfo: $0.userInfo)
+                }
+            ),
+            NotificationCenter.default.addObserver(
+                forName: ScreenViewController.screenDismissedNotification,
+                object: nil,
+                queue: nil,
+                using: { [weak self] in
+                    self?.trackEvent(name: "Screen Dismissed", userInfo: $0.userInfo)
+                }
+            ),
+            NotificationCenter.default.addObserver(
+                forName: ScreenViewController.screenViewedNotification,
+                object: nil,
+                queue: nil,
+                using: { [weak self] in
+                    self?.trackEvent(name: "Screen Viewed", userInfo: $0.userInfo)
+                }
+            ),
+            NotificationCenter.default.addObserver(
+                forName: ScreenViewController.blockTappedNotification,
+                object: nil,
+                queue: nil,
+                using: { [weak self] in
+                    self?.trackEvent(name: "Block Tapped", userInfo: $0.userInfo)
+                }
+            )
         ]
     }
     

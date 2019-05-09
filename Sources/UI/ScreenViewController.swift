@@ -424,14 +424,20 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
             presentWebsite(url, self)
         }
         
+        var userInfo: [String: Any] = [
+            ScreenViewController.experienceUserInfoKey: experience,
+            ScreenViewController.screenUserInfoKey: screen,
+            ScreenViewController.blockUserInfoKey: block
+        ]
+        
+        if let campaignID = campaignID {
+            userInfo[ScreenViewController.campaignIDUserInfoKey] = campaignID
+        }
+        
         NotificationCenter.default.post(
             name: ScreenViewController.blockTappedNotification,
             object: self,
-            userInfo: [
-                ScreenViewController.experienceUserInfoKey: experience,
-                ScreenViewController.screenUserInfoKey: screen,
-                ScreenViewController.blockUserInfoKey: block
-            ]
+            userInfo: userInfo
         )
     }
 }

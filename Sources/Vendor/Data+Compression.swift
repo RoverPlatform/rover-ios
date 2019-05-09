@@ -31,7 +31,7 @@
 import Foundation
 import Compression
 
-public extension Data
+extension Data
 {
     /// Compresses the data.
     /// - parameter withAlgorithm: Compression algorithm to use. See the `CompressionAlgorithm` type
@@ -269,11 +269,11 @@ public extension Data
 
 
 /// Struct based type representing a Crc32 checksum.
-public struct Crc32: CustomStringConvertible
+struct Crc32: CustomStringConvertible
 {
     private static let zLibCrc32: ZLibCrc32FuncPtr? = loadCrc32fromZLib()
     
-    public init() {}
+    init() {}
     
     // C convention function pointer type matching the signature of `libz::crc32`
     private typealias ZLibCrc32FuncPtr = @convention(c) (
@@ -283,11 +283,11 @@ public struct Crc32: CustomStringConvertible
         ) -> UInt32
     
     /// Raw checksum. Updated after a every call to `advance(withChunk:)`
-    public var checksum: UInt32 = 0
+    var checksum: UInt32 = 0
     
     /// Advance the current checksum with a chunk of data. Designed t be called multiple times.
     /// - parameter chunk: data to advance the checksum
-    public mutating func advance(withChunk chunk: Data)
+    mutating func advance(withChunk chunk: Data)
     {
         if let fastCrc32 = Crc32.zLibCrc32 {
             checksum = chunk.withUnsafeBytes({ (ptr: UnsafePointer<UInt8>) -> UInt32 in
@@ -300,7 +300,7 @@ public struct Crc32: CustomStringConvertible
     }
     
     /// Formatted checksum.
-    public var description: String
+    var description: String
     {
         return String(format: "%08x", checksum)
     }
@@ -368,11 +368,11 @@ public struct Crc32: CustomStringConvertible
 
 
 /// Struct based type representing a Adler32 checksum.
-public struct Adler32: CustomStringConvertible
+struct Adler32: CustomStringConvertible
 {
     private static let zLibAdler32: ZLibAdler32FuncPtr? = loadAdler32fromZLib()
     
-    public init() {}
+    init() {}
     
     // C convention function pointer type matching the signature of `libz::adler32`
     private typealias ZLibAdler32FuncPtr = @convention(c) (
@@ -382,11 +382,11 @@ public struct Adler32: CustomStringConvertible
         ) -> UInt32
     
     /// Raw checksum. Updated after a every call to `advance(withChunk:)`
-    public var checksum: UInt32 = 1
+    var checksum: UInt32 = 1
     
     /// Advance the current checksum with a chunk of data. Designed t be called multiple times.
     /// - parameter chunk: data to advance the checksum
-    public mutating func advance(withChunk chunk: Data)
+    mutating func advance(withChunk chunk: Data)
     {
         if let fastAdler32 = Adler32.zLibAdler32 {
             checksum = chunk.withUnsafeBytes({ (ptr: UnsafePointer<UInt8>) -> UInt32 in
@@ -399,7 +399,7 @@ public struct Adler32: CustomStringConvertible
     }
     
     /// Formatted checksum.
-    public var description: String
+    var description: String
     {
         return String(format: "%08x", checksum)
     }

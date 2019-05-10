@@ -7,13 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0DB7648F2256C57900038605 /* Data+Compression.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DB7648E2256C57900038605 /* Data+Compression.swift */; };
 		49005D0422776283009D62F9 /* UIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49005D0322776283009D62F9 /* UIApplication.swift */; };
-		492226D22242BC1500AE27DD /* AuthContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492226D12242BC1500AE27DD /* AuthContext.swift */; };
 		4953DD112239925B00286C4B /* Rover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4953DD102239925B00286C4B /* Rover.swift */; };
-		4953DD1422399A4D00286C4B /* HTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC3B42A2148A7D10096C74E /* HTTPClient.swift */; };
-		4953DD1522399A4D00286C4B /* HTTPError.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB496E3F214854CF0026DE6A /* HTTPError.swift */; };
-		4953DD1622399A4D00286C4B /* HTTPResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB496E3D214854C50026DE6A /* HTTPResult.swift */; };
 		4953DD1F22399A6900286C4B /* ImageConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FDDB20891153008D1A57 /* ImageConfiguration.swift */; };
 		4953DD2022399A6900286C4B /* ImageOptimization.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB709C72207EB47400F96C2B /* ImageOptimization.swift */; };
 		4953DD2122399A6900286C4B /* ImageStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB709C68207E7EFC00F96C2B /* ImageStore.swift */; };
@@ -41,9 +36,6 @@
 		4953DD4222399A8500286C4B /* TextBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A6F209B8CC500E99F9F /* TextBlock.swift */; };
 		4953DD4322399A8500286C4B /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A6E209B8CC500E99F9F /* WebView.swift */; };
 		4953DD4422399A8500286C4B /* WebViewBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A6D209B8CC500E99F9F /* WebViewBlock.swift */; };
-		4953DD4622399A9100286C4B /* FetchExperienceClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC3B42C2148B08D0096C74E /* FetchExperienceClient.swift */; };
-		4953DD4722399A9100286C4B /* ExperienceStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1B0E209CAD9600E99F9F /* ExperienceStore.swift */; };
-		4953DD4822399A9100286C4B /* ExperienceStoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1ACB209BB3D200E99F9F /* ExperienceStoreService.swift */; };
 		4953DD4922399A9700286C4B /* BarcodeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FDDF208A4961008D1A57 /* BarcodeCell.swift */; };
 		4953DD4A22399A9700286C4B /* BlockCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEEE2055964E00E5C77F /* BlockCell.swift */; };
 		4953DD4B22399A9700286C4B /* ButtonCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEED2055964E00E5C77F /* ButtonCell.swift */; };
@@ -57,10 +49,11 @@
 		4953DD5322399A9C00286C4B /* ScreenViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEE32055964E00E5C77F /* ScreenViewLayout.swift */; };
 		4953DD5422399A9C00286C4B /* ScreenViewLayoutAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FDD92087E09F008D1A57 /* ScreenViewLayoutAttributes.swift */; };
 		DB637A872279EFC600F0E791 /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB637A862279EFC600F0E791 /* Analytics.swift */; };
-		DB640B6D2245289800CFA795 /* ExperienceCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB640B6C2245289800CFA795 /* ExperienceCache.swift */; };
 		DB640B6F22452AB000CFA795 /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB640B6E22452AB000CFA795 /* ImageCache.swift */; };
 		DB640B712245343F00CFA795 /* SessionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB640B702245343F00CFA795 /* SessionState.swift */; };
 		DB6BE8AE215D41F7000A1FDA /* OSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6BE8AD215D41F7000A1FDA /* OSLog.swift */; };
+		DB8FF7102286064400BDE2DC /* ExperienceStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8FF70F2286064400BDE2DC /* ExperienceStore.swift */; };
+		DB8FF71222861B5800BDE2DC /* DateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8FF71122861B5800BDE2DC /* DateFormatter.swift */; };
 		DBF49DDD203DE00F00B54652 /* Rover.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF49DD3203DE00F00B54652 /* Rover.framework */; };
 /* End PBXBuildFile section */
 
@@ -75,19 +68,14 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		0DB7648E2256C57900038605 /* Data+Compression.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+Compression.swift"; sourceTree = "<group>"; };
 		49005D0322776283009D62F9 /* UIApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplication.swift; sourceTree = "<group>"; };
-		492226D12242BC1500AE27DD /* AuthContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthContext.swift; sourceTree = "<group>"; };
 		4953DD102239925B00286C4B /* Rover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rover.swift; sourceTree = "<group>"; };
 		49952B452242B73A004C5521 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DB00FDD92087E09F008D1A57 /* ScreenViewLayoutAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenViewLayoutAttributes.swift; sourceTree = "<group>"; };
 		DB00FDDB20891153008D1A57 /* ImageConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageConfiguration.swift; sourceTree = "<group>"; };
 		DB00FDDF208A4961008D1A57 /* BarcodeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarcodeCell.swift; sourceTree = "<group>"; };
 		DB4831B920DC5D18003DBF1B /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
-		DB496E3D214854C50026DE6A /* HTTPResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPResult.swift; sourceTree = "<group>"; };
-		DB496E3F214854CF0026DE6A /* HTTPError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPError.swift; sourceTree = "<group>"; };
 		DB637A862279EFC600F0E791 /* Analytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analytics.swift; sourceTree = "<group>"; };
-		DB640B6C2245289800CFA795 /* ExperienceCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperienceCache.swift; sourceTree = "<group>"; };
 		DB640B6E22452AB000CFA795 /* ImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
 		DB640B702245343F00CFA795 /* SessionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionState.swift; sourceTree = "<group>"; };
 		DB6ADD6720B33EC0002F226C /* RoverUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoverUITests.swift; sourceTree = "<group>"; };
@@ -97,6 +85,8 @@
 		DB709C68207E7EFC00F96C2B /* ImageStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageStore.swift; sourceTree = "<group>"; };
 		DB709C6B207EAEED00F96C2B /* ImageStoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageStoreService.swift; sourceTree = "<group>"; };
 		DB709C72207EB47400F96C2B /* ImageOptimization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageOptimization.swift; sourceTree = "<group>"; };
+		DB8FF70F2286064400BDE2DC /* ExperienceStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperienceStore.swift; sourceTree = "<group>"; };
+		DB8FF71122861B5800BDE2DC /* DateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatter.swift; sourceTree = "<group>"; };
 		DB9DBEDE2055964E00E5C77F /* ExperienceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExperienceViewController.swift; sourceTree = "<group>"; };
 		DB9DBEDF2055964E00E5C77F /* RoverViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoverViewController.swift; sourceTree = "<group>"; };
 		DB9DBEE02055964E00E5C77F /* ScreenViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScreenViewController.swift; sourceTree = "<group>"; };
@@ -108,8 +98,6 @@
 		DB9DBEEE2055964E00E5C77F /* BlockCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlockCell.swift; sourceTree = "<group>"; };
 		DB9DBEEF2055964E00E5C77F /* WebViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebViewCell.swift; sourceTree = "<group>"; };
 		DBADA83120AA03B900225C80 /* BlockTapBehavior.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockTapBehavior.swift; sourceTree = "<group>"; };
-		DBC3B42A2148A7D10096C74E /* HTTPClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPClient.swift; sourceTree = "<group>"; };
-		DBC3B42C2148B08D0096C74E /* FetchExperienceClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchExperienceClient.swift; sourceTree = "<group>"; };
 		DBD88A8020C1B21700085AE0 /* RoverDataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoverDataTests.swift; sourceTree = "<group>"; };
 		DBD88A8220C1B21700085AE0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DBF49DD3203DE00F00B54652 /* Rover.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Rover.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -134,8 +122,6 @@
 		DBFB1A76209B8CC500E99F9F /* Text.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Text.swift; sourceTree = "<group>"; };
 		DBFB1A77209B8CC500E99F9F /* Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		DBFB1A78209B8CC500E99F9F /* ImageBlock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageBlock.swift; sourceTree = "<group>"; };
-		DBFB1ACB209BB3D200E99F9F /* ExperienceStoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperienceStoreService.swift; sourceTree = "<group>"; };
-		DBFB1B0E209CAD9600E99F9F /* ExperienceStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperienceStore.swift; sourceTree = "<group>"; };
 		DBFDF44F20AC84430031EF47 /* RoverExperiencesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoverExperiencesTests.swift; sourceTree = "<group>"; };
 		DBFDF45120AC84430031EF47 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -173,27 +159,14 @@
 			isa = PBXGroup;
 			children = (
 				DBFDF52220AE2B0B0031EF47 /* Extensions */,
-				DB496E3C214854AC0026DE6A /* HTTP */,
 				DBFDF43520AC81CD0031EF47 /* Models */,
 				DB6ADD7D20B3446D002F226C /* Services */,
 				DBF31B5A20E41C5A005D7C34 /* UI */,
-				DBFDF4B920AC95FD0031EF47 /* Vendor */,
 				DB637A862279EFC600F0E791 /* Analytics.swift */,
 				4953DD102239925B00286C4B /* Rover.swift */,
 				49952B452242B73A004C5521 /* Info.plist */,
 			);
 			path = Sources;
-			sourceTree = "<group>";
-		};
-		DB496E3C214854AC0026DE6A /* HTTP */ = {
-			isa = PBXGroup;
-			children = (
-				DBC3B42A2148A7D10096C74E /* HTTPClient.swift */,
-				DB496E3F214854CF0026DE6A /* HTTPError.swift */,
-				DB496E3D214854C50026DE6A /* HTTPResult.swift */,
-				492226D12242BC1500AE27DD /* AuthContext.swift */,
-			);
-			path = HTTP;
 			sourceTree = "<group>";
 		};
 		DB6ADD6620B33EC0002F226C /* UITests */ = {
@@ -208,7 +181,7 @@
 		DB6ADD7D20B3446D002F226C /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				DBFB1B09209CACAC00E99F9F /* ExperienceStore */,
+				DB8FF70F2286064400BDE2DC /* ExperienceStore.swift */,
 				DB709C67207E7EF200F96C2B /* ImageStore */,
 				DB6ADD8320B34EE1002F226C /* SessionController */,
 			);
@@ -299,17 +272,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		DBFB1B09209CACAC00E99F9F /* ExperienceStore */ = {
-			isa = PBXGroup;
-			children = (
-				DBC3B42C2148B08D0096C74E /* FetchExperienceClient.swift */,
-				DBFB1B0E209CAD9600E99F9F /* ExperienceStore.swift */,
-				DBFB1ACB209BB3D200E99F9F /* ExperienceStoreService.swift */,
-				DB640B6C2245289800CFA795 /* ExperienceCache.swift */,
-			);
-			path = ExperienceStore;
-			sourceTree = "<group>";
-		};
 		DBFDF43520AC81CD0031EF47 /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -347,17 +309,10 @@
 			path = ExperiencesTests;
 			sourceTree = "<group>";
 		};
-		DBFDF4B920AC95FD0031EF47 /* Vendor */ = {
-			isa = PBXGroup;
-			children = (
-				0DB7648E2256C57900038605 /* Data+Compression.swift */,
-			);
-			path = Vendor;
-			sourceTree = "<group>";
-		};
 		DBFDF52220AE2B0B0031EF47 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				DB8FF71122861B5800BDE2DC /* DateFormatter.swift */,
 				DB6BE8AD215D41F7000A1FDA /* OSLog.swift */,
 				49005D0322776283009D62F9 /* UIApplication.swift */,
 			);
@@ -476,17 +431,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4953DD4622399A9100286C4B /* FetchExperienceClient.swift in Sources */,
 				4953DD3422399A8500286C4B /* Border.swift in Sources */,
 				4953DD5022399A9C00286C4B /* RoverViewController.swift in Sources */,
 				4953DD3222399A8500286C4B /* BarcodeBlock.swift in Sources */,
-				4953DD4722399A9100286C4B /* ExperienceStore.swift in Sources */,
 				4953DD5422399A9C00286C4B /* ScreenViewLayoutAttributes.swift in Sources */,
 				4953DD4122399A8500286C4B /* Text.swift in Sources */,
 				4953DD3D22399A8500286C4B /* RectangleBlock.swift in Sources */,
 				4953DD5122399A9C00286C4B /* ExperienceViewController.swift in Sources */,
 				4953DD3A22399A8500286C4B /* ImageBlock.swift in Sources */,
-				492226D22242BC1500AE27DD /* AuthContext.swift in Sources */,
 				4953DD2922399A7600286C4B /* SessionController.swift in Sources */,
 				4953DD3122399A8500286C4B /* Barcode.swift in Sources */,
 				4953DD4E22399A9700286C4B /* TextCell.swift in Sources */,
@@ -497,10 +449,7 @@
 				4953DD4D22399A9700286C4B /* RowView.swift in Sources */,
 				4953DD4A22399A9700286C4B /* BlockCell.swift in Sources */,
 				4953DD4222399A8500286C4B /* TextBlock.swift in Sources */,
-				0DB7648F2256C57900038605 /* Data+Compression.swift in Sources */,
-				4953DD1422399A4D00286C4B /* HTTPClient.swift in Sources */,
 				4953DD4F22399A9700286C4B /* WebViewCell.swift in Sources */,
-				DB640B6D2245289800CFA795 /* ExperienceCache.swift in Sources */,
 				4953DD5322399A9C00286C4B /* ScreenViewLayout.swift in Sources */,
 				49005D0422776283009D62F9 /* UIApplication.swift in Sources */,
 				4953DD5222399A9C00286C4B /* ScreenViewController.swift in Sources */,
@@ -509,6 +458,7 @@
 				4953DD3022399A8500286C4B /* Background.swift in Sources */,
 				DB6BE8AE215D41F7000A1FDA /* OSLog.swift in Sources */,
 				4953DD3C22399A8500286C4B /* Position.swift in Sources */,
+				DB8FF71222861B5800BDE2DC /* DateFormatter.swift in Sources */,
 				4953DD2022399A6900286C4B /* ImageOptimization.swift in Sources */,
 				4953DD1F22399A6900286C4B /* ImageConfiguration.swift in Sources */,
 				4953DD4C22399A9700286C4B /* ImageCell.swift in Sources */,
@@ -517,9 +467,9 @@
 				4953DD2A22399A7600286C4B /* Session.swift in Sources */,
 				4953DD4022399A8500286C4B /* BlockTapBehavior.swift in Sources */,
 				DB640B712245343F00CFA795 /* SessionState.swift in Sources */,
-				4953DD1522399A4D00286C4B /* HTTPError.swift in Sources */,
 				4953DD4422399A8500286C4B /* WebViewBlock.swift in Sources */,
 				4953DD3622399A8500286C4B /* Color.swift in Sources */,
+				DB8FF7102286064400BDE2DC /* ExperienceStore.swift in Sources */,
 				4953DD3B22399A8500286C4B /* Insets.swift in Sources */,
 				4953DD3922399A8500286C4B /* Image.swift in Sources */,
 				4953DD3722399A8500286C4B /* Experience.swift in Sources */,
@@ -528,8 +478,6 @@
 				4953DD3E22399A8500286C4B /* Row.swift in Sources */,
 				4953DD3322399A8500286C4B /* Block.swift in Sources */,
 				4953DD3822399A8500286C4B /* Height.swift in Sources */,
-				4953DD4822399A9100286C4B /* ExperienceStoreService.swift in Sources */,
-				4953DD1622399A4D00286C4B /* HTTPResult.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

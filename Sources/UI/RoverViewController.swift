@@ -12,21 +12,11 @@ import UIKit
 
 /// Either present or embed this view in a container to display a Rover experience.  Make sure you set Rover.accountToken first!
 open class RoverViewController: UIViewController {    
-    public let identifier: ExperienceIdentifier
+    let identifier: ExperienceStore.Identifier
+    
     public let campaignID: String?
     
     open private(set) lazy var urlSession = URLSession(configuration: URLSessionConfiguration.default)
-    
-    open private(set) lazy var httpClient = HTTPClient(session: urlSession) {
-        AuthContext(
-            accountToken: accountToken,
-            endpoint: URL(string: "https://api.rover.io/graphql")!
-        )
-    }
-    
-    open private(set) lazy var experienceStore = ExperienceStoreService(
-        client: self.httpClient
-    )
     
     open private(set) lazy var imageStore = ImageStoreService(session: urlSession)
     
@@ -53,8 +43,8 @@ open class RoverViewController: UIViewController {
         return cancelButton
     }()
     
-    init(identifier: ExperienceIdentifier, campaignID: String? = nil) {
-        self.identifier = identifier
+    public init(experienceID: String, campaignID: String? = nil) {
+        self.identifier = .experienceID(id: experienceID)
         self.campaignID = campaignID
         super.init(nibName: nil, bundle: nil)
         
@@ -63,12 +53,14 @@ open class RoverViewController: UIViewController {
         layoutCancelButton()
     }
     
-    public convenience init(experienceID: String, campaignID: String? = nil) {
-        self.init(identifier: .experienceID(id: experienceID), campaignID: campaignID)
-    }
-    
-    public convenience init(experienceURL: URL, campaignID: String? = nil) {
-        self.init(identifier: .experienceURL(url: experienceURL), campaignID: campaignID)
+    public init(experienceURL: URL, campaignID: String? = nil) {
+        self.identifier = .experienceURL(url: experienceURL)
+        self.campaignID = campaignID
+        super.init(nibName: nil, bundle: nil)
+        
+        configureView()
+        layoutActivityIndicator()
+        layoutCancelButton()
     }
     
     @available(*, unavailable)
@@ -113,7 +105,7 @@ open class RoverViewController: UIViewController {
     open func fetchExperience() {
         startLoading()
         
-        experienceStore.fetchExperience(for: identifier) { [weak self] result in
+        ExperienceStore.shared.fetchExperience(for: identifier) { [weak self] result in
             // If the user cancels loading, the view controller may have been dismissed and garbage collected before the fetch completes
             
             guard let container = self else {
@@ -124,8 +116,8 @@ open class RoverViewController: UIViewController {
                 container.stopLoading()
                 
                 switch result {
-                case let .error(error, shouldRetry):
-                    container.present(error: error, shouldRetry: shouldRetry)
+                case let .failure(error):
+                    container.present(error: error, shouldRetry: error.isRetryable)
                 case let .success(experience):
                     container.didFetchExperience(experience)
                 }

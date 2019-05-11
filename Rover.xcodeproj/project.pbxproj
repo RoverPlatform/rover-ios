@@ -48,6 +48,7 @@
 		DB6BE8AE215D41F7000A1FDA /* OSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6BE8AD215D41F7000A1FDA /* OSLog.swift */; };
 		DB8FF7102286064400BDE2DC /* ExperienceStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8FF70F2286064400BDE2DC /* ExperienceStore.swift */; };
 		DB8FF71222861B5800BDE2DC /* DateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8FF71122861B5800BDE2DC /* DateFormatter.swift */; };
+		DB8FF7142287423E00BDE2DC /* LoadingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8FF7132287423E00BDE2DC /* LoadingViewController.swift */; };
 		DBF49DDD203DE00F00B54652 /* Rover.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF49DD3203DE00F00B54652 /* Rover.framework */; };
 /* End PBXBuildFile section */
 
@@ -75,6 +76,7 @@
 		DB709C6B207EAEED00F96C2B /* ImageStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageStore.swift; sourceTree = "<group>"; };
 		DB8FF70F2286064400BDE2DC /* ExperienceStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperienceStore.swift; sourceTree = "<group>"; };
 		DB8FF71122861B5800BDE2DC /* DateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatter.swift; sourceTree = "<group>"; };
+		DB8FF7132287423E00BDE2DC /* LoadingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingViewController.swift; sourceTree = "<group>"; };
 		DB9DBEDE2055964E00E5C77F /* ExperienceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExperienceViewController.swift; sourceTree = "<group>"; };
 		DB9DBEDF2055964E00E5C77F /* RoverViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoverViewController.swift; sourceTree = "<group>"; };
 		DB9DBEE02055964E00E5C77F /* ScreenViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScreenViewController.swift; sourceTree = "<group>"; };
@@ -210,6 +212,7 @@
 			isa = PBXGroup;
 			children = (
 				DB9DBEE52055964E00E5C77F /* Views */,
+				DB8FF7132287423E00BDE2DC /* LoadingViewController.swift */,
 				DB9DBEDF2055964E00E5C77F /* RoverViewController.swift */,
 				DB9DBEDE2055964E00E5C77F /* ExperienceViewController.swift */,
 				DB9DBEE02055964E00E5C77F /* ScreenViewController.swift */,
@@ -432,6 +435,7 @@
 				DB8FF7102286064400BDE2DC /* ExperienceStore.swift in Sources */,
 				4953DD3B22399A8500286C4B /* Insets.swift in Sources */,
 				4953DD3922399A8500286C4B /* Image.swift in Sources */,
+				DB8FF7142287423E00BDE2DC /* LoadingViewController.swift in Sources */,
 				4953DD3722399A8500286C4B /* Experience.swift in Sources */,
 				DB637A872279EFC600F0E791 /* Analytics.swift in Sources */,
 				4953DD4B22399A9700286C4B /* ButtonCell.swift in Sources */,

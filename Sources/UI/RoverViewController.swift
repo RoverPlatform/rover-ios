@@ -10,196 +10,98 @@ import SafariServices
 import os
 import UIKit
 
-/// Either present or embed this view in a container to display a Rover experience.  Make sure you set Rover.accountToken first!
+/// The `RoverViewController` is a container for loading and displaying a Rover experience. The `RoverViewController`
+/// can be instantiated manually or in a story board. After the view controller is instantiated, its primary API is the
+/// `loadExperience(id:campaignID:)` and `loadExperience(universalLink:campaignID:)` methods which present to ways of
+/// identifying the experience to load. Before calling either of these methods make sure you've set the
+/// `Rover.accountToken` variable to match the SDK token found in the Rover Settings app.
+///
+/// The `RoverViewController` fetches experiences from Rover's server and displays a loading screen while it is loading.
+/// The loading screen can be customized by overriding the `loadingViewController()` method and supplying your own. The
+/// Rover SDK comes with a default loading screen `LoadingViewController` which you can override and customize to suit
+/// your needs. You can also supply your own view controller.
 open class RoverViewController: UIViewController {
     override open var childForStatusBarStyle: UIViewController? {
         return self.children.first
     }
     
-    open var activityIndicator: UIActivityIndicatorView = {
-        let activityIndicator = UIActivityIndicatorView(style: .whiteLarge)
-        activityIndicator.color = UIColor.gray
-        activityIndicator.hidesWhenStopped = true
-        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
-        return activityIndicator
-    }()
-    
-    open var cancelButton: UIButton = {
-        let cancelButton = UIButton(type: .custom)
-        cancelButton.translatesAutoresizingMaskIntoConstraints = false
-        cancelButton.setTitle("Cancel", for: .normal)
-        cancelButton.setTitleColor(UIColor.darkText, for: .normal)
-        cancelButton.addTarget(self, action: #selector(cancel), for: .touchUpInside)
-        return cancelButton
-    }()
+    private var campaignID: String?
+    private var identifier: ExperienceStore.Identifier?
     
     override open func viewDidLoad() {
         super.viewDidLoad()
         
         Analytics.shared.enable()
-        
-        configureView()
-        layoutActivityIndicator()
-        layoutCancelButton()
     }
     
-    open func configureView() {
-        view.backgroundColor = UIColor.white
-    }
-    
-    open func layoutActivityIndicator() {
-        view.addSubview(activityIndicator)
-        
-        if #available(iOS 11.0, *) {
-            let layoutGuide = view.safeAreaLayoutGuide
-            activityIndicator.centerXAnchor.constraint(equalTo: layoutGuide.centerXAnchor).isActive = true
-            activityIndicator.centerYAnchor.constraint(equalTo: layoutGuide.centerYAnchor).isActive = true
-        } else {
-            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-        }
-    }
-    
-    open func layoutCancelButton() {
-        view.addSubview(cancelButton)
-        
-        cancelButton.centerXAnchor.constraint(equalTo: activityIndicator.centerXAnchor).isActive = true
-        cancelButton.topAnchor.constraint(equalTo: activityIndicator.bottomAnchor, constant: 8).isActive = true
-    }
-    
-    @objc
-    open func cancel() {
-        dismiss(animated: true, completion: nil)
-    }
-    
-    // MARK: Fetching
-    
-    private var campaignID: String?
-    private var identifier: ExperienceStore.Identifier?
-    
+    /// Load a Rover experience into the view controller referenced by its ID.
+    ///
+    /// - Parameter id: The ID of the experience to load.
     public func loadExperience(id: String, campaignID: String? = nil) {
         self.campaignID = campaignID
         self.identifier = ExperienceStore.Identifier.experienceID(id: id)
-        fetchExperience()
+        loadExperience()
     }
     
+    /// Load a Rover experience into the view controller referenced by its associated universal link.
+    ///
+    /// - Parameter universalLink: The universal link associated with the experience to load.
     public func loadExperience(universalLink url: URL, campaignID: String? = nil) {
         self.campaignID = campaignID
         self.identifier = ExperienceStore.Identifier.experienceURL(url: url)
-        fetchExperience()
+        loadExperience()
     }
     
-    private func fetchExperience() {
+    private func loadExperience() {
         guard let identifier = identifier else {
             return
         }
         
-        startLoading()
+        if let experience = ExperienceStore.shared.experience(for: identifier) {
+            let viewController = experienceViewController(experience: experience)
+            setChildViewController(viewController)
+            return
+        }
+        
+        let loadingViewController = self.loadingViewController()
+        setChildViewController(loadingViewController)
         
         ExperienceStore.shared.fetchExperience(for: identifier) { [weak self] result in
-            // If the user cancels loading, the view controller may have been dismissed and garbage collected before the fetch completes
-            
-            guard let container = self else {
+            guard let self = self else {
                 return
             }
             
             DispatchQueue.main.async {
-                container.stopLoading()
-                
                 switch result {
                 case let .failure(error):
-                    container.present(error: error, shouldRetry: error.isRetryable)
+                    self.present(error: error, shouldRetry: error.isRetryable)
                 case let .success(experience):
-                    container.didFetchExperience(experience)
+                    let viewController = self.experienceViewController(
+                        experience: experience
+                    )
+                    
+                    self.setChildViewController(viewController)
+                    self.setNeedsStatusBarAppearanceUpdate()
                 }
             }
         }
     }
     
-    // MARK: View Controller Factories
-    
-    open func presentWebsiteViewController(url: URL) -> UIViewController {
-        return SFSafariViewController(url: url)
-    }
-
-    open func screenViewLayout(screen: Screen) -> UICollectionViewLayout {
-        return ScreenViewLayout(screen: screen)
-    }
-
-    open func presentWebsite(sourceViewController: UIViewController, url: URL) {
-        // open a link using an embedded web browser controller.
-        let webViewController = SFSafariViewController(url: url)
-        sourceViewController.present(webViewController, animated: true, completion: nil)
-    }
-
-    open func screenViewController(experience: Experience, screen: Screen) -> ScreenViewController {
-        return ScreenViewController(
-            collectionViewLayout: screenViewLayout(screen: screen),
-            experience: experience,
-            campaignID: self.campaignID,
-            screen: screen,
-            viewControllerProvider: { (experience: Experience, screen: Screen) in
-                self.screenViewController(experience: experience, screen: screen)
-            },
-            presentWebsite: { (url: URL, sourceViewController: UIViewController) in
-                self.presentWebsite(sourceViewController: sourceViewController, url: url)
-            }
-        )
-    }
-
-    open func experienceViewController(experience: Experience) -> ExperienceViewController {
-        let homeScreenViewController = screenViewController(experience: experience, screen: experience.homeScreen)
-        return ExperienceViewController(
-            homeScreenViewController: homeScreenViewController,
-            experience: experience,
-            campaignID: self.campaignID
-        )
-    }
-    
-    open func didFetchExperience(_ experience: Experience) {
-        let viewController = self.experienceViewController(
-            experience: experience
-        )
-        
-        addChild(viewController)
-        view.addSubview(viewController.view)
-        viewController.didMove(toParent: self)
-        setNeedsStatusBarAppearanceUpdate()
-    }
-    
-    var cancelButtonTimer: Timer?
-    
-    open func showCancelButton() {
-        if let timer = cancelButtonTimer {
-            timer.invalidate()
+    private func setChildViewController(_ childViewController: UIViewController) {
+        if let existingChildViewController = self.children.first {
+            existingChildViewController.willMove(toParent: nil)
+            existingChildViewController.view.removeFromSuperview()
+            existingChildViewController.removeFromParent()
         }
         
-        cancelButton.isHidden = true
-        cancelButtonTimer = Timer.scheduledTimer(withTimeInterval: TimeInterval(3), repeats: false) { [weak self] _ in
-            self?.cancelButtonTimer = nil
-            self?.cancelButton.isHidden = false
-        }
+        childViewController.willMove(toParent: self)
+        addChild(childViewController)
+        childViewController.view.frame = view.bounds
+        view.addSubview(childViewController.view)
+        childViewController.didMove(toParent: self)
     }
     
-    open func hideCancelButton() {
-        if let timer = cancelButtonTimer {
-            timer.invalidate()
-        }
-        
-        cancelButton.isHidden = true
-    }
-    
-    open func startLoading() {
-        showCancelButton()
-        activityIndicator.startAnimating()
-    }
-    
-    open func stopLoading() {
-        hideCancelButton()
-        activityIndicator.stopAnimating()
-    }
-    
-    open func present(error: Error?, shouldRetry: Bool) {
+    private func present(error: Error?, shouldRetry: Bool) {
         let alertController: UIAlertController
         
         if shouldRetry {
@@ -210,7 +112,7 @@ open class RoverViewController: UIViewController {
             }
             let retry = UIAlertAction(title: "Try Again", style: UIAlertAction.Style.default) { _ in
                 alertController.dismiss(animated: true, completion: nil)
-                self.fetchExperience()
+                self.loadExperience()
             }
             
             alertController.addAction(cancel)
@@ -226,5 +128,48 @@ open class RoverViewController: UIViewController {
         }
         
         self.present(alertController, animated: true, completion: nil)
+    }
+    
+    // MARK: Factories
+    
+    open func loadingViewController() -> UIViewController {
+        return LoadingViewController()
+    }
+    
+    open func presentWebsiteViewController(url: URL) -> UIViewController {
+        return SFSafariViewController(url: url)
+    }
+    
+    open func screenViewLayout(screen: Screen) -> UICollectionViewLayout {
+        return ScreenViewLayout(screen: screen)
+    }
+    
+    open func presentWebsite(sourceViewController: UIViewController, url: URL) {
+        // open a link using an embedded web browser controller.
+        let webViewController = SFSafariViewController(url: url)
+        sourceViewController.present(webViewController, animated: true, completion: nil)
+    }
+    
+    open func screenViewController(experience: Experience, screen: Screen) -> ScreenViewController {
+        return ScreenViewController(
+            collectionViewLayout: screenViewLayout(screen: screen),
+            experience: experience,
+            campaignID: self.campaignID,
+            screen: screen,
+            viewControllerProvider: { (experience: Experience, screen: Screen) in
+                self.screenViewController(experience: experience, screen: screen)
+        },
+            presentWebsite: { (url: URL, sourceViewController: UIViewController) in
+                self.presentWebsite(sourceViewController: sourceViewController, url: url)
+        })
+    }
+    
+    open func experienceViewController(experience: Experience) -> ExperienceViewController {
+        let homeScreenViewController = screenViewController(experience: experience, screen: experience.homeScreen)
+        return ExperienceViewController(
+            homeScreenViewController: homeScreenViewController,
+            experience: experience,
+            campaignID: self.campaignID
+        )
     }
 }

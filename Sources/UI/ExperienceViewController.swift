@@ -6,9 +6,17 @@
 //  Copyright © 2017 Rover Labs Inc. All rights reserved.
 //
 
+import SafariServices
 import UIKit
 
-/// View controller responsible for navigation behaviour between screens of an Experience.
+/// The `ExperienceViewController` displays a Rover experience and is responsible for navigation behavior between
+/// its screens. It posts [`Notification`s](https://developer.apple.com/documentation/foundation/notification) through
+/// the default [`NotificationCenter`](https://developer.apple.com/documentation/foundation/notificationcenter) when it
+/// is presented, dismissed and viewed.
+///
+/// When the `ExperienceViewController` navigates to a Rover screen, it instantiates a view controller by calling its
+/// factory method `screenViewController(experience:screen:)`. The default implementation returns an instance of
+/// `ScreenViewController` but you can override this method if you wan to use a different view controller.
 open class ExperienceViewController: UINavigationController {
     public let experience: Experience
     public let campaignID: String?
@@ -17,7 +25,27 @@ open class ExperienceViewController: UINavigationController {
         return self.topViewController
     }
     
-    var sessionIdentifier: String {
+    public init(experience: Experience, campaignID: String?) {
+        self.experience = experience
+        self.campaignID = campaignID
+        super.init(nibName: nil, bundle: nil)
+        
+        let homeScreenViewController = screenViewController(
+            experience: experience,
+            screen: experience.homeScreen
+        )
+        
+        viewControllers = [homeScreenViewController]
+    }
+    
+    @available(*, unavailable)
+    public required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: Notifications
+    
+    private var sessionIdentifier: String {
         var identifier = "experience-\(experience.id)"
         
         if let campaignID = self.campaignID {
@@ -25,23 +53,6 @@ open class ExperienceViewController: UINavigationController {
         }
         
         return identifier
-    }
-    
-    public init(
-        homeScreenViewController: UIViewController,
-        experience: Experience,
-        campaignID: String?
-    ) {
-        self.experience = experience
-        self.campaignID = campaignID
-        
-        super.init(nibName: nil, bundle: nil)
-        viewControllers = [homeScreenViewController]
-    }
-    
-    @available(*, unavailable)
-    public required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
     
     override open func viewDidAppear(_ animated: Bool) {
@@ -89,6 +100,33 @@ open class ExperienceViewController: UINavigationController {
         )
         
         SessionController.shared.unregisterSession(identifier: sessionIdentifier)
+    }
+    
+    // MARK: Factories
+    
+    open func screenViewController(experience: Experience, screen: Screen) -> ScreenViewController {
+        return ScreenViewController(
+            collectionViewLayout: ScreenViewLayout(screen: screen),
+            experience: experience,
+            campaignID: self.campaignID,
+            screen: screen,
+            viewControllerProvider: { (experience: Experience, screen: Screen) in
+                self.screenViewController(experience: experience, screen: screen)
+            },
+            presentWebsite: { (url: URL, sourceViewController: UIViewController) in
+                self.presentWebsite(sourceViewController: sourceViewController, url: url)
+            }
+        )
+    }
+    
+    open func presentWebsiteViewController(url: URL) -> UIViewController {
+        return SFSafariViewController(url: url)
+    }
+    
+    open func presentWebsite(sourceViewController: UIViewController, url: URL) {
+        // open a link using an embedded web browser controller.
+        let webViewController = SFSafariViewController(url: url)
+        sourceViewController.present(webViewController, animated: true, completion: nil)
     }
 }
 

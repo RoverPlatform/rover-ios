@@ -6,13 +6,11 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-import SafariServices
-import os
 import UIKit
 
 /// The `RoverViewController` is a container for loading and displaying a Rover experience. The `RoverViewController`
 /// can be instantiated manually or in a story board. After the view controller is instantiated, its primary API is the
-/// `loadExperience(id:campaignID:)` and `loadExperience(universalLink:campaignID:)` methods which present to ways of
+/// `loadExperience(id:campaignID:)` and `loadExperience(universalLink:campaignID:)` methods which present two ways of
 /// identifying the experience to load. Before calling either of these methods make sure you've set the
 /// `Rover.accountToken` variable to match the SDK token found in the Rover Settings app.
 ///
@@ -132,44 +130,16 @@ open class RoverViewController: UIViewController {
     
     // MARK: Factories
     
+    /// Construct a view controller to display while loading an experience from Rover's server. The default
+    /// returns an instance `LoadingViewController`. You can override this method if you want to use a different view
+    /// controller.
     open func loadingViewController() -> UIViewController {
         return LoadingViewController()
     }
     
-    open func presentWebsiteViewController(url: URL) -> UIViewController {
-        return SFSafariViewController(url: url)
-    }
-    
-    open func screenViewLayout(screen: Screen) -> UICollectionViewLayout {
-        return ScreenViewLayout(screen: screen)
-    }
-    
-    open func presentWebsite(sourceViewController: UIViewController, url: URL) {
-        // open a link using an embedded web browser controller.
-        let webViewController = SFSafariViewController(url: url)
-        sourceViewController.present(webViewController, animated: true, completion: nil)
-    }
-    
-    open func screenViewController(experience: Experience, screen: Screen) -> ScreenViewController {
-        return ScreenViewController(
-            collectionViewLayout: screenViewLayout(screen: screen),
-            experience: experience,
-            campaignID: self.campaignID,
-            screen: screen,
-            viewControllerProvider: { (experience: Experience, screen: Screen) in
-                self.screenViewController(experience: experience, screen: screen)
-        },
-            presentWebsite: { (url: URL, sourceViewController: UIViewController) in
-                self.presentWebsite(sourceViewController: sourceViewController, url: url)
-        })
-    }
-    
-    open func experienceViewController(experience: Experience) -> ExperienceViewController {
-        let homeScreenViewController = screenViewController(experience: experience, screen: experience.homeScreen)
-        return ExperienceViewController(
-            homeScreenViewController: homeScreenViewController,
-            experience: experience,
-            campaignID: self.campaignID
-        )
+    /// Construct a view controller to display for a given experience. The default implementation returns an instance of
+    /// `ExperienceViewController`. You can override this method if you want to use a different view controller.
+    open func experienceViewController(experience: Experience) -> UIViewController {
+        return ExperienceViewController(experience: experience, campaignID: self.campaignID)
     }
 }

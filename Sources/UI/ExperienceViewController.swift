@@ -6,7 +6,6 @@
 //  Copyright © 2017 Rover Labs Inc. All rights reserved.
 //
 
-import SafariServices
 import UIKit
 
 /// The `ExperienceViewController` displays a Rover experience and is responsible for navigation behavior between
@@ -110,23 +109,10 @@ open class ExperienceViewController: UINavigationController {
             experience: experience,
             campaignID: self.campaignID,
             screen: screen,
-            viewControllerProvider: { (experience: Experience, screen: Screen) in
-                self.screenViewController(experience: experience, screen: screen)
-            },
-            presentWebsite: { (url: URL, sourceViewController: UIViewController) in
-                self.presentWebsite(sourceViewController: sourceViewController, url: url)
+            viewControllerFactory: { [weak self] experience, screen in
+                self?.screenViewController(experience: experience, screen: screen)
             }
         )
-    }
-    
-    open func presentWebsiteViewController(url: URL) -> UIViewController {
-        return SFSafariViewController(url: url)
-    }
-    
-    open func presentWebsite(sourceViewController: UIViewController, url: URL) {
-        // open a link using an embedded web browser controller.
-        let webViewController = SFSafariViewController(url: url)
-        sourceViewController.present(webViewController, animated: true, completion: nil)
     }
 }
 

@@ -18,10 +18,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Pass your account token from the Rover Settings app to the Rover SDK.
         Rover.accountToken = "d6ab40e8a45e3040c372806baba387fd"
         
-        // Enable reporting of various Rover "events" such as when an experience is viewed or a button in a Rover
-        // experience is tapped.
-        Rover.Analytics.shared.enable()
-        
         // This method demonstrates how to observe the Rover events mentioned above in your own app.
         observeRoverNotifications()
         return true

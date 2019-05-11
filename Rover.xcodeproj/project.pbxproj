@@ -150,7 +150,6 @@
 				DBFDF43520AC81CD0031EF47 /* Models */,
 				DB6ADD7D20B3446D002F226C /* Services */,
 				DBF31B5A20E41C5A005D7C34 /* UI */,
-				DB637A862279EFC600F0E791 /* Analytics.swift */,
 				4953DD102239925B00286C4B /* Rover.swift */,
 				49952B452242B73A004C5521 /* Info.plist */,
 			);
@@ -169,6 +168,7 @@
 		DB6ADD7D20B3446D002F226C /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				DB637A862279EFC600F0E791 /* Analytics.swift */,
 				DB8FF70F2286064400BDE2DC /* ExperienceStore.swift */,
 				DB709C6B207EAEED00F96C2B /* ImageStore.swift */,
 				DB6ADD7E20B3449E002F226C /* SessionController.swift */,

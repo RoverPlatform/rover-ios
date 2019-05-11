@@ -1,10 +1,6 @@
 # Rover iOS SDK
 
-Create engaging mobile experiences, designed in the browser and delivered natively in your app.
-
-<hr />
-
-The Rover SDK is a collection of Cocoa Touch Frameworks written in Swift. Instead of a single monolithic framework, the Rover SDK takes a modular approach, allowing you to include only the functionality relevant to your application. The SDK is 100% open-source and available on [GitHub](https://github.com/RoverPlatform/rover-ios).
+The Rover SDK is a Cocoa Touch Framework written in Swift. The SDK is 100% open-source.
 
 ---
 
@@ -12,14 +8,38 @@ The Rover SDK is a collection of Cocoa Touch Frameworks written in Swift. Instea
 
 The recommended way to install the Rover SDK is via [Cocoapods](http://cocoapods.org/).
 
-The Rover [Podspec](https://guides.cocoapods.org/syntax/podspec.html) breaks each of the Rover frameworks out into a separate [Subspec](https://guides.cocoapods.org/syntax/podspec.html#group_subspecs).
-
-The simplest approach is to specify `Rover` as a dependency of your app's target which will add all required and optional subspecs to your project.
+Add the Rover dependency to your Podfile.
 
 ```ruby
-target 'MyAppTarget' do
-  pod 'Rover', '~> 3.0.0-beta1
-end
+pod 'Rover', '~> 3.0.0-beta.1
 ```
 
-Please continue onwards from https://developer.rover.io/ios/.
+### Carthage
+
+CocoaPods is the simplest approach to installing the Rover SDK but you can also use Carthage.
+
+Add the following entry to your Cartfile:
+
+```ruby
+github "RoverPlatform/rover-ios" ~> 3.0.0-beta.1
+```
+
+## Initialization
+
+You must initialize the Rover SDK with your account token. You can find your account token in the Rover [Settings app](https://app.rover.io/settings). Find the token labelled "SDK Token" and click the icon next to it to copy it to your clipboard.
+
+Import Rover in your app delegate and set the `accountToken` variable from within your `application(_:didFinishLaunchingWithOptions:)` method.
+
+```swift
+import Rover
+
+func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+    // ...
+    Rover.accountToken = "<YOUR_SDK_TOKEN>"
+    // ...
+}
+```
+
+## Next Steps
+
+The rest of the Rover integration process is described in detail on the Rover developer portal: https://developer.rover.io/v3/ios/.

@@ -1,14 +1,99 @@
 //
-//  Session.swift
+//  SessionController.swift
 //  Rover
 //
-//  Created by Sean Rucker on 2018-06-21.
+//  Created by Sean Rucker on 2018-05-21.
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
 import UIKit
 
-class Session {
+/// Responsible for emitting events including a view duration for open and closable registered sessions, such as
+/// Experience Viewed or Screen Viewed.  Includes some basic hysteresis for ensuring that rapidly re-opened sessions are
+/// aggregated into a single session.
+class SessionController {
+    /// The shared singleton sesion controller.
+    static let shared = SessionController()
+    
+    private let keepAliveTime: Int = 10
+    private var observers: [NSObjectProtocol] = []
+    
+    private init() {
+        observers = [
+            NotificationCenter.default.addObserver(
+                forName: UIApplication.didBecomeActiveNotification,
+                object: nil,
+                queue: OperationQueue.main,
+                using: { _ in
+                    self.entries.forEach {
+                        $0.value.session.start()
+                    }
+                }
+            ),
+            NotificationCenter.default.addObserver(
+                forName: UIApplication.willResignActiveNotification,
+                object: nil,
+                queue: OperationQueue.main,
+                using: { _ in
+                    self.entries.forEach {
+                        $0.value.session.end()
+                    }
+                }
+            )
+        ]
+    }
+    
+    deinit {
+        observers.forEach(NotificationCenter.default.removeObserver)
+    }
+    
+    // MARK: Registration
+    
+    private struct Entry {
+        let session: Session
+        var isUnregistered = false
+        
+        init(session: Session) {
+            self.session = session
+        }
+    }
+    
+    private var entries = [String: Entry]()
+    
+    func registerSession(identifier: String, completionHandler: @escaping (Double) -> Void) {
+        if var entry = entries[identifier] {
+            entry.session.start()
+            
+            if entry.isUnregistered {
+                entry.isUnregistered = false
+                entries[identifier] = entry
+            }
+            
+            return
+        }
+        
+        let session = Session(keepAliveTime: keepAliveTime) { result in
+            completionHandler(result.duration)
+            
+            if let entry = self.entries[identifier], entry.isUnregistered {
+                self.entries[identifier] = nil
+            }
+        }
+        
+        session.start()
+        entries[identifier] = Entry(session: session)
+    }
+    
+    func unregisterSession(identifier: String) {
+        if var entry = entries[identifier] {
+            entry.isUnregistered = true
+            entries[identifier] = entry
+            entry.session.end()
+        }
+    }
+}
+
+fileprivate class Session {
     let keepAliveTime: Int
     
     struct Result {

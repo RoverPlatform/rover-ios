@@ -10,7 +10,6 @@ import UIKit
 
 /// View controller responsible for navigation behaviour between screens of an Experience.
 open class ExperienceViewController: UINavigationController {
-    private let sessionController: SessionController
     public let experience: Experience
     public let campaignID: String?
     
@@ -29,14 +28,12 @@ open class ExperienceViewController: UINavigationController {
     }
     
     public init(
-        sessionController: SessionController,
         homeScreenViewController: UIViewController,
         experience: Experience,
         campaignID: String?
     ) {
         self.experience = experience
         self.campaignID = campaignID
-        self.sessionController = sessionController
         
         super.init(nibName: nil, bundle: nil)
         viewControllers = [homeScreenViewController]
@@ -64,7 +61,7 @@ open class ExperienceViewController: UINavigationController {
             userInfo: userInfo
         )
         
-        sessionController.registerSession(identifier: sessionIdentifier) { [weak self] duration in
+        SessionController.shared.registerSession(identifier: sessionIdentifier) { [weak self] duration in
             userInfo[ExperienceViewController.durationUserInfoKey] = duration
             NotificationCenter.default.post(
                 name: ExperienceViewController.experienceViewedNotification,
@@ -91,7 +88,7 @@ open class ExperienceViewController: UINavigationController {
             userInfo: userInfo
         )
         
-        sessionController.unregisterSession(identifier: sessionIdentifier)
+        SessionController.shared.unregisterSession(identifier: sessionIdentifier)
     }
 }
 

@@ -18,8 +18,6 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     public let campaignID: String?
     public let screen: Screen
     
-    public let sessionController: SessionController
-    
     public typealias ViewControllerProvider = (Experience, Screen) -> UIViewController?
     public let viewControllerProvider: ViewControllerProvider
     
@@ -40,14 +38,12 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         experience: Experience,
         campaignID: String?,
         screen: Screen,
-        sessionController: SessionController,
         viewControllerProvider: @escaping ViewControllerProvider,
         presentWebsite: @escaping PresentWebsite
     ) {
         self.experience = experience
         self.campaignID = campaignID
         self.screen = screen
-        self.sessionController = sessionController
         self.viewControllerProvider = viewControllerProvider
         self.presentWebsite = presentWebsite
         
@@ -106,7 +102,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
             userInfo: userInfo
         )
         
-        sessionController.registerSession(identifier: sessionIdentifier) { [weak self] duration in
+        SessionController.shared.registerSession(identifier: sessionIdentifier) { [weak self] duration in
             userInfo[ScreenViewController.durationUserInfoKey] = duration
             NotificationCenter.default.post(
                 name: ScreenViewController.screenViewedNotification,
@@ -134,7 +130,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
             userInfo: userInfo
         )
         
-        sessionController.unregisterSession(identifier: sessionIdentifier)
+        SessionController.shared.unregisterSession(identifier: sessionIdentifier)
     }
     
     @objc

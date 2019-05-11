@@ -11,7 +11,6 @@
 		4953DD112239925B00286C4B /* Rover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4953DD102239925B00286C4B /* Rover.swift */; };
 		4953DD2222399A6900286C4B /* ImageStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB709C6B207EAEED00F96C2B /* ImageStore.swift */; };
 		4953DD2922399A7600286C4B /* SessionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6ADD7E20B3449E002F226C /* SessionController.swift */; };
-		4953DD2A22399A7600286C4B /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB4831B920DC5D18003DBF1B /* Session.swift */; };
 		4953DD3022399A8500286C4B /* Background.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A69209B8CC500E99F9F /* Background.swift */; };
 		4953DD3122399A8500286C4B /* Barcode.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A65209B8CC500E99F9F /* Barcode.swift */; };
 		4953DD3222399A8500286C4B /* BarcodeBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A74209B8CC500E99F9F /* BarcodeBlock.swift */; };
@@ -46,7 +45,6 @@
 		4953DD5322399A9C00286C4B /* ScreenViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEE32055964E00E5C77F /* ScreenViewLayout.swift */; };
 		4953DD5422399A9C00286C4B /* ScreenViewLayoutAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FDD92087E09F008D1A57 /* ScreenViewLayoutAttributes.swift */; };
 		DB637A872279EFC600F0E791 /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB637A862279EFC600F0E791 /* Analytics.swift */; };
-		DB640B712245343F00CFA795 /* SessionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB640B702245343F00CFA795 /* SessionState.swift */; };
 		DB6BE8AE215D41F7000A1FDA /* OSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6BE8AD215D41F7000A1FDA /* OSLog.swift */; };
 		DB8FF7102286064400BDE2DC /* ExperienceStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8FF70F2286064400BDE2DC /* ExperienceStore.swift */; };
 		DB8FF71222861B5800BDE2DC /* DateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8FF71122861B5800BDE2DC /* DateFormatter.swift */; };
@@ -69,9 +67,7 @@
 		49952B452242B73A004C5521 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DB00FDD92087E09F008D1A57 /* ScreenViewLayoutAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenViewLayoutAttributes.swift; sourceTree = "<group>"; };
 		DB00FDDF208A4961008D1A57 /* BarcodeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarcodeCell.swift; sourceTree = "<group>"; };
-		DB4831B920DC5D18003DBF1B /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
 		DB637A862279EFC600F0E791 /* Analytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analytics.swift; sourceTree = "<group>"; };
-		DB640B702245343F00CFA795 /* SessionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionState.swift; sourceTree = "<group>"; };
 		DB6ADD6720B33EC0002F226C /* RoverUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoverUITests.swift; sourceTree = "<group>"; };
 		DB6ADD6920B33EC0002F226C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DB6ADD7E20B3449E002F226C /* SessionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionController.swift; sourceTree = "<group>"; };
@@ -175,19 +171,9 @@
 			children = (
 				DB8FF70F2286064400BDE2DC /* ExperienceStore.swift */,
 				DB709C6B207EAEED00F96C2B /* ImageStore.swift */,
-				DB6ADD8320B34EE1002F226C /* SessionController */,
+				DB6ADD7E20B3449E002F226C /* SessionController.swift */,
 			);
 			path = Services;
-			sourceTree = "<group>";
-		};
-		DB6ADD8320B34EE1002F226C /* SessionController */ = {
-			isa = PBXGroup;
-			children = (
-				DB6ADD7E20B3449E002F226C /* SessionController.swift */,
-				DB4831B920DC5D18003DBF1B /* Session.swift */,
-				DB640B702245343F00CFA795 /* SessionState.swift */,
-			);
-			path = SessionController;
 			sourceTree = "<group>";
 		};
 		DB9DBEBA205595F100E5C77F /* Frameworks */ = {
@@ -440,9 +426,7 @@
 				4953DD4C22399A9700286C4B /* ImageCell.swift in Sources */,
 				4953DD3F22399A8500286C4B /* Screen.swift in Sources */,
 				4953DD112239925B00286C4B /* Rover.swift in Sources */,
-				4953DD2A22399A7600286C4B /* Session.swift in Sources */,
 				4953DD4022399A8500286C4B /* BlockTapBehavior.swift in Sources */,
-				DB640B712245343F00CFA795 /* SessionState.swift in Sources */,
 				4953DD4422399A8500286C4B /* WebViewBlock.swift in Sources */,
 				4953DD3622399A8500286C4B /* Color.swift in Sources */,
 				DB8FF7102286064400BDE2DC /* ExperienceStore.swift in Sources */,

@@ -16,8 +16,6 @@ open class RoverViewController: UIViewController {
     
     public let campaignID: String?
     
-    open private(set) lazy var sessionController = SessionController(keepAliveTime: 10)
-    
     override open var childForStatusBarStyle: UIViewController? {
         return self.children.first
     }
@@ -143,7 +141,6 @@ open class RoverViewController: UIViewController {
             experience: experience,
             campaignID: self.campaignID,
             screen: screen,
-            sessionController: sessionController,
             viewControllerProvider: { (experience: Experience, screen: Screen) in
                 self.screenViewController(experience: experience, screen: screen)
             },
@@ -156,7 +153,6 @@ open class RoverViewController: UIViewController {
     open func experienceViewController(experience: Experience) -> ExperienceViewController {
         let homeScreenViewController = screenViewController(experience: experience, screen: experience.homeScreen)
         return ExperienceViewController(
-            sessionController: sessionController,
             homeScreenViewController: homeScreenViewController,
             experience: experience,
             campaignID: self.campaignID

@@ -11,11 +11,7 @@ import os
 import UIKit
 
 /// Either present or embed this view in a container to display a Rover experience.  Make sure you set Rover.accountToken first!
-open class RoverViewController: UIViewController {    
-    let identifier: ExperienceStore.Identifier
-    
-    public let campaignID: String?
-    
+open class RoverViewController: UIViewController {
     override open var childForStatusBarStyle: UIViewController? {
         return self.children.first
     }
@@ -37,38 +33,14 @@ open class RoverViewController: UIViewController {
         return cancelButton
     }()
     
-    public init(experienceID: String, campaignID: String? = nil) {
-        self.identifier = .experienceID(id: experienceID)
-        self.campaignID = campaignID
-        super.init(nibName: nil, bundle: nil)
-        
-        Analytics.shared.enable()
-        
-        configureView()
-        layoutActivityIndicator()
-        layoutCancelButton()
-    }
-    
-    public init(experienceURL: URL, campaignID: String? = nil) {
-        self.identifier = .experienceURL(url: experienceURL)
-        self.campaignID = campaignID
-        super.init(nibName: nil, bundle: nil)
-        
-        Analytics.shared.enable()
-        
-        configureView()
-        layoutActivityIndicator()
-        layoutCancelButton()
-    }
-    
-    @available(*, unavailable)
-    public required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     override open func viewDidLoad() {
         super.viewDidLoad()
-        fetchExperience()
+        
+        Analytics.shared.enable()
+        
+        configureView()
+        layoutActivityIndicator()
+        layoutCancelButton()
     }
     
     open func configureView() {
@@ -100,7 +72,28 @@ open class RoverViewController: UIViewController {
         dismiss(animated: true, completion: nil)
     }
     
-    open func fetchExperience() {
+    // MARK: Fetching
+    
+    private var campaignID: String?
+    private var identifier: ExperienceStore.Identifier?
+    
+    public func loadExperience(id: String, campaignID: String? = nil) {
+        self.campaignID = campaignID
+        self.identifier = ExperienceStore.Identifier.experienceID(id: id)
+        fetchExperience()
+    }
+    
+    public func loadExperience(universalLink url: URL, campaignID: String? = nil) {
+        self.campaignID = campaignID
+        self.identifier = ExperienceStore.Identifier.experienceURL(url: url)
+        fetchExperience()
+    }
+    
+    private func fetchExperience() {
+        guard let identifier = identifier else {
+            return
+        }
+        
         startLoading()
         
         ExperienceStore.shared.fetchExperience(for: identifier) { [weak self] result in

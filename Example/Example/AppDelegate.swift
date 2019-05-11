@@ -16,11 +16,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Pass your account token from the Rover Settings app to the Rover SDK.
-        Rover.accountToken = "<YOUR_SDK_TOKEN>"
-        
-        // Enable reporting of various Rover "events" such as when an experience is viewed or a button in a Rover
-        // experience is tapped.
-        Rover.Analytics.shared.enable()
+        Rover.accountToken = "d6ab40e8a45e3040c372806baba387fd"
         
         // This method demonstrates how to observe the Rover events mentioned above in your own app.
         observeRoverNotifications()
@@ -42,16 +38,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 return false
             }
             
-            guard let experienceID = queryItems.first(where: { $0.name == "id" })?.value else {
+            guard let id = queryItems.first(where: { $0.name == "id" })?.value else {
                 return false
             }
             
             let campaignID = queryItems.first(where: { $0.name == "campaignID" })?.value
-            let viewController = RoverViewController(experienceID: experienceID, campaignID: campaignID)
+            
+            // Instantiate a `RoverViewController` and call the `loadExperience(id:campaignID)` method to load the
+            // experience whose id matches the value passed in the query parameter.
+            let roverViewController = RoverViewController()
+            roverViewController.loadExperience(id: id, campaignID: campaignID)
             
             // Use Rover's UIApplication.present() helper extension method to find the currently active view controller,
             // and present the RoverViewController on top.
-            app.present(viewController, animated: true)
+            app.present(roverViewController, animated: true)
             return true
         }
         
@@ -66,10 +66,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 return false
             }
             
-            let experienceID = components[1]
+            let id = components[1]
             let campaignID = components.indices.contains(2) ? components[2] : nil
-            let viewController = RoverViewController(experienceID: experienceID, campaignID: campaignID)
-            app.present(viewController, animated: true)
+            let roverViewController = RoverViewController()
+            roverViewController.loadExperience(id: id, campaignID: campaignID)
+            app.present(roverViewController, animated: true)
             return true
         }
         
@@ -89,7 +90,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // domain used below needs to be set in your App Links configuration and entitlements. See the documentation
         // for further details.
         if url.host == "example.rover.io" {
-            let roverViewController = RoverViewController(experienceURL: url)
+            // Instantiate a `RoverViewController` and call the `loadExperience(universalLink:campaignID)` method to
+            // load the experience whose associated universal link matches the url in the user activity.
+            let roverViewController = RoverViewController()
+            roverViewController.loadExperience(universalLink: url)
+            
             app.present(roverViewController, animated: true)
             return true
         }

@@ -8,15 +8,15 @@
 
 import WebKit
 
-open class WebViewCell: BlockCell {
-    public let webView = WKWebView()
+class WebViewCell: BlockCell {
+    let webView = WKWebView()
     
-    override open var content: UIView? {
+    override var content: UIView? {
         return webView
     }
     
-    override open func configure(with block: Block, imageStore: ImageStore) {
-        super.configure(with: block, imageStore: imageStore)
+    override func configure(with block: Block) {
+        super.configure(with: block)
         
         guard let webViewBlock = block as? WebViewBlock else {
             self.webView.isHidden = true

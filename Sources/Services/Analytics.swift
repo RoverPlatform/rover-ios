@@ -9,13 +9,14 @@
 import os.log
 import UIKit
 
-public class Analytics {
-    public static var shared = Analytics()
+class Analytics {
+    /// The shared singleton analytics service.
+    static var shared = Analytics()
     
     private let session = URLSession(configuration: URLSessionConfiguration.default)
     private var tokens: [NSObjectProtocol] = []
     
-    public func enable() {
+    func enable() {
         guard tokens.isEmpty else {
             return
         }
@@ -101,7 +102,7 @@ public class Analytics {
         ]
     }
     
-    public func disable() {
+    func disable() {
         tokens.forEach(NotificationCenter.default.removeObserver)
         tokens = []
     }

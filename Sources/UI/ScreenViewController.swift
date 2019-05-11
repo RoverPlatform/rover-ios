@@ -6,26 +6,20 @@
 //  Copyright © 2017 Rover Labs Inc. All rights reserved.
 //
 
+import SafariServices
 import UIKit
 
-// ScreenViewController may deserve a refactor: https://github.com/RoverPlatform/rover-ios/issues/406
 // swiftlint:disable type_body_length
-/// ScreenViewController displays a screen within a Rover experience.
+
+/// The `ScreenViewController` displays a Rover screen within an `ExperienceViewController` and is responsible for
+/// handling button taps. It posts [`Notification`s](https://developer.apple.com/documentation/foundation/notification)
+/// through the default [`NotificationCenter`](https://developer.apple.com/documentation/foundation/notificationcenter)
+/// when it is presented, dismissed and viewed.
 open class ScreenViewController: UICollectionViewController, UICollectionViewDataSourcePrefetching {
-    static var fetchImageTaskKey: Void?
-    
     public let experience: Experience
     public let campaignID: String?
     public let screen: Screen
-    
-    public let imageStore: ImageStore
-    public let sessionController: SessionController
-    
-    public typealias ViewControllerProvider = (Experience, Screen) -> UIViewController?
-    public let viewControllerProvider: ViewControllerProvider
-    
-    public typealias PresentWebsite = (URL, UIViewController) -> Void
-    public let presentWebsite: PresentWebsite
+    public let viewControllerFactory: (Experience, Screen) -> UIViewController?
     
     override open var preferredStatusBarStyle: UIStatusBarStyle {
         switch screen.statusBar.style {
@@ -41,19 +35,12 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         experience: Experience,
         campaignID: String?,
         screen: Screen,
-        imageStore: ImageStore,
-        sessionController: SessionController,
-        viewControllerProvider: @escaping ViewControllerProvider,
-        presentWebsite: @escaping PresentWebsite
+        viewControllerFactory: @escaping (Experience, Screen) -> UIViewController?
     ) {
         self.experience = experience
         self.campaignID = campaignID
         self.screen = screen
-        self.imageStore = imageStore
-        self.sessionController = sessionController
-        self.viewControllerProvider = viewControllerProvider
-        self.presentWebsite = presentWebsite
-        
+        self.viewControllerFactory = viewControllerFactory
         super.init(collectionViewLayout: collectionViewLayout)
         collectionView?.prefetchDataSource = self
     }
@@ -81,7 +68,14 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         configureNavigationBar()
     }
     
-    lazy var sessionIdentifier: String = {
+    @objc
+    open func close() {
+        dismiss(animated: true, completion: nil)
+    }
+    
+    // MARK: Notifications
+    
+    private var sessionIdentifier: String {
         var identifier = "experience-\(experience.id)-screen-\(screen.id)"
         
         if let campaignID = self.campaignID {
@@ -89,7 +83,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         }
         
         return identifier
-    }()
+    }
     
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -109,7 +103,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
             userInfo: userInfo
         )
         
-        sessionController.registerSession(identifier: sessionIdentifier) { [weak self] duration in
+        SessionController.shared.registerSession(identifier: sessionIdentifier) { [weak self] duration in
             userInfo[ScreenViewController.durationUserInfoKey] = duration
             NotificationCenter.default.post(
                 name: ScreenViewController.screenViewedNotification,
@@ -137,17 +131,12 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
             userInfo: userInfo
         )
         
-        sessionController.unregisterSession(identifier: sessionIdentifier)
-    }
-    
-    @objc
-    open func close() {
-        dismiss(animated: true, completion: nil)
+        SessionController.shared.unregisterSession(identifier: sessionIdentifier)
     }
     
     // MARK: Configuration
     
-    open func configureNavigationBar() {
+    private func configureNavigationBar() {
         guard let navigationBar = navigationController?.navigationBar else {
             return
         }
@@ -210,7 +199,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         navigationBar.titleTextAttributes = nextAttributes
     }
     
-    open func configureNavigationItem() {
+    private func configureNavigationItem() {
         switch screen.titleBar.buttons {
         case .back:
             navigationItem.rightBarButtonItem = nil
@@ -224,15 +213,15 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         }
     }
     
-    open func configureTitle() {
+    private func configureTitle() {
         title = screen.titleBar.text
     }
     
-    open func configureBackgroundColor() {
+    private func configureBackgroundColor() {
         collectionView?.backgroundColor = screen.background.color.uiColor
     }
     
-    open func configureBackgroundImage() {
+    private func configureBackgroundImage() {
         let backgroundImageView = collectionView!.backgroundView as! UIImageView
         backgroundImageView.alpha = 0.0
         backgroundImageView.image = nil
@@ -255,11 +244,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
             backgroundImageView.contentMode = .center
         }
         
-        guard let configuration = ImageConfiguration(background: background, frame: backgroundImageView.frame) else {
-            return
-        }
-        
-        if let image = imageStore.fetchedImage(for: configuration) {
+        if let image = ImageStore.shared.image(for: background, frame: backgroundImageView.frame) {
             if case .tile = background.contentMode {
                 backgroundImageView.backgroundColor = UIColor(patternImage: image)
             } else {
@@ -267,7 +252,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
             }
             backgroundImageView.alpha = 1.0
         } else {
-            imageStore.fetchImage(for: configuration) { [weak backgroundImageView] image in
+            ImageStore.shared.fetchImage(for: background, frame: backgroundImageView.frame) { [weak backgroundImageView] image in
                 guard let image = image else {
                     return
                 }
@@ -287,37 +272,67 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     
     // MARK: Reuseable Views
     
+    /// Register the `UITableViewCell` class to use for each of the various block types and the supplementary view class
+    /// to use for rows. You can override this method to provide a custom cell for a specific block.
     open func registerReusableViews() {
-        collectionView?.register(BlockCell.self, forCellWithReuseIdentifier: "block")
-        collectionView?.register(BarcodeCell.self, forCellWithReuseIdentifier: "barcode")
-        collectionView?.register(ButtonCell.self, forCellWithReuseIdentifier: "button")
-        collectionView?.register(ImageCell.self, forCellWithReuseIdentifier: "image")
-        collectionView?.register(TextCell.self, forCellWithReuseIdentifier: "text")
-        collectionView?.register(WebViewCell.self, forCellWithReuseIdentifier: "webView")
-        collectionView?.register(RowView.self, forSupplementaryViewOfKind: "row", withReuseIdentifier: "row")
+        collectionView?.register(
+            BlockCell.self,
+            forCellWithReuseIdentifier: ScreenViewController.blockCellReuseIdentifier
+        )
+        
+        collectionView?.register(
+            BarcodeCell.self,
+            forCellWithReuseIdentifier: ScreenViewController.barcodeCellReuseIdentifier
+        )
+        
+        collectionView?.register(
+            ButtonCell.self,
+            forCellWithReuseIdentifier: ScreenViewController.buttonCellReuseIdentifier
+        )
+        
+        collectionView?.register(
+            ImageCell.self,
+            forCellWithReuseIdentifier: ScreenViewController.imageCellReuseIdentifier
+        )
+        
+        collectionView?.register(
+            TextCell.self,
+            forCellWithReuseIdentifier: ScreenViewController.textCellReuseIdentifier
+        )
+        
+        collectionView?.register(
+            WebViewCell.self,
+            forCellWithReuseIdentifier: ScreenViewController.webViewCellReuseIdentifier
+        )
+        
+        collectionView?.register(
+            RowView.self,
+            forSupplementaryViewOfKind: "row",
+            withReuseIdentifier: ScreenViewController.rowSupplementaryViewReuseIdentifier
+        )
     }
     
-    open func cellReuseIdentifier(at indexPath: IndexPath) -> String {
+    private func cellReuseIdentifier(at indexPath: IndexPath) -> String {
         let block = screen.rows[indexPath.section].blocks[indexPath.row]
         
         switch block {
         case _ as BarcodeBlock:
-            return "barcode"
+            return ScreenViewController.barcodeCellReuseIdentifier
         case _ as ButtonBlock:
-            return "button"
+            return ScreenViewController.buttonCellReuseIdentifier
         case _ as ImageBlock:
-            return "image"
+            return ScreenViewController.imageCellReuseIdentifier
         case _ as TextBlock:
-            return "text"
+            return ScreenViewController.textCellReuseIdentifier
         case _ as WebViewBlock:
-            return "webView"
+            return ScreenViewController.webViewCellReuseIdentifier
         default:
-            return "block"
+            return ScreenViewController.blockCellReuseIdentifier
         }
     }
     
-    open func supplementaryViewReuseIdentifier(at indexPath: IndexPath) -> String {
-        return "row"
+    private func supplementaryViewReuseIdentifier(at indexPath: IndexPath) -> String {
+        return ScreenViewController.rowSupplementaryViewReuseIdentifier
     }
     
     // MARK: UICollectionViewDataSource
@@ -347,7 +362,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         }
         
         let block = screen.rows[indexPath.section].blocks[indexPath.row]
-        blockCell.configure(with: block, imageStore: imageStore)
+        blockCell.configure(with: block)
         return blockCell
     }
     
@@ -360,26 +375,23 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         }
         
         let row = screen.rows[indexPath.section]
-        rowView.configure(with: row, imageStore: imageStore)
+        rowView.configure(with: row)
         return rowView
     }
     
     // MARK: UICollectionViewDataSourcePrefetching
     
-    public func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+    open func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
         indexPaths.forEach { indexPath in
             guard let frame = collectionViewLayout.layoutAttributesForItem(at: indexPath)?.frame else {
                 return
             }
             
             let block = screen.rows[indexPath.section].blocks[indexPath.row]
-            if let configuration = ImageConfiguration(background: block.background, frame: frame) {
-                imageStore.fetchImage(for: configuration, completionHandler: nil)
-            }
+            ImageStore.shared.fetchImage(for: block.background, frame: frame)
             
-            if let block = block as? ImageBlock {
-                let configuration = ImageConfiguration(image: block.image, frame: frame)
-                imageStore.fetchImage(for: configuration, completionHandler: nil)
+            if let image = (block as? ImageBlock)?.image {
+                ImageStore.shared.fetchImage(for: image, frame: frame)
             }
         }
     }
@@ -407,21 +419,13 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         
         switch block.tapBehavior {
         case .goToScreen(let screenID):
-            if let nextScreen = experience.screens.first(where: { $0.id == screenID }), let navigationController = navigationController {
-                if let viewController = viewControllerProvider(experience, nextScreen) {
-                    navigationController.pushViewController(viewController, animated: true)
-                }
-            }
+            navigateToScreen(screenID: screenID)
         case .none:
             break
         case let .openURL(url, dismiss):
-            UIApplication.shared.open(url, options: [:], completionHandler: nil)
-            
-            if dismiss {
-                self.dismiss(animated: true, completion: nil)
-            }
+            openURL(url, dismiss: dismiss)
         case .presentWebsite(let url):
-            presentWebsite(url, self)
+            presentWebsite(at: url)
         }
         
         var userInfo: [String: Any] = [
@@ -440,7 +444,66 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
             userInfo: userInfo
         )
     }
+    
+    // MARK: Block Tap Actions
+    
+    /// Navigate to another screen in the experience. This method is called by the `ScreenViewController` in response
+    /// to a block tap configured to navigate to a screen. The default implementation constructs a new view controller
+    /// using the `viewControllerFactory` and pushes it onto the navigation stack. You can override this method if you
+    /// need to change this behavior.
+    open func navigateToScreen(screenID: String) {
+        guard let nextScreen = experience.screens.first(where: { $0.id == screenID }), let navigationController = navigationController else {
+            return
+        }
+        
+        if let viewController = viewControllerFactory(experience, nextScreen) {
+            navigationController.pushViewController(viewController, animated: true)
+        }
+    }
+    
+    /// Open a URL. This method is called by the `ScreenViewController` in response to a block tap configured to
+    /// open a URL. The default implementation calls `open(_:options:completionHandler:)` on `UIApplication.shared` and
+    /// dismisses the entire experience if the `dismiss` paramter is true. You can override this method if you need to
+    /// change this behavior.
+    open func openURL(_ url: URL, dismiss: Bool) {
+        UIApplication.shared.open(url, options: [:], completionHandler: nil)
+        
+        if dismiss {
+            self.dismiss(animated: true, completion: nil)
+        }
+    }
+    
+    /// Present a website at the given URL in a view controller. This method is called by the `ScreenViewController` in
+    /// response to a block tap configured to present a website. The default implementation constructs a new view
+    /// controller by calling the `websiteViewController(url:)` factory method and presents it modally. You can override
+    /// this method if you need to change this behavior.
+    open func presentWebsite(at url: URL) {
+        let websiteViewController = self.websiteViewController(url: url)
+        present(websiteViewController, animated: true, completion: nil)
+    }
+    
+    // MARK: Factories
+    
+    /// Construct a view controller to use for presenting websites. The default implementation returns an instance
+    /// of `SFSafariViewController`. You can override this method if you want to use a different view controller.
+    open func websiteViewController(url: URL) -> UIViewController {
+        return SFSafariViewController(url: url)
+    }
 }
+
+// MARK: Reuse Identifiers
+
+extension ScreenViewController {
+    public static let blockCellReuseIdentifier = "block"
+    public static let barcodeCellReuseIdentifier = "barcode"
+    public static let buttonCellReuseIdentifier = "button"
+    public static let imageCellReuseIdentifier = "image"
+    public static let textCellReuseIdentifier = "text"
+    public static let webViewCellReuseIdentifier = "webView"
+    public static let rowSupplementaryViewReuseIdentifier = "row"
+}
+
+// MARK: Notifications
 
 extension ScreenViewController {
     /// The `ScreenViewController` sends this notification when it is presented.

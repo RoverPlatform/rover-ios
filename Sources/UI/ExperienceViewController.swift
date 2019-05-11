@@ -8,9 +8,15 @@
 
 import UIKit
 
-/// View controller responsible for navigation behaviour between screens of an Experience.
+/// The `ExperienceViewController` displays a Rover experience and is responsible for navigation behavior between
+/// its screens. It posts [`Notification`s](https://developer.apple.com/documentation/foundation/notification) through
+/// the default [`NotificationCenter`](https://developer.apple.com/documentation/foundation/notificationcenter) when it
+/// is presented, dismissed and viewed.
+///
+/// When the `ExperienceViewController` navigates to a Rover screen, it instantiates a view controller by calling its
+/// factory method `screenViewController(experience:screen:)`. The default implementation returns an instance of
+/// `ScreenViewController` but you can override this method if you wan to use a different view controller.
 open class ExperienceViewController: UINavigationController {
-    private let sessionController: SessionController
     public let experience: Experience
     public let campaignID: String?
     
@@ -18,7 +24,27 @@ open class ExperienceViewController: UINavigationController {
         return self.topViewController
     }
     
-    var sessionIdentifier: String {
+    public init(experience: Experience, campaignID: String?) {
+        self.experience = experience
+        self.campaignID = campaignID
+        super.init(nibName: nil, bundle: nil)
+        
+        let homeScreenViewController = screenViewController(
+            experience: experience,
+            screen: experience.homeScreen
+        )
+        
+        viewControllers = [homeScreenViewController]
+    }
+    
+    @available(*, unavailable)
+    public required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: Notifications
+    
+    private var sessionIdentifier: String {
         var identifier = "experience-\(experience.id)"
         
         if let campaignID = self.campaignID {
@@ -26,25 +52,6 @@ open class ExperienceViewController: UINavigationController {
         }
         
         return identifier
-    }
-    
-    public init(
-        sessionController: SessionController,
-        homeScreenViewController: UIViewController,
-        experience: Experience,
-        campaignID: String?
-    ) {
-        self.experience = experience
-        self.campaignID = campaignID
-        self.sessionController = sessionController
-        
-        super.init(nibName: nil, bundle: nil)
-        viewControllers = [homeScreenViewController]
-    }
-    
-    @available(*, unavailable)
-    public required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
     
     override open func viewDidAppear(_ animated: Bool) {
@@ -64,7 +71,7 @@ open class ExperienceViewController: UINavigationController {
             userInfo: userInfo
         )
         
-        sessionController.registerSession(identifier: sessionIdentifier) { [weak self] duration in
+        SessionController.shared.registerSession(identifier: sessionIdentifier) { [weak self] duration in
             userInfo[ExperienceViewController.durationUserInfoKey] = duration
             NotificationCenter.default.post(
                 name: ExperienceViewController.experienceViewedNotification,
@@ -91,7 +98,21 @@ open class ExperienceViewController: UINavigationController {
             userInfo: userInfo
         )
         
-        sessionController.unregisterSession(identifier: sessionIdentifier)
+        SessionController.shared.unregisterSession(identifier: sessionIdentifier)
+    }
+    
+    // MARK: Factories
+    
+    open func screenViewController(experience: Experience, screen: Screen) -> ScreenViewController {
+        return ScreenViewController(
+            collectionViewLayout: ScreenViewLayout(screen: screen),
+            experience: experience,
+            campaignID: self.campaignID,
+            screen: screen,
+            viewControllerFactory: { [weak self] experience, screen in
+                self?.screenViewController(experience: experience, screen: screen)
+            }
+        )
     }
 }
 

@@ -8,19 +8,19 @@
 
 import UIKit
 
-open class ImageCell: BlockCell {
-    public let imageView: UIImageView = {
+class ImageCell: BlockCell {
+    let imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleToFill
         return imageView
     }()
     
-    override open var content: UIView? {
+    override var content: UIView? {
         return imageView
     }
     
-    override open func configure(with block: Block, imageStore: ImageStore) {
-        super.configure(with: block, imageStore: imageStore)
+    override func configure(with block: Block) {
+        super.configure(with: block)
         
         guard let imageBlock = block as? ImageBlock else {
             imageView.isHidden = true
@@ -30,12 +30,11 @@ open class ImageCell: BlockCell {
         imageView.alpha = 0.0
         imageView.image = nil
         
-        let configuration = ImageConfiguration(image: imageBlock.image, frame: frame)
-        if let image = imageStore.fetchedImage(for: configuration) {
+        if let image = ImageStore.shared.image(for: imageBlock.image, frame: frame) {
             imageView.image = image
             imageView.alpha = 1.0
         } else {
-            imageStore.fetchImage(for: configuration) { [weak self, blockID = block.id] image in
+            ImageStore.shared.fetchImage(for: imageBlock.image, frame: frame) { [weak self, blockID = block.id] image in
                 guard let image = image else {
                     return
                 }

@@ -8,12 +8,12 @@
 
 import UIKit
 
-open class RowView: UICollectionReusableView {
-    public let backgroundImageView = UIImageView()
+class RowView: UICollectionReusableView {
+    let backgroundImageView = UIImageView()
     
-    public var row: Row?
+    var row: Row?
     
-    override open var clipsToBounds: Bool {
+    override var clipsToBounds: Bool {
         get {
             return true
         }
@@ -21,17 +21,17 @@ open class RowView: UICollectionReusableView {
         set { }
     }
     
-    override public init(frame: CGRect) {
+    override init(frame: CGRect) {
         super.init(frame: frame)
         addSubviews()
     }
     
-    public required init?(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         addSubviews()
     }
     
-    open func addSubviews() {
+    func addSubviews() {
         addSubview(backgroundImageView)
         backgroundImageView.translatesAutoresizingMaskIntoConstraints = false
         backgroundImageView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
@@ -40,14 +40,14 @@ open class RowView: UICollectionReusableView {
         backgroundImageView.topAnchor.constraint(equalTo: topAnchor).isActive = true
     }
     
-    open func configure(with row: Row) {
+    func configure(with row: Row) {
         self.row = row
         
         configureBackgroundColor()
         configureBackgroundImage()
     }
     
-    open func configureBackgroundColor() {
+    func configureBackgroundColor() {
         guard let row = row else {
             backgroundColor = UIColor.clear
             return
@@ -57,7 +57,7 @@ open class RowView: UICollectionReusableView {
     }
     
     // swiftlint:disable:next cyclomatic_complexity // This routine is fairly readable as it is, so we will hold off on refactoring it, so silence the complexity warning.
-    open func configureBackgroundImage() {
+    func configureBackgroundImage() {
         // Reset any existing background image
         
         backgroundImageView.alpha = 0.0

@@ -8,8 +8,8 @@
 
 import UIKit
 
-open class BarcodeCell: BlockCell {
-    public let imageView: UIImageView = {
+class BarcodeCell: BlockCell {
+    let imageView: UIImageView = {
         let imageView = UIImageView()
 
         // Using stretch fit because we've ensured that the image will scale aspect-correct, so will always have the
@@ -21,11 +21,11 @@ open class BarcodeCell: BlockCell {
         return imageView
     }()
     
-    override open var content: UIView? {
+    override var content: UIView? {
         return imageView
     }
     
-    override open func configure(with block: Block) {
+    override func configure(with block: Block) {
         super.configure(with: block)
         
         guard let barcodeBlock = block as? BarcodeBlock else {

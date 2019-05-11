@@ -8,14 +8,14 @@
 
 import UIKit
 
-open class BlockCell: UICollectionViewCell {
-    public var block: Block?
+class BlockCell: UICollectionViewCell {
+    var block: Block?
     
-    open var content: UIView? {
+    var content: UIView? {
         return nil
     }
     
-    override public init(frame: CGRect) {
+    override init(frame: CGRect) {
         super.init(frame: frame)
         
         backgroundView = UIImageView()
@@ -27,7 +27,7 @@ open class BlockCell: UICollectionViewCell {
         }
     }
     
-    public required init?(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         
         backgroundView = UIImageView()
@@ -39,7 +39,7 @@ open class BlockCell: UICollectionViewCell {
         }
     }
     
-    open func configure(with block: Block) {
+    func configure(with block: Block) {
         self.block = block
         
         configureBackgroundColor()
@@ -49,7 +49,7 @@ open class BlockCell: UICollectionViewCell {
         configureContent()
     }
     
-    open func configureBackgroundColor() {
+    func configureBackgroundColor() {
         guard let block = block else {
             backgroundColor = UIColor.clear
             return
@@ -59,7 +59,7 @@ open class BlockCell: UICollectionViewCell {
     }
     
     // swiftlint:disable:next cyclomatic_complexity // This routine is fairly readable as it is, so we will hold off on refactoring it, so silence the complexity warning.
-    open func configureBackgroundImage() {
+    func configureBackgroundImage() {
         guard let backgroundImageView = backgroundView as? UIImageView else {
             return
         }
@@ -121,7 +121,7 @@ open class BlockCell: UICollectionViewCell {
         }
     }
     
-    open func configureBorder() {
+    func configureBorder() {
         guard let block = block else {
             layer.borderColor = UIColor.clear.cgColor
             layer.borderWidth = 0
@@ -139,7 +139,7 @@ open class BlockCell: UICollectionViewCell {
         }()
     }
     
-    open func configureOpacity() {
+    func configureOpacity() {
         guard let block = block else {
             layer.opacity = 0
             return
@@ -148,7 +148,7 @@ open class BlockCell: UICollectionViewCell {
         self.contentView.alpha = CGFloat(block.opacity)
     }
     
-    open func configureContent() {
+    func configureContent() {
         guard let block = block, let content = content else {
             return
         }

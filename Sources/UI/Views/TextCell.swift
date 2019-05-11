@@ -8,8 +8,8 @@
 
 import UIKit
 
-open class TextCell: BlockCell {
-    public let textView: UITextView = {
+class TextCell: BlockCell {
+    let textView: UITextView = {
         let textView = UITextView()
         textView.backgroundColor = UIColor.clear
         textView.isUserInteractionEnabled = false
@@ -18,11 +18,11 @@ open class TextCell: BlockCell {
         return textView
     }()
     
-    override open var content: UIView? {
+    override var content: UIView? {
         return textView
     }
     
-    override open func configure(with block: Block) {
+    override func configure(with block: Block) {
         super.configure(with: block)
         
         guard let textBlock = block as? TextBlock else {

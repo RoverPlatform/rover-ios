@@ -8,14 +8,14 @@
 
 import UIKit
 
-open class ButtonCell: BlockCell {
-    public let label = UILabel()
+class ButtonCell: BlockCell {
+    let label = UILabel()
     
-    override open var content: UIView? {
+    override var content: UIView? {
         return label
     }
     
-    override open func configure(with block: Block) {
+    override func configure(with block: Block) {
         super.configure(with: block)
         
         guard let buttonBlock = block as? ButtonBlock else {

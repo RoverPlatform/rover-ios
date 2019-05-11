@@ -8,18 +8,18 @@
 
 import UIKit
 
-open class ImageCell: BlockCell {
-    public let imageView: UIImageView = {
+class ImageCell: BlockCell {
+    let imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleToFill
         return imageView
     }()
     
-    override open var content: UIView? {
+    override var content: UIView? {
         return imageView
     }
     
-    override open func configure(with block: Block) {
+    override func configure(with block: Block) {
         super.configure(with: block)
         
         guard let imageBlock = block as? ImageBlock else {

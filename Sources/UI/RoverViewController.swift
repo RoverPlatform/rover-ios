@@ -16,10 +16,6 @@ open class RoverViewController: UIViewController {
     
     public let campaignID: String?
     
-    open private(set) lazy var urlSession = URLSession(configuration: URLSessionConfiguration.default)
-    
-    open private(set) lazy var imageStore = ImageStoreService(session: urlSession)
-    
     open private(set) lazy var sessionController = SessionController(keepAliveTime: 10)
     
     override open var childForStatusBarStyle: UIViewController? {
@@ -147,7 +143,6 @@ open class RoverViewController: UIViewController {
             experience: experience,
             campaignID: self.campaignID,
             screen: screen,
-            imageStore: imageStore,
             sessionController: sessionController,
             viewControllerProvider: { (experience: Experience, screen: Screen) in
                 self.screenViewController(experience: experience, screen: screen)

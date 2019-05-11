@@ -9,10 +9,7 @@
 /* Begin PBXBuildFile section */
 		49005D0422776283009D62F9 /* UIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49005D0322776283009D62F9 /* UIApplication.swift */; };
 		4953DD112239925B00286C4B /* Rover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4953DD102239925B00286C4B /* Rover.swift */; };
-		4953DD1F22399A6900286C4B /* ImageConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FDDB20891153008D1A57 /* ImageConfiguration.swift */; };
-		4953DD2022399A6900286C4B /* ImageOptimization.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB709C72207EB47400F96C2B /* ImageOptimization.swift */; };
-		4953DD2122399A6900286C4B /* ImageStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB709C68207E7EFC00F96C2B /* ImageStore.swift */; };
-		4953DD2222399A6900286C4B /* ImageStoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB709C6B207EAEED00F96C2B /* ImageStoreService.swift */; };
+		4953DD2222399A6900286C4B /* ImageStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB709C6B207EAEED00F96C2B /* ImageStore.swift */; };
 		4953DD2922399A7600286C4B /* SessionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6ADD7E20B3449E002F226C /* SessionController.swift */; };
 		4953DD2A22399A7600286C4B /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB4831B920DC5D18003DBF1B /* Session.swift */; };
 		4953DD3022399A8500286C4B /* Background.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB1A69209B8CC500E99F9F /* Background.swift */; };
@@ -49,7 +46,6 @@
 		4953DD5322399A9C00286C4B /* ScreenViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEE32055964E00E5C77F /* ScreenViewLayout.swift */; };
 		4953DD5422399A9C00286C4B /* ScreenViewLayoutAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FDD92087E09F008D1A57 /* ScreenViewLayoutAttributes.swift */; };
 		DB637A872279EFC600F0E791 /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB637A862279EFC600F0E791 /* Analytics.swift */; };
-		DB640B6F22452AB000CFA795 /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB640B6E22452AB000CFA795 /* ImageCache.swift */; };
 		DB640B712245343F00CFA795 /* SessionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB640B702245343F00CFA795 /* SessionState.swift */; };
 		DB6BE8AE215D41F7000A1FDA /* OSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6BE8AD215D41F7000A1FDA /* OSLog.swift */; };
 		DB8FF7102286064400BDE2DC /* ExperienceStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8FF70F2286064400BDE2DC /* ExperienceStore.swift */; };
@@ -72,19 +68,15 @@
 		4953DD102239925B00286C4B /* Rover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rover.swift; sourceTree = "<group>"; };
 		49952B452242B73A004C5521 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DB00FDD92087E09F008D1A57 /* ScreenViewLayoutAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenViewLayoutAttributes.swift; sourceTree = "<group>"; };
-		DB00FDDB20891153008D1A57 /* ImageConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageConfiguration.swift; sourceTree = "<group>"; };
 		DB00FDDF208A4961008D1A57 /* BarcodeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarcodeCell.swift; sourceTree = "<group>"; };
 		DB4831B920DC5D18003DBF1B /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
 		DB637A862279EFC600F0E791 /* Analytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analytics.swift; sourceTree = "<group>"; };
-		DB640B6E22452AB000CFA795 /* ImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
 		DB640B702245343F00CFA795 /* SessionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionState.swift; sourceTree = "<group>"; };
 		DB6ADD6720B33EC0002F226C /* RoverUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoverUITests.swift; sourceTree = "<group>"; };
 		DB6ADD6920B33EC0002F226C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DB6ADD7E20B3449E002F226C /* SessionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionController.swift; sourceTree = "<group>"; };
 		DB6BE8AD215D41F7000A1FDA /* OSLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OSLog.swift; sourceTree = "<group>"; };
-		DB709C68207E7EFC00F96C2B /* ImageStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageStore.swift; sourceTree = "<group>"; };
-		DB709C6B207EAEED00F96C2B /* ImageStoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageStoreService.swift; sourceTree = "<group>"; };
-		DB709C72207EB47400F96C2B /* ImageOptimization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageOptimization.swift; sourceTree = "<group>"; };
+		DB709C6B207EAEED00F96C2B /* ImageStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageStore.swift; sourceTree = "<group>"; };
 		DB8FF70F2286064400BDE2DC /* ExperienceStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperienceStore.swift; sourceTree = "<group>"; };
 		DB8FF71122861B5800BDE2DC /* DateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatter.swift; sourceTree = "<group>"; };
 		DB9DBEDE2055964E00E5C77F /* ExperienceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExperienceViewController.swift; sourceTree = "<group>"; };
@@ -182,7 +174,7 @@
 			isa = PBXGroup;
 			children = (
 				DB8FF70F2286064400BDE2DC /* ExperienceStore.swift */,
-				DB709C67207E7EF200F96C2B /* ImageStore */,
+				DB709C6B207EAEED00F96C2B /* ImageStore.swift */,
 				DB6ADD8320B34EE1002F226C /* SessionController */,
 			);
 			path = Services;
@@ -196,18 +188,6 @@
 				DB640B702245343F00CFA795 /* SessionState.swift */,
 			);
 			path = SessionController;
-			sourceTree = "<group>";
-		};
-		DB709C67207E7EF200F96C2B /* ImageStore */ = {
-			isa = PBXGroup;
-			children = (
-				DB00FDDB20891153008D1A57 /* ImageConfiguration.swift */,
-				DB709C72207EB47400F96C2B /* ImageOptimization.swift */,
-				DB709C68207E7EFC00F96C2B /* ImageStore.swift */,
-				DB709C6B207EAEED00F96C2B /* ImageStoreService.swift */,
-				DB640B6E22452AB000CFA795 /* ImageCache.swift */,
-			);
-			path = ImageStore;
 			sourceTree = "<group>";
 		};
 		DB9DBEBA205595F100E5C77F /* Frameworks */ = {
@@ -442,9 +422,8 @@
 				4953DD2922399A7600286C4B /* SessionController.swift in Sources */,
 				4953DD3122399A8500286C4B /* Barcode.swift in Sources */,
 				4953DD4E22399A9700286C4B /* TextCell.swift in Sources */,
-				DB640B6F22452AB000CFA795 /* ImageCache.swift in Sources */,
 				4953DD4922399A9700286C4B /* BarcodeCell.swift in Sources */,
-				4953DD2222399A6900286C4B /* ImageStoreService.swift in Sources */,
+				4953DD2222399A6900286C4B /* ImageStore.swift in Sources */,
 				4953DD4322399A8500286C4B /* WebView.swift in Sources */,
 				4953DD4D22399A9700286C4B /* RowView.swift in Sources */,
 				4953DD4A22399A9700286C4B /* BlockCell.swift in Sources */,
@@ -454,13 +433,10 @@
 				49005D0422776283009D62F9 /* UIApplication.swift in Sources */,
 				4953DD5222399A9C00286C4B /* ScreenViewController.swift in Sources */,
 				4953DD3522399A8500286C4B /* ButtonBlock.swift in Sources */,
-				4953DD2122399A6900286C4B /* ImageStore.swift in Sources */,
 				4953DD3022399A8500286C4B /* Background.swift in Sources */,
 				DB6BE8AE215D41F7000A1FDA /* OSLog.swift in Sources */,
 				4953DD3C22399A8500286C4B /* Position.swift in Sources */,
 				DB8FF71222861B5800BDE2DC /* DateFormatter.swift in Sources */,
-				4953DD2022399A6900286C4B /* ImageOptimization.swift in Sources */,
-				4953DD1F22399A6900286C4B /* ImageConfiguration.swift in Sources */,
 				4953DD4C22399A9700286C4B /* ImageCell.swift in Sources */,
 				4953DD3F22399A8500286C4B /* Screen.swift in Sources */,
 				4953DD112239925B00286C4B /* Rover.swift in Sources */,

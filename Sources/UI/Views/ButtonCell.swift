@@ -15,8 +15,8 @@ open class ButtonCell: BlockCell {
         return label
     }
     
-    override open func configure(with block: Block, imageStore: ImageStore) {
-        super.configure(with: block, imageStore: imageStore)
+    override open func configure(with block: Block) {
+        super.configure(with: block)
         
         guard let buttonBlock = block as? ButtonBlock else {
             label.isHidden = true

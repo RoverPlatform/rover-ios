@@ -40,11 +40,11 @@ open class RowView: UICollectionReusableView {
         backgroundImageView.topAnchor.constraint(equalTo: topAnchor).isActive = true
     }
     
-    open func configure(with row: Row, imageStore: ImageStore) {
+    open func configure(with row: Row) {
         self.row = row
         
         configureBackgroundColor()
-        configureBackgroundImage(imageStore: imageStore)
+        configureBackgroundImage()
     }
     
     open func configureBackgroundColor() {
@@ -57,7 +57,7 @@ open class RowView: UICollectionReusableView {
     }
     
     // swiftlint:disable:next cyclomatic_complexity // This routine is fairly readable as it is, so we will hold off on refactoring it, so silence the complexity warning.
-    open func configureBackgroundImage(imageStore: ImageStore) {
+    open func configureBackgroundImage() {
         // Reset any existing background image
         
         backgroundImageView.alpha = 0.0
@@ -83,11 +83,7 @@ open class RowView: UICollectionReusableView {
             backgroundImageView.contentMode = .center
         }
         
-        guard let configuration = ImageConfiguration(background: row.background, frame: frame) else {
-            return
-        }
-        
-        if let image = imageStore.fetchedImage(for: configuration) {
+        if let image = ImageStore.shared.image(for: row.background, frame: frame) {
             if case .tile = row.background.contentMode {
                 backgroundImageView.backgroundColor = UIColor(patternImage: image)
             } else {
@@ -95,7 +91,7 @@ open class RowView: UICollectionReusableView {
             }
             backgroundImageView.alpha = 1.0
         } else {
-            imageStore.fetchImage(for: configuration) { [weak self, rowID = row.id] image in
+            ImageStore.shared.fetchImage(for: row.background, frame: frame) { [weak self, rowID = row.id] image in
                 guard let image = image else {
                     return
                 }

@@ -58,7 +58,7 @@ class ExperienceStore {
         return cache.object(forKey: key)?.experience
     }
     
-    // MARK: Tasks
+    // MARK: Fetching
     
     enum Failure: LocalizedError {
         case emptyResponseData
@@ -93,12 +93,9 @@ class ExperienceStore {
         }
     }
     
+    private let session = URLSession(configuration: .default)
     private var tasks = [Identifier: URLSessionTask]()
     private var completionHandlers = [Identifier: [(Result<Experience, ExperienceStore.Failure>) -> Void]]()
-    
-    // MARK: Fetching
-    
-    private let session = URLSession(configuration: URLSessionConfiguration.default)
     
     /// Fetch an experience for the given identifier from Rover's servers.
     ///
@@ -121,6 +118,8 @@ class ExperienceStore {
                 for: identifier,
                 with: .success(experience)
             )
+            
+            return
         }
         
         let queryItems = self.queryItems(identifier: identifier)

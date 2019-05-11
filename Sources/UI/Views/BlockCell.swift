@@ -39,11 +39,11 @@ open class BlockCell: UICollectionViewCell {
         }
     }
     
-    open func configure(with block: Block, imageStore: ImageStore) {
+    open func configure(with block: Block) {
         self.block = block
         
         configureBackgroundColor()
-        configureBackgroundImage(imageStore: imageStore)
+        configureBackgroundImage()
         configureBorder()
         configureOpacity()
         configureContent()
@@ -59,7 +59,7 @@ open class BlockCell: UICollectionViewCell {
     }
     
     // swiftlint:disable:next cyclomatic_complexity // This routine is fairly readable as it is, so we will hold off on refactoring it, so silence the complexity warning.
-    open func configureBackgroundImage(imageStore: ImageStore) {
+    open func configureBackgroundImage() {
         guard let backgroundImageView = backgroundView as? UIImageView else {
             return
         }
@@ -89,11 +89,7 @@ open class BlockCell: UICollectionViewCell {
             backgroundImageView.contentMode = .center
         }
         
-        guard let configuration = ImageConfiguration(background: block.background, frame: frame) else {
-            return
-        }
-        
-        if let image = imageStore.fetchedImage(for: configuration) {
+        if let image = ImageStore.shared.image(for: block.background, frame: frame) {
             if case .tile = block.background.contentMode {
                 backgroundImageView.backgroundColor = UIColor(patternImage: image)
             } else {
@@ -101,7 +97,7 @@ open class BlockCell: UICollectionViewCell {
             }
             backgroundImageView.alpha = 1.0
         } else {
-            imageStore.fetchImage(for: configuration) { [weak self, weak backgroundImageView, blockID = block.id] image in
+            ImageStore.shared.fetchImage(for: block.background, frame: frame) { [weak self, weak backgroundImageView, blockID = block.id] image in
                 guard let image = image else {
                     return
                 }

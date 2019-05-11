@@ -18,7 +18,6 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     public let campaignID: String?
     public let screen: Screen
     
-    public let imageStore: ImageStore
     public let sessionController: SessionController
     
     public typealias ViewControllerProvider = (Experience, Screen) -> UIViewController?
@@ -41,7 +40,6 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         experience: Experience,
         campaignID: String?,
         screen: Screen,
-        imageStore: ImageStore,
         sessionController: SessionController,
         viewControllerProvider: @escaping ViewControllerProvider,
         presentWebsite: @escaping PresentWebsite
@@ -49,7 +47,6 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         self.experience = experience
         self.campaignID = campaignID
         self.screen = screen
-        self.imageStore = imageStore
         self.sessionController = sessionController
         self.viewControllerProvider = viewControllerProvider
         self.presentWebsite = presentWebsite
@@ -255,11 +252,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
             backgroundImageView.contentMode = .center
         }
         
-        guard let configuration = ImageConfiguration(background: background, frame: backgroundImageView.frame) else {
-            return
-        }
-        
-        if let image = imageStore.fetchedImage(for: configuration) {
+        if let image = ImageStore.shared.image(for: background, frame: backgroundImageView.frame) {
             if case .tile = background.contentMode {
                 backgroundImageView.backgroundColor = UIColor(patternImage: image)
             } else {
@@ -267,7 +260,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
             }
             backgroundImageView.alpha = 1.0
         } else {
-            imageStore.fetchImage(for: configuration) { [weak backgroundImageView] image in
+            ImageStore.shared.fetchImage(for: background, frame: backgroundImageView.frame) { [weak backgroundImageView] image in
                 guard let image = image else {
                     return
                 }
@@ -347,7 +340,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         }
         
         let block = screen.rows[indexPath.section].blocks[indexPath.row]
-        blockCell.configure(with: block, imageStore: imageStore)
+        blockCell.configure(with: block)
         return blockCell
     }
     
@@ -360,7 +353,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         }
         
         let row = screen.rows[indexPath.section]
-        rowView.configure(with: row, imageStore: imageStore)
+        rowView.configure(with: row)
         return rowView
     }
     
@@ -373,13 +366,10 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
             }
             
             let block = screen.rows[indexPath.section].blocks[indexPath.row]
-            if let configuration = ImageConfiguration(background: block.background, frame: frame) {
-                imageStore.fetchImage(for: configuration, completionHandler: nil)
-            }
+            ImageStore.shared.fetchImage(for: block.background, frame: frame)
             
-            if let block = block as? ImageBlock {
-                let configuration = ImageConfiguration(image: block.image, frame: frame)
-                imageStore.fetchImage(for: configuration, completionHandler: nil)
+            if let image = (block as? ImageBlock)?.image {
+                ImageStore.shared.fetchImage(for: image, frame: frame)
             }
         }
     }

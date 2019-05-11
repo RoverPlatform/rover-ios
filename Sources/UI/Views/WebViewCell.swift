@@ -15,8 +15,8 @@ open class WebViewCell: BlockCell {
         return webView
     }
     
-    override open func configure(with block: Block, imageStore: ImageStore) {
-        super.configure(with: block, imageStore: imageStore)
+    override open func configure(with block: Block) {
+        super.configure(with: block)
         
         guard let webViewBlock = block as? WebViewBlock else {
             self.webView.isHidden = true

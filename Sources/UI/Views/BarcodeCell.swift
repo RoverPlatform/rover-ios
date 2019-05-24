@@ -17,7 +17,13 @@ class BarcodeCell: BlockCell {
         // a sharp scale of the pixels.  While we could use .scaleToFit, .scaleToFill will avoid the barcode
         // leaving any unexpected gaps around the outside in case of lack of agreement.
         imageView.contentMode = .scaleToFill
+        
+        #if swift(>=4.2)
         imageView.layer.magnificationFilter = CALayerContentsFilter.nearest
+        #else
+        imageView.layer.magnificationFilter = kCAFilterNearest
+        #endif
+        
         return imageView
     }()
     

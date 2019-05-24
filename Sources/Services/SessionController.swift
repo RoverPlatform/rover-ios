@@ -19,9 +19,17 @@ class SessionController {
     private var observers: [NSObjectProtocol] = []
     
     private init() {
+        #if swift(>=4.2)
+        let didBecomeActiveNotification = UIApplication.didBecomeActiveNotification
+        let willResignActiveNotification = UIApplication.willResignActiveNotification
+        #else
+        let didBecomeActiveNotification = NSNotification.Name.UIApplicationDidBecomeActive
+        let willResignActiveNotification = NSNotification.Name.UIApplicationWillResignActive
+        #endif
+        
         observers = [
             NotificationCenter.default.addObserver(
-                forName: UIApplication.didBecomeActiveNotification,
+                forName: didBecomeActiveNotification,
                 object: nil,
                 queue: OperationQueue.main,
                 using: { _ in
@@ -31,7 +39,7 @@ class SessionController {
                 }
             ),
             NotificationCenter.default.addObserver(
-                forName: UIApplication.willResignActiveNotification,
+                forName: willResignActiveNotification,
                 object: nil,
                 queue: OperationQueue.main,
                 using: { _ in

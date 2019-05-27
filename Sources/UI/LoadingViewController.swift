@@ -15,7 +15,11 @@ import UIKit
 /// also displays a cancel button. When the cancel button is tapped it dismisses the view controller.
 open class LoadingViewController: UIViewController {
     /// The activity indicator displayed in the center of the screen.
+    #if swift(>=4.2)
     public var activityIndicator = UIActivityIndicatorView(style: .whiteLarge)
+    #else
+    public var activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+    #endif
     
     /// The cancel button displayed below the activity indicator after 3 seconds.
     public var cancelButton = UIButton(type: .custom)

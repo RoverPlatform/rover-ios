@@ -20,9 +20,15 @@ open class ExperienceViewController: UINavigationController {
     public let experience: Experience
     public let campaignID: String?
     
+    #if swift(>=4.2)
     override open var childForStatusBarStyle: UIViewController? {
         return self.topViewController
     }
+    #else
+    override open var childViewControllerForStatusBarStyle: UIViewController? {
+        return self.topViewController
+    }
+    #endif
     
     public init(experience: Experience, campaignID: String?) {
         self.experience = experience

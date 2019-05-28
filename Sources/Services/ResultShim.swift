@@ -1,4 +1,4 @@
-// This is a copy of Result.swift from upstream Swift.  Using the proceprocessor to include it when using the old version of Swift (namely, of its standard library, not the language version level)
+// This is a copy of Result.swift from upstream Swift.  Using the proceprocessor to include it when using the old version of Swift (namely, of its standard library, not the language version level), plus a few tweaks to make it internal scope and remove an unneeded feature not supported with the older Swift stdlib.
 
 //===----------------------------------------------------------------------===//
 //
@@ -17,7 +17,7 @@
 /// A value that represents either a success or a failure, including an
 /// associated value in each case.
 //@_frozen
-public enum Result<Success, Failure: Error> {
+enum Result<Success, Failure: Error> {
     /// A success, storing a `Success` value.
     case success(Success)
     
@@ -42,7 +42,7 @@ public enum Result<Success, Failure: Error> {
     ///   instance.
     /// - Returns: A `Result` instance with the result of evaluating `transform`
     ///   as the new success value if this instance represents a success.
-    public func map<NewSuccess>(
+    func map<NewSuccess>(
         _ transform: (Success) -> NewSuccess
         ) -> Result<NewSuccess, Failure> {
         switch self {
@@ -79,7 +79,7 @@ public enum Result<Success, Failure: Error> {
     ///   instance.
     /// - Returns: A `Result` instance with the result of evaluating `transform`
     ///   as the new failure value if this instance represents a failure.
-    public func mapError<NewFailure>(
+    func mapError<NewFailure>(
         _ transform: (Failure) -> NewFailure
         ) -> Result<Success, NewFailure> {
         switch self {
@@ -97,7 +97,7 @@ public enum Result<Success, Failure: Error> {
     ///   instance.
     /// - Returns: A `Result` instance with the result of evaluating `transform`
     ///   as the new failure value if this instance represents a failure.
-    public func flatMap<NewSuccess>(
+    func flatMap<NewSuccess>(
         _ transform: (Success) -> Result<NewSuccess, Failure>
         ) -> Result<NewSuccess, Failure> {
         switch self {
@@ -115,7 +115,7 @@ public enum Result<Success, Failure: Error> {
     ///   instance.
     /// - Returns: A `Result` instance, either from the closure or the previous
     ///   `.success`.
-    public func flatMapError<NewFailure>(
+    func flatMapError<NewFailure>(
         _ transform: (Failure) -> Result<Success, NewFailure>
         ) -> Result<Success, NewFailure> {
         switch self {
@@ -142,7 +142,7 @@ public enum Result<Success, Failure: Error> {
     ///
     /// - Returns: The success value, if the instance represents a success.
     /// - Throws: The failure value, if the instance represents a failure.
-    public func get() throws -> Success {
+    func get() throws -> Success {
         switch self {
         case let .success(success):
             return success

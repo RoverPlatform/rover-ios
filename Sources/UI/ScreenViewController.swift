@@ -398,10 +398,6 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     
     // MARK: UICollectionViewDelegate
     
-    override open func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-        return true
-    }
-    
     override open func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         defer {
             collectionView.deselectItem(at: indexPath, animated: true)

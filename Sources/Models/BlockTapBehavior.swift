@@ -8,7 +8,7 @@
 
 import Foundation
 
-public enum BlockTapBehavior {
+public enum BlockTapBehavior: Equatable {
     case goToScreen(screenID: String)
     case none
     case openURL(url: URL, dismiss: Bool)

@@ -398,6 +398,13 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     
     // MARK: UICollectionViewDelegate
     
+    override open func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
+        let row = screen.rows[indexPath.section]
+        let block = row.blocks[indexPath.row]
+        
+        return block is ButtonBlock || block.tapBehavior != BlockTapBehavior.none
+    }
+    
     override open func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         defer {
             collectionView.deselectItem(at: indexPath, animated: true)

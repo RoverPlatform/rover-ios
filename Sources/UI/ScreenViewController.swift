@@ -416,7 +416,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         switch block.tapBehavior {
         case .goToScreen(let screenID):
             navigateToScreen(screenID: screenID)
-        case .none:
+        case .none, .custom:
             break
         case let .openURL(url, dismiss):
             openURL(url, dismiss: dismiss)

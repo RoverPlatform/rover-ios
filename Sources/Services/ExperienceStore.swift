@@ -219,6 +219,7 @@ class ExperienceStore {
         
         assert(accountToken != nil, "Your Rover auth token has not been set.  Use Rover.accountToken = \"MY_TOKEN\".")
         urlRequest.setValue(accountToken, forHTTPHeaderField: "x-rover-account-token")
+        urlRequest.setRoverUserAgent()
         return urlRequest
     }
     

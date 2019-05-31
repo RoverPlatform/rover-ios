@@ -399,14 +399,10 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     // MARK: UICollectionViewDelegate
     
     override open func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-        // No-op if the block does not have any meaningful behavior to avoid every rectangle, line, image etc. tracking events
+        let row = screen.rows[indexPath.section]
+        let block = row.blocks[indexPath.row]
         
-        switch screen.rows[indexPath.section].blocks[indexPath.row].tapBehavior {
-        case .none:
-            return false
-        default:
-            return true
-        }
+        return block is ButtonBlock || block.tapBehavior != BlockTapBehavior.none
     }
     
     override open func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -420,7 +416,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         switch block.tapBehavior {
         case .goToScreen(let screenID):
             navigateToScreen(screenID: screenID)
-        case .none:
+        case .none, .custom:
             break
         case let .openURL(url, dismiss):
             openURL(url, dismiss: dismiss)

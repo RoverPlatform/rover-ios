@@ -8,11 +8,12 @@
 
 import Foundation
 
-public enum BlockTapBehavior {
+public enum BlockTapBehavior: Equatable {
     case goToScreen(screenID: String)
     case none
     case openURL(url: URL, dismiss: Bool)
     case presentWebsite(url: URL)
+    case custom
 }
 
 // MARK: Codable
@@ -54,6 +55,8 @@ extension BlockTapBehavior: Codable {
             let container = try decoder.container(keyedBy: PresentWebsiteKeys.self)
             let url = try container.decode(URL.self, forKey: .url)
             self = .presentWebsite(url: url)
+        case "CustomBlockTapBehavior":
+            self = .custom
         default:
             throw DecodingError.dataCorruptedError(forKey: CodingKeys.typeName, in: container, debugDescription: "Expected one of GoToScreenBlockTapBehavior, NoneBlockTapBehavior, OpenURLBlockTapBehavior or PresentWebsiteBlockTapBehavior – found \(typeName)")
         }
@@ -77,6 +80,8 @@ extension BlockTapBehavior: Codable {
             try container.encode("PresentWebsiteBlockTapBehavior", forKey: .typeName)
             var container = encoder.container(keyedBy: PresentWebsiteKeys.self)
             try container.encode(url, forKey: .url)
+        case .custom:
+            try container.encode("CustomBlockTapBehavior", forKey: .typeName)
         }
     }
 }

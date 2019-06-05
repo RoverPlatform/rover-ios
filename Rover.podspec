@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name              = "Rover"
-  s.version           = "3.0.0-beta.5"
+  s.version           = "3.0.0-beta.6"
   s.summary           = "iOS framework for the Rover platform"
   s.homepage          = "https://www.rover.io"
   s.license           = "Apache License, Version 2.0"

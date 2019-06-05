@@ -128,6 +128,7 @@ class Analytics {
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "content-type")
         request.setValue(Rover.accountToken, forHTTPHeaderField: "x-rover-account-token")
+        request.setRoverUserAgent()
         
         var backgroundTaskID: UIBackgroundTaskIdentifier!
         backgroundTaskID = UIApplication.shared.beginBackgroundTask(withName: "Upload Analytics Event") {

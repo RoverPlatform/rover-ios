@@ -46,6 +46,8 @@ extension Row: Decodable {
         case rectangleBlock
         case textBlock
         case webViewBlock
+        case textPollBlock
+        case imagePollBlock
         
         enum CodingKeys: String, CodingKey {
             case typeName = "__typename"
@@ -67,8 +69,12 @@ extension Row: Decodable {
                 self = .textBlock
             case "WebViewBlock":
                 self = .webViewBlock
+            case "TextPollBlock":
+                self = .textPollBlock
+            case "ImagePollBlock":
+                self = .imagePollBlock
             default:
-                throw DecodingError.dataCorruptedError(forKey: CodingKeys.typeName, in: container, debugDescription: "Expected one of BarcodeBlock, ButtonBlock, ImageBlock, RectangleBlock, TextBlock, WebViewBlock – found \(typeName)")
+                throw DecodingError.dataCorruptedError(forKey: CodingKeys.typeName, in: container, debugDescription: "Expected one of BarcodeBlock, ButtonBlock, ImageBlock, RectangleBlock, TextBlock, WebViewBlock, TextPollBlock, ImagePollBlock – found \(typeName)")
             }
         }
     }
@@ -101,6 +107,10 @@ extension Row: Decodable {
                 block = try blocksContainer.decode(TextBlock.self)
             case .webViewBlock:
                 block = try blocksContainer.decode(WebViewBlock.self)
+            case .textPollBlock:
+                block = try blocksContainer.decode(TextPollBlock.self)
+            case .imagePollBlock:
+                block = try blocksContainer.decode(ImagePollBlock.self)
             }
             blocks.append(block)
         }

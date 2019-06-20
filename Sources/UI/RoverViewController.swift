@@ -56,6 +56,13 @@ open class RoverViewController: UIViewController {
         loadExperience()
     }
     
+    /// Present an Experience directly into the view controller without downloading one by an identifier.
+    public func loadExperience(experience: Experience) {
+        let viewController = experienceViewController(experience: experience)
+        setChildViewController(viewController)
+        return
+    }
+    
     private func loadExperience() {
         guard let identifier = identifier else {
             return

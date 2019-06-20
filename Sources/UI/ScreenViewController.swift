@@ -306,6 +306,16 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         )
         
         collectionView?.register(
+            TextPollCell.self,
+            forCellWithReuseIdentifier: ScreenViewController.textPollViewCellReuseIdentifier
+        )
+        
+        collectionView.register(
+            ImagePollCell.self,
+            forCellWithReuseIdentifier: ScreenViewController.imagePollViewCellReuseIdentifier
+        )
+        
+        collectionView?.register(
             RowView.self,
             forSupplementaryViewOfKind: "row",
             withReuseIdentifier: ScreenViewController.rowSupplementaryViewReuseIdentifier
@@ -326,6 +336,10 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
             return ScreenViewController.textCellReuseIdentifier
         case _ as WebViewBlock:
             return ScreenViewController.webViewCellReuseIdentifier
+        case _ as TextPollBlock:
+            return ScreenViewController.textPollViewCellReuseIdentifier
+        case _ as ImagePollBlock:
+            return ScreenViewController.imagePollViewCellReuseIdentifier
         default:
             return ScreenViewController.blockCellReuseIdentifier
         }
@@ -497,6 +511,8 @@ extension ScreenViewController {
     public static let textCellReuseIdentifier = "text"
     public static let webViewCellReuseIdentifier = "webView"
     public static let rowSupplementaryViewReuseIdentifier = "row"
+    public static let textPollViewCellReuseIdentifier = "textPoll"
+    public static let imagePollViewCellReuseIdentifier = "imagePoll"
 }
 
 // MARK: Notifications

@@ -176,7 +176,7 @@ extension ImageStore.Configuration {
         }
         
         let optimization: ImageStore.Optimization?
-        if image.isURLOptimizationEnabled {
+        if true {
             let originalSize = CGSize(width: CGFloat(image.width), height: CGFloat(image.height))
             
             let originalScale: CGFloat

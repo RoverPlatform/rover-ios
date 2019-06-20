@@ -1,0 +1,343 @@
+{
+  "homeScreenID": "ry0ohjx9",
+  "id": "5cdb18a0c310ea0012dadc29",
+  "name": "Kitchen",
+  "screens": [
+    {
+      "background": {
+        "color": {
+          "red": 255,
+          "green": 204,
+          "blue": 0,
+          "alpha": 1
+        },
+        "contentMode": "ORIGINAL",
+        "image": null,
+        "scale": "X1"
+      },
+      "id": "ry0ohjx9",
+      "name": "Kitchen Home",
+      "isStretchyHeaderEnabled": true,
+      "rows": [
+        {
+          "background": {
+            "color": {
+              "red": 129,
+              "green": 129,
+              "blue": 129,
+              "alpha": 0
+            },
+            "contentMode": "ORIGINAL",
+            "image": null,
+            "scale": "X1"
+          },
+          "blocks": [
+            {
+              "background": {
+                "color": {
+                  "red": 238,
+                  "green": 238,
+                  "blue": 238,
+                  "alpha": 0
+                },
+                "contentMode": "ORIGINAL",
+                "image": null,
+                "scale": "X1"
+              },
+              "border": {
+                "color": {
+                  "red": 129,
+                  "green": 129,
+                  "blue": 129,
+                  "alpha": 0
+                },
+                "radius": 0,
+                "width": 0
+              },
+              "id": "textYz",
+              "name": "Text Poll Block",
+              "insets": {
+                "bottom": 0,
+                "left": 0,
+                "right": 0,
+                "top": 0
+              },
+              "opacity": 1,
+              "position": {
+                "horizontalAlignment": {
+                  "__typename": "HorizontalAlignmentCenter",
+                  "offset": 0,
+                  "width": 400
+                },
+                "verticalAlignment": {
+                  "__typename": "VerticalAlignmentStacked",
+                  "topOffset": 0,
+                  "bottomOffset": 0,
+                  "height": {
+                    "__typename": "HeightIntrinsic"
+                  }
+                }
+              },
+              "tapBehavior": {
+                "__typename": "NoneBlockTapBehavior"
+              },
+              "keys": {},
+              "tags": [],
+              "__typename": "TextPollBlock",
+              "question": "This is the very long question question question",
+              "options": [
+                "Is this the best very very very very long option",
+                "Or is it this option",
+                "How about this very very very very long option"
+              ],
+              "questionStyle": {
+                "color": {
+                  "red": 129,
+                  "green": 220,
+                  "blue": 129,
+                  "alpha": 1
+                },
+                "font": {
+                  "size": 32,
+                  "weight": "LIGHT"
+                },
+                "textAlignment": "CENTER"
+              },
+              "optionStyle": {
+                "height": 100,
+                "opacity": 1,
+                "borderRadius": 20,
+                "borderWidth": 5,
+                "borderColor": {
+                  "red": 10,
+                  "green": 10,
+                  "blue": 10,
+                  "alpha": 1
+                },
+                "color": {
+                  "red": 129,
+                  "green": 129,
+                  "blue": 220,
+                  "alpha": 1
+                },
+                "resultFillColor": {
+                  "red": 129,
+                  "green": 129,
+                  "blue": 129,
+                  "alpha": 1
+                },
+                "font": {
+                  "size": 26,
+                  "weight": "MEDIUM"
+                },
+                "background": {
+                  "color": {
+                    "red": 238,
+                    "green": 238,
+                    "blue": 238,
+                    "alpha": 0
+                  },
+                  "contentMode": "ORIGINAL",
+                  "image": {
+                    "height": 561,
+                    "name": "tex-mex-lasagna-main.png",
+                    "size": 593477,
+                    "width": 936,
+                    "url": "https://images-rover-io.imgix.net/uploads/c4ca4238a0b923820dcc509a6f75849b/5156d40b-11ed-40c2-8f41-9ed681842c61-tex-mex-lasagna-main.png"
+                  },
+                  "scale": "X1"
+                },
+                "textAlignment": "LEFT",
+                "verticalSpacing": 16
+              }
+            },
+            {
+              "background": {
+                "color": {
+                  "red": 238,
+                  "green": 238,
+                  "blue": 238,
+                  "alpha": 0
+                },
+                "contentMode": "ORIGINAL",
+                "image": null,
+                "scale": "X1"
+              },
+              "border": {
+                "color": {
+                  "red": 129,
+                  "green": 129,
+                  "blue": 129,
+                  "alpha": 0
+                },
+                "radius": 0,
+                "width": 0
+              },
+              "id": "imageYz",
+              "name": "Image Poll Block",
+              "insets": {
+                "bottom": 0,
+                "left": 0,
+                "right": 0,
+                "top": 0
+              },
+              "opacity": 1,
+              "position": {
+                "horizontalAlignment": {
+                  "__typename": "HorizontalAlignmentCenter",
+                  "offset": 0,
+                  "width": 400
+                },
+                "verticalAlignment": {
+                  "__typename": "VerticalAlignmentStacked",
+                  "topOffset": 0,
+                  "bottomOffset": 0,
+                  "height": {
+                    "__typename": "HeightIntrinsic"
+                  }
+                }
+              },
+              "tapBehavior": {
+                "__typename": "NoneBlockTapBehavior"
+              },
+              "keys": {},
+              "tags": [],
+              "__typename": "ImagePollBlock",
+              "question": "Which is the best?",
+              "options": [
+                {
+                  "text": "This one",
+                  "image": {
+                    "height": 561,
+                    "name": "tex-mex-lasagna-main.png",
+                    "size": 593477,
+                    "width": 936,
+                    "url": "https://images-rover-io.imgix.net/uploads/c4ca4238a0b923820dcc509a6f75849b/5156d40b-11ed-40c2-8f41-9ed681842c61-tex-mex-lasagna-main.png"
+                  }
+                },
+                {
+                  "text": "Or this one?",
+                  "image": {
+                    "height": 561,
+                    "name": "tex-mex-lasagna-main.png",
+                    "size": 593477,
+                    "width": 936,
+                    "url": "https://images-rover-io.imgix.net/uploads/c4ca4238a0b923820dcc509a6f75849b/5156d40b-11ed-40c2-8f41-9ed681842c61-tex-mex-lasagna-main.png"
+                  }
+                },
+                {
+                  "text": "Or this one?",
+                  "image": {
+                    "height": 561,
+                    "name": "tex-mex-lasagna-main.png",
+                    "size": 593477,
+                    "width": 936,
+                    "url": "https://images-rover-io.imgix.net/uploads/c4ca4238a0b923820dcc509a6f75849b/5156d40b-11ed-40c2-8f41-9ed681842c61-tex-mex-lasagna-main.png"
+                  }
+                },
+                {
+                  "text": "Or this one?",
+                  "image": {
+                    "height": 561,
+                    "name": "tex-mex-lasagna-main.png",
+                    "size": 593477,
+                    "width": 936,
+                    "url": "https://images-rover-io.imgix.net/uploads/c4ca4238a0b923820dcc509a6f75849b/5156d40b-11ed-40c2-8f41-9ed681842c61-tex-mex-lasagna-main.png"
+                  }
+                }
+              ],
+              "questionStyle": {
+                "color": {
+                  "red": 129,
+                  "green": 129,
+                  "blue": 129,
+                  "alpha": 1
+                },
+                "font": {
+                  "size": 16,
+                  "weight": "LIGHT"
+                },
+                "textAlignment": "CENTER"
+              },
+              "optionStyle": {
+                "color": {
+                  "red": 10,
+                  "green": 10,
+                  "blue": 10,
+                  "alpha": 1
+                },
+                "opacity": 1,
+                "border": {
+                  "color": {
+                    "red": 129,
+                    "green": 129,
+                    "blue": 129,
+                    "alpha": 1
+                  },
+                  "radius": 20,
+                  "width": 5
+                },
+                "font": {
+                  "size": 16,
+                  "weight": "LIGHT"
+                },
+                "textAlignment": "LEFT",
+                "resultFillColor": {
+                  "red": 129,
+                  "green": 129,
+                  "blue": 129,
+                  "alpha": 1
+                },
+                "verticalSpacing": 16,
+                "horizontalSpacing": 16
+              }
+            }
+          ],
+          "height": {
+            "__typename": "HeightIntrinsic"
+          },
+          "id": "HJqhJnlc",
+          "name": "Row",
+          "keys": {},
+          "tags": []
+        }
+      ],
+      "statusBar": {
+        "style": "LIGHT",
+        "color": {
+          "red": 245,
+          "green": 15,
+          "blue": 15,
+          "alpha": 1
+        }
+      },
+      "titleBar": {
+        "backgroundColor": {
+          "red": 247,
+          "green": 64,
+          "blue": 64,
+          "alpha": 1
+        },
+        "buttons": "CLOSE",
+        "buttonColor": {
+          "red": 241,
+          "green": 189,
+          "blue": 189,
+          "alpha": 1
+        },
+        "text": "What's Cooking?",
+        "textColor": {
+          "red": 255,
+          "green": 255,
+          "blue": 255,
+          "alpha": 1
+        },
+        "useDefaultStyle": false
+      },
+      "keys": {},
+      "tags": []
+    }
+  ],
+  "keys": {},
+  "tags": []
+}

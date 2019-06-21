@@ -8,34 +8,84 @@
 
 import UIKit
 
-class TextPollCell: BlockCell {
-//    let textView: UITextView = {
-//        let textView = UITextView()
-//        textView.backgroundColor = UIColor.clear
-//        textView.isUserInteractionEnabled = false
-//        textView.textContainer.lineFragmentPadding = 0
-//        textView.textContainerInset = UIEdgeInsets.zero
-//        return textView
-//    }()
+///
+class TextPollOptionView: UITextView {
+    init(
+        optionText: String,
+        style: TextPollBlock.OptionStyle
+    ) {
+        super.init(frame: CGRect.zero, textContainer: nil)
+        self.translatesAutoresizingMaskIntoConstraints = false
+        self.text = optionText
+    }
     
-    private var createdOptions
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("Usage in XIB not supported.")
+    }
+}
+
+class PollQuestionView: UILabel {
+    init(
+        questionText: String,
+        style: QuestionStyle
+    ) {
+
+//        super.init(frame: CGRect.zero, textContainer: nil)
+        super.init(frame: .zero)
+        self.numberOfLines = 0
+        self.translatesAutoresizingMaskIntoConstraints = false
+        self.text = questionText
+    }
+    
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("Usage in XIB not supported.")
+    }
+}
+
+class TextPollCell: BlockCell {
+    /// a simple container view to the relatively complex layout of the text poll.
+    let containerView = UIView()
+    
+    private var optionViews = [TextPollOptionView]()
     
     override var content: UIView? {
-        return textView
+        return containerView
     }
+    
+    var questionView: PollQuestionView?
     
     override func configure(with block: Block) {
         super.configure(with: block)
+     
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+        questionView?.removeFromSuperview()
+        self.optionViews.forEach { $0.removeFromSuperview() }
         
         guard let textPollBlock = block as? TextPollBlock else {
-            textView.isHidden = true
             return
         }
-        
-        
-        
-        textView.isHidden = false
-        textView.text = "PRAISE JEBUS I AM TEXT POLL"
+    
+        questionView = PollQuestionView(questionText: textPollBlock.question, style: textPollBlock.questionStyle)
+        containerView.addSubview(questionView!)
+        questionView?.topAnchor.constraint(equalTo: containerView.topAnchor).isActive = true
+        questionView?.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
+        questionView?.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
+//        self.optionViews = textPollBlock.options.map { option in
+//            TextPollOptionView(optionText: option, style: textPollBlock.optionStyle)
+//        }
+//        for optionViewIndex in 0..<optionViews.count {
+//            let currentOptionView = self.optionViews[optionViewIndex]
+//            containerView.addSubview(currentOptionView)
+//            currentOptionView.heightAnchor.constraint(equalToConstant: CGFloat(textPollBlock.optionStyle.height)).isActive = true
+//            if optionViewIndex > 0 {
+//                let previousOptionView = self.optionViews[optionViewIndex - 1]
+//                currentOptionView.topAnchor.constraint(equalTo: previousOptionView.bottomAnchor).isActive = true
+//            } else {
+//                currentOptionView.topAnchor.constraint(equalTo: questionView!.bottomAnchor).isActive = true
+//            }
+//        }
     }
 }
 
@@ -55,6 +105,5 @@ extension TextPollBlock {
 //        let optionSpacing = verticalSpacing * (self.options.size)
 //
 //        return optionsHeight + optionSpacing + questionHeight
-        return 20
     }
 }

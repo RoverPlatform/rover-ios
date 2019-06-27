@@ -41,9 +41,9 @@ open class RoverViewController: UIViewController {
     /// Load a Rover experience into the view controller referenced by its ID.
     ///
     /// - Parameter id: The ID of the experience to load.
-    public func loadExperience(id: String, campaignID: String? = nil) {
+    public func loadExperience(id: String, campaignID: String? = nil, useDraft: Bool = false) {
         self.campaignID = campaignID
-        self.identifier = ExperienceStore.Identifier.experienceID(id: id)
+        self.identifier = ExperienceStore.Identifier.experienceID(id: id, useDraft: useDraft)
         loadExperience()
     }
     

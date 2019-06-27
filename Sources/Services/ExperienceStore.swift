@@ -17,7 +17,7 @@ class ExperienceStore {
     
     enum Identifier: Equatable, Hashable {
         case experienceURL(url: URL)
-        case experienceID(id: String)
+        case experienceID(id: String, useDraft: Bool)
     }
     
     private class CacheKey: NSObject {
@@ -160,14 +160,24 @@ class ExperienceStore {
                     }
                 }
                 """
-        case .experienceID:
-            query = """
-                query FetchExperienceByID($id: ID!) {
-                    experience(id: $id) {
-                        ...experienceFields
+        case let .experienceID(_, useDraft):
+            if useDraft {
+                query = """
+                    query FetchExperienceByID($id: ID!) {
+                        experience(id: $id, versionID: "current") {
+                            ...experienceFields
+                        }
                     }
-                }
                 """
+            } else {
+                query = """
+                    query FetchExperienceByID($id: ID!) {
+                        experience(id: $id) {
+                            ...experienceFields
+                        }
+                    }
+                """
+            }
         }
         
         let condensed = query.components(separatedBy: .whitespacesAndNewlines).filter {
@@ -186,7 +196,7 @@ class ExperienceStore {
         switch identifier {
         case let .experienceURL(url):
             variables = RequestVariables(campaignURL: url.absoluteString, id: nil)
-        case let .experienceID(id):
+        case let .experienceID(id, _):
             variables = RequestVariables(campaignURL: nil, id: id)
         }
         

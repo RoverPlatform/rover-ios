@@ -50,12 +50,7 @@ class BlockCell: UICollectionViewCell {
     }
     
     func configureBackgroundColor() {
-        guard let block = block else {
-            backgroundColor = UIColor.clear
-            return
-        }
-        
-        backgroundColor = block.background.color.uiColor(dimmedBy: block.opacity)
+        self.configureBackgroundColor(color: block?.background.color, opacity: block?.opacity)
     }
     
     // swiftlint:disable:next cyclomatic_complexity // This routine is fairly readable as it is, so we will hold off on refactoring it, so silence the complexity warning.
@@ -64,88 +59,19 @@ class BlockCell: UICollectionViewCell {
             return
         }
         
-        // Reset any existing background image
-        
-        backgroundImageView.alpha = 0.0
-        backgroundImageView.image = nil
-        
-        // Background color is used for tiled backgrounds
-        backgroundImageView.backgroundColor = UIColor.clear
-        
-        guard let block = block else {
-            return
-        }
-        
-        switch block.background.contentMode {
-        case .fill:
-            backgroundImageView.contentMode = .scaleAspectFill
-        case .fit:
-            backgroundImageView.contentMode = .scaleAspectFit
-        case .original:
-            backgroundImageView.contentMode = .center
-        case .stretch:
-            backgroundImageView.contentMode = .scaleToFill
-        case .tile:
-            backgroundImageView.contentMode = .center
-        }
-        
-        if let image = ImageStore.shared.image(for: block.background, frame: frame) {
-            if case .tile = block.background.contentMode {
-                backgroundImageView.backgroundColor = UIColor(patternImage: image)
-            } else {
-                backgroundImageView.image = image
-            }
-            backgroundImageView.alpha = 1.0
-        } else {
-            ImageStore.shared.fetchImage(for: block.background, frame: frame) { [weak self, weak backgroundImageView, blockID = block.id] image in
-                guard let image = image else {
-                    return
-                }
-                
-                // Verify the block cell is still configured to the same block; otherwise we should no-op because the cell has been recycled.
-                
-                if self?.block?.id != blockID {
-                    return
-                }
-                
-                if case .tile = block.background.contentMode {
-                    backgroundImageView?.backgroundColor = UIColor(patternImage: image)
-                } else {
-                    backgroundImageView?.image = image
-                }
-                
-                UIView.animate(withDuration: 0.25) {
-                    backgroundImageView?.alpha = 1.0
-                }
-            }
+        let originalBlockId = block?.id
+        backgroundImageView.configureAsBackgroundImage(background: block?.background) { [weak self] in
+            // Verify the block cell is still configured to the same block; otherwise we should no-op because the cell has been recycled.
+            return self?.block?.id == originalBlockId
         }
     }
     
     func configureBorder() {
-        guard let block = block else {
-            layer.borderColor = UIColor.clear.cgColor
-            layer.borderWidth = 0
-            layer.cornerRadius = 0
-            return
-        }
-        
-        let border = block.border
-        layer.borderColor = border.color.uiColor.cgColor
-        layer.borderWidth = CGFloat(border.width)
-        layer.cornerRadius = {
-            let radius = CGFloat(border.radius)
-            let maxRadius = min(frame.height, frame.width) / 2
-            return min(radius, maxRadius)
-        }()
+        self.configureBorder(border: block?.border)
     }
     
     func configureOpacity() {
-        guard let block = block else {
-            layer.opacity = 0
-            return
-        }
-        
-        self.contentView.alpha = CGFloat(block.opacity)
+        self.contentView.configureOpacity(opacity: block?.opacity)
     }
     
     func configureContent() {
@@ -168,5 +94,92 @@ class BlockCell: UICollectionViewCell {
         content.leftAnchor.constraint(equalTo: self.contentView.leftAnchor, constant: insets.left).isActive = true
         content.rightAnchor.constraint(equalTo: self.contentView.rightAnchor, constant: insets.right).isActive = true
         content.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: insets.top).isActive = true
+    }
+}
+
+extension UIView {
+    func configureOpacity(opacity: Double?) {
+        self.alpha = opacity.map { CGFloat($0) } ?? 0.0
+    }
+    
+    func configureBorder(border: Border?) {
+        guard let border = border else {
+            layer.borderColor = UIColor.clear.cgColor
+            layer.borderWidth = 0
+            layer.cornerRadius = 0
+            return
+        }
+        
+        layer.borderColor = border.color.uiColor.cgColor
+        layer.borderWidth = CGFloat(border.width)
+        layer.cornerRadius = {
+            let radius = CGFloat(border.radius)
+            let maxRadius = min(frame.height, frame.width) / 2
+            return min(radius, maxRadius)
+        }()
+    }
+    
+    func configureBackgroundColor(color: Color?, opacity: Double?) {
+        guard let color = color, let opacity = opacity else {
+            backgroundColor = UIColor.clear
+            return
+        }
+        
+        self.backgroundColor = color.uiColor(dimmedBy: opacity)
+    }
+}
+
+extension UIImageView {
+    // swiftlint:disable:next cyclomatic_complexity // This routine is fairly readable as it is, so we will hold off on refactoring it, so silence the complexity warning.
+    func configureAsBackgroundImage(background: Background?, checkStillMatches: @escaping () -> Bool) {
+        // Reset any existing background image
+        
+        self.alpha = 0.0
+        self.image = nil
+        
+        // Background color is used for tiled backgrounds
+        self.backgroundColor = UIColor.clear
+        
+        guard let background = background else {
+            return
+        }
+        
+        switch background.contentMode {
+        case .fill:
+            self.contentMode = .scaleAspectFill
+        case .fit:
+            self.contentMode = .scaleAspectFit
+        case .original:
+            self.contentMode = .center
+        case .stretch:
+            self.contentMode = .scaleToFill
+        case .tile:
+            self.contentMode = .center
+        }
+        
+        if let image = ImageStore.shared.image(for: background, frame: frame) {
+            if case .tile = background.contentMode {
+                self.backgroundColor = UIColor(patternImage: image)
+            } else {
+                self.image = image
+            }
+            self.alpha = 1.0
+        } else {
+            ImageStore.shared.fetchImage(for: background, frame: frame) { [weak self] image in
+                guard let image = image, checkStillMatches() else {
+                    return
+                }
+                
+                if case .tile = background.contentMode {
+                    self?.backgroundColor = UIColor(patternImage: image)
+                } else {
+                    self?.image = image
+                }
+                
+                UIView.animate(withDuration: 0.25) {
+                    self?.alpha = 1.0
+                }
+            }
+        }
     }
 }

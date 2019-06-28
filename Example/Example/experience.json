@@ -106,13 +106,15 @@
               "optionStyle": {
                 "height": 100,
                 "opacity": 1,
-                "borderRadius": 20,
-                "borderWidth": 5,
-                "borderColor": {
-                  "red": 10,
-                  "green": 10,
-                  "blue": 10,
-                  "alpha": 1
+                "border": {
+                    "color": {
+                        "red": 10,
+                        "green": 10,
+                        "blue": 10,
+                        "alpha": 1
+                    },
+                    "radius": 20,
+                    "width": 5
                 },
                 "color": {
                   "red": 129,

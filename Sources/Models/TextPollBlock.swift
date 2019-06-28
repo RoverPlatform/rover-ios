@@ -12,9 +12,7 @@ public struct TextPollBlock : PollBlock {
     public struct OptionStyle: Decodable {
         public var height: Int
         public var opacity: Double
-        public var borderRadius: Int
-        public var borderWidth: Int
-        public var borderColor: Color
+        public var border: Border
         public var color: Color
         public var font: Text.Font
         public var textAlignment: Text.Alignment
@@ -22,12 +20,10 @@ public struct TextPollBlock : PollBlock {
         public var background: Background
         public var verticalSpacing: Int
         
-        public init(height: Int, opacity: Double, borderRadius: Int, borderWidth: Int, borderColor: Color, color: Color, font: Text.Font, textAlignment: Text.Alignment, resultFillColor: Color, background: Background, verticalSpacing: Int) {
+        public init(height: Int, opacity: Double, border: Border, color: Color, font: Text.Font, textAlignment: Text.Alignment, resultFillColor: Color, background: Background, verticalSpacing: Int) {
             self.height = height
             self.opacity = opacity
-            self.borderRadius = borderRadius
-            self.borderWidth = borderWidth
-            self.borderColor = borderColor
+            self.border = border
             self.color = color
             self.font = font
             self.textAlignment = textAlignment

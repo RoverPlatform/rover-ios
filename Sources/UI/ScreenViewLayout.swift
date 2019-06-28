@@ -149,7 +149,8 @@ class ScreenViewLayout: UICollectionViewLayout {
                     intrinsicHeight = boundingRect.height + CGFloat(block.insets.top) + CGFloat(block.insets.bottom)
                 case let block as TextPollBlock:
                     // blocks need to be measured.
-                    intrinsicHeight = block.intrinsicHeight(blockWidth: blockWidth)
+                    let innerWidth = blockWidth - CGFloat(block.insets.left) - CGFloat(block.insets.right)
+                    intrinsicHeight = block.intrinsicHeight(blockWidth: innerWidth)
                 case let block as ImagePollBlock:
                     intrinsicHeight = 42
                 default:

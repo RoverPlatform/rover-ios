@@ -18,4 +18,6 @@ public struct Insets: Decodable {
         self.right = right
         self.top = top
     }
+    
+    static var zero = Insets(bottom: 0, left: 0, right: 0, top: 0)
 }

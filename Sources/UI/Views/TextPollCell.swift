@@ -11,21 +11,44 @@ import UIKit
 ///
 
 // TODO: andrew start here and make this a UIView (analagous to contentView in blockCell) so we can add both the UILabel AND a "backgroundView" (again, akin to blockCell)
-class TextPollOptionView: UILabel {
+class TextPollOptionView: UIView {
+    private let backgroundView = UIImageView()
+    private let content = UILabel()
+    
     init(
         optionText: String,
         style: TextPollBlock.OptionStyle
     ) {
         super.init(frame: CGRect.zero)
-        self.translatesAutoresizingMaskIntoConstraints = false
-//        self.isScrollEnabled = false
-        self.text = optionText
+        self.addSubview(backgroundView)
+        self.addSubview(content)
         
+        self.translatesAutoresizingMaskIntoConstraints = false
+        content.translatesAutoresizingMaskIntoConstraints = false
+        self.clipsToBounds = true
+        
+        content.backgroundColor = UIColor.clear
+        content.numberOfLines = 1
+        
+        content.font = style.font.uiFont
+        content.textColor = style.color.uiColor
+        content.text = optionText
+        
+        self.configureContent(content: content, withInsets: .zero)
         // TODO: the original configureOpacity from Rover blocks worked on a contained contentView rather than on the containing block cell.  I have no equivalent here, and I have no idea if that distinction was important or not.  I will find out.
         self.configureOpacity(opacity: style.opacity)
-        self.configureBorder(border: style.border)
+        self.configureBorder(border: style.border, constrainedByFrame: nil)
         self.configureBackgroundColor(color: style.background.color, opacity: style.opacity)
+        self.backgroundView.configureAsBackgroundImage(background: style.background) {
+            // Option views are not recycled in the containing CollectionView driving the Rover experience, so we don't need to worry about checking that the background image loading callback is associated with a "stale" option.
+            true
+        }
+        
+        // TODO: set up alignment
+        
+        self.heightAnchor.constraint(equalToConstant: CGFloat(style.height)).isActive = true
     }
+    
     
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
@@ -33,7 +56,10 @@ class TextPollOptionView: UILabel {
     }
 }
 
-class PollQuestionView: UILabel {
+class PollQuestionView: UIView {
+    private let backgroundView = UIImageView()
+    private let content = UITextView()
+    
     init(
         questionText: String,
         style: QuestionStyle
@@ -41,9 +67,25 @@ class PollQuestionView: UILabel {
 
 //        super.init(frame: CGRect.zero, textContainer: nil)
         super.init(frame: .zero)
-        self.numberOfLines = 0
+        self.addSubview(backgroundView)
+        self.addSubview(content)
+        
         self.translatesAutoresizingMaskIntoConstraints = false
-        self.text = questionText
+        content.translatesAutoresizingMaskIntoConstraints = false
+        self.clipsToBounds = true
+        
+
+        content.text = questionText
+        content.isScrollEnabled = false
+        content.backgroundColor = UIColor.clear
+        content.isUserInteractionEnabled = false
+        content.textContainer.lineFragmentPadding = 0
+        content.textContainerInset = UIEdgeInsets.zero
+        
+        // TODO: set up alignment.
+        
+        self.configureContent(content: content, withInsets: .zero)
+        // TODO: the original configureOpacity from Rover blocks worked on a contained contentView rather than on the containing block cell.  I have no equivalent here, and I have no idea if that distinction was important or not.  I will find out.
     }
     
     @available(*, unavailable)
@@ -87,7 +129,7 @@ class TextPollCell: BlockCell {
             let currentOptionView = self.optionViews[optionViewIndex]
             containerView.addSubview(currentOptionView)
             // ANDREW START HERE AND IDENTIFY HOW TO MAKE THE UITEXTVIEW FOR POLL OPTIONS A FIXED HEIGHT (WITH TEXT CENTERED VERTICALLY). might need to disable scrolling?
-            currentOptionView.heightAnchor.constraint(equalToConstant: CGFloat(textPollBlock.optionStyle.height)).isActive = true
+            // currentOptionView.heightAnchor.constraint(equalToConstant: CGFloat(textPollBlock.optionStyle.height)).isActive = true
             if optionViewIndex > 0 {
                 let previousOptionView = self.optionViews[optionViewIndex - 1]
                 currentOptionView.topAnchor.constraint(equalTo: previousOptionView.bottomAnchor).isActive = true
@@ -105,15 +147,14 @@ extension TextPollBlock {
         return CGFloat(485.0)
 //        // Roundtrip to avoid rounding when converting floats to ints causing mismatches in measured size vs views actual size
 //        let optionStyleHeight = self.optionStyle.height
-        //        let borderWidth = self.optionStyle.borderWidth // TODO: REMOVE THIS BORDER WIDTH CONCERN, NO LONGER VALID.
 //        let verticalSpacing = self.optionStyle.verticalSpacing
 //
 //        let questionHeight = measurementService.measureHeightNeededForMultiLineTextInTextView(
 //            textPollBlock.question,
 //            textPollBlock.questionStyle.font.getFontAppearance(textPollBlock.questionStyle.color, textPollBlock.questionStyle.textAlignment),
 //        bounds.width())
-//        let optionsHeight = ((optionStyleHeight + (borderWidth * 2)) * self.options.size)
-//        let optionSpacing = verticalSpacing * (self.options.size)
+//        let optionsHeight = optionStyleHeight * self.options.size
+//        let optionSpacing = verticalSpacing * self.options.size
 //
 //        return optionsHeight + optionSpacing + questionHeight
     }

@@ -67,7 +67,7 @@ class BlockCell: UICollectionViewCell {
     }
     
     func configureBorder() {
-        self.configureBorder(border: block?.border)
+        self.configureBorder(border: block?.border, constrainedByFrame: self.frame)
     }
     
     func configureOpacity() {
@@ -79,21 +79,7 @@ class BlockCell: UICollectionViewCell {
             return
         }
         
-        NSLayoutConstraint.deactivate(contentView.constraints)
-        contentView.removeConstraints(contentView.constraints)
-
-        let insets: UIEdgeInsets = {
-            let top = CGFloat(block.insets.top)
-            let left = CGFloat(block.insets.left)
-            let bottom = 0 - CGFloat(block.insets.bottom)
-            let right = 0 - CGFloat(block.insets.right)
-            return UIEdgeInsets(top: top, left: left, bottom: bottom, right: right)
-        }()
-        
-        content.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: insets.bottom).isActive = true
-        content.leftAnchor.constraint(equalTo: self.contentView.leftAnchor, constant: insets.left).isActive = true
-        content.rightAnchor.constraint(equalTo: self.contentView.rightAnchor, constant: insets.right).isActive = true
-        content.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: insets.top).isActive = true
+        self.contentView.configureContent(content: content, withInsets: block.insets)
     }
 }
 
@@ -102,7 +88,7 @@ extension UIView {
         self.alpha = opacity.map { CGFloat($0) } ?? 0.0
     }
     
-    func configureBorder(border: Border?) {
+    func configureBorder(border: Border?, constrainedByFrame frame: CGRect?) {
         guard let border = border else {
             layer.borderColor = UIColor.clear.cgColor
             layer.borderWidth = 0
@@ -114,6 +100,9 @@ extension UIView {
         layer.borderWidth = CGFloat(border.width)
         layer.cornerRadius = {
             let radius = CGFloat(border.radius)
+            guard let frame = frame else {
+                return radius
+            }
             let maxRadius = min(frame.height, frame.width) / 2
             return min(radius, maxRadius)
         }()
@@ -126,6 +115,24 @@ extension UIView {
         }
         
         self.backgroundColor = color.uiColor(dimmedBy: opacity)
+    }
+    
+    func configureContent(content: UIView, withInsets insets: Insets) {
+        NSLayoutConstraint.deactivate(self.constraints)
+        self.removeConstraints(self.constraints)
+        
+        let insets: UIEdgeInsets = {
+            let top = CGFloat(insets.top)
+            let left = CGFloat(insets.left)
+            let bottom = 0 - CGFloat(insets.bottom)
+            let right = 0 - CGFloat(insets.right)
+            return UIEdgeInsets(top: top, left: left, bottom: bottom, right: right)
+        }()
+        
+        content.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: insets.bottom).isActive = true
+        content.leftAnchor.constraint(equalTo: self.leftAnchor, constant: insets.left).isActive = true
+        content.rightAnchor.constraint(equalTo: self.rightAnchor, constant: insets.right).isActive = true
+        content.topAnchor.constraint(equalTo: self.topAnchor, constant: insets.top).isActive = true
     }
 }
 

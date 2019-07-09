@@ -41,14 +41,11 @@ class TextPollOptionView: UIView {
         self.configureContent(content: content, withInsets: .zero)
         self.configureOpacity(opacity: style.opacity)
         self.configureBorder(border: style.border, constrainedByFrame: nil)
-        print("configuring colour for background image view: ", style.color)
         self.configureBackgroundColor(color: style.background.color, opacity: style.opacity)
         self.backgroundView.configureAsBackgroundImage(background: style.background) {
             // Option views are not recycled in the containing CollectionView driving the Rover experience, so we don't need to worry about checking that the background image loading callback is associated with a "stale" option.
             true
         }
-        
-        // TODO: set up alignment
         
         self.heightAnchor.constraint(equalToConstant: CGFloat(style.height)).isActive = true
     }
@@ -60,41 +57,6 @@ class TextPollOptionView: UIView {
     }
 }
 
-// MARK: Question View
-
-class PollQuestionView: UIView {
-    private let backgroundView = UIImageView()
-    private let content = UITextView()
-    
-    init(
-        questionText: String,
-        style: QuestionStyle
-    ) {
-        super.init(frame: .zero)
-        self.addSubview(backgroundView)
-        self.addSubview(content)
-        
-        self.translatesAutoresizingMaskIntoConstraints = false
-        content.translatesAutoresizingMaskIntoConstraints = false
-        self.clipsToBounds = true
-        
-        content.text = questionText
-        content.font = style.font.uiFont
-        content.isScrollEnabled = false
-        content.backgroundColor = UIColor.clear
-        content.isUserInteractionEnabled = false
-        content.textContainer.lineFragmentPadding = 0
-        content.textContainerInset = UIEdgeInsets.zero
-        
-        // TODO: set up alignment.
-        self.configureContent(content: content, withInsets: .zero)
-    }
-    
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("Usage in XIB not supported.")
-    }
-}
 
 // MARK: Cell
 
@@ -163,12 +125,5 @@ extension TextPollBlock {
         let optionSpacing: CGFloat = CGFloat(verticalSpacing) * CGFloat(self.options.count)
 
         return optionsHeight + optionSpacing + questionHeight
-    }
-}
-
-extension QuestionStyle {
-    func attributedText(for text: String) -> NSAttributedString? {
-        let text = Text(rawValue: text, alignment: .left, color: self.color, font: self.font)
-        return text.attributedText(forFormat: .plain)
     }
 }

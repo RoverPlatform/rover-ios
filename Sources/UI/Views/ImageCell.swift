@@ -27,28 +27,37 @@ class ImageCell: BlockCell {
             return
         }
         
-        imageView.alpha = 0.0
-        imageView.image = nil
+        let originalBlockId = imageBlock.id
+        self.imageView.configureAsImage(image: imageBlock.image) { [weak self] in
+            return self?.block?.id == originalBlockId
+        }
+    }
+}
+
+extension UIImageView {
+    func configureAsImage(image: Image, checkStillMatches: @escaping () -> Bool) {
+        self.alpha = 0.0
+        self.image = nil
         
-        if let image = ImageStore.shared.image(for: imageBlock.image, frame: frame) {
-            imageView.image = image
-            imageView.alpha = 1.0
+        if let image = ImageStore.shared.image(for: image, frame: frame) {
+            self.image = image
+            self.alpha = 1.0
         } else {
-            ImageStore.shared.fetchImage(for: imageBlock.image, frame: frame) { [weak self, blockID = block.id] image in
+            ImageStore.shared.fetchImage(for: image, frame: frame) { [weak self] image in
                 guard let image = image else {
                     return
                 }
                 
                 // Verify the block cell is still configured to the same block; otherwise we should no-op because the cell has been recycled.
                 
-                if self?.block?.id != blockID {
+                if !checkStillMatches() {
                     return
                 }
                 
-                self?.imageView.image = image
+                self?.image = image
                 
                 UIView.animate(withDuration: 0.25) {
-                    self?.imageView.alpha = 1.0
+                    self?.alpha = 1.0
                 }
             }
         }

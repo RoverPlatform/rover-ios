@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0DAFE6CF22D5453F00F5D47B /* PollQuestionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DAFE6CE22D5453F00F5D47B /* PollQuestionView.swift */; };
 		49005D0422776283009D62F9 /* UIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49005D0322776283009D62F9 /* UIApplication.swift */; };
 		4914B3D822B4307300FA395E /* RoverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD88A8020C1B21700085AE0 /* RoverTests.swift */; };
 		4914B3E022B83A2300FA395E /* QuestionStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4914B3DF22B83A2300FA395E /* QuestionStyle.swift */; };
@@ -72,6 +73,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0DAFE6CE22D5453F00F5D47B /* PollQuestionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollQuestionView.swift; sourceTree = "<group>"; };
 		49005D0322776283009D62F9 /* UIApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplication.swift; sourceTree = "<group>"; };
 		4914B3DF22B83A2300FA395E /* QuestionStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionStyle.swift; sourceTree = "<group>"; };
 		4914B3E322B83A3F00FA395E /* PollBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollBlock.swift; sourceTree = "<group>"; };
@@ -200,6 +202,7 @@
 				DB9DBEEF2055964E00E5C77F /* WebViewCell.swift */,
 				4914B3ED22BAB2B800FA395E /* TextPollCell.swift */,
 				4914B3EF22BABA6500FA395E /* ImagePollCell.swift */,
+				0DAFE6CE22D5453F00F5D47B /* PollQuestionView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -422,6 +425,7 @@
 				4953DD4222399A8500286C4B /* TextBlock.swift in Sources */,
 				4953DD4F22399A9700286C4B /* WebViewCell.swift in Sources */,
 				4953DD5322399A9C00286C4B /* ScreenViewLayout.swift in Sources */,
+				0DAFE6CF22D5453F00F5D47B /* PollQuestionView.swift in Sources */,
 				49005D0422776283009D62F9 /* UIApplication.swift in Sources */,
 				4953DD5222399A9C00286C4B /* ScreenViewController.swift in Sources */,
 				4953DD3522399A8500286C4B /* ButtonBlock.swift in Sources */,

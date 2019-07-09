@@ -31,9 +31,9 @@ class TextPollOptionView: UIView {
         backgroundView.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
         self.clipsToBounds = true
         
+        // Configure text view:
         content.backgroundColor = UIColor.clear
         content.numberOfLines = 1
-        
         content.font = style.font.uiFont
         content.textColor = style.color.uiColor
         content.text = optionText
@@ -42,6 +42,7 @@ class TextPollOptionView: UIView {
         // TODO: the original configureOpacity from Rover blocks worked on a contained contentView rather than on the containing block cell.  I have no equivalent here, and I have no idea if that distinction was important or not.  I will find out.
         self.configureOpacity(opacity: style.opacity)
         self.configureBorder(border: style.border, constrainedByFrame: nil)
+        print("configuring colour for background image view: ", style.color)
         self.configureBackgroundColor(color: style.background.color, opacity: style.opacity)
         self.backgroundView.configureAsBackgroundImage(background: style.background) {
             // Option views are not recycled in the containing CollectionView driving the Rover experience, so we don't need to worry about checking that the background image loading callback is associated with a "stale" option.

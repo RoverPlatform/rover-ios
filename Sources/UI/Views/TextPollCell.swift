@@ -10,7 +10,6 @@ import UIKit
 
 // MARK: Option View
 
-// TODO: andrew start here and make this a UIView (analagous to contentView in blockCell) so we can add both the UILabel AND a "backgroundView" (again, akin to blockCell)
 class TextPollOptionView: UIView {
     private let backgroundView = UIImageView()
     private let content = UILabel()
@@ -137,7 +136,7 @@ class TextPollCell: BlockCell {
             containerView.addSubview(currentOptionView)
             if optionViewIndex > 0 {
                 let previousOptionView = self.optionViews[optionViewIndex - 1]
-                currentOptionView.topAnchor.constraint(equalTo: previousOptionView.bottomAnchor).isActive = true
+                currentOptionView.topAnchor.constraint(equalTo: previousOptionView.bottomAnchor, constant: CGFloat(textPollBlock.optionStyle.verticalSpacing)).isActive = true
             } else {
                 currentOptionView.topAnchor.constraint(equalTo: questionView!.bottomAnchor).isActive = true
             }

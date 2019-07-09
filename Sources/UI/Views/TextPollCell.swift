@@ -39,7 +39,6 @@ class TextPollOptionView: UIView {
         content.text = optionText
         
         self.configureContent(content: content, withInsets: .zero)
-        // TODO: the original configureOpacity from Rover blocks worked on a contained contentView rather than on the containing block cell.  I have no equivalent here, and I have no idea if that distinction was important or not.  I will find out.
         self.configureOpacity(opacity: style.opacity)
         self.configureBorder(border: style.border, constrainedByFrame: nil)
         print("configuring colour for background image view: ", style.color)
@@ -88,9 +87,7 @@ class PollQuestionView: UIView {
         content.textContainerInset = UIEdgeInsets.zero
         
         // TODO: set up alignment.
-        
         self.configureContent(content: content, withInsets: .zero)
-        // TODO: the original configureOpacity from Rover blocks worked on a contained contentView rather than on the containing block cell.  I have no equivalent here, and I have no idea if that distinction was important or not.  I will find out.
     }
     
     @available(*, unavailable)

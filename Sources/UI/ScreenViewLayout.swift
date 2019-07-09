@@ -112,6 +112,8 @@ class ScreenViewLayout: UICollectionViewLayout {
                     }
                 }()
                 
+                // MARK: Block Measurement
+                
                 let intrinsicHeight: CGFloat?
                 switch block {
                 case let block as BarcodeBlock:
@@ -125,7 +127,7 @@ class ScreenViewLayout: UICollectionViewLayout {
                     
                     intrinsicHeight = blockWidth / aspectRatio
                 case let block as ButtonBlock:
-                    guard let attributedText = block.text.attributedText else {
+                    guard let attributedText = block.text.attributedText() else {
                         intrinsicHeight = nil
                         break
                     }
@@ -138,7 +140,7 @@ class ScreenViewLayout: UICollectionViewLayout {
                     let aspectRatio = CGFloat(block.image.width) / CGFloat(block.image.height)
                     intrinsicHeight = blockWidth / aspectRatio
                 case let block as TextBlock:
-                    guard let attributedText = block.text.attributedText else {
+                    guard let attributedText = block.text.attributedText() else {
                         intrinsicHeight = nil
                         break
                     }
@@ -149,8 +151,7 @@ class ScreenViewLayout: UICollectionViewLayout {
                     intrinsicHeight = boundingRect.height + CGFloat(block.insets.top) + CGFloat(block.insets.bottom)
                 case let block as TextPollBlock:
                     // blocks need to be measured.
-                    let innerWidth = blockWidth - CGFloat(block.insets.left) - CGFloat(block.insets.right)
-                    intrinsicHeight = block.intrinsicHeight(blockWidth: innerWidth)
+                    intrinsicHeight = block.intrinsicHeight(blockWidth: blockWidth)
                 case let block as ImagePollBlock:
                     intrinsicHeight = 42
                 default:

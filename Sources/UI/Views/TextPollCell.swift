@@ -8,7 +8,7 @@
 
 import UIKit
 
-///
+// MARK: Option View
 
 // TODO: andrew start here and make this a UIView (analagous to contentView in blockCell) so we can add both the UILabel AND a "backgroundView" (again, akin to blockCell)
 class TextPollOptionView: UIView {
@@ -25,6 +25,11 @@ class TextPollOptionView: UIView {
         
         self.translatesAutoresizingMaskIntoConstraints = false
         content.translatesAutoresizingMaskIntoConstraints = false
+        backgroundView.translatesAutoresizingMaskIntoConstraints = false
+        backgroundView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
+        backgroundView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
+        backgroundView.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
+        backgroundView.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
         self.clipsToBounds = true
         
         content.backgroundColor = UIColor.clear
@@ -56,6 +61,8 @@ class TextPollOptionView: UIView {
     }
 }
 
+// MARK: Question View
+
 class PollQuestionView: UIView {
     private let backgroundView = UIImageView()
     private let content = UITextView()
@@ -64,8 +71,6 @@ class PollQuestionView: UIView {
         questionText: String,
         style: QuestionStyle
     ) {
-
-//        super.init(frame: CGRect.zero, textContainer: nil)
         super.init(frame: .zero)
         self.addSubview(backgroundView)
         self.addSubview(content)
@@ -74,8 +79,8 @@ class PollQuestionView: UIView {
         content.translatesAutoresizingMaskIntoConstraints = false
         self.clipsToBounds = true
         
-
         content.text = questionText
+        content.font = style.font.uiFont
         content.isScrollEnabled = false
         content.backgroundColor = UIColor.clear
         content.isUserInteractionEnabled = false
@@ -93,6 +98,8 @@ class PollQuestionView: UIView {
         fatalError("Usage in XIB not supported.")
     }
 }
+
+// MARK: Cell
 
 class TextPollCell: BlockCell {
     /// a simple container view to the relatively complex layout of the text poll.
@@ -128,8 +135,6 @@ class TextPollCell: BlockCell {
         for optionViewIndex in 0..<optionViews.count {
             let currentOptionView = self.optionViews[optionViewIndex]
             containerView.addSubview(currentOptionView)
-            // ANDREW START HERE AND IDENTIFY HOW TO MAKE THE UITEXTVIEW FOR POLL OPTIONS A FIXED HEIGHT (WITH TEXT CENTERED VERTICALLY). might need to disable scrolling?
-            // currentOptionView.heightAnchor.constraint(equalToConstant: CGFloat(textPollBlock.optionStyle.height)).isActive = true
             if optionViewIndex > 0 {
                 let previousOptionView = self.optionViews[optionViewIndex - 1]
                 currentOptionView.topAnchor.constraint(equalTo: previousOptionView.bottomAnchor).isActive = true
@@ -142,20 +147,31 @@ class TextPollCell: BlockCell {
     }
 }
 
+// MARK: Measurement
+
 extension TextPollBlock {
     func intrinsicHeight(blockWidth: CGFloat) -> CGFloat {
-        return CGFloat(485.0)
-//        // Roundtrip to avoid rounding when converting floats to ints causing mismatches in measured size vs views actual size
-//        let optionStyleHeight = self.optionStyle.height
-//        let verticalSpacing = self.optionStyle.verticalSpacing
-//
-//        let questionHeight = measurementService.measureHeightNeededForMultiLineTextInTextView(
-//            textPollBlock.question,
-//            textPollBlock.questionStyle.font.getFontAppearance(textPollBlock.questionStyle.color, textPollBlock.questionStyle.textAlignment),
-//        bounds.width())
-//        let optionsHeight = optionStyleHeight * self.options.size
-//        let optionSpacing = verticalSpacing * self.options.size
-//
-//        return optionsHeight + optionSpacing + questionHeight
+        let innerWidth = blockWidth - CGFloat(insets.left) - CGFloat(insets.right)
+        
+        let size = CGSize(width: innerWidth, height: CGFloat.greatestFiniteMagnitude)
+        
+        let questionAttributedText = self.questionStyle.attributedText(for: self.question)
+        
+        let questionHeight = questionAttributedText?.boundingRect(with: size, options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil).height ?? CGFloat(0)
+        
+        let optionStyleHeight = self.optionStyle.height
+        let verticalSpacing = self.optionStyle.verticalSpacing
+        
+        let optionsHeight: CGFloat = CGFloat(optionStyleHeight) * CGFloat(self.options.count)
+        let optionSpacing: CGFloat = CGFloat(verticalSpacing) * CGFloat(self.options.count)
+
+        return optionsHeight + optionSpacing + questionHeight
+    }
+}
+
+extension QuestionStyle {
+    func attributedText(for text: String) -> NSAttributedString? {
+        let text = Text(rawValue: text, alignment: .left, color: self.color, font: self.font)
+        return text.attributedText(forFormat: .plain)
     }
 }

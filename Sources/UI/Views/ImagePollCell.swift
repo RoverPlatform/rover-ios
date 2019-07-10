@@ -14,24 +14,25 @@ class ImagePollOptionView: UIView {
     private let content = UIImageView()
     private let captionView = UILabel()
     
+    private let image: Image
+    
     init(
         image: Image,
         style: ImagePollBlock.OptionStyle
     ) {
+        self.image = image
         super.init(frame: CGRect.zero)
-        self.addSubview(content)
         
+        self.addSubview(content)
+        content.contentMode = .scaleToFill // TODO: determine appropriate setting.
         self.translatesAutoresizingMaskIntoConstraints = false
         content.translatesAutoresizingMaskIntoConstraints = false
+        self.clipsToBounds = true
         
-        // Configure image content view:
-        content.configureAsImage(image: image) {
-            // Option views are not recycled in the containing CollectionView driving the Rover experience, so we don't need to worry about checking that the background image loading callback is associated with a "stale" option.
-            return true
-        }
         self.configureContent(content: content, withInsets: .zero)
         self.configureOpacity(opacity: style.opacity)
         self.configureBorder(border: style.border, constrainedByFrame: nil)
+        // Configure image content view:
         
         // this is temporary to make things render simple 1:1.  probably different later.
         self.heightAnchor.constraint(equalTo: self.widthAnchor).isActive = true
@@ -42,6 +43,15 @@ class ImagePollOptionView: UIView {
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("Usage in XIB not supported.")
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        // configure image here since the laid out side matters.
+        let frameAtStartTime = self.frame
+        content.configureAsFilledImage(image: image) { [weak self] in
+            return frameAtStartTime == self?.frame
+        }
     }
 }
 
@@ -93,6 +103,35 @@ class ImagePollCell: BlockCell {
             }
             currentOptionView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
             currentOptionView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
+        }
+    }
+}
+
+extension UIImageView {
+    func configureAsFilledImage(image: Image, checkStillMatches: @escaping () -> Bool) {
+        // Reset any existing background image
+        
+        self.alpha = 0.0
+        self.image = nil
+    
+        self.contentMode = .scaleAspectFill
+        
+        if let image = ImageStore.shared.image(for: image, filledInFrame: self.frame) {
+            self.image = image
+            self.alpha = 1.0
+        } else {
+            ImageStore.shared.fetchImage(for: image, filledInFrame: frame) { [weak self] image in
+                let frame = self?.frame
+                guard let image = image, checkStillMatches() else {
+                    return
+                }
+                
+                self?.image = image
+                
+                UIView.animate(withDuration: 0.25) {
+                    self?.alpha = 1.0
+                }
+            }
         }
     }
 }

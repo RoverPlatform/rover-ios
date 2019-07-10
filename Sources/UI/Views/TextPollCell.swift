@@ -14,10 +14,13 @@ class TextPollOptionView: UIView {
     private let backgroundView = UIImageView()
     private let content = UILabel()
     
+    private let style: TextPollBlock.OptionStyle
+    
     init(
         optionText: String,
         style: TextPollBlock.OptionStyle
     ) {
+        self.style = style
         super.init(frame: CGRect.zero)
         self.addSubview(backgroundView)
         self.addSubview(content)
@@ -42,18 +45,22 @@ class TextPollOptionView: UIView {
         self.configureOpacity(opacity: style.opacity)
         self.configureBorder(border: style.border, constrainedByFrame: nil)
         self.configureBackgroundColor(color: style.background.color, opacity: style.opacity)
-        self.backgroundView.configureAsBackgroundImage(background: style.background) {
-            // Option views are not recycled in the containing CollectionView driving the Rover experience, so we don't need to worry about checking that the background image loading callback is associated with a "stale" option.
-            true
-        }
         
         self.heightAnchor.constraint(equalToConstant: CGFloat(style.height)).isActive = true
     }
     
-    
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("Usage in XIB not supported.")
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        let frameAtStartTime = self.frame
+        self.backgroundView.configureAsBackgroundImage(background: style.background) { [weak self] in
+            // Option views are not recycled in the containing CollectionView driving the Rover experience, so we don't need to worry about checking that the background image loading callback is associated with a "stale" option.
+            frameAtStartTime == self?.frame
+        }
     }
 }
 

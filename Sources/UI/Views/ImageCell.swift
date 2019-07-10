@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import os
 
 class ImageCell: BlockCell {
     let imageView: UIImageView = {
@@ -38,6 +39,11 @@ extension UIImageView {
     func configureAsImage(image: Image, checkStillMatches: @escaping () -> Bool) {
         self.alpha = 0.0
         self.image = nil
+        
+        if frame == .zero {
+            os_log("configureAsImage called with a zero frame. No good.", log: .rover)
+            return
+        }
         
         if let image = ImageStore.shared.image(for: image, frame: frame) {
             self.image = image

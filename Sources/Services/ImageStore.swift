@@ -68,6 +68,12 @@ class ImageStore {
         return self.image(for: configuration)
     }
     
+    func image(for image: Image, filledInFrame frame: CGRect) -> UIImage? {
+        let optimization: ImageStore.Optimization = .fill(bounds: frame)
+        let configuration = Configuration(url: image.url, optimization: optimization)
+        return self.image(for: configuration)
+    }
+    
     private func image(for configuration: Configuration) -> UIImage? {
         let key = CacheKey(configuration: configuration)
         return cache.object(forKey: key)
@@ -100,6 +106,17 @@ class ImageStore {
         let configuration = Configuration(image: image, frame: frame)
         fetchImage(for: configuration, completionHandler: completionHandler)
     }
+    
+    func fetchImage(for image: Image, filledInFrame frame: CGRect, completionHandler: ((UIImage?) -> Void)? = nil) {
+        let optimization: ImageStore.Optimization = .fill(bounds: frame)
+        let configuration = Configuration(url: image.url, optimization: optimization)
+        fetchImage(for: configuration, completionHandler: completionHandler)
+    }
+    
+//    init(image: Image, filledWithinFrame frame: CGRect) {
+//        let optimization: ImageStore.Optimization = .fill(bounds: frame)
+//        self.init(url: image.ur, optimization: optimization)
+//    }
     
     private func fetchImage(for configuration: Configuration, completionHandler: ((UIImage?) -> Void)? = nil) {
         if !Thread.isMainThread {

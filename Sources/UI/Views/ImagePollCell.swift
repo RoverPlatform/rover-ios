@@ -7,6 +7,9 @@
 //
 
 import UIKit
+import os
+
+fileprivate let OPTION_TEXT_HEIGHT = 40
 
 // MARK: Option View
 
@@ -24,7 +27,6 @@ class ImagePollOptionView: UIView {
         super.init(frame: CGRect.zero)
         
         self.addSubview(content)
-        content.contentMode = .scaleToFill // TODO: determine appropriate setting.
         self.translatesAutoresizingMaskIntoConstraints = false
         content.translatesAutoresizingMaskIntoConstraints = false
         self.clipsToBounds = true
@@ -92,18 +94,42 @@ class ImagePollCell: BlockCell {
         
         // TODO: the 2x1 layout and the 2x2 layout.
         
-        for optionViewIndex in 0..<optionViews.count {
-            let currentOptionView = self.optionViews[optionViewIndex]
-            containerView.addSubview(currentOptionView)
-            if optionViewIndex > 0 {
+        // merge them into tuples.
+        
+        // we render the poll options in two columns, regardless of device size.
+        var optionViewPairs = optionViews.tuples
+        
+        for pairIndex in 0..<optionViewPairs.count {
+            let (firstView, secondView) = optionViewPairs[pairIndex]
+            containerView.addSubview(firstView)
+            containerView.addSubview(secondView)
+            if pairIndex == 0 {
+                // first row
+                firstView.topAnchor.constraint(equalTo: questionView!.bottomAnchor).isActive = true
+                secondView.topAnchor.constraint(equalTo: questionView!.bottomAnchor).isActive = true
+            } else {
+                // subsequent rows stack on one another
+                let (previousFirstView, previousSecondView) = optionViewPairs[pairIndex - 1]
                 let previousOptionView = self.optionViews[optionViewIndex - 1]
                 currentOptionView.topAnchor.constraint(equalTo: previousOptionView.bottomAnchor, constant: CGFloat(imagePollBlock.optionStyle.verticalSpacing)).isActive = true
-            } else {
-                currentOptionView.topAnchor.constraint(equalTo: questionView!.bottomAnchor).isActive = true
             }
+            
+            
             currentOptionView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
             currentOptionView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
         }
+    }
+}
+
+extension Array {
+    var tuples: [(Element,Element)] {
+        var optionPairs = [(Element,Element)]()
+        for optionIndex in 0..<self.count {
+            if optionIndex % 2 == 1 {
+                optionPairs.append((self[optionIndex - 1], self[1]))
+            }
+        }
+        return optionPairs
     }
 }
 
@@ -132,6 +158,35 @@ extension UIImageView {
                     self?.alpha = 1.0
                 }
             }
+        }
+    }
+}
+
+extension ImagePollBlock {
+    func intrinisicHeight(blockWidth: CGFloat) -> CGFloat {
+        let innerWidth = blockWidth - CGFloat(insets.left) - CGFloat(insets.right)
+        
+        let size = CGSize(width: innerWidth, height: CGFloat.greatestFiniteMagnitude)
+        
+        let questionAttributedText = self.questionStyle.attributedText(for: self.question)
+        
+        let questionHeight = questionAttributedText?.boundingRect(with: size, options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil).height ?? CGFloat(0)
+            
+        
+        let horizontalSpacing = CGFloat(self.optionStyle.horizontalSpacing)
+        let optionTextHeight = CGFloat(OPTION_TEXT_HEIGHT)
+        let verticalSpacing = CGFloat(self.optionStyle.verticalSpacing)
+        
+        let optionImageHeight = (blockWidth - horizontalSpacing) / 2
+        
+        switch self.options.count {
+        case 2:
+            return verticalSpacing + optionTextHeight + optionImageHeight + questionHeight
+        case 4:
+            return 2 * (verticalSpacing + optionTextHeight + optionImageHeight) + questionHeight
+        default:
+            os_log("Unsupported number of image poll options.", log: .rover)
+            return 0
         }
     }
 }

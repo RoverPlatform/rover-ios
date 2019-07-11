@@ -153,7 +153,7 @@ class ScreenViewLayout: UICollectionViewLayout {
                     // blocks need to be measured.
                     intrinsicHeight = block.intrinsicHeight(blockWidth: blockWidth)
                 case let block as ImagePollBlock:
-                    intrinsicHeight = 4200
+                    intrinsicHeight = block.intrinisicHeight(blockWidth: blockWidth)
                 default:
                     intrinsicHeight = nil
                 }

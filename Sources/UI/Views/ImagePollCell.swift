@@ -110,13 +110,17 @@ class ImagePollCell: BlockCell {
             } else {
                 // subsequent rows stack on one another
                 let (previousFirstView, previousSecondView) = optionViewPairs[pairIndex - 1]
-                let previousOptionView = self.optionViews[optionViewIndex - 1]
-                currentOptionView.topAnchor.constraint(equalTo: previousOptionView.bottomAnchor, constant: CGFloat(imagePollBlock.optionStyle.verticalSpacing)).isActive = true
+                
+                firstView.topAnchor.constraint(equalTo: previousFirstView.bottomAnchor, constant: CGFloat(imagePollBlock.optionStyle.verticalSpacing)).isActive = true
+                secondView.topAnchor.constraint(equalTo: previousSecondView.bottomAnchor, constant: CGFloat(imagePollBlock.optionStyle.verticalSpacing)).isActive = true
             }
+
             
+            firstView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
+            firstView.trailingAnchor.constraint(equalTo: containerView.centerXAnchor, constant: -1 * CGFloat(imagePollBlock.optionStyle.horizontalSpacing) / 2).isActive = true
             
-            currentOptionView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
-            currentOptionView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
+            secondView.leadingAnchor.constraint(equalTo: containerView.centerXAnchor, constant: CGFloat(imagePollBlock.optionStyle.horizontalSpacing) / 2).isActive = true
+            secondView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
         }
     }
 }
@@ -126,7 +130,7 @@ extension Array {
         var optionPairs = [(Element,Element)]()
         for optionIndex in 0..<self.count {
             if optionIndex % 2 == 1 {
-                optionPairs.append((self[optionIndex - 1], self[1]))
+                optionPairs.append((self[optionIndex - 1], self[optionIndex]))
             }
         }
         return optionPairs

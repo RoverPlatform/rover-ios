@@ -9,37 +9,58 @@
 import UIKit
 import os
 
-fileprivate let OPTION_TEXT_HEIGHT = 40
+fileprivate let OPTION_TEXT_HEIGHT = CGFloat(40)
+fileprivate let OPTION_TEXT_SPACING = CGFloat(8)
 
 // MARK: Option View
 
 class ImagePollOptionView: UIView {
     private let content = UIImageView()
-    private let captionView = UILabel()
+    private let answerTextView = UILabel()
     
-    private let image: Image
+    private let option: ImagePollBlock.Option
     
     init(
-        image: Image,
+        option: ImagePollBlock.Option,
         style: ImagePollBlock.OptionStyle
     ) {
-        self.image = image
+        self.option = option
         super.init(frame: CGRect.zero)
         
         self.addSubview(content)
+        self.addSubview(answerTextView)
         self.translatesAutoresizingMaskIntoConstraints = false
         content.translatesAutoresizingMaskIntoConstraints = false
+        answerTextView.translatesAutoresizingMaskIntoConstraints = false
         self.clipsToBounds = true
         
-        self.configureContent(content: content, withInsets: .zero)
         self.configureOpacity(opacity: style.opacity)
         self.configureBorder(border: style.border, constrainedByFrame: nil)
         // Configure image content view:
         
-        // this is temporary to make things render simple 1:1.  probably different later.
-        self.heightAnchor.constraint(equalTo: self.widthAnchor).isActive = true
+        // the image itself should be rendered as 1:1 tile.
+        self.content.heightAnchor.constraint(equalTo: self.widthAnchor).isActive = true
         
-        // TODO: set up caption view.
+        // caption view styling:
+        answerTextView.backgroundColor = .clear
+        answerTextView.numberOfLines = 1
+        answerTextView.attributedText = style.attributedText(for: option.text)
+        answerTextView.lineBreakMode = .byTruncatingTail
+        
+        self.backgroundColor = style.background.color.uiColor
+        
+        self.answerTextView.backgroundColor = .clear
+        self.answerTextView.textAlignment = .center
+        
+        self.answerTextView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: OPTION_TEXT_SPACING).isActive = true
+        self.answerTextView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: OPTION_TEXT_SPACING * -1).isActive = true
+        self.answerTextView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: OPTION_TEXT_SPACING * -1 ).isActive = true
+        self.answerTextView.heightAnchor.constraint(equalToConstant: OPTION_TEXT_HEIGHT - OPTION_TEXT_SPACING * 2).isActive = true
+        self.answerTextView.topAnchor.constraint(equalTo: self.content.bottomAnchor, constant: 8).isActive = true
+        self.content.leftAnchor.constraint(equalTo: self.leftAnchor).isActive = true
+        self.content.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
+        self.content.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
+        answerTextView.text = option.text
     }
     
     @available(*, unavailable)
@@ -51,14 +72,13 @@ class ImagePollOptionView: UIView {
         super.layoutSubviews()
         // configure image here since the laid out side matters.
         let frameAtStartTime = self.frame
-        content.configureAsFilledImage(image: image) { [weak self] in
+        content.configureAsFilledImage(image: self.option.image) { [weak self] in
             return frameAtStartTime == self?.frame
         }
     }
 }
 
 // MARK: Cell
-
 
 class ImagePollCell: BlockCell {
     /// a simple container view to the relatively complex layout of the text poll.
@@ -89,15 +109,11 @@ class ImagePollCell: BlockCell {
         questionView?.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
         questionView?.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
         self.optionViews = imagePollBlock.options.map { option in
-            ImagePollOptionView(image: option.image, style: imagePollBlock.optionStyle)
+            ImagePollOptionView(option: option, style: imagePollBlock.optionStyle)
         }
         
-        // TODO: the 2x1 layout and the 2x2 layout.
-        
-        // merge them into tuples.
-        
-        // we render the poll options in two columns, regardless of device size.
-        var optionViewPairs = optionViews.tuples
+        // we render the poll options in two columns, regardless of device size.  so pair them off.
+        let optionViewPairs = optionViews.tuples
         
         for pairIndex in 0..<optionViewPairs.count {
             let (firstView, secondView) = optionViewPairs[pairIndex]
@@ -114,7 +130,6 @@ class ImagePollCell: BlockCell {
                 firstView.topAnchor.constraint(equalTo: previousFirstView.bottomAnchor, constant: CGFloat(imagePollBlock.optionStyle.verticalSpacing)).isActive = true
                 secondView.topAnchor.constraint(equalTo: previousSecondView.bottomAnchor, constant: CGFloat(imagePollBlock.optionStyle.verticalSpacing)).isActive = true
             }
-
             
             firstView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
             firstView.trailingAnchor.constraint(equalTo: containerView.centerXAnchor, constant: -1 * CGFloat(imagePollBlock.optionStyle.horizontalSpacing) / 2).isActive = true
@@ -126,7 +141,7 @@ class ImagePollCell: BlockCell {
 }
 
 extension Array {
-    var tuples: [(Element,Element)] {
+    fileprivate var tuples: [(Element,Element)] {
         var optionPairs = [(Element,Element)]()
         for optionIndex in 0..<self.count {
             if optionIndex % 2 == 1 {
@@ -138,7 +153,7 @@ extension Array {
 }
 
 extension UIImageView {
-    func configureAsFilledImage(image: Image, checkStillMatches: @escaping () -> Bool) {
+    fileprivate func configureAsFilledImage(image: Image, checkStillMatches: @escaping () -> Bool) {
         // Reset any existing background image
         
         self.alpha = 0.0
@@ -178,7 +193,7 @@ extension ImagePollBlock {
             
         
         let horizontalSpacing = CGFloat(self.optionStyle.horizontalSpacing)
-        let optionTextHeight = CGFloat(OPTION_TEXT_HEIGHT)
+        let optionTextHeight = OPTION_TEXT_HEIGHT
         let verticalSpacing = CGFloat(self.optionStyle.verticalSpacing)
         
         let optionImageHeight = (blockWidth - horizontalSpacing) / 2
@@ -192,5 +207,12 @@ extension ImagePollBlock {
             os_log("Unsupported number of image poll options.", log: .rover)
             return 0
         }
+    }
+}
+
+extension ImagePollBlock.OptionStyle {
+    func attributedText(for text: String) -> NSAttributedString? {
+        let text = Text(rawValue: text, alignment: .left, color: self.color, font: self.font)
+        return text.attributedText(forFormat: .plain)
     }
 }

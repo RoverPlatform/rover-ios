@@ -35,11 +35,10 @@ class TextPollOptionView: UIView {
         self.clipsToBounds = true
         
         // Configure text view:
-        content.backgroundColor = UIColor.clear
+        content.backgroundColor = .clear
         content.numberOfLines = 1
-        content.font = style.font.uiFont
-        content.textColor = style.color.uiColor
-        content.text = optionText
+        content.attributedText = style.attributedText(for: optionText)
+        content.lineBreakMode = .byTruncatingTail
         
         self.configureContent(content: content, withInsets: .zero)
         self.configureOpacity(opacity: style.opacity)
@@ -132,5 +131,12 @@ extension TextPollBlock {
         let optionSpacing: CGFloat = CGFloat(verticalSpacing) * CGFloat(self.options.count)
 
         return optionsHeight + optionSpacing + questionHeight
+    }
+}
+
+extension TextPollBlock.OptionStyle {
+    func attributedText(for text: String) -> NSAttributedString? {
+        let text = Text(rawValue: text, alignment: .left, color: self.color, font: self.font)
+        return text.attributedText(forFormat: .plain)
     }
 }

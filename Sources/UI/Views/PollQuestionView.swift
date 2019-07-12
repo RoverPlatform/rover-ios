@@ -25,8 +25,7 @@ class PollQuestionView: UIView {
         content.translatesAutoresizingMaskIntoConstraints = false
         self.clipsToBounds = true
         
-        content.text = questionText
-        content.font = style.font.uiFont
+        content.attributedText = style.attributedText(for: questionText)
         content.isScrollEnabled = false
         content.backgroundColor = UIColor.clear
         content.isUserInteractionEnabled = false

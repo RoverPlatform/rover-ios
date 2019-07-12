@@ -14,16 +14,18 @@ public struct ImagePollBlock : PollBlock {
         public var color: Color
         public var border: Border
         public var font: Text.Font
+        public var background: Background
         public var textAlignment: Text.Alignment
         public var resultFillColor: Color
         public var verticalSpacing: Int
         public var horizontalSpacing: Int
 
-        public init(opacity: Double, color: Color, border: Border, font: Text.Font, textAlignment: Text.Alignment, resultFillColor: Color, verticalSpacing: Int, horizontalSpacing: Int) {
+        public init(opacity: Double, color: Color, border: Border, background: Background, font: Text.Font, textAlignment: Text.Alignment, resultFillColor: Color, verticalSpacing: Int, horizontalSpacing: Int) {
             self.opacity = opacity
             self.color = color
             self.border = border
             self.font = font
+            self.background = background
             self.textAlignment = textAlignment
             self.resultFillColor = resultFillColor
             self.verticalSpacing = verticalSpacing

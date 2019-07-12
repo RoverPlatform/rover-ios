@@ -8,6 +8,8 @@
 
 import UIKit
 
+fileprivate let OPTION_TEXT_SPACING = CGFloat(16)
+
 // MARK: Option View
 
 class TextPollOptionView: UIView {
@@ -35,12 +37,16 @@ class TextPollOptionView: UIView {
         self.clipsToBounds = true
         
         // Configure text view:
-        content.backgroundColor = .clear
+        self.content.backgroundColor = .clear
         content.numberOfLines = 1
         content.attributedText = style.attributedText(for: optionText)
         content.lineBreakMode = .byTruncatingTail
         
-        self.configureContent(content: content, withInsets: .zero)
+        self.content.topAnchor.constraint(equalTo: self.topAnchor, constant: OPTION_TEXT_SPACING).isActive = true
+        self.content.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: OPTION_TEXT_SPACING * -1).isActive = true
+        self.content.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: OPTION_TEXT_SPACING).isActive = true
+        self.content.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: OPTION_TEXT_SPACING * -1).isActive = true
+        
         self.configureOpacity(opacity: style.opacity)
         self.configureBorder(border: style.border, constrainedByFrame: nil)
         self.configureBackgroundColor(color: style.background.color, opacity: style.opacity)

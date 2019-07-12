@@ -121,8 +121,8 @@ class ImagePollCell: BlockCell {
             containerView.addSubview(secondView)
             if pairIndex == 0 {
                 // first row
-                firstView.topAnchor.constraint(equalTo: questionView!.bottomAnchor).isActive = true
-                secondView.topAnchor.constraint(equalTo: questionView!.bottomAnchor).isActive = true
+                firstView.topAnchor.constraint(equalTo: questionView!.bottomAnchor, constant: CGFloat(imagePollBlock.optionStyle.verticalSpacing)).isActive = true
+                secondView.topAnchor.constraint(equalTo: questionView!.bottomAnchor, constant: CGFloat(imagePollBlock.optionStyle.verticalSpacing)).isActive = true
             } else {
                 // subsequent rows stack on one another
                 let (previousFirstView, previousSecondView) = optionViewPairs[pairIndex - 1]

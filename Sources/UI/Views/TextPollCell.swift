@@ -110,7 +110,7 @@ class TextPollCell: BlockCell {
                 let previousOptionView = self.optionViews[optionViewIndex - 1]
                 currentOptionView.topAnchor.constraint(equalTo: previousOptionView.bottomAnchor, constant: CGFloat(textPollBlock.optionStyle.verticalSpacing)).isActive = true
             } else {
-                currentOptionView.topAnchor.constraint(equalTo: questionView!.bottomAnchor).isActive = true
+                currentOptionView.topAnchor.constraint(equalTo: questionView!.bottomAnchor, constant: CGFloat(textPollBlock.optionStyle.verticalSpacing)).isActive = true
             }
             currentOptionView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
             currentOptionView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true

@@ -11,27 +11,59 @@ import os
 
 fileprivate let OPTION_TEXT_HEIGHT = CGFloat(40)
 fileprivate let OPTION_TEXT_SPACING = CGFloat(8)
+fileprivate let FRACTION_INDICATOR_SPACING = CGFloat(4)
 
 // MARK: Option View
 
 class ImagePollOptionView: UIView {
+    var state: State {
+        didSet {
+            switch state {
+            case .waitingForAnswer:
+                revealQuestionState()
+            case .answered(let optionResults):
+                revealResultsState()
+            }
+        }
+    }
+    
+    enum State {
+        case waitingForAnswer
+        case answered(optionResults: [String: Double])
+    }
+    
     private let content = UIImageView()
     private let answerTextView = UILabel()
+    
+    /// This view introduces a 50% opacity layer on top of the image in the results state.
+    private let resultFadeOverlay = UIView()
+    private let resultFractionPercentage = UILabel()
+    
+    // TODO: replace this with a custom view that allows for a rounded bar.
+    private let resultFractionIndicator = UIProgressView()
     
     private let option: ImagePollBlock.Option
     
     init(
         option: ImagePollBlock.Option,
-        style: ImagePollBlock.OptionStyle
+        style: ImagePollBlock.OptionStyle,
+        initialState: State
     ) {
         self.option = option
+        self.state = initialState
         super.init(frame: CGRect.zero)
         
         self.addSubview(content)
         self.addSubview(answerTextView)
+        self.addSubview(resultFadeOverlay)
+        self.addSubview(resultFractionPercentage)
+        self.addSubview(resultFractionIndicator)
         self.translatesAutoresizingMaskIntoConstraints = false
         content.translatesAutoresizingMaskIntoConstraints = false
         answerTextView.translatesAutoresizingMaskIntoConstraints = false
+        self.resultFadeOverlay.translatesAutoresizingMaskIntoConstraints = false
+        resultFractionPercentage.translatesAutoresizingMaskIntoConstraints = false
+        resultFractionIndicator.translatesAutoresizingMaskIntoConstraints = false
         self.clipsToBounds = true
         
         self.configureOpacity(opacity: style.opacity)
@@ -57,10 +89,45 @@ class ImagePollOptionView: UIView {
         self.answerTextView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: OPTION_TEXT_SPACING * -1 ).isActive = true
         self.answerTextView.heightAnchor.constraint(equalToConstant: OPTION_TEXT_HEIGHT - OPTION_TEXT_SPACING * 2).isActive = true
         self.answerTextView.topAnchor.constraint(equalTo: self.content.bottomAnchor, constant: 8).isActive = true
-        self.content.leftAnchor.constraint(equalTo: self.leftAnchor).isActive = true
-        self.content.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
+        self.content.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
+        self.content.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
         self.content.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
+        
+        self.resultFadeOverlay.topAnchor.constraint(equalTo: self.content.topAnchor).isActive = true
+        self.resultFadeOverlay.leadingAnchor.constraint(equalTo: self.content.leadingAnchor).isActive = true
+        self.resultFadeOverlay.trailingAnchor.constraint(equalTo: self.content.trailingAnchor).isActive = true
+        self.resultFadeOverlay.bottomAnchor.constraint(equalTo: self.content.bottomAnchor).isActive = true
+        self.resultFadeOverlay.backgroundColor = .black
+        self.resultFadeOverlay.configureOpacity(opacity: 0.5)
+        
+        self.resultFractionIndicator.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: FRACTION_INDICATOR_SPACING).isActive = true
+        self.resultFractionIndicator.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: FRACTION_INDICATOR_SPACING * -1).isActive = true
+        self.resultFractionIndicator.bottomAnchor.constraint(equalTo: self.content.bottomAnchor, constant: CGFloat(-8)).isActive = true
+        self.resultFractionIndicator.heightAnchor.constraint(equalToConstant: 8).isActive = true
+        self.resultFractionIndicator.progress = 0.5
+        self.resultFractionIndicator.clipsToBounds = true
+        self.resultFractionIndicator.configureBorder(border: Border(color: .transparent, radius: 4, width: 0), constrainedByFrame: nil)
+        
+        self.resultFractionPercentage.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
+        self.resultFractionPercentage.bottomAnchor.constraint(equalTo: self.resultFractionIndicator.topAnchor, constant: -4).isActive = true
+        
+        self.resultFractionPercentage.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        self.resultFractionPercentage.textColor = .white
+        self.resultFractionPercentage.text = "50 %"
+        
         answerTextView.text = option.text
+    }
+    
+    private func revealQuestionState() {
+        self.resultFractionPercentage.isHidden = true
+        self.resultFractionIndicator.isHidden = true
+        self.resultFadeOverlay.isHidden = true
+    }
+    
+    private func revealResultsState() {
+        self.resultFractionPercentage.isHidden = false
+        self.resultFractionIndicator.isHidden = false
+        self.resultFadeOverlay.isHidden = false
     }
     
     @available(*, unavailable)
@@ -71,10 +138,7 @@ class ImagePollOptionView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         // configure image here since the laid out side matters.
-        let frameAtStartTime = self.frame
-        content.configureAsFilledImage(image: self.option.image) { [weak self] in
-            return frameAtStartTime == self?.frame
-        }
+        content.configureAsFilledImage(image: self.option.image)
     }
 }
 
@@ -109,7 +173,7 @@ class ImagePollCell: BlockCell {
         questionView?.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
         questionView?.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
         self.optionViews = imagePollBlock.options.map { option in
-            ImagePollOptionView(option: option, style: imagePollBlock.optionStyle)
+            ImagePollOptionView(option: option, style: imagePollBlock.optionStyle, initialState: .waitingForAnswer)
         }
         
         // we render the poll options in two columns, regardless of device size.  so pair them off.
@@ -137,10 +201,15 @@ class ImagePollCell: BlockCell {
             secondView.leadingAnchor.constraint(equalTo: containerView.centerXAnchor, constant: CGFloat(imagePollBlock.optionStyle.horizontalSpacing) / 2).isActive = true
             secondView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
         }
+        
+        // TODO: this is the place where we will subscribe to the option poll service.
+        
+        // TODO: will will determine the current poll state according to the on-disk store.  Immediately, and without animation, we will set the poll to display either question state or results state.
     }
 }
 
 extension Array {
+    /// Pair off each set of two items in sequence in the array.
     fileprivate var tuples: [(Element,Element)] {
         var optionPairs = [(Element,Element)]()
         for optionIndex in 0..<self.count {
@@ -153,7 +222,7 @@ extension Array {
 }
 
 extension UIImageView {
-    fileprivate func configureAsFilledImage(image: Image, checkStillMatches: @escaping () -> Bool) {
+    fileprivate func configureAsFilledImage(image: Image, checkStillMatches: @escaping () -> Bool = { true } ) {
         // Reset any existing background image
         
         self.alpha = 0.0
@@ -165,9 +234,9 @@ extension UIImageView {
             self.image = image
             self.alpha = 1.0
         } else {
-            ImageStore.shared.fetchImage(for: image, filledInFrame: frame) { [weak self] image in
-                let frame = self?.frame
-                guard let image = image, checkStillMatches() else {
+            let originalFrame = self.frame
+            ImageStore.shared.fetchImage(for: image, filledInFrame: self.frame) { [weak self] image in
+                guard let image = image, checkStillMatches(), self?.frame == originalFrame else {
                     return
                 }
                 
@@ -216,3 +285,5 @@ extension ImagePollBlock.OptionStyle {
         return text.attributedText(forFormat: .plain)
     }
 }
+
+

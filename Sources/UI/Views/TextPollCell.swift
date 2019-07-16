@@ -61,11 +61,7 @@ class TextPollOptionView: UIView {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        let frameAtStartTime = self.frame
-        self.backgroundView.configureAsBackgroundImage(background: style.background) { [weak self] in
-            // Option views are not recycled in the containing CollectionView driving the Rover experience, so we don't need to worry about checking that the background image loading callback is associated with a "stale" option.
-            frameAtStartTime == self?.frame
-        }
+        self.backgroundView.configureAsBackgroundImage(background: style.background)
     }
 }
 

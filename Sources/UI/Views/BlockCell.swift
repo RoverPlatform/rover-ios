@@ -138,7 +138,7 @@ extension UIView {
 
 extension UIImageView {
     // swiftlint:disable:next cyclomatic_complexity // This routine is fairly readable as it is, so we will hold off on refactoring it, so silence the complexity warning.
-    func configureAsBackgroundImage(background: Background?, checkStillMatches: @escaping () -> Bool) {
+    func configureAsBackgroundImage(background: Background?, checkStillMatches: @escaping () -> Bool = { true }) {
         // Reset any existing background image
         
         self.alpha = 0.0
@@ -172,8 +172,9 @@ extension UIImageView {
             }
             self.alpha = 1.0
         } else {
+            let originalFrame = self.frame
             ImageStore.shared.fetchImage(for: background, frame: frame) { [weak self] image in
-                guard let image = image, checkStillMatches() else {
+                guard let image = image, checkStillMatches(), self?.frame == originalFrame else {
                     return
                 }
                 

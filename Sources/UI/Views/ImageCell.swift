@@ -49,14 +49,9 @@ extension UIImageView {
             self.image = image
             self.alpha = 1.0
         } else {
+            let originalFrame = self.frame
             ImageStore.shared.fetchImage(for: image, frame: frame) { [weak self] image in
-                guard let image = image else {
-                    return
-                }
-                
-                // Verify the block cell is still configured to the same block; otherwise we should no-op because the cell has been recycled.
-                
-                if !checkStillMatches() {
+                guard let image = image, checkStillMatches(), self?.frame == originalFrame else {
                     return
                 }
                 

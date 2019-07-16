@@ -22,14 +22,19 @@ class ImagePollOptionView: UIView {
             case .waitingForAnswer:
                 revealQuestionState()
             case .answered(let optionResults):
-                revealResultsState()
+                revealResultsState(animated: true, optionResults: optionResults)
             }
         }
     }
     
+    struct OptionResults {
+        let selected: Bool
+        let fraction: Float
+    }
+    
     enum State {
         case waitingForAnswer
-        case answered(optionResults: [String: Double])
+        case answered(optionResults: OptionResults)
     }
     
     private let content = UIImageView()
@@ -98,13 +103,12 @@ class ImagePollOptionView: UIView {
         self.resultFadeOverlay.trailingAnchor.constraint(equalTo: self.content.trailingAnchor).isActive = true
         self.resultFadeOverlay.bottomAnchor.constraint(equalTo: self.content.bottomAnchor).isActive = true
         self.resultFadeOverlay.backgroundColor = .black
-        self.resultFadeOverlay.configureOpacity(opacity: 0.5)
+        self.resultFadeOverlay.alpha = 0.0
         
         self.resultFractionIndicator.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: FRACTION_INDICATOR_SPACING).isActive = true
         self.resultFractionIndicator.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: FRACTION_INDICATOR_SPACING * -1).isActive = true
         self.resultFractionIndicator.bottomAnchor.constraint(equalTo: self.content.bottomAnchor, constant: CGFloat(-8)).isActive = true
         self.resultFractionIndicator.heightAnchor.constraint(equalToConstant: 8).isActive = true
-        self.resultFractionIndicator.progress = 0.5
         self.resultFractionIndicator.clipsToBounds = true
         self.resultFractionIndicator.configureBorder(border: Border(color: .transparent, radius: 4, width: 0), constrainedByFrame: nil)
         
@@ -113,21 +117,37 @@ class ImagePollOptionView: UIView {
         
         self.resultFractionPercentage.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         self.resultFractionPercentage.textColor = .white
-        self.resultFractionPercentage.text = "50 %"
+        
         
         answerTextView.text = option.text
+        
+        switch initialState {
+        case .waitingForAnswer:
+            revealQuestionState()
+        case .answered(let optionResults):
+            revealResultsState(animated: false, optionResults: optionResults)
+        }
     }
     
     private func revealQuestionState() {
-        self.resultFractionPercentage.isHidden = true
-        self.resultFractionIndicator.isHidden = true
-        self.resultFadeOverlay.isHidden = true
+        self.resultFractionPercentage.alpha = 0.0
+        self.resultFractionIndicator.alpha = 0.0
+        self.resultFadeOverlay.alpha = 0.0
+        self.resultFractionIndicator.progress = 0.0
     }
     
-    private func revealResultsState() {
-        self.resultFractionPercentage.isHidden = false
-        self.resultFractionIndicator.isHidden = false
-        self.resultFadeOverlay.isHidden = false
+    private func revealResultsState(animated: Bool, optionResults: OptionResults) {
+        self.resultFractionPercentage.text = String(format: "%.0f %%", optionResults.fraction * 100)
+        
+        UIView.animate(withDuration: 0.167, delay: 0.0, options: [.curveEaseInOut], animations: {
+            self.resultFractionPercentage.alpha = 1.0
+            self.resultFractionIndicator.alpha = 0.5
+            self.resultFadeOverlay.alpha = 0.3
+        })
+        
+        UIView.animate(withDuration: 1.0, delay: 0.0, options: [.curveEaseInOut], animations: {
+            self.resultFractionIndicator.setProgress(optionResults.fraction, animated: true)
+        })
     }
     
     @available(*, unavailable)
@@ -155,6 +175,8 @@ class ImagePollCell: BlockCell {
     }
     
     var questionView: PollQuestionView?
+    
+    var timer: Timer?
     
     override func configure(with block: Block) {
         super.configure(with: block)
@@ -205,6 +227,13 @@ class ImagePollCell: BlockCell {
         // TODO: this is the place where we will subscribe to the option poll service.
         
         // TODO: will will determine the current poll state according to the on-disk store.  Immediately, and without animation, we will set the poll to display either question state or results state.
+        
+        self.timer = Timer.scheduledTimer(withTimeInterval: 4, repeats: false) { _ in
+            optionViewPairs.first?.0.state = .answered(optionResults: ImagePollOptionView.OptionResults(selected: true, fraction: 0.67))
+            optionViewPairs.first?.1.state = .answered(optionResults: ImagePollOptionView.OptionResults(selected: false, fraction: 0.11))
+            optionViewPairs[1].0.state = .answered(optionResults: ImagePollOptionView.OptionResults(selected: false, fraction: 0.11))
+            optionViewPairs[1].1.state = .answered(optionResults: ImagePollOptionView.OptionResults(selected: false, fraction: 0.11))
+        }
     }
 }
 
@@ -259,7 +288,6 @@ extension ImagePollBlock {
         let questionAttributedText = self.questionStyle.attributedText(for: self.question)
         
         let questionHeight = questionAttributedText?.boundingRect(with: size, options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil).height ?? CGFloat(0)
-            
         
         let horizontalSpacing = CGFloat(self.optionStyle.horizontalSpacing)
         let optionTextHeight = OPTION_TEXT_HEIGHT
@@ -285,5 +313,3 @@ extension ImagePollBlock.OptionStyle {
         return text.attributedText(forFormat: .plain)
     }
 }
-
-

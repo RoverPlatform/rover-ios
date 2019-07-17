@@ -126,13 +126,7 @@ class TextPollOptionView: UIView {
         
         UIView.animate(withDuration: 1, delay: 0, options: [.curveEaseInOut], animations: {
             self.resultFractionIndicator.setProgress(optionResults.fraction, animated: true)
-            
-            
         })
-        
-        UIViewPropertyAnimator(duration: 1, curve: .easeInOut) {
-            
-        }
     }
     
     @available(*, unavailable)
@@ -143,6 +137,31 @@ class TextPollOptionView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         self.backgroundView.configureAsBackgroundImage(background: style.background)
+    }
+}
+
+// MARK: Progress Bar View
+
+class TextPollProgressBarView: UIView {
+    
+    private var progressBarLayer = CAShapeLayer()
+    private var progressTextLayer = CATextLayer()
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("Usage in XIB not supported.")
+    }
+    
+    // TODO: andrew start here and ensure that resize is
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        
+        self.progressBarLayer.shape ...... damn! I can't just set the shape here, because how would I handle the UIView being resized? Seems wrong.  I can't find clear guidance online about this.
+        
+        
+        self.layer.addSublayer(self.progressBarLayer)
+        self.layer.addSublayer(self.progressTextLayer)
     }
 }
 

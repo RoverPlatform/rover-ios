@@ -13,45 +13,126 @@ fileprivate let OPTION_TEXT_SPACING = CGFloat(16)
 // MARK: Option View
 
 class TextPollOptionView: UIView {
+    var state: State {
+        didSet {
+            switch state {
+            case .waitingForAnswer:
+                revealQuestionState()
+            case .answered(let optionResults):
+                revealResultsState(animated: true, optionResults: optionResults)
+            }
+        }
+    }
+    
+    struct OptionResults {
+        let selected: Bool
+        let fraction: Float
+    }
+    
+    enum State {
+        case waitingForAnswer
+        case answered(optionResults: OptionResults)
+    }
+    
     private let backgroundView = UIImageView()
     private let content = UILabel()
+    private let resultFractionPercentage = UILabel()
+    private let resultFractionIndicator = UIProgressView()
     
     private let style: TextPollBlock.OptionStyle
     
     init(
         optionText: String,
-        style: TextPollBlock.OptionStyle
+        style: TextPollBlock.OptionStyle,
+        initialState: State
     ) {
         self.style = style
+        self.state = initialState
         super.init(frame: CGRect.zero)
-        self.addSubview(backgroundView)
-        self.addSubview(content)
+        self.addSubview(self.backgroundView)
+        self.addSubview(resultFractionIndicator)
+        self.addSubview(self.content)
+        self.addSubview(self.resultFractionPercentage)
         
         self.translatesAutoresizingMaskIntoConstraints = false
-        content.translatesAutoresizingMaskIntoConstraints = false
-        backgroundView.translatesAutoresizingMaskIntoConstraints = false
-        backgroundView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
-        backgroundView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
-        backgroundView.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
-        backgroundView.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
-        self.clipsToBounds = true
+        self.content.translatesAutoresizingMaskIntoConstraints = false
+        self.backgroundView.translatesAutoresizingMaskIntoConstraints = false
+        self.resultFractionPercentage.translatesAutoresizingMaskIntoConstraints = false
+        self.resultFractionIndicator.translatesAutoresizingMaskIntoConstraints = false
+        
+        self.backgroundView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
+        self.backgroundView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
+        self.backgroundView.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
+        self.backgroundView.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
+        
+        self.resultFractionIndicator.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
+        self.resultFractionIndicator.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
+        self.resultFractionIndicator.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
+        self.resultFractionIndicator.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
+        
+        self.heightAnchor.constraint(equalToConstant: CGFloat(style.height)).isActive = true
+        
+        self.resultFractionIndicator.setProgress(0.5, animated: true)
+        self.resultFractionIndicator.progressTintColor = style.resultFillColor.uiColor
+        self.resultFractionPercentage.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: OPTION_TEXT_SPACING * -1).isActive = true
+        self.resultFractionPercentage.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
+        self.resultFractionPercentage.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
+        self.resultFractionPercentage.text = "67%"
+        // we want the content to expand out to the horizontal space permitted by the percentage view.
+        self.content.setContentHuggingPriority(.fittingSizeLevel, for: .horizontal)
+        self.resultFractionPercentage.font = style.font.uiFontForPercentageIndciator
+        self.resultFractionPercentage.textColor = style.color.uiColor
         
         // Configure text view:
         self.content.backgroundColor = .clear
-        content.numberOfLines = 1
-        content.attributedText = style.attributedText(for: optionText)
-        content.lineBreakMode = .byTruncatingTail
+        self.content.numberOfLines = 1
+        self.content.attributedText = style.attributedText(for: optionText)
+        self.content.lineBreakMode = .byTruncatingTail
         
         self.content.topAnchor.constraint(equalTo: self.topAnchor, constant: OPTION_TEXT_SPACING).isActive = true
         self.content.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: OPTION_TEXT_SPACING * -1).isActive = true
         self.content.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: OPTION_TEXT_SPACING).isActive = true
-        self.content.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: OPTION_TEXT_SPACING * -1).isActive = true
+        self.content.trailingAnchor.constraint(equalTo: self.resultFractionPercentage.leadingAnchor, constant: OPTION_TEXT_SPACING * -1).isActive = true
         
         self.configureOpacity(opacity: style.opacity)
+        self.clipsToBounds = true
         self.configureBorder(border: style.border, constrainedByFrame: nil)
         self.configureBackgroundColor(color: style.background.color, opacity: style.opacity)
         
-        self.heightAnchor.constraint(equalToConstant: CGFloat(style.height)).isActive = true
+        switch initialState {
+        case .waitingForAnswer:
+            revealQuestionState()
+        case .answered(let optionResults):
+            revealResultsState(animated: false, optionResults: optionResults)
+        }
+    }
+    
+    private func revealQuestionState() {
+        self.resultFractionPercentage.alpha = 0.0
+        self.resultFractionIndicator.alpha = 0.0
+        self.resultFractionIndicator.progress = 0.0
+    }
+    
+    private func revealResultsState(animated: Bool, optionResults: OptionResults) {
+        self.resultFractionPercentage.text = String(format: "%.0f %%", optionResults.fraction * 100)
+        
+        UIView.animate(withDuration: 0.75, delay: 0, options: [.curveEaseInOut], animations: {
+            self.resultFractionPercentage.alpha = 1.0
+        })
+        
+        UIView.animate(withDuration: 0.05, delay: 0, options: [.curveEaseInOut], animations: {
+            self.resultFractionIndicator.alpha = 1.0
+        })
+        
+        UIView.animate(withDuration: 1, delay: 0, options: [.curveEaseInOut], animations: {
+            self.resultFractionIndicator.setProgress(optionResults.fraction, animated: true)
+            
+            
+        })
+        
+        UIViewPropertyAnimator(duration: 1, curve: .easeInOut) {
+            
+        }
     }
     
     @available(*, unavailable)
@@ -80,6 +161,8 @@ class TextPollCell: BlockCell {
     
     var questionView: PollQuestionView?
     
+    var timer: Timer?
+    
     override func configure(with block: Block) {
         super.configure(with: block)
      
@@ -97,7 +180,8 @@ class TextPollCell: BlockCell {
         questionView?.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
         questionView?.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
         self.optionViews = textPollBlock.options.map { option in
-            TextPollOptionView(optionText: option, style: textPollBlock.optionStyle)
+            // TODO: get initial state synchronously from the local VotingService.
+            TextPollOptionView(optionText: option, style: textPollBlock.optionStyle, initialState: .waitingForAnswer)
         }
         for optionViewIndex in 0..<optionViews.count {
             let currentOptionView = self.optionViews[optionViewIndex]
@@ -110,6 +194,13 @@ class TextPollCell: BlockCell {
             }
             currentOptionView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
             currentOptionView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
+        }
+        
+        // TODO: A stand-in for the user tapping.
+        self.timer = Timer.scheduledTimer(withTimeInterval: 4, repeats: false) { _ in
+            self.optionViews[0].state = .answered(optionResults: TextPollOptionView.OptionResults(selected: true, fraction: 0.67))
+            self.optionViews[1].state = .answered(optionResults: TextPollOptionView.OptionResults(selected: false, fraction: 0.166))
+            self.optionViews[2].state = .answered(optionResults: TextPollOptionView.OptionResults(selected: false, fraction: 0.166))
         }
     }
 }
@@ -131,14 +222,50 @@ extension TextPollBlock {
         
         let optionsHeight: CGFloat = CGFloat(optionStyleHeight) * CGFloat(self.options.count)
         let optionSpacing: CGFloat = CGFloat(verticalSpacing) * CGFloat(self.options.count)
-
+        
         return optionsHeight + optionSpacing + questionHeight
     }
 }
+
+
+
+// MARK: Helpers
 
 extension TextPollBlock.OptionStyle {
     func attributedText(for text: String) -> NSAttributedString? {
         let text = Text(rawValue: text, alignment: .left, color: self.color, font: self.font)
         return text.attributedText(forFormat: .plain)
+    }
+}
+
+extension Text.Font.Weight {
+    /// Return a weight two stops heavier.
+    var bumped: Text.Font.Weight {
+        switch self {
+        case .ultraLight:
+            return .light
+        case .thin:
+            return .regular
+        case .light:
+            return .medium
+        case .regular:
+            return .semiBold
+        case .medium:
+            return .bold
+        case .semiBold:
+            return .heavy
+        case .bold:
+            return .black
+        case .heavy:
+            return .black
+        case .black:
+            return .black
+        }
+    }
+}
+
+extension Text.Font {
+    var uiFontForPercentageIndciator: UIFont {
+        return UIFont.systemFont(ofSize: CGFloat(size) * 1.05, weight: weight.bumped.uiFontWeight)
     }
 }

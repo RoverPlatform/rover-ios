@@ -44,7 +44,7 @@ class ImagePollOptionView: UIView {
     private let resultFadeOverlay = UIView()
     private let resultFractionPercentage = UILabel()
     
-    // TODO: replace this with a custom view that allows for a rounded bar.
+    // TODO: replace this with a custom view that allows for a rounded bar: https://github.com/RoverPlatform/rover-ios/issues/482
     private let resultFractionIndicator = UIProgressView()
     
     private let option: ImagePollBlock.Option
@@ -57,21 +57,20 @@ class ImagePollOptionView: UIView {
         self.option = option
         self.state = initialState
         super.init(frame: CGRect.zero)
-        
-        self.addSubview(content)
-        self.addSubview(answerTextView)
-        self.addSubview(resultFadeOverlay)
-        self.addSubview(resultFractionPercentage)
-        self.addSubview(resultFractionIndicator)
+        self.addSubview(self.content)
+        self.addSubview(self.answerTextView)
+        self.addSubview(self.resultFadeOverlay)
+        self.addSubview(self.resultFractionPercentage)
+        self.addSubview(self.resultFractionIndicator)
         self.translatesAutoresizingMaskIntoConstraints = false
-        content.translatesAutoresizingMaskIntoConstraints = false
-        answerTextView.translatesAutoresizingMaskIntoConstraints = false
+        self.content.translatesAutoresizingMaskIntoConstraints = false
+        self.answerTextView.translatesAutoresizingMaskIntoConstraints = false
         self.resultFadeOverlay.translatesAutoresizingMaskIntoConstraints = false
-        resultFractionPercentage.translatesAutoresizingMaskIntoConstraints = false
-        resultFractionIndicator.translatesAutoresizingMaskIntoConstraints = false
-        self.clipsToBounds = true
-        
+        self.resultFractionPercentage.translatesAutoresizingMaskIntoConstraints = false
+        self.resultFractionIndicator.translatesAutoresizingMaskIntoConstraints = false
+
         self.configureOpacity(opacity: style.opacity)
+        self.clipsToBounds = true
         self.configureBorder(border: style.border, constrainedByFrame: nil)
         // Configure image content view:
         
@@ -79,10 +78,10 @@ class ImagePollOptionView: UIView {
         self.content.heightAnchor.constraint(equalTo: self.widthAnchor).isActive = true
         
         // caption view styling:
-        answerTextView.backgroundColor = .clear
-        answerTextView.numberOfLines = 1
-        answerTextView.attributedText = style.attributedText(for: option.text)
-        answerTextView.lineBreakMode = .byTruncatingTail
+        self.answerTextView.backgroundColor = .clear
+        self.answerTextView.numberOfLines = 1
+        self.answerTextView.attributedText = style.attributedText(for: option.text)
+        self.answerTextView.lineBreakMode = .byTruncatingTail
         
         self.backgroundColor = style.background.color.uiColor
         
@@ -119,7 +118,7 @@ class ImagePollOptionView: UIView {
         self.resultFractionPercentage.textColor = .white
         
         
-        answerTextView.text = option.text
+        self.answerTextView.text = option.text
         
         switch initialState {
         case .waitingForAnswer:
@@ -158,7 +157,7 @@ class ImagePollOptionView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         // configure image here since the laid out side matters.
-        content.configureAsFilledImage(image: self.option.image)
+        self.content.configureAsFilledImage(image: self.option.image)
     }
 }
 
@@ -181,20 +180,21 @@ class ImagePollCell: BlockCell {
     override func configure(with block: Block) {
         super.configure(with: block)
         
-        containerView.translatesAutoresizingMaskIntoConstraints = false
-        questionView?.removeFromSuperview()
+        self.containerView.translatesAutoresizingMaskIntoConstraints = false
+        self.questionView?.removeFromSuperview()
         self.optionViews.forEach { $0.removeFromSuperview() }
         
         guard let imagePollBlock = block as? ImagePollBlock else {
             return
         }
         
-        questionView = PollQuestionView(questionText: imagePollBlock.question, style: imagePollBlock.questionStyle)
-        containerView.addSubview(questionView!)
-        questionView?.topAnchor.constraint(equalTo: containerView.topAnchor).isActive = true
-        questionView?.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
-        questionView?.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
+        self.questionView = PollQuestionView(questionText: imagePollBlock.question, style: imagePollBlock.questionStyle)
+        self.containerView.addSubview(questionView!)
+        self.questionView?.topAnchor.constraint(equalTo: containerView.topAnchor).isActive = true
+        self.questionView?.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
+        self.questionView?.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
         self.optionViews = imagePollBlock.options.map { option in
+            // TODO: get initial state synchronously from the local VotingService.
             ImagePollOptionView(option: option, style: imagePollBlock.optionStyle, initialState: .waitingForAnswer)
         }
         
@@ -203,8 +203,8 @@ class ImagePollCell: BlockCell {
         
         for pairIndex in 0..<optionViewPairs.count {
             let (firstView, secondView) = optionViewPairs[pairIndex]
-            containerView.addSubview(firstView)
-            containerView.addSubview(secondView)
+            self.containerView.addSubview(firstView)
+            self.containerView.addSubview(secondView)
             if pairIndex == 0 {
                 // first row
                 firstView.topAnchor.constraint(equalTo: questionView!.bottomAnchor, constant: CGFloat(imagePollBlock.optionStyle.verticalSpacing)).isActive = true
@@ -217,17 +217,14 @@ class ImagePollCell: BlockCell {
                 secondView.topAnchor.constraint(equalTo: previousSecondView.bottomAnchor, constant: CGFloat(imagePollBlock.optionStyle.verticalSpacing)).isActive = true
             }
             
-            firstView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
-            firstView.trailingAnchor.constraint(equalTo: containerView.centerXAnchor, constant: -1 * CGFloat(imagePollBlock.optionStyle.horizontalSpacing) / 2).isActive = true
+            firstView.leadingAnchor.constraint(equalTo: self.containerView.leadingAnchor).isActive = true
+            firstView.trailingAnchor.constraint(equalTo: self.containerView.centerXAnchor, constant: -1 * CGFloat(imagePollBlock.optionStyle.horizontalSpacing) / 2).isActive = true
             
-            secondView.leadingAnchor.constraint(equalTo: containerView.centerXAnchor, constant: CGFloat(imagePollBlock.optionStyle.horizontalSpacing) / 2).isActive = true
-            secondView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
+            secondView.leadingAnchor.constraint(equalTo: self.containerView.centerXAnchor, constant: CGFloat(imagePollBlock.optionStyle.horizontalSpacing) / 2).isActive = true
+            secondView.trailingAnchor.constraint(equalTo: self.containerView.trailingAnchor).isActive = true
         }
         
-        // TODO: this is the place where we will subscribe to the option poll service.
-        
-        // TODO: will will determine the current poll state according to the on-disk store.  Immediately, and without animation, we will set the poll to display either question state or results state.
-        
+        // TODO: A stand-in for the user tapping.
         self.timer = Timer.scheduledTimer(withTimeInterval: 4, repeats: false) { _ in
             optionViewPairs.first?.0.state = .answered(optionResults: ImagePollOptionView.OptionResults(selected: true, fraction: 0.67))
             optionViewPairs.first?.1.state = .answered(optionResults: ImagePollOptionView.OptionResults(selected: false, fraction: 0.11))
@@ -237,47 +234,7 @@ class ImagePollCell: BlockCell {
     }
 }
 
-extension Array {
-    /// Pair off each set of two items in sequence in the array.
-    fileprivate var tuples: [(Element,Element)] {
-        var optionPairs = [(Element,Element)]()
-        for optionIndex in 0..<self.count {
-            if optionIndex % 2 == 1 {
-                optionPairs.append((self[optionIndex - 1], self[optionIndex]))
-            }
-        }
-        return optionPairs
-    }
-}
-
-extension UIImageView {
-    fileprivate func configureAsFilledImage(image: Image, checkStillMatches: @escaping () -> Bool = { true } ) {
-        // Reset any existing background image
-        
-        self.alpha = 0.0
-        self.image = nil
-    
-        self.contentMode = .scaleAspectFill
-        
-        if let image = ImageStore.shared.image(for: image, filledInFrame: self.frame) {
-            self.image = image
-            self.alpha = 1.0
-        } else {
-            let originalFrame = self.frame
-            ImageStore.shared.fetchImage(for: image, filledInFrame: self.frame) { [weak self] image in
-                guard let image = image, checkStillMatches(), self?.frame == originalFrame else {
-                    return
-                }
-                
-                self?.image = image
-                
-                UIView.animate(withDuration: 0.25) {
-                    self?.alpha = 1.0
-                }
-            }
-        }
-    }
-}
+// MARK: Measurement
 
 extension ImagePollBlock {
     func intrinisicHeight(blockWidth: CGFloat) -> CGFloat {
@@ -303,6 +260,49 @@ extension ImagePollBlock {
         default:
             os_log("Unsupported number of image poll options.", log: .rover)
             return 0
+        }
+    }
+}
+
+// MARK: Helpers
+
+extension Array {
+    /// Pair off each set of two items in sequence in the array.
+    fileprivate var tuples: [(Element,Element)] {
+        var optionPairs = [(Element,Element)]()
+        for optionIndex in 0..<self.count {
+            if optionIndex % 2 == 1 {
+                optionPairs.append((self[optionIndex - 1], self[optionIndex]))
+            }
+        }
+        return optionPairs
+    }
+}
+
+extension UIImageView {
+    fileprivate func configureAsFilledImage(image: Image, checkStillMatches: @escaping () -> Bool = { true } ) {
+        // Reset any existing background image
+        self.alpha = 0.0
+        self.image = nil
+    
+        self.contentMode = .scaleAspectFill
+        
+        if let image = ImageStore.shared.image(for: image, filledInFrame: self.frame) {
+            self.image = image
+            self.alpha = 1.0
+        } else {
+            let originalFrame = self.frame
+            ImageStore.shared.fetchImage(for: image, filledInFrame: self.frame) { [weak self] image in
+                guard let image = image, checkStillMatches(), self?.frame == originalFrame else {
+                    return
+                }
+                
+                self?.image = image
+                
+                UIView.animate(withDuration: 0.25) {
+                    self?.alpha = 1.0
+                }
+            }
         }
     }
 }

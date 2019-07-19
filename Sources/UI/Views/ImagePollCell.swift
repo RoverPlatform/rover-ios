@@ -43,9 +43,10 @@ class ImagePollOptionView: UIView {
     /// This view introduces a 50% opacity layer on top of the image in the results state.
     private let resultFadeOverlay = UIView()
     private let resultFractionPercentage = UILabel()
-    
-    // TODO: replace this with a custom view that allows for a rounded bar: https://github.com/RoverPlatform/rover-ios/issues/482
-    private let resultFractionIndicator = UIProgressView()
+
+    private let resultFractionIndicator = UIView()
+    private let resultFractionIndicatorBar = UIView()
+    private var resultFractionIndicatorBarWidthConstraint: NSLayoutConstraint?
     
     private let option: ImagePollBlock.Option
     
@@ -62,12 +63,14 @@ class ImagePollOptionView: UIView {
         self.addSubview(self.resultFadeOverlay)
         self.addSubview(self.resultFractionPercentage)
         self.addSubview(self.resultFractionIndicator)
+        self.resultFractionIndicator.addSubview(self.resultFractionIndicatorBar)
         self.translatesAutoresizingMaskIntoConstraints = false
         self.content.translatesAutoresizingMaskIntoConstraints = false
         self.answerTextView.translatesAutoresizingMaskIntoConstraints = false
         self.resultFadeOverlay.translatesAutoresizingMaskIntoConstraints = false
         self.resultFractionPercentage.translatesAutoresizingMaskIntoConstraints = false
         self.resultFractionIndicator.translatesAutoresizingMaskIntoConstraints = false
+        self.resultFractionIndicatorBar.translatesAutoresizingMaskIntoConstraints = false
 
         self.configureOpacity(opacity: style.opacity)
         self.clipsToBounds = true
@@ -109,7 +112,21 @@ class ImagePollOptionView: UIView {
         self.resultFractionIndicator.bottomAnchor.constraint(equalTo: self.content.bottomAnchor, constant: CGFloat(-8)).isActive = true
         self.resultFractionIndicator.heightAnchor.constraint(equalToConstant: 8).isActive = true
         self.resultFractionIndicator.clipsToBounds = true
-        self.resultFractionIndicator.configureBorder(border: Border(color: .transparent, radius: 4, width: 0), constrainedByFrame: nil)
+        resultFractionIndicator.layer.cornerRadius = 4
+
+        
+        
+        self.resultFractionIndicator.backgroundColor = UIColor.white.withAlphaComponent(0.5)
+        
+        self.resultFractionIndicatorBar.backgroundColor = style.resultFillColor.uiColor
+        
+        self.resultFractionIndicatorBar.topAnchor.constraint(equalTo: self.resultFractionIndicator.topAnchor).isActive = true
+        self.resultFractionIndicatorBar.bottomAnchor.constraint(equalTo: self.resultFractionIndicator.bottomAnchor).isActive = true
+        self.resultFractionIndicatorBar.leadingAnchor.constraint(equalTo: self.resultFractionIndicator.leadingAnchor).isActive = true
+        resultFractionIndicatorBarWidthConstraint = self.resultFractionIndicatorBar.widthAnchor.constraint(equalToConstant: 0)
+        resultFractionIndicatorBarWidthConstraint!.isActive = true
+        
+        
         
         self.resultFractionPercentage.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
         self.resultFractionPercentage.bottomAnchor.constraint(equalTo: self.resultFractionIndicator.topAnchor, constant: -4).isActive = true
@@ -132,7 +149,7 @@ class ImagePollOptionView: UIView {
         self.resultFractionPercentage.alpha = 0.0
         self.resultFractionIndicator.alpha = 0.0
         self.resultFadeOverlay.alpha = 0.0
-        self.resultFractionIndicator.progress = 0.0
+        self.resultFractionIndicatorBarWidthConstraint!.constant = 0
     }
     
     private func revealResultsState(animated: Bool, optionResults: OptionResults) {
@@ -140,12 +157,14 @@ class ImagePollOptionView: UIView {
         
         UIView.animate(withDuration: 0.167, delay: 0.0, options: [.curveEaseInOut], animations: {
             self.resultFractionPercentage.alpha = 1.0
-            self.resultFractionIndicator.alpha = 0.5
+            self.resultFractionIndicator.alpha = 1.0
             self.resultFadeOverlay.alpha = 0.3
         })
         
+        let width = self.resultFractionIndicator.frame.width * CGFloat(optionResults.fraction)
+        self.resultFractionIndicatorBarWidthConstraint!.constant = width
         UIView.animate(withDuration: 1.0, delay: 0.0, options: [.curveEaseInOut], animations: {
-            self.resultFractionIndicator.setProgress(optionResults.fraction, animated: true)
+            self.resultFractionIndicator.layoutIfNeeded()
         })
     }
     

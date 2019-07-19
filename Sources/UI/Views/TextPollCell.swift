@@ -37,7 +37,9 @@ class TextPollOptionView: UIView {
     private let backgroundView = UIImageView()
     private let content = UILabel()
     private let resultFractionPercentage = UILabel()
-    private let resultFractionIndicator = UIProgressView()
+    private let resultFractionIndicator = UIView()
+    private let resultFractionIndicatorBar = UIView()
+    private var resultFractionIndicatorBarWidthConstraint: NSLayoutConstraint?
     
     private let style: TextPollBlock.OptionStyle
     
@@ -48,17 +50,20 @@ class TextPollOptionView: UIView {
     ) {
         self.style = style
         self.state = initialState
+        
         super.init(frame: CGRect.zero)
         self.addSubview(self.backgroundView)
-        self.addSubview(resultFractionIndicator)
+        self.addSubview(self.resultFractionIndicator)
         self.addSubview(self.content)
         self.addSubview(self.resultFractionPercentage)
+        self.resultFractionIndicator.addSubview(self.resultFractionIndicatorBar)
         
         self.translatesAutoresizingMaskIntoConstraints = false
         self.content.translatesAutoresizingMaskIntoConstraints = false
         self.backgroundView.translatesAutoresizingMaskIntoConstraints = false
         self.resultFractionPercentage.translatesAutoresizingMaskIntoConstraints = false
         self.resultFractionIndicator.translatesAutoresizingMaskIntoConstraints = false
+        self.resultFractionIndicatorBar.translatesAutoresizingMaskIntoConstraints = false
         
         self.backgroundView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
         self.backgroundView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
@@ -69,11 +74,16 @@ class TextPollOptionView: UIView {
         self.resultFractionIndicator.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
         self.resultFractionIndicator.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
         self.resultFractionIndicator.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
+        self.resultFractionIndicatorBar.backgroundColor = style.resultFillColor.uiColor
+        self.resultFractionIndicatorBar.topAnchor.constraint(equalTo: self.resultFractionIndicator.topAnchor).isActive = true
+        self.resultFractionIndicatorBar.bottomAnchor.constraint(equalTo: self.resultFractionIndicator.bottomAnchor).isActive = true
+        self.resultFractionIndicatorBar.leadingAnchor.constraint(equalTo: self.resultFractionIndicator.leadingAnchor).isActive = true
+         resultFractionIndicatorBarWidthConstraint = self.resultFractionIndicatorBar.widthAnchor.constraint(equalToConstant: 0)
+        resultFractionIndicatorBarWidthConstraint!.isActive = true
         
         self.heightAnchor.constraint(equalToConstant: CGFloat(style.height)).isActive = true
         
-        self.resultFractionIndicator.setProgress(0.5, animated: true)
-        self.resultFractionIndicator.progressTintColor = style.resultFillColor.uiColor
+        
         self.resultFractionPercentage.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: OPTION_TEXT_SPACING * -1).isActive = true
         self.resultFractionPercentage.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
         self.resultFractionPercentage.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
@@ -94,6 +104,8 @@ class TextPollOptionView: UIView {
         self.content.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: OPTION_TEXT_SPACING).isActive = true
         self.content.trailingAnchor.constraint(equalTo: self.resultFractionPercentage.leadingAnchor, constant: OPTION_TEXT_SPACING * -1).isActive = true
         
+
+        
         self.configureOpacity(opacity: style.opacity)
         self.clipsToBounds = true
         self.configureBorder(border: style.border, constrainedByFrame: nil)
@@ -110,7 +122,7 @@ class TextPollOptionView: UIView {
     private func revealQuestionState() {
         self.resultFractionPercentage.alpha = 0.0
         self.resultFractionIndicator.alpha = 0.0
-        self.resultFractionIndicator.progress = 0.0
+        self.resultFractionIndicatorBarWidthConstraint!.constant = 0
     }
     
     private func revealResultsState(animated: Bool, optionResults: OptionResults) {
@@ -124,8 +136,10 @@ class TextPollOptionView: UIView {
             self.resultFractionIndicator.alpha = 1.0
         })
         
+        let width = self.resultFractionIndicator.frame.width * CGFloat(optionResults.fraction)
+        self.resultFractionIndicatorBarWidthConstraint!.constant = width
         UIView.animate(withDuration: 1, delay: 0, options: [.curveEaseInOut], animations: {
-            self.resultFractionIndicator.setProgress(optionResults.fraction, animated: true)
+            self.resultFractionIndicator.layoutIfNeeded()
         })
     }
     
@@ -137,31 +151,6 @@ class TextPollOptionView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         self.backgroundView.configureAsBackgroundImage(background: style.background)
-    }
-}
-
-// MARK: Progress Bar View
-
-class TextPollProgressBarView: UIView {
-    
-    private var progressBarLayer = CAShapeLayer()
-    private var progressTextLayer = CATextLayer()
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("Usage in XIB not supported.")
-    }
-    
-    // TODO: andrew start here and ensure that resize is
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        
-        self.progressBarLayer.shape ...... damn! I can't just set the shape here, because how would I handle the UIView being resized? Seems wrong.  I can't find clear guidance online about this.
-        
-        
-        self.layer.addSublayer(self.progressBarLayer)
-        self.layer.addSublayer(self.progressTextLayer)
     }
 }
 

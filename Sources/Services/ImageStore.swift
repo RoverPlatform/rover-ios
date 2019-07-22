@@ -113,11 +113,6 @@ class ImageStore {
         fetchImage(for: configuration, completionHandler: completionHandler)
     }
     
-//    init(image: Image, filledWithinFrame frame: CGRect) {
-//        let optimization: ImageStore.Optimization = .fill(bounds: frame)
-//        self.init(url: image.ur, optimization: optimization)
-//    }
-    
     private func fetchImage(for configuration: Configuration, completionHandler: ((UIImage?) -> Void)? = nil) {
         if !Thread.isMainThread {
             os_log("ImageStore is not thread-safe – fetchImage only be called from main thread", log: .rover, type: .default)

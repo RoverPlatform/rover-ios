@@ -40,6 +40,7 @@ class TextPollOptionView: UIView {
     private let resultFractionIndicator = UIView()
     private let resultFractionIndicatorBar = UIView()
     private var resultFractionIndicatorBarWidthConstraint: NSLayoutConstraint?
+    private var resultFractionPercentageWidthConstraint: NSLayoutConstraint?
     
     private let style: TextPollBlock.OptionStyle
     
@@ -86,11 +87,13 @@ class TextPollOptionView: UIView {
         self.resultFractionIndicatorBar.leadingAnchor.constraint(equalTo: self.resultFractionIndicator.leadingAnchor).isActive = true
          resultFractionIndicatorBarWidthConstraint = self.resultFractionIndicatorBar.widthAnchor.constraint(equalToConstant: 0)
         resultFractionIndicatorBarWidthConstraint!.isActive = true
-        
         self.resultFractionPercentage.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: OPTION_TEXT_SPACING * -1).isActive = true
         self.resultFractionPercentage.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
         self.resultFractionPercentage.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
-        self.resultFractionPercentage.text = "100%" // Ensure that layout leaves enough space for the numbers.
+        self.resultFractionPercentageWidthConstraint = self.resultFractionPercentage.widthAnchor.constraint(
+            equalToConstant: 0
+        )
+        self.resultFractionPercentageWidthConstraint!.isActive = true
         // we want the content to expand out to the horizontal space permitted by the percentage view.
         self.answerTextView.setContentHuggingPriority(.fittingSizeLevel, for: .horizontal)
         self.resultFractionPercentage.font = style.font.uiFontForPercentageIndciator
@@ -132,8 +135,6 @@ class TextPollOptionView: UIView {
     
     private var animationTimer: Timer?
     private func revealResultsState(animated: Bool, optionResults: OptionResults) {
-        self.resultFractionPercentage.text = String(format: "%.0f %%", optionResults.fraction * 100)
-        
         UIView.animate(withDuration: 0.75, delay: 0, options: [.curveEaseInOut], animations: {
             self.resultFractionPercentage.alpha = 1.0
         })
@@ -148,20 +149,23 @@ class TextPollOptionView: UIView {
             self.resultFractionIndicator.layoutIfNeeded()
         })
         
-//        self.animationTimer?.invalidate()
-//        let startTime = Float(Date().timeIntervalSince1970)
-//        self.animationTimer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true, block: { timer in
-//            let elapsed = Float(Date().timeIntervalSince1970) - startTime
-//            let elapsedProportion = elapsed / 0.75
-//            if elapsed > 0.75 {
-//                print("Number animation complete.")
-//                self.resultFractionPercentage.text = String(format: "%.0f %%", optionResults.fraction * 100)
-//                timer.invalidate()
-//            } else {
-//                print("and iterating")
-//                self.resultFractionPercentage.text = String(format: "%.0f %%", (optionResults.fraction * 100) * elapsedProportion)
-//            }
-//        })
+        self.resultFractionPercentageWidthConstraint?.constant = style.attributedText(for: "100%")?.boundingRect(with: .init(width: 1000, height: 1000), options: [], context: nil).width ?? CGFloat(0)
+        
+        self.animationTimer?.invalidate()
+        let startTime = Date()
+        self.animationTimer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true, block: { [weak self] timer in
+            let elapsed = Float(startTime.timeIntervalSinceNow) * -1
+            let elapsedProportion = elapsed / 0.75 // (750 ms)
+            print("Elapsed proption: \(elapsedProportion)")
+            if elapsedProportion > 1.0 {
+                print("Number animation complete.")
+                self?.resultFractionPercentage.text = String(format: "%.0f%%", optionResults.fraction * 100)
+                timer.invalidate()
+            } else {
+                print("and iterating")
+                self?.resultFractionPercentage.text = String(format: "%.0f%%", (optionResults.fraction * 100) * elapsedProportion)
+            }
+        })
     }
     
     @available(*, unavailable)

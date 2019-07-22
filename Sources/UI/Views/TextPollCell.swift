@@ -237,6 +237,13 @@ class TextPollCell: BlockCell {
             self.optionViews[1].state = .answered(optionResults: TextPollOptionView.OptionResults(selected: false, fraction: 0.166))
             self.optionViews[2].state = .answered(optionResults: TextPollOptionView.OptionResults(selected: false, fraction: 0.166))
         }
+        
+        // TODO: A stand-in for the user tapping.
+        self.timer = Timer.scheduledTimer(withTimeInterval: 10, repeats: false) { _ in
+            self.optionViews[0].state = .answered(optionResults: TextPollOptionView.OptionResults(selected: true, fraction: 0.80))
+            self.optionViews[1].state = .answered(optionResults: TextPollOptionView.OptionResults(selected: false, fraction: 0.25))
+            self.optionViews[2].state = .answered(optionResults: TextPollOptionView.OptionResults(selected: false, fraction: 0.66))
+        }
     }
 }
 

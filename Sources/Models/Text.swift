@@ -28,10 +28,10 @@ public struct Text: Decodable {
             case black = "BLACK"
         }
         
-        public var size: Int
+        public var size: Double
         public var weight: Weight
         
-        public init(size: Int, weight: Weight) {
+        public init(size: Double, weight: Weight) {
             self.size = size
             self.weight = weight
         }

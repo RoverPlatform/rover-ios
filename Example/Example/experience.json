@@ -57,10 +57,10 @@
               "id": "textYz",
               "name": "Text Poll Block",
               "insets": {
-                "bottom": 0,
-                "left": 0,
-                "right": 0,
-                "top": 0
+                "bottom": 20,
+                "left": 20,
+                "right": 20,
+                "top": 20
               },
               "opacity": 1,
               "position": {
@@ -84,7 +84,7 @@
               "keys": {},
               "tags": [],
               "__typename": "TextPollBlock",
-              "question": "This is the very long question question question This is the very long question question question This is the very long question question question This is the very long question question question This is the very long question question question This is the very long question question question This is the very long question question question This is the very long question question question This is the very long question question question This is the very long question question question ",
+              "question": "This is the very long question question question. This is the very long question question.",
               "options": [
                 "Is this the best very very very very long option",
                 "Or is it this option",
@@ -126,7 +126,7 @@
                   "red": 129,
                   "green": 129,
                   "blue": 129,
-                  "alpha": 1
+                  "alpha": 0.5
                 },
                 "font": {
                   "size": 26,
@@ -178,10 +178,10 @@
               "id": "imageYz",
               "name": "Image Poll Block",
               "insets": {
-                "bottom": 0,
-                "left": 0,
-                "right": 0,
-                "top": 0
+                "bottom": 20,
+                "left": 20,
+                "right": 20,
+                "top": 20
               },
               "opacity": 1,
               "position": {

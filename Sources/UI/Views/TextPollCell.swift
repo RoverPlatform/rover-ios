@@ -81,7 +81,7 @@ class TextPollOptionView: UIView {
         self.resultFractionIndicator.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
         self.resultFractionIndicator.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
         self.resultFractionIndicator.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
-        self.resultFractionIndicatorBar.backgroundColor = style.resultFillColor.uiColor
+        self.resultFractionIndicatorBar.backgroundColor = style.resultFillColor.opaque.uiColor
         self.resultFractionIndicatorBar.topAnchor.constraint(equalTo: self.resultFractionIndicator.topAnchor).isActive = true
         self.resultFractionIndicatorBar.bottomAnchor.constraint(equalTo: self.resultFractionIndicator.bottomAnchor).isActive = true
         self.resultFractionIndicatorBar.leadingAnchor.constraint(equalTo: self.resultFractionIndicator.leadingAnchor).isActive = true
@@ -90,13 +90,14 @@ class TextPollOptionView: UIView {
         self.resultFractionPercentage.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: OPTION_TEXT_SPACING * -1).isActive = true
         self.resultFractionPercentage.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
         self.resultFractionPercentage.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
+        self.resultFractionPercentage.textAlignment = .right
         self.resultFractionPercentageWidthConstraint = self.resultFractionPercentage.widthAnchor.constraint(
             equalToConstant: 0
         )
         self.resultFractionPercentageWidthConstraint!.isActive = true
         // we want the content to expand out to the horizontal space permitted by the percentage view.
         self.answerTextView.setContentHuggingPriority(.fittingSizeLevel, for: .horizontal)
-        self.resultFractionPercentage.font = style.font.uiFontForPercentageIndciator
+        self.resultFractionPercentage.font = style.font.bumpedForPercentageIndicator.uiFont
         self.resultFractionPercentage.textColor = style.color.uiColor
         
         // MARK: Answer Text View
@@ -131,6 +132,7 @@ class TextPollOptionView: UIView {
         self.resultFractionPercentage.alpha = 0.0
         self.resultFractionIndicator.alpha = 0.0
         self.resultFractionIndicatorBarWidthConstraint!.constant = 0
+        self.resultFractionPercentageWidthConstraint!.constant = 0
     }
     
     private var percentageAnimationTimer: Timer?
@@ -140,7 +142,7 @@ class TextPollOptionView: UIView {
         })
         
         UIView.animate(withDuration: 0.05, delay: 0, options: [.curveEaseInOut], animations: {
-            self.resultFractionIndicator.alpha = 1.0
+            self.resultFractionIndicator.alpha = CGFloat(self.style.resultFillColor.alpha)
         })
         
         let width = self.resultFractionIndicator.frame.width * CGFloat(optionResults.fraction)
@@ -149,14 +151,16 @@ class TextPollOptionView: UIView {
             self.resultFractionIndicator.layoutIfNeeded()
         })
         
+        let percentageTextFont = self.style.font.bumpedForPercentageIndicator
+
         // expand the percentage view to accomodate all possible percentage values as we rotate through, to avoid any possible wobble in the layout.
-        self.resultFractionPercentageWidthConstraint?.constant = style.attributedText(for: "100%")?.boundingRect(with: .init(width: 1000, height: 1000), options: [], context: nil).width ?? CGFloat(0)
+        self.resultFractionPercentageWidthConstraint?.constant = percentageTextFont.attributedText(forPlainText: "100%", color: self.style.color)?.boundingRect(with: .init(width: 1000, height: 1000), options: [], context: nil).width ?? CGFloat(0)
         
         self.percentageAnimationTimer?.invalidate()
         let startTime = Date()
         self.percentageAnimationTimer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true, block: { [weak self] timer in
             let elapsed = Float(startTime.timeIntervalSinceNow) * -1
-            let elapsedProportion = elapsed / 0.75 // (750 ms)
+            let elapsedProportion = elapsed / 1.0 // (1 s)
             if elapsedProportion > 1.0 {
                 self?.resultFractionPercentage.text = String(format: "%.0f%%", optionResults.fraction * 100)
                 timer.invalidate()
@@ -258,14 +262,11 @@ extension TextPollBlock {
     }
 }
 
-
-
 // MARK: Helpers
 
 extension TextPollBlock.OptionStyle {
     func attributedText(for text: String) -> NSAttributedString? {
-        let text = Text(rawValue: text, alignment: .left, color: self.color, font: self.font)
-        return text.attributedText(forFormat: .plain)
+        return self.font.attributedText(forPlainText: text, color: self.color)
     }
 }
 
@@ -296,7 +297,18 @@ extension Text.Font.Weight {
 }
 
 extension Text.Font {
-    var uiFontForPercentageIndciator: UIFont {
-        return UIFont.systemFont(ofSize: CGFloat(size) * 1.05, weight: weight.bumped.uiFontWeight)
+    func attributedText(forPlainText text: String, color: Color) -> NSAttributedString? {
+        let text = Text(rawValue: text, alignment: .left, color: color, font: self)
+        return text.attributedText(forFormat: .plain)
+    }
+    
+    var bumpedForPercentageIndicator: Text.Font {
+        return Text.Font(size: self.size * 1.05, weight: self.weight.bumped)
+    }
+}
+
+extension Color {
+    var opaque: Color {
+        return Color.init(red: self.red, green: self.green, blue: self.blue, alpha: 1.0)
     }
 }

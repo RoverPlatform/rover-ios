@@ -133,7 +133,7 @@ class TextPollOptionView: UIView {
         self.resultFractionIndicatorBarWidthConstraint!.constant = 0
     }
     
-    private var animationTimer: Timer?
+    private var percentageAnimationTimer: Timer?
     private func revealResultsState(animated: Bool, optionResults: OptionResults) {
         UIView.animate(withDuration: 0.75, delay: 0, options: [.curveEaseInOut], animations: {
             self.resultFractionPercentage.alpha = 1.0
@@ -149,20 +149,18 @@ class TextPollOptionView: UIView {
             self.resultFractionIndicator.layoutIfNeeded()
         })
         
+        // expand the percentage view to accomodate all possible percentage values as we rotate through, to avoid any possible wobble in the layout.
         self.resultFractionPercentageWidthConstraint?.constant = style.attributedText(for: "100%")?.boundingRect(with: .init(width: 1000, height: 1000), options: [], context: nil).width ?? CGFloat(0)
         
-        self.animationTimer?.invalidate()
+        self.percentageAnimationTimer?.invalidate()
         let startTime = Date()
-        self.animationTimer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true, block: { [weak self] timer in
+        self.percentageAnimationTimer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true, block: { [weak self] timer in
             let elapsed = Float(startTime.timeIntervalSinceNow) * -1
             let elapsedProportion = elapsed / 0.75 // (750 ms)
-            print("Elapsed proption: \(elapsedProportion)")
             if elapsedProportion > 1.0 {
-                print("Number animation complete.")
                 self?.resultFractionPercentage.text = String(format: "%.0f%%", optionResults.fraction * 100)
                 timer.invalidate()
             } else {
-                print("and iterating")
                 self?.resultFractionPercentage.text = String(format: "%.0f%%", (optionResults.fraction * 100) * elapsedProportion)
             }
         })
@@ -256,7 +254,7 @@ extension TextPollBlock {
         let optionsHeight: CGFloat = CGFloat(optionStyleHeight) * CGFloat(self.options.count)
         let optionSpacing: CGFloat = CGFloat(verticalSpacing) * CGFloat(self.options.count)
         
-        return optionsHeight + optionSpacing + questionHeight
+        return optionsHeight + optionSpacing + questionHeight + CGFloat(insets.top + insets.bottom)
     }
 }
 

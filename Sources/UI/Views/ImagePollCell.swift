@@ -152,6 +152,7 @@ class ImagePollOptionView: UIView {
         self.resultFractionIndicatorBarWidthConstraint!.constant = 0
     }
     
+    private var percentageAnimationTimer: Timer?
     private func revealResultsState(animated: Bool, optionResults: OptionResults) {
         self.resultFractionPercentage.text = String(format: "%.0f %%", optionResults.fraction * 100)
         
@@ -165,6 +166,19 @@ class ImagePollOptionView: UIView {
         self.resultFractionIndicatorBarWidthConstraint!.constant = width
         UIView.animate(withDuration: 1.0, delay: 0.0, options: [.curveEaseInOut], animations: {
             self.resultFractionIndicator.layoutIfNeeded()
+        })
+        
+        self.percentageAnimationTimer?.invalidate()
+        let startTime = Date()
+        self.percentageAnimationTimer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true, block: { [weak self] timer in
+            let elapsed = Float(startTime.timeIntervalSinceNow) * -1
+            let elapsedProportion = elapsed / 1.0 // (1 s)
+            if elapsedProportion > 1.0 {
+                self?.resultFractionPercentage.text = String(format: "%.0f%%", optionResults.fraction * 100)
+                timer.invalidate()
+            } else {
+                self?.resultFractionPercentage.text = String(format: "%.0f%%", (optionResults.fraction * 100) * elapsedProportion)
+            }
         })
     }
     
@@ -273,9 +287,9 @@ extension ImagePollBlock {
         
         switch self.options.count {
         case 2:
-            return verticalSpacing + optionTextHeight + optionImageHeight + questionHeight
+            return verticalSpacing + optionTextHeight + optionImageHeight + questionHeight + CGFloat(insets.top + insets.bottom)
         case 4:
-            return 2 * (verticalSpacing + optionTextHeight + optionImageHeight) + questionHeight
+            return 2 * (verticalSpacing + optionTextHeight + optionImageHeight) + questionHeight + CGFloat(insets.top + insets.bottom)
         default:
             os_log("Unsupported number of image poll options.", log: .rover)
             return 0

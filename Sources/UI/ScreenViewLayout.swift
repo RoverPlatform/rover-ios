@@ -150,7 +150,6 @@ class ScreenViewLayout: UICollectionViewLayout {
                     let boundingRect = attributedText.boundingRect(with: size, options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil)
                     intrinsicHeight = boundingRect.height + CGFloat(block.insets.top) + CGFloat(block.insets.bottom)
                 case let block as TextPollBlock:
-                    // blocks need to be measured.
                     intrinsicHeight = block.intrinsicHeight(blockWidth: blockWidth)
                 case let block as ImagePollBlock:
                     intrinsicHeight = block.intrinisicHeight(blockWidth: blockWidth)

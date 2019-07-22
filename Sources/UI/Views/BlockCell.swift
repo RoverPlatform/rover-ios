@@ -53,7 +53,6 @@ class BlockCell: UICollectionViewCell {
         self.configureBackgroundColor(color: block?.background.color, opacity: block?.opacity)
     }
     
-    // swiftlint:disable:next cyclomatic_complexity // This routine is fairly readable as it is, so we will hold off on refactoring it, so silence the complexity warning.
     func configureBackgroundImage() {
         guard let backgroundImageView = backgroundView as? UIImageView else {
             return

@@ -8,7 +8,12 @@
 
 import UIKit
 
+// MARK: Constants
+
 fileprivate let OPTION_TEXT_SPACING = CGFloat(16)
+fileprivate let RESULT_PERCENTAGE_REVEAL_TIME = 0.75 // ms
+fileprivate let RESULT_FILL_BAR_REVEAL_TIME = 0.05 // ms
+fileprivate let RESULT_FILL_BAR_FILL_TIME = 1.00 // ms
 
 // MARK: Option View
 
@@ -36,11 +41,11 @@ class TextPollOptionView: UIView {
     
     private let backgroundView = UIImageView()
     private let answerTextView = UILabel()
-    private let resultFractionPercentage = UILabel()
-    private let resultFractionIndicator = UIView()
-    private let resultFractionIndicatorBar = UIView()
-    private var resultFractionIndicatorBarWidthConstraint: NSLayoutConstraint?
-    private var resultFractionPercentageWidthConstraint: NSLayoutConstraint?
+    private let resultPercentage = UILabel()
+    private let resultFillBarArea = UIView()
+    private let resultFillBar = UIView()
+    private var resultFillBarWidthConstraint: NSLayoutConstraint?
+    private var resultPercentageWidthConstraint: NSLayoutConstraint?
     
     private let style: TextPollBlock.OptionStyle
     
@@ -54,19 +59,19 @@ class TextPollOptionView: UIView {
         
         super.init(frame: CGRect.zero)
         self.addSubview(self.backgroundView)
-        self.addSubview(self.resultFractionIndicator)
+        self.addSubview(self.resultFillBarArea)
         self.addSubview(self.answerTextView)
-        self.addSubview(self.resultFractionPercentage)
-        self.resultFractionIndicator.addSubview(self.resultFractionIndicatorBar)
+        self.addSubview(self.resultPercentage)
+        self.resultFillBarArea.addSubview(self.resultFillBar)
         
         // MARK: Enable AutoLayout
         
         self.translatesAutoresizingMaskIntoConstraints = false
         self.answerTextView.translatesAutoresizingMaskIntoConstraints = false
         self.backgroundView.translatesAutoresizingMaskIntoConstraints = false
-        self.resultFractionPercentage.translatesAutoresizingMaskIntoConstraints = false
-        self.resultFractionIndicator.translatesAutoresizingMaskIntoConstraints = false
-        self.resultFractionIndicatorBar.translatesAutoresizingMaskIntoConstraints = false
+        self.resultPercentage.translatesAutoresizingMaskIntoConstraints = false
+        self.resultFillBarArea.translatesAutoresizingMaskIntoConstraints = false
+        self.resultFillBar.translatesAutoresizingMaskIntoConstraints = false
         
         // MARK: Background Image
         
@@ -75,30 +80,33 @@ class TextPollOptionView: UIView {
         self.backgroundView.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
         self.backgroundView.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
         
-        // MARK: Result Bar
+        // MARK: Result Fill Bar
         
-        self.resultFractionIndicator.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
-        self.resultFractionIndicator.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
-        self.resultFractionIndicator.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
-        self.resultFractionIndicator.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
-        self.resultFractionIndicatorBar.backgroundColor = style.resultFillColor.opaque.uiColor
-        self.resultFractionIndicatorBar.topAnchor.constraint(equalTo: self.resultFractionIndicator.topAnchor).isActive = true
-        self.resultFractionIndicatorBar.bottomAnchor.constraint(equalTo: self.resultFractionIndicator.bottomAnchor).isActive = true
-        self.resultFractionIndicatorBar.leadingAnchor.constraint(equalTo: self.resultFractionIndicator.leadingAnchor).isActive = true
-         resultFractionIndicatorBarWidthConstraint = self.resultFractionIndicatorBar.widthAnchor.constraint(equalToConstant: 0)
-        resultFractionIndicatorBarWidthConstraint!.isActive = true
-        self.resultFractionPercentage.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: OPTION_TEXT_SPACING * -1).isActive = true
-        self.resultFractionPercentage.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
-        self.resultFractionPercentage.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
-        self.resultFractionPercentage.textAlignment = .right
-        self.resultFractionPercentageWidthConstraint = self.resultFractionPercentage.widthAnchor.constraint(
+        self.resultFillBarArea.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
+        self.resultFillBarArea.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
+        self.resultFillBarArea.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
+        self.resultFillBarArea.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
+        self.resultFillBar.backgroundColor = style.resultFillColor.opaque.uiColor
+        self.resultFillBar.topAnchor.constraint(equalTo: self.resultFillBarArea.topAnchor).isActive = true
+        self.resultFillBar.bottomAnchor.constraint(equalTo: self.resultFillBarArea.bottomAnchor).isActive = true
+        self.resultFillBar.leadingAnchor.constraint(equalTo: self.resultFillBarArea.leadingAnchor).isActive = true
+        self.resultFillBarWidthConstraint = self.resultFillBar.widthAnchor.constraint(equalToConstant: 0)
+        self.resultFillBarWidthConstraint!.isActive = true
+        
+        // MARK: Result Percentage
+        
+        self.resultPercentage.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: OPTION_TEXT_SPACING * -1).isActive = true
+        self.resultPercentage.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
+        self.resultPercentage.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
+        self.resultPercentage.textAlignment = .right
+        self.resultPercentageWidthConstraint = self.resultPercentage.widthAnchor.constraint(
             equalToConstant: 0
         )
-        self.resultFractionPercentageWidthConstraint!.isActive = true
+        self.resultPercentageWidthConstraint!.isActive = true
         // we want the content to expand out to the horizontal space permitted by the percentage view.
         self.answerTextView.setContentHuggingPriority(.fittingSizeLevel, for: .horizontal)
-        self.resultFractionPercentage.font = style.font.bumpedForPercentageIndicator.uiFont
-        self.resultFractionPercentage.textColor = style.color.uiColor
+        self.resultPercentage.font = style.font.bumpedForPercentageIndicator.uiFont
+        self.resultPercentage.textColor = style.color.uiColor
         
         // MARK: Answer Text View
         
@@ -106,11 +114,10 @@ class TextPollOptionView: UIView {
         self.answerTextView.numberOfLines = 1
         self.answerTextView.attributedText = style.attributedText(for: optionText)
         self.answerTextView.lineBreakMode = .byTruncatingTail
-        
         self.answerTextView.topAnchor.constraint(equalTo: self.topAnchor, constant: OPTION_TEXT_SPACING).isActive = true
         self.answerTextView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: OPTION_TEXT_SPACING * -1).isActive = true
         self.answerTextView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: OPTION_TEXT_SPACING).isActive = true
-        self.answerTextView.trailingAnchor.constraint(equalTo: self.resultFractionPercentage.leadingAnchor, constant: OPTION_TEXT_SPACING * -1).isActive = true
+        self.answerTextView.trailingAnchor.constraint(equalTo: self.resultPercentage.leadingAnchor, constant: OPTION_TEXT_SPACING * -1).isActive = true
         
         // MARK: Container
         
@@ -128,44 +135,47 @@ class TextPollOptionView: UIView {
         }
     }
     
+    // MARK: States and Animation
+    
     private func revealQuestionState() {
-        self.resultFractionPercentage.alpha = 0.0
-        self.resultFractionIndicator.alpha = 0.0
-        self.resultFractionIndicatorBarWidthConstraint!.constant = 0
-        self.resultFractionPercentageWidthConstraint!.constant = 0
+        self.resultPercentage.alpha = 0.0
+        self.resultFillBarArea.alpha = 0.0
+        self.resultFillBarWidthConstraint!.constant = 0
+        self.resultPercentageWidthConstraint!.constant = 0
     }
     
     private var percentageAnimationTimer: Timer?
     private func revealResultsState(animated: Bool, optionResults: OptionResults) {
-        UIView.animate(withDuration: 0.75, delay: 0, options: [.curveEaseInOut], animations: {
-            self.resultFractionPercentage.alpha = 1.0
+        UIView.animate(withDuration: RESULT_PERCENTAGE_REVEAL_TIME, delay: 0, options: [.curveEaseInOut], animations: {
+            self.resultPercentage.alpha = 1.0
         })
         
-        UIView.animate(withDuration: 0.05, delay: 0, options: [.curveEaseInOut], animations: {
-            self.resultFractionIndicator.alpha = CGFloat(self.style.resultFillColor.alpha)
+        UIView.animate(withDuration: RESULT_FILL_BAR_REVEAL_TIME, delay: 0, options: [.curveEaseInOut], animations: {
+            self.resultFillBarArea.alpha = CGFloat(self.style.resultFillColor.alpha)
         })
         
-        let width = self.resultFractionIndicator.frame.width * CGFloat(optionResults.fraction)
-        self.resultFractionIndicatorBarWidthConstraint!.constant = width
-        UIView.animate(withDuration: 1, delay: 0, options: [.curveEaseInOut], animations: {
-            self.resultFractionIndicator.layoutIfNeeded()
+        let width = self.resultFillBarArea.frame.width * CGFloat(optionResults.fraction)
+        self.resultFillBarWidthConstraint!.constant = width
+        UIView.animate(withDuration: RESULT_FILL_BAR_FILL_TIME, delay: 0, options: [.curveEaseInOut], animations: {
+            self.resultFillBarArea.layoutIfNeeded()
         })
         
         let percentageTextFont = self.style.font.bumpedForPercentageIndicator
 
-        // expand the percentage view to accomodate all possible percentage values as we rotate through, to avoid any possible wobble in the layout.
-        self.resultFractionPercentageWidthConstraint?.constant = percentageTextFont.attributedText(forPlainText: "100%", color: self.style.color)?.boundingRect(with: .init(width: 1000, height: 1000), options: [], context: nil).width ?? CGFloat(0)
+        // expand the percentage view to accomodate all possible percentage values as we animate through them, to avoid any possible wobble in the layout.
+        self.resultPercentageWidthConstraint?.constant = percentageTextFont.attributedText(forPlainText: "100%", color: self.style.color)?.boundingRect(with: .init(width: 1000, height: 1000), options: [], context: nil).width ?? CGFloat(0)
         
         self.percentageAnimationTimer?.invalidate()
         let startTime = Date()
         self.percentageAnimationTimer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true, block: { [weak self] timer in
-            let elapsed = Float(startTime.timeIntervalSinceNow) * -1
-            let elapsedProportion = elapsed / 1.0 // (1 s)
+            // TODO: calculate a "start position" from the current value on the constraint, in order for repeat calls to `revealResultsState` to properly animate through the percentages between the current value rather than just 0.
+            let elapsed = Double(startTime.timeIntervalSinceNow) * -1
+            let elapsedProportion = elapsed / RESULT_FILL_BAR_FILL_TIME
             if elapsedProportion > 1.0 {
-                self?.resultFractionPercentage.text = String(format: "%.0f%%", optionResults.fraction * 100)
+                self?.resultPercentage.text = String(format: "%.0f%%", optionResults.fraction * 100)
                 timer.invalidate()
             } else {
-                self?.resultFractionPercentage.text = String(format: "%.0f%%", (optionResults.fraction * 100) * elapsedProportion)
+                self?.resultPercentage.text = String(format: "%.0f%%", Double(optionResults.fraction * 100) * elapsedProportion)
             }
         })
     }
@@ -177,16 +187,17 @@ class TextPollOptionView: UIView {
     
     override func layoutSubviews() {
         super.layoutSubviews()
+        // we defer configuring background image to here so that the layout has been calculated, and thus frame is available.
         self.backgroundView.configureAsBackgroundImage(background: style.background)
     }
 }
 
 
-// MARK: Cell
+// MARK: Cell View
 
 class TextPollCell: BlockCell {
     /// a simple container view to the relatively complex layout of the text poll.
-    let containerView = UIView()
+    private let containerView = UIView()
     
     private var optionViews = [TextPollOptionView]()
     
@@ -194,9 +205,9 @@ class TextPollCell: BlockCell {
         return containerView
     }
     
-    var questionView: PollQuestionView?
+    private var questionView: PollQuestionView?
     
-    var timer: Timer?
+    private var temporaryTapDemoTimer: Timer?
     
     override func configure(with block: Block) {
         super.configure(with: block)
@@ -232,15 +243,15 @@ class TextPollCell: BlockCell {
         }
         
         // TODO: A stand-in for the user tapping.
-        self.timer = Timer.scheduledTimer(withTimeInterval: 4, repeats: false) { _ in
+        self.temporaryTapDemoTimer = Timer.scheduledTimer(withTimeInterval: 4, repeats: false) { _ in
             self.optionViews[0].state = .answered(optionResults: TextPollOptionView.OptionResults(selected: true, fraction: 0.67))
             self.optionViews[1].state = .answered(optionResults: TextPollOptionView.OptionResults(selected: false, fraction: 0.166))
             self.optionViews[2].state = .answered(optionResults: TextPollOptionView.OptionResults(selected: false, fraction: 0.166))
         }
         
         // TODO: A stand-in for the user tapping.
-        self.timer = Timer.scheduledTimer(withTimeInterval: 10, repeats: false) { _ in
-            self.optionViews[0].state = .answered(optionResults: TextPollOptionView.OptionResults(selected: true, fraction: 0.80))
+        self.temporaryTapDemoTimer = Timer.scheduledTimer(withTimeInterval: 10, repeats: false) { _ in
+            self.optionViews[0].state = .answered(optionResults: TextPollOptionView.OptionResults(selected: true, fraction: 0.50))
             self.optionViews[1].state = .answered(optionResults: TextPollOptionView.OptionResults(selected: false, fraction: 0.25))
             self.optionViews[2].state = .answered(optionResults: TextPollOptionView.OptionResults(selected: false, fraction: 0.66))
         }
@@ -272,14 +283,14 @@ extension TextPollBlock {
 // MARK: Helpers
 
 extension TextPollBlock.OptionStyle {
-    func attributedText(for text: String) -> NSAttributedString? {
+    fileprivate func attributedText(for text: String) -> NSAttributedString? {
         return self.font.attributedText(forPlainText: text, color: self.color)
     }
 }
 
 extension Text.Font.Weight {
     /// Return a weight two stops heavier.
-    var bumped: Text.Font.Weight {
+    fileprivate var bumped: Text.Font.Weight {
         switch self {
         case .ultraLight:
             return .light
@@ -304,18 +315,18 @@ extension Text.Font.Weight {
 }
 
 extension Text.Font {
-    func attributedText(forPlainText text: String, color: Color) -> NSAttributedString? {
+    fileprivate func attributedText(forPlainText text: String, color: Color) -> NSAttributedString? {
         let text = Text(rawValue: text, alignment: .left, color: color, font: self)
         return text.attributedText(forFormat: .plain)
     }
     
-    var bumpedForPercentageIndicator: Text.Font {
+    fileprivate var bumpedForPercentageIndicator: Text.Font {
         return Text.Font(size: self.size * 1.05, weight: self.weight.bumped)
     }
 }
 
 extension Color {
-    var opaque: Color {
+    fileprivate var opaque: Color {
         return Color.init(red: self.red, green: self.green, blue: self.blue, alpha: 1.0)
     }
 }

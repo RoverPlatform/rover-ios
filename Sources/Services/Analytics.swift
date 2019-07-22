@@ -98,7 +98,7 @@ class Analytics {
                         properties: BlockTappedProperties(userInfo: $0.userInfo)
                     )
                 }
-            ),
+            )
         ]
     }
     
@@ -148,7 +148,7 @@ class Analytics {
     }
 }
 
-fileprivate struct Event<Properties>: Encodable where Properties: Encodable {
+private struct Event<Properties>: Encodable where Properties: Encodable {
     let name: String
     let properties: Properties
     let timestamp = Date()
@@ -162,7 +162,7 @@ fileprivate struct Event<Properties>: Encodable where Properties: Encodable {
     }
 }
 
-fileprivate struct ExperiencePresentedProperties: Encodable {
+private struct ExperiencePresentedProperties: Encodable {
     var experienceID: String
     var experienceName: String
     var experienceTags: [String]
@@ -184,7 +184,7 @@ fileprivate struct ExperiencePresentedProperties: Encodable {
     }
 }
 
-fileprivate struct ExperienceDismissedProperties: Encodable {
+private struct ExperienceDismissedProperties: Encodable {
     var experienceID: String
     var experienceName: String
     var experienceTags: [String]
@@ -206,7 +206,7 @@ fileprivate struct ExperienceDismissedProperties: Encodable {
     }
 }
 
-fileprivate struct ExperienceViewedProperties: Encodable {
+private struct ExperienceViewedProperties: Encodable {
     var experienceID: String
     var experienceName: String
     var experienceTags: [String]
@@ -231,7 +231,7 @@ fileprivate struct ExperienceViewedProperties: Encodable {
     }
 }
 
-fileprivate struct ScreenPresentedProperties: Encodable {
+private struct ScreenPresentedProperties: Encodable {
     var experienceID: String
     var experienceName: String
     var experienceTags: [String]
@@ -260,7 +260,7 @@ fileprivate struct ScreenPresentedProperties: Encodable {
     }
 }
 
-fileprivate struct ScreenDismissedProperties: Encodable {
+private struct ScreenDismissedProperties: Encodable {
     var experienceID: String
     var experienceName: String
     var experienceTags: [String]
@@ -289,7 +289,7 @@ fileprivate struct ScreenDismissedProperties: Encodable {
     }
 }
 
-fileprivate struct ScreenViewedProperties: Encodable {
+private struct ScreenViewedProperties: Encodable {
     var experienceID: String
     var experienceName: String
     var experienceTags: [String]
@@ -321,7 +321,7 @@ fileprivate struct ScreenViewedProperties: Encodable {
     }
 }
 
-fileprivate struct BlockTappedProperties: Encodable {
+private struct BlockTappedProperties: Encodable {
     var experienceID: String
     var experienceName: String
     var experienceTags: [String]

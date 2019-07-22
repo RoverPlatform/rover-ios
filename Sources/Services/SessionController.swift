@@ -101,7 +101,7 @@ class SessionController {
     }
 }
 
-fileprivate class Session {
+private class Session {
     let keepAliveTime: Int
     
     struct Result {

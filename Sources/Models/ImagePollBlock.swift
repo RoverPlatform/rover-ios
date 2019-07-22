@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct ImagePollBlock : PollBlock {
+public struct ImagePollBlock: PollBlock {
     public struct OptionStyle: Decodable {
         public var opacity: Double
         public var color: Color
@@ -52,7 +52,7 @@ public struct ImagePollBlock : PollBlock {
     public var opacity: Double
     public var position: Position
     public var tapBehavior: BlockTapBehavior
-    public var keys: [String : String]
+    public var keys: [String: String]
     public var tags: [String]
     
     // MARK: Image Poll fields

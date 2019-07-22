@@ -6,12 +6,11 @@
 //  Copyright © 2019 Rover Labs Inc. All rights reserved.
 //
 
-import UIKit
-import Rover
 import os
+import Rover
+import UIKit
 
 class ViewController: UIViewController {
-
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
@@ -29,8 +28,7 @@ class ViewController: UIViewController {
         
         let experience = try! decoder.decode(Experience.self, from: experienceJson)
         
-        
-        let rvc = RoverViewController.init()
+        let rvc = RoverViewController()
         rvc.loadExperience(experience: experience)
         
         self.present(rvc, animated: false)

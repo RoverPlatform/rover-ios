@@ -6,8 +6,8 @@
 //  Copyright © 2017 Rover Labs Inc. All rights reserved.
 //
 
-import UIKit
 import os
+import UIKit
 
 // swiftlint:disable:next type_body_length
 class ScreenViewLayout: UICollectionViewLayout {

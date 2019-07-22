@@ -15,7 +15,7 @@ public struct Image: Decodable {
     public var width: Int
     public var url: URL
     
-    public init(height: Int,  name: String, size: Int, width: Int, url: URL) {
+    public init(height: Int, name: String, size: Int, width: Int, url: URL) {
         self.height = height
         self.name = name
         self.size = size

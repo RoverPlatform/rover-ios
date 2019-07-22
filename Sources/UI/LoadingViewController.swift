@@ -24,7 +24,7 @@ open class LoadingViewController: UIViewController {
     /// The cancel button displayed below the activity indicator after 3 seconds.
     public var cancelButton = UIButton(type: .custom)
     
-    open override func viewDidLoad() {
+    override open func viewDidLoad() {
         super.viewDidLoad()
         
         view.backgroundColor = .white

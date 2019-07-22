@@ -82,4 +82,3 @@ class BlockCell: UICollectionViewCell {
         self.contentView.configureContent(content: content, withInsets: block.insets)
     }
 }
-

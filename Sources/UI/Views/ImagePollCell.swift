@@ -6,19 +6,19 @@
 //  Copyright © 2019 Rover Labs Inc. All rights reserved.
 //
 
-import UIKit
 import os
+import UIKit
 
 // MARK: Constants
 
-fileprivate let OPTION_TEXT_HEIGHT = CGFloat(40)
-fileprivate let OPTION_TEXT_SPACING = CGFloat(8)
-fileprivate let RESULT_FILL_BAR_HEIGHT = CGFloat(8)
-fileprivate let RESULT_FILL_BAR_HORIZONTAL_SPACING = CGFloat(4)
-fileprivate let RESULT_FILL_BAR_VERTICAL_SPACING = CGFloat(8)
-fileprivate let RESULT_PERCENTAGE_FONT_SIZE = CGFloat(16)
-fileprivate let RESULT_REVEAL_TIME = 0.167 // (167 ms)
-fileprivate let RESULT_FILL_BAR_FILL_TIME = 1.00  // (1 s)
+private let OPTION_TEXT_HEIGHT = CGFloat(40)
+private let OPTION_TEXT_SPACING = CGFloat(8)
+private let RESULT_FILL_BAR_HEIGHT = CGFloat(8)
+private let RESULT_FILL_BAR_HORIZONTAL_SPACING = CGFloat(4)
+private let RESULT_FILL_BAR_VERTICAL_SPACING = CGFloat(8)
+private let RESULT_PERCENTAGE_FONT_SIZE = CGFloat(16)
+private let RESULT_REVEAL_TIME = 0.167 // (167 ms)
+private let RESULT_FILL_BAR_FILL_TIME = 1.00  // (1 s)
 
 // MARK: Option View
 
@@ -82,7 +82,6 @@ class ImagePollOptionView: UIView {
         self.resultFillBarArea.translatesAutoresizingMaskIntoConstraints = false
         self.resultFillBar.translatesAutoresizingMaskIntoConstraints = false
 
-
         // MARK: Image Content
         
         // the image itself should be rendered as 1:1 tile.
@@ -99,7 +98,6 @@ class ImagePollOptionView: UIView {
         self.answerTextView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: OPTION_TEXT_SPACING * -1 ).isActive = true
         self.answerTextView.heightAnchor.constraint(equalToConstant: OPTION_TEXT_HEIGHT - OPTION_TEXT_SPACING * 2).isActive = true
         self.answerTextView.topAnchor.constraint(equalTo: self.content.bottomAnchor, constant: OPTION_TEXT_SPACING).isActive = true
-
         
         self.answerTextView.backgroundColor = .clear
         self.answerTextView.numberOfLines = 1
@@ -321,8 +319,8 @@ extension ImagePollBlock {
 
 extension Array {
     /// Pair off a set of two items in sequence in the array.
-    fileprivate var tuples: [(Element,Element)] {
-        var optionPairs = [(Element,Element)]()
+    fileprivate var tuples: [(Element, Element)] {
+        var optionPairs = [(Element, Element)]()
         for optionIndex in 0..<self.count {
             if optionIndex % 2 == 1 {
                 optionPairs.append((self[optionIndex - 1], self[optionIndex]))
@@ -333,7 +331,7 @@ extension Array {
 }
 
 extension UIImageView {
-    fileprivate func configureAsFilledImage(image: Image, checkStillMatches: @escaping () -> Bool = { true } ) {
+    fileprivate func configureAsFilledImage(image: Image, checkStillMatches: @escaping () -> Bool = { true }) {
         // Reset any existing background image
         self.alpha = 0.0
         self.image = nil

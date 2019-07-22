@@ -10,10 +10,10 @@ import UIKit
 
 // MARK: Constants
 
-fileprivate let OPTION_TEXT_SPACING = CGFloat(16)
-fileprivate let RESULT_PERCENTAGE_REVEAL_TIME = 0.75 // ms
-fileprivate let RESULT_FILL_BAR_REVEAL_TIME = 0.05 // ms
-fileprivate let RESULT_FILL_BAR_FILL_TIME = 1.00 // ms
+private let OPTION_TEXT_SPACING = CGFloat(16)
+private let RESULT_PERCENTAGE_REVEAL_TIME = 0.75 // ms
+private let RESULT_FILL_BAR_REVEAL_TIME = 0.05 // ms
+private let RESULT_FILL_BAR_FILL_TIME = 1.00 // ms
 
 // MARK: Option View
 
@@ -163,7 +163,7 @@ class TextPollOptionView: UIView {
         let percentageTextFont = self.style.font.bumpedForPercentageIndicator
 
         // expand the percentage view to accomodate all possible percentage values as we animate through them, to avoid any possible wobble in the layout.
-        self.resultPercentageWidthConstraint?.constant = percentageTextFont.attributedText(forPlainText: "100%", color: self.style.color)?.boundingRect(with: .init(width: 1000, height: 1000), options: [], context: nil).width ?? CGFloat(0)
+        self.resultPercentageWidthConstraint?.constant = percentageTextFont.attributedText(forPlainText: "100%", color: self.style.color)?.boundingRect(with: .init(width: 1_000, height: 1_000), options: [], context: nil).width ?? CGFloat(0)
         
         self.percentageAnimationTimer?.invalidate()
         let startTime = Date()
@@ -191,7 +191,6 @@ class TextPollOptionView: UIView {
         self.backgroundView.configureAsBackgroundImage(background: style.background)
     }
 }
-
 
 // MARK: Cell View
 
@@ -327,6 +326,6 @@ extension Text.Font {
 
 extension Color {
     fileprivate var opaque: Color {
-        return Color.init(red: self.red, green: self.green, blue: self.blue, alpha: 1.0)
+        return Color(red: self.red, green: self.green, blue: self.blue, alpha: 1.0)
     }
 }

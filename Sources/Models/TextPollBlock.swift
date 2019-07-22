@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct TextPollBlock : PollBlock {
+public struct TextPollBlock: PollBlock {
     public struct OptionStyle: Decodable {
         public var height: Int
         public var opacity: Double
@@ -42,7 +42,7 @@ public struct TextPollBlock : PollBlock {
     public var opacity: Double
     public var position: Position
     public var tapBehavior: BlockTapBehavior
-    public var keys: [String : String]
+    public var keys: [String: String]
     public var tags: [String]
     
     // MARK: Text Poll fields

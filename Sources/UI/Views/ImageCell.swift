@@ -6,8 +6,8 @@
 //  Copyright © 2017 Rover Labs Inc. All rights reserved.
 //
 
-import UIKit
 import os
+import UIKit
 
 class ImageCell: BlockCell {
     let imageView: UIImageView = {
@@ -30,7 +30,7 @@ class ImageCell: BlockCell {
         
         let originalBlockId = imageBlock.id
         self.imageView.configureAsImage(image: imageBlock.image) { [weak self] in
-            return self?.block?.id == originalBlockId
+            self?.block?.id == originalBlockId
         }
     }
 }

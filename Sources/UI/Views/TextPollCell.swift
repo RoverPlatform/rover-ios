@@ -117,8 +117,9 @@ class TextPollOptionView: UIView {
         self.answerTextView.numberOfLines = 1
         self.answerTextView.attributedText = option.attributedText
         self.answerTextView.lineBreakMode = .byTruncatingTail
-        self.answerTextView.topAnchor.constraint(equalTo: self.topAnchor, constant: OPTION_TEXT_SPACING).isActive = true
-        self.answerTextView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: OPTION_TEXT_SPACING * -1).isActive = true
+        self.answerTextView.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
+//        self.answerTextView.topAnchor.constraint(equalTo: self.topAnchor, constant: OPTION_TEXT_SPACING).isActive = true
+//        self.answerTextView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: OPTION_TEXT_SPACING * -1).isActive = true
         self.answerTextView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: OPTION_TEXT_SPACING).isActive = true
         self.answerTextView.trailingAnchor.constraint(equalTo: self.resultPercentage.leadingAnchor, constant: OPTION_TEXT_SPACING * -1).isActive = true
         

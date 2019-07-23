@@ -17,7 +17,7 @@ class ViewController: UIViewController {
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        let experienceFile = Bundle.main.path(forResource: "experience.json", ofType: nil)!
+        let experienceFile = Bundle.main.path(forResource: "gql-tpoll-response.json", ofType: nil)!
         
         let experienceFileURL: URL = URL(fileURLWithPath: experienceFile)
         os_log("Experience file path: %@", experienceFileURL.absoluteString)
@@ -26,11 +26,19 @@ class ViewController: UIViewController {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .formatted(DateFormatter.rfc3339)
         
-        let experience = try! decoder.decode(Experience.self, from: experienceJson)
+        let graphqlResponse = try! decoder.decode(SampleGraphqlResponse.self, from: experienceJson)
         
         let rvc = RoverViewController()
-        rvc.loadExperience(experience: experience)
+        rvc.loadExperience(experience: graphqlResponse.data.experience)
         
         self.present(rvc, animated: false)
+    }
+    
+    struct SampleGraphqlResponse: Decodable {
+        var data: SampleGraphqlDataContainer
+        
+        struct SampleGraphqlDataContainer: Decodable {
+            var experience: Experience
+        }
     }
 }

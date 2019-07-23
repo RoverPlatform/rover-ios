@@ -1,0 +1,2394 @@
+{
+  "data": {
+    "experience": {
+      "campaignID": null,
+      "homeScreenID": "BkcA8nQZB",
+      "id": "5d2636d0ffab400010e43bfc",
+      "name": "Polls ",
+      "screens": [
+        {
+          "background": {
+            "color": {
+              "red": 255,
+              "green": 255,
+              "blue": 255,
+              "alpha": 1
+            },
+            "contentMode": "ORIGINAL",
+            "image": null,
+            "scale": "X1"
+          },
+          "id": "BkcA8nQZB",
+          "name": "Untitled",
+          "isStretchyHeaderEnabled": false,
+          "rows": [
+            {
+              "background": {
+                "color": {
+                  "red": 129,
+                  "green": 129,
+                  "blue": 129,
+                  "alpha": 0
+                },
+                "contentMode": "ORIGINAL",
+                "image": null,
+                "scale": "X1"
+              },
+              "blocks": [
+                {
+                  "__typename": "TextPollBlock",
+                  "background": {
+                    "color": {
+                      "red": 0,
+                      "green": 0,
+                      "blue": 0,
+                      "alpha": 0
+                    },
+                    "contentMode": "ORIGINAL",
+                    "image": null,
+                    "scale": "X1"
+                  },
+                  "border": {
+                    "color": {
+                      "red": 0,
+                      "green": 0,
+                      "blue": 0,
+                      "alpha": 0
+                    },
+                    "radius": 0,
+                    "width": 0
+                  },
+                  "id": "Bklb1vh7-B",
+                  "name": "Text Poll",
+                  "insets": {
+                    "bottom": 0,
+                    "left": 0,
+                    "right": 0,
+                    "top": 0
+                  },
+                  "opacity": 1,
+                  "position": {
+                    "horizontalAlignment": {
+                      "__typename": "HorizontalAlignmentFill",
+                      "leftOffset": 20,
+                      "rightOffset": 20
+                    },
+                    "verticalAlignment": {
+                      "__typename": "VerticalAlignmentStacked",
+                      "topOffset": 20,
+                      "bottomOffset": 20,
+                      "height": {
+                        "__typename": "HeightIntrinsic"
+                      }
+                    }
+                  },
+                  "tapBehavior": {
+                    "__typename": "NoneBlockTapBehavior"
+                  },
+                  "keys": {},
+                  "tags": [],
+                  "textPoll": {
+                    "question": {
+                      "rawValue": "Pick one 👇",
+                      "alignment": "LEFT",
+                      "color": {
+                        "red": 0,
+                        "green": 0,
+                        "blue": 0,
+                        "alpha": 1
+                      },
+                      "font": {
+                        "size": 16,
+                        "weight": "BLACK"
+                      }
+                    },
+                    "options": [
+                      {
+                        "height": 50,
+                        "id": "U3RyYXdiZXJyeSAg8J-Nkw==",
+                        "text": {
+                          "rawValue": "Strawberry  🍓",
+                          "alignment": "LEFT",
+                          "color": {
+                            "red": 0,
+                            "green": 0,
+                            "blue": 0,
+                            "alpha": 1
+                          },
+                          "font": {
+                            "size": 16,
+                            "weight": "MEDIUM"
+                          }
+                        },
+                        "background": {
+                          "color": {
+                            "red": 255,
+                            "green": 255,
+                            "blue": 255,
+                            "alpha": 1
+                          },
+                          "contentMode": "ORIGINAL",
+                          "image": null,
+                          "scale": "X1"
+                        },
+                        "border": {
+                          "color": {
+                            "red": 0,
+                            "green": 0,
+                            "blue": 0,
+                            "alpha": 1
+                          },
+                          "radius": 5,
+                          "width": 2
+                        },
+                        "opacity": 1,
+                        "topMargin": 20,
+                        "resultFillColor": {
+                          "red": 12,
+                          "green": 204,
+                          "blue": 204,
+                          "alpha": 1
+                        }
+                      },
+                      {
+                        "height": 50,
+                        "id": "QmFuYW5hIPCfjYw=",
+                        "text": {
+                          "rawValue": "Banana 🍌",
+                          "alignment": "LEFT",
+                          "color": {
+                            "red": 0,
+                            "green": 0,
+                            "blue": 0,
+                            "alpha": 1
+                          },
+                          "font": {
+                            "size": 16,
+                            "weight": "MEDIUM"
+                          }
+                        },
+                        "background": {
+                          "color": {
+                            "red": 255,
+                            "green": 255,
+                            "blue": 255,
+                            "alpha": 1
+                          },
+                          "contentMode": "ORIGINAL",
+                          "image": null,
+                          "scale": "X1"
+                        },
+                        "border": {
+                          "color": {
+                            "red": 0,
+                            "green": 0,
+                            "blue": 0,
+                            "alpha": 1
+                          },
+                          "radius": 5,
+                          "width": 2
+                        },
+                        "opacity": 1,
+                        "topMargin": 20,
+                        "resultFillColor": {
+                          "red": 12,
+                          "green": 204,
+                          "blue": 204,
+                          "alpha": 1
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "__typename": "ImagePollBlock",
+                  "background": {
+                    "color": {
+                      "red": 0,
+                      "green": 0,
+                      "blue": 0,
+                      "alpha": 0
+                    },
+                    "contentMode": "ORIGINAL",
+                    "image": null,
+                    "scale": "X1"
+                  },
+                  "border": {
+                    "color": {
+                      "red": 0,
+                      "green": 0,
+                      "blue": 0,
+                      "alpha": 0
+                    },
+                    "radius": 0,
+                    "width": 0
+                  },
+                  "id": "rJecPhm-r",
+                  "name": "Image Poll",
+                  "insets": {
+                    "bottom": 0,
+                    "left": 0,
+                    "right": 0,
+                    "top": 0
+                  },
+                  "opacity": 1,
+                  "position": {
+                    "horizontalAlignment": {
+                      "__typename": "HorizontalAlignmentFill",
+                      "leftOffset": 20,
+                      "rightOffset": 20
+                    },
+                    "verticalAlignment": {
+                      "__typename": "VerticalAlignmentStacked",
+                      "topOffset": 20,
+                      "bottomOffset": 20,
+                      "height": {
+                        "__typename": "HeightIntrinsic"
+                      }
+                    }
+                  },
+                  "tapBehavior": {
+                    "__typename": "NoneBlockTapBehavior"
+                  },
+                  "keys": {},
+                  "tags": [],
+                  "imagePoll": {
+                    "question": {
+                      "rawValue": "How are you feeling today?",
+                      "alignment": "CENTER",
+                      "color": {
+                        "red": 0,
+                        "green": 0,
+                        "blue": 0,
+                        "alpha": 1
+                      },
+                      "font": {
+                        "size": 16,
+                        "weight": "BLACK"
+                      }
+                    },
+                    "options": [
+                      {
+                        "id": "aHR0cHM6Ly9pbWFnZXMtcm92ZXItaW8uaW1naXgubmV0L3VwbG9hZHMvYTg3ZmY2NzlhMmYzZTcxZDkxODFhNjdiNzU0MjEyMmMvNjA0NDVkYzYtMDlmNS00YWNlLThkYjEtZGI4ZTQxYzBjZGE5LWhhcHB5LnBuZw==",
+                        "text": {
+                          "rawValue": "Happy",
+                          "alignment": "CENTER",
+                          "color": {
+                            "red": 0,
+                            "green": 0,
+                            "blue": 0,
+                            "alpha": 1
+                          },
+                          "font": {
+                            "size": 16,
+                            "weight": "MEDIUM"
+                          }
+                        },
+                        "image": {
+                          "height": 300,
+                          "isURLOptimizationEnabled": true,
+                          "name": "happy.png",
+                          "size": 10417,
+                          "width": 300,
+                          "url": "https://images-rover-io.imgix.net/uploads/a87ff679a2f3e71d9181a67b7542122c/60445dc6-09f5-4ace-8db1-db8e41c0cda9-happy.png"
+                        },
+                        "background": {
+                          "color": {
+                            "red": 255,
+                            "green": 255,
+                            "blue": 255,
+                            "alpha": 1
+                          },
+                          "contentMode": "ORIGINAL",
+                          "image": null,
+                          "scale": "X1"
+                        },
+                        "border": {
+                          "color": {
+                            "red": 0,
+                            "green": 0,
+                            "blue": 0,
+                            "alpha": 1
+                          },
+                          "radius": 0,
+                          "width": 0
+                        },
+                        "opacity": 1,
+                        "topMargin": 20,
+                        "leftMargin": 0,
+                        "resultFillColor": {
+                          "red": 255,
+                          "green": 255,
+                          "blue": 255,
+                          "alpha": 1
+                        }
+                      },
+                      {
+                        "id": "aHR0cHM6Ly9pbWFnZXMtcm92ZXItaW8uaW1naXgubmV0L3VwbG9hZHMvYTg3ZmY2NzlhMmYzZTcxZDkxODFhNjdiNzU0MjEyMmMvNzlhYmM3NzctODQyYi00Mjg2LTg4ZWItNmQzYjc4NjgxMTQwLWFuZ3J5LnBuZw==",
+                        "text": {
+                          "rawValue": "Angry",
+                          "alignment": "CENTER",
+                          "color": {
+                            "red": 0,
+                            "green": 0,
+                            "blue": 0,
+                            "alpha": 1
+                          },
+                          "font": {
+                            "size": 16,
+                            "weight": "MEDIUM"
+                          }
+                        },
+                        "image": {
+                          "height": 300,
+                          "isURLOptimizationEnabled": true,
+                          "name": "angry.png",
+                          "size": 12659,
+                          "width": 300,
+                          "url": "https://images-rover-io.imgix.net/uploads/a87ff679a2f3e71d9181a67b7542122c/79abc777-842b-4286-88eb-6d3b78681140-angry.png"
+                        },
+                        "background": {
+                          "color": {
+                            "red": 255,
+                            "green": 255,
+                            "blue": 255,
+                            "alpha": 1
+                          },
+                          "contentMode": "ORIGINAL",
+                          "image": null,
+                          "scale": "X1"
+                        },
+                        "border": {
+                          "color": {
+                            "red": 0,
+                            "green": 0,
+                            "blue": 0,
+                            "alpha": 1
+                          },
+                          "radius": 0,
+                          "width": 0
+                        },
+                        "opacity": 1,
+                        "topMargin": 20,
+                        "leftMargin": 20,
+                        "resultFillColor": {
+                          "red": 255,
+                          "green": 255,
+                          "blue": 255,
+                          "alpha": 1
+                        }
+                      },
+                      {
+                        "id": "aHR0cHM6Ly9pbWFnZXMtcm92ZXItaW8uaW1naXgubmV0L3VwbG9hZHMvYTg3ZmY2NzlhMmYzZTcxZDkxODFhNjdiNzU0MjEyMmMvM2NlNzVlNmEtNzYxNi00MjYwLWExZWQtZjE2YTE0NGFmN2JmLXNhZC5wbmc=",
+                        "text": {
+                          "rawValue": "Sad",
+                          "alignment": "CENTER",
+                          "color": {
+                            "red": 0,
+                            "green": 0,
+                            "blue": 0,
+                            "alpha": 1
+                          },
+                          "font": {
+                            "size": 16,
+                            "weight": "MEDIUM"
+                          }
+                        },
+                        "image": {
+                          "height": 300,
+                          "isURLOptimizationEnabled": true,
+                          "name": "sad.png",
+                          "size": 10158,
+                          "width": 300,
+                          "url": "https://images-rover-io.imgix.net/uploads/a87ff679a2f3e71d9181a67b7542122c/3ce75e6a-7616-4260-a1ed-f16a144af7bf-sad.png"
+                        },
+                        "background": {
+                          "color": {
+                            "red": 255,
+                            "green": 255,
+                            "blue": 255,
+                            "alpha": 1
+                          },
+                          "contentMode": "ORIGINAL",
+                          "image": null,
+                          "scale": "X1"
+                        },
+                        "border": {
+                          "color": {
+                            "red": 0,
+                            "green": 0,
+                            "blue": 0,
+                            "alpha": 1
+                          },
+                          "radius": 0,
+                          "width": 0
+                        },
+                        "opacity": 1,
+                        "topMargin": 20,
+                        "leftMargin": 0,
+                        "resultFillColor": {
+                          "red": 255,
+                          "green": 255,
+                          "blue": 255,
+                          "alpha": 1
+                        }
+                      },
+                      {
+                        "id": "aHR0cHM6Ly9pbWFnZXMtcm92ZXItaW8uaW1naXgubmV0L3VwbG9hZHMvYTg3ZmY2NzlhMmYzZTcxZDkxODFhNjdiNzU0MjEyMmMvODM5MmZiMjUtMzViZC00Y2Y5LWI2MmItYWU1ZDkxYzNkYThkLW5ldXRyYWwucG5n",
+                        "text": {
+                          "rawValue": "Neutral",
+                          "alignment": "CENTER",
+                          "color": {
+                            "red": 0,
+                            "green": 0,
+                            "blue": 0,
+                            "alpha": 1
+                          },
+                          "font": {
+                            "size": 16,
+                            "weight": "MEDIUM"
+                          }
+                        },
+                        "image": {
+                          "height": 300,
+                          "isURLOptimizationEnabled": true,
+                          "name": "neutral.png",
+                          "size": 9157,
+                          "width": 300,
+                          "url": "https://images-rover-io.imgix.net/uploads/a87ff679a2f3e71d9181a67b7542122c/8392fb25-35bd-4cf9-b62b-ae5d91c3da8d-neutral.png"
+                        },
+                        "background": {
+                          "color": {
+                            "red": 255,
+                            "green": 255,
+                            "blue": 255,
+                            "alpha": 1
+                          },
+                          "contentMode": "ORIGINAL",
+                          "image": null,
+                          "scale": "X1"
+                        },
+                        "border": {
+                          "color": {
+                            "red": 0,
+                            "green": 0,
+                            "blue": 0,
+                            "alpha": 1
+                          },
+                          "radius": 0,
+                          "width": 0
+                        },
+                        "opacity": 1,
+                        "topMargin": 20,
+                        "leftMargin": 20,
+                        "resultFillColor": {
+                          "red": 255,
+                          "green": 255,
+                          "blue": 255,
+                          "alpha": 1
+                        }
+                      }
+                    ]
+                  }
+                }
+              ],
+              "height": {
+                "__typename": "HeightIntrinsic"
+              },
+              "id": "BJ-kvnQZS",
+              "name": "Row",
+              "keys": {},
+              "tags": []
+            },
+            {
+              "background": {
+                "color": {
+                  "red": 244,
+                  "green": 244,
+                  "blue": 244,
+                  "alpha": 1
+                },
+                "contentMode": "ORIGINAL",
+                "image": null,
+                "scale": "X1"
+              },
+              "blocks": [
+                {
+                  "__typename": "ImagePollBlock",
+                  "background": {
+                    "color": {
+                      "red": 0,
+                      "green": 0,
+                      "blue": 0,
+                      "alpha": 0
+                    },
+                    "contentMode": "ORIGINAL",
+                    "image": null,
+                    "scale": "X1"
+                  },
+                  "border": {
+                    "color": {
+                      "red": 0,
+                      "green": 0,
+                      "blue": 0,
+                      "alpha": 0
+                    },
+                    "radius": 0,
+                    "width": 0
+                  },
+                  "id": "Skl9w4bSbH",
+                  "name": "Image Poll 2",
+                  "insets": {
+                    "bottom": 0,
+                    "left": 0,
+                    "right": 0,
+                    "top": 0
+                  },
+                  "opacity": 1,
+                  "position": {
+                    "horizontalAlignment": {
+                      "__typename": "HorizontalAlignmentFill",
+                      "leftOffset": 10,
+                      "rightOffset": 10
+                    },
+                    "verticalAlignment": {
+                      "__typename": "VerticalAlignmentStacked",
+                      "topOffset": 40,
+                      "bottomOffset": 20,
+                      "height": {
+                        "__typename": "HeightIntrinsic"
+                      }
+                    }
+                  },
+                  "tapBehavior": {
+                    "__typename": "NoneBlockTapBehavior"
+                  },
+                  "keys": {},
+                  "tags": [],
+                  "imagePoll": {
+                    "question": {
+                      "rawValue": "This is a very long question please pick an answer below",
+                      "alignment": "CENTER",
+                      "color": {
+                        "red": 0,
+                        "green": 0,
+                        "blue": 0,
+                        "alpha": 1
+                      },
+                      "font": {
+                        "size": 28,
+                        "weight": "SEMI_BOLD"
+                      }
+                    },
+                    "options": [
+                      {
+                        "id": "aHR0cHM6Ly9pbWFnZXMtcm92ZXItaW8uaW1naXgubmV0L3VwbG9hZHMvYTg3ZmY2NzlhMmYzZTcxZDkxODFhNjdiNzU0MjEyMmMvYjM4NmI2OTQtNzRlNi00Yzc3LTgxYzYtMmYwM2ZlNWY1NTU0LWN1dGUtYmFieS1hbmltYWxzLTkuanBn",
+                        "text": {
+                          "rawValue": "",
+                          "alignment": "RIGHT",
+                          "color": {
+                            "red": 255,
+                            "green": 255,
+                            "blue": 255,
+                            "alpha": 1
+                          },
+                          "font": {
+                            "size": 15,
+                            "weight": "SEMI_BOLD"
+                          }
+                        },
+                        "image": {
+                          "height": 367,
+                          "isURLOptimizationEnabled": true,
+                          "name": "cute-baby-animals-9.jpg",
+                          "size": 30922,
+                          "width": 605,
+                          "url": "https://images-rover-io.imgix.net/uploads/a87ff679a2f3e71d9181a67b7542122c/b386b694-74e6-4c77-81c6-2f03fe5f5554-cute-baby-animals-9.jpg"
+                        },
+                        "background": {
+                          "color": {
+                            "red": 0,
+                            "green": 0,
+                            "blue": 0,
+                            "alpha": 1
+                          },
+                          "contentMode": "ORIGINAL",
+                          "image": null,
+                          "scale": "X1"
+                        },
+                        "border": {
+                          "color": {
+                            "red": 0,
+                            "green": 0,
+                            "blue": 0,
+                            "alpha": 1
+                          },
+                          "radius": 2,
+                          "width": 2
+                        },
+                        "opacity": 1,
+                        "topMargin": 20,
+                        "leftMargin": 0,
+                        "resultFillColor": {
+                          "red": 160,
+                          "green": 216,
+                          "blue": 255,
+                          "alpha": 1
+                        }
+                      },
+                      {
+                        "id": "aHR0cHM6Ly9pbWFnZXMtcm92ZXItaW8uaW1naXgubmV0L3VwbG9hZHMvYTg3ZmY2NzlhMmYzZTcxZDkxODFhNjdiNzU0MjEyMmMvNGMyYzhjMGQtZWJiMy00MTU4LTljMjUtMmNmYmU4ZjdlZTFjLWN1dGUtYmFieS1hbmltYWxzLTEzLmpwZw==",
+                        "text": {
+                          "rawValue": "",
+                          "alignment": "RIGHT",
+                          "color": {
+                            "red": 255,
+                            "green": 255,
+                            "blue": 255,
+                            "alpha": 1
+                          },
+                          "font": {
+                            "size": 15,
+                            "weight": "SEMI_BOLD"
+                          }
+                        },
+                        "image": {
+                          "height": 454,
+                          "isURLOptimizationEnabled": true,
+                          "name": "cute-baby-animals-13.jpg",
+                          "size": 80798,
+                          "width": 605,
+                          "url": "https://images-rover-io.imgix.net/uploads/a87ff679a2f3e71d9181a67b7542122c/4c2c8c0d-ebb3-4158-9c25-2cfbe8f7ee1c-cute-baby-animals-13.jpg"
+                        },
+                        "background": {
+                          "color": {
+                            "red": 0,
+                            "green": 0,
+                            "blue": 0,
+                            "alpha": 1
+                          },
+                          "contentMode": "ORIGINAL",
+                          "image": null,
+                          "scale": "X1"
+                        },
+                        "border": {
+                          "color": {
+                            "red": 0,
+                            "green": 0,
+                            "blue": 0,
+                            "alpha": 1
+                          },
+                          "radius": 2,
+                          "width": 2
+                        },
+                        "opacity": 1,
+                        "topMargin": 20,
+                        "leftMargin": 20,
+                        "resultFillColor": {
+                          "red": 160,
+                          "green": 216,
+                          "blue": 255,
+                          "alpha": 1
+                        }
+                      },
+                      {
+                        "id": "aHR0cHM6Ly9pbWFnZXMtcm92ZXItaW8uaW1naXgubmV0L3VwbG9hZHMvYTg3ZmY2NzlhMmYzZTcxZDkxODFhNjdiNzU0MjEyMmMvYTJhNDlkYmYtZDJiMi00MDVjLTg3ZGMtYjBmYmZlMTE3MDgzLWN1dGUtYmFieS1hbmltYWxzLTEwLmpwZw==",
+                        "text": {
+                          "rawValue": "",
+                          "alignment": "RIGHT",
+                          "color": {
+                            "red": 255,
+                            "green": 255,
+                            "blue": 255,
+                            "alpha": 1
+                          },
+                          "font": {
+                            "size": 15,
+                            "weight": "SEMI_BOLD"
+                          }
+                        },
+                        "image": {
+                          "height": 422,
+                          "isURLOptimizationEnabled": true,
+                          "name": "cute-baby-animals-10.jpg",
+                          "size": 60063,
+                          "width": 605,
+                          "url": "https://images-rover-io.imgix.net/uploads/a87ff679a2f3e71d9181a67b7542122c/a2a49dbf-d2b2-405c-87dc-b0fbfe117083-cute-baby-animals-10.jpg"
+                        },
+                        "background": {
+                          "color": {
+                            "red": 0,
+                            "green": 0,
+                            "blue": 0,
+                            "alpha": 1
+                          },
+                          "contentMode": "ORIGINAL",
+                          "image": null,
+                          "scale": "X1"
+                        },
+                        "border": {
+                          "color": {
+                            "red": 0,
+                            "green": 0,
+                            "blue": 0,
+                            "alpha": 1
+                          },
+                          "radius": 2,
+                          "width": 2
+                        },
+                        "opacity": 1,
+                        "topMargin": 20,
+                        "leftMargin": 0,
+                        "resultFillColor": {
+                          "red": 160,
+                          "green": 216,
+                          "blue": 255,
+                          "alpha": 1
+                        }
+                      },
+                      {
+                        "id": "aHR0cHM6Ly9pbWFnZXMtcm92ZXItaW8uaW1naXgubmV0L3VwbG9hZHMvYTg3ZmY2NzlhMmYzZTcxZDkxODFhNjdiNzU0MjEyMmMvMDI1YmJhYzAtNTJlYi00ZjRmLTlmZDMtN2ZmMGM1NWFmNjQzLWN1dGUtYW5pbWFsLTEwLnBuZw==",
+                        "text": {
+                          "rawValue": "",
+                          "alignment": "RIGHT",
+                          "color": {
+                            "red": 255,
+                            "green": 255,
+                            "blue": 255,
+                            "alpha": 1
+                          },
+                          "font": {
+                            "size": 15,
+                            "weight": "SEMI_BOLD"
+                          }
+                        },
+                        "image": {
+                          "height": 1200,
+                          "isURLOptimizationEnabled": true,
+                          "name": "cute-animal-10.png",
+                          "size": 991240,
+                          "width": 1200,
+                          "url": "https://images-rover-io.imgix.net/uploads/a87ff679a2f3e71d9181a67b7542122c/025bbac0-52eb-4f4f-9fd3-7ff0c55af643-cute-animal-10.png"
+                        },
+                        "background": {
+                          "color": {
+                            "red": 0,
+                            "green": 0,
+                            "blue": 0,
+                            "alpha": 1
+                          },
+                          "contentMode": "ORIGINAL",
+                          "image": null,
+                          "scale": "X1"
+                        },
+                        "border": {
+                          "color": {
+                            "red": 0,
+                            "green": 0,
+                            "blue": 0,
+                            "alpha": 1
+                          },
+                          "radius": 2,
+                          "width": 2
+                        },
+                        "opacity": 1,
+                        "topMargin": 20,
+                        "leftMargin": 20,
+                        "resultFillColor": {
+                          "red": 160,
+                          "green": 216,
+                          "blue": 255,
+                          "alpha": 1
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "__typename": "TextPollBlock",
+                  "background": {
+                    "color": {
+                      "red": 0,
+                      "green": 0,
+                      "blue": 0,
+                      "alpha": 0
+                    },
+                    "contentMode": "ORIGINAL",
+                    "image": null,
+                    "scale": "X1"
+                  },
+                  "border": {
+                    "color": {
+                      "red": 0,
+                      "green": 0,
+                      "blue": 0,
+                      "alpha": 0
+                    },
+                    "radius": 0,
+                    "width": 0
+                  },
+                  "id": "BkeJf8bSbr",
+                  "name": "Text Poll 2",
+                  "insets": {
+                    "bottom": 0,
+                    "left": 0,
+                    "right": 0,
+                    "top": 0
+                  },
+                  "opacity": 1,
+                  "position": {
+                    "horizontalAlignment": {
+                      "__typename": "HorizontalAlignmentFill",
+                      "leftOffset": 20,
+                      "rightOffset": 20
+                    },
+                    "verticalAlignment": {
+                      "__typename": "VerticalAlignmentStacked",
+                      "topOffset": 20,
+                      "bottomOffset": 20,
+                      "height": {
+                        "__typename": "HeightIntrinsic"
+                      }
+                    }
+                  },
+                  "tapBehavior": {
+                    "__typename": "NoneBlockTapBehavior"
+                  },
+                  "keys": {},
+                  "tags": [],
+                  "textPoll": {
+                    "question": {
+                      "rawValue": "",
+                      "alignment": "CENTER",
+                      "color": {
+                        "red": 0,
+                        "green": 0,
+                        "blue": 0,
+                        "alpha": 1
+                      },
+                      "font": {
+                        "size": 16,
+                        "weight": "BLACK"
+                      }
+                    },
+                    "options": [
+                      {
+                        "height": 40,
+                        "id": "T25l",
+                        "text": {
+                          "rawValue": "One",
+                          "alignment": "LEFT",
+                          "color": {
+                            "red": 0,
+                            "green": 0,
+                            "blue": 0,
+                            "alpha": 1
+                          },
+                          "font": {
+                            "size": 16,
+                            "weight": "HEAVY"
+                          }
+                        },
+                        "background": {
+                          "color": {
+                            "red": 255,
+                            "green": 255,
+                            "blue": 255,
+                            "alpha": 1
+                          },
+                          "contentMode": "ORIGINAL",
+                          "image": {
+                            "height": 1300,
+                            "isURLOptimizationEnabled": true,
+                            "name": "ice-2025937_1920.jpg",
+                            "size": 950329,
+                            "width": 1920,
+                            "url": "https://images-rover-io.imgix.net/uploads/a87ff679a2f3e71d9181a67b7542122c/3e1ff916-d5b6-472e-93bc-cf217c9ffa3e-ice-2025937_1920.jpg"
+                          },
+                          "scale": "X1"
+                        },
+                        "border": {
+                          "color": {
+                            "red": 0,
+                            "green": 0,
+                            "blue": 0,
+                            "alpha": 1
+                          },
+                          "radius": 48,
+                          "width": 2
+                        },
+                        "opacity": 1,
+                        "topMargin": 15,
+                        "resultFillColor": {
+                          "red": 160,
+                          "green": 216,
+                          "blue": 255,
+                          "alpha": 1
+                        }
+                      },
+                      {
+                        "height": 40,
+                        "id": "VHdv",
+                        "text": {
+                          "rawValue": "Two",
+                          "alignment": "LEFT",
+                          "color": {
+                            "red": 0,
+                            "green": 0,
+                            "blue": 0,
+                            "alpha": 1
+                          },
+                          "font": {
+                            "size": 16,
+                            "weight": "HEAVY"
+                          }
+                        },
+                        "background": {
+                          "color": {
+                            "red": 255,
+                            "green": 255,
+                            "blue": 255,
+                            "alpha": 1
+                          },
+                          "contentMode": "ORIGINAL",
+                          "image": {
+                            "height": 1300,
+                            "isURLOptimizationEnabled": true,
+                            "name": "ice-2025937_1920.jpg",
+                            "size": 950329,
+                            "width": 1920,
+                            "url": "https://images-rover-io.imgix.net/uploads/a87ff679a2f3e71d9181a67b7542122c/3e1ff916-d5b6-472e-93bc-cf217c9ffa3e-ice-2025937_1920.jpg"
+                          },
+                          "scale": "X1"
+                        },
+                        "border": {
+                          "color": {
+                            "red": 0,
+                            "green": 0,
+                            "blue": 0,
+                            "alpha": 1
+                          },
+                          "radius": 48,
+                          "width": 2
+                        },
+                        "opacity": 1,
+                        "topMargin": 15,
+                        "resultFillColor": {
+                          "red": 160,
+                          "green": 216,
+                          "blue": 255,
+                          "alpha": 1
+                        }
+                      },
+                      {
+                        "height": 40,
+                        "id": "VGhyZWU=",
+                        "text": {
+                          "rawValue": "Three",
+                          "alignment": "LEFT",
+                          "color": {
+                            "red": 0,
+                            "green": 0,
+                            "blue": 0,
+                            "alpha": 1
+                          },
+                          "font": {
+                            "size": 16,
+                            "weight": "HEAVY"
+                          }
+                        },
+                        "background": {
+                          "color": {
+                            "red": 255,
+                            "green": 255,
+                            "blue": 255,
+                            "alpha": 1
+                          },
+                          "contentMode": "ORIGINAL",
+                          "image": {
+                            "height": 1300,
+                            "isURLOptimizationEnabled": true,
+                            "name": "ice-2025937_1920.jpg",
+                            "size": 950329,
+                            "width": 1920,
+                            "url": "https://images-rover-io.imgix.net/uploads/a87ff679a2f3e71d9181a67b7542122c/3e1ff916-d5b6-472e-93bc-cf217c9ffa3e-ice-2025937_1920.jpg"
+                          },
+                          "scale": "X1"
+                        },
+                        "border": {
+                          "color": {
+                            "red": 0,
+                            "green": 0,
+                            "blue": 0,
+                            "alpha": 1
+                          },
+                          "radius": 48,
+                          "width": 2
+                        },
+                        "opacity": 1,
+                        "topMargin": 15,
+                        "resultFillColor": {
+                          "red": 160,
+                          "green": 216,
+                          "blue": 255,
+                          "alpha": 1
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "__typename": "TextPollBlock",
+                  "background": {
+                    "color": {
+                      "red": 0,
+                      "green": 0,
+                      "blue": 0,
+                      "alpha": 0
+                    },
+                    "contentMode": "ORIGINAL",
+                    "image": null,
+                    "scale": "X1"
+                  },
+                  "border": {
+                    "color": {
+                      "red": 0,
+                      "green": 0,
+                      "blue": 0,
+                      "alpha": 0
+                    },
+                    "radius": 0,
+                    "width": 0
+                  },
+                  "id": "Hkryu-B-B",
+                  "name": "Text Poll 2",
+                  "insets": {
+                    "bottom": 0,
+                    "left": 0,
+                    "right": 0,
+                    "top": 0
+                  },
+                  "opacity": 1,
+                  "position": {
+                    "horizontalAlignment": {
+                      "__typename": "HorizontalAlignmentFill",
+                      "leftOffset": 0,
+                      "rightOffset": 0
+                    },
+                    "verticalAlignment": {
+                      "__typename": "VerticalAlignmentStacked",
+                      "topOffset": 20,
+                      "bottomOffset": 20,
+                      "height": {
+                        "__typename": "HeightIntrinsic"
+                      }
+                    }
+                  },
+                  "tapBehavior": {
+                    "__typename": "NoneBlockTapBehavior"
+                  },
+                  "keys": {},
+                  "tags": [],
+                  "textPoll": {
+                    "question": {
+                      "rawValue": "",
+                      "alignment": "CENTER",
+                      "color": {
+                        "red": 0,
+                        "green": 0,
+                        "blue": 0,
+                        "alpha": 1
+                      },
+                      "font": {
+                        "size": 32,
+                        "weight": "SEMI_BOLD"
+                      }
+                    },
+                    "options": [
+                      {
+                        "height": 47,
+                        "id": "T25l",
+                        "text": {
+                          "rawValue": "One",
+                          "alignment": "LEFT",
+                          "color": {
+                            "red": 255,
+                            "green": 255,
+                            "blue": 255,
+                            "alpha": 1
+                          },
+                          "font": {
+                            "size": 16,
+                            "weight": "HEAVY"
+                          }
+                        },
+                        "background": {
+                          "color": {
+                            "red": 64,
+                            "green": 64,
+                            "blue": 64,
+                            "alpha": 1
+                          },
+                          "contentMode": "ORIGINAL",
+                          "image": null,
+                          "scale": "X1"
+                        },
+                        "border": {
+                          "color": {
+                            "red": 0,
+                            "green": 0,
+                            "blue": 0,
+                            "alpha": 1
+                          },
+                          "radius": 0,
+                          "width": 3
+                        },
+                        "opacity": 1,
+                        "topMargin": 15,
+                        "resultFillColor": {
+                          "red": 0,
+                          "green": 0,
+                          "blue": 0,
+                          "alpha": 1
+                        }
+                      },
+                      {
+                        "height": 47,
+                        "id": "VHdv",
+                        "text": {
+                          "rawValue": "Two",
+                          "alignment": "LEFT",
+                          "color": {
+                            "red": 255,
+                            "green": 255,
+                            "blue": 255,
+                            "alpha": 1
+                          },
+                          "font": {
+                            "size": 16,
+                            "weight": "HEAVY"
+                          }
+                        },
+                        "background": {
+                          "color": {
+                            "red": 64,
+                            "green": 64,
+                            "blue": 64,
+                            "alpha": 1
+                          },
+                          "contentMode": "ORIGINAL",
+                          "image": null,
+                          "scale": "X1"
+                        },
+                        "border": {
+                          "color": {
+                            "red": 0,
+                            "green": 0,
+                            "blue": 0,
+                            "alpha": 1
+                          },
+                          "radius": 0,
+                          "width": 3
+                        },
+                        "opacity": 1,
+                        "topMargin": 15,
+                        "resultFillColor": {
+                          "red": 0,
+                          "green": 0,
+                          "blue": 0,
+                          "alpha": 1
+                        }
+                      },
+                      {
+                        "height": 47,
+                        "id": "VGhyZWU=",
+                        "text": {
+                          "rawValue": "Three",
+                          "alignment": "LEFT",
+                          "color": {
+                            "red": 255,
+                            "green": 255,
+                            "blue": 255,
+                            "alpha": 1
+                          },
+                          "font": {
+                            "size": 16,
+                            "weight": "HEAVY"
+                          }
+                        },
+                        "background": {
+                          "color": {
+                            "red": 64,
+                            "green": 64,
+                            "blue": 64,
+                            "alpha": 1
+                          },
+                          "contentMode": "ORIGINAL",
+                          "image": null,
+                          "scale": "X1"
+                        },
+                        "border": {
+                          "color": {
+                            "red": 0,
+                            "green": 0,
+                            "blue": 0,
+                            "alpha": 1
+                          },
+                          "radius": 0,
+                          "width": 3
+                        },
+                        "opacity": 1,
+                        "topMargin": 15,
+                        "resultFillColor": {
+                          "red": 0,
+                          "green": 0,
+                          "blue": 0,
+                          "alpha": 1
+                        }
+                      }
+                    ]
+                  }
+                }
+              ],
+              "height": {
+                "__typename": "HeightIntrinsic"
+              },
+              "id": "r1cDN-S-H",
+              "name": "Row 2",
+              "keys": {},
+              "tags": []
+            },
+            {
+              "background": {
+                "color": {
+                  "red": 129,
+                  "green": 129,
+                  "blue": 129,
+                  "alpha": 0
+                },
+                "contentMode": "ORIGINAL",
+                "image": null,
+                "scale": "X1"
+              },
+              "blocks": [
+                {
+                  "__typename": "ImagePollBlock",
+                  "background": {
+                    "color": {
+                      "red": 0,
+                      "green": 0,
+                      "blue": 0,
+                      "alpha": 0
+                    },
+                    "contentMode": "ORIGINAL",
+                    "image": null,
+                    "scale": "X1"
+                  },
+                  "border": {
+                    "color": {
+                      "red": 0,
+                      "green": 0,
+                      "blue": 0,
+                      "alpha": 0
+                    },
+                    "radius": 0,
+                    "width": 0
+                  },
+                  "id": "Sygqqu-S-r",
+                  "name": "Image Poll 3",
+                  "insets": {
+                    "bottom": 0,
+                    "left": 0,
+                    "right": 0,
+                    "top": 0
+                  },
+                  "opacity": 1,
+                  "position": {
+                    "horizontalAlignment": {
+                      "__typename": "HorizontalAlignmentFill",
+                      "leftOffset": 6,
+                      "rightOffset": 4
+                    },
+                    "verticalAlignment": {
+                      "__typename": "VerticalAlignmentStacked",
+                      "topOffset": 20,
+                      "bottomOffset": 20,
+                      "height": {
+                        "__typename": "HeightIntrinsic"
+                      }
+                    }
+                  },
+                  "tapBehavior": {
+                    "__typename": "NoneBlockTapBehavior"
+                  },
+                  "keys": {},
+                  "tags": [],
+                  "imagePoll": {
+                    "question": {
+                      "rawValue": "",
+                      "alignment": "LEFT",
+                      "color": {
+                        "red": 0,
+                        "green": 0,
+                        "blue": 0,
+                        "alpha": 1
+                      },
+                      "font": {
+                        "size": 16,
+                        "weight": "SEMI_BOLD"
+                      }
+                    },
+                    "options": [
+                      {
+                        "id": "aHR0cHM6Ly9pbWFnZXMtcm92ZXItaW8uaW1naXgubmV0L3VwbG9hZHMvYTg3ZmY2NzlhMmYzZTcxZDkxODFhNjdiNzU0MjEyMmMvYzdkNmViZDAtZGU4Zi00NGIxLTgwMzUtNjQ4OWFhYWQ0ZDEzLWFsbGlzb24tYmFuY2VzLTY0MTQ1OC11bnNwbGFzaC5qcGc=",
+                        "text": {
+                          "rawValue": "one",
+                          "alignment": "LEFT",
+                          "color": {
+                            "red": 0,
+                            "green": 0,
+                            "blue": 0,
+                            "alpha": 1
+                          },
+                          "font": {
+                            "size": 16,
+                            "weight": "SEMI_BOLD"
+                          }
+                        },
+                        "image": {
+                          "height": 3344,
+                          "isURLOptimizationEnabled": true,
+                          "name": "allison-bances-641458-unsplash.jpg",
+                          "size": 2337163,
+                          "width": 2508,
+                          "url": "https://images-rover-io.imgix.net/uploads/a87ff679a2f3e71d9181a67b7542122c/c7d6ebd0-de8f-44b1-8035-6489aaad4d13-allison-bances-641458-unsplash.jpg"
+                        },
+                        "background": {
+                          "color": {
+                            "red": 14,
+                            "green": 222,
+                            "blue": 222,
+                            "alpha": 0
+                          },
+                          "contentMode": "ORIGINAL",
+                          "image": null,
+                          "scale": "X1"
+                        },
+                        "border": {
+                          "color": {
+                            "red": 220,
+                            "green": 220,
+                            "blue": 220,
+                            "alpha": 1
+                          },
+                          "radius": 0,
+                          "width": 0
+                        },
+                        "opacity": 1,
+                        "topMargin": 20,
+                        "leftMargin": 0,
+                        "resultFillColor": {
+                          "red": 160,
+                          "green": 216,
+                          "blue": 255,
+                          "alpha": 1
+                        }
+                      },
+                      {
+                        "id": "aHR0cHM6Ly9pbWFnZXMtcm92ZXItaW8uaW1naXgubmV0L3VwbG9hZHMvYTg3ZmY2NzlhMmYzZTcxZDkxODFhNjdiNzU0MjEyMmMvMzA4MTUxODQtOGIxNC00ZmZjLTgzMDYtNDEyNjVkYmRhOTYzLWNocmlzdGlhbi1ib2x0LVVmMGFWeWw1QzcwLXVuc3BsYXNoLmpwZw==",
+                        "text": {
+                          "rawValue": "two",
+                          "alignment": "LEFT",
+                          "color": {
+                            "red": 0,
+                            "green": 0,
+                            "blue": 0,
+                            "alpha": 1
+                          },
+                          "font": {
+                            "size": 16,
+                            "weight": "SEMI_BOLD"
+                          }
+                        },
+                        "image": {
+                          "height": 5189,
+                          "isURLOptimizationEnabled": true,
+                          "name": "christian-bolt-Uf0aVyl5C70-unsplash.jpg",
+                          "size": 2361353,
+                          "width": 4151,
+                          "url": "https://images-rover-io.imgix.net/uploads/a87ff679a2f3e71d9181a67b7542122c/30815184-8b14-4ffc-8306-41265dbda963-christian-bolt-Uf0aVyl5C70-unsplash.jpg"
+                        },
+                        "background": {
+                          "color": {
+                            "red": 14,
+                            "green": 222,
+                            "blue": 222,
+                            "alpha": 0
+                          },
+                          "contentMode": "ORIGINAL",
+                          "image": null,
+                          "scale": "X1"
+                        },
+                        "border": {
+                          "color": {
+                            "red": 220,
+                            "green": 220,
+                            "blue": 220,
+                            "alpha": 1
+                          },
+                          "radius": 0,
+                          "width": 0
+                        },
+                        "opacity": 1,
+                        "topMargin": 20,
+                        "leftMargin": 5,
+                        "resultFillColor": {
+                          "red": 160,
+                          "green": 216,
+                          "blue": 255,
+                          "alpha": 1
+                        }
+                      }
+                    ]
+                  }
+                }
+              ],
+              "height": {
+                "__typename": "HeightIntrinsic"
+              },
+              "id": "r19quZSZH",
+              "name": "Row 4",
+              "keys": {},
+              "tags": []
+            },
+            {
+              "background": {
+                "color": {
+                  "red": 129,
+                  "green": 129,
+                  "blue": 129,
+                  "alpha": 0
+                },
+                "contentMode": "ORIGINAL",
+                "image": null,
+                "scale": "X1"
+              },
+              "blocks": [
+                {
+                  "__typename": "ImageBlock",
+                  "background": {
+                    "color": {
+                      "red": 238,
+                      "green": 238,
+                      "blue": 238,
+                      "alpha": 0
+                    },
+                    "contentMode": "ORIGINAL",
+                    "image": null,
+                    "scale": "X1"
+                  },
+                  "border": {
+                    "color": {
+                      "red": 129,
+                      "green": 129,
+                      "blue": 129,
+                      "alpha": 1
+                    },
+                    "radius": 0,
+                    "width": 0
+                  },
+                  "id": "S1q47fBWS",
+                  "name": "birds-cable-lines-perched-2434420.jpg",
+                  "insets": {
+                    "bottom": 0,
+                    "left": 0,
+                    "right": 0,
+                    "top": 0
+                  },
+                  "opacity": 1,
+                  "position": {
+                    "horizontalAlignment": {
+                      "__typename": "HorizontalAlignmentFill",
+                      "leftOffset": 0,
+                      "rightOffset": 0
+                    },
+                    "verticalAlignment": {
+                      "__typename": "VerticalAlignmentStacked",
+                      "topOffset": 0,
+                      "bottomOffset": 0,
+                      "height": {
+                        "__typename": "HeightIntrinsic"
+                      }
+                    }
+                  },
+                  "tapBehavior": {
+                    "__typename": "NoneBlockTapBehavior"
+                  },
+                  "keys": {},
+                  "tags": [],
+                  "image": {
+                    "height": 4000,
+                    "isURLOptimizationEnabled": true,
+                    "name": "birds-cable-lines-perched-2434420.jpg",
+                    "size": 748299,
+                    "width": 6000,
+                    "url": "https://images-rover-io.imgix.net/uploads/a87ff679a2f3e71d9181a67b7542122c/be2409b5-879c-4c68-9e6b-dbd9c4120833-birds-cable-lines-perched-2434420.jpg"
+                  }
+                },
+                {
+                  "__typename": "TextPollBlock",
+                  "background": {
+                    "color": {
+                      "red": 0,
+                      "green": 0,
+                      "blue": 0,
+                      "alpha": 0
+                    },
+                    "contentMode": "ORIGINAL",
+                    "image": null,
+                    "scale": "X1"
+                  },
+                  "border": {
+                    "color": {
+                      "red": 0,
+                      "green": 0,
+                      "blue": 0,
+                      "alpha": 0
+                    },
+                    "radius": 0,
+                    "width": 0
+                  },
+                  "id": "HJZhWMSWH",
+                  "name": "Text Poll 3",
+                  "insets": {
+                    "bottom": 0,
+                    "left": 0,
+                    "right": 0,
+                    "top": 0
+                  },
+                  "opacity": 1,
+                  "position": {
+                    "horizontalAlignment": {
+                      "__typename": "HorizontalAlignmentCenter",
+                      "offset": -85,
+                      "width": 150
+                    },
+                    "verticalAlignment": {
+                      "__typename": "VerticalAlignmentStacked",
+                      "topOffset": 40,
+                      "bottomOffset": 20,
+                      "height": {
+                        "__typename": "HeightIntrinsic"
+                      }
+                    }
+                  },
+                  "tapBehavior": {
+                    "__typename": "NoneBlockTapBehavior"
+                  },
+                  "keys": {},
+                  "tags": [],
+                  "textPoll": {
+                    "question": {
+                      "rawValue": "SP",
+                      "alignment": "LEFT",
+                      "color": {
+                        "red": 0,
+                        "green": 0,
+                        "blue": 0,
+                        "alpha": 1
+                      },
+                      "font": {
+                        "size": 16,
+                        "weight": "SEMI_BOLD"
+                      }
+                    },
+                    "options": [
+                      {
+                        "height": 50,
+                        "id": "dW5v",
+                        "text": {
+                          "rawValue": "uno",
+                          "alignment": "LEFT",
+                          "color": {
+                            "red": 92,
+                            "green": 93,
+                            "blue": 92,
+                            "alpha": 1
+                          },
+                          "font": {
+                            "size": 16,
+                            "weight": "REGULAR"
+                          }
+                        },
+                        "background": {
+                          "color": {
+                            "red": 255,
+                            "green": 255,
+                            "blue": 255,
+                            "alpha": 1
+                          },
+                          "contentMode": "ORIGINAL",
+                          "image": null,
+                          "scale": "X1"
+                        },
+                        "border": {
+                          "color": {
+                            "red": 0,
+                            "green": 0,
+                            "blue": 0,
+                            "alpha": 1
+                          },
+                          "radius": 5,
+                          "width": 2
+                        },
+                        "opacity": 1,
+                        "topMargin": 20,
+                        "resultFillColor": {
+                          "red": 160,
+                          "green": 216,
+                          "blue": 255,
+                          "alpha": 1
+                        }
+                      },
+                      {
+                        "height": 50,
+                        "id": "ZG9z",
+                        "text": {
+                          "rawValue": "dos",
+                          "alignment": "LEFT",
+                          "color": {
+                            "red": 92,
+                            "green": 93,
+                            "blue": 92,
+                            "alpha": 1
+                          },
+                          "font": {
+                            "size": 16,
+                            "weight": "REGULAR"
+                          }
+                        },
+                        "background": {
+                          "color": {
+                            "red": 255,
+                            "green": 255,
+                            "blue": 255,
+                            "alpha": 1
+                          },
+                          "contentMode": "ORIGINAL",
+                          "image": null,
+                          "scale": "X1"
+                        },
+                        "border": {
+                          "color": {
+                            "red": 0,
+                            "green": 0,
+                            "blue": 0,
+                            "alpha": 1
+                          },
+                          "radius": 5,
+                          "width": 2
+                        },
+                        "opacity": 1,
+                        "topMargin": 20,
+                        "resultFillColor": {
+                          "red": 160,
+                          "green": 216,
+                          "blue": 255,
+                          "alpha": 1
+                        }
+                      },
+                      {
+                        "height": 50,
+                        "id": "dHJlcw==",
+                        "text": {
+                          "rawValue": "tres",
+                          "alignment": "LEFT",
+                          "color": {
+                            "red": 92,
+                            "green": 93,
+                            "blue": 92,
+                            "alpha": 1
+                          },
+                          "font": {
+                            "size": 16,
+                            "weight": "REGULAR"
+                          }
+                        },
+                        "background": {
+                          "color": {
+                            "red": 255,
+                            "green": 255,
+                            "blue": 255,
+                            "alpha": 1
+                          },
+                          "contentMode": "ORIGINAL",
+                          "image": null,
+                          "scale": "X1"
+                        },
+                        "border": {
+                          "color": {
+                            "red": 0,
+                            "green": 0,
+                            "blue": 0,
+                            "alpha": 1
+                          },
+                          "radius": 5,
+                          "width": 2
+                        },
+                        "opacity": 1,
+                        "topMargin": 20,
+                        "resultFillColor": {
+                          "red": 160,
+                          "green": 216,
+                          "blue": 255,
+                          "alpha": 1
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "__typename": "TextPollBlock",
+                  "background": {
+                    "color": {
+                      "red": 0,
+                      "green": 0,
+                      "blue": 0,
+                      "alpha": 0
+                    },
+                    "contentMode": "ORIGINAL",
+                    "image": null,
+                    "scale": "X1"
+                  },
+                  "border": {
+                    "color": {
+                      "red": 0,
+                      "green": 0,
+                      "blue": 0,
+                      "alpha": 0
+                    },
+                    "radius": 0,
+                    "width": 0
+                  },
+                  "id": "HJqyGfSbS",
+                  "name": "Text Poll 3",
+                  "insets": {
+                    "bottom": 0,
+                    "left": 0,
+                    "right": 0,
+                    "top": 0
+                  },
+                  "opacity": 1,
+                  "position": {
+                    "horizontalAlignment": {
+                      "__typename": "HorizontalAlignmentCenter",
+                      "offset": 85,
+                      "width": 150
+                    },
+                    "verticalAlignment": {
+                      "__typename": "VerticalAlignmentBottom",
+                      "offset": 19,
+                      "height": {
+                        "__typename": "HeightIntrinsic"
+                      }
+                    }
+                  },
+                  "tapBehavior": {
+                    "__typename": "NoneBlockTapBehavior"
+                  },
+                  "keys": {},
+                  "tags": [],
+                  "textPoll": {
+                    "question": {
+                      "rawValue": "EN",
+                      "alignment": "LEFT",
+                      "color": {
+                        "red": 0,
+                        "green": 0,
+                        "blue": 0,
+                        "alpha": 1
+                      },
+                      "font": {
+                        "size": 16,
+                        "weight": "SEMI_BOLD"
+                      }
+                    },
+                    "options": [
+                      {
+                        "height": 50,
+                        "id": "b25l",
+                        "text": {
+                          "rawValue": "one",
+                          "alignment": "LEFT",
+                          "color": {
+                            "red": 92,
+                            "green": 93,
+                            "blue": 92,
+                            "alpha": 1
+                          },
+                          "font": {
+                            "size": 16,
+                            "weight": "REGULAR"
+                          }
+                        },
+                        "background": {
+                          "color": {
+                            "red": 255,
+                            "green": 255,
+                            "blue": 255,
+                            "alpha": 1
+                          },
+                          "contentMode": "ORIGINAL",
+                          "image": null,
+                          "scale": "X1"
+                        },
+                        "border": {
+                          "color": {
+                            "red": 0,
+                            "green": 0,
+                            "blue": 0,
+                            "alpha": 1
+                          },
+                          "radius": 5,
+                          "width": 2
+                        },
+                        "opacity": 1,
+                        "topMargin": 20,
+                        "resultFillColor": {
+                          "red": 160,
+                          "green": 216,
+                          "blue": 255,
+                          "alpha": 1
+                        }
+                      },
+                      {
+                        "height": 50,
+                        "id": "dHdv",
+                        "text": {
+                          "rawValue": "two",
+                          "alignment": "LEFT",
+                          "color": {
+                            "red": 92,
+                            "green": 93,
+                            "blue": 92,
+                            "alpha": 1
+                          },
+                          "font": {
+                            "size": 16,
+                            "weight": "REGULAR"
+                          }
+                        },
+                        "background": {
+                          "color": {
+                            "red": 255,
+                            "green": 255,
+                            "blue": 255,
+                            "alpha": 1
+                          },
+                          "contentMode": "ORIGINAL",
+                          "image": null,
+                          "scale": "X1"
+                        },
+                        "border": {
+                          "color": {
+                            "red": 0,
+                            "green": 0,
+                            "blue": 0,
+                            "alpha": 1
+                          },
+                          "radius": 5,
+                          "width": 2
+                        },
+                        "opacity": 1,
+                        "topMargin": 20,
+                        "resultFillColor": {
+                          "red": 160,
+                          "green": 216,
+                          "blue": 255,
+                          "alpha": 1
+                        }
+                      },
+                      {
+                        "height": 50,
+                        "id": "dGhyZWU=",
+                        "text": {
+                          "rawValue": "three",
+                          "alignment": "LEFT",
+                          "color": {
+                            "red": 92,
+                            "green": 93,
+                            "blue": 92,
+                            "alpha": 1
+                          },
+                          "font": {
+                            "size": 16,
+                            "weight": "REGULAR"
+                          }
+                        },
+                        "background": {
+                          "color": {
+                            "red": 255,
+                            "green": 255,
+                            "blue": 255,
+                            "alpha": 1
+                          },
+                          "contentMode": "ORIGINAL",
+                          "image": null,
+                          "scale": "X1"
+                        },
+                        "border": {
+                          "color": {
+                            "red": 0,
+                            "green": 0,
+                            "blue": 0,
+                            "alpha": 1
+                          },
+                          "radius": 5,
+                          "width": 2
+                        },
+                        "opacity": 1,
+                        "topMargin": 20,
+                        "resultFillColor": {
+                          "red": 160,
+                          "green": 216,
+                          "blue": 255,
+                          "alpha": 1
+                        }
+                      }
+                    ]
+                  }
+                }
+              ],
+              "height": {
+                "__typename": "HeightIntrinsic"
+              },
+              "id": "r1-QlGS-H",
+              "name": "Row 3",
+              "keys": {},
+              "tags": []
+            },
+            {
+              "background": {
+                "color": {
+                  "red": 0,
+                  "green": 0,
+                  "blue": 0,
+                  "alpha": 1
+                },
+                "contentMode": "ORIGINAL",
+                "image": null,
+                "scale": "X1"
+              },
+              "blocks": [
+                {
+                  "__typename": "ImagePollBlock",
+                  "background": {
+                    "color": {
+                      "red": 0,
+                      "green": 0,
+                      "blue": 0,
+                      "alpha": 0
+                    },
+                    "contentMode": "ORIGINAL",
+                    "image": null,
+                    "scale": "X1"
+                  },
+                  "border": {
+                    "color": {
+                      "red": 0,
+                      "green": 0,
+                      "blue": 0,
+                      "alpha": 0
+                    },
+                    "radius": 0,
+                    "width": 0
+                  },
+                  "id": "HyxxMEMHbS",
+                  "name": "Image Poll 4",
+                  "insets": {
+                    "bottom": 0,
+                    "left": 0,
+                    "right": 0,
+                    "top": 0
+                  },
+                  "opacity": 1,
+                  "position": {
+                    "horizontalAlignment": {
+                      "__typename": "HorizontalAlignmentCenter",
+                      "offset": -85,
+                      "width": 150
+                    },
+                    "verticalAlignment": {
+                      "__typename": "VerticalAlignmentStacked",
+                      "topOffset": 20,
+                      "bottomOffset": 20,
+                      "height": {
+                        "__typename": "HeightIntrinsic"
+                      }
+                    }
+                  },
+                  "tapBehavior": {
+                    "__typename": "NoneBlockTapBehavior"
+                  },
+                  "keys": {},
+                  "tags": [],
+                  "imagePoll": {
+                    "question": {
+                      "rawValue": "",
+                      "alignment": "CENTER",
+                      "color": {
+                        "red": 255,
+                        "green": 255,
+                        "blue": 255,
+                        "alpha": 1
+                      },
+                      "font": {
+                        "size": 14,
+                        "weight": "SEMI_BOLD"
+                      }
+                    },
+                    "options": [
+                      {
+                        "id": "aHR0cHM6Ly9pbWFnZXMtcm92ZXItaW8uaW1naXgubmV0L3VwbG9hZHMvYTg3ZmY2NzlhMmYzZTcxZDkxODFhNjdiNzU0MjEyMmMvMTc1MTQ4ZmItYzJhYS00ZWNlLWJlNjAtMmVlNTI3YWQwYTFkLWN1dGUtYmFieS1hbmltYWxzLTkuanBn",
+                        "text": {
+                          "rawValue": "1",
+                          "alignment": "CENTER",
+                          "color": {
+                            "red": 92,
+                            "green": 93,
+                            "blue": 92,
+                            "alpha": 1
+                          },
+                          "font": {
+                            "size": 16,
+                            "weight": "SEMI_BOLD"
+                          }
+                        },
+                        "image": {
+                          "height": 367,
+                          "isURLOptimizationEnabled": true,
+                          "name": "cute-baby-animals-9.jpg",
+                          "size": 30922,
+                          "width": 605,
+                          "url": "https://images-rover-io.imgix.net/uploads/a87ff679a2f3e71d9181a67b7542122c/175148fb-c2aa-4ece-be60-2ee527ad0a1d-cute-baby-animals-9.jpg"
+                        },
+                        "background": {
+                          "color": {
+                            "red": 255,
+                            "green": 255,
+                            "blue": 255,
+                            "alpha": 1
+                          },
+                          "contentMode": "ORIGINAL",
+                          "image": null,
+                          "scale": "X1"
+                        },
+                        "border": {
+                          "color": {
+                            "red": 220,
+                            "green": 220,
+                            "blue": 220,
+                            "alpha": 1
+                          },
+                          "radius": 0,
+                          "width": 0
+                        },
+                        "opacity": 1,
+                        "topMargin": 20,
+                        "leftMargin": 0,
+                        "resultFillColor": {
+                          "red": 160,
+                          "green": 216,
+                          "blue": 255,
+                          "alpha": 1
+                        }
+                      },
+                      {
+                        "id": "aHR0cHM6Ly9pbWFnZXMtcm92ZXItaW8uaW1naXgubmV0L3VwbG9hZHMvYTg3ZmY2NzlhMmYzZTcxZDkxODFhNjdiNzU0MjEyMmMvZmYwNDA3YTctODI2Ny00NjdjLWE4NjgtZmE5ZmI2YzJmZDRkLWN1dGUtYW5pbWFsLTEwLnBuZw==",
+                        "text": {
+                          "rawValue": "2",
+                          "alignment": "CENTER",
+                          "color": {
+                            "red": 92,
+                            "green": 93,
+                            "blue": 92,
+                            "alpha": 1
+                          },
+                          "font": {
+                            "size": 16,
+                            "weight": "SEMI_BOLD"
+                          }
+                        },
+                        "image": {
+                          "height": 1200,
+                          "isURLOptimizationEnabled": true,
+                          "name": "cute-animal-10.png",
+                          "size": 991240,
+                          "width": 1200,
+                          "url": "https://images-rover-io.imgix.net/uploads/a87ff679a2f3e71d9181a67b7542122c/ff0407a7-8267-467c-a868-fa9fb6c2fd4d-cute-animal-10.png"
+                        },
+                        "background": {
+                          "color": {
+                            "red": 255,
+                            "green": 255,
+                            "blue": 255,
+                            "alpha": 1
+                          },
+                          "contentMode": "ORIGINAL",
+                          "image": null,
+                          "scale": "X1"
+                        },
+                        "border": {
+                          "color": {
+                            "red": 220,
+                            "green": 220,
+                            "blue": 220,
+                            "alpha": 1
+                          },
+                          "radius": 0,
+                          "width": 0
+                        },
+                        "opacity": 1,
+                        "topMargin": 20,
+                        "leftMargin": 10,
+                        "resultFillColor": {
+                          "red": 160,
+                          "green": 216,
+                          "blue": 255,
+                          "alpha": 1
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "__typename": "ImagePollBlock",
+                  "background": {
+                    "color": {
+                      "red": 0,
+                      "green": 0,
+                      "blue": 0,
+                      "alpha": 0
+                    },
+                    "contentMode": "ORIGINAL",
+                    "image": null,
+                    "scale": "X1"
+                  },
+                  "border": {
+                    "color": {
+                      "red": 0,
+                      "green": 0,
+                      "blue": 0,
+                      "alpha": 0
+                    },
+                    "radius": 0,
+                    "width": 0
+                  },
+                  "id": "SJEvEMr-B",
+                  "name": "Image Poll 4",
+                  "insets": {
+                    "bottom": 0,
+                    "left": 0,
+                    "right": 0,
+                    "top": 0
+                  },
+                  "opacity": 1,
+                  "position": {
+                    "horizontalAlignment": {
+                      "__typename": "HorizontalAlignmentCenter",
+                      "offset": 85,
+                      "width": 150
+                    },
+                    "verticalAlignment": {
+                      "__typename": "VerticalAlignmentTop",
+                      "offset": 20,
+                      "height": {
+                        "__typename": "HeightIntrinsic"
+                      }
+                    }
+                  },
+                  "tapBehavior": {
+                    "__typename": "NoneBlockTapBehavior"
+                  },
+                  "keys": {},
+                  "tags": [],
+                  "imagePoll": {
+                    "question": {
+                      "rawValue": "",
+                      "alignment": "CENTER",
+                      "color": {
+                        "red": 255,
+                        "green": 255,
+                        "blue": 255,
+                        "alpha": 1
+                      },
+                      "font": {
+                        "size": 14,
+                        "weight": "SEMI_BOLD"
+                      }
+                    },
+                    "options": [
+                      {
+                        "id": "aHR0cHM6Ly9pbWFnZXMtcm92ZXItaW8uaW1naXgubmV0L3VwbG9hZHMvYTg3ZmY2NzlhMmYzZTcxZDkxODFhNjdiNzU0MjEyMmMvZWY0ZDQwMDUtZjZmZi00MTE3LTkzZjAtYzcwYjEyN2JhMGU2LWN1dGUtYmFieS1hbmltYWxzLTEzLmpwZw==",
+                        "text": {
+                          "rawValue": "1",
+                          "alignment": "CENTER",
+                          "color": {
+                            "red": 0,
+                            "green": 0,
+                            "blue": 0,
+                            "alpha": 1
+                          },
+                          "font": {
+                            "size": 16,
+                            "weight": "SEMI_BOLD"
+                          }
+                        },
+                        "image": {
+                          "height": 454,
+                          "isURLOptimizationEnabled": true,
+                          "name": "cute-baby-animals-13.jpg",
+                          "size": 80798,
+                          "width": 605,
+                          "url": "https://images-rover-io.imgix.net/uploads/a87ff679a2f3e71d9181a67b7542122c/ef4d4005-f6ff-4117-93f0-c70b127ba0e6-cute-baby-animals-13.jpg"
+                        },
+                        "background": {
+                          "color": {
+                            "red": 255,
+                            "green": 255,
+                            "blue": 255,
+                            "alpha": 1
+                          },
+                          "contentMode": "ORIGINAL",
+                          "image": null,
+                          "scale": "X1"
+                        },
+                        "border": {
+                          "color": {
+                            "red": 220,
+                            "green": 220,
+                            "blue": 220,
+                            "alpha": 1
+                          },
+                          "radius": 0,
+                          "width": 0
+                        },
+                        "opacity": 1,
+                        "topMargin": 20,
+                        "leftMargin": 0,
+                        "resultFillColor": {
+                          "red": 255,
+                          "green": 255,
+                          "blue": 255,
+                          "alpha": 1
+                        }
+                      },
+                      {
+                        "id": "aHR0cHM6Ly9pbWFnZXMtcm92ZXItaW8uaW1naXgubmV0L3VwbG9hZHMvYTg3ZmY2NzlhMmYzZTcxZDkxODFhNjdiNzU0MjEyMmMvODM0MTQ1NGUtZDUzZi00MWY2LWExYzktNTYxNTc5MWU5MzQyLWFsZXgta29yb2xrb2ZmLXU1bFBqMy1mMFhJLXVuc3BsYXNoLmpwZw==",
+                        "text": {
+                          "rawValue": "2",
+                          "alignment": "CENTER",
+                          "color": {
+                            "red": 0,
+                            "green": 0,
+                            "blue": 0,
+                            "alpha": 1
+                          },
+                          "font": {
+                            "size": 16,
+                            "weight": "SEMI_BOLD"
+                          }
+                        },
+                        "image": {
+                          "height": 2890,
+                          "isURLOptimizationEnabled": true,
+                          "name": "alex-korolkoff-u5lPj3-f0XI-unsplash.jpg",
+                          "size": 1858895,
+                          "width": 3854,
+                          "url": "https://images-rover-io.imgix.net/uploads/a87ff679a2f3e71d9181a67b7542122c/8341454e-d53f-41f6-a1c9-5615791e9342-alex-korolkoff-u5lPj3-f0XI-unsplash.jpg"
+                        },
+                        "background": {
+                          "color": {
+                            "red": 255,
+                            "green": 255,
+                            "blue": 255,
+                            "alpha": 1
+                          },
+                          "contentMode": "ORIGINAL",
+                          "image": null,
+                          "scale": "X1"
+                        },
+                        "border": {
+                          "color": {
+                            "red": 220,
+                            "green": 220,
+                            "blue": 220,
+                            "alpha": 1
+                          },
+                          "radius": 0,
+                          "width": 0
+                        },
+                        "opacity": 1,
+                        "topMargin": 20,
+                        "leftMargin": 10,
+                        "resultFillColor": {
+                          "red": 255,
+                          "green": 255,
+                          "blue": 255,
+                          "alpha": 1
+                        }
+                      }
+                    ]
+                  }
+                }
+              ],
+              "height": {
+                "__typename": "HeightIntrinsic"
+              },
+              "id": "H1xfVfSWr",
+              "name": "Row 5",
+              "keys": {},
+              "tags": []
+            }
+          ],
+          "statusBar": {
+            "style": "LIGHT",
+            "color": {
+              "red": 0,
+              "green": 0,
+              "blue": 0,
+              "alpha": 1
+            }
+          },
+          "titleBar": {
+            "backgroundColor": {
+              "red": 0,
+              "green": 0,
+              "blue": 0,
+              "alpha": 1
+            },
+            "buttons": "CLOSE",
+            "buttonColor": {
+              "red": 255,
+              "green": 255,
+              "blue": 255,
+              "alpha": 1
+            },
+            "text": "Polls",
+            "textColor": {
+              "red": 255,
+              "green": 255,
+              "blue": 255,
+              "alpha": 1
+            },
+            "useDefaultStyle": false
+          },
+          "keys": {},
+          "tags": []
+        }
+      ],
+      "keys": {},
+      "tags": []
+    }
+  }
+}

@@ -39,6 +39,10 @@ class TextPollOptionView: UIView {
         case answered(optionResults: OptionResults)
     }
     
+    public var topMargin: Int {
+        return self.option.topMargin
+    }
+    
     private let backgroundView = UIImageView()
     private let answerTextView = UILabel()
     private let resultPercentage = UILabel()
@@ -47,14 +51,13 @@ class TextPollOptionView: UIView {
     private var resultFillBarWidthConstraint: NSLayoutConstraint?
     private var resultPercentageWidthConstraint: NSLayoutConstraint?
     
-    private let style: TextPollBlock.OptionStyle
+    public let option: TextPollBlock.TextPoll.Option
     
     init(
-        optionText: String,
-        style: TextPollBlock.OptionStyle,
+        option: TextPollBlock.TextPoll.Option,
         initialState: State
     ) {
-        self.style = style
+        self.option = option
         self.state = initialState
         
         super.init(frame: CGRect.zero)
@@ -86,7 +89,7 @@ class TextPollOptionView: UIView {
         self.resultFillBarArea.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
         self.resultFillBarArea.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
         self.resultFillBarArea.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
-        self.resultFillBar.backgroundColor = style.resultFillColor.opaque.uiColor
+        self.resultFillBar.backgroundColor = option.resultFillColor.opaque.uiColor
         self.resultFillBar.topAnchor.constraint(equalTo: self.resultFillBarArea.topAnchor).isActive = true
         self.resultFillBar.bottomAnchor.constraint(equalTo: self.resultFillBarArea.bottomAnchor).isActive = true
         self.resultFillBar.leadingAnchor.constraint(equalTo: self.resultFillBarArea.leadingAnchor).isActive = true
@@ -105,14 +108,14 @@ class TextPollOptionView: UIView {
         self.resultPercentageWidthConstraint!.isActive = true
         // we want the content to expand out to the horizontal space permitted by the percentage view.
         self.answerTextView.setContentHuggingPriority(.fittingSizeLevel, for: .horizontal)
-        self.resultPercentage.font = style.font.bumpedForPercentageIndicator.uiFont
-        self.resultPercentage.textColor = style.color.uiColor
+        self.resultPercentage.font = option.text.font.bumpedForPercentageIndicator.uiFont
+        self.resultPercentage.textColor = option.text.color.uiColor
         
         // MARK: Answer Text View
         
         self.answerTextView.backgroundColor = .clear
         self.answerTextView.numberOfLines = 1
-        self.answerTextView.attributedText = style.attributedText(for: optionText)
+        self.answerTextView.attributedText = option.attributedText
         self.answerTextView.lineBreakMode = .byTruncatingTail
         self.answerTextView.topAnchor.constraint(equalTo: self.topAnchor, constant: OPTION_TEXT_SPACING).isActive = true
         self.answerTextView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: OPTION_TEXT_SPACING * -1).isActive = true
@@ -121,11 +124,11 @@ class TextPollOptionView: UIView {
         
         // MARK: Container
         
-        self.heightAnchor.constraint(equalToConstant: CGFloat(style.height)).isActive = true
-        self.configureOpacity(opacity: style.opacity)
+        self.heightAnchor.constraint(equalToConstant: CGFloat(option.height)).isActive = true
+        self.configureOpacity(opacity: option.opacity)
         self.clipsToBounds = true
-        self.configureBorder(border: style.border, constrainedByFrame: nil)
-        self.configureBackgroundColor(color: style.background.color, opacity: style.opacity)
+        self.configureBorder(border: option.border, constrainedByFrame: nil)
+        self.configureBackgroundColor(color: option.background.color, opacity: option.opacity)
         
         switch initialState {
         case .waitingForAnswer:
@@ -151,7 +154,7 @@ class TextPollOptionView: UIView {
         })
         
         UIView.animate(withDuration: RESULT_FILL_BAR_REVEAL_TIME, delay: 0, options: [.curveEaseInOut], animations: {
-            self.resultFillBarArea.alpha = CGFloat(self.style.resultFillColor.alpha)
+            self.resultFillBarArea.alpha = CGFloat(self.option.resultFillColor.alpha)
         })
         
         let width = self.resultFillBarArea.frame.width * CGFloat(optionResults.fraction)
@@ -160,10 +163,10 @@ class TextPollOptionView: UIView {
             self.resultFillBarArea.layoutIfNeeded()
         })
         
-        let percentageTextFont = self.style.font.bumpedForPercentageIndicator
+        let percentageTextFont = self.option.text.font.bumpedForPercentageIndicator
 
         // expand the percentage view to accomodate all possible percentage values as we animate through them, to avoid any possible wobble in the layout.
-        self.resultPercentageWidthConstraint?.constant = percentageTextFont.attributedText(forPlainText: "100%", color: self.style.color)?.boundingRect(with: .init(width: 1_000, height: 1_000), options: [], context: nil).width ?? CGFloat(0)
+        self.resultPercentageWidthConstraint?.constant = percentageTextFont.attributedText(forPlainText: "100%", color: self.option.text.color)?.boundingRect(with: .init(width: 1_000, height: 1_000), options: [], context: nil).width ?? CGFloat(0)
         
         self.percentageAnimationTimer?.invalidate()
         let startTime = Date()
@@ -188,7 +191,7 @@ class TextPollOptionView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         // we defer configuring background image to here so that the layout has been calculated, and thus frame is available.
-        self.backgroundView.configureAsBackgroundImage(background: style.background)
+        self.backgroundView.configureAsBackgroundImage(background: option.background)
     }
 }
 
@@ -204,7 +207,7 @@ class TextPollCell: BlockCell {
         return containerView
     }
     
-    private var questionView: PollQuestionView?
+    private var questionView: NewPollQuestionView?
     
     private var temporaryTapDemoTimer: Timer?
     
@@ -219,23 +222,23 @@ class TextPollCell: BlockCell {
             return
         }
     
-        questionView = PollQuestionView(questionText: textPollBlock.question, style: textPollBlock.questionStyle)
+        questionView = NewPollQuestionView(questionText: textPollBlock.textPoll.question)
         containerView.addSubview(questionView!)
         questionView?.topAnchor.constraint(equalTo: containerView.topAnchor).isActive = true
         questionView?.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
         questionView?.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
-        self.optionViews = textPollBlock.options.map { option in
+        self.optionViews = textPollBlock.textPoll.options.map { option in
             // TODO: get initial state synchronously from the local VotingService.
-            TextPollOptionView(optionText: option, style: textPollBlock.optionStyle, initialState: .waitingForAnswer)
+            TextPollOptionView(option: option, initialState: .waitingForAnswer)
         }
         for optionViewIndex in 0..<optionViews.count {
             let currentOptionView = self.optionViews[optionViewIndex]
             containerView.addSubview(currentOptionView)
             if optionViewIndex > 0 {
                 let previousOptionView = self.optionViews[optionViewIndex - 1]
-                currentOptionView.topAnchor.constraint(equalTo: previousOptionView.bottomAnchor, constant: CGFloat(textPollBlock.optionStyle.verticalSpacing)).isActive = true
+                currentOptionView.topAnchor.constraint(equalTo: previousOptionView.bottomAnchor, constant: CGFloat(currentOptionView.topMargin)).isActive = true
             } else {
-                currentOptionView.topAnchor.constraint(equalTo: questionView!.bottomAnchor, constant: CGFloat(textPollBlock.optionStyle.verticalSpacing)).isActive = true
+                currentOptionView.topAnchor.constraint(equalTo: questionView!.bottomAnchor, constant: CGFloat(currentOptionView.topMargin)).isActive = true
             }
             currentOptionView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
             currentOptionView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
@@ -243,16 +246,16 @@ class TextPollCell: BlockCell {
         
         // TODO: A stand-in for the user tapping.
         self.temporaryTapDemoTimer = Timer.scheduledTimer(withTimeInterval: 4, repeats: false) { _ in
-            self.optionViews[0].state = .answered(optionResults: TextPollOptionView.OptionResults(selected: true, fraction: 0.67))
-            self.optionViews[1].state = .answered(optionResults: TextPollOptionView.OptionResults(selected: false, fraction: 0.166))
-            self.optionViews[2].state = .answered(optionResults: TextPollOptionView.OptionResults(selected: false, fraction: 0.166))
+            self.optionViews.forEach { (optionView) in
+                optionView.state = .answered(optionResults: TextPollOptionView.OptionResults.init(selected: false, fraction: 0.67))
+            }
         }
         
         // TODO: A stand-in for the user tapping.
         self.temporaryTapDemoTimer = Timer.scheduledTimer(withTimeInterval: 10, repeats: false) { _ in
-            self.optionViews[0].state = .answered(optionResults: TextPollOptionView.OptionResults(selected: true, fraction: 0.50))
-            self.optionViews[1].state = .answered(optionResults: TextPollOptionView.OptionResults(selected: false, fraction: 0.25))
-            self.optionViews[2].state = .answered(optionResults: TextPollOptionView.OptionResults(selected: false, fraction: 0.66))
+            self.optionViews.forEach { (optionView) in
+                optionView.state = .answered(optionResults: TextPollOptionView.OptionResults.init(selected: false, fraction: 0.25))
+            }
         }
     }
 }
@@ -265,25 +268,25 @@ extension TextPollBlock {
         
         let size = CGSize(width: innerWidth, height: CGFloat.greatestFiniteMagnitude)
         
-        let questionAttributedText = self.questionStyle.attributedText(for: self.question)
+        let questionAttributedText = self.textPoll.question.attributedText(forFormat: .plain)
         
         let questionHeight = questionAttributedText?.boundingRect(with: size, options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil).height ?? CGFloat(0)
         
-        let optionStyleHeight = self.optionStyle.height
-        let verticalSpacing = self.optionStyle.verticalSpacing
+        let optionsHeightAndSpacing = self.textPoll.options.flatMap { option in
+            return [option.height, option.topMargin]
+        }.reduce(0) { (accumulator, addend) in
+            return accumulator + addend
+        }
         
-        let optionsHeight: CGFloat = CGFloat(optionStyleHeight) * CGFloat(self.options.count)
-        let optionSpacing: CGFloat = CGFloat(verticalSpacing) * CGFloat(self.options.count)
-        
-        return optionsHeight + optionSpacing + questionHeight + CGFloat(insets.top + insets.bottom)
+        return CGFloat(optionsHeightAndSpacing) + questionHeight + CGFloat(insets.top + insets.bottom)
     }
 }
 
 // MARK: Helpers
 
-extension TextPollBlock.OptionStyle {
-    fileprivate func attributedText(for text: String) -> NSAttributedString? {
-        return self.font.attributedText(forPlainText: text, color: self.color)
+extension TextPollBlock.TextPoll.Option {
+    var attributedText: NSAttributedString? {
+        return self.text.attributedText(forFormat: .plain)
     }
 }
 

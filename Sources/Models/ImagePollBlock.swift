@@ -49,7 +49,6 @@ public struct ImagePollBlock: PollBlock {
     
     public var imagePoll: ImagePoll
 
-    
     // MARK: Block fields
     public var background: Background
     public var border: Border

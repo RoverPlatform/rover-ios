@@ -197,7 +197,6 @@ class TextPollOptionView: UIView {
 // MARK: Cell View
 
 class TextPollCell: BlockCell {
-    /// a simple container view to the relatively complex layout of the text poll.
     private let containerView = UIView()
     
     private var optionViews = [TextPollOptionView]()

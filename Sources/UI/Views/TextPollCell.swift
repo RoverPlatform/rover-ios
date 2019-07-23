@@ -118,8 +118,6 @@ class TextPollOptionView: UIView {
         self.answerTextView.attributedText = option.attributedText
         self.answerTextView.lineBreakMode = .byTruncatingTail
         self.answerTextView.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
-//        self.answerTextView.topAnchor.constraint(equalTo: self.topAnchor, constant: OPTION_TEXT_SPACING).isActive = true
-//        self.answerTextView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: OPTION_TEXT_SPACING * -1).isActive = true
         self.answerTextView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: OPTION_TEXT_SPACING).isActive = true
         self.answerTextView.trailingAnchor.constraint(equalTo: self.resultPercentage.leadingAnchor, constant: OPTION_TEXT_SPACING * -1).isActive = true
         
@@ -208,7 +206,7 @@ class TextPollCell: BlockCell {
         return containerView
     }
     
-    private var questionView: NewPollQuestionView?
+    private var questionView: PollQuestionView?
     
     private var temporaryTapDemoTimer: Timer?
     
@@ -223,7 +221,7 @@ class TextPollCell: BlockCell {
             return
         }
     
-        questionView = NewPollQuestionView(questionText: textPollBlock.textPoll.question)
+        questionView = PollQuestionView(questionText: textPollBlock.textPoll.question)
         containerView.addSubview(questionView!)
         questionView?.topAnchor.constraint(equalTo: containerView.topAnchor).isActive = true
         questionView?.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
@@ -251,7 +249,7 @@ class TextPollCell: BlockCell {
                 optionView.state = .answered(optionResults: TextPollOptionView.OptionResults.init(selected: false, fraction: 0.67))
             }
         }
-        
+
         // TODO: A stand-in for the user tapping.
         self.temporaryTapDemoTimer = Timer.scheduledTimer(withTimeInterval: 10, repeats: false) { _ in
             self.optionViews.forEach { (optionView) in

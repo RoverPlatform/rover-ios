@@ -44,6 +44,14 @@ class ImagePollOptionView: UIView {
         case answered(optionResults: OptionResults)
     }
     
+    public var topMargin: Int {
+        return self.option.topMargin
+    }
+    
+    public var leftMargin: Int {
+        return self.option.leftMargin
+    }
+    
     private let content = UIImageView()
     private let answerTextView = UILabel()
     
@@ -55,11 +63,10 @@ class ImagePollOptionView: UIView {
     private let resultFillBar = UIView()
     private var resultFillBarWidthConstraint: NSLayoutConstraint?
     
-    private let option: ImagePollBlock.Option
+    private let option: ImagePollBlock.ImagePoll.Option
     
     init(
-        option: ImagePollBlock.Option,
-        style: ImagePollBlock.OptionStyle,
+        option: ImagePollBlock.ImagePoll.Option,
         initialState: State
     ) {
         self.option = option
@@ -101,11 +108,10 @@ class ImagePollOptionView: UIView {
         
         self.answerTextView.backgroundColor = .clear
         self.answerTextView.numberOfLines = 1
-        self.answerTextView.attributedText = style.attributedText(for: option.text)
+        self.answerTextView.attributedText = option.attributedText
         self.answerTextView.lineBreakMode = .byTruncatingTail
         self.answerTextView.backgroundColor = .clear
         self.answerTextView.textAlignment = .center
-        self.answerTextView.text = option.text
         
         // MARK: Results Fade Overlay
         
@@ -130,7 +136,7 @@ class ImagePollOptionView: UIView {
         self.resultFillBarArea.clipsToBounds = true
         self.resultFillBarArea.layer.cornerRadius = RESULT_FILL_BAR_HEIGHT / 2
         self.resultFillBarArea.backgroundColor = UIColor.white.withAlphaComponent(0.5)
-        self.resultFillBar.backgroundColor = style.resultFillColor.uiColor
+        self.resultFillBar.backgroundColor = option.resultFillColor.uiColor
         
         self.resultPercentage.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
         self.resultPercentage.bottomAnchor.constraint(equalTo: self.resultFillBarArea.topAnchor, constant: RESULT_FILL_BAR_VERTICAL_SPACING * -1).isActive = true
@@ -139,10 +145,10 @@ class ImagePollOptionView: UIView {
         
         // MARK: Container
         
-        self.configureOpacity(opacity: style.opacity)
+        self.configureOpacity(opacity: option.opacity)
         self.clipsToBounds = true
-        self.configureBorder(border: style.border, constrainedByFrame: nil)
-        self.backgroundColor = style.background.color.uiColor
+        self.configureBorder(border: option.border, constrainedByFrame: nil)
+        self.backgroundColor = option.background.color.uiColor
         
         switch initialState {
         case .waitingForAnswer:
@@ -231,14 +237,14 @@ class ImagePollCell: BlockCell {
             return
         }
         
-        self.questionView = PollQuestionView(questionText: imagePollBlock.question, style: imagePollBlock.questionStyle)
+        self.questionView = PollQuestionView(questionText: imagePollBlock.imagePoll.question)
         self.containerView.addSubview(questionView!)
         self.questionView?.topAnchor.constraint(equalTo: containerView.topAnchor).isActive = true
         self.questionView?.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
         self.questionView?.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
-        self.optionViews = imagePollBlock.options.map { option in
+        self.optionViews = imagePollBlock.imagePoll.options.map { option in
             // TODO: get initial state synchronously from the local VotingService.
-            ImagePollOptionView(option: option, style: imagePollBlock.optionStyle, initialState: .waitingForAnswer)
+            ImagePollOptionView(option: option, initialState: .waitingForAnswer)
         }
         
         // we render the poll options in two columns, regardless of device size.  so pair them off.
@@ -250,37 +256,37 @@ class ImagePollCell: BlockCell {
             self.containerView.addSubview(secondView)
             if pairIndex == 0 {
                 // first row
-                firstView.topAnchor.constraint(equalTo: questionView!.bottomAnchor, constant: CGFloat(imagePollBlock.optionStyle.verticalSpacing)).isActive = true
-                secondView.topAnchor.constraint(equalTo: questionView!.bottomAnchor, constant: CGFloat(imagePollBlock.optionStyle.verticalSpacing)).isActive = true
+                firstView.topAnchor.constraint(equalTo: questionView!.bottomAnchor, constant: CGFloat(firstView.topMargin)).isActive = true
+                secondView.topAnchor.constraint(equalTo: questionView!.bottomAnchor, constant: CGFloat(secondView.topMargin)).isActive = true
             } else {
                 // subsequent rows stack on one another
                 let (previousFirstView, previousSecondView) = optionViewPairs[pairIndex - 1]
                 
-                firstView.topAnchor.constraint(equalTo: previousFirstView.bottomAnchor, constant: CGFloat(imagePollBlock.optionStyle.verticalSpacing)).isActive = true
-                secondView.topAnchor.constraint(equalTo: previousSecondView.bottomAnchor, constant: CGFloat(imagePollBlock.optionStyle.verticalSpacing)).isActive = true
+                firstView.topAnchor.constraint(equalTo: previousFirstView.bottomAnchor, constant: CGFloat(firstView.topMargin)).isActive = true
+                secondView.topAnchor.constraint(equalTo: previousSecondView.bottomAnchor, constant: CGFloat(secondView.topMargin)).isActive = true
             }
             
             firstView.leadingAnchor.constraint(equalTo: self.containerView.leadingAnchor).isActive = true
-            firstView.trailingAnchor.constraint(equalTo: self.containerView.centerXAnchor, constant: -1 * CGFloat(imagePollBlock.optionStyle.horizontalSpacing) / 2).isActive = true
             
-            secondView.leadingAnchor.constraint(equalTo: self.containerView.centerXAnchor, constant: CGFloat(imagePollBlock.optionStyle.horizontalSpacing) / 2).isActive = true
+            // the leftMargin value on the right hand column of image options defines the space between the two. So we'll space each column from the center line by half that amount.
+            let centerSpacing = CGFloat(secondView.leftMargin) / 2.0
+            firstView.trailingAnchor.constraint(equalTo: self.containerView.centerXAnchor, constant: -1 * centerSpacing).isActive = true
+            secondView.leadingAnchor.constraint(equalTo: self.containerView.centerXAnchor, constant: centerSpacing).isActive = true
             secondView.trailingAnchor.constraint(equalTo: self.containerView.trailingAnchor).isActive = true
         }
         
         // TODO: A stand-in for the user tapping.
         self.temporaryTapDemoTimer = Timer.scheduledTimer(withTimeInterval: 4, repeats: false) { _ in
-            optionViewPairs.first?.0.state = .answered(optionResults: ImagePollOptionView.OptionResults(selected: true, fraction: 0.67))
-            optionViewPairs.first?.1.state = .answered(optionResults: ImagePollOptionView.OptionResults(selected: false, fraction: 0.11))
-            optionViewPairs[1].0.state = .answered(optionResults: ImagePollOptionView.OptionResults(selected: false, fraction: 0.11))
-            optionViewPairs[1].1.state = .answered(optionResults: ImagePollOptionView.OptionResults(selected: false, fraction: 0.11))
+            self.optionViews.forEach { (optionView) in
+                optionView.state = .answered(optionResults: ImagePollOptionView.OptionResults.init(selected: false, fraction: 0.67))
+            }
         }
-        
+
         // TODO: A stand-in for the user tapping.
         self.temporaryTapDemoTimer = Timer.scheduledTimer(withTimeInterval: 10, repeats: false) { _ in
-            optionViewPairs.first?.0.state = .answered(optionResults: ImagePollOptionView.OptionResults(selected: true, fraction: 0.50))
-            optionViewPairs.first?.1.state = .answered(optionResults: ImagePollOptionView.OptionResults(selected: false, fraction: 0.66))
-            optionViewPairs[1].0.state = .answered(optionResults: ImagePollOptionView.OptionResults(selected: false, fraction: 0.44))
-            optionViewPairs[1].1.state = .answered(optionResults: ImagePollOptionView.OptionResults(selected: false, fraction: 0.90))
+            self.optionViews.forEach { (optionView) in
+                optionView.state = .answered(optionResults: ImagePollOptionView.OptionResults.init(selected: false, fraction: 0.25))
+            }
         }
     }
 }
@@ -293,25 +299,22 @@ extension ImagePollBlock {
         
         let size = CGSize(width: innerWidth, height: CGFloat.greatestFiniteMagnitude)
         
-        let questionAttributedText = self.questionStyle.attributedText(for: self.question)
+        let questionAttributedText = self.imagePoll.question.attributedText(forFormat: .plain)
         
         let questionHeight = questionAttributedText?.boundingRect(with: size, options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil).height ?? CGFloat(0)
         
-        let horizontalSpacing = CGFloat(self.optionStyle.horizontalSpacing)
-        let optionTextHeight = OPTION_TEXT_HEIGHT
-        let verticalSpacing = CGFloat(self.optionStyle.verticalSpacing)
-        
-        let optionImageHeight = (blockWidth - horizontalSpacing) / 2
-        
-        switch self.options.count {
-        case 2:
-            return verticalSpacing + optionTextHeight + optionImageHeight + questionHeight + CGFloat(insets.top + insets.bottom)
-        case 4:
-            return 2 * (verticalSpacing + optionTextHeight + optionImageHeight) + questionHeight + CGFloat(insets.top + insets.bottom)
-        default:
-            os_log("Unsupported number of image poll options.", log: .rover)
-            return 0
+        let optionsHeightAndSpacing = self.imagePoll.options.tuples.map { (firstOption, secondOption) in
+            let horizontalSpacing = CGFloat(secondOption.leftMargin)
+            let optionTextHeight = OPTION_TEXT_HEIGHT
+            let verticalSpacing = CGFloat(max(firstOption.topMargin, secondOption.topMargin))
+            
+            let optionImageHeight = (blockWidth - horizontalSpacing) / 2
+            return verticalSpacing + optionTextHeight + optionImageHeight
+        }.reduce(CGFloat(0)) { (accumulator, addend) in
+            return accumulator + addend
         }
+        
+        return optionsHeightAndSpacing + questionHeight + CGFloat(insets.top + insets.bottom)
     }
 }
 
@@ -358,9 +361,8 @@ extension UIImageView {
     }
 }
 
-extension ImagePollBlock.OptionStyle {
-    fileprivate func attributedText(for text: String) -> NSAttributedString? {
-        let text = Text(rawValue: text, alignment: .left, color: self.color, font: self.font)
-        return text.attributedText(forFormat: .plain)
+extension ImagePollBlock.ImagePoll.Option {
+    var attributedText: NSAttributedString? {
+        return self.text.attributedText(forFormat: .plain)
     }
 }

@@ -9,39 +9,46 @@
 import Foundation
 
 public struct ImagePollBlock: PollBlock {
-    public struct OptionStyle: Decodable {
-        public var opacity: Double
-        public var color: Color
-        public var border: Border
-        public var font: Text.Font
-        public var background: Background
-        public var textAlignment: Text.Alignment
-        public var resultFillColor: Color
-        public var verticalSpacing: Int
-        public var horizontalSpacing: Int
-
-        public init(opacity: Double, color: Color, border: Border, background: Background, font: Text.Font, textAlignment: Text.Alignment, resultFillColor: Color, verticalSpacing: Int, horizontalSpacing: Int) {
-            self.opacity = opacity
-            self.color = color
-            self.border = border
-            self.font = font
-            self.background = background
-            self.textAlignment = textAlignment
-            self.resultFillColor = resultFillColor
-            self.verticalSpacing = verticalSpacing
-            self.horizontalSpacing = horizontalSpacing
+    // MARK: Image Poll fields
+    
+    public struct ImagePoll: Decodable {
+        public struct Option: Decodable {
+            public var id: String
+            public var text: Text
+            public var image: Image
+            public var background: Background
+            public var border: Border
+            public var opacity: Double
+            public var topMargin: Int
+            public var leftMargin: Int
+            public var resultFillColor: Color
+            
+            public init(
+                id: String, text: Text, image: Image, background: Background, border: Border, opacity: Double, topMargin: Int, leftMargin: Int, resultFillColor: Color
+            ) {
+                self.id = id
+                self.text = text
+                self.image = image
+                self.background = background
+                self.border = border
+                self.opacity = opacity
+                self.topMargin = topMargin
+                self.leftMargin = leftMargin
+                self.resultFillColor = resultFillColor
+            }
+        }
+        
+        public var question: Text
+        public var options: [Option]
+        
+        public init(question: Text, options: [Option]) {
+            self.question = question
+            self.options = options
         }
     }
     
-    public struct Option: Decodable {
-        public var text: String
-        public var image: Image
-        
-        public init(text: String, image: Image) {
-            self.text = text
-            self.image = image
-        }
-    }
+    public var imagePoll: ImagePoll
+
     
     // MARK: Block fields
     public var background: Background
@@ -55,13 +62,7 @@ public struct ImagePollBlock: PollBlock {
     public var keys: [String: String]
     public var tags: [String]
     
-    // MARK: Image Poll fields
-    public var question: String
-    public var options: [Option]
-    public var questionStyle: QuestionStyle
-    public var optionStyle: OptionStyle
-    
-    public init(background: Background, border: Border, id: String, name: String, insets: Insets, opacity: Double, position: Position, tapBehavior: BlockTapBehavior, keys: [String: String], tags: [String], question: String, options: [Option], questionStyle: QuestionStyle, optionStyle: OptionStyle) {
+    public init(background: Background, border: Border, id: String, name: String, insets: Insets, opacity: Double, position: Position, tapBehavior: BlockTapBehavior, keys: [String: String], tags: [String], imagePoll: ImagePoll) {
         self.background = background
         self.border = border
         self.id = id
@@ -72,9 +73,6 @@ public struct ImagePollBlock: PollBlock {
         self.tapBehavior = tapBehavior
         self.keys = keys
         self.tags = tags
-        self.options = options
-        self.question = question
-        self.questionStyle = questionStyle
-        self.optionStyle = optionStyle
+        self.imagePoll = imagePoll
     }
 }

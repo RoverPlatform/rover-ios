@@ -17,7 +17,7 @@ class ViewController: UIViewController {
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        let experienceFile = Bundle.main.path(forResource: "gql-tpoll-response.json", ofType: nil)!
+        let experienceFile = Bundle.main.path(forResource: "gql-img-resp.json", ofType: nil)!
         
         let experienceFileURL: URL = URL(fileURLWithPath: experienceFile)
         os_log("Experience file path: %@", experienceFileURL.absoluteString)

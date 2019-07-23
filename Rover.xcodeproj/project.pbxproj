@@ -10,7 +10,6 @@
 		0DAFE6CF22D5453F00F5D47B /* PollQuestionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DAFE6CE22D5453F00F5D47B /* PollQuestionView.swift */; };
 		49005D0422776283009D62F9 /* UIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49005D0322776283009D62F9 /* UIApplication.swift */; };
 		4914B3D822B4307300FA395E /* RoverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD88A8020C1B21700085AE0 /* RoverTests.swift */; };
-		4914B3E022B83A2300FA395E /* QuestionStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4914B3DF22B83A2300FA395E /* QuestionStyle.swift */; };
 		4914B3E422B83A3F00FA395E /* PollBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4914B3E322B83A3F00FA395E /* PollBlock.swift */; };
 		4914B3E622B83A4B00FA395E /* ImagePollBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4914B3E522B83A4B00FA395E /* ImagePollBlock.swift */; };
 		4914B3EA22B9373900FA395E /* TextPollBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4914B3E922B9373900FA395E /* TextPollBlock.swift */; };
@@ -77,7 +76,6 @@
 /* Begin PBXFileReference section */
 		0DAFE6CE22D5453F00F5D47B /* PollQuestionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollQuestionView.swift; sourceTree = "<group>"; };
 		49005D0322776283009D62F9 /* UIApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplication.swift; sourceTree = "<group>"; };
-		4914B3DF22B83A2300FA395E /* QuestionStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionStyle.swift; sourceTree = "<group>"; };
 		4914B3E322B83A3F00FA395E /* PollBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollBlock.swift; sourceTree = "<group>"; };
 		4914B3E522B83A4B00FA395E /* ImagePollBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePollBlock.swift; sourceTree = "<group>"; };
 		4914B3E922B9373900FA395E /* TextPollBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextPollBlock.swift; sourceTree = "<group>"; };
@@ -287,7 +285,6 @@
 				DBFB1A6F209B8CC500E99F9F /* TextBlock.swift */,
 				DBFB1A6E209B8CC500E99F9F /* WebView.swift */,
 				DBFB1A6D209B8CC500E99F9F /* WebViewBlock.swift */,
-				4914B3DF22B83A2300FA395E /* QuestionStyle.swift */,
 				4914B3E322B83A3F00FA395E /* PollBlock.swift */,
 				4914B3E522B83A4B00FA395E /* ImagePollBlock.swift */,
 				4914B3E922B9373900FA395E /* TextPollBlock.swift */,
@@ -445,7 +442,6 @@
 				4953DD5222399A9C00286C4B /* ScreenViewController.swift in Sources */,
 				4953DD3522399A8500286C4B /* ButtonBlock.swift in Sources */,
 				4953DD3022399A8500286C4B /* Background.swift in Sources */,
-				4914B3E022B83A2300FA395E /* QuestionStyle.swift in Sources */,
 				49C04DB8229DB11100243504 /* ResultShim.swift in Sources */,
 				DB6BE8AE215D41F7000A1FDA /* OSLog.swift in Sources */,
 				4953DD3C22399A8500286C4B /* Position.swift in Sources */,

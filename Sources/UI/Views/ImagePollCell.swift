@@ -92,20 +92,23 @@ class ImagePollOptionView: UIView {
         // MARK: Image Content
         
         // the image itself should be rendered as 1:1 tile.
-        self.content.heightAnchor.constraint(equalTo: self.widthAnchor).isActive = true
+        let contentConstraints = [
+            self.content.heightAnchor.constraint(equalTo: self.widthAnchor),
+            self.content.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+            self.content.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+            self.content.topAnchor.constraint(equalTo: self.topAnchor)
+        ]
         
-        self.content.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
-        self.content.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
-        self.content.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
         
         // MARK: Answer/Caption Text View
         
-        self.answerTextView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: OPTION_TEXT_SPACING).isActive = true
-        self.answerTextView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: OPTION_TEXT_SPACING * -1).isActive = true
-        self.answerTextView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: OPTION_TEXT_SPACING * -1 ).isActive = true
-        self.answerTextView.heightAnchor.constraint(equalToConstant: OPTION_TEXT_HEIGHT - OPTION_TEXT_SPACING * 2).isActive = true
-        self.answerTextView.topAnchor.constraint(equalTo: self.content.bottomAnchor, constant: OPTION_TEXT_SPACING).isActive = true
-        
+        let answerConstraints = [
+            self.answerTextView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: OPTION_TEXT_SPACING),
+            self.answerTextView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: OPTION_TEXT_SPACING * -1),
+            self.answerTextView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: OPTION_TEXT_SPACING * -1 ),
+            self.answerTextView.heightAnchor.constraint(equalToConstant: OPTION_TEXT_HEIGHT - OPTION_TEXT_SPACING * 2),
+            self.answerTextView.topAnchor.constraint(equalTo: self.content.bottomAnchor, constant: OPTION_TEXT_SPACING)
+        ]
         self.answerTextView.backgroundColor = .clear
         self.answerTextView.numberOfLines = 1
         self.answerTextView.attributedText = option.attributedText
@@ -115,31 +118,37 @@ class ImagePollOptionView: UIView {
         
         // MARK: Results Fade Overlay
         
-        self.resultFadeOverlay.topAnchor.constraint(equalTo: self.content.topAnchor).isActive = true
-        self.resultFadeOverlay.leadingAnchor.constraint(equalTo: self.content.leadingAnchor).isActive = true
-        self.resultFadeOverlay.trailingAnchor.constraint(equalTo: self.content.trailingAnchor).isActive = true
-        self.resultFadeOverlay.bottomAnchor.constraint(equalTo: self.content.bottomAnchor).isActive = true
+        let fadeOverlayConstraints = [
+            self.resultFadeOverlay.topAnchor.constraint(equalTo: self.content.topAnchor),
+            self.resultFadeOverlay.leadingAnchor.constraint(equalTo: self.content.leadingAnchor),
+            self.resultFadeOverlay.trailingAnchor.constraint(equalTo: self.content.trailingAnchor),
+            self.resultFadeOverlay.bottomAnchor.constraint(equalTo: self.content.bottomAnchor)
+        ]
         self.resultFadeOverlay.backgroundColor = .black
         self.resultFadeOverlay.alpha = 0.0
         
         // MARK: Result Fill Bar
         
-        self.resultFillBarArea.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: RESULT_FILL_BAR_HORIZONTAL_SPACING).isActive = true
-        self.resultFillBarArea.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: RESULT_FILL_BAR_HORIZONTAL_SPACING * -1).isActive = true
-        self.resultFillBarArea.bottomAnchor.constraint(equalTo: self.content.bottomAnchor, constant: CGFloat(RESULT_FILL_BAR_VERTICAL_SPACING * -1)).isActive = true
-        self.resultFillBarArea.heightAnchor.constraint(equalToConstant: RESULT_FILL_BAR_HEIGHT).isActive = true
-        self.resultFillBar.topAnchor.constraint(equalTo: self.resultFillBarArea.topAnchor).isActive = true
-        self.resultFillBar.bottomAnchor.constraint(equalTo: self.resultFillBarArea.bottomAnchor).isActive = true
-        self.resultFillBar.leadingAnchor.constraint(equalTo: self.resultFillBarArea.leadingAnchor).isActive = true
         self.resultFillBarWidthConstraint = self.resultFillBar.widthAnchor.constraint(equalToConstant: 0)
-        self.resultFillBarWidthConstraint!.isActive = true
+        let resultFillBarConstraints = [
+            self.resultFillBarArea.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: RESULT_FILL_BAR_HORIZONTAL_SPACING),
+            self.resultFillBarArea.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: RESULT_FILL_BAR_HORIZONTAL_SPACING * -1),
+            self.resultFillBarArea.bottomAnchor.constraint(equalTo: self.content.bottomAnchor, constant: CGFloat(RESULT_FILL_BAR_VERTICAL_SPACING * -1)),
+            self.resultFillBarArea.heightAnchor.constraint(equalToConstant: RESULT_FILL_BAR_HEIGHT),
+            self.resultFillBar.topAnchor.constraint(equalTo: self.resultFillBarArea.topAnchor),
+            self.resultFillBar.bottomAnchor.constraint(equalTo: self.resultFillBarArea.bottomAnchor),
+            self.resultFillBar.leadingAnchor.constraint(equalTo: self.resultFillBarArea.leadingAnchor),
+            self.resultFillBarWidthConstraint!
+        ]
         self.resultFillBarArea.clipsToBounds = true
         self.resultFillBarArea.layer.cornerRadius = RESULT_FILL_BAR_HEIGHT / 2
         self.resultFillBarArea.backgroundColor = UIColor.white.withAlphaComponent(0.5)
         self.resultFillBar.backgroundColor = option.resultFillColor.uiColor
         
-        self.resultPercentage.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
-        self.resultPercentage.bottomAnchor.constraint(equalTo: self.resultFillBarArea.topAnchor, constant: RESULT_FILL_BAR_VERTICAL_SPACING * -1).isActive = true
+        let resultPercentageConstraints = [
+            self.resultPercentage.centerXAnchor.constraint(equalTo: self.centerXAnchor),
+            self.resultPercentage.bottomAnchor.constraint(equalTo: self.resultFillBarArea.topAnchor, constant: RESULT_FILL_BAR_VERTICAL_SPACING * -1)
+        ]
         self.resultPercentage.font = UIFont.systemFont(ofSize: RESULT_PERCENTAGE_FONT_SIZE, weight: .medium)
         self.resultPercentage.textColor = .white
         
@@ -149,6 +158,8 @@ class ImagePollOptionView: UIView {
         self.clipsToBounds = true
         self.configureBorder(border: option.border, constrainedByFrame: nil)
         self.backgroundColor = option.background.color.uiColor
+        
+        NSLayoutConstraint.activate(contentConstraints + answerConstraints + fadeOverlayConstraints + resultFillBarConstraints + resultPercentageConstraints)
         
         switch initialState {
         case .waitingForAnswer:
@@ -238,9 +249,13 @@ class ImagePollCell: BlockCell {
         
         self.questionView = PollQuestionView(questionText: imagePollBlock.imagePoll.question)
         self.containerView.addSubview(questionView!)
-        self.questionView?.topAnchor.constraint(equalTo: containerView.topAnchor).isActive = true
-        self.questionView?.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
-        self.questionView?.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
+        let constraints = [
+            self.questionView!.topAnchor.constraint(equalTo: containerView.topAnchor),
+            self.questionView!.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            self.questionView!.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
+        ]
+        NSLayoutConstraint.activate(constraints)
+        
         self.optionViews = imagePollBlock.imagePoll.options.map { option in
             // TODO: get initial state synchronously from the local VotingService.
             ImagePollOptionView(option: option, initialState: .waitingForAnswer)

@@ -78,34 +78,41 @@ class TextPollOptionView: UIView {
         
         // MARK: Background Image
         
-        self.backgroundView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
-        self.backgroundView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
-        self.backgroundView.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
-        self.backgroundView.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
+        let backgroundConstraints = [
+            self.backgroundView.topAnchor.constraint(equalTo: self.topAnchor),
+            self.backgroundView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
+            self.backgroundView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+            self.backgroundView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+        ]
+        
         
         // MARK: Result Fill Bar
         
-        self.resultFillBarArea.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
-        self.resultFillBarArea.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
-        self.resultFillBarArea.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
-        self.resultFillBarArea.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
-        self.resultFillBar.backgroundColor = option.resultFillColor.opaque.uiColor
-        self.resultFillBar.topAnchor.constraint(equalTo: self.resultFillBarArea.topAnchor).isActive = true
-        self.resultFillBar.bottomAnchor.constraint(equalTo: self.resultFillBarArea.bottomAnchor).isActive = true
-        self.resultFillBar.leadingAnchor.constraint(equalTo: self.resultFillBarArea.leadingAnchor).isActive = true
         self.resultFillBarWidthConstraint = self.resultFillBar.widthAnchor.constraint(equalToConstant: 0)
-        self.resultFillBarWidthConstraint!.isActive = true
+        let resultFillBarConstraints = [
+            self.resultFillBarArea.topAnchor.constraint(equalTo: self.topAnchor),
+            self.resultFillBarArea.bottomAnchor.constraint(equalTo: self.bottomAnchor),
+            self.resultFillBarArea.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+            self.resultFillBarArea.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+            self.resultFillBar.topAnchor.constraint(equalTo: self.resultFillBarArea.topAnchor),
+            self.resultFillBar.bottomAnchor.constraint(equalTo: self.resultFillBarArea.bottomAnchor),
+            self.resultFillBar.leadingAnchor.constraint(equalTo: self.resultFillBarArea.leadingAnchor),
+            self.resultFillBarWidthConstraint!
+        ]
+        self.resultFillBar.backgroundColor = option.resultFillColor.opaque.uiColor
         
         // MARK: Result Percentage
         
-        self.resultPercentage.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: OPTION_TEXT_SPACING * -1).isActive = true
-        self.resultPercentage.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
-        self.resultPercentage.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
-        self.resultPercentage.textAlignment = .right
         self.resultPercentageWidthConstraint = self.resultPercentage.widthAnchor.constraint(
             equalToConstant: 0
         )
-        self.resultPercentageWidthConstraint!.isActive = true
+        let percentageConstraints = [
+            self.resultPercentage.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: OPTION_TEXT_SPACING * -1),
+            self.resultPercentage.topAnchor.constraint(equalTo: self.topAnchor),
+            self.resultPercentage.bottomAnchor.constraint(equalTo: self.bottomAnchor),
+            self.resultFillBarWidthConstraint!
+        ]
+        self.resultPercentage.textAlignment = .right
         // we want the content to expand out to the horizontal space permitted by the percentage view.
         self.answerTextView.setContentHuggingPriority(.fittingSizeLevel, for: .horizontal)
         self.resultPercentage.font = option.text.font.bumpedForPercentageIndicator.uiFont
@@ -113,17 +120,23 @@ class TextPollOptionView: UIView {
         
         // MARK: Answer Text View
         
+        let answerConstraints = [
+            self.answerTextView.centerYAnchor.constraint(equalTo: self.centerYAnchor),
+            self.answerTextView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: OPTION_TEXT_SPACING),
+            self.answerTextView.trailingAnchor.constraint(equalTo: self.resultPercentage.leadingAnchor, constant: OPTION_TEXT_SPACING * -1)
+        ]
         self.answerTextView.backgroundColor = .clear
         self.answerTextView.numberOfLines = 1
         self.answerTextView.attributedText = option.attributedText
         self.answerTextView.lineBreakMode = .byTruncatingTail
-        self.answerTextView.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
-        self.answerTextView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: OPTION_TEXT_SPACING).isActive = true
-        self.answerTextView.trailingAnchor.constraint(equalTo: self.resultPercentage.leadingAnchor, constant: OPTION_TEXT_SPACING * -1).isActive = true
         
         // MARK: Container
         
-        self.heightAnchor.constraint(equalToConstant: CGFloat(option.height)).isActive = true
+        let constraints = backgroundConstraints + resultFillBarConstraints + percentageConstraints + answerConstraints + [
+            self.heightAnchor.constraint(equalToConstant: CGFloat(option.height))
+        ]
+        NSLayoutConstraint.activate(constraints)
+        
         self.configureOpacity(opacity: option.opacity)
         self.clipsToBounds = true
         self.configureBorder(border: option.border, constrainedByFrame: nil)

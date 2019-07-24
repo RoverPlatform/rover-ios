@@ -264,30 +264,49 @@ class ImagePollCell: BlockCell {
         // we render the poll options in two columns, regardless of device size.  so pair them off.
         let optionViewPairs = optionViews.tuples
         
-        for pairIndex in 0..<optionViewPairs.count {
-            let (firstView, secondView) = optionViewPairs[pairIndex]
-            self.containerView.addSubview(firstView)
-            self.containerView.addSubview(secondView)
-            if pairIndex == 0 {
-                // first row
-                firstView.topAnchor.constraint(equalTo: questionView!.bottomAnchor, constant: CGFloat(firstView.topMargin)).isActive = true
-                secondView.topAnchor.constraint(equalTo: questionView!.bottomAnchor, constant: CGFloat(secondView.topMargin)).isActive = true
-            } else {
-                // subsequent rows stack on one another
-                let (previousFirstView, previousSecondView) = optionViewPairs[pairIndex - 1]
-                
-                firstView.topAnchor.constraint(equalTo: previousFirstView.bottomAnchor, constant: CGFloat(firstView.topMargin)).isActive = true
-                secondView.topAnchor.constraint(equalTo: previousSecondView.bottomAnchor, constant: CGFloat(secondView.topMargin)).isActive = true
-            }
-            
-            firstView.leadingAnchor.constraint(equalTo: self.containerView.leadingAnchor).isActive = true
-            
-            // the leftMargin value on the right hand column of image options defines the space between the two. So we'll space each column from the center line by half that amount.
-            let centerSpacing = CGFloat(secondView.leftMargin) / 2.0
-            firstView.trailingAnchor.constraint(equalTo: self.containerView.centerXAnchor, constant: -1 * centerSpacing).isActive = true
-            secondView.leadingAnchor.constraint(equalTo: self.containerView.centerXAnchor, constant: centerSpacing).isActive = true
-            secondView.trailingAnchor.constraint(equalTo: self.containerView.trailingAnchor).isActive = true
-        }
+        let verticalSpacing = CGFloat((imagePollBlock.imagePoll.options.first?.topMargin) ?? 0)
+        let verticalStack = UIStackView(arrangedSubviews: optionViewPairs.map({ (leftOption, rightOption) in
+            let row = UIStackView(arrangedSubviews: [leftOption, rightOption])
+            row.axis = .horizontal
+            row.spacing = CGFloat(rightOption.leftMargin) / 2
+            row.translatesAutoresizingMaskIntoConstraints = false
+            return row
+//            return leftOption
+        }))
+        verticalStack.translatesAutoresizingMaskIntoConstraints = false
+        verticalStack.axis = .vertical
+        verticalStack.spacing = verticalSpacing / 2.0
+        self.containerView.addSubview(verticalStack)
+        verticalStack.topAnchor.constraint(equalTo: questionView!.bottomAnchor, constant: CGFloat(verticalSpacing)).isActive = true
+        verticalStack.leadingAnchor.constraint(equalTo: self.containerView.leadingAnchor).isActive = true
+        verticalStack.trailingAnchor.constraint(equalTo: self.containerView.trailingAnchor).isActive = true
+        
+
+//
+//        for pairIndex in 0..<optionViewPairs.count {
+//            let (firstView, secondView) = optionViewPairs[pairIndex]
+//            self.containerView.addSubview(firstView)
+//            self.containerView.addSubview(secondView)
+//            if pairIndex == 0 {
+//                // first row
+//                firstView.topAnchor.constraint(equalTo: questionView!.bottomAnchor, constant: CGFloat(firstView.topMargin)).isActive = true
+//                secondView.topAnchor.constraint(equalTo: questionView!.bottomAnchor, constant: CGFloat(secondView.topMargin)).isActive = true
+//            } else {
+//                // subsequent rows stack on one another
+//                let (previousFirstView, previousSecondView) = optionViewPairs[pairIndex - 1]
+//
+//                firstView.topAnchor.constraint(equalTo: previousFirstView.bottomAnchor, constant: CGFloat(firstView.topMargin)).isActive = true
+//                secondView.topAnchor.constraint(equalTo: previousSecondView.bottomAnchor, constant: CGFloat(secondView.topMargin)).isActive = true
+//            }
+//
+//            firstView.leadingAnchor.constraint(equalTo: self.containerView.leadingAnchor).isActive = true
+//
+//            // the leftMargin value on the right hand column of image options defines the space between the two. So we'll space each column from the center line by half that amount.
+//            let centerSpacing = CGFloat(secondView.leftMargin) / 2.0
+//            firstView.trailingAnchor.constraint(equalTo: self.containerView.centerXAnchor, constant: -1 * centerSpacing).isActive = true
+//            secondView.leadingAnchor.constraint(equalTo: self.containerView.centerXAnchor, constant: centerSpacing).isActive = true
+//            secondView.trailingAnchor.constraint(equalTo: self.containerView.trailingAnchor).isActive = true
+//        }
         
         // TODO: A stand-in for the user tapping.
         self.temporaryTapDemoTimer = Timer.scheduledTimer(withTimeInterval: 4, repeats: false) { _ in

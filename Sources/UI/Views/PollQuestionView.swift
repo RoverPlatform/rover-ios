@@ -10,14 +10,12 @@ import Foundation
 import UIKit
 
 class PollQuestionView: UIView {
-    private let backgroundView = UIImageView()
     private let content = UITextView()
     
     init(
         questionText: Text
     ) {
         super.init(frame: .zero)
-        self.addSubview(backgroundView)
         self.addSubview(content)
         
         self.translatesAutoresizingMaskIntoConstraints = false

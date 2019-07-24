@@ -212,7 +212,6 @@ class TextPollCell: BlockCell {
     override func configure(with block: Block) {
         super.configure(with: block)
      
-        containerView.translatesAutoresizingMaskIntoConstraints = false
         questionView?.removeFromSuperview()
         self.optionViews.forEach { $0.removeFromSuperview() }
         

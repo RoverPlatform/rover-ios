@@ -229,7 +229,6 @@ class ImagePollCell: BlockCell {
     override func configure(with block: Block) {
         super.configure(with: block)
         
-        self.containerView.translatesAutoresizingMaskIntoConstraints = false
         self.questionView?.removeFromSuperview()
         self.optionViews.forEach { $0.removeFromSuperview() }
         

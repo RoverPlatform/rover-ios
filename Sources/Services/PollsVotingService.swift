@@ -9,6 +9,17 @@
 import Foundation
 
 class PollsVotingService {
+    public struct OptionStatus {
+        let selected: Bool
+        let fraction: Float
+    }
+    
+    /// Yielded
+    public enum PollStatus {
+        case waitingForAnswer
+        case answered(optionResults: OptionStatus)
+    }
+    
     // TODO: Api Client
     
     // TODO: local storage for each poll: the last seen options list for the poll.  results for the poll, if any have been retrieved. What our vote was, if any.
@@ -23,21 +34,34 @@ class PollsVotingService {
     
     private let storage = UserDefaults()
     
-    /// synchronous, fire-and-forget, best-effort.
-    func castVote(pollId: String, optionId: String) {
-       // TODO: dispatch update task onto the queue.
-    }
-    
-    /// we will emit updates on the main thread.
-    func subscribeToUpdates(pollId: String, subscriber: (PollStatus) -> Void) {
-        
-    }
+    /// Synchronize operations that mutate local poll state.
+    private let serialQueue: Foundation.OperationQueue = {
+        let q = Foundation.OperationQueue()
+        q.maxConcurrentOperationCount = 1
+        return q
+    }()
     
     /// Get the current state for the poll.
     func currentStateForPoll(optionIds: [String], pollId: String) {
         
     }
     
+    // TODO: decide when and where the results request should be fired. As a side-effect of currentStateForPoll or subscribeToUpdates?
+    
+    /// Cast a vote on the poll.  Naturally may only be done once.  Synchronous, fire-and-forget, and best-effort. Any subscribers will be instantly notified (if possible) of the update.
+    func castVote(pollId: String, optionId: String) {
+        // TODO synchronously in local storage check for optionResults stored locally.  If present, update local state with dead-reckoned (+1 bump) values and then immediately emit an poll status update to subscribers.
+        // then dispatch vote request task onto the queue.
+        
+        // if local state wasn't present, then either the results request didn't complete successfully or user tapped fast and thus we're racing it.
+    }
+    
+    /// Be notified of poll state.  Updates will be emitted on the main thread. Note that this will not immediately yield current state. Synchronously call `currentStateForPoll()` instead.
+    func subscribeToUpdates(pollId: String, subscriber: (PollStatus) -> Void) {
+        
+    }
+    
+    /// Internal representation for storage of poll state on disk.
     private struct PollState: Codable {
         let pollId: String
         
@@ -49,17 +73,6 @@ class PollsVotingService {
         
         /// If the user has voted, for which option did they vote?
         let userVotedForOptionId: String?
-    }
-    
-    public struct OptionStatus {
-        let selected: Bool
-        let fraction: Float
-    }
-    
-    ///
-    public enum PollStatus {
-        case waitingForAnswer
-        case answered(optionResults: OptionStatus)
     }
 }
 

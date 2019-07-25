@@ -99,7 +99,6 @@ class ImagePollOptionView: UIView {
             self.content.topAnchor.constraint(equalTo: self.topAnchor)
         ]
         
-        
         // MARK: Answer/Caption Text View
         
         let answerConstraints = [
@@ -228,6 +227,7 @@ class ImagePollCell: BlockCell {
     private let containerView = UIView()
     
     private var optionViews = [ImagePollOptionView]()
+    private var optionStack: UIStackView?
     
     override var content: UIView? {
         return containerView
@@ -236,12 +236,15 @@ class ImagePollCell: BlockCell {
     private var questionView: PollQuestionView?
     
     private var temporaryTapDemoTimer: Timer?
+    private var temporaryTapDemoTimer1: Timer?
     
     override func configure(with block: Block) {
         super.configure(with: block)
+        self.temporaryTapDemoTimer?.invalidate()
+        self.temporaryTapDemoTimer1?.invalidate()
         
         self.questionView?.removeFromSuperview()
-        self.optionViews.forEach { $0.removeFromSuperview() }
+        self.optionStack?.removeFromSuperview()
         
         guard let imagePollBlock = block as? ImagePollBlock else {
             return
@@ -277,6 +280,7 @@ class ImagePollCell: BlockCell {
         verticalStack.axis = .vertical
         verticalStack.spacing = verticalSpacing / 2.0
         self.containerView.addSubview(verticalStack)
+        self.optionStack = verticalStack
         verticalStack.topAnchor.constraint(equalTo: questionView!.bottomAnchor, constant: CGFloat(verticalSpacing)).isActive = true
         verticalStack.leadingAnchor.constraint(equalTo: self.containerView.leadingAnchor).isActive = true
         verticalStack.trailingAnchor.constraint(equalTo: self.containerView.trailingAnchor).isActive = true
@@ -316,7 +320,7 @@ class ImagePollCell: BlockCell {
         }
 
         // TODO: A stand-in for the user tapping.
-        self.temporaryTapDemoTimer = Timer.scheduledTimer(withTimeInterval: 10, repeats: false) { _ in
+        self.temporaryTapDemoTimer1 = Timer.scheduledTimer(withTimeInterval: 10, repeats: false) { _ in
             self.optionViews.forEach { (optionView) in
                 optionView.state = .answered(optionResults: ImagePollOptionView.OptionResults.init(selected: false, fraction: 0.25))
             }

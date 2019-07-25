@@ -85,7 +85,6 @@ class TextPollOptionView: UIView {
             self.backgroundView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
         ]
         
-        
         // MARK: Result Fill Bar
         
         self.resultFillBarWidthConstraint = self.resultFillBar.widthAnchor.constraint(equalToConstant: 0)
@@ -213,6 +212,7 @@ class TextPollCell: BlockCell {
     private let containerView = UIView()
     
     private var optionViews = [TextPollOptionView]()
+    private var optionStack: UIStackView?
     
     override var content: UIView? {
         return containerView
@@ -221,12 +221,15 @@ class TextPollCell: BlockCell {
     private var questionView: PollQuestionView?
     
     private var temporaryTapDemoTimer: Timer?
+    private var temporaryTapDemoTimer1: Timer?
     
     override func configure(with block: Block) {
         super.configure(with: block)
+        self.temporaryTapDemoTimer?.invalidate()
+        self.temporaryTapDemoTimer1?.invalidate()
      
         questionView?.removeFromSuperview()
-        self.optionViews.forEach { $0.removeFromSuperview() }
+        self.optionStack?.removeFromSuperview()
         
         guard let textPollBlock = block as? TextPollBlock else {
             return
@@ -241,18 +244,19 @@ class TextPollCell: BlockCell {
             // TODO: get initial state synchronously from the local VotingService.
             TextPollOptionView(option: option, initialState: .waitingForAnswer)
         }
-        for optionViewIndex in 0..<optionViews.count {
-            let currentOptionView = self.optionViews[optionViewIndex]
-            containerView.addSubview(currentOptionView)
-            if optionViewIndex > 0 {
-                let previousOptionView = self.optionViews[optionViewIndex - 1]
-                currentOptionView.topAnchor.constraint(equalTo: previousOptionView.bottomAnchor, constant: CGFloat(currentOptionView.topMargin)).isActive = true
-            } else {
-                currentOptionView.topAnchor.constraint(equalTo: questionView!.bottomAnchor, constant: CGFloat(currentOptionView.topMargin)).isActive = true
-            }
-            currentOptionView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
-            currentOptionView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
-        }
+        
+        let verticalStack = UIStackView(arrangedSubviews: self.optionViews)
+        verticalStack.translatesAutoresizingMaskIntoConstraints = false
+        let verticalSpacing = CGFloat(self.optionViews.first?.topMargin ?? 0) / 2
+        verticalStack.axis = .vertical
+        verticalStack.spacing = verticalSpacing
+        
+        containerView.addSubview(verticalStack)
+        self.optionStack = verticalStack
+        
+        verticalStack.topAnchor.constraint(equalTo: questionView!.bottomAnchor, constant: CGFloat(verticalSpacing)).isActive = true
+        verticalStack.leadingAnchor.constraint(equalTo: self.containerView.leadingAnchor).isActive = true
+        verticalStack.trailingAnchor.constraint(equalTo: self.containerView.trailingAnchor).isActive = true
         
         // TODO: A stand-in for the user tapping.
         self.temporaryTapDemoTimer = Timer.scheduledTimer(withTimeInterval: 4, repeats: false) { _ in
@@ -262,7 +266,7 @@ class TextPollCell: BlockCell {
         }
 
         // TODO: A stand-in for the user tapping.
-        self.temporaryTapDemoTimer = Timer.scheduledTimer(withTimeInterval: 10, repeats: false) { _ in
+        self.temporaryTapDemoTimer1 = Timer.scheduledTimer(withTimeInterval: 10, repeats: false) { _ in
             self.optionViews.forEach { (optionView) in
                 optionView.state = .answered(optionResults: TextPollOptionView.OptionResults.init(selected: false, fraction: 0.25))
             }

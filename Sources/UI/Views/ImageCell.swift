@@ -6,7 +6,6 @@
 //  Copyright © 2017 Rover Labs Inc. All rights reserved.
 //
 
-import os
 import UIKit
 
 class ImageCell: BlockCell {
@@ -28,37 +27,28 @@ class ImageCell: BlockCell {
             return
         }
         
-        let originalBlockId = imageBlock.id
-        self.imageView.configureAsImage(image: imageBlock.image) { [weak self] in
-            self?.block?.id == originalBlockId
-        }
-    }
-}
-
-extension UIImageView {
-    func configureAsImage(image: Image, checkStillMatches: @escaping () -> Bool) {
-        self.alpha = 0.0
-        self.image = nil
+        imageView.alpha = 0.0
+        imageView.image = nil
         
-        if frame == .zero {
-            os_log("configureAsImage called with a zero frame. No good.", log: .rover)
-            return
-        }
-        
-        if let image = ImageStore.shared.image(for: image, frame: frame) {
-            self.image = image
-            self.alpha = 1.0
+        if let image = ImageStore.shared.image(for: imageBlock.image, frame: frame) {
+            imageView.image = image
+            imageView.alpha = 1.0
         } else {
-            let originalFrame = self.frame
-            ImageStore.shared.fetchImage(for: image, frame: frame) { [weak self] image in
-                guard let image = image, checkStillMatches(), self?.frame == originalFrame else {
+            ImageStore.shared.fetchImage(for: imageBlock.image, frame: frame) { [weak self, blockID = block.id] image in
+                guard let image = image else {
                     return
                 }
                 
-                self?.image = image
+                // Verify the block cell is still configured to the same block; otherwise we should no-op because the cell has been recycled.
+                
+                if self?.block?.id != blockID {
+                    return
+                }
+                
+                self?.imageView.image = image
                 
                 UIView.animate(withDuration: 0.25) {
-                    self?.alpha = 1.0
+                    self?.imageView.alpha = 1.0
                 }
             }
         }

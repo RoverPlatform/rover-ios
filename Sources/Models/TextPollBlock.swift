@@ -8,34 +8,42 @@
 
 import Foundation
 
-public struct TextPollBlock : PollBlock {
-    public struct OptionStyle: Decodable {
-        public var height: Int
-        public var opacity: Double
-        public var borderRadius: Int
-        public var borderWidth: Int
-        public var borderColor: Color
-        public var color: Color
-        public var font: Text.Font
-        public var textAlignment: Text.Alignment
-        public var resultFillColor: Color
-        public var background: Background
-        public var verticalSpacing: Int
+public struct TextPollBlock: PollBlock {
+    // MARK: Text Poll fields
+    
+    public struct TextPoll: Decodable {
+        public struct Option: Decodable {
+            public var id: String
+            public var height: Int
+            public var opacity: Double
+            public var border: Border
+            public var text: Text
+            public var resultFillColor: Color
+            public var background: Background
+            public var topMargin: Int
+            
+            public init(id: String, height: Int, opacity: Double, border: Border, text: Text, resultFillColor: Color, background: Background, topMargin: Int) {
+                self.id = id
+                self.height = height
+                self.opacity = opacity
+                self.border = border
+                self.text = text
+                self.resultFillColor = resultFillColor
+                self.background = background
+                self.topMargin = topMargin
+            }
+        }
+    
+        public var question: Text
+        public var options: [Option]
         
-        public init(height: Int, opacity: Double, borderRadius: Int, borderWidth: Int, borderColor: Color, color: Color, font: Text.Font, textAlignment: Text.Alignment, resultFillColor: Color, background: Background, verticalSpacing: Int) {
-            self.height = height
-            self.opacity = opacity
-            self.borderRadius = borderRadius
-            self.borderWidth = borderWidth
-            self.borderColor = borderColor
-            self.color = color
-            self.font = font
-            self.textAlignment = textAlignment
-            self.resultFillColor = resultFillColor
-            self.background = background
-            self.verticalSpacing = verticalSpacing
+        public init(question: Text, options: [Option]) {
+            self.question = question
+            self.options = options
         }
     }
+    
+    public var textPoll: TextPoll
     
     // MARK: Block fields
     public var background: Background
@@ -46,16 +54,10 @@ public struct TextPollBlock : PollBlock {
     public var opacity: Double
     public var position: Position
     public var tapBehavior: BlockTapBehavior
-    public var keys: [String : String]
+    public var keys: [String: String]
     public var tags: [String]
     
-    // MARK: Text Poll fields
-    public var question: String
-    public var options: [String]
-    public var questionStyle: QuestionStyle
-    public var optionStyle: OptionStyle
-    
-    public init(background: Background, border: Border, id: String, name: String, insets: Insets, opacity: Double, position: Position, tapBehavior: BlockTapBehavior, keys: [String: String], tags: [String], question: String, options: [String], questionStyle: QuestionStyle, optionStyle: OptionStyle) {
+    public init(background: Background, border: Border, id: String, name: String, insets: Insets, opacity: Double, position: Position, tapBehavior: BlockTapBehavior, keys: [String: String], tags: [String], textPoll: TextPoll) {
         self.background = background
         self.border = border
         self.id = id
@@ -66,9 +68,6 @@ public struct TextPollBlock : PollBlock {
         self.tapBehavior = tapBehavior
         self.keys = keys
         self.tags = tags
-        self.options = options
-        self.question = question
-        self.questionStyle = questionStyle
-        self.optionStyle = optionStyle
+        self.textPoll = textPoll
     }
 }

@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		49005D002273908F009D62F9 /* Rover.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49005CFF2273908F009D62F9 /* Rover.framework */; };
 		49005D012273908F009D62F9 /* Rover.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 49005CFF2273908F009D62F9 /* Rover.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		49C76DFC22E746AA003E5CC7 /* gql-img-resp.json in Resources */ = {isa = PBXBuildFile; fileRef = 49C76DFA22E746AA003E5CC7 /* gql-img-resp.json */; };
+		49C76DFD22E746AA003E5CC7 /* gql-tpoll-response.json in Resources */ = {isa = PBXBuildFile; fileRef = 49C76DFB22E746AA003E5CC7 /* gql-tpoll-response.json */; };
 		49D8913322738FC900332E67 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D8913222738FC900332E67 /* AppDelegate.swift */; };
 		49D8913522738FC900332E67 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D8913422738FC900332E67 /* ViewController.swift */; };
 		49D8913822738FC900332E67 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 49D8913622738FC900332E67 /* Main.storyboard */; };
@@ -32,6 +34,8 @@
 
 /* Begin PBXFileReference section */
 		49005CFF2273908F009D62F9 /* Rover.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Rover.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		49C76DFA22E746AA003E5CC7 /* gql-img-resp.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "gql-img-resp.json"; sourceTree = "<group>"; };
+		49C76DFB22E746AA003E5CC7 /* gql-tpoll-response.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "gql-tpoll-response.json"; sourceTree = "<group>"; };
 		49D8912F22738FC900332E67 /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		49D8913222738FC900332E67 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		49D8913422738FC900332E67 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -73,6 +77,8 @@
 		49D8913122738FC900332E67 /* Example */ = {
 			isa = PBXGroup;
 			children = (
+				49C76DFA22E746AA003E5CC7 /* gql-img-resp.json */,
+				49C76DFB22E746AA003E5CC7 /* gql-tpoll-response.json */,
 				49D8913222738FC900332E67 /* AppDelegate.swift */,
 				49D8913422738FC900332E67 /* ViewController.swift */,
 				49D8913622738FC900332E67 /* Main.storyboard */,
@@ -142,8 +148,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				49C76DFC22E746AA003E5CC7 /* gql-img-resp.json in Resources */,
 				49D8913D22738FCA00332E67 /* LaunchScreen.storyboard in Resources */,
 				49D8913A22738FCA00332E67 /* Assets.xcassets in Resources */,
+				49C76DFD22E746AA003E5CC7 /* gql-tpoll-response.json in Resources */,
 				49D8913822738FC900332E67 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

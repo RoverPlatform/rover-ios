@@ -6,8 +6,8 @@
 //  Copyright © 2017 Rover Labs Inc. All rights reserved.
 //
 
-import UIKit
 import os
+import UIKit
 
 // swiftlint:disable:next type_body_length
 class ScreenViewLayout: UICollectionViewLayout {
@@ -112,6 +112,8 @@ class ScreenViewLayout: UICollectionViewLayout {
                     }
                 }()
                 
+                // MARK: Block Measurement
+                
                 let intrinsicHeight: CGFloat?
                 switch block {
                 case let block as BarcodeBlock:
@@ -125,7 +127,7 @@ class ScreenViewLayout: UICollectionViewLayout {
                     
                     intrinsicHeight = blockWidth / aspectRatio
                 case let block as ButtonBlock:
-                    guard let attributedText = block.text.attributedText else {
+                    guard let attributedText = block.text.attributedText() else {
                         intrinsicHeight = nil
                         break
                     }
@@ -138,7 +140,7 @@ class ScreenViewLayout: UICollectionViewLayout {
                     let aspectRatio = CGFloat(block.image.width) / CGFloat(block.image.height)
                     intrinsicHeight = blockWidth / aspectRatio
                 case let block as TextBlock:
-                    guard let attributedText = block.text.attributedText else {
+                    guard let attributedText = block.text.attributedText() else {
                         intrinsicHeight = nil
                         break
                     }
@@ -147,6 +149,10 @@ class ScreenViewLayout: UICollectionViewLayout {
                     let size = CGSize(width: innerWidth, height: CGFloat.greatestFiniteMagnitude)
                     let boundingRect = attributedText.boundingRect(with: size, options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil)
                     intrinsicHeight = boundingRect.height + CGFloat(block.insets.top) + CGFloat(block.insets.bottom)
+                case let block as TextPollBlock:
+                    intrinsicHeight = block.intrinsicHeight(blockWidth: blockWidth)
+                case let block as ImagePollBlock:
+                    intrinsicHeight = block.intrinisicHeight(blockWidth: blockWidth)
                 default:
                     intrinsicHeight = nil
                 }

@@ -28,10 +28,10 @@ public struct Text: Decodable {
             case black = "BLACK"
         }
         
-        public var size: Int
+        public var size: Double
         public var weight: Weight
         
-        public init(size: Int, weight: Weight) {
+        public init(size: Double, weight: Weight) {
             self.size = size
             self.weight = weight
         }
@@ -53,7 +53,7 @@ public struct Text: Decodable {
 // MARK: Convenience Initializers
 
 extension Text {
-    var attributedText: NSAttributedString? {
+    func attributedText(forFormat format: NSAttributedString.DocumentType = .html) -> NSAttributedString? {
         guard let data = rawValue.data(using: String.Encoding.unicode) else {
             return nil
         }
@@ -92,11 +92,13 @@ extension Text {
         
         attributedString.addAttributes(attributes, range: range)
         
-        // Remove double newlines at end of string
+        // Remove double newlines at end of string, as a workaround for an artifact that appears in some of the HTML structure in some experiences saved by older versions of the authoring tool.
         
-        let string = attributedString.string
-        if attributedString.length > 0 && string.suffix(1) == "\n" {
-            attributedString.replaceCharacters(in: NSRange(location: attributedString.length - 1, length: 1), with: "")
+        if format == .html {
+            let string = attributedString.string
+            if attributedString.length > 0 && string.suffix(1) == "\n" {
+                attributedString.replaceCharacters(in: NSRange(location: attributedString.length - 1, length: 1), with: "")
+            }
         }
         
         return attributedString

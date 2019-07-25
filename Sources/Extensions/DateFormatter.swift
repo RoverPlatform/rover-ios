@@ -9,7 +9,7 @@
 import Foundation
 
 extension DateFormatter {
-    static let rfc3339: DateFormatter = {
+    public static let rfc3339: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ"
         formatter.calendar = Calendar(identifier: .iso8601)

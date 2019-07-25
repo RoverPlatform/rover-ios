@@ -91,8 +91,9 @@ class RowView: UICollectionReusableView {
             }
             backgroundImageView.alpha = 1.0
         } else {
+            let originalFrame = self.frame
             ImageStore.shared.fetchImage(for: row.background, frame: frame) { [weak self, rowID = row.id] image in
-                guard let image = image else {
+                guard let image = image, self?.frame == originalFrame else {
                     return
                 }
                 

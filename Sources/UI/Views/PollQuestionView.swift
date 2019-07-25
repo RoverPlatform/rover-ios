@@ -9,27 +9,22 @@
 import Foundation
 import UIKit
 
-class PollQuestionView: UIView {
-    private let content = UITextView()
-    
+class PollQuestionView: UITextView {
     init(
         questionText: Text
     ) {
-        super.init(frame: .zero)
-        self.addSubview(content)
+        super.init(frame: .zero, textContainer: nil)
         
         self.translatesAutoresizingMaskIntoConstraints = false
-        content.translatesAutoresizingMaskIntoConstraints = false
+        self.translatesAutoresizingMaskIntoConstraints = false
         self.clipsToBounds = true
         
-        content.attributedText = questionText.attributedTextForPollQuestion
-        content.isScrollEnabled = false
-        content.backgroundColor = UIColor.clear
-        content.isUserInteractionEnabled = false
-        content.textContainer.lineFragmentPadding = 0
-        content.textContainerInset = UIEdgeInsets.zero
-        
-        self.configureContent(content: content, withInsets: .zero)
+        self.attributedText = questionText.attributedTextForPollQuestion
+        self.isScrollEnabled = false
+        self.backgroundColor = UIColor.clear
+        self.isUserInteractionEnabled = false
+        self.textContainer.lineFragmentPadding = 0
+        self.textContainerInset = UIEdgeInsets.zero
     }
     
     @available(*, unavailable)

@@ -234,12 +234,16 @@ class TextPollCell: BlockCell {
         guard let textPollBlock = block as? TextPollBlock else {
             return
         }
-    
+        
         questionView = PollQuestionView(questionText: textPollBlock.textPoll.question)
         containerView.addSubview(questionView!)
-        questionView?.topAnchor.constraint(equalTo: containerView.topAnchor).isActive = true
-        questionView?.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
-        questionView?.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
+        
+        let questionConstraints = [
+            questionView!.topAnchor.constraint(equalTo: containerView.topAnchor),
+            questionView!.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            questionView!.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
+        ]
+        
         self.optionViews = textPollBlock.textPoll.options.map { option in
             // TODO: get initial state synchronously from the local VotingService.
             TextPollOptionView(option: option, initialState: .waitingForAnswer)
@@ -254,10 +258,13 @@ class TextPollCell: BlockCell {
         containerView.addSubview(verticalStack)
         self.optionStack = verticalStack
         
-        verticalStack.topAnchor.constraint(equalTo: questionView!.bottomAnchor, constant: CGFloat(verticalSpacing)).isActive = true
-        verticalStack.leadingAnchor.constraint(equalTo: self.containerView.leadingAnchor).isActive = true
-        verticalStack.trailingAnchor.constraint(equalTo: self.containerView.trailingAnchor).isActive = true
+        let stackConstraints = [
+            verticalStack.topAnchor.constraint(equalTo: questionView!.bottomAnchor, constant: CGFloat(verticalSpacing)),
+            verticalStack.leadingAnchor.constraint(equalTo: self.containerView.leadingAnchor),
+            verticalStack.trailingAnchor.constraint(equalTo: self.containerView.trailingAnchor)
+        ]
         
+        NSLayoutConstraint.activate(questionConstraints + stackConstraints)
         // TODO: A stand-in for the user tapping.
         self.temporaryTapDemoTimer = Timer.scheduledTimer(withTimeInterval: 4, repeats: false) { _ in
             self.optionViews.forEach { (optionView) in

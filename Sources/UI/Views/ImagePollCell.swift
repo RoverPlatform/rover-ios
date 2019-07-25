@@ -252,12 +252,12 @@ class ImagePollCell: BlockCell {
         
         self.questionView = PollQuestionView(questionText: imagePollBlock.imagePoll.question)
         self.containerView.addSubview(questionView!)
-        let constraints = [
+        let questionConstraints = [
             self.questionView!.topAnchor.constraint(equalTo: containerView.topAnchor),
             self.questionView!.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
             self.questionView!.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
         ]
-        NSLayoutConstraint.activate(constraints)
+        
         
         self.optionViews = imagePollBlock.imagePoll.options.map { option in
             // TODO: get initial state synchronously from the local VotingService.
@@ -274,43 +274,20 @@ class ImagePollCell: BlockCell {
             row.spacing = CGFloat(rightOption.leftMargin) / 2
             row.translatesAutoresizingMaskIntoConstraints = false
             return row
-//            return leftOption
         }))
         verticalStack.translatesAutoresizingMaskIntoConstraints = false
         verticalStack.axis = .vertical
         verticalStack.spacing = verticalSpacing / 2.0
         self.containerView.addSubview(verticalStack)
         self.optionStack = verticalStack
-        verticalStack.topAnchor.constraint(equalTo: questionView!.bottomAnchor, constant: CGFloat(verticalSpacing)).isActive = true
-        verticalStack.leadingAnchor.constraint(equalTo: self.containerView.leadingAnchor).isActive = true
-        verticalStack.trailingAnchor.constraint(equalTo: self.containerView.trailingAnchor).isActive = true
         
+        let stackConstraints = [
+            verticalStack.topAnchor.constraint(equalTo: questionView!.bottomAnchor, constant: CGFloat(verticalSpacing)),
+            verticalStack.leadingAnchor.constraint(equalTo: self.containerView.leadingAnchor),
+            verticalStack.trailingAnchor.constraint(equalTo: self.containerView.trailingAnchor)
+        ]
 
-//
-//        for pairIndex in 0..<optionViewPairs.count {
-//            let (firstView, secondView) = optionViewPairs[pairIndex]
-//            self.containerView.addSubview(firstView)
-//            self.containerView.addSubview(secondView)
-//            if pairIndex == 0 {
-//                // first row
-//                firstView.topAnchor.constraint(equalTo: questionView!.bottomAnchor, constant: CGFloat(firstView.topMargin)).isActive = true
-//                secondView.topAnchor.constraint(equalTo: questionView!.bottomAnchor, constant: CGFloat(secondView.topMargin)).isActive = true
-//            } else {
-//                // subsequent rows stack on one another
-//                let (previousFirstView, previousSecondView) = optionViewPairs[pairIndex - 1]
-//
-//                firstView.topAnchor.constraint(equalTo: previousFirstView.bottomAnchor, constant: CGFloat(firstView.topMargin)).isActive = true
-//                secondView.topAnchor.constraint(equalTo: previousSecondView.bottomAnchor, constant: CGFloat(secondView.topMargin)).isActive = true
-//            }
-//
-//            firstView.leadingAnchor.constraint(equalTo: self.containerView.leadingAnchor).isActive = true
-//
-//            // the leftMargin value on the right hand column of image options defines the space between the two. So we'll space each column from the center line by half that amount.
-//            let centerSpacing = CGFloat(secondView.leftMargin) / 2.0
-//            firstView.trailingAnchor.constraint(equalTo: self.containerView.centerXAnchor, constant: -1 * centerSpacing).isActive = true
-//            secondView.leadingAnchor.constraint(equalTo: self.containerView.centerXAnchor, constant: centerSpacing).isActive = true
-//            secondView.trailingAnchor.constraint(equalTo: self.containerView.trailingAnchor).isActive = true
-//        }
+        NSLayoutConstraint.activate(questionConstraints + stackConstraints)
         
         // TODO: A stand-in for the user tapping.
         self.temporaryTapDemoTimer = Timer.scheduledTimer(withTimeInterval: 4, repeats: false) { _ in

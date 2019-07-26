@@ -22,10 +22,10 @@ class PollsVotingService {
     /// Yielded
     public enum PollStatus {
         case waitingForAnswer
-        case answered(optionResults: OptionStatus)
+        case answered(optionResults: [String: OptionStatus])
     }
     
-    enum PollResults {
+    private enum PollFetchResults {
         case fetched(results: PollFetchResponse)
         case failed
     }
@@ -77,10 +77,10 @@ class PollsVotingService {
     
     /// Internal representation for storage of poll state on disk.
     private struct PollState: Codable {
-        let pollId: String
+//        let pollId: String
         
-        /// The options last seen for this poll.  If the options have changed, we will reset that state to allow the user to vote again.
-        let seenOptions: [String]
+//        /// The options last seen for this poll.  If the options have changed, we will reset that state to allow the user to vote again.
+//        let seenOptions: [String]
         
         /// The results retrieved for the poll, if available.  Poll Id -> Number of Votes.
         let optionResults: [String: Int]?
@@ -98,9 +98,55 @@ class PollsVotingService {
         let decoder = JSONDecoder.init()
         if let existingEntryJson = self.storage[pollId] {
             do {
-                let decoded = try? decoder.decode(PollState.self, from: existingEntryJson.data(using: .utf8) ?? Data())
-                
-                decoded
+                let decoded = try decoder.decode(PollState.self, from: existingEntryJson.data(using: .utf8) ?? Data())
+                guard let vote = decoded.userVotedForOptionId else {
+                    // TODO: do the Largest Remainder Method
+                    
+                    guard let results = decoded.optionResults else {
+                        return .waitingForAnswer
+                    }
+                    
+                    // Largest Remainder Method in order to enable us to produce nice integer percentage values for each option that all add up to 100%.
+                    
+                    let counts = results.map { $1 }
+                    
+                    let totalVotes = counts.reduce(0, +)
+                    
+                    let voteFractions = counts.map { votes in
+                        Double(votes) / Double(totalVotes)
+                    }
+                    
+                    let totalWithoutRemainders = voteFractions.map { value in
+                        Int(value.rounded(.down))
+                    }.reduce(0, +)
+                    
+                    let remainder = 100 - totalWithoutRemainders
+                    
+
+                    let optionsSortedByDecimal = results.sorted { (firstOption, secondOption) -> Bool in
+                        let firstOptionFraction = Double(firstOption.value) / Double(totalVotes)
+                        let secondOptionFraction = Double(secondOption.value) / Double(totalVotes)
+                        let firstOptionDecimal = firstOption.value
+                    }
+                    
+//
+//
+//                    let pollIdsToRemainders = results.mapValues { votes -> Double in
+//                        let percentage = (Double(votes) / Double(totalVotes)) * 100
+//                        let flooredDivision = percentage.rounded(.down)
+//                        return percentage - flooredDivision
+//                    }
+//
+//                    let totalRemainders = pollIdsToRemainders.map { $1 }.reduce(0, +)
+
+                    
+                    
+                    let roundedOptions = results.map { (pollId, votes) in
+                        
+                    }
+                    
+                    return .answered(optionResults:
+                }
             } catch {
                 os_log("Existing storage for poll was corrupted: %s", error.saneDescription)
                 return .answered(optionResults: <#T##PollsVotingService.OptionStatus#>)
@@ -115,7 +161,7 @@ class PollsVotingService {
         return q
     }()
     
-    private func fetchPollResults(for pollId: String, callback: @escaping (PollResults) -> Void) {
+    private func fetchPollResults(for pollId: String, callback: @escaping (PollFetchResults) -> Void) {
         let url = URL(string: "\(POLLS_SERVICE_ENDPOINT)\(pollId)/vote")!
         var request = URLRequest(url: url)
         request.httpMethod = "GET"

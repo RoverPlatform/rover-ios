@@ -6,9 +6,14 @@
 //  Copyright © 2019 Rover Labs Inc. All rights reserved.
 //
 
-import Foundation
+import os
+import UIKit
+
+private let POLLS_SERVICE_ENDPOINT = "https://polls.rover.io/v1/polls/"
 
 class PollsVotingService {
+    // MARK: Types
+    
     public struct OptionStatus {
         let selected: Bool
         let fraction: Float
@@ -18,6 +23,18 @@ class PollsVotingService {
     public enum PollStatus {
         case waitingForAnswer
         case answered(optionResults: OptionStatus)
+    }
+    
+    enum PollResults {
+        case fetched(results: PollFetchResponse)
+        case failed
+    }
+    
+    // TODO: decide if to actually promote this to API or not. If not, inline it right into the fetch function.
+    public struct PollFetchResponse: Codable {
+        var results: [
+            String: Int
+        ]
     }
     
     // TODO: Api Client
@@ -30,23 +47,8 @@ class PollsVotingService {
     
     //
     
-    // MARK: State & Storage
+
     
-    private let storage = UserDefaults()
-    
-    /// Synchronize operations that mutate local poll state.
-    private let serialQueue: Foundation.OperationQueue = {
-        let q = Foundation.OperationQueue()
-        q.maxConcurrentOperationCount = 1
-        return q
-    }()
-    
-    /// Get the current state for the poll.
-    func currentStateForPoll(optionIds: [String], pollId: String) {
-        
-    }
-    
-    // TODO: decide when and where the results request should be fired. As a side-effect of currentStateForPoll or subscribeToUpdates?
     
     /// Cast a vote on the poll.  Naturally may only be done once.  Synchronous, fire-and-forget, and best-effort. Any subscribers will be instantly notified (if possible) of the update.
     func castVote(pollId: String, optionId: String) {
@@ -57,9 +59,21 @@ class PollsVotingService {
     }
     
     /// Be notified of poll state.  Updates will be emitted on the main thread. Note that this will not immediately yield current state. Synchronously call `currentStateForPoll()` instead.
-    func subscribeToUpdates(pollId: String, subscriber: (PollStatus) -> Void) {
+    func subscribeToUpdates(pollId: String, optionIds: [String], subscriber: (PollStatus) -> Void) -> PollStatus {
+        // side-effect: kick off attempt to refresh PollResults.  That request will update the state in UserDefaults.
         
+        self.fetchPollResults(for: pollId) { results in
+            <#code#>
+        }
+        
+        // synchronously check local storage:
+        
+        
+        return .waitingForAnswer
     }
+
+    
+    // MARK: State & Storage
     
     /// Internal representation for storage of poll state on disk.
     private struct PollState: Codable {
@@ -73,6 +87,116 @@ class PollsVotingService {
         
         /// If the user has voted, for which option did they vote?
         let userVotedForOptionId: String?
+    }
+    
+//        private let storage = UserDefaults()
+    // temporary shitty in-memory version just to get me going.
+    private var storage = [String: String]()
+    private let urlSession = URLSession(configuration: URLSessionConfiguration.default)
+    
+    private func localStateForPoll(pollId: String, currentOptionIds: [String]) -> PollStatus {
+        let decoder = JSONDecoder.init()
+        if let existingEntryJson = self.storage[pollId] {
+            do {
+                let decoded = try? decoder.decode(PollState.self, from: existingEntryJson.data(using: .utf8) ?? Data())
+                
+                decoded
+            } catch {
+                os_log("Existing storage for poll was corrupted: %s", error.saneDescription)
+                return .answered(optionResults: <#T##PollsVotingService.OptionStatus#>)
+            }
+        }
+    }
+    
+    /// Synchronize operations that mutate local poll state.
+    private let serialQueue: Foundation.OperationQueue = {
+        let q = Foundation.OperationQueue()
+        q.maxConcurrentOperationCount = 1
+        return q
+    }()
+    
+    private func fetchPollResults(for pollId: String, callback: @escaping (PollResults) -> Void) {
+        let url = URL(string: "\(POLLS_SERVICE_ENDPOINT)\(pollId)/vote")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        let task = self.urlSession.dataTask(with: request) { data, urlResponse, error in
+            if let error = error {
+                os_log("Unable to request poll results because: %s", log: .rover, type: .error, error.saneDescription)
+                callback(.failed)
+                return
+            }
+            
+            guard let httpURLResponse = urlResponse as? HTTPURLResponse else {
+                os_log("Unable to request poll results for an unknown reason.", log: .rover, type: .error)
+                callback(.failed)
+                return
+            }
+            
+            if httpURLResponse.statusCode != 200 {
+                if let errorBody = data {
+                    let errorString = String(bytes: errorBody, encoding: .utf8)
+                    os_log("Unable to request poll results due to application error: status code: %d, reason: %s", log: .rover, type: .error, httpURLResponse.statusCode, errorString ?? "empty")
+                } else {
+                    os_log("Unable to request poll results due to application error: status code %d.", log: .rover, type: .error, httpURLResponse.statusCode)
+                }
+                
+                callback(.failed)
+                return
+            }
+            
+            guard let data = data else {
+                os_log("Poll results fetch response body missing.", log: .rover, type: .error)
+                return
+            }
+            
+            do {
+                let decoder = JSONDecoder()
+                decoder.dateDecodingStrategy = .formatted(DateFormatter.rfc3339)
+                
+                let response = try decoder.decode(PollFetchResponse.self, from: data)
+                callback(.fetched(results: response))
+            } catch {
+                os_log("Unable to decode poll results fetch response body: %s", log: .rover, type: .error, error.saneDescription)
+            }
+        }
+        task.resume()
+    }
+    
+    private func dispatchCastVoteRequest(pollId: String, optionId: String) {
+        let url = URL(string: "\(POLLS_SERVICE_ENDPOINT)\(pollId)/vote")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setRoverUserAgent()
+        let requestBody = VoteCastRequest(option: optionId)
+        let data: Data
+        do {
+            let encoder = JSONEncoder()
+            data = try encoder.encode(requestBody)
+        } catch {
+            os_log("Failed to encode poll cast vote request: %@", log: .rover, type: .error, error.localizedDescription)
+            return
+        }
+        
+        var backgroundTaskID: UIBackgroundTaskIdentifier!
+        backgroundTaskID = UIApplication.shared.beginBackgroundTask(withName: "Cast Poll Vote") {
+            os_log("Failed to submit poll cast vote request: %@", log: .rover, type: .error, "App was suspended during submit")
+            UIApplication.shared.endBackgroundTask(backgroundTaskID)
+        }
+        
+        let sessionTask = urlSession.uploadTask(with: request, from: data) { _, _, error in
+            if let error = error {
+                os_log("Failed to submit poll cast vote request: %@", log: .rover, type: .error, error.localizedDescription)
+            }
+            
+            UIApplication.shared.endBackgroundTask(backgroundTaskID)
+        }
+        
+        sessionTask.resume()
+    }
+    
+    private struct VoteCastRequest: Codable {
+        var option: String
     }
 }
 
@@ -93,3 +217,8 @@ extension ImagePollBlock.ImagePoll {
 }
 
 
+extension Error {
+    var saneDescription: String {
+        return "Error: \(self.localizedDescription), details: \((self as NSError).userInfo.debugDescription)"
+    }
+}

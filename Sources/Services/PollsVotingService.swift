@@ -16,7 +16,7 @@ class PollsVotingService {
     
     public struct OptionStatus {
         let selected: Bool
-        let fraction: Float
+        let voteCount: Int
     }
     
     /// Yielded
@@ -60,10 +60,19 @@ class PollsVotingService {
     
     /// Be notified of poll state.  Updates will be emitted on the main thread. Note that this will not immediately yield current state. Synchronously call `currentStateForPoll()` instead.
     func subscribeToUpdates(pollId: String, optionIds: [String], subscriber: (PollStatus) -> Void) -> PollStatus {
-        // side-effect: kick off attempt to refresh PollResults.  That request will update the state in UserDefaults.
+        // side-effect: kick off async attempt to refresh PollResults.  That request will update the state in UserDefaults.
         
-        self.fetchPollResults(for: pollId) { results in
-            <#code#>
+        self.fetchPollResults(for: pollId) { [weak self] results in
+            // dispatch to the serial queue:
+            self?.serialQueue.addOperation {
+                switch results {
+                case .failed:
+                    os_log("Unable to fetch poll results.", log: .rover, type: .error)
+                case let .fetched(results):
+                    // update local state!
+                    results.results
+                }
+            }
         }
         
         // synchronously check local storage:
@@ -97,61 +106,40 @@ class PollsVotingService {
     private func localStateForPoll(pollId: String, currentOptionIds: [String]) -> PollStatus {
         let decoder = JSONDecoder.init()
         if let existingEntryJson = self.storage[pollId] {
+            let localState: PollState
             do {
-                let decoded = try decoder.decode(PollState.self, from: existingEntryJson.data(using: .utf8) ?? Data())
-                guard let vote = decoded.userVotedForOptionId else {
-                    // TODO: do the Largest Remainder Method
-                    
-                    guard let results = decoded.optionResults else {
-                        return .waitingForAnswer
-                    }
-                    
-                    // Largest Remainder Method in order to enable us to produce nice integer percentage values for each option that all add up to 100%.
-                    
-                    let counts = results.map { $1 }
-                    
-                    let totalVotes = counts.reduce(0, +)
-                    
-                    let voteFractions = counts.map { votes in
-                        Double(votes) / Double(totalVotes)
-                    }
-                    
-                    let totalWithoutRemainders = voteFractions.map { value in
-                        Int(value.rounded(.down))
-                    }.reduce(0, +)
-                    
-                    let remainder = 100 - totalWithoutRemainders
-                    
-
-                    let optionsSortedByDecimal = results.sorted { (firstOption, secondOption) -> Bool in
-                        let firstOptionFraction = Double(firstOption.value) / Double(totalVotes)
-                        let secondOptionFraction = Double(secondOption.value) / Double(totalVotes)
-                        let firstOptionDecimal = firstOption.value
-                    }
-                    
-//
-//
-//                    let pollIdsToRemainders = results.mapValues { votes -> Double in
-//                        let percentage = (Double(votes) / Double(totalVotes)) * 100
-//                        let flooredDivision = percentage.rounded(.down)
-//                        return percentage - flooredDivision
-//                    }
-//
-//                    let totalRemainders = pollIdsToRemainders.map { $1 }.reduce(0, +)
-
-                    
-                    
-                    let roundedOptions = results.map { (pollId, votes) in
-                        
-                    }
-                    
-                    return .answered(optionResults:
-                }
+                localState = try decoder.decode(PollState.self, from: existingEntryJson.data(using: .utf8) ?? Data())
             } catch {
-                os_log("Existing storage for poll was corrupted: %s", error.saneDescription)
-                return .answered(optionResults: <#T##PollsVotingService.OptionStatus#>)
+               os_log("Existing storage for poll was corrupted: %s", error.saneDescription)
+               return .waitingForAnswer
             }
+            
+            if let vote = localState.userVotedForOptionId {
+                // user voted, so show them the response.
+                guard let optionResults = localState.optionResults else {
+                    // user voted but optionResults not stored.
+                    os_log("User voted but local copy of option results is missing.", log: .rover, type: .fault)
+                    return .waitingForAnswer
+                }
+
+                // couldn't use mapValues because I needed the key (option id) to do the transform.
+                let optionStatuses = optionResults.keys.map { (optionId) in
+                    return (optionId, PollsVotingService.OptionStatus(selected: vote == optionId, voteCount: optionResults[optionId]!))
+                }.reduce(into: [String: PollsVotingService.OptionStatus]()) { (dictionary, tuple) in
+                    let (optionId, optionStatus) = tuple
+                    dictionary[optionId] = optionStatus
+                }
+                return .answered(optionResults: optionStatuses)
+            }
+            return .waitingForAnswer
         }
+        return .waitingForAnswer
+    }
+    
+    private func updateLocalState(pollFetchResponse: PollFetchResponse) {
+        // replace locally stored results with a new copy with the
+//        self.storage
+        // ANDREW START HERE
     }
     
     /// Synchronize operations that mutate local poll state.
@@ -266,5 +254,49 @@ extension ImagePollBlock.ImagePoll {
 extension Error {
     var saneDescription: String {
         return "Error: \(self.localizedDescription), details: \((self as NSError).userInfo.debugDescription)"
+    }
+}
+
+extension Dictionary where Value == Int {
+    fileprivate func percentagesWithDistributedRemainder() -> [Key: Int] {
+        // Largest Remainder Method in order to enable us to produce nice integer percentage values for each option that all add up to 100%.
+        let counts = self.map { $1 }
+        
+        let totalVotes = counts.reduce(0, +)
+        
+        let voteFractions = counts.map { votes in
+            Double(votes) / Double(totalVotes)
+        }
+        
+        let totalWithoutRemainders = voteFractions.map { value in
+            Int(value.rounded(.down))
+        }.reduce(0, +)
+        
+        let remainder = 100 - totalWithoutRemainders
+        
+        typealias OptionIdAndCount = (Key, Int)
+        
+        let optionsSortedByDecimal: [OptionIdAndCount] = self.sorted { (firstOption, secondOption) -> Bool in
+            let firstOptionFraction = Double(firstOption.value) / Double(totalVotes)
+            let secondOptionFraction = Double(secondOption.value) / Double(totalVotes)
+
+            return secondOptionFraction > firstOptionFraction
+        }
+
+        // now to distribute the remainder (as whole integers) across the options.
+        let distributed = optionsSortedByDecimal.enumerated().map { tuple -> OptionIdAndCount in
+            let (offset, (optionId, voteCount)) = tuple
+            if offset < remainder {
+                return (optionId, voteCount + 1)
+            } else {
+                return (optionId, voteCount)
+            }
+        }
+        
+        // and turn it back into a dictionary:
+        return distributed.reduce(into: [Key: Int]()) { (dictionary, optionIdAndCount) in
+            let (optionId, voteCount) = optionIdAndCount
+            dictionary[optionId] = voteCount
+        }
     }
 }

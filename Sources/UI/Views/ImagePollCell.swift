@@ -37,6 +37,7 @@ class ImagePollOptionView: UIView {
     struct OptionResults {
         let selected: Bool
         let fraction: Float
+        let percentage: Int
     }
     
     enum State {
@@ -50,6 +51,10 @@ class ImagePollOptionView: UIView {
     
     public var leftMargin: Int {
         return self.option.leftMargin
+    }
+    
+    public var optionId: String {
+        return self.option.id
     }
     
     private let content = UIImageView()
@@ -166,6 +171,8 @@ class ImagePollOptionView: UIView {
         case .answered(let optionResults):
             revealResultsState(animated: false, optionResults: optionResults)
         }
+        
+        // TODO: tap gesture recognizers for detecting option taps
     }
     
     // MARK: States and Animation
@@ -258,10 +265,43 @@ class ImagePollCell: BlockCell {
             self.questionView!.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
         ]
         
+        // TODO: this will soon hold a subscription, too.
+        // TODO: figure out how to get the experience ID :(
+        let initialPollStatus = PollsVotingService.shared.subscribeToUpdates(pollId: "5d2636d0ffab400010e43bfc:\(imagePollBlock.id)", givenCurrentOptionIds: imagePollBlock.imagePoll.votableOptionIds) { [weak self] newPollStatus in
+            
+            switch newPollStatus {
+                case .answered(let optionResults):
+                
+                let viewOptionStatuses = optionResults.viewOptionStatuses
+                
+                self?.optionViews.forEach { (optionView) in
+                    let optionId = optionView.optionId
+                    guard let optionResult = optionResults[optionId] else {
+                        os_log("An option result was missing for a poll option view being currently displayed.", log: .rover, type: .fault)
+                        return
+                    }
+                    
+                    optionView.state = .answered(optionResults: viewOptionStatuses[optionId]!)
+                }
+
+                case .waitingForAnswer:
+                    self?.optionViews.forEach({ (optionView) in
+                        optionView.state = .waitingForAnswer
+                    })
+            }
+        }
         
-        self.optionViews = imagePollBlock.imagePoll.options.map { option in
-            // TODO: get initial state synchronously from the local VotingService.
-            ImagePollOptionView(option: option, initialState: .waitingForAnswer)
+        switch initialPollStatus {
+            case .answered(let optionResults):
+                let viewOptionStatuses = optionResults.viewOptionStatuses
+                    self.optionViews = imagePollBlock.imagePoll.options.map { option in
+                        
+                        ImagePollOptionView(option: option, initialState: .answered(optionResults: viewOptionStatuses[option.id]!))
+                    }
+            case .waitingForAnswer:
+                self.optionViews = imagePollBlock.imagePoll.options.map { option in
+                    ImagePollOptionView(option: option, initialState: .waitingForAnswer)
+                }
         }
         
         // we render the poll options in two columns, regardless of device size.  so pair them off.
@@ -288,20 +328,6 @@ class ImagePollCell: BlockCell {
         ]
 
         NSLayoutConstraint.activate(questionConstraints + stackConstraints)
-        
-        // TODO: A stand-in for the user tapping.
-        self.temporaryTapDemoTimer = Timer.scheduledTimer(withTimeInterval: 4, repeats: false) { _ in
-            self.optionViews.forEach { (optionView) in
-                optionView.state = .answered(optionResults: ImagePollOptionView.OptionResults.init(selected: false, fraction: 0.67))
-            }
-        }
-
-        // TODO: A stand-in for the user tapping.
-        self.temporaryTapDemoTimer1 = Timer.scheduledTimer(withTimeInterval: 10, repeats: false) { _ in
-            self.optionViews.forEach { (optionView) in
-                optionView.state = .answered(optionResults: ImagePollOptionView.OptionResults.init(selected: false, fraction: 0.25))
-            }
-        }
     }
 }
 
@@ -379,4 +405,39 @@ extension ImagePollBlock.ImagePoll.Option {
     var attributedText: NSAttributedString? {
         return self.text.attributedText(forFormat: .plain)
     }
+}
+
+extension Dictionary where Key == String, Value == PollsVotingService.OptionStatus {
+    var viewOptionStatuses: [String: ImagePollOptionView.OptionResults] {
+        let votesByOptionIds = self.mapValues { $0.voteCount }
+        let totalVotes = votesByOptionIds.values.reduce(0, +)
+        let roundedPercentagesByOptionIds = votesByOptionIds.percentagesWithDistributedRemainder()
+        
+        return self.mapValuesWithKey { (optionId, optionStatus) in
+            let fraction = Double(optionStatus.voteCount) / Double(totalVotes)
+            return ImagePollOptionView.OptionResults(
+                selected: optionStatus.selected,
+                fraction: Float(fraction),
+                percentage: roundedPercentagesByOptionIds[optionId]!
+            )
+        }
+    }
+}
+
+extension Dictionary {
+    func mapValuesWithKey<T>(transform: (Key, Value) throws -> T) throws -> [Key: T] {
+        var result = [Key: T]()
+        try self.keys.forEach { key in
+            result[key] = try transform(key, self[key]!)
+        }
+        return result
+    }
+    
+    func mapValuesWithKey<T>(transform: (Key, Value) -> T) -> [Key: T] {
+            var result = [Key: T]()
+            self.keys.forEach { key in
+                result[key] = transform(key, self[key]!)
+            }
+            return result
+        }
 }

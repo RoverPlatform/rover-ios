@@ -12,6 +12,9 @@ import UIKit
 private let POLLS_SERVICE_ENDPOINT = "https://polls.rover.io/v1/polls/"
 
 class PollsVotingService {
+    /// The shared singleton Voting Service.
+    static let shared = PollsVotingService()
+    
     // MARK: Types
     
     public struct OptionStatus {
@@ -45,11 +48,6 @@ class PollsVotingService {
 
     // Interface is going to be thus: separation of casting of votes and subscribing to updates.  also allow getting current state synchronously, to make the UI code simpler so an initial state can be available. so getting current state synchronously and subscribing to updates will be two separate methods, for convenience.
     
-    //
-    
-
-    
-    
     /// Cast a vote on the poll.  Naturally may only be done once.  Synchronous, fire-and-forget, and best-effort. Any subscribers will be instantly notified (if possible) of the update.
     func castVote(pollId: String, optionId: String) {
         // TODO synchronously in local storage check for optionResults stored locally.  If present, update local state with dead-reckoned (+1 bump) values and then immediately emit an poll status update to subscribers.
@@ -59,7 +57,7 @@ class PollsVotingService {
     }
     
     /// Be notified of poll state.  Updates will be emitted on the main thread. Note that this will not immediately yield current state. Synchronously call `currentStateForPoll()` instead.
-    func subscribeToUpdates(pollId: String, optionIds: [String], subscriber: (PollStatus) -> Void) -> PollStatus {
+    func subscribeToUpdates(pollId: String, givenCurrentOptionIds optionIds: [String], subscriber: (PollStatus) -> Void) -> PollStatus {
         // side-effect: kick off async attempt to refresh PollResults.  That request will update the state in UserDefaults.
         
         self.fetchPollResults(for: pollId) { [weak self] results in
@@ -70,17 +68,16 @@ class PollsVotingService {
                     os_log("Unable to fetch poll results.", log: .rover, type: .error)
                 case let .fetched(results):
                     // update local state!
-                    results.results
+                    self?.updateLocalStateWithResults(pollId: pollId, pollFetchResponse: results)
                 }
             }
         }
         
-        // synchronously check local storage:
+        // in the meantime, synchronously check local storage and immediately return the results:
+        return self.localStateForPoll(pollId: pollId, currentOptionIds: optionIds)
         
-        
-        return .waitingForAnswer
+        // TODO: implement a 5s timer, and then return a subscription chit to allow client to unsubscribe.
     }
-
     
     // MARK: State & Storage
     
@@ -137,9 +134,7 @@ class PollsVotingService {
     }
     
     private func updateLocalStateWithResults(pollId: String, pollFetchResponse: PollFetchResponse) {
-        // replace locally stored results with a new copy with the
-//        self.storage
-        // ANDREW START HERE
+        // replace locally stored results with a new copy with the results part updated.
         let localState: PollState
         if let existingEntryJson = self.storage[pollId] {
             do {
@@ -149,15 +144,17 @@ class PollsVotingService {
                os_log("Existing storage for poll was corrupted: %s", error.saneDescription)
                 localState = PollState(optionResults: pollFetchResponse.results, userVotedForOptionId: nil)
             }
+        } else {
+            localState = PollState(optionResults: nil, userVotedForOptionId: nil)
         }
         
         let encoder = JSONEncoder()
         let newState = PollState(optionResults: pollFetchResponse.results, userVotedForOptionId: localState.userVotedForOptionId)
         do {
             let newStateJson = try encoder.encode(newState)
-            self.storage[pollId] = newStateJson
+            self.storage[pollId] = String(data: newStateJson, encoding: .utf8)
         } catch {
-            os_log("")
+            os_log("Unable to update local poll storage with newly fetched results: %s", error.saneDescription)
         }
     }
     
@@ -277,7 +274,7 @@ extension Error {
 }
 
 extension Dictionary where Value == Int {
-    fileprivate func percentagesWithDistributedRemainder() -> [Key: Int] {
+    func percentagesWithDistributedRemainder() -> [Key: Int] {
         // Largest Remainder Method in order to enable us to produce nice integer percentage values for each option that all add up to 100%.
         let counts = self.map { $1 }
         

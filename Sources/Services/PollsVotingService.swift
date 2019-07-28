@@ -136,10 +136,29 @@ class PollsVotingService {
         return .waitingForAnswer
     }
     
-    private func updateLocalState(pollFetchResponse: PollFetchResponse) {
+    private func updateLocalStateWithResults(pollId: String, pollFetchResponse: PollFetchResponse) {
         // replace locally stored results with a new copy with the
 //        self.storage
         // ANDREW START HERE
+        let localState: PollState
+        if let existingEntryJson = self.storage[pollId] {
+            do {
+                let decoder = JSONDecoder()
+                localState = try decoder.decode(PollState.self, from: existingEntryJson.data(using: .utf8) ?? Data())
+            } catch {
+               os_log("Existing storage for poll was corrupted: %s", error.saneDescription)
+                localState = PollState(optionResults: pollFetchResponse.results, userVotedForOptionId: nil)
+            }
+        }
+        
+        let encoder = JSONEncoder()
+        let newState = PollState(optionResults: pollFetchResponse.results, userVotedForOptionId: localState.userVotedForOptionId)
+        do {
+            let newStateJson = try encoder.encode(newState)
+            self.storage[pollId] = newStateJson
+        } catch {
+            os_log("")
+        }
     }
     
     /// Synchronize operations that mutate local poll state.

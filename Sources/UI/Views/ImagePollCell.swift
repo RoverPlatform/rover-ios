@@ -70,12 +70,16 @@ class ImagePollOptionView: UIView {
     
     private let option: ImagePollBlock.ImagePoll.Option
     
+    private let optionTapped: () -> Void
+    
     init(
         option: ImagePollBlock.ImagePoll.Option,
-        initialState: State
+        initialState: State,
+        optionTapped: @escaping () -> Void
     ) {
         self.option = option
         self.state = initialState
+        self.optionTapped = optionTapped
         super.init(frame: CGRect.zero)
         self.addSubview(self.content)
         self.addSubview(self.answerTextView)
@@ -163,6 +167,10 @@ class ImagePollOptionView: UIView {
         self.configureBorder(border: option.border, constrainedByFrame: nil)
         self.backgroundColor = option.background.color.uiColor
         
+        let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleOptionTapped))
+        gestureRecognizer.numberOfTapsRequired = 1
+        self.addGestureRecognizer(gestureRecognizer)
+        
         NSLayoutConstraint.activate(contentConstraints + answerConstraints + fadeOverlayConstraints + resultFillBarConstraints + resultPercentageConstraints)
         
         switch initialState {
@@ -182,10 +190,12 @@ class ImagePollOptionView: UIView {
         self.resultFillBarArea.alpha = 0.0
         self.resultFadeOverlay.alpha = 0.0
         self.resultFillBarWidthConstraint!.constant = 0
+        self.isUserInteractionEnabled = true
     }
     
     private var percentageAnimationTimer: Timer?
     private func revealResultsState(animated: Bool, optionResults: OptionResults) {
+        // TODO: allow animation to be turned off by parameter.
         self.resultPercentage.text = String(format: "%.0f %%", optionResults.fraction * 100)
         
         UIView.animate(withDuration: RESULT_REVEAL_TIME, delay: 0.0, options: [.curveEaseInOut], animations: {
@@ -213,6 +223,16 @@ class ImagePollOptionView: UIView {
                 self?.resultPercentage.text = String(format: "%.0f%%", Double(optionResults.fraction * 100) * elapsedProportion)
             }
         })
+        
+        self.isUserInteractionEnabled = false
+    }
+    
+    // MARK: Interaction
+
+    @objc
+    private func handleOptionTapped(_: UIGestureRecognizer) {
+        os_log("OPTION TAPPED")
+        self.optionTapped()
     }
     
     @available(*, unavailable)
@@ -276,11 +296,6 @@ class ImagePollCell: BlockCell {
                 
                 self?.optionViews.forEach { (optionView) in
                     let optionId = optionView.optionId
-                    guard let optionResult = optionResults[optionId] else {
-                        os_log("An option result was missing for a poll option view being currently displayed.", log: .rover, type: .fault)
-                        return
-                    }
-                    
                     optionView.state = .answered(optionResults: viewOptionStatuses[optionId]!)
                 }
 
@@ -295,12 +310,15 @@ class ImagePollCell: BlockCell {
             case .answered(let optionResults):
                 let viewOptionStatuses = optionResults.viewOptionStatuses
                     self.optionViews = imagePollBlock.imagePoll.options.map { option in
-                        
-                        ImagePollOptionView(option: option, initialState: .answered(optionResults: viewOptionStatuses[option.id]!))
+                        ImagePollOptionView(option: option, initialState: .answered(optionResults: viewOptionStatuses[option.id]!)) {
+                                PollsVotingService.shared.castVote(pollId: imagePollBlock.id, optionId: option.id)
+                        }
                     }
             case .waitingForAnswer:
                 self.optionViews = imagePollBlock.imagePoll.options.map { option in
-                    ImagePollOptionView(option: option, initialState: .waitingForAnswer)
+                    ImagePollOptionView(option: option, initialState: .waitingForAnswer) {
+                        PollsVotingService.shared.castVote(pollId: imagePollBlock.id, optionId: option.id)
+                    }
                 }
         }
         
@@ -329,6 +347,7 @@ class ImagePollCell: BlockCell {
 
         NSLayoutConstraint.activate(questionConstraints + stackConstraints)
     }
+
 }
 
 // MARK: Measurement

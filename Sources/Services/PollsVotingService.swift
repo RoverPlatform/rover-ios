@@ -9,7 +9,7 @@
 import os
 import UIKit
 
-private let POLLS_SERVICE_ENDPOINT = "https://polls.rover.io/v1/polls/"
+private let POLLS_SERVICE_ENDPOINT = "https://polls.staging.rover.io/v1/polls/"
 
 class PollsVotingService {
     /// The shared singleton Voting Service.
@@ -52,15 +52,18 @@ class PollsVotingService {
     func castVote(pollId: String, optionId: String) {
         // TODO synchronously in local storage check for optionResults stored locally.  If present, update local state with dead-reckoned (+1 bump) values and then immediately emit an poll status update to subscribers.
         // then dispatch vote request task onto the queue.
+        dispatchCastVoteRequest(pollId: pollId, optionId: optionId)
         
         // if local state wasn't present, then either the results request didn't complete successfully or user tapped fast and thus we're racing it.
+        
+        
     }
     
     /// Be notified of poll state.  Updates will be emitted on the main thread. Note that this will not immediately yield current state. Synchronously call `currentStateForPoll()` instead.
-    func subscribeToUpdates(pollId: String, givenCurrentOptionIds optionIds: [String], subscriber: (PollStatus) -> Void) -> PollStatus {
+    func subscribeToUpdates(pollId: String, givenCurrentOptionIds optionIds: [String], subscriber: @escaping (PollStatus) -> Void) -> PollStatus {
         // side-effect: kick off async attempt to refresh PollResults.  That request will update the state in UserDefaults.
         
-        self.fetchPollResults(for: pollId) { [weak self] results in
+        self.fetchPollResults(for: pollId, optionIds: optionIds) { [weak self] results in
             // dispatch to the serial queue:
             self?.serialQueue.addOperation {
                 switch results {
@@ -69,6 +72,11 @@ class PollsVotingService {
                 case let .fetched(results):
                     // update local state!
                     self?.updateLocalStateWithResults(pollId: pollId, pollFetchResponse: results)
+                    if let newState = self?.localStateForPoll(pollId: pollId, currentOptionIds: optionIds) {
+                        DispatchQueue.main.async {
+                            subscriber(newState)
+                        }                        
+                    }
                 }
             }
         }
@@ -165,9 +173,10 @@ class PollsVotingService {
         return q
     }()
     
-    private func fetchPollResults(for pollId: String, callback: @escaping (PollFetchResults) -> Void) {
-        let url = URL(string: "\(POLLS_SERVICE_ENDPOINT)\(pollId)/vote")!
-        var request = URLRequest(url: url)
+    private func fetchPollResults(for pollId: String, optionIds: [String], callback: @escaping (PollFetchResults) -> Void) {
+        var url = URLComponents(string: "\(POLLS_SERVICE_ENDPOINT)\(pollId)")!
+        url.queryItems = [URLQueryItem(name: "options", value: optionIds.joined(separator: ","))]
+        var request = URLRequest(url: url.url!)
         request.httpMethod = "GET"
         let task = self.urlSession.dataTask(with: request) { data, urlResponse, error in
             if let error = error {
@@ -242,6 +251,7 @@ class PollsVotingService {
             UIApplication.shared.endBackgroundTask(backgroundTaskID)
         }
         
+        os_log("Submitting vote...")
         sessionTask.resume()
     }
     

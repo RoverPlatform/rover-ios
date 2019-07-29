@@ -54,9 +54,8 @@ class PollsVotingService {
         // then dispatch vote request task onto the queue.
         dispatchCastVoteRequest(pollId: pollId, optionId: optionId)
         
+        commitVoteToLocalState(pollId: pollId, optionId: optionId)
         // if local state wasn't present, then either the results request didn't complete successfully or user tapped fast and thus we're racing it.
-        
-        
     }
     
     /// Be notified of poll state.  Updates will be emitted on the main thread. Note that this will not immediately yield current state. Synchronously call `currentStateForPoll()` instead.
@@ -89,6 +88,8 @@ class PollsVotingService {
     
     // MARK: State & Storage
     
+    private var stateSubscribers = [String: [(PollStatus) -> Void]]()
+    
     /// Internal representation for storage of poll state on disk.
     private struct PollState: Codable {
 //        let pollId: String
@@ -103,7 +104,7 @@ class PollsVotingService {
         let userVotedForOptionId: String?
     }
     
-//        private let storage = UserDefaults()
+    //        private let storage = UserDefaults()
     // temporary shitty in-memory version just to get me going.
     private var storage = [String: String]()
     private let urlSession = URLSession(configuration: URLSessionConfiguration.default)
@@ -166,6 +167,48 @@ class PollsVotingService {
         }
     }
     
+    private func commitVoteToLocalState(pollId: String, optionId: String) {
+        let localState: PollState
+        if let existingEntryJson = self.storage[pollId] {
+            do {
+                let decoder = JSONDecoder()
+                localState = try decoder.decode(PollState.self, from: existingEntryJson.data(using: .utf8) ?? Data())
+            } catch {
+               os_log("Existing storage for poll was corrupted: %s", error.saneDescription)
+                localState = PollState(optionResults: nil, userVotedForOptionId: optionId)
+            }
+        } else {
+            os_log("Recording a local vote before option results are available. This means user got their vote in before the results were fetched.  UI may wait for a moment while fetching continues.", log: .rover, type: .info)
+            localState = PollState(optionResults: nil, userVotedForOptionId: optionId)
+        }
+                
+        let newState: PollState
+        if var optionResults = localState.optionResults {
+            // results with user's selection incremented.
+            optionResults[optionId]? += 1
+            newState = PollState(optionResults: optionResults, userVotedForOptionId: optionId)
+        } else {
+            newState = PollState(optionResults: localState.optionResults, userVotedForOptionId: optionId)
+        }
+        
+        updateStorageForPoll(pollId: pollId, withNewState: newState)
+    }
+    
+    private func updateStorageForPoll(pollId: String, withNewState newState: PollState) {
+        let encoder = JSONEncoder()
+        do {
+            let newStateJson = try encoder.encode(newState)
+            // TODO: storage update dispatch.
+            self.storage[pollId] = String(data: newStateJson, encoding: .utf8)
+            self.stateSubscribers[pollId]?.forEach { callback in
+                callback()
+            }
+        } catch {
+            os_log("Unable to update local poll storage: %s", error.saneDescription)
+            return
+        }
+    }
+    
     /// Synchronize operations that mutate local poll state.
     private let serialQueue: Foundation.OperationQueue = {
         let q = Foundation.OperationQueue()
@@ -175,9 +218,10 @@ class PollsVotingService {
     
     private func fetchPollResults(for pollId: String, optionIds: [String], callback: @escaping (PollFetchResults) -> Void) {
         var url = URLComponents(string: "\(POLLS_SERVICE_ENDPOINT)\(pollId)")!
-        url.queryItems = [URLQueryItem(name: "options", value: optionIds.joined(separator: ","))]
+        url.queryItems = optionIds.map { URLQueryItem(name: "options", value: $0) }
         var request = URLRequest(url: url.url!)
         request.httpMethod = "GET"
+        request.setRoverUserAgent()
         let task = self.urlSession.dataTask(with: request) { data, urlResponse, error in
             if let error = error {
                 os_log("Unable to request poll results because: %s", log: .rover, type: .error, error.saneDescription)

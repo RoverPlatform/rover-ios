@@ -62,6 +62,11 @@ class PollsVotingService {
     func subscribeToUpdates(pollId: String, givenCurrentOptionIds optionIds: [String], subscriber: @escaping (PollStatus) -> Void) -> PollStatus {
         // side-effect: kick off async attempt to refresh PollResults.  That request will update the state in UserDefaults.
         
+        if self.stateSubscribers[pollId] == nil {
+            self.stateSubscribers[pollId] = []
+        }
+        self.stateSubscribers[pollId]!.append(subscriber)
+        
         self.fetchPollResults(for: pollId, optionIds: optionIds) { [weak self] results in
             // dispatch to the serial queue:
             self?.serialQueue.addOperation {
@@ -70,18 +75,19 @@ class PollsVotingService {
                     os_log("Unable to fetch poll results.", log: .rover, type: .error)
                 case let .fetched(results):
                     // update local state!
+                    os_log("Successfully fetched current poll results.", log: .rover, type: .debug)
                     self?.updateLocalStateWithResults(pollId: pollId, pollFetchResponse: results)
-                    if let newState = self?.localStateForPoll(pollId: pollId, currentOptionIds: optionIds) {
-                        DispatchQueue.main.async {
-                            subscriber(newState)
-                        }                        
-                    }
+//                    if let newState = self?.localStateForPoll(pollId: pollId) {
+//                        DispatchQueue.main.async {
+//                            subscriber(newState)
+//                        }
+//                    }
                 }
             }
         }
-        
+
         // in the meantime, synchronously check local storage and immediately return the results:
-        return self.localStateForPoll(pollId: pollId, currentOptionIds: optionIds)
+        return self.localStateForPoll(pollId: pollId)
         
         // TODO: implement a 5s timer, and then return a subscription chit to allow client to unsubscribe.
     }
@@ -102,27 +108,11 @@ class PollsVotingService {
         
         /// If the user has voted, for which option did they vote?
         let userVotedForOptionId: String?
-    }
-    
-    //        private let storage = UserDefaults()
-    // temporary shitty in-memory version just to get me going.
-    private var storage = [String: String]()
-    private let urlSession = URLSession(configuration: URLSessionConfiguration.default)
-    
-    private func localStateForPoll(pollId: String, currentOptionIds: [String]) -> PollStatus {
-        let decoder = JSONDecoder.init()
-        if let existingEntryJson = self.storage[pollId] {
-            let localState: PollState
-            do {
-                localState = try decoder.decode(PollState.self, from: existingEntryJson.data(using: .utf8) ?? Data())
-            } catch {
-               os_log("Existing storage for poll was corrupted: %s", error.saneDescription)
-               return .waitingForAnswer
-            }
-            
-            if let vote = localState.userVotedForOptionId {
+        
+        func pollStatus() -> PollStatus {
+            if let vote = self.userVotedForOptionId {
                 // user voted, so show them the response.
-                guard let optionResults = localState.optionResults else {
+                guard let optionResults = self.optionResults else {
                     // user voted but optionResults not stored.
                     os_log("User voted but local copy of option results is missing.", log: .rover, type: .fault)
                     return .waitingForAnswer
@@ -138,6 +128,26 @@ class PollsVotingService {
                 return .answered(optionResults: optionStatuses)
             }
             return .waitingForAnswer
+        }
+    }
+    
+    //        private let storage = UserDefaults()
+    // temporary shitty in-memory version just to get me going.
+    private var storage = [String: String]()
+    private let urlSession = URLSession(configuration: URLSessionConfiguration.default)
+    
+    private func localStateForPoll(pollId: String) -> PollStatus {
+        let decoder = JSONDecoder.init()
+        if let existingEntryJson = self.storage[pollId] {
+            let localState: PollState
+            do {
+                localState = try decoder.decode(PollState.self, from: existingEntryJson.data(using: .utf8) ?? Data())
+            } catch {
+               os_log("Existing storage for poll was corrupted: %s", error.saneDescription)
+               return .waitingForAnswer
+            }
+            
+            return localState.pollStatus()
         }
         return .waitingForAnswer
     }
@@ -165,6 +175,8 @@ class PollsVotingService {
         } catch {
             os_log("Unable to update local poll storage with newly fetched results: %s", error.saneDescription)
         }
+        
+        os_log("Updated local state for poll %s.", log: .rover, type: .debug, pollId)
     }
     
     private func commitVoteToLocalState(pollId: String, optionId: String) {
@@ -174,12 +186,17 @@ class PollsVotingService {
                 let decoder = JSONDecoder()
                 localState = try decoder.decode(PollState.self, from: existingEntryJson.data(using: .utf8) ?? Data())
             } catch {
-               os_log("Existing storage for poll was corrupted: %s", error.saneDescription)
-                localState = PollState(optionResults: nil, userVotedForOptionId: optionId)
+               os_log("Existing storage for poll was corrupted: %s", log: .rover, type: .error, error.saneDescription)
+                localState = PollState(optionResults: nil, userVotedForOptionId: nil)
             }
         } else {
             os_log("Recording a local vote before option results are available. This means user got their vote in before the results were fetched.  UI may wait for a moment while fetching continues.", log: .rover, type: .info)
-            localState = PollState(optionResults: nil, userVotedForOptionId: optionId)
+            localState = PollState(optionResults: nil, userVotedForOptionId: nil)
+        }
+        
+        guard localState.userVotedForOptionId == nil else {
+            os_log("User already voted.", log: .rover, type: .fault)
+            return
         }
                 
         let newState: PollState
@@ -191,6 +208,8 @@ class PollsVotingService {
             newState = PollState(optionResults: localState.optionResults, userVotedForOptionId: optionId)
         }
         
+        os_log("Recording vote for option %s on poll %s", optionId, pollId)
+        
         updateStorageForPoll(pollId: pollId, withNewState: newState)
     }
     
@@ -201,7 +220,9 @@ class PollsVotingService {
             // TODO: storage update dispatch.
             self.storage[pollId] = String(data: newStateJson, encoding: .utf8)
             self.stateSubscribers[pollId]?.forEach { callback in
-                callback()
+                DispatchQueue.main.async {
+                    callback(newState.pollStatus())
+                }
             }
         } catch {
             os_log("Unable to update local poll storage: %s", error.saneDescription)

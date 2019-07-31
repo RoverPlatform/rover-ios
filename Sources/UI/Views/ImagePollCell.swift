@@ -290,13 +290,19 @@ class ImagePollCell: BlockCell {
         let initialPollStatus = PollsVotingService.shared.subscribeToUpdates(pollId: "5d2636d0ffab400010e43bfc:\(imagePollBlock.id)", givenCurrentOptionIds: imagePollBlock.imagePoll.votableOptionIds) { [weak self] newPollStatus in
             
             switch newPollStatus {
-                case .answered(let optionResults):
+                case .answered(let resultsForOptions):
+                    
+                var copy = resultsForOptions
                 
-                let viewOptionStatuses = optionResults.viewOptionStatuses
+                let viewOptionStatuses = resultsForOptions.viewOptionStatuses
                 
                 self?.optionViews.forEach { (optionView) in
                     let optionId = optionView.optionId
-                    optionView.state = .answered(optionResults: viewOptionStatuses[optionId]!)
+                    guard let optionResults = viewOptionStatuses[optionId] else {
+                        os_log("A result was not given for option: %s.  Did you remember to unsubscribe on recycle?", log: .rover, type: .error, optionId)
+                        return
+                    }
+                    optionView.state = .answered(optionResults: optionResults)
                 }
 
                 case .waitingForAnswer:

@@ -25,7 +25,7 @@ class PollsVotingService {
     /// Yielded
     public enum PollStatus {
         case waitingForAnswer
-        case answered(optionResults: [String: OptionStatus])
+        case answered(resultsForOptions: [String: OptionStatus])
     }
     
     private enum PollFetchResults {
@@ -125,7 +125,7 @@ class PollsVotingService {
                     let (optionId, optionStatus) = tuple
                     dictionary[optionId] = optionStatus
                 }
-                return .answered(optionResults: optionStatuses)
+                return .answered(resultsForOptions: optionStatuses)
             }
             return .waitingForAnswer
         }

@@ -58,51 +58,78 @@ class PollsVotingService {
         // if local state wasn't present, then either the results request didn't complete successfully or user tapped fast and thus we're racing it.
     }
     
-    /// Be notified of poll state.  Updates will be emitted on the main thread. Note that this will not immediately yield current state. Synchronously call `currentStateForPoll()` instead.
-    func subscribeToUpdates(pollId: String, givenCurrentOptionIds optionIds: [String], subscriber: @escaping (PollStatus) -> Void) -> PollStatus {
+    /// Be notified of poll state.  Updates will be emitted on the main thread. Note that this will not immediately yield current state, but it it synchronously.
+    /// Returns the current poll status synchronously, along with a subscriber chit that you should retain a reference to until you wish to unsubscribe.
+    func subscribeToUpdates(pollId: String, givenCurrentOptionIds optionIds: [String], subscriber: @escaping (PollStatus) -> Void) -> (PollStatus, AnyObject) {
         // side-effect: kick off async attempt to refresh PollResults.  That request will update the state in UserDefaults.
         
         if self.stateSubscribers[pollId] == nil {
             self.stateSubscribers[pollId] = []
         }
-        self.stateSubscribers[pollId]!.append(subscriber)
+        var chit = Subscriber(callback: subscriber)
+        self.stateSubscribers[pollId]!.append(
+            SubscriberBox(subscriber: chit)
+        )
+        self.stateSubscribers = self.stateSubscribers.garbageCollected()
         
-        self.fetchPollResults(for: pollId, optionIds: optionIds) { [weak self] results in
-            // dispatch to the serial queue:
-            self?.serialQueue.addOperation {
-                switch results {
-                case .failed:
-                    os_log("Unable to fetch poll results.", log: .rover, type: .error)
-                case let .fetched(results):
-                    // update local state!
-                    os_log("Successfully fetched current poll results.", log: .rover, type: .debug)
-                    self?.updateLocalStateWithResults(pollId: pollId, pollFetchResponse: results)
-//                    if let newState = self?.localStateForPoll(pollId: pollId) {
-//                        DispatchQueue.main.async {
-//                            subscriber(newState)
-//                        }
-//                    }
+        func recursiveFetch(delay: TimeInterval = 0) {
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(Int(delay * 1000))) {
+                self.fetchPollResults(for: pollId, optionIds: optionIds) { [weak self] results in
+                    // dispatch to the serial queue:
+                    self?.serialQueue.addOperation {
+                        switch results {
+                        case .failed:
+                            os_log("Unable to fetch poll results.", log: .rover, type: .error)
+                        case let .fetched(results):
+                            // update local state!
+                            os_log("Successfully fetched current poll results.", log: .rover, type: .debug)
+                            self?.updateLocalStateWithResults(pollId: pollId, pollFetchResponse: results)
+                            
+                            // chain fetch requests recursively, provided at least one subscriber exists for this poll.
+                            if let _ = self?.stateSubscribers[pollId]?.first?.subscriber {
+                                // 5 second delay on subsequent requests.
+                                recursiveFetch(delay: 5)
+                            }
+                        }
+                    }
                 }
             }
         }
-
+        
+        recursiveFetch()
+        
         // in the meantime, synchronously check local storage and immediately return the results:
-        return self.localStateForPoll(pollId: pollId)
+        return (self.localStateForPoll(pollId: pollId), chit)
         
         // TODO: implement a 5s timer, and then return a subscription chit to allow client to unsubscribe.
     }
     
     // MARK: State & Storage
     
-    private var stateSubscribers = [String: [(PollStatus) -> Void]]()
+    fileprivate class SubscriberBox {
+        weak var subscriber: Subscriber?
+        
+        init(subscriber: Subscriber) {
+            self.subscriber = subscriber
+        }
+        
+        convenience init(callback: @escaping (PollStatus) -> Void) {
+            self.init(subscriber: Subscriber(callback: callback))
+        }
+    }
+    
+    fileprivate class Subscriber {
+        var callback: (PollStatus) -> Void
+        
+        init(callback: @escaping (PollStatus) -> Void) {
+            self.callback = callback
+        }
+    }
+    
+    private var stateSubscribers = [String: [SubscriberBox]]()
     
     /// Internal representation for storage of poll state on disk.
     private struct PollState: Codable {
-//        let pollId: String
-        
-//        /// The options last seen for this poll.  If the options have changed, we will reset that state to allow the user to vote again.
-//        let seenOptions: [String]
-        
         /// The results retrieved for the poll, if available.  Poll Id -> Number of Votes.
         let optionResults: [String: Int]?
         
@@ -167,16 +194,8 @@ class PollsVotingService {
             localState = PollState(optionResults: nil, userVotedForOptionId: nil)
         }
         
-        let encoder = JSONEncoder()
         let newState = PollState(optionResults: pollFetchResponse.results, userVotedForOptionId: localState.userVotedForOptionId)
-        do {
-            let newStateJson = try encoder.encode(newState)
-            self.storage[pollId] = String(data: newStateJson, encoding: .utf8)
-        } catch {
-            os_log("Unable to update local poll storage with newly fetched results: %s", error.saneDescription)
-        }
-        
-        os_log("Updated local state for poll %s.", log: .rover, type: .debug, pollId)
+        self.updateStorageForPoll(pollId: pollId, withNewState: newState)
     }
     
     private func commitVoteToLocalState(pollId: String, optionId: String) {
@@ -219,15 +238,16 @@ class PollsVotingService {
             let newStateJson = try encoder.encode(newState)
             // TODO: storage update dispatch.
             self.storage[pollId] = String(data: newStateJson, encoding: .utf8)
-            self.stateSubscribers[pollId]?.forEach { callback in
+            self.stateSubscribers[pollId]?.forEach { subscriber in
                 DispatchQueue.main.async {
-                    callback(newState.pollStatus())
+                    subscriber.subscriber?.callback(newState.pollStatus())
                 }
             }
         } catch {
             os_log("Unable to update local poll storage: %s", error.saneDescription)
             return
         }
+        os_log("Updated local state for poll %s.", log: .rover, type: .debug, pollId)
     }
     
     /// Synchronize operations that mutate local poll state.
@@ -388,6 +408,22 @@ extension Dictionary where Value == Int {
         return distributed.reduce(into: [Key: Int]()) { (dictionary, optionIdAndCount) in
             let (optionId, voteCount) = optionIdAndCount
             dictionary[optionId] = voteCount
+        }
+    }
+}
+
+extension Array where Element == PollsVotingService.SubscriberBox {
+    fileprivate func garbageCollected() -> [PollsVotingService.SubscriberBox] {
+        self.filter { subscriberBox in
+            subscriberBox.subscriber != nil
+        }
+    }
+}
+
+extension Dictionary where Key == String, Value == [PollsVotingService.SubscriberBox] {
+    fileprivate func garbageCollected() -> [String: [PollsVotingService.SubscriberBox]] {
+        self.mapValues { subscribers in
+            return subscribers.garbageCollected()
         }
     }
 }

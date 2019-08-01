@@ -265,6 +265,8 @@ class ImagePollCell: BlockCell {
     private var temporaryTapDemoTimer: Timer?
     private var temporaryTapDemoTimer1: Timer?
     
+    private var pollSubscription: AnyObject?
+    
     override func configure(with block: Block) {
         super.configure(with: block)
         self.temporaryTapDemoTimer?.invalidate()
@@ -272,6 +274,9 @@ class ImagePollCell: BlockCell {
         
         self.questionView?.removeFromSuperview()
         self.optionStack?.removeFromSuperview()
+        
+        // unsubscribe from existing poll subscription.
+        self.pollSubscription = nil
         
         guard let imagePollBlock = block as? ImagePollBlock else {
             return
@@ -287,15 +292,11 @@ class ImagePollCell: BlockCell {
         
         // TODO: this will soon hold a subscription, too.
         // TODO: figure out how to get the experience ID :(
-        let initialPollStatus = PollsVotingService.shared.subscribeToUpdates(pollId: "5d2636d0ffab400010e43bfc:\(imagePollBlock.id)", givenCurrentOptionIds: imagePollBlock.imagePoll.votableOptionIds) { [weak self] newPollStatus in
+        let (initialPollStatus, subscription) = PollsVotingService.shared.subscribeToUpdates(pollId: "5d2636d0ffab400010e43bfc:\(imagePollBlock.id)", givenCurrentOptionIds: imagePollBlock.imagePoll.votableOptionIds) { [weak self] newPollStatus in
             
             switch newPollStatus {
                 case .answered(let resultsForOptions):
-                    
-                var copy = resultsForOptions
-                
                 let viewOptionStatuses = resultsForOptions.viewOptionStatuses
-                
                 self?.optionViews.forEach { (optionView) in
                     let optionId = optionView.optionId
                     guard let optionResults = viewOptionStatuses[optionId] else {
@@ -311,6 +312,8 @@ class ImagePollCell: BlockCell {
                     })
             }
         }
+        
+        self.pollSubscription = subscription
         
         switch initialPollStatus {
             case .answered(let optionResults):

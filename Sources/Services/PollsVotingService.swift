@@ -22,40 +22,25 @@ class PollsVotingService {
         let voteCount: Int
     }
     
-    /// Yielded
     public enum PollStatus {
         case waitingForAnswer
         case answered(resultsForOptions: [String: OptionStatus])
     }
-    
-    private enum PollFetchResults {
-        case fetched(results: PollFetchResponse)
-        case failed
-    }
-    
-    // TODO: decide if to actually promote this to API or not. If not, inline it right into the fetch function.
-    public struct PollFetchResponse: Codable {
-        var results: [
-            String: Int
-        ]
-    }
-    
-    // TODO: Api Client
-    
-    // TODO: local storage for each poll: the last seen options list for the poll.  results for the poll, if any have been retrieved. What our vote was, if any.
-    
-    // TODO: aggregation behaviour -> for example, waiting to emit a poll result until the poll results have been retrieved.
-
-    // Interface is going to be thus: separation of casting of votes and subscribing to updates.  also allow getting current state synchronously, to make the UI code simpler so an initial state can be available. so getting current state synchronously and subscribing to updates will be two separate methods, for convenience.
-    
+        
     /// Cast a vote on the poll.  Naturally may only be done once.  Synchronous, fire-and-forget, and best-effort. Any subscribers will be instantly notified (if possible) of the update.
     func castVote(pollId: String, optionId: String) {
-        // TODO synchronously in local storage check for optionResults stored locally.  If present, update local state with dead-reckoned (+1 bump) values and then immediately emit an poll status update to subscribers.
-        // then dispatch vote request task onto the queue.
-        dispatchCastVoteRequest(pollId: pollId, optionId: optionId)
+        switch self.localStateForPoll(pollId: pollId) {
+        case .answered:
+            os_log("Can't vote twice, punk.", log: .rover, type: .fault)
+            return
+        default:
+            break;
+        }
         
+        dispatchCastVoteRequest(pollId: pollId, optionId: optionId)
+
+        // in the meantime, update local state that we voted and also to dead-reckon the increment of our vote being applied.
         commitVoteToLocalState(pollId: pollId, optionId: optionId)
-        // if local state wasn't present, then either the results request didn't complete successfully or user tapped fast and thus we're racing it.
     }
     
     /// Be notified of poll state.  Updates will be emitted on the main thread. Note that this will not immediately yield current state, but it it synchronously.
@@ -179,7 +164,7 @@ class PollsVotingService {
         return .waitingForAnswer
     }
     
-    private func updateLocalStateWithResults(pollId: String, pollFetchResponse: PollFetchResponse) {
+    private func updateLocalStateWithResults(pollId: String, pollFetchResponse: PollFetchResponseBody) {
         // replace locally stored results with a new copy with the results part updated.
         let localState: PollState
         if let existingEntryJson = self.storage[pollId] {
@@ -250,6 +235,8 @@ class PollsVotingService {
         os_log("Updated local state for poll %s.", log: .rover, type: .debug, pollId)
     }
     
+    // MARK: Network Requests
+    
     /// Synchronize operations that mutate local poll state.
     private let serialQueue: Foundation.OperationQueue = {
         let q = Foundation.OperationQueue()
@@ -297,7 +284,7 @@ class PollsVotingService {
                 let decoder = JSONDecoder()
                 decoder.dateDecodingStrategy = .formatted(DateFormatter.rfc3339)
                 
-                let response = try decoder.decode(PollFetchResponse.self, from: data)
+                let response = try decoder.decode(PollFetchResponseBody.self, from: data)
                 callback(.fetched(results: response))
             } catch {
                 os_log("Unable to decode poll results fetch response body: %s", log: .rover, type: .error, error.saneDescription)
@@ -340,12 +327,28 @@ class PollsVotingService {
         sessionTask.resume()
     }
     
+    // MARK: Voting Service REST DTOs
+    
     private struct VoteCastRequest: Codable {
         var option: String
     }
+    
+    private enum PollFetchResults {
+        case fetched(results: PollFetchResponseBody)
+        case failed
+    }
+    
+    private struct PollFetchResponseBody: Codable {
+        var results: [
+            String: Int
+        ]
+    }
 }
 
+// MARK: External Helpers
+
 extension TextPollBlock.TextPoll {
+    /// Gather up votable option IDs from the options on this Poll, for  use with the PollsVotingService.
     var votableOptionIds: [String] {
         return self.options.map { option in
             option.id
@@ -354,6 +357,7 @@ extension TextPollBlock.TextPoll {
 }
 
 extension ImagePollBlock.ImagePoll {
+    /// Gather up votable option IDs from the options on this Poll, for  use with the PollsVotingService.
     var votableOptionIds: [String] {
         return self.options.map { option in
             option.id
@@ -361,14 +365,35 @@ extension ImagePollBlock.ImagePoll {
     }
 }
 
+// MARK: Internal Helpers
 
-extension Error {
+// TODO: Move this.
+private extension Error {
     var saneDescription: String {
         return "Error: \(self.localizedDescription), details: \((self as NSError).userInfo.debugDescription)"
     }
 }
 
-extension Dictionary where Value == Int {
+
+private extension Array where Element == PollsVotingService.SubscriberBox {
+    func garbageCollected() -> [PollsVotingService.SubscriberBox] {
+        self.filter { subscriberBox in
+            subscriberBox.subscriber != nil
+        }
+    }
+}
+
+private extension Dictionary where Key == String, Value == [PollsVotingService.SubscriberBox] {
+    func garbageCollected() -> [String: [PollsVotingService.SubscriberBox]] {
+        self.mapValues { subscribers in
+            return subscribers.garbageCollected()
+        }
+    }
+}
+
+// MARK: Largest Remainder Method
+
+private extension Dictionary where Value == Int {
     func percentagesWithDistributedRemainder() -> [Key: Int] {
         // Largest Remainder Method in order to enable us to produce nice integer percentage values for each option that all add up to 100%.
         let counts = self.map { $1 }
@@ -408,22 +433,6 @@ extension Dictionary where Value == Int {
         return distributed.reduce(into: [Key: Int]()) { (dictionary, optionIdAndCount) in
             let (optionId, voteCount) = optionIdAndCount
             dictionary[optionId] = voteCount
-        }
-    }
-}
-
-extension Array where Element == PollsVotingService.SubscriberBox {
-    fileprivate func garbageCollected() -> [PollsVotingService.SubscriberBox] {
-        self.filter { subscriberBox in
-            subscriberBox.subscriber != nil
-        }
-    }
-}
-
-extension Dictionary where Key == String, Value == [PollsVotingService.SubscriberBox] {
-    fileprivate func garbageCollected() -> [String: [PollsVotingService.SubscriberBox]] {
-        self.mapValues { subscribers in
-            return subscribers.garbageCollected()
         }
     }
 }

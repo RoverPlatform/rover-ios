@@ -29,7 +29,14 @@ class ImagePollOptionView: UIView {
             case .waitingForAnswer:
                 revealQuestionState()
             case .answered(let optionResults):
-                revealResultsState(animated: true, optionResults: optionResults)
+                let shouldAnimate: Bool
+                switch oldValue {
+                case .waitingForAnswer:
+                    shouldAnimate = true
+                case .answered:
+                    shouldAnimate = false
+                }
+                revealResultsState(animated: shouldAnimate, optionResults: optionResults)
             }
         }
     }
@@ -183,7 +190,7 @@ class ImagePollOptionView: UIView {
         // TODO: tap gesture recognizers for detecting option taps
     }
     
-    // MARK: States and Animation
+    // MARK: View States and Animation
     
     private func revealQuestionState() {
         self.resultPercentage.alpha = 0.0
@@ -191,11 +198,14 @@ class ImagePollOptionView: UIView {
         self.resultFadeOverlay.alpha = 0.0
         self.resultFillBarWidthConstraint!.constant = 0
         self.isUserInteractionEnabled = true
+        self.percentageAnimationTimer?.invalidate()
+        self.percentageAnimationTimer = nil
     }
     
     private var percentageAnimationTimer: Timer?
     private func revealResultsState(animated: Bool, optionResults: OptionResults) {
-        // TODO: allow animation to be turned off by parameter.
+        self.percentageAnimationTimer?.invalidate()
+        self.percentageAnimationTimer = nil
         self.resultPercentage.text = String(format: "%.0f %%", optionResults.fraction * 100)
         
         UIView.animate(withDuration: RESULT_REVEAL_TIME, delay: 0.0, options: [.curveEaseInOut], animations: {
@@ -212,17 +222,22 @@ class ImagePollOptionView: UIView {
         
         self.percentageAnimationTimer?.invalidate()
         let startTime = Date()
-        self.percentageAnimationTimer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true, block: { [weak self] timer in
-            // TODO: calculate a "start position" from the current value on the constraint, in order for repeat calls to `revealResultsState` to properly animate through the percentages between the current value rather than just 0.
-            let elapsed = Double(startTime.timeIntervalSinceNow) * -1
-            let elapsedProportion = elapsed / RESULT_FILL_BAR_FILL_TIME
-            if elapsedProportion > 1.0 {
-                self?.resultPercentage.text = String(format: "%.0f%%", optionResults.fraction * 100)
-                timer.invalidate()
-            } else {
-                self?.resultPercentage.text = String(format: "%.0f%%", Double(optionResults.fraction * 100) * elapsedProportion)
-            }
-        })
+        if animated {
+            self.percentageAnimationTimer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true, block: { [weak self] timer in
+                // TODO: calculate a "start position" from the current value on the constraint, in order for repeat calls to `revealResultsState` to properly animate through the percentages between the current value rather than just 0.
+                let elapsed = Double(startTime.timeIntervalSinceNow) * -1
+                let elapsedProportion = elapsed / RESULT_FILL_BAR_FILL_TIME
+                if elapsedProportion >= 1.0 {
+                    self?.resultPercentage.text = String(format: "%d%%", optionResults.percentage)
+                    timer.invalidate()
+                    self?.percentageAnimationTimer = nil
+                } else {
+                    self?.resultPercentage.text = String(format: "%.0f%%", Double(optionResults.fraction * 100).rounded(.down) * elapsedProportion)
+                }
+            })
+        } else {
+            self.resultPercentage.text = String(format: "%d%%", optionResults.percentage)
+        }
         
         self.isUserInteractionEnabled = false
     }

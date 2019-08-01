@@ -13,35 +13,39 @@ extension Dictionary where Value == Int {
     func percentagesWithDistributedRemainder() -> [Key: Int] {
         // Largest Remainder Method in order to enable us to produce nice integer percentage values for each option that all add up to 100%.
         let counts = self.map { $1 }
-        
         let totalVotes = counts.reduce(0, +)
         
-        let voteFractions = counts.map { votes in
-            Double(votes) / Double(totalVotes)
+        let asExactPercentages = self.mapValues { votes in
+            (Double(votes) / Double(totalVotes)) * 100
         }
         
-        let totalWithoutRemainders = voteFractions.map { value in
-            Int(value.rounded(.down))
-        }.reduce(0, +)
+        let withRoundedDownPercentages: [Key:(Double, Int)] = asExactPercentages.mapValues { exactPercentage in
+            return (exactPercentage, Int(exactPercentage.rounded(.down)))
+        }
+        
+        let asRoundedDownPercentages: [Key: Int] = withRoundedDownPercentages.mapValues { $1 }
+        
+        let totalWithoutRemainders = asRoundedDownPercentages.values.reduce(0, +)
         
         let remainder = 100 - totalWithoutRemainders
         
-        typealias OptionIdAndCount = (Key, Int)
-        
-        let optionsSortedByDecimal: [OptionIdAndCount] = self.sorted { (firstOption, secondOption) -> Bool in
-            let firstOptionFraction = Double(firstOption.value) / Double(totalVotes)
-            let secondOptionFraction = Double(secondOption.value) / Double(totalVotes)
-
-            return secondOptionFraction > firstOptionFraction
+        let optionsSortedByDecimal = withRoundedDownPercentages.sorted { (firstOption, secondOption) -> Bool in
+            let (_, (firstPercentage, firstRoundedDownPercentage)) = firstOption
+            let (_, (secondPercentage, secondRoundedDownPercentage)) = secondOption
+            
+            let firstRemainder = firstPercentage - Double(firstRoundedDownPercentage)
+            let secondRemainder = secondPercentage - Double(secondRoundedDownPercentage)
+            
+            return firstRemainder < secondRemainder
         }
 
-        // now to distribute the remainder (as whole integers) across the options.
-        let distributed = optionsSortedByDecimal.enumerated().map { tuple -> OptionIdAndCount in
-            let (offset, (optionId, voteCount)) = tuple
+        // now to distribute the remainder (as whole integers) across the options:
+        let distributed = optionsSortedByDecimal.enumerated().map { tuple -> (Key, Int) in
+            let (offset, (optionId, (_, roundedDownPercentage))) = tuple
             if offset < remainder {
-                return (optionId, voteCount + 1)
+                return (optionId, roundedDownPercentage + 1)
             } else {
-                return (optionId, voteCount)
+                return (optionId, roundedDownPercentage)
             }
         }
         

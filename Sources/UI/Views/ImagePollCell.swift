@@ -208,7 +208,9 @@ class ImagePollOptionView: UIView {
         self.percentageAnimationTimer = nil
         self.resultPercentage.text = String(format: "%.0f %%", optionResults.fraction * 100)
         
-        UIView.animate(withDuration: RESULT_REVEAL_TIME, delay: 0.0, options: [.curveEaseInOut], animations: {
+        let animateFactor = Double(animated ? 1 : 0)
+        
+        UIView.animate(withDuration: RESULT_REVEAL_TIME * animateFactor, delay: 0.0, options: [.curveEaseInOut], animations: {
             self.resultPercentage.alpha = 1.0
             self.resultFillBarArea.alpha = 1.0
             self.resultFadeOverlay.alpha = 0.3
@@ -216,11 +218,14 @@ class ImagePollOptionView: UIView {
         
         let width = self.resultFillBarArea.frame.width * CGFloat(optionResults.fraction)
         self.resultFillBarWidthConstraint!.constant = width
-        UIView.animate(withDuration: RESULT_FILL_BAR_FILL_TIME, delay: 0.0, options: [.curveEaseInOut], animations: {
+        if animated {
+            UIView.animate(withDuration: RESULT_FILL_BAR_FILL_TIME, delay: 0.0, options: [.curveEaseInOut], animations: {
+                self.resultFillBarArea.layoutIfNeeded()
+            })
+        } else {
             self.resultFillBarArea.layoutIfNeeded()
-        })
+        }
         
-        self.percentageAnimationTimer?.invalidate()
         let startTime = Date()
         if animated {
             self.percentageAnimationTimer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true, block: { [weak self] timer in

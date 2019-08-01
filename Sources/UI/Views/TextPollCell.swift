@@ -223,8 +223,8 @@ class TextPollCell: BlockCell {
     private var temporaryTapDemoTimer: Timer?
     private var temporaryTapDemoTimer1: Timer?
     
-    override func configure(with block: Block) {
-        super.configure(with: block)
+    override func configure(with block: Block, for experience: Experience) {
+        super.configure(with: block, for: experience)
         self.temporaryTapDemoTimer?.invalidate()
         self.temporaryTapDemoTimer1?.invalidate()
      

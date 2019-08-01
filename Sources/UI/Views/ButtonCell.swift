@@ -15,8 +15,8 @@ class ButtonCell: BlockCell {
         return label
     }
     
-    override func configure(with block: Block) {
-        super.configure(with: block)
+    override func configure(with block: Block, for experience: Experience) {
+        super.configure(with: block, for: experience)
         
         guard let buttonBlock = block as? ButtonBlock else {
             label.isHidden = true

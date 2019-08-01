@@ -22,8 +22,8 @@ class TextCell: BlockCell {
         return textView
     }
     
-    override func configure(with block: Block) {
-        super.configure(with: block)
+    override func configure(with block: Block, for experience: Experience) {
+        super.configure(with: block, for: experience)
         
         guard let textBlock = block as? TextBlock else {
             textView.isHidden = true

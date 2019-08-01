@@ -31,8 +31,8 @@ class BarcodeCell: BlockCell {
         return imageView
     }
     
-    override func configure(with block: Block) {
-        super.configure(with: block)
+    override func configure(with block: Block, for experience: Experience) {
+        super.configure(with: block, for: experience)
         
         guard let barcodeBlock = block as? BarcodeBlock else {
             imageView.isHidden = true

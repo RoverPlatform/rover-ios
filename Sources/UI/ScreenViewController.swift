@@ -376,7 +376,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         }
         
         let block = screen.rows[indexPath.section].blocks[indexPath.row]
-        blockCell.configure(with: block)
+        blockCell.configure(with: block, for: self.experience)
         return blockCell
     }
     

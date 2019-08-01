@@ -393,7 +393,8 @@ private extension Dictionary where Key == String, Value == [PollsVotingService.S
 
 // MARK: Largest Remainder Method
 
-private extension Dictionary where Value == Int {
+// TODO: move this.
+extension Dictionary where Value == Int {
     func percentagesWithDistributedRemainder() -> [Key: Int] {
         // Largest Remainder Method in order to enable us to produce nice integer percentage values for each option that all add up to 100%.
         let counts = self.map { $1 }

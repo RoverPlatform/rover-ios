@@ -267,8 +267,8 @@ class ImagePollCell: BlockCell {
     
     private var pollSubscription: AnyObject?
     
-    override func configure(with block: Block) {
-        super.configure(with: block)
+    override func configure(with block: Block, for experience: Experience) {
+        super.configure(with: block, for: experience)
         self.temporaryTapDemoTimer?.invalidate()
         self.temporaryTapDemoTimer1?.invalidate()
         
@@ -290,9 +290,8 @@ class ImagePollCell: BlockCell {
             self.questionView!.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
         ]
         
-        // TODO: this will soon hold a subscription, too.
         // TODO: figure out how to get the experience ID :(
-        let (initialPollStatus, subscription) = PollsVotingService.shared.subscribeToUpdates(pollId: "5d2636d0ffab400010e43bfc:\(imagePollBlock.id)", givenCurrentOptionIds: imagePollBlock.imagePoll.votableOptionIds) { [weak self] newPollStatus in
+        let (initialPollStatus, subscription) = PollsVotingService.shared.subscribeToUpdates(pollId: imagePollBlock.pollId(containedBy: experience), givenCurrentOptionIds: imagePollBlock.imagePoll.votableOptionIds) { [weak self] newPollStatus in
             
             switch newPollStatus {
                 case .answered(let resultsForOptions):
@@ -320,13 +319,13 @@ class ImagePollCell: BlockCell {
                 let viewOptionStatuses = optionResults.viewOptionStatuses
                     self.optionViews = imagePollBlock.imagePoll.options.map { option in
                         ImagePollOptionView(option: option, initialState: .answered(optionResults: viewOptionStatuses[option.id]!)) {
-                                PollsVotingService.shared.castVote(pollId: "5d2636d0ffab400010e43bfc:\(imagePollBlock.id)", optionId: option.id)
+                            PollsVotingService.shared.castVote(pollId: imagePollBlock.pollId(containedBy: experience), optionId: option.id)
                         }
                     }
             case .waitingForAnswer:
                 self.optionViews = imagePollBlock.imagePoll.options.map { option in
                     ImagePollOptionView(option: option, initialState: .waitingForAnswer) {
-                        PollsVotingService.shared.castVote(pollId: "5d2636d0ffab400010e43bfc:\(imagePollBlock.id)", optionId: option.id)
+                        PollsVotingService.shared.castVote(pollId: imagePollBlock.pollId(containedBy: experience), optionId: option.id)
                     }
                 }
         }

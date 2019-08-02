@@ -171,7 +171,7 @@ class ImagePollOptionView: UIView {
         
         self.configureOpacity(opacity: option.opacity)
         self.clipsToBounds = true
-        self.configureBorder(border: option.border, constrainedByFrame: nil)
+
         self.backgroundColor = option.background.color.uiColor
         
         let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleOptionTapped))
@@ -262,6 +262,7 @@ class ImagePollOptionView: UIView {
     
     override func layoutSubviews() {
         super.layoutSubviews()
+        self.configureBorder(border: option.border, constrainedByFrame: self.frame)
         // we defer configuring background image to here so that the layout has been calculated, and thus frame is available.
         self.content.configureAsFilledImage(image: self.option.image)
     }

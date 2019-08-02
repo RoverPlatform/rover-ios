@@ -159,7 +159,7 @@ class TextPollOptionView: UIView {
         
         self.configureOpacity(opacity: option.opacity)
         self.clipsToBounds = true
-        self.configureBorder(border: option.border, constrainedByFrame: nil)
+        
         self.configureBackgroundColor(color: option.background.color, opacity: option.opacity)
         
         switch initialState {
@@ -245,6 +245,7 @@ class TextPollOptionView: UIView {
     
     override func layoutSubviews() {
         super.layoutSubviews()
+        self.configureBorder(border: option.border, constrainedByFrame: self.frame)
         // we defer configuring background image to here so that the layout has been calculated, and thus frame is available.
         self.backgroundView.configureAsBackgroundImage(background: option.background)
     }

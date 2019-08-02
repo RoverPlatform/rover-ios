@@ -281,16 +281,12 @@ class ImagePollCell: BlockCell {
     }
     
     private var questionView: PollQuestionView?
-    
-    private var temporaryTapDemoTimer: Timer?
-    private var temporaryTapDemoTimer1: Timer?
+
     
     private var pollSubscription: AnyObject?
     
     override func configure(with block: Block, for experience: Experience) {
         super.configure(with: block, for: experience)
-        self.temporaryTapDemoTimer?.invalidate()
-        self.temporaryTapDemoTimer1?.invalidate()
         
         self.questionView?.removeFromSuperview()
         self.optionStack?.removeFromSuperview()
@@ -310,7 +306,6 @@ class ImagePollCell: BlockCell {
             self.questionView!.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
         ]
         
-        // TODO: figure out how to get the experience ID :(
         let (initialPollStatus, subscription) = PollsVotingService.shared.subscribeToUpdates(pollId: imagePollBlock.pollId(containedBy: experience), givenCurrentOptionIds: imagePollBlock.imagePoll.votableOptionIds) { [weak self] newPollStatus in
             
             switch newPollStatus {
@@ -337,11 +332,11 @@ class ImagePollCell: BlockCell {
         switch initialPollStatus {
             case .answered(let optionResults):
                 let viewOptionStatuses = optionResults.viewOptionStatuses
-                    self.optionViews = imagePollBlock.imagePoll.options.map { option in
-                        ImagePollOptionView(option: option, initialState: .answered(optionResults: viewOptionStatuses[option.id]!)) {
-                            PollsVotingService.shared.castVote(pollId: imagePollBlock.pollId(containedBy: experience), optionId: option.id)
-                        }
+                self.optionViews = imagePollBlock.imagePoll.options.map { option in
+                    ImagePollOptionView(option: option, initialState: .answered(optionResults: viewOptionStatuses[option.id]!)) {
+                        PollsVotingService.shared.castVote(pollId: imagePollBlock.pollId(containedBy: experience), optionId: option.id)
                     }
+                }
             case .waitingForAnswer:
                 self.optionViews = imagePollBlock.imagePoll.options.map { option in
                     ImagePollOptionView(option: option, initialState: .waitingForAnswer) {
@@ -420,8 +415,8 @@ extension Array {
     }
 }
 
-extension UIImageView {
-    fileprivate func configureAsFilledImage(image: Image, checkStillMatches: @escaping () -> Bool = { true }) {
+private extension UIImageView {
+    func configureAsFilledImage(image: Image, checkStillMatches: @escaping () -> Bool = { true }) {
         // Reset any existing background image
         self.alpha = 0.0
         self.image = nil
@@ -448,13 +443,13 @@ extension UIImageView {
     }
 }
 
-extension ImagePollBlock.ImagePoll.Option {
+private extension ImagePollBlock.ImagePoll.Option {
     var attributedText: NSAttributedString? {
         return self.text.attributedText(forFormat: .plain)
     }
 }
 
-extension Dictionary where Key == String, Value == PollsVotingService.OptionStatus {
+private extension Dictionary where Key == String, Value == PollsVotingService.OptionStatus {
     var viewOptionStatuses: [String: ImagePollOptionView.OptionResults] {
         let votesByOptionIds = self.mapValues { $0.voteCount }
         let totalVotes = votesByOptionIds.values.reduce(0, +)
@@ -469,22 +464,4 @@ extension Dictionary where Key == String, Value == PollsVotingService.OptionStat
             )
         }
     }
-}
-
-extension Dictionary {
-    func mapValuesWithKey<T>(transform: (Key, Value) throws -> T) throws -> [Key: T] {
-        var result = [Key: T]()
-        try self.keys.forEach { key in
-            result[key] = try transform(key, self[key]!)
-        }
-        return result
-    }
-    
-    func mapValuesWithKey<T>(transform: (Key, Value) -> T) -> [Key: T] {
-            var result = [Key: T]()
-            self.keys.forEach { key in
-                result[key] = transform(key, self[key]!)
-            }
-            return result
-        }
 }

@@ -6,6 +6,7 @@
 //  Copyright © 2019 Rover Labs Inc. All rights reserved.
 //
 
+import os
 import UIKit
 
 // MARK: Constants
@@ -24,7 +25,14 @@ class TextPollOptionView: UIView {
             case .waitingForAnswer:
                 revealQuestionState()
             case .answered(let optionResults):
-                revealResultsState(animated: true, optionResults: optionResults)
+                let shouldAnimate: Bool
+                switch oldValue {
+                case .waitingForAnswer:
+                    shouldAnimate = true
+                case .answered:
+                    shouldAnimate = false
+                }
+                revealResultsState(animated: shouldAnimate, optionResults: optionResults)
             }
         }
     }
@@ -32,6 +40,7 @@ class TextPollOptionView: UIView {
     struct OptionResults {
         let selected: Bool
         let fraction: Float
+        let percentage: Int
     }
     
     enum State {
@@ -41,6 +50,10 @@ class TextPollOptionView: UIView {
     
     public var topMargin: Int {
         return self.option.topMargin
+    }
+    
+    public var optionId: String {
+        return self.option.id
     }
     
     private let backgroundView = UIImageView()
@@ -53,12 +66,16 @@ class TextPollOptionView: UIView {
     
     public let option: TextPollBlock.TextPoll.Option
     
+    private let optionTapped: () -> Void
+    
     init(
         option: TextPollBlock.TextPoll.Option,
-        initialState: State
+        initialState: State,
+        optionTapped: @escaping () -> Void
     ) {
         self.option = option
         self.state = initialState
+        self.optionTapped = optionTapped
         
         super.init(frame: CGRect.zero)
         self.addSubview(self.backgroundView)
@@ -131,6 +148,10 @@ class TextPollOptionView: UIView {
         
         // MARK: Container
         
+        let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleOptionTapped))
+       gestureRecognizer.numberOfTapsRequired = 1
+       self.addGestureRecognizer(gestureRecognizer)
+        
         let constraints = backgroundConstraints + resultFillBarConstraints + percentageConstraints + answerConstraints + [
             self.heightAnchor.constraint(equalToConstant: CGFloat(option.height))
         ]
@@ -156,21 +177,29 @@ class TextPollOptionView: UIView {
         self.resultFillBarArea.alpha = 0.0
         self.resultFillBarWidthConstraint!.constant = 0
         self.resultPercentageWidthConstraint!.constant = 0
+        self.isUserInteractionEnabled = true
+        self.percentageAnimationTimer?.invalidate()
+        self.percentageAnimationTimer = nil
     }
     
     private var percentageAnimationTimer: Timer?
     private func revealResultsState(animated: Bool, optionResults: OptionResults) {
-        UIView.animate(withDuration: RESULT_PERCENTAGE_REVEAL_TIME, delay: 0, options: [.curveEaseInOut], animations: {
+        self.percentageAnimationTimer?.invalidate()
+        self.percentageAnimationTimer = nil
+        
+        let animateFactor = Double(animated ? 1 : 0)
+        
+        UIView.animate(withDuration: RESULT_PERCENTAGE_REVEAL_TIME * animateFactor, delay: 0, options: [.curveEaseInOut], animations: {
             self.resultPercentage.alpha = 1.0
         })
         
-        UIView.animate(withDuration: RESULT_FILL_BAR_REVEAL_TIME, delay: 0, options: [.curveEaseInOut], animations: {
+        UIView.animate(withDuration: RESULT_FILL_BAR_REVEAL_TIME * animateFactor, delay: 0, options: [.curveEaseInOut], animations: {
             self.resultFillBarArea.alpha = CGFloat(self.option.resultFillColor.alpha)
         })
         
         let width = self.resultFillBarArea.frame.width * CGFloat(optionResults.fraction)
         self.resultFillBarWidthConstraint!.constant = width
-        UIView.animate(withDuration: RESULT_FILL_BAR_FILL_TIME, delay: 0, options: [.curveEaseInOut], animations: {
+        UIView.animate(withDuration: RESULT_FILL_BAR_FILL_TIME * animateFactor, delay: 0, options: [.curveEaseInOut], animations: {
             self.resultFillBarArea.layoutIfNeeded()
         })
         
@@ -179,19 +208,34 @@ class TextPollOptionView: UIView {
         // expand the percentage view to accomodate all possible percentage values as we animate through them, to avoid any possible wobble in the layout.
         self.resultPercentageWidthConstraint?.constant = percentageTextFont.attributedText(forPlainText: "100%", color: self.option.text.color)?.boundingRect(with: .init(width: 1_000, height: 1_000), options: [], context: nil).width ?? CGFloat(0)
         
-        self.percentageAnimationTimer?.invalidate()
         let startTime = Date()
-        self.percentageAnimationTimer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true, block: { [weak self] timer in
-            // TODO: calculate a "start position" from the current value on the constraint, in order for repeat calls to `revealResultsState` to properly animate through the percentages between the current value rather than just 0.
-            let elapsed = Double(startTime.timeIntervalSinceNow) * -1
-            let elapsedProportion = elapsed / RESULT_FILL_BAR_FILL_TIME
-            if elapsedProportion > 1.0 {
-                self?.resultPercentage.text = String(format: "%.0f%%", optionResults.fraction * 100)
-                timer.invalidate()
-            } else {
-                self?.resultPercentage.text = String(format: "%.0f%%", Double(optionResults.fraction * 100) * elapsedProportion)
-            }
-        })
+        
+        if animated {
+            self.percentageAnimationTimer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true, block: { [weak self] timer in
+                // TODO: calculate a "start position" from the current value on the constraint, in order for repeat calls to `revealResultsState` to properly animate through the percentages between the current value rather than just 0.
+                let elapsed = Double(startTime.timeIntervalSinceNow) * -1
+                let elapsedProportion = elapsed / RESULT_FILL_BAR_FILL_TIME
+                if elapsedProportion > 1.0 {
+                    self?.resultPercentage.text = String(format: "%d%%", optionResults.percentage)
+                    timer.invalidate()
+                    self?.percentageAnimationTimer = nil
+                } else {
+                    self?.resultPercentage.text = String(format: "%.0f%%", Double(optionResults.fraction * 100).rounded(.down) * elapsedProportion)
+                }
+            })
+        } else {
+            self.resultPercentage.text = String(format: "%d%%", optionResults.percentage)
+        }
+        
+        self.isUserInteractionEnabled = false
+    }
+    
+    // MARK: Interaction
+    
+    @objc
+    private func handleOptionTapped(_: UIGestureRecognizer) {
+        os_log("OPTION TAPPED")
+        self.optionTapped()
     }
     
     @available(*, unavailable)
@@ -219,17 +263,16 @@ class TextPollCell: BlockCell {
     }
     
     private var questionView: PollQuestionView?
-    
-    private var temporaryTapDemoTimer: Timer?
-    private var temporaryTapDemoTimer1: Timer?
+    private var pollSubscription: AnyObject?
     
     override func configure(with block: Block, for experience: Experience) {
         super.configure(with: block, for: experience)
-        self.temporaryTapDemoTimer?.invalidate()
-        self.temporaryTapDemoTimer1?.invalidate()
      
         questionView?.removeFromSuperview()
         self.optionStack?.removeFromSuperview()
+        
+        // unsubscribe from existing poll subscription.
+        self.pollSubscription = nil
         
         guard let textPollBlock = block as? TextPollBlock else {
             return
@@ -244,9 +287,43 @@ class TextPollCell: BlockCell {
             questionView!.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
         ]
         
-        self.optionViews = textPollBlock.textPoll.options.map { option in
-            // TODO: get initial state synchronously from the local VotingService.
-            TextPollOptionView(option: option, initialState: .waitingForAnswer)
+        let (initialPollStatus, subscription) = PollsVotingService.shared.subscribeToUpdates(pollId: textPollBlock.pollId(containedBy: experience), givenCurrentOptionIds: textPollBlock.textPoll.votableOptionIds) { [weak self] newPollStatus in
+            
+            switch newPollStatus {
+                case .answered(let resultsForOptions):
+                let viewOptionStatuses = resultsForOptions.viewOptionStatuses
+                self?.optionViews.forEach { (optionView) in
+                    let optionId = optionView.optionId
+                    guard let optionResults = viewOptionStatuses[optionId] else {
+                        os_log("A result was not given for option: %s.  Did you remember to unsubscribe on recycle?", log: .rover, type: .error, optionId)
+                        return
+                    }
+                    optionView.state = .answered(optionResults: optionResults)
+                }
+
+                case .waitingForAnswer:
+                    self?.optionViews.forEach({ (optionView) in
+                        optionView.state = .waitingForAnswer
+                    })
+            }
+        }
+        
+        self.pollSubscription = subscription
+        
+        switch initialPollStatus {
+            case .answered(let optionResults):
+                let viewOptionStatuses = optionResults.viewOptionStatuses
+                self.optionViews = textPollBlock.textPoll.options.map { option in
+                    TextPollOptionView(option: option, initialState: .answered(optionResults: viewOptionStatuses[option.id]!)) {
+                        PollsVotingService.shared.castVote(pollId: textPollBlock.pollId(containedBy: experience), optionId: option.id)
+                    }
+                }
+            case .waitingForAnswer:
+                self.optionViews = textPollBlock.textPoll.options.map { option in
+                    TextPollOptionView(option: option, initialState: .waitingForAnswer) {
+                        PollsVotingService.shared.castVote(pollId: textPollBlock.pollId(containedBy: experience), optionId: option.id)
+                    }
+                }
         }
         
         let verticalStack = UIStackView(arrangedSubviews: self.optionViews)
@@ -265,19 +342,6 @@ class TextPollCell: BlockCell {
         ]
         
         NSLayoutConstraint.activate(questionConstraints + stackConstraints)
-        // TODO: A stand-in for the user tapping.
-        self.temporaryTapDemoTimer = Timer.scheduledTimer(withTimeInterval: 4, repeats: false) { _ in
-            self.optionViews.forEach { (optionView) in
-                optionView.state = .answered(optionResults: TextPollOptionView.OptionResults.init(selected: false, fraction: 0.67))
-            }
-        }
-
-        // TODO: A stand-in for the user tapping.
-        self.temporaryTapDemoTimer1 = Timer.scheduledTimer(withTimeInterval: 10, repeats: false) { _ in
-            self.optionViews.forEach { (optionView) in
-                optionView.state = .answered(optionResults: TextPollOptionView.OptionResults.init(selected: false, fraction: 0.25))
-            }
-        }
     }
 }
 
@@ -308,6 +372,23 @@ extension TextPollBlock {
 extension TextPollBlock.TextPoll.Option {
     var attributedText: NSAttributedString? {
         return self.text.attributedText(forFormat: .plain)
+    }
+}
+
+private extension Dictionary where Key == String, Value == PollsVotingService.OptionStatus {
+    var viewOptionStatuses: [String: TextPollOptionView.OptionResults] {
+        let votesByOptionIds = self.mapValues { $0.voteCount }
+        let totalVotes = votesByOptionIds.values.reduce(0, +)
+        let roundedPercentagesByOptionIds = votesByOptionIds.percentagesWithDistributedRemainder()
+        
+        return self.mapValuesWithKey { (optionId, optionStatus) in
+            let fraction = Double(optionStatus.voteCount) / Double(totalVotes)
+            return TextPollOptionView.OptionResults(
+                selected: optionStatus.selected,
+                fraction: Float(fraction),
+                percentage: roundedPercentagesByOptionIds[optionId]!
+            )
+        }
     }
 }
 

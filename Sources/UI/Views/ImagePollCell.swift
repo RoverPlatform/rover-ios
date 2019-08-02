@@ -159,6 +159,8 @@ class ImagePollOptionView: UIView {
         self.resultFillBarArea.layer.cornerRadius = RESULT_FILL_BAR_HEIGHT / 2
         self.resultFillBarArea.backgroundColor = UIColor.white.withAlphaComponent(0.5)
         self.resultFillBar.backgroundColor = option.resultFillColor.uiColor
+        self.resultFillBar.layer.cornerRadius = RESULT_FILL_BAR_HEIGHT / 2
+        self.resultFillBar.clipsToBounds = true
         
         let resultPercentageConstraints = [
             self.resultPercentage.centerXAnchor.constraint(equalTo: self.centerXAnchor),

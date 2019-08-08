@@ -80,11 +80,11 @@ open class RoverViewController: UIViewController {
         setChildViewController(loadingViewController)
         
         ExperienceStore.shared.fetchExperience(for: identifier) { [weak self] result in
-            guard let self = self else {
-                return
-            }
-            
             DispatchQueue.main.async {
+                guard let self = self else {
+                    return
+                }
+                
                 switch result {
                 case let .failure(error):
                     self.present(error: error, shouldRetry: error.isRetryable)

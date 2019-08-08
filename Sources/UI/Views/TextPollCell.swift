@@ -154,15 +154,8 @@ class TextPollOptionView: UIView {
         self.clipsToBounds = true
         
         self.configureBackgroundColor(color: option.background.color, opacity: option.opacity)
-        
-        switch initialState {
-        case .waitingForAnswer:
-            revealQuestionState()
-        case .answered(let optionResults):
-            revealResultsState(animated: false, optionResults: optionResults)
-        }
     }
-    
+
     // MARK: States and Animation
     
     private func revealQuestionState() {
@@ -184,8 +177,12 @@ class TextPollOptionView: UIView {
     private func revealResultsState(animated: Bool, optionResults: OptionResults) {
         self.percentageAnimationTimer?.invalidate()
         self.percentageAnimationTimer = nil
-        
         let animateFactor = Double(animated ? 1 : 0)
+        
+        // get the result bar into a sane state before animating:
+//        let startingBarWidth = self.resultFillBarArea.frame.width * CGFloat(previousPercentageProportion)
+//        self.resultFillBarWidthConstraint!.constant = startingBarWidth
+//        self.resultFillBarArea.layoutIfNeeded()
         
         UIView.animate(withDuration: RESULT_PERCENTAGE_REVEAL_TIME * animateFactor, delay: 0, options: [.curveEaseInOut], animations: {
             self.resultPercentage.alpha = 1.0
@@ -197,6 +194,7 @@ class TextPollOptionView: UIView {
         
         let width = self.resultFillBarArea.frame.width * CGFloat(optionResults.fraction)
         self.resultFillBarWidthConstraint!.constant = width
+        
         UIView.animate(withDuration: RESULT_FILL_BAR_FILL_TIME * animateFactor, delay: 0, options: [.curveEaseInOut], animations: {
             self.resultFillBarArea.layoutIfNeeded()
         })
@@ -249,6 +247,16 @@ class TextPollOptionView: UIView {
         self.configureBorder(border: option.border, constrainedByFrame: self.frame)
         // we defer configuring background image to here so that the layout has been calculated, and thus frame is available.
         self.backgroundView.configureAsBackgroundImage(background: option.background)
+        
+//        self.resultFillBarArea.layoutIfNeeded()
+        self.resultFillBar.layoutIfNeeded()
+        
+        switch self.state {
+            case .waitingForAnswer:
+                revealQuestionState()
+            case .answered(let optionResults):
+                revealResultsState(animated: false, optionResults: optionResults)
+        }
     }
 }
 

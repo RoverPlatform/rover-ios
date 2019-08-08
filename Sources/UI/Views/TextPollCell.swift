@@ -25,21 +25,14 @@ class TextPollOptionView: UIView {
             case .waitingForAnswer:
                 revealQuestionState()
             case .answered(let optionResults):
-                let shouldAnimate: Bool
-                switch oldValue {
-                case .waitingForAnswer:
-                    shouldAnimate = true
-                case .answered:
-                    shouldAnimate = false
-                }
-                revealResultsState(animated: shouldAnimate, optionResults: optionResults)
+                revealResultsState(animated: true, optionResults: optionResults)
             }
         }
     }
     
     struct OptionResults {
         let selected: Bool
-        let fraction: Float
+        let fraction: Double
         let percentage: Int
     }
     
@@ -182,7 +175,12 @@ class TextPollOptionView: UIView {
         self.percentageAnimationTimer = nil
     }
     
+    /// In lieu of a UIKit animation, we animate the percentage values with a manually managed timer.
     private var percentageAnimationTimer: Timer?
+    
+    /// Since percentages are animated manually with Timers rather than using UIKit animations, we have to manually interpolate from any prior value.
+    private var previousPercentageProportion: Double = 0
+    
     private func revealResultsState(animated: Bool, optionResults: OptionResults) {
         self.percentageAnimationTimer?.invalidate()
         self.percentageAnimationTimer = nil
@@ -209,8 +207,8 @@ class TextPollOptionView: UIView {
         self.resultPercentageWidthConstraint?.constant = percentageTextFont.attributedText(forPlainText: "100%", color: self.option.text.color)?.boundingRect(with: .init(width: 1_000, height: 1_000), options: [], context: nil).width ?? CGFloat(0)
         
         let startTime = Date()
-        
-        if animated {
+        let startProportion = self.previousPercentageProportion
+        if animated && startProportion != optionResults.fraction {
             self.percentageAnimationTimer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true, block: { [weak self] timer in
                 // TODO: calculate a "start position" from the current value on the constraint, in order for repeat calls to `revealResultsState` to properly animate through the percentages between the current value rather than just 0.
                 let elapsed = Double(startTime.timeIntervalSinceNow) * -1
@@ -220,12 +218,15 @@ class TextPollOptionView: UIView {
                     timer.invalidate()
                     self?.percentageAnimationTimer = nil
                 } else {
-                    self?.resultPercentage.text = String(format: "%.0f%%", Double(optionResults.fraction * 100).rounded(.down) * elapsedProportion)
+                    let percentage = (startProportion * 100).rounded(.down) + ((optionResults.fraction - startProportion) * 100).rounded(.down) * elapsedProportion
+                    self?.resultPercentage.text = String(format: "%.0f%%", percentage)
                 }
             })
         } else {
             self.resultPercentage.text = String(format: "%d%%", optionResults.percentage)
         }
+        
+        self.previousPercentageProportion = optionResults.fraction
         
         self.isUserInteractionEnabled = false
     }
@@ -386,7 +387,7 @@ private extension Dictionary where Key == String, Value == PollsVotingService.Op
             let fraction = Double(optionStatus.voteCount) / Double(totalVotes)
             return TextPollOptionView.OptionResults(
                 selected: optionStatus.selected,
-                fraction: Float(fraction),
+                fraction: fraction,
                 percentage: roundedPercentagesByOptionIds[optionId]!
             )
         }

@@ -174,15 +174,6 @@ class ImagePollOptionView: UIView {
         self.addGestureRecognizer(gestureRecognizer)
         
         NSLayoutConstraint.activate(contentConstraints + answerConstraints + fadeOverlayConstraints + resultFillBarConstraints + resultPercentageConstraints)
-        
-        switch initialState {
-        case .waitingForAnswer:
-            revealQuestionState()
-        case .answered(let optionResults):
-            revealResultsState(animated: false, optionResults: optionResults)
-        }
-        
-        // TODO: tap gesture recognizers for detecting option taps
     }
     
     // MARK: View States and Animation
@@ -268,6 +259,13 @@ class ImagePollOptionView: UIView {
         self.configureBorder(border: option.border, constrainedByFrame: self.frame)
         // we defer configuring background image to here so that the layout has been calculated, and thus frame is available.
         self.content.configureAsFilledImage(image: self.option.image)
+        
+        switch self.state {
+        case .waitingForAnswer:
+            revealQuestionState()
+        case .answered(let optionResults):
+            revealResultsState(animated: false, optionResults: optionResults)
+        }
     }
 }
 
@@ -374,7 +372,6 @@ class ImagePollCell: BlockCell {
 
         NSLayoutConstraint.activate(questionConstraints + stackConstraints)
     }
-
 }
 
 // MARK: Measurement

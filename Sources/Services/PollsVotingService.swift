@@ -61,9 +61,7 @@ class PollsVotingService {
         func recursiveFetch(delay: TimeInterval = 0) {
             DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(Int(delay * 1000))) {
                 self.fetchPollResults(for: pollId, optionIds: optionIds) { [weak self] results in
-                    // dispatch to the serial queue:
-                    self?.serialQueue.addOperation {
-                        switch results {
+                    switch results {
                         case .failed:
                             os_log("Unable to fetch poll results.", log: .rover, type: .error)
                         case let .fetched(results):
@@ -76,7 +74,6 @@ class PollsVotingService {
                                 // 5 second delay on subsequent requests.
                                 recursiveFetch(delay: 5)
                             }
-                        }
                     }
                 }
             }
@@ -86,8 +83,6 @@ class PollsVotingService {
         
         // in the meantime, synchronously check local storage and immediately return the results:
         return (self.localStatusForPoll(pollId: pollId), chit)
-        
-        // TODO: implement a 5s timer, and then return a subscription chit to allow client to unsubscribe.
     }
     
     // MARK: State & Storage
@@ -240,14 +235,7 @@ class PollsVotingService {
     }
     
     // MARK: Network Requests
-    
-    /// Synchronize operations that mutate local poll state.
-    private let serialQueue: Foundation.OperationQueue = {
-        let q = Foundation.OperationQueue()
-        q.maxConcurrentOperationCount = 1
-        return q
-    }()
-    
+
     private func fetchPollResults(for pollId: String, optionIds: [String], callback: @escaping (PollFetchResults) -> Void) {
         var url = URLComponents(string: "\(POLLS_SERVICE_ENDPOINT)\(pollId)")!
         url.queryItems = optionIds.map { URLQueryItem(name: "options", value: $0) }

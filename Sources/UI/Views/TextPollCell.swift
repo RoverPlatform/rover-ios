@@ -332,7 +332,7 @@ class TextPollCell: BlockCell {
         
         let verticalStack = UIStackView(arrangedSubviews: self.optionViews)
         verticalStack.translatesAutoresizingMaskIntoConstraints = false
-        let verticalSpacing = CGFloat(self.optionViews.first?.topMargin ?? 0) / 2
+        let verticalSpacing = CGFloat(self.optionViews.first?.topMargin ?? 0)
         verticalStack.axis = .vertical
         verticalStack.spacing = verticalSpacing
         

@@ -353,13 +353,13 @@ class ImagePollCell: BlockCell {
         let verticalStack = UIStackView(arrangedSubviews: optionViewPairs.map({ (leftOption, rightOption) in
             let row = UIStackView(arrangedSubviews: [leftOption, rightOption])
             row.axis = .horizontal
-            row.spacing = CGFloat(rightOption.leftMargin) / 2
+            row.spacing = CGFloat(rightOption.leftMargin)
             row.translatesAutoresizingMaskIntoConstraints = false
             return row
         }))
         verticalStack.translatesAutoresizingMaskIntoConstraints = false
         verticalStack.axis = .vertical
-        verticalStack.spacing = verticalSpacing / 2.0
+        verticalStack.spacing = verticalSpacing
         self.containerView.addSubview(verticalStack)
         self.optionStack = verticalStack
         

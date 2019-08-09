@@ -36,7 +36,7 @@ extension Dictionary where Value == Int {
             let firstRemainder = firstPercentage - Double(firstRoundedDownPercentage)
             let secondRemainder = secondPercentage - Double(secondRoundedDownPercentage)
             
-            return firstRemainder < secondRemainder
+            return firstRemainder > secondRemainder
         }
 
         // now to distribute the remainder (as whole integers) across the options:

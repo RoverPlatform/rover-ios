@@ -6,6 +6,8 @@
 //  Copyright © 2019 Rover Labs Inc. All rights reserved.
 //
 
+import os
+
 // MARK: Largest Remainder Method
 
 extension Dictionary where Value == Int {
@@ -15,9 +17,16 @@ extension Dictionary where Value == Int {
         let counts = self.map { $1 }
         let totalVotes = counts.reduce(0, +)
         
+        if(totalVotes == 0) {
+            os_log("Cannot perform largest remainder method when total is 0.  Defaulting to zero percentages.", log: .rover, type: .fault)
+            return self.mapValues { _ in 0 }
+        }
+        
         let asExactPercentages = self.mapValues { votes in
             (Double(votes) / Double(totalVotes)) * 100
         }
+        
+        
         
         let withRoundedDownPercentages: [Key:(Double, Int)] = asExactPercentages.mapValues { exactPercentage in
             return (exactPercentage, Int(exactPercentage.rounded(.down)))

@@ -12,9 +12,11 @@ import UIKit
 // MARK: Constants
 
 private let OPTION_TEXT_SPACING = CGFloat(16)
+private let OPTION_INDICATOR_SPACING = CGFloat(8)
 private let RESULT_PERCENTAGE_REVEAL_TIME = 0.75 // ms
 private let RESULT_FILL_BAR_REVEAL_TIME = 0.05 // ms
 private let RESULT_FILL_BAR_FILL_TIME = 1.00 // ms
+private let INDICATOR_BULLET_CHARACTER = "•"
 
 // MARK: Option View
 
@@ -51,6 +53,7 @@ class TextPollOptionView: UIView {
     
     private let backgroundView = UIImageView()
     private let answerTextView = UILabel()
+    private let indicator = UILabel()
     private let resultPercentage = UILabel()
     private let resultFillBarArea = UIView()
     private let resultFillBar = UIView()
@@ -74,6 +77,7 @@ class TextPollOptionView: UIView {
         self.addSubview(self.backgroundView)
         self.addSubview(self.resultFillBarArea)
         self.addSubview(self.answerTextView)
+        self.addSubview(self.indicator)
         self.addSubview(self.resultPercentage)
         self.resultFillBarArea.addSubview(self.resultFillBar)
         
@@ -85,6 +89,7 @@ class TextPollOptionView: UIView {
         self.resultPercentage.translatesAutoresizingMaskIntoConstraints = false
         self.resultFillBarArea.translatesAutoresizingMaskIntoConstraints = false
         self.resultFillBar.translatesAutoresizingMaskIntoConstraints = false
+        self.indicator.translatesAutoresizingMaskIntoConstraints = false
         
         // MARK: Background Image
         
@@ -127,17 +132,29 @@ class TextPollOptionView: UIView {
         self.resultPercentage.font = option.text.font.bumpedForPercentageIndicator.uiFont
         self.resultPercentage.textColor = option.text.color.uiColor
         
-        // MARK: Answer Text View
+        // MARK: Answer & Indicators
+        
+        self.indicator.text = INDICATOR_BULLET_CHARACTER
+        
+        let indicatorConstraints = [
+            self.indicator.centerYAnchor.constraint(equalTo: self.centerYAnchor),
+            self.indicator.trailingAnchor.constraint(lessThanOrEqualTo: self.resultPercentage.leadingAnchor, constant: OPTION_TEXT_SPACING)
+//            self.indicator.leadingAnchor.constraint(equalTo: self.answerTextView.trailingAnchor, constant: OPTION_INDICATOR_SPACING * -1)
+        ]
         
         let answerConstraints = [
             self.answerTextView.centerYAnchor.constraint(equalTo: self.centerYAnchor),
             self.answerTextView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: OPTION_TEXT_SPACING),
-            self.answerTextView.trailingAnchor.constraint(equalTo: self.resultPercentage.leadingAnchor, constant: OPTION_TEXT_SPACING * -1)
+            self.answerTextView.trailingAnchor.constraint(equalTo: self.indicator.leadingAnchor, constant: OPTION_TEXT_SPACING * -1)
         ]
         self.answerTextView.backgroundColor = .clear
         self.answerTextView.numberOfLines = 1
         self.answerTextView.attributedText = option.attributedText
         self.answerTextView.lineBreakMode = .byTruncatingTail
+        self.answerTextView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        self.indicator.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+        self.resultPercentage.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+        self.indicator.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         
         // MARK: Container
         
@@ -145,7 +162,7 @@ class TextPollOptionView: UIView {
        gestureRecognizer.numberOfTapsRequired = 1
        self.addGestureRecognizer(gestureRecognizer)
         
-        let constraints = backgroundConstraints + resultFillBarConstraints + percentageConstraints + answerConstraints + [
+        let constraints = backgroundConstraints + resultFillBarConstraints + percentageConstraints + indicatorConstraints + answerConstraints + [
             self.heightAnchor.constraint(equalToConstant: CGFloat(option.height))
         ]
         NSLayoutConstraint.activate(constraints)
@@ -172,6 +189,7 @@ class TextPollOptionView: UIView {
         self.resultPercentageWidthConstraint!.constant = 0
         self.isUserInteractionEnabled = true
         self.percentageAnimationTimer?.invalidate()
+        self.indicator.isHidden = true
         self.percentageAnimationTimer = nil
     }
     
@@ -184,6 +202,7 @@ class TextPollOptionView: UIView {
     private func revealResultsState(animated: Bool, optionResults: OptionResults) {
         self.percentageAnimationTimer?.invalidate()
         self.percentageAnimationTimer = nil
+        self.indicator.isHidden = !optionResults.selected
         let animateFactor = Double(animated ? 1 : 0)
         
         UIView.animate(withDuration: RESULT_PERCENTAGE_REVEAL_TIME * animateFactor, delay: 0, options: [.curveEaseInOut], animations: {
@@ -318,7 +337,7 @@ class TextPollCell: BlockCell {
             case .answered(let optionResults):
                 let viewOptionStatuses = optionResults.viewOptionStatuses
                 self.optionViews = textPollBlock.textPoll.options.map { option in
-                    TextPollOptionView(option: option, initialState: .answered(optionResults: viewOptionStatuses[option.id]!)) {
+                    TextPollOptionView(option: option, initialState: .answered(optionResults: viewOptionStatuses[option.id] ?? TextPollOptionView.OptionResults(selected: false, fraction: 0, percentage: 0))) {
                         PollsVotingService.shared.castVote(pollId: textPollBlock.pollId(containedBy: experience), optionId: option.id)
                     }
                 }

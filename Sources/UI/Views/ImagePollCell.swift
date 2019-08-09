@@ -137,7 +137,6 @@ class ImagePollOptionView: UIView {
         
         // MARK: Result Fill Bar
         
-        self.resultFillBarWidthConstraint = self.resultFillBar.widthAnchor.constraint(equalToConstant: 0)
         let resultFillBarConstraints = [
             self.resultFillBarArea.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: RESULT_FILL_BAR_HORIZONTAL_SPACING),
             self.resultFillBarArea.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: RESULT_FILL_BAR_HORIZONTAL_SPACING * -1),
@@ -145,8 +144,7 @@ class ImagePollOptionView: UIView {
             self.resultFillBarArea.heightAnchor.constraint(equalToConstant: RESULT_FILL_BAR_HEIGHT),
             self.resultFillBar.topAnchor.constraint(equalTo: self.resultFillBarArea.topAnchor),
             self.resultFillBar.bottomAnchor.constraint(equalTo: self.resultFillBarArea.bottomAnchor),
-            self.resultFillBar.leadingAnchor.constraint(equalTo: self.resultFillBarArea.leadingAnchor),
-            self.resultFillBarWidthConstraint!
+            self.resultFillBar.leadingAnchor.constraint(equalTo: self.resultFillBarArea.leadingAnchor)
         ]
         self.resultFillBarArea.clipsToBounds = true
         self.resultFillBarArea.layer.cornerRadius = RESULT_FILL_BAR_HEIGHT / 2
@@ -174,6 +172,13 @@ class ImagePollOptionView: UIView {
         self.addGestureRecognizer(gestureRecognizer)
         
         NSLayoutConstraint.activate(contentConstraints + answerConstraints + fadeOverlayConstraints + resultFillBarConstraints + resultPercentageConstraints)
+        
+        switch self.state {
+        case .waitingForAnswer:
+            revealQuestionState()
+        case .answered(let optionResults):
+            revealResultsState(animated: false, optionResults: optionResults)
+        }
     }
     
     // MARK: View States and Animation
@@ -182,7 +187,7 @@ class ImagePollOptionView: UIView {
         self.resultPercentage.alpha = 0.0
         self.resultFillBarArea.alpha = 0.0
         self.resultFadeOverlay.alpha = 0.0
-        self.resultFillBarWidthConstraint!.constant = 0
+        self.resultFillBarWidthConstraint?.isActive = false
         self.isUserInteractionEnabled = true
         self.percentageAnimationTimer?.invalidate()
         self.percentageAnimationTimer = nil
@@ -207,8 +212,9 @@ class ImagePollOptionView: UIView {
             self.resultFadeOverlay.alpha = 0.3
         })
         
-        let width = self.resultFillBarArea.frame.width * CGFloat(optionResults.fraction)
-        self.resultFillBarWidthConstraint!.constant = width
+        self.resultFillBarWidthConstraint?.isActive = false
+        self.resultFillBarWidthConstraint = self.resultFillBar.widthAnchor.constraint(equalTo: self.resultFillBarArea.widthAnchor, multiplier: CGFloat(optionResults.fraction))
+        self.resultFillBarWidthConstraint?.isActive = true
         if animated {
             UIView.animate(withDuration: RESULT_FILL_BAR_FILL_TIME, delay: 0.0, options: [.curveEaseInOut], animations: {
                 self.resultFillBarArea.layoutIfNeeded()
@@ -259,13 +265,6 @@ class ImagePollOptionView: UIView {
         self.configureBorder(border: option.border, constrainedByFrame: self.frame)
         // we defer configuring background image to here so that the layout has been calculated, and thus frame is available.
         self.content.configureAsFilledImage(image: self.option.image)
-        
-        switch self.state {
-        case .waitingForAnswer:
-            revealQuestionState()
-        case .answered(let optionResults):
-            revealResultsState(animated: false, optionResults: optionResults)
-        }
     }
 }
 

@@ -9,7 +9,7 @@
 import os
 import UIKit
 
-private let POLLS_SERVICE_ENDPOINT = "https://polls.staging.rover.io/v1/polls/"
+private let POLLS_SERVICE_ENDPOINT = "https://polls.rover.io/v1/polls/"
 private let USER_DEFAULTS_STORAGE_KEY = "io.rover.Polls.storage"
 
 class PollsVotingService {
@@ -139,7 +139,7 @@ class PollsVotingService {
             }
             return .waitingForAnswer
         }
-    }
+}
     
     private let storage = UserDefaults()
 
@@ -153,7 +153,7 @@ class PollsVotingService {
                 let pollStates = try decoder.decode([PollState].self, from: existingPollsJson)
                 return pollStates.first { $0.pollId == pollId } ?? .init(pollId: pollId, optionResults: nil, userVotedForOptionId: nil)
             } catch {
-                os_log("Existing storage for polls was corrupted: %s", error.saneDescription)
+                os_log("Existing storage for polls was corrupted: %s", error.debugDescription)
                 return .init(pollId: pollId, optionResults: nil, userVotedForOptionId: nil)
             }
         }
@@ -171,7 +171,7 @@ class PollsVotingService {
             do {
                 pollStates = try decoder.decode([PollState].self, from: existingPollsJson)
             } catch {
-                os_log("Existing storage for polls was corrupted, resetting: %s", error.saneDescription)
+                os_log("Existing storage for polls was corrupted, resetting: %s", log: .rover, type: .error, error.debugDescription)
                 pollStates = []
             }
         } else {
@@ -194,7 +194,7 @@ class PollsVotingService {
                 }
             }
         } catch {
-            os_log("Unable to update local poll storage: %s", error.saneDescription)
+            os_log("Unable to update local poll storage: %s", log: .rover, type: .error, error.debugDescription)
             return
         }
         os_log("Updated local state for poll %s.", log: .rover, type: .debug, pollId)
@@ -229,7 +229,7 @@ class PollsVotingService {
             newState = PollState(pollId: pollId, optionResults: localState.optionResults, userVotedForOptionId: optionId)
         }
         
-        os_log("Recording vote for option %s on poll %s", optionId, pollId)
+        os_log("Recording vote for option %s on poll %s", log: .rover, type: .info, optionId, pollId)
         
         updateStorageForPoll(newState: newState)
     }
@@ -244,7 +244,7 @@ class PollsVotingService {
         request.setRoverUserAgent()
         let task = self.urlSession.dataTask(with: request) { data, urlResponse, error in
             if let error = error {
-                os_log("Unable to request poll results because: %s", log: .rover, type: .error, error.saneDescription)
+                os_log("Unable to request poll results because: %s", log: .rover, type: .error, error.debugDescription)
                 callback(.failed)
                 return
             }
@@ -279,7 +279,7 @@ class PollsVotingService {
                 let response = try decoder.decode(PollFetchResponseBody.self, from: data)
                 callback(.fetched(results: response))
             } catch {
-                os_log("Unable to decode poll results fetch response body: %s", log: .rover, type: .error, error.saneDescription)
+                os_log("Unable to decode poll results fetch response body: %s", log: .rover, type: .error, error.debugDescription)
             }
         }
         task.resume()
@@ -297,7 +297,7 @@ class PollsVotingService {
             let encoder = JSONEncoder()
             data = try encoder.encode(requestBody)
         } catch {
-            os_log("Failed to encode poll cast vote request: %@", log: .rover, type: .error, error.localizedDescription)
+            os_log("Failed to encode poll cast vote request: %@", log: .rover, type: .error, error.debugDescription)
             return
         }
         
@@ -309,13 +309,13 @@ class PollsVotingService {
         
         let sessionTask = urlSession.uploadTask(with: request, from: data) { _, _, error in
             if let error = error {
-                os_log("Failed to submit poll cast vote request: %@", log: .rover, type: .error, error.localizedDescription)
+                os_log("Failed to submit poll cast vote request: %@", log: .rover, type: .error, error.debugDescription)
             }
             
             UIApplication.shared.endBackgroundTask(backgroundTaskID)
         }
         
-        os_log("Submitting vote...")
+        os_log("Submitting vote...", log: .rover, type: .debug)
         sessionTask.resume()
     }
     
@@ -358,14 +358,6 @@ extension ImagePollBlock.ImagePoll {
 }
 
 // MARK: Internal Helpers
-
-// TODO: Move this.
-private extension Error {
-    var saneDescription: String {
-        return "Error: \(self.localizedDescription), details: \((self as NSError).userInfo.debugDescription)"
-    }
-}
-
 
 private extension Array where Element == PollsVotingService.SubscriberBox {
     func garbageCollected() -> [PollsVotingService.SubscriberBox] {

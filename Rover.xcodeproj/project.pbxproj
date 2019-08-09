@@ -59,6 +59,7 @@
 		4994669D22A19C99005ECD07 /* URLRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4994669C22A19C99005ECD07 /* URLRequest.swift */; };
 		49C04DB8229DB11100243504 /* ResultShim.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C04DB7229DB11100243504 /* ResultShim.swift */; };
 		49C76DFF22E78C1F003E5CC7 /* PollsVotingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C76DFE22E78C1F003E5CC7 /* PollsVotingService.swift */; };
+		49ED505722FDE58B0027FAA5 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49ED505622FDE58B0027FAA5 /* Error.swift */; };
 		DB637A872279EFC600F0E791 /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB637A862279EFC600F0E791 /* Analytics.swift */; };
 		DB6BE8AE215D41F7000A1FDA /* OSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6BE8AD215D41F7000A1FDA /* OSLog.swift */; };
 		DB8FF7102286064400BDE2DC /* ExperienceStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8FF70F2286064400BDE2DC /* ExperienceStore.swift */; };
@@ -95,6 +96,7 @@
 		49952B452242B73A004C5521 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		49C04DB7229DB11100243504 /* ResultShim.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultShim.swift; sourceTree = "<group>"; };
 		49C76DFE22E78C1F003E5CC7 /* PollsVotingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollsVotingService.swift; sourceTree = "<group>"; };
+		49ED505622FDE58B0027FAA5 /* Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
 		DB00FDD92087E09F008D1A57 /* ScreenViewLayoutAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenViewLayoutAttributes.swift; sourceTree = "<group>"; };
 		DB00FDDF208A4961008D1A57 /* BarcodeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarcodeCell.swift; sourceTree = "<group>"; };
 		DB637A862279EFC600F0E791 /* Analytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analytics.swift; sourceTree = "<group>"; };
@@ -311,6 +313,7 @@
 				49005D0322776283009D62F9 /* UIApplication.swift */,
 				4994669C22A19C99005ECD07 /* URLRequest.swift */,
 				491EDCD922F3B6DD003FD25E /* Dictionary.swift */,
+				49ED505622FDE58B0027FAA5 /* Error.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -464,6 +467,7 @@
 				4953DD3F22399A8500286C4B /* Screen.swift in Sources */,
 				491EDCD822F38A99003FD25E /* LargestRemainder.swift in Sources */,
 				4953DD112239925B00286C4B /* Rover.swift in Sources */,
+				49ED505722FDE58B0027FAA5 /* Error.swift in Sources */,
 				4953DD4022399A8500286C4B /* BlockTapBehavior.swift in Sources */,
 				4953DD4422399A8500286C4B /* WebViewBlock.swift in Sources */,
 				4953DD3622399A8500286C4B /* Color.swift in Sources */,

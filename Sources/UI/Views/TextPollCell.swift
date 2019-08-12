@@ -186,7 +186,7 @@ class TextPollOptionView: UIView {
         self.percentageAnimationTimer = nil
         self.indicator.layoutIfNeeded()
         self.answerTextTrailingConstraint?.isActive = false
-        self.answerTextTrailingConstraint = self.indicator.trailingAnchor.constraint(lessThanOrEqualTo: self.trailingAnchor, constant: -16)
+        self.answerTextTrailingConstraint = self.indicator.trailingAnchor.constraint(lessThanOrEqualTo: self.trailingAnchor, constant: OPTION_TEXT_SPACING * -1)
         self.answerTextTrailingConstraint?.isActive = true
     }
     
@@ -226,13 +226,14 @@ class TextPollOptionView: UIView {
         
         self.answerTextTrailingConstraint?.isActive = false
         if optionResults.selected {
-            self.answerTextTrailingConstraint = self.indicator.trailingAnchor.constraint(lessThanOrEqualTo: self.resultPercentage.leadingAnchor, constant: -16)
+            self.answerTextTrailingConstraint = self.indicator.trailingAnchor.constraint(lessThanOrEqualTo: self.resultPercentage.leadingAnchor, constant: OPTION_TEXT_SPACING * -1)
         } else {
-            self.answerTextTrailingConstraint = self.answerTextView.trailingAnchor.constraint(lessThanOrEqualTo: self.resultPercentage.leadingAnchor, constant: -16)
+            self.answerTextTrailingConstraint = self.answerTextView.trailingAnchor.constraint(lessThanOrEqualTo: self.resultPercentage.leadingAnchor, constant: OPTION_TEXT_SPACING * -1)
         }
         self.answerTextTrailingConstraint?.isActive = true
 
         // expand the percentage view to accomodate all possible percentage values as we animate through them, to avoid any possible wobble in the layout.
+        // Unfortunately, neededPercentageWidth does not seem to quite accomodate for all space needed by the label, so
         self.resultPercentageWidthConstraint.constant = neededPercentageWidth + 1
         
         let startTime = Date()

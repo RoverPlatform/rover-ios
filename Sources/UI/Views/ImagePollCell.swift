@@ -456,7 +456,12 @@ private extension Dictionary where Key == String, Value == PollsVotingService.Op
         let roundedPercentagesByOptionIds = votesByOptionIds.percentagesWithDistributedRemainder()
         
         return self.mapValuesWithKey { (optionId, optionStatus) in
-            let fraction = Double(optionStatus.voteCount) / Double(totalVotes)
+            let fraction: Double
+            if totalVotes == 0 {
+                fraction = 0
+            } else {
+                fraction = Double(optionStatus.voteCount) / Double(totalVotes)
+            }
             return ImagePollOptionView.OptionResults(
                 selected: optionStatus.selected,
                 fraction: fraction,

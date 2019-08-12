@@ -338,13 +338,13 @@ class TextPollCell: BlockCell {
                 let viewOptionStatuses = optionResults.viewOptionStatuses
                 self.optionViews = textPollBlock.textPoll.options.map { option in
                     TextPollOptionView(option: option, initialState: .answered(optionResults: viewOptionStatuses[option.id] ?? TextPollOptionView.OptionResults(selected: false, fraction: 0, percentage: 0))) {
-                        PollsVotingService.shared.castVote(pollId: textPollBlock.pollId(containedBy: experience), optionId: option.id)
+                        PollsVotingService.shared.castVote(pollId: textPollBlock.pollId(containedBy: experience), givenOptionIds: textPollBlock.textPoll.votableOptionIds, optionId: option.id)
                     }
                 }
             case .waitingForAnswer:
                 self.optionViews = textPollBlock.textPoll.options.map { option in
                     TextPollOptionView(option: option, initialState: .waitingForAnswer) {
-                        PollsVotingService.shared.castVote(pollId: textPollBlock.pollId(containedBy: experience), optionId: option.id)
+                        PollsVotingService.shared.castVote(pollId: textPollBlock.pollId(containedBy: experience), givenOptionIds: textPollBlock.textPoll.votableOptionIds, optionId: option.id)
                     }
                 }
         }

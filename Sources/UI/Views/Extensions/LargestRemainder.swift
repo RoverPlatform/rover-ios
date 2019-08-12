@@ -18,7 +18,7 @@ extension Dictionary where Value == Int {
         let totalVotes = counts.reduce(0, +)
         
         if(totalVotes == 0) {
-            os_log("Cannot perform largest remainder method when total is 0.  Defaulting to zero percentages.", log: .rover, type: .fault)
+            os_log("Cannot perform largest remainder method when total is 0. Defaulting to zero percentages.", log: .rover, type: .fault)
             return self.mapValues { _ in 0 }
         }
         

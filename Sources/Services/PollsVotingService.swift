@@ -29,8 +29,8 @@ class PollsVotingService {
     }
 
     /// Cast a vote on the poll.  Naturally may only be done once.  Synchronous, fire-and-forget, and best-effort. Any subscribers will be instantly notified (if possible) of the update.
-    func castVote(pollId: String, optionId: String) {
-        switch self.localStatusForPoll(pollId: pollId) {
+    func castVote(pollId: String, givenOptionIds optionIds: [String], optionId: String) {
+        switch self.localStatusForPoll(pollId: pollId, givenOptionIds: optionIds) {
         case .answered:
             os_log("Can't vote twice.", log: .rover, type: .fault)
             return
@@ -41,7 +41,7 @@ class PollsVotingService {
         dispatchCastVoteRequest(pollId: pollId, optionId: optionId)
 
         // in the meantime, update local state that we voted and also to dead-reckon the increment of our vote being applied.
-        commitVoteToLocalState(pollId: pollId, optionId: optionId)
+        commitVoteToLocalState(pollId: pollId, givenOptionIds: optionIds, optionId: optionId)
     }
     
     /// Be notified of poll state.  Updates will be emitted on the main thread. Note that this will not immediately yield current state, but it it synchronously.
@@ -67,7 +67,7 @@ class PollsVotingService {
                         case let .fetched(results):
                             // update local state!
                             os_log("Successfully fetched current poll results.", log: .rover, type: .debug)
-                            self?.updateLocalStateWithResults(pollId: pollId, pollFetchResponse: results)
+                            self?.updateLocalStateWithResults(pollId: pollId, givenOptionIds: optionIds, pollFetchResponse: results)
                             
                             // chain fetch requests recursively, provided at least one subscriber exists for this poll.
                             if let _ = self?.stateSubscribers[pollId]?.first?.subscriber {
@@ -82,7 +82,7 @@ class PollsVotingService {
         recursiveFetch()
         
         // in the meantime, synchronously check local storage and immediately return the results:
-        return (self.localStatusForPoll(pollId: pollId), chit)
+        return (self.localStatusForPoll(pollId: pollId, givenOptionIds: optionIds), chit)
     }
     
     // MARK: State & Storage
@@ -135,6 +135,7 @@ class PollsVotingService {
                     let (optionId, optionStatus) = tuple
                     dictionary[optionId] = optionStatus
                 }
+                
                 return .answered(resultsForOptions: optionStatuses)
             }
             return .waitingForAnswer
@@ -143,15 +144,25 @@ class PollsVotingService {
     
     private let storage = UserDefaults()
 
-//    private var storage = [String: String]()
     private let urlSession = URLSession(configuration: URLSessionConfiguration.default)
-        
-    private func localStateForPoll(pollId: String) -> PollState {
+
+    private func localStateForPoll(pollId: String, givenCurrentOptionIds optionIds: [String]) -> PollState {
         let decoder = JSONDecoder.init()
         if let existingPollsJson = self.storage.data(forKey: USER_DEFAULTS_STORAGE_KEY) {
             do {
                 let pollStates = try decoder.decode([PollState].self, from: existingPollsJson)
-                return pollStates.first { $0.pollId == pollId } ?? .init(pollId: pollId, optionResults: nil, userVotedForOptionId: nil)
+                
+                if let state = pollStates.first(where: { $0.pollId == pollId }), let storedOptions = state.optionResults {
+                    if storedOptions.keys.sorted() == optionIds.sorted() {
+                        // currently stored poll options match!
+                        return state
+                    } else {
+                        os_log("Local poll state no longer matches the options given on the Poll itself. Considering poll state reset.", log: .rover, type: .fault)
+                        return .init(pollId: pollId, optionResults: nil, userVotedForOptionId: nil)
+                    }
+                } else {
+                    return .init(pollId: pollId, optionResults: nil, userVotedForOptionId: nil)
+                }
             } catch {
                 os_log("Existing storage for polls was corrupted: %s", error.debugDescription)
                 return .init(pollId: pollId, optionResults: nil, userVotedForOptionId: nil)
@@ -200,20 +211,20 @@ class PollsVotingService {
         os_log("Updated local state for poll %s.", log: .rover, type: .debug, pollId)
     }
     
-    private func localStatusForPoll(pollId: String) -> PollStatus {
-        return localStateForPoll(pollId: pollId).pollStatus()
+    private func localStatusForPoll(pollId: String, givenOptionIds optionIds: [String]) -> PollStatus {
+        return localStateForPoll(pollId: pollId, givenCurrentOptionIds: optionIds).pollStatus()
     }
     
-    private func updateLocalStateWithResults(pollId: String, pollFetchResponse: PollFetchResponseBody) {
+    private func updateLocalStateWithResults(pollId: String, givenOptionIds optionIds: [String], pollFetchResponse: PollFetchResponseBody) {
         // replace locally stored results with a new copy with the results part updated.
-        let localState: PollState = self.localStateForPoll(pollId: pollId)
+        let localState: PollState = self.localStateForPoll(pollId: pollId, givenCurrentOptionIds: optionIds)
 
         let newState = PollState(pollId: pollId, optionResults: pollFetchResponse.results, userVotedForOptionId: localState.userVotedForOptionId)
         self.updateStorageForPoll(newState: newState)
     }
     
-    private func commitVoteToLocalState(pollId: String, optionId: String) {
-        let localState: PollState = self.localStateForPoll(pollId: pollId)
+    private func commitVoteToLocalState(pollId: String, givenOptionIds optionIds: [String], optionId: String) {
+        let localState: PollState = self.localStateForPoll(pollId: pollId, givenCurrentOptionIds: optionIds)
        
         guard localState.userVotedForOptionId == nil else {
             os_log("User already voted.", log: .rover, type: .fault)

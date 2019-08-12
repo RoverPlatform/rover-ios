@@ -335,13 +335,13 @@ class ImagePollCell: BlockCell {
                 let viewOptionStatuses = optionResults.viewOptionStatuses
                 self.optionViews = imagePollBlock.imagePoll.options.map { option in
                     ImagePollOptionView(option: option, initialState: .answered(optionResults: viewOptionStatuses[option.id]!)) {
-                        PollsVotingService.shared.castVote(pollId: imagePollBlock.pollId(containedBy: experience), optionId: option.id)
+                        PollsVotingService.shared.castVote(pollId: imagePollBlock.pollId(containedBy: experience), givenOptionIds: imagePollBlock.imagePoll.votableOptionIds, optionId: option.id)
                     }
                 }
             case .waitingForAnswer:
                 self.optionViews = imagePollBlock.imagePoll.options.map { option in
                     ImagePollOptionView(option: option, initialState: .waitingForAnswer) {
-                        PollsVotingService.shared.castVote(pollId: imagePollBlock.pollId(containedBy: experience), optionId: option.id)
+                        PollsVotingService.shared.castVote(pollId: imagePollBlock.pollId(containedBy: experience), givenOptionIds: imagePollBlock.imagePoll.votableOptionIds, optionId: option.id)
                     }
                 }
         }

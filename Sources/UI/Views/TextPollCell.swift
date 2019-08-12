@@ -57,10 +57,10 @@ class TextPollOptionView: UIView {
     private let resultPercentage = UILabel()
     private let resultFillBarArea = UIView()
     private let resultFillBar = UIView()
-    // TODO: use ! decoration for enforced nullability
-    private var resultFillBarWidthConstraint: NSLayoutConstraint?
+
+    private var resultFillBarWidthConstraint: NSLayoutConstraint!
     private var resultPercentageWidthConstraint: NSLayoutConstraint!
-    private var answerTextTrailingConstraint: NSLayoutConstraint?
+    private var answerTextTrailingConstraint: NSLayoutConstraint!
     public let option: TextPollBlock.TextPoll.Option
     
     private let optionTapped: () -> Void
@@ -185,6 +185,9 @@ class TextPollOptionView: UIView {
         self.indicator.alpha = 0.0
         self.percentageAnimationTimer = nil
         self.indicator.layoutIfNeeded()
+        self.answerTextTrailingConstraint?.isActive = false
+        self.answerTextTrailingConstraint = self.indicator.trailingAnchor.constraint(lessThanOrEqualTo: self.trailingAnchor, constant: -16)
+        self.answerTextTrailingConstraint?.isActive = true
     }
     
     /// In lieu of a UIKit animation, we animate the percentage values with a manually managed timer.
@@ -230,7 +233,7 @@ class TextPollOptionView: UIView {
         self.answerTextTrailingConstraint?.isActive = true
 
         // expand the percentage view to accomodate all possible percentage values as we animate through them, to avoid any possible wobble in the layout.
-        self.resultPercentageWidthConstraint.constant = neededPercentageWidth
+        self.resultPercentageWidthConstraint.constant = neededPercentageWidth + 1
         
         let startTime = Date()
         let startProportion = self.previousPercentageProportion

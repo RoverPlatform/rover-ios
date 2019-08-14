@@ -480,18 +480,25 @@ private extension Dictionary where Key == String, Value == PollsVotingService.Op
         let totalVotes = votesByOptionIds.values.reduce(0, +)
         let roundedPercentagesByOptionIds = votesByOptionIds.percentagesWithDistributedRemainder()
         
-        return self.mapValuesWithKey { (optionId, optionStatus) in
+        return self.keys.map { optionId -> (String, ImagePollOptionView.OptionResults) in
+            let optionStatus = self[optionId]!
+            
             let fraction: Double
             if totalVotes == 0 {
                 fraction = 0
             } else {
                 fraction = Double(optionStatus.voteCount) / Double(totalVotes)
             }
-            return ImagePollOptionView.OptionResults(
+            let optionResults = ImagePollOptionView.OptionResults(
                 selected: optionStatus.selected,
                 fraction: fraction,
                 percentage: roundedPercentagesByOptionIds[optionId]!
             )
+            
+            return (optionId, optionResults)
+        }.reduce(into: [String: ImagePollOptionView.OptionResults]()) { (dictionary, tuple) in
+            let (optionId, optionStatus) = tuple
+            dictionary[optionId] = optionStatus
         }
     }
 }

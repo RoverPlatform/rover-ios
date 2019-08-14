@@ -292,6 +292,9 @@ class TextPollOptionView: UIView {
 // MARK: Cell View
 
 class TextPollCell: BlockCell {
+    /// This delegate is informed of a poll option being tapped.
+    weak var delegate: PollCellAnswerDelegate?
+    
     private let containerView = UIView()
     
     private var optionViews = [TextPollOptionView]()
@@ -353,14 +356,14 @@ class TextPollCell: BlockCell {
             case .answered(let optionResults):
                 let viewOptionStatuses = optionResults.viewOptionStatuses
                 self.optionViews = textPollBlock.textPoll.options.map { option in
-                    TextPollOptionView(option: option, initialState: .answered(optionResults: viewOptionStatuses[option.id] ?? TextPollOptionView.OptionResults(selected: false, fraction: 0, percentage: 0))) {
-                        PollsVotingService.shared.castVote(pollId: textPollBlock.pollId(containedBy: experience), givenOptionIds: textPollBlock.textPoll.votableOptionIds, optionId: option.id)
+                    TextPollOptionView(option: option, initialState: .answered(optionResults: viewOptionStatuses[option.id] ?? TextPollOptionView.OptionResults(selected: false, fraction: 0, percentage: 0))) { [weak self] in
+                           self?.delegate?.castVote(on: textPollBlock, for: option)
                     }
                 }
             case .waitingForAnswer:
                 self.optionViews = textPollBlock.textPoll.options.map { option in
-                    TextPollOptionView(option: option, initialState: .waitingForAnswer) {
-                        PollsVotingService.shared.castVote(pollId: textPollBlock.pollId(containedBy: experience), givenOptionIds: textPollBlock.textPoll.votableOptionIds, optionId: option.id)
+                    TextPollOptionView(option: option, initialState: .waitingForAnswer) { [weak self] in
+                           self?.delegate?.castVote(on: textPollBlock, for: option)
                     }
                 }
         }

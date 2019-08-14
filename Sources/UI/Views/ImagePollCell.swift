@@ -88,8 +88,6 @@ class ImagePollOptionView: UIView {
         ])
         super.init(frame: CGRect.zero)
         self.addSubview(self.content)
-//        self.addSubview(self.answerTextView)
-//        self.addSubview(self.indicator)
         self.addSubview(self.indicatorAndAnswer)
         self.addSubview(self.resultFadeOverlay)
         self.addSubview(self.resultPercentage)
@@ -100,8 +98,6 @@ class ImagePollOptionView: UIView {
         
         self.translatesAutoresizingMaskIntoConstraints = false
         self.content.translatesAutoresizingMaskIntoConstraints = false
-//        self.answerTextView.translatesAutoresizingMaskIntoConstraints = false
-//        self.indicator.translatesAutoresizingMaskIntoConstraints = false
         self.indicatorAndAnswer.translatesAutoresizingMaskIntoConstraints = false
         self.resultFadeOverlay.translatesAutoresizingMaskIntoConstraints = false
         self.resultPercentage.translatesAutoresizingMaskIntoConstraints = false
@@ -119,14 +115,7 @@ class ImagePollOptionView: UIView {
         ]
         
         // MARK: Answer/Caption Text View
-        
-//        let answerConstraints = [
-//            self.answerTextView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: OPTION_TEXT_SPACING),
-////            self.answerTextView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: OPTION_TEXT_SPACING * -1),
-//            self.answerTextView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: OPTION_TEXT_SPACING * -1 ),
-//            self.answerTextView.heightAnchor.constraint(equalToConstant: OPTION_TEXT_HEIGHT - OPTION_TEXT_SPACING * 2),
-//            self.answerTextView.topAnchor.constraint(equalTo: self.content.bottomAnchor, constant: OPTION_TEXT_SPACING)
-//        ]
+
         self.answerTextView.backgroundColor = .clear
         self.answerTextView.numberOfLines = 1
         self.answerTextView.attributedText = option.attributedText
@@ -137,12 +126,6 @@ class ImagePollOptionView: UIView {
         // MARK: Indicator
         self.indicator.text = INDICATOR_BULLET_CHARACTER
         self.indicator.font = option.text.font.uiFont
-        
-//        let indicatorConstraints = [
-//            self.indicator.centerYAnchor.constraint(equalTo: self.answerTextView.centerYAnchor),
-//            self.indicator.leadingAnchor.constraint(equalTo: self.answerTextView.trailingAnchor, constant: OPTION_TEXT_SPACING),
-//            self.indicator.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: OPTION_TEXT_SPACING * -1)
-//        ]
         
         let answerAndIndicatorConstraints = [
             self.indicatorAndAnswer.leadingAnchor.constraint(greaterThanOrEqualTo: self.leadingAnchor, constant: OPTION_TEXT_SPACING),
@@ -310,6 +293,9 @@ class ImagePollOptionView: UIView {
 // MARK: Cell View
 
 class ImagePollCell: BlockCell {
+    /// This delegate is informed of a poll option being tapped.
+    weak var delegate: PollCellAnswerDelegate?
+    
     /// a simple container view to the relatively complex layout of the text poll.
     private let containerView = UIView()
     
@@ -373,14 +359,14 @@ class ImagePollCell: BlockCell {
             case .answered(let optionResults):
                 let viewOptionStatuses = optionResults.viewOptionStatuses
                 self.optionViews = imagePollBlock.imagePoll.options.map { option in
-                    ImagePollOptionView(option: option, initialState: .answered(optionResults: viewOptionStatuses[option.id]!)) {
-                        PollsVotingService.shared.castVote(pollId: imagePollBlock.pollId(containedBy: experience), givenOptionIds: imagePollBlock.imagePoll.votableOptionIds, optionId: option.id)
+                    ImagePollOptionView(option: option, initialState: .answered(optionResults: viewOptionStatuses[option.id]!)) { [weak self] in
+                        self?.delegate?.castVote(on: imagePollBlock, for: option)
                     }
                 }
             case .waitingForAnswer:
                 self.optionViews = imagePollBlock.imagePoll.options.map { option in
-                    ImagePollOptionView(option: option, initialState: .waitingForAnswer) {
-                        PollsVotingService.shared.castVote(pollId: imagePollBlock.pollId(containedBy: experience), givenOptionIds: imagePollBlock.imagePoll.votableOptionIds, optionId: option.id)
+                    ImagePollOptionView(option: option, initialState: .waitingForAnswer) { [weak self] in
+                        self?.delegate?.castVote(on: imagePollBlock, for: option)
                     }
                 }
         }

@@ -204,7 +204,6 @@ class TextPollOptionView: UIView {
         
         UIView.animate(withDuration: RESULT_PERCENTAGE_REVEAL_TIME * animateFactor, delay: 0, options: [.curveEaseInOut], animations: {
             self.resultPercentage.alpha = 1.0
-            self.indicator.alpha = optionResults.selected ? 1.0 : 0.0
         })
         
         UIView.animate(withDuration: RESULT_FILL_BAR_REVEAL_TIME * animateFactor, delay: 0, options: [.curveEaseInOut], animations: {
@@ -238,9 +237,13 @@ class TextPollOptionView: UIView {
             self.answerTextTrailingConstraint = self.answerTextView.trailingAnchor.constraint(lessThanOrEqualTo: self.resultPercentage.leadingAnchor, constant: OPTION_TEXT_SPACING * -1)
         }
         self.answerTextTrailingConstraint?.isActive = true
+        
+        self.answerTextView.layoutIfNeeded()
+        
+        self.indicator.alpha = optionResults.selected ? 1.0 : 0.0
 
         // expand the percentage view to accomodate all possible percentage values as we animate through them, to avoid any possible wobble in the layout.
-        // Unfortunately, neededPercentageWidth does not seem to quite accomodate for all space needed by the label, so
+        // Unfortunately, neededPercentageWidth does not seem to quite accomodate for all space needed by the label, so:
         self.resultPercentageWidthConstraint.constant = neededPercentageWidth + 1
         
         let startTime = Date()

@@ -372,7 +372,6 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
             imagePollCell.delegate = self
         }
         
-        
         if let attributes = collectionViewLayout.layoutAttributesForItem(at: indexPath) as? ScreenLayoutAttributes, let clipRect = attributes.clipRect {
             let maskLayer = CAShapeLayer()
             maskLayer.path = CGPath(rect: clipRect, transform: nil)

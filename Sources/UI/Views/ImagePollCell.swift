@@ -19,6 +19,7 @@ private let RESULT_FILL_BAR_VERTICAL_SPACING = CGFloat(8)
 private let RESULT_PERCENTAGE_FONT_SIZE = CGFloat(16)
 private let RESULT_REVEAL_TIME = 0.167 // (167 ms)
 private let RESULT_FILL_BAR_FILL_TIME = 1.00  // (1 s)
+private let INDICATOR_BULLET_CHARACTER = "•"
 
 // MARK: Option View
 
@@ -59,8 +60,9 @@ class ImagePollOptionView: UIView {
     
     private let content = UIImageView()
     private let answerTextView = UILabel()
-    
+    private let indicator = UILabel()
     /// This view introduces a 50% opacity layer on top of the image in the results state.
+    private let indicatorAndAnswer: UIStackView
     private let resultFadeOverlay = UIView()
     private let resultPercentage = UILabel()
 
@@ -80,9 +82,15 @@ class ImagePollOptionView: UIView {
         self.option = option
         self.state = initialState
         self.optionTapped = optionTapped
+        self.indicatorAndAnswer = UIStackView(arrangedSubviews: [
+            answerTextView,
+            indicator
+        ])
         super.init(frame: CGRect.zero)
         self.addSubview(self.content)
-        self.addSubview(self.answerTextView)
+//        self.addSubview(self.answerTextView)
+//        self.addSubview(self.indicator)
+        self.addSubview(self.indicatorAndAnswer)
         self.addSubview(self.resultFadeOverlay)
         self.addSubview(self.resultPercentage)
         self.addSubview(self.resultFillBarArea)
@@ -92,7 +100,9 @@ class ImagePollOptionView: UIView {
         
         self.translatesAutoresizingMaskIntoConstraints = false
         self.content.translatesAutoresizingMaskIntoConstraints = false
-        self.answerTextView.translatesAutoresizingMaskIntoConstraints = false
+//        self.answerTextView.translatesAutoresizingMaskIntoConstraints = false
+//        self.indicator.translatesAutoresizingMaskIntoConstraints = false
+        self.indicatorAndAnswer.translatesAutoresizingMaskIntoConstraints = false
         self.resultFadeOverlay.translatesAutoresizingMaskIntoConstraints = false
         self.resultPercentage.translatesAutoresizingMaskIntoConstraints = false
         self.resultFillBarArea.translatesAutoresizingMaskIntoConstraints = false
@@ -110,13 +120,13 @@ class ImagePollOptionView: UIView {
         
         // MARK: Answer/Caption Text View
         
-        let answerConstraints = [
-            self.answerTextView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: OPTION_TEXT_SPACING),
-            self.answerTextView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: OPTION_TEXT_SPACING * -1),
-            self.answerTextView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: OPTION_TEXT_SPACING * -1 ),
-            self.answerTextView.heightAnchor.constraint(equalToConstant: OPTION_TEXT_HEIGHT - OPTION_TEXT_SPACING * 2),
-            self.answerTextView.topAnchor.constraint(equalTo: self.content.bottomAnchor, constant: OPTION_TEXT_SPACING)
-        ]
+//        let answerConstraints = [
+//            self.answerTextView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: OPTION_TEXT_SPACING),
+////            self.answerTextView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: OPTION_TEXT_SPACING * -1),
+//            self.answerTextView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: OPTION_TEXT_SPACING * -1 ),
+//            self.answerTextView.heightAnchor.constraint(equalToConstant: OPTION_TEXT_HEIGHT - OPTION_TEXT_SPACING * 2),
+//            self.answerTextView.topAnchor.constraint(equalTo: self.content.bottomAnchor, constant: OPTION_TEXT_SPACING)
+//        ]
         self.answerTextView.backgroundColor = .clear
         self.answerTextView.numberOfLines = 1
         self.answerTextView.attributedText = option.attributedText
@@ -124,6 +134,32 @@ class ImagePollOptionView: UIView {
         self.answerTextView.backgroundColor = .clear
         self.answerTextView.textAlignment = .center
         
+        // MARK: Indicator
+        self.indicator.text = INDICATOR_BULLET_CHARACTER
+        self.indicator.font = option.text.font.uiFont
+        
+//        let indicatorConstraints = [
+//            self.indicator.centerYAnchor.constraint(equalTo: self.answerTextView.centerYAnchor),
+//            self.indicator.leadingAnchor.constraint(equalTo: self.answerTextView.trailingAnchor, constant: OPTION_TEXT_SPACING),
+//            self.indicator.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: OPTION_TEXT_SPACING * -1)
+//        ]
+        
+        let answerAndIndicatorConstraints = [
+            self.indicatorAndAnswer.leadingAnchor.constraint(greaterThanOrEqualTo: self.leadingAnchor, constant: OPTION_TEXT_SPACING),
+            self.indicatorAndAnswer.trailingAnchor.constraint(lessThanOrEqualTo: self.trailingAnchor, constant: OPTION_TEXT_SPACING * -1),
+            self.indicatorAndAnswer.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: OPTION_TEXT_SPACING * -1 ),
+            self.indicatorAndAnswer.heightAnchor.constraint(equalToConstant: OPTION_TEXT_HEIGHT - OPTION_TEXT_SPACING * 2),
+            self.indicatorAndAnswer.topAnchor.constraint(equalTo: self.content.bottomAnchor, constant: OPTION_TEXT_SPACING),
+            self.indicatorAndAnswer.centerXAnchor.constraint(equalTo: self.centerXAnchor)
+        ]
+        
+        self.indicatorAndAnswer.axis = .horizontal
+        self.indicatorAndAnswer.alignment = .center
+        self.indicatorAndAnswer.spacing = OPTION_TEXT_SPACING
+        
+        self.indicator.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+        self.answerTextView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+
         // MARK: Results Fade Overlay
         
         let fadeOverlayConstraints = [
@@ -171,7 +207,7 @@ class ImagePollOptionView: UIView {
         gestureRecognizer.numberOfTapsRequired = 1
         self.addGestureRecognizer(gestureRecognizer)
         
-        NSLayoutConstraint.activate(contentConstraints + answerConstraints + fadeOverlayConstraints + resultFillBarConstraints + resultPercentageConstraints)
+        NSLayoutConstraint.activate(contentConstraints + fadeOverlayConstraints + answerAndIndicatorConstraints + resultFillBarConstraints + resultPercentageConstraints)
         
         switch self.state {
         case .waitingForAnswer:
@@ -191,6 +227,7 @@ class ImagePollOptionView: UIView {
         self.isUserInteractionEnabled = true
         self.percentageAnimationTimer?.invalidate()
         self.percentageAnimationTimer = nil
+        self.indicator.isHidden = true
     }
     
     /// In lieu of a UIKit animation, we animate the percentage values with a manually managed timer.
@@ -203,6 +240,8 @@ class ImagePollOptionView: UIView {
         self.percentageAnimationTimer?.invalidate()
         self.percentageAnimationTimer = nil
         self.resultPercentage.text = String(format: "%.0f %%", optionResults.fraction * 100)
+        
+        self.indicator.isHidden = !optionResults.selected
         
         let animateFactor = Double(animated ? 1 : 0)
         

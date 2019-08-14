@@ -13,4 +13,3 @@ protocol PollCellAnswerDelegate: AnyObject {
     
     func castVote(on textPollBlock: TextPollBlock, for option: TextPollBlock.TextPoll.Option)
 }
-

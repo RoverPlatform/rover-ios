@@ -15,7 +15,7 @@ import UIKit
 /// handling button taps. It posts [`Notification`s](https://developer.apple.com/documentation/foundation/notification)
 /// through the default [`NotificationCenter`](https://developer.apple.com/documentation/foundation/notificationcenter)
 /// when it is presented, dismissed and viewed.
-open class ScreenViewController: UICollectionViewController, UICollectionViewDataSourcePrefetching {
+open class ScreenViewController: UICollectionViewController, UICollectionViewDataSourcePrefetching, PollCellAnswerDelegate {
     public let experience: Experience
     public let campaignID: String?
     public let screen: Screen
@@ -363,6 +363,16 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         let reuseIdentifier = cellReuseIdentifier(at: indexPath)
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath)
         
+        
+        if let textPollCell = cell as? TextPollCell {
+            textPollCell.delegate = self
+        }
+        
+        if let imagePollCell = cell as? ImagePollCell {
+            imagePollCell.delegate = self
+        }
+        
+        
         if let attributes = collectionViewLayout.layoutAttributesForItem(at: indexPath) as? ScreenLayoutAttributes, let clipRect = attributes.clipRect {
             let maskLayer = CAShapeLayer()
             maskLayer.path = CGPath(rect: clipRect, transform: nil)
@@ -492,6 +502,51 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         present(websiteViewController, animated: true, completion: nil)
     }
     
+    // MARK: Poll Answer
+    
+    func castVote(on imagePollBlock: ImagePollBlock, for option: ImagePollBlock.ImagePoll.Option) {
+        PollsVotingService.shared.castVote(pollId: imagePollBlock.pollId(containedBy: experience), givenOptionIds: imagePollBlock.imagePoll.votableOptionIds, optionId: option.id)
+        
+        var userInfo: [String: Any] = [
+            ScreenViewController.experienceUserInfoKey: experience,
+            ScreenViewController.screenUserInfoKey: screen,
+            ScreenViewController.blockUserInfoKey: imagePollBlock,
+            ScreenViewController.optionUserInfoKey: option
+        ]
+        
+        if let campaignID = campaignID {
+            userInfo[ScreenViewController.campaignIDUserInfoKey] = campaignID
+        }
+        
+        NotificationCenter.default.post(
+            name: ScreenViewController.pollAnsweredNotification,
+            object: self,
+            userInfo: userInfo
+        )
+        
+    }
+    
+    func castVote(on textPollBlock: TextPollBlock, for option: TextPollBlock.TextPoll.Option) {
+        PollsVotingService.shared.castVote(pollId: textPollBlock.pollId(containedBy: experience), givenOptionIds: textPollBlock.textPoll.votableOptionIds, optionId: option.id)
+        
+        var userInfo: [String: Any] = [
+            ScreenViewController.experienceUserInfoKey: experience,
+            ScreenViewController.screenUserInfoKey: screen,
+            ScreenViewController.blockUserInfoKey: textPollBlock,
+            ScreenViewController.optionUserInfoKey: option
+        ]
+        
+        if let campaignID = campaignID {
+            userInfo[ScreenViewController.campaignIDUserInfoKey] = campaignID
+        }
+        
+        NotificationCenter.default.post(
+            name: ScreenViewController.pollAnsweredNotification,
+            object: self,
+            userInfo: userInfo
+        )
+    }
+    
     // MARK: Factories
     
     /// Construct a view controller to use for presenting websites. The default implementation returns an instance
@@ -539,6 +594,9 @@ extension ScreenViewController {
     /// The `ScreenViewController` sends this when a `UIView` representing a specific block somewhere within the view
     /// controller's hierarchy was tapped by the user.
     public static let blockTappedNotification = Notification.Name("io.rover.blockTappedNotification")
+    
+    /// The `ScreenViewController` sends this notification when a user casts a vote on a Poll in an experience.
+    public static let pollAnsweredNotification = Notification.Name("io.rover.pollAnsweredNotification")
 }
 
 // MARK: User Info Keys
@@ -552,6 +610,9 @@ extension ScreenViewController {
     
     /// A key whose value is the `Block` that was tapped which triggered a `blockTappedNotification`.
     public static let blockUserInfoKey = "blockUserInfoKey"
+    
+    /// A key whose value is the poll `Option` that was tapped which triggered a `pollAnsweredNotification`.
+    public static let optionUserInfoKey = "optionUserInfoKey"
     
     /// A key whose value is an optional `String` containing the `campaignID` passed into the `RoverViewController` when
     /// it was initialized.

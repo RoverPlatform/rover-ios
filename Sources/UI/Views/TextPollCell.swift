@@ -222,7 +222,14 @@ class TextPollOptionView: UIView {
         let percentageString = String(format: "%d%%", optionResults.percentage)
         
         let percentageTextFont = self.option.text.font.bumpedForPercentageIndicator
-        let neededPercentageWidth = percentageTextFont.attributedText(forPlainText: percentageString, color: self.option.text.color)?.boundingRect(with: .init(width: 1_000, height: 1_000), options: [], context: nil).width.rounded(.up) ?? CGFloat(0)
+        
+        let percentageToMeasure: String
+        if optionResults.percentage == 100 {
+            percentageToMeasure = "100%"
+        } else {
+            percentageToMeasure = "88%"
+        }
+        let neededPercentageWidth = percentageTextFont.attributedText(forPlainText: percentageToMeasure, color: self.option.text.color)?.boundingRect(with: .init(width: 1_000, height: 1_000), options: [], context: nil).width.rounded(.up) ?? CGFloat(0)
         
         self.answerTextTrailingConstraint?.isActive = false
         if optionResults.selected {

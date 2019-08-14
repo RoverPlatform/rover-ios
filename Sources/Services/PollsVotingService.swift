@@ -18,12 +18,12 @@ class PollsVotingService {
     
     // MARK: Types
     
-    public struct OptionStatus {
+    struct OptionStatus {
         let selected: Bool
         let voteCount: Int
     }
     
-    public enum PollStatus {
+    enum PollStatus {
         case waitingForAnswer
         case answered(resultsForOptions: [String: OptionStatus])
     }
@@ -140,7 +140,7 @@ class PollsVotingService {
             }
             return .waitingForAnswer
         }
-}
+    }
     
     private let storage = UserDefaults()
 

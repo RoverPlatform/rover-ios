@@ -332,7 +332,7 @@ class ImagePollCell: BlockCell {
             self.questionView!.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
         ]
         
-        let (initialPollStatus, subscription) = PollsVotingService.shared.subscribeToUpdates(pollId: imagePollBlock.pollId(containedBy: experience), givenCurrentOptionIds: imagePollBlock.imagePoll.votableOptionIds) { [weak self] newPollStatus in
+        let (initialPollStatus, subscription) = PollsVotingService.shared.subscribeToUpdates(pollID: imagePollBlock.pollID(containedBy: experience), givenCurrentOptionIds: imagePollBlock.imagePoll.votableOptionIds) { [weak self] newPollStatus in
             
             switch newPollStatus {
                 case .answered(let resultsForOptions):

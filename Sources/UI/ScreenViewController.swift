@@ -504,7 +504,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     // MARK: Poll Answer
     
     func castVote(on imagePollBlock: ImagePollBlock, for option: ImagePollBlock.ImagePoll.Option) {
-        PollsVotingService.shared.castVote(pollId: imagePollBlock.pollId(containedBy: experience), givenOptionIds: imagePollBlock.imagePoll.votableOptionIds, optionId: option.id)
+        PollsVotingService.shared.castVote(pollID: imagePollBlock.pollID(containedBy: experience), givenOptionIds: imagePollBlock.imagePoll.votableOptionIds, optionId: option.id)
         
         var userInfo: [String: Any] = [
             ScreenViewController.experienceUserInfoKey: experience,
@@ -526,7 +526,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     }
     
     func castVote(on textPollBlock: TextPollBlock, for option: TextPollBlock.TextPoll.Option) {
-        PollsVotingService.shared.castVote(pollId: textPollBlock.pollId(containedBy: experience), givenOptionIds: textPollBlock.textPoll.votableOptionIds, optionId: option.id)
+        PollsVotingService.shared.castVote(pollID: textPollBlock.pollID(containedBy: experience), givenOptionIds: textPollBlock.textPoll.votableOptionIds, optionId: option.id)
         
         var userInfo: [String: Any] = [
             ScreenViewController.experienceUserInfoKey: experience,

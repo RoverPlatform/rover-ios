@@ -29,8 +29,8 @@ class PollsVotingService {
     }
 
     /// Cast a vote on the poll.  Naturally may only be done once.  Synchronous, fire-and-forget, and best-effort. Any subscribers will be instantly notified (if possible) of the update.
-    func castVote(pollId: String, givenOptionIds optionIds: [String], optionId: String) {
-        switch self.localStatusForPoll(pollId: pollId, givenOptionIds: optionIds) {
+    func castVote(pollID: String, givenOptionIds optionIds: [String], optionId: String) {
+        switch self.localStatusForPoll(pollID: pollID, givenOptionIds: optionIds) {
         case .answered:
             os_log("Can't vote twice.", log: .rover, type: .fault)
             return
@@ -38,39 +38,39 @@ class PollsVotingService {
             break;
         }
         
-        dispatchCastVoteRequest(pollId: pollId, optionId: optionId)
+        dispatchCastVoteRequest(pollID: pollID, optionId: optionId)
 
         // in the meantime, update local state that we voted and also to dead-reckon the increment of our vote being applied.
-        commitVoteToLocalState(pollId: pollId, givenOptionIds: optionIds, optionId: optionId)
+        commitVoteToLocalState(pollID: pollID, givenOptionIds: optionIds, optionId: optionId)
     }
     
     /// Be notified of poll state.  Updates will be emitted on the main thread. Note that this will not immediately yield current state, but it it synchronously.
     /// Returns the current poll status synchronously, along with a subscriber chit that you should retain a reference to until you wish to unsubscribe.
-    func subscribeToUpdates(pollId: String, givenCurrentOptionIds optionIds: [String], subscriber: @escaping (PollStatus) -> Void) -> (PollStatus, AnyObject) {
+    func subscribeToUpdates(pollID: String, givenCurrentOptionIds optionIds: [String], subscriber: @escaping (PollStatus) -> Void) -> (PollStatus, AnyObject) {
         // side-effect: kick off async attempt to refresh PollResults.  That request will update the state in UserDefaults.
         
-        if self.stateSubscribers[pollId] == nil {
-            self.stateSubscribers[pollId] = []
+        if self.stateSubscribers[pollID] == nil {
+            self.stateSubscribers[pollID] = []
         }
         var chit = Subscriber(callback: subscriber)
-        self.stateSubscribers[pollId]!.append(
+        self.stateSubscribers[pollID]!.append(
             SubscriberBox(subscriber: chit)
         )
         self.stateSubscribers = self.stateSubscribers.garbageCollected()
         
         func recursiveFetch(delay: TimeInterval = 0) {
             DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(Int(delay * 1000))) {
-                self.fetchPollResults(for: pollId, optionIds: optionIds) { [weak self] results in
+                self.fetchPollResults(for: pollID, optionIds: optionIds) { [weak self] results in
                     switch results {
                         case .failed:
                             os_log("Unable to fetch poll results.", log: .rover, type: .error)
                         case let .fetched(results):
                             // update local state!
                             os_log("Successfully fetched current poll results.", log: .rover, type: .debug)
-                            self?.updateLocalStateWithResults(pollId: pollId, givenOptionIds: optionIds, pollFetchResponse: results)
+                            self?.updateLocalStateWithResults(pollID: pollID, givenOptionIds: optionIds, pollFetchResponse: results)
                             
                             // chain fetch requests recursively, provided at least one subscriber exists for this poll.
-                            if let _ = self?.stateSubscribers[pollId]?.first?.subscriber {
+                            if let _ = self?.stateSubscribers[pollID]?.first?.subscriber {
                                 // 5 second delay on subsequent requests.
                                 recursiveFetch(delay: 5)
                             }
@@ -82,7 +82,7 @@ class PollsVotingService {
         recursiveFetch()
         
         // in the meantime, synchronously check local storage and immediately return the results:
-        return (self.localStatusForPoll(pollId: pollId, givenOptionIds: optionIds), chit)
+        return (self.localStatusForPoll(pollID: pollID, givenOptionIds: optionIds), chit)
     }
     
     // MARK: State & Storage
@@ -111,7 +111,7 @@ class PollsVotingService {
     
     /// Internal representation for storage of poll state on disk.
     private struct PollState: Codable {
-        let pollId: String
+        let pollID: String
         
         /// The results retrieved for the poll, if available.  Poll Id -> Number of Votes.
         let optionResults: [String: Int]?
@@ -146,36 +146,36 @@ class PollsVotingService {
 
     private let urlSession = URLSession(configuration: URLSessionConfiguration.default)
 
-    private func localStateForPoll(pollId: String, givenCurrentOptionIds optionIds: [String]) -> PollState {
+    private func localStateForPoll(pollID: String, givenCurrentOptionIds optionIds: [String]) -> PollState {
         let decoder = JSONDecoder.init()
         if let existingPollsJson = self.storage.data(forKey: USER_DEFAULTS_STORAGE_KEY) {
             do {
                 let pollStates = try decoder.decode([PollState].self, from: existingPollsJson)
                 
-                if let state = pollStates.first(where: { $0.pollId == pollId }), let storedOptions = state.optionResults {
+                if let state = pollStates.first(where: { $0.pollID == pollID }), let storedOptions = state.optionResults {
                     if storedOptions.keys.sorted() == optionIds.sorted() {
                         // currently stored poll options match!
                         return state
                     } else {
                         os_log("Local poll state no longer matches the options given on the Poll itself. Considering poll state reset.", log: .rover, type: .fault)
-                        return .init(pollId: pollId, optionResults: nil, userVotedForOptionId: nil)
+                        return .init(pollID: pollID, optionResults: nil, userVotedForOptionId: nil)
                     }
                 } else {
-                    return .init(pollId: pollId, optionResults: nil, userVotedForOptionId: nil)
+                    return .init(pollID: pollID, optionResults: nil, userVotedForOptionId: nil)
                 }
             } catch {
                 os_log("Existing storage for polls was corrupted: %s", error.debugDescription)
-                return .init(pollId: pollId, optionResults: nil, userVotedForOptionId: nil)
+                return .init(pollID: pollID, optionResults: nil, userVotedForOptionId: nil)
             }
         }
-        return .init(pollId: pollId, optionResults: nil, userVotedForOptionId: nil)
+        return .init(pollID: pollID, optionResults: nil, userVotedForOptionId: nil)
     }
     
     private func updateStorageForPoll(newState: PollState) {
         let encoder = JSONEncoder()
         let decoder = JSONDecoder()
         
-        let pollId = newState.pollId
+        let pollID = newState.pollID
         
         let pollStates: [PollState]
         if let existingPollsJson = self.storage.data(forKey: USER_DEFAULTS_STORAGE_KEY) {
@@ -190,7 +190,7 @@ class PollsVotingService {
         }
         
         // delete existing entry if one is present and prepend the new one:
-        let newStates = [newState] + pollStates.filter { $0.pollId != pollId }
+        let newStates = [newState] + pollStates.filter { $0.pollID != pollID }
         
         // drop any stored states past 100:
         let trimmedNewStates: [PollState] = Array(newStates.prefix(100))
@@ -199,7 +199,7 @@ class PollsVotingService {
             let newStateJson = try encoder.encode(trimmedNewStates)
             // TODO: storage update dispatch.
             self.storage.set(newStateJson, forKey: USER_DEFAULTS_STORAGE_KEY)
-            self.stateSubscribers[pollId]?.forEach { subscriber in
+            self.stateSubscribers[pollID]?.forEach { subscriber in
                 DispatchQueue.main.async {
                     subscriber.subscriber?.callback(newState.pollStatus())
                 }
@@ -208,23 +208,23 @@ class PollsVotingService {
             os_log("Unable to update local poll storage: %s", log: .rover, type: .error, error.debugDescription)
             return
         }
-        os_log("Updated local state for poll %s.", log: .rover, type: .debug, pollId)
+        os_log("Updated local state for poll %s.", log: .rover, type: .debug, pollID)
     }
     
-    private func localStatusForPoll(pollId: String, givenOptionIds optionIds: [String]) -> PollStatus {
-        return localStateForPoll(pollId: pollId, givenCurrentOptionIds: optionIds).pollStatus()
+    private func localStatusForPoll(pollID: String, givenOptionIds optionIds: [String]) -> PollStatus {
+        return localStateForPoll(pollID: pollID, givenCurrentOptionIds: optionIds).pollStatus()
     }
     
-    private func updateLocalStateWithResults(pollId: String, givenOptionIds optionIds: [String], pollFetchResponse: PollFetchResponseBody) {
+    private func updateLocalStateWithResults(pollID: String, givenOptionIds optionIds: [String], pollFetchResponse: PollFetchResponseBody) {
         // replace locally stored results with a new copy with the results part updated.
-        let localState: PollState = self.localStateForPoll(pollId: pollId, givenCurrentOptionIds: optionIds)
+        let localState: PollState = self.localStateForPoll(pollID: pollID, givenCurrentOptionIds: optionIds)
 
-        let newState = PollState(pollId: pollId, optionResults: pollFetchResponse.results, userVotedForOptionId: localState.userVotedForOptionId)
+        let newState = PollState(pollID: pollID, optionResults: pollFetchResponse.results, userVotedForOptionId: localState.userVotedForOptionId)
         self.updateStorageForPoll(newState: newState)
     }
     
-    private func commitVoteToLocalState(pollId: String, givenOptionIds optionIds: [String], optionId: String) {
-        let localState: PollState = self.localStateForPoll(pollId: pollId, givenCurrentOptionIds: optionIds)
+    private func commitVoteToLocalState(pollID: String, givenOptionIds optionIds: [String], optionId: String) {
+        let localState: PollState = self.localStateForPoll(pollID: pollID, givenCurrentOptionIds: optionIds)
        
         guard localState.userVotedForOptionId == nil else {
             os_log("User already voted.", log: .rover, type: .fault)
@@ -235,20 +235,20 @@ class PollsVotingService {
         if var optionResults = localState.optionResults {
             // results with user's selection incremented.
             optionResults[optionId]? += 1
-            newState = PollState(pollId: pollId, optionResults: optionResults, userVotedForOptionId: optionId)
+            newState = PollState(pollID: pollID, optionResults: optionResults, userVotedForOptionId: optionId)
         } else {
-            newState = PollState(pollId: pollId, optionResults: localState.optionResults, userVotedForOptionId: optionId)
+            newState = PollState(pollID: pollID, optionResults: localState.optionResults, userVotedForOptionId: optionId)
         }
         
-        os_log("Recording vote for option %s on poll %s", log: .rover, type: .info, optionId, pollId)
+        os_log("Recording vote for option %s on poll %s", log: .rover, type: .info, optionId, pollID)
         
         updateStorageForPoll(newState: newState)
     }
     
     // MARK: Network Requests
 
-    private func fetchPollResults(for pollId: String, optionIds: [String], callback: @escaping (PollFetchResults) -> Void) {
-        var url = URLComponents(string: "\(POLLS_SERVICE_ENDPOINT)\(pollId)")!
+    private func fetchPollResults(for pollID: String, optionIds: [String], callback: @escaping (PollFetchResults) -> Void) {
+        var url = URLComponents(string: "\(POLLS_SERVICE_ENDPOINT)\(pollID)")!
         url.queryItems = optionIds.map { URLQueryItem(name: "options", value: $0) }
         var request = URLRequest(url: url.url!)
         request.httpMethod = "GET"
@@ -296,8 +296,8 @@ class PollsVotingService {
         task.resume()
     }
     
-    private func dispatchCastVoteRequest(pollId: String, optionId: String) {
-        let url = URL(string: "\(POLLS_SERVICE_ENDPOINT)\(pollId)/vote")!
+    private func dispatchCastVoteRequest(pollID: String, optionId: String) {
+        let url = URL(string: "\(POLLS_SERVICE_ENDPOINT)\(pollID)/vote")!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")

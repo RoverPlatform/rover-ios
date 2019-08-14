@@ -332,7 +332,7 @@ class TextPollCell: BlockCell {
             questionView!.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
         ]
         
-        let (initialPollStatus, subscription) = PollsVotingService.shared.subscribeToUpdates(pollId: textPollBlock.pollId(containedBy: experience), givenCurrentOptionIds: textPollBlock.textPoll.votableOptionIds) { [weak self] newPollStatus in
+        let (initialPollStatus, subscription) = PollsVotingService.shared.subscribeToUpdates(pollID: textPollBlock.pollID(containedBy: experience), givenCurrentOptionIds: textPollBlock.textPoll.votableOptionIds) { [weak self] newPollStatus in
             
             switch newPollStatus {
                 case .answered(let resultsForOptions):

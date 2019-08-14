@@ -54,8 +54,8 @@
 		4953DD5022399A9C00286C4B /* RoverViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEDF2055964E00E5C77F /* RoverViewController.swift */; };
 		4953DD5122399A9C00286C4B /* ExperienceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEDE2055964E00E5C77F /* ExperienceViewController.swift */; };
 		4953DD5222399A9C00286C4B /* ScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEE02055964E00E5C77F /* ScreenViewController.swift */; };
-		4953DD5322399A9C00286C4B /* ScreenViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9DBEE32055964E00E5C77F /* ScreenViewLayout.swift */; };
 		4953DD5422399A9C00286C4B /* ScreenViewLayoutAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00FDD92087E09F008D1A57 /* ScreenViewLayoutAttributes.swift */; };
+		4974281A2304813C008F8D35 /* ScreenViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 497428192304813C008F8D35 /* ScreenViewLayout.swift */; };
 		4994669D22A19C99005ECD07 /* URLRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4994669C22A19C99005ECD07 /* URLRequest.swift */; };
 		49C04DB8229DB11100243504 /* ResultShim.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C04DB7229DB11100243504 /* ResultShim.swift */; };
 		49C76DFF22E78C1F003E5CC7 /* PollsVotingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C76DFE22E78C1F003E5CC7 /* PollsVotingService.swift */; };
@@ -92,6 +92,7 @@
 		492F7A5122E6640D00D1F653 /* UIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIView.swift; sourceTree = "<group>"; };
 		492F7A5322E6642900D1F653 /* UIImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImageView.swift; sourceTree = "<group>"; };
 		4953DD102239925B00286C4B /* Rover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rover.swift; sourceTree = "<group>"; };
+		497428192304813C008F8D35 /* ScreenViewLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScreenViewLayout.swift; sourceTree = "<group>"; };
 		4994669C22A19C99005ECD07 /* URLRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLRequest.swift; sourceTree = "<group>"; };
 		49952B452242B73A004C5521 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		49C04DB7229DB11100243504 /* ResultShim.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultShim.swift; sourceTree = "<group>"; };
@@ -109,7 +110,6 @@
 		DB9DBEDE2055964E00E5C77F /* ExperienceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExperienceViewController.swift; sourceTree = "<group>"; };
 		DB9DBEDF2055964E00E5C77F /* RoverViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoverViewController.swift; sourceTree = "<group>"; };
 		DB9DBEE02055964E00E5C77F /* ScreenViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScreenViewController.swift; sourceTree = "<group>"; };
-		DB9DBEE32055964E00E5C77F /* ScreenViewLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScreenViewLayout.swift; sourceTree = "<group>"; };
 		DB9DBEE62055964E00E5C77F /* TextCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextCell.swift; sourceTree = "<group>"; };
 		DB9DBEE72055964E00E5C77F /* ImageCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageCell.swift; sourceTree = "<group>"; };
 		DB9DBEEB2055964E00E5C77F /* RowView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RowView.swift; sourceTree = "<group>"; };
@@ -249,7 +249,7 @@
 				DB9DBEDF2055964E00E5C77F /* RoverViewController.swift */,
 				DB9DBEDE2055964E00E5C77F /* ExperienceViewController.swift */,
 				DB9DBEE02055964E00E5C77F /* ScreenViewController.swift */,
-				DB9DBEE32055964E00E5C77F /* ScreenViewLayout.swift */,
+				497428192304813C008F8D35 /* ScreenViewLayout.swift */,
 				DB00FDD92087E09F008D1A57 /* ScreenViewLayoutAttributes.swift */,
 			);
 			path = UI;
@@ -432,6 +432,7 @@
 			files = (
 				492F7A5222E6640D00D1F653 /* UIView.swift in Sources */,
 				4953DD3422399A8500286C4B /* Border.swift in Sources */,
+				4974281A2304813C008F8D35 /* ScreenViewLayout.swift in Sources */,
 				4953DD5022399A9C00286C4B /* RoverViewController.swift in Sources */,
 				4953DD3222399A8500286C4B /* BarcodeBlock.swift in Sources */,
 				4953DD5422399A9C00286C4B /* ScreenViewLayoutAttributes.swift in Sources */,
@@ -452,7 +453,6 @@
 				4953DD4A22399A9700286C4B /* BlockCell.swift in Sources */,
 				4953DD4222399A8500286C4B /* TextBlock.swift in Sources */,
 				4953DD4F22399A9700286C4B /* WebViewCell.swift in Sources */,
-				4953DD5322399A9C00286C4B /* ScreenViewLayout.swift in Sources */,
 				0DAFE6CF22D5453F00F5D47B /* PollQuestionView.swift in Sources */,
 				49005D0422776283009D62F9 /* UIApplication.swift in Sources */,
 				491EDCDA22F3B6DD003FD25E /* Dictionary.swift in Sources */,

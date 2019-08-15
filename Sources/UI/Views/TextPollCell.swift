@@ -134,6 +134,7 @@ class TextPollOptionView: UIView {
         
         self.indicator.text = INDICATOR_BULLET_CHARACTER
         self.indicator.font = option.text.font.uiFont
+        self.indicator.textColor = option.text.color.uiColor
         
         let indicatorConstraints = [
             self.indicator.centerYAnchor.constraint(equalTo: self.centerYAnchor),

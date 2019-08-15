@@ -293,7 +293,7 @@ class ImagePollOptionView: UIView {
 
 // MARK: Cell View
 
-class ImagePollCell: BlockCell, PollCell {
+class ImagePollCell: BlockCell {
     /// This delegate is informed of a poll option being tapped.
     weak var delegate: ImagePollCellDelegate?
     

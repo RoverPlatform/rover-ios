@@ -48,7 +48,7 @@ class TextPollCell: PollCell {
     
     func optionSelected(_ option: TextPollBlock.TextPoll.Option) {
         if let textPollBlock = block as? TextPollBlock {
-            delegate?.castVote(on: textPollBlock, for: option)
+            delegate?.didCastVote(on: textPollBlock, for: option)
         }
         
         // TODO: Remove this debug/demo implementation

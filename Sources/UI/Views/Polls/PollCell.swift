@@ -9,8 +9,8 @@
 import UIKit
 
 protocol PollCellDelegate: AnyObject {
-    func castVote(on textPollBlock: TextPollBlock, for option: TextPollBlock.TextPoll.Option)
-    func castVote(on imagePollBlock: ImagePollBlock, for option: ImagePollBlock.ImagePoll.Option)
+    func didCastVote(on textPollBlock: TextPollBlock, for option: TextPollBlock.TextPoll.Option)
+    func didCastVote(on imagePollBlock: ImagePollBlock, for option: ImagePollBlock.ImagePoll.Option)
 }
 
 class PollCell: BlockCell {

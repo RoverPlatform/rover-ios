@@ -30,12 +30,9 @@ class PollsVotingService {
 
     /// Cast a vote on the poll.  Naturally may only be done once.  Synchronous, fire-and-forget, and best-effort. Any subscribers will be instantly notified (if possible) of the update.
     func castVote(pollID: String, givenOptionIds optionIds: [String], optionId: String) {
-        switch self.localStatusForPoll(pollID: pollID, givenOptionIds: optionIds) {
-        case .answered:
+        if let _ = self.localStateForPoll(pollID: pollID, givenCurrentOptionIds: optionIds).userVotedForOptionId {
             os_log("Can't vote twice.", log: .rover, type: .fault)
             return
-        default:
-            break;
         }
         
         dispatchCastVoteRequest(pollID: pollID, optionId: optionId)

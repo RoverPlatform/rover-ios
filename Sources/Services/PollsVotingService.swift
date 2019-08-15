@@ -369,7 +369,7 @@ extension ImagePollBlock.ImagePoll {
 
 private extension Array where Element == PollsVotingService.SubscriberBox {
     func garbageCollected() -> [PollsVotingService.SubscriberBox] {
-        self.filter { subscriberBox in
+        return self.filter { subscriberBox in
             subscriberBox.subscriber != nil
         }
     }
@@ -377,7 +377,7 @@ private extension Array where Element == PollsVotingService.SubscriberBox {
 
 private extension Dictionary where Key == String, Value == [PollsVotingService.SubscriberBox] {
     func garbageCollected() -> [String: [PollsVotingService.SubscriberBox]] {
-        self.mapValues { subscribers in
+        return self.mapValues { subscribers in
             return subscribers.garbageCollected()
         }
     }

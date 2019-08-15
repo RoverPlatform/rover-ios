@@ -41,6 +41,6 @@ extension Color {
         return UIColor(red: red, green: green, blue: blue, alpha: alpha)
     }
     
-    static var white: Color { Color(red: 255, green: 255, blue: 255, alpha: 1) }
-    static var transparent: Color { Color(red: 0, green: 0, blue: 0, alpha: 0) }
+    static var white: Color { return Color(red: 255, green: 255, blue: 255, alpha: 1) }
+    static var transparent: Color { return Color(red: 0, green: 0, blue: 0, alpha: 0) }
 }

@@ -19,6 +19,7 @@ private let RESULT_FILL_BAR_VERTICAL_SPACING = CGFloat(8)
 private let RESULT_PERCENTAGE_FONT_SIZE = CGFloat(16)
 private let RESULT_REVEAL_TIME = 0.167 // (167 ms)
 private let RESULT_FILL_BAR_FILL_TIME = 1.00  // (1 s)
+private let INDICATOR_BULLET_CHARACTER = "•"
 
 // MARK: Option View
 
@@ -36,7 +37,8 @@ class ImagePollOptionView: UIView {
     
     struct OptionResults {
         let selected: Bool
-        let fraction: Float
+        let fraction: Double
+        let percentage: Int
     }
     
     enum State {
@@ -44,18 +46,23 @@ class ImagePollOptionView: UIView {
         case answered(optionResults: OptionResults)
     }
     
-    public var topMargin: Int {
+    var topMargin: Int {
         return self.option.topMargin
     }
     
-    public var leftMargin: Int {
+    var leftMargin: Int {
         return self.option.leftMargin
+    }
+    
+    var optionId: String {
+        return self.option.id
     }
     
     private let content = UIImageView()
     private let answerTextView = UILabel()
-    
+    private let indicator = UILabel()
     /// This view introduces a 50% opacity layer on top of the image in the results state.
+    private let indicatorAndAnswer: UIStackView
     private let resultFadeOverlay = UIView()
     private let resultPercentage = UILabel()
 
@@ -65,15 +72,23 @@ class ImagePollOptionView: UIView {
     
     private let option: ImagePollBlock.ImagePoll.Option
     
+    private let optionTapped: () -> Void
+    
     init(
         option: ImagePollBlock.ImagePoll.Option,
-        initialState: State
+        initialState: State,
+        optionTapped: @escaping () -> Void
     ) {
         self.option = option
         self.state = initialState
+        self.optionTapped = optionTapped
+        self.indicatorAndAnswer = UIStackView(arrangedSubviews: [
+            answerTextView,
+            indicator
+        ])
         super.init(frame: CGRect.zero)
         self.addSubview(self.content)
-        self.addSubview(self.answerTextView)
+        self.addSubview(self.indicatorAndAnswer)
         self.addSubview(self.resultFadeOverlay)
         self.addSubview(self.resultPercentage)
         self.addSubview(self.resultFillBarArea)
@@ -83,7 +98,7 @@ class ImagePollOptionView: UIView {
         
         self.translatesAutoresizingMaskIntoConstraints = false
         self.content.translatesAutoresizingMaskIntoConstraints = false
-        self.answerTextView.translatesAutoresizingMaskIntoConstraints = false
+        self.indicatorAndAnswer.translatesAutoresizingMaskIntoConstraints = false
         self.resultFadeOverlay.translatesAutoresizingMaskIntoConstraints = false
         self.resultPercentage.translatesAutoresizingMaskIntoConstraints = false
         self.resultFillBarArea.translatesAutoresizingMaskIntoConstraints = false
@@ -100,14 +115,7 @@ class ImagePollOptionView: UIView {
         ]
         
         // MARK: Answer/Caption Text View
-        
-        let answerConstraints = [
-            self.answerTextView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: OPTION_TEXT_SPACING),
-            self.answerTextView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: OPTION_TEXT_SPACING * -1),
-            self.answerTextView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: OPTION_TEXT_SPACING * -1 ),
-            self.answerTextView.heightAnchor.constraint(equalToConstant: OPTION_TEXT_HEIGHT - OPTION_TEXT_SPACING * 2),
-            self.answerTextView.topAnchor.constraint(equalTo: self.content.bottomAnchor, constant: OPTION_TEXT_SPACING)
-        ]
+
         self.answerTextView.backgroundColor = .clear
         self.answerTextView.numberOfLines = 1
         self.answerTextView.attributedText = option.attributedText
@@ -115,6 +123,26 @@ class ImagePollOptionView: UIView {
         self.answerTextView.backgroundColor = .clear
         self.answerTextView.textAlignment = .center
         
+        // MARK: Indicator
+        self.indicator.text = INDICATOR_BULLET_CHARACTER
+        self.indicator.font = option.text.font.uiFont
+        
+        let answerAndIndicatorConstraints = [
+            self.indicatorAndAnswer.leadingAnchor.constraint(greaterThanOrEqualTo: self.leadingAnchor, constant: OPTION_TEXT_SPACING),
+            self.indicatorAndAnswer.trailingAnchor.constraint(lessThanOrEqualTo: self.trailingAnchor, constant: OPTION_TEXT_SPACING * -1),
+            self.indicatorAndAnswer.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: OPTION_TEXT_SPACING * -1 ),
+            self.indicatorAndAnswer.heightAnchor.constraint(equalToConstant: OPTION_TEXT_HEIGHT - OPTION_TEXT_SPACING * 2),
+            self.indicatorAndAnswer.topAnchor.constraint(equalTo: self.content.bottomAnchor, constant: OPTION_TEXT_SPACING),
+            self.indicatorAndAnswer.centerXAnchor.constraint(equalTo: self.centerXAnchor)
+        ]
+        
+        self.indicatorAndAnswer.axis = .horizontal
+        self.indicatorAndAnswer.alignment = .center
+        self.indicatorAndAnswer.spacing = OPTION_TEXT_SPACING
+        
+        self.indicator.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+        self.answerTextView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+
         // MARK: Results Fade Overlay
         
         let fadeOverlayConstraints = [
@@ -128,7 +156,6 @@ class ImagePollOptionView: UIView {
         
         // MARK: Result Fill Bar
         
-        self.resultFillBarWidthConstraint = self.resultFillBar.widthAnchor.constraint(equalToConstant: 0)
         let resultFillBarConstraints = [
             self.resultFillBarArea.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: RESULT_FILL_BAR_HORIZONTAL_SPACING),
             self.resultFillBarArea.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: RESULT_FILL_BAR_HORIZONTAL_SPACING * -1),
@@ -136,13 +163,14 @@ class ImagePollOptionView: UIView {
             self.resultFillBarArea.heightAnchor.constraint(equalToConstant: RESULT_FILL_BAR_HEIGHT),
             self.resultFillBar.topAnchor.constraint(equalTo: self.resultFillBarArea.topAnchor),
             self.resultFillBar.bottomAnchor.constraint(equalTo: self.resultFillBarArea.bottomAnchor),
-            self.resultFillBar.leadingAnchor.constraint(equalTo: self.resultFillBarArea.leadingAnchor),
-            self.resultFillBarWidthConstraint!
+            self.resultFillBar.leadingAnchor.constraint(equalTo: self.resultFillBarArea.leadingAnchor)
         ]
         self.resultFillBarArea.clipsToBounds = true
         self.resultFillBarArea.layer.cornerRadius = RESULT_FILL_BAR_HEIGHT / 2
         self.resultFillBarArea.backgroundColor = UIColor.white.withAlphaComponent(0.5)
         self.resultFillBar.backgroundColor = option.resultFillColor.uiColor
+        self.resultFillBar.layer.cornerRadius = RESULT_FILL_BAR_HEIGHT / 2
+        self.resultFillBar.clipsToBounds = true
         
         let resultPercentageConstraints = [
             self.resultPercentage.centerXAnchor.constraint(equalTo: self.centerXAnchor),
@@ -155,12 +183,16 @@ class ImagePollOptionView: UIView {
         
         self.configureOpacity(opacity: option.opacity)
         self.clipsToBounds = true
-        self.configureBorder(border: option.border, constrainedByFrame: nil)
+
         self.backgroundColor = option.background.color.uiColor
         
-        NSLayoutConstraint.activate(contentConstraints + answerConstraints + fadeOverlayConstraints + resultFillBarConstraints + resultPercentageConstraints)
+        let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleOptionTapped))
+        gestureRecognizer.numberOfTapsRequired = 1
+        self.addGestureRecognizer(gestureRecognizer)
         
-        switch initialState {
+        NSLayoutConstraint.activate(contentConstraints + fadeOverlayConstraints + answerAndIndicatorConstraints + resultFillBarConstraints + resultPercentageConstraints)
+        
+        switch self.state {
         case .waitingForAnswer:
             revealQuestionState()
         case .answered(let optionResults):
@@ -168,44 +200,81 @@ class ImagePollOptionView: UIView {
         }
     }
     
-    // MARK: States and Animation
+    // MARK: View States and Animation
     
     private func revealQuestionState() {
         self.resultPercentage.alpha = 0.0
         self.resultFillBarArea.alpha = 0.0
         self.resultFadeOverlay.alpha = 0.0
-        self.resultFillBarWidthConstraint!.constant = 0
+        self.resultFillBarWidthConstraint?.isActive = false
+        self.isUserInteractionEnabled = true
+        self.percentageAnimationTimer?.invalidate()
+        self.percentageAnimationTimer = nil
+        self.indicator.isHidden = true
     }
     
+    /// In lieu of a UIKit animation, we animate the percentage values with a manually managed timer.
     private var percentageAnimationTimer: Timer?
+    
+    /// Since percentages are animated manually with Timers rather than using UIKit animations, we have to manually interpolate from any prior value.
+    private var previousPercentageProportion: Double = 0
+    
     private func revealResultsState(animated: Bool, optionResults: OptionResults) {
+        self.percentageAnimationTimer?.invalidate()
+        self.percentageAnimationTimer = nil
         self.resultPercentage.text = String(format: "%.0f %%", optionResults.fraction * 100)
         
-        UIView.animate(withDuration: RESULT_REVEAL_TIME, delay: 0.0, options: [.curveEaseInOut], animations: {
+        self.indicator.isHidden = !optionResults.selected
+        
+        let animateFactor = Double(animated ? 1 : 0)
+        
+        UIView.animate(withDuration: RESULT_REVEAL_TIME * animateFactor, delay: 0.0, options: [.curveEaseInOut], animations: {
             self.resultPercentage.alpha = 1.0
             self.resultFillBarArea.alpha = 1.0
             self.resultFadeOverlay.alpha = 0.3
         })
         
-        let width = self.resultFillBarArea.frame.width * CGFloat(optionResults.fraction)
-        self.resultFillBarWidthConstraint!.constant = width
-        UIView.animate(withDuration: RESULT_FILL_BAR_FILL_TIME, delay: 0.0, options: [.curveEaseInOut], animations: {
+        self.resultFillBarWidthConstraint?.isActive = false
+        self.resultFillBarWidthConstraint = self.resultFillBar.widthAnchor.constraint(equalTo: self.resultFillBarArea.widthAnchor, multiplier: CGFloat(optionResults.fraction))
+        self.resultFillBarWidthConstraint?.isActive = true
+        if animated {
+            UIView.animate(withDuration: RESULT_FILL_BAR_FILL_TIME, delay: 0.0, options: [.curveEaseInOut], animations: {
+                self.resultFillBarArea.layoutIfNeeded()
+            })
+        } else {
             self.resultFillBarArea.layoutIfNeeded()
-        })
+        }
         
-        self.percentageAnimationTimer?.invalidate()
         let startTime = Date()
-        self.percentageAnimationTimer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true, block: { [weak self] timer in
-            // TODO: calculate a "start position" from the current value on the constraint, in order for repeat calls to `revealResultsState` to properly animate through the percentages between the current value rather than just 0.
-            let elapsed = Double(startTime.timeIntervalSinceNow) * -1
-            let elapsedProportion = elapsed / RESULT_FILL_BAR_FILL_TIME
-            if elapsedProportion > 1.0 {
-                self?.resultPercentage.text = String(format: "%.0f%%", optionResults.fraction * 100)
-                timer.invalidate()
-            } else {
-                self?.resultPercentage.text = String(format: "%.0f%%", Double(optionResults.fraction * 100) * elapsedProportion)
-            }
-        })
+        let startProportion = self.previousPercentageProportion
+        if animated && startProportion != optionResults.fraction {
+            self.percentageAnimationTimer = Timer.scheduledTimer(withTimeInterval: 0.0167, repeats: true, block: { [weak self] timer in
+                let elapsed = Double(startTime.timeIntervalSinceNow) * -1
+                let elapsedProportion = elapsed / RESULT_FILL_BAR_FILL_TIME
+                if elapsedProportion >= 1.0 {
+                    self?.resultPercentage.text = String(format: "%d%%", optionResults.percentage)
+                    timer.invalidate()
+                    self?.percentageAnimationTimer = nil
+                } else {
+                    let percentage = (startProportion * 100).rounded(.down) + ((optionResults.fraction - startProportion) * 100).rounded(.down) * elapsedProportion
+                    self?.resultPercentage.text = String(format: "%.0f%%", percentage)
+                }
+            })
+        } else {
+            self.resultPercentage.text = String(format: "%d%%", optionResults.percentage)
+        }
+        
+        self.previousPercentageProportion = optionResults.fraction
+        
+        self.isUserInteractionEnabled = false
+    }
+    
+    // MARK: Interaction
+
+    @objc
+    private func handleOptionTapped(_: UIGestureRecognizer) {
+        os_log("OPTION TAPPED")
+        self.optionTapped()
     }
     
     @available(*, unavailable)
@@ -215,6 +284,7 @@ class ImagePollOptionView: UIView {
     
     override func layoutSubviews() {
         super.layoutSubviews()
+        self.configureBorder(border: option.border, constrainedByFrame: self.frame)
         // we defer configuring background image to here so that the layout has been calculated, and thus frame is available.
         self.content.configureAsFilledImage(image: self.option.image)
     }
@@ -222,7 +292,12 @@ class ImagePollOptionView: UIView {
 
 // MARK: Cell View
 
-class ImagePollCell: BlockCell {
+class ImagePollCell: BlockCell, PollCell {
+    /// This delegate is informed of a poll option being tapped.
+    weak var delegate: ImagePollCellDelegate?
+    
+    var experienceID: String?
+    
     /// a simple container view to the relatively complex layout of the text poll.
     private let containerView = UIView()
     
@@ -235,20 +310,26 @@ class ImagePollCell: BlockCell {
     
     private var questionView: PollQuestionView?
     
-    private var temporaryTapDemoTimer: Timer?
-    private var temporaryTapDemoTimer1: Timer?
+    private var pollSubscription: AnyObject?
     
     override func configure(with block: Block) {
         super.configure(with: block)
-        self.temporaryTapDemoTimer?.invalidate()
-        self.temporaryTapDemoTimer1?.invalidate()
         
         self.questionView?.removeFromSuperview()
         self.optionStack?.removeFromSuperview()
         
+        // unsubscribe from existing poll subscription.
+        self.pollSubscription = nil
+        
         guard let imagePollBlock = block as? ImagePollBlock else {
             return
         }
+        
+        guard let experienceID = self.experienceID else {
+            os_log("Attempt to configure Poll block without Experience being configured on it first.", log: .rover, type: .error)
+            return
+        }
+        
         
         self.questionView = PollQuestionView(questionText: imagePollBlock.imagePoll.question)
         self.containerView.addSubview(questionView!)
@@ -258,10 +339,43 @@ class ImagePollCell: BlockCell {
             self.questionView!.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
         ]
         
+        let (initialPollStatus, subscription) = PollsVotingService.shared.subscribeToUpdates(pollID: imagePollBlock.pollID(containedBy: experienceID), givenCurrentOptionIds: imagePollBlock.imagePoll.votableOptionIds) { [weak self] newPollStatus in
+            
+            switch newPollStatus {
+                case .answered(let resultsForOptions):
+                let viewOptionStatuses = resultsForOptions.viewOptionStatuses
+                self?.optionViews.forEach { (optionView) in
+                    let optionId = optionView.optionId
+                    guard let optionResults = viewOptionStatuses[optionId] else {
+                        os_log("A result was not given for option: %s.  Did you remember to unsubscribe on recycle?", log: .rover, type: .error, optionId)
+                        return
+                    }
+                    optionView.state = .answered(optionResults: optionResults)
+                }
+
+                case .waitingForAnswer:
+                    self?.optionViews.forEach({ (optionView) in
+                        optionView.state = .waitingForAnswer
+                    })
+            }
+        }
         
-        self.optionViews = imagePollBlock.imagePoll.options.map { option in
-            // TODO: get initial state synchronously from the local VotingService.
-            ImagePollOptionView(option: option, initialState: .waitingForAnswer)
+        self.pollSubscription = subscription
+        
+        switch initialPollStatus {
+            case .answered(let optionResults):
+                let viewOptionStatuses = optionResults.viewOptionStatuses
+                self.optionViews = imagePollBlock.imagePoll.options.map { option in
+                    ImagePollOptionView(option: option, initialState: .answered(optionResults: viewOptionStatuses[option.id]!)) { [weak self] in
+                        self?.delegate?.castVote(on: imagePollBlock, for: option)
+                    }
+                }
+            case .waitingForAnswer:
+                self.optionViews = imagePollBlock.imagePoll.options.map { option in
+                    ImagePollOptionView(option: option, initialState: .waitingForAnswer) { [weak self] in
+                        self?.delegate?.castVote(on: imagePollBlock, for: option)
+                    }
+                }
         }
         
         // we render the poll options in two columns, regardless of device size.  so pair them off.
@@ -271,13 +385,13 @@ class ImagePollCell: BlockCell {
         let verticalStack = UIStackView(arrangedSubviews: optionViewPairs.map({ (leftOption, rightOption) in
             let row = UIStackView(arrangedSubviews: [leftOption, rightOption])
             row.axis = .horizontal
-            row.spacing = CGFloat(rightOption.leftMargin) / 2
+            row.spacing = CGFloat(rightOption.leftMargin)
             row.translatesAutoresizingMaskIntoConstraints = false
             return row
         }))
         verticalStack.translatesAutoresizingMaskIntoConstraints = false
         verticalStack.axis = .vertical
-        verticalStack.spacing = verticalSpacing / 2.0
+        verticalStack.spacing = verticalSpacing
         self.containerView.addSubview(verticalStack)
         self.optionStack = verticalStack
         
@@ -288,21 +402,13 @@ class ImagePollCell: BlockCell {
         ]
 
         NSLayoutConstraint.activate(questionConstraints + stackConstraints)
-        
-        // TODO: A stand-in for the user tapping.
-        self.temporaryTapDemoTimer = Timer.scheduledTimer(withTimeInterval: 4, repeats: false) { _ in
-            self.optionViews.forEach { (optionView) in
-                optionView.state = .answered(optionResults: ImagePollOptionView.OptionResults.init(selected: false, fraction: 0.67))
-            }
-        }
-
-        // TODO: A stand-in for the user tapping.
-        self.temporaryTapDemoTimer1 = Timer.scheduledTimer(withTimeInterval: 10, repeats: false) { _ in
-            self.optionViews.forEach { (optionView) in
-                optionView.state = .answered(optionResults: ImagePollOptionView.OptionResults.init(selected: false, fraction: 0.25))
-            }
-        }
     }
+}
+
+// MARK: Cell Delegate
+
+protocol ImagePollCellDelegate: AnyObject {
+    func castVote(on imagePollBlock: ImagePollBlock, for option: ImagePollBlock.ImagePoll.Option)
 }
 
 // MARK: Measurement
@@ -347,8 +453,8 @@ extension Array {
     }
 }
 
-extension UIImageView {
-    fileprivate func configureAsFilledImage(image: Image, checkStillMatches: @escaping () -> Bool = { true }) {
+private extension UIImageView {
+    func configureAsFilledImage(image: Image, checkStillMatches: @escaping () -> Bool = { true }) {
         // Reset any existing background image
         self.alpha = 0.0
         self.image = nil
@@ -375,8 +481,37 @@ extension UIImageView {
     }
 }
 
-extension ImagePollBlock.ImagePoll.Option {
+private extension ImagePollBlock.ImagePoll.Option {
     var attributedText: NSAttributedString? {
         return self.text.attributedText(forFormat: .plain)
+    }
+}
+
+private extension Dictionary where Key == String, Value == PollsVotingService.OptionStatus {
+    var viewOptionStatuses: [String: ImagePollOptionView.OptionResults] {
+        let votesByOptionIds = self.mapValues { $0.voteCount }
+        let totalVotes = votesByOptionIds.values.reduce(0, +)
+        let roundedPercentagesByOptionIds = votesByOptionIds.percentagesWithDistributedRemainder()
+        
+        return self.keys.map { optionId -> (String, ImagePollOptionView.OptionResults) in
+            let optionStatus = self[optionId]!
+            
+            let fraction: Double
+            if totalVotes == 0 {
+                fraction = 0
+            } else {
+                fraction = Double(optionStatus.voteCount) / Double(totalVotes)
+            }
+            let optionResults = ImagePollOptionView.OptionResults(
+                selected: optionStatus.selected,
+                fraction: fraction,
+                percentage: roundedPercentagesByOptionIds[optionId]!
+            )
+            
+            return (optionId, optionResults)
+        }.reduce(into: [String: ImagePollOptionView.OptionResults]()) { (dictionary, tuple) in
+            let (optionId, optionStatus) = tuple
+            dictionary[optionId] = optionStatus
+        }
     }
 }

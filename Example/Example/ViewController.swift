@@ -15,30 +15,5 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
     }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        let experienceFile = Bundle.main.path(forResource: "gql-img-resp.json", ofType: nil)!
-        
-        let experienceFileURL: URL = URL(fileURLWithPath: experienceFile)
-        os_log("Experience file path: %@", experienceFileURL.absoluteString)
-        let experienceJson = try! Data(contentsOf: experienceFileURL)
-        
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .formatted(DateFormatter.rfc3339)
-        
-        let graphqlResponse = try! decoder.decode(SampleGraphqlResponse.self, from: experienceJson)
-        
-        let rvc = RoverViewController()
-        rvc.loadExperience(experience: graphqlResponse.data.experience)
-        
-        self.present(rvc, animated: false)
-    }
-    
-    struct SampleGraphqlResponse: Decodable {
-        var data: SampleGraphqlDataContainer
-        
-        struct SampleGraphqlDataContainer: Decodable {
-            var experience: Experience
-        }
-    }
+
 }

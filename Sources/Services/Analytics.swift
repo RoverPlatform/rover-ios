@@ -119,7 +119,7 @@ class Analytics {
             encoder.dateEncodingStrategy = .formatted(DateFormatter.rfc3339)
             data = try encoder.encode(event)
         } catch {
-            os_log("Failed to encode analytics event: %@", log: .rover, type: .error, error.localizedDescription)
+            os_log("Failed to encode analytics event: %@", log: .rover, type: .error, error.debugDescription)
             return
         }
         
@@ -138,7 +138,7 @@ class Analytics {
         
         let sessionTask = session.uploadTask(with: request, from: data) { _, _, error in
             if let error = error {
-                os_log("Failed to upload analytics event: %@", log: .rover, type: .error, error.localizedDescription)
+                os_log("Failed to upload analytics event: %@", log: .rover, type: .error, error.debugDescription)
             }
             
             UIApplication.shared.endBackgroundTask(backgroundTaskID)

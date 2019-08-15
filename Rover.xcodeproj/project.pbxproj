@@ -216,21 +216,13 @@
 		DB7B853123060FFB008D628E /* Polls */ = {
 			isa = PBXGroup;
 			children = (
-				DB7B853523060FFB008D628E /* Text Polls */,
 				DB7B853223060FFB008D628E /* PollCell.swift */,
-			);
-			path = Polls;
-			sourceTree = "<group>";
-		};
-		DB7B853523060FFB008D628E /* Text Polls */ = {
-			isa = PBXGroup;
-			children = (
-				DB7B853623060FFB008D628E /* TextPollOptionFillBar.swift */,
-				DB7B853723060FFB008D628E /* TextPollOptionLabel.swift */,
 				DB7B853823060FFB008D628E /* TextPollCell.swift */,
 				DB7B853923060FFB008D628E /* TextPollOption.swift */,
+				DB7B853623060FFB008D628E /* TextPollOptionFillBar.swift */,
+				DB7B853723060FFB008D628E /* TextPollOptionLabel.swift */,
 			);
-			path = "Text Polls";
+			path = Polls;
 			sourceTree = "<group>";
 		};
 		DB9DBEBA205595F100E5C77F /* Frameworks */ = {

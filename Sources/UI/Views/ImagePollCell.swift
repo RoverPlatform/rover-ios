@@ -290,8 +290,7 @@ typealias PollAnswer = String
 
 // MARK: Cell View
 
-class ImagePollCell: BlockCell, PollCell {
-    // MARK: Cell Interface
+class ImagePollCell: BlockCell {
     /// This delegate is informed of a poll option being tapped.
     weak var delegate: ImagePollCellDelegate?
     

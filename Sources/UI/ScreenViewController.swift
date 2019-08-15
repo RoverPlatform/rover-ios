@@ -15,7 +15,7 @@ import UIKit
 /// handling button taps. It posts [`Notification`s](https://developer.apple.com/documentation/foundation/notification)
 /// through the default [`NotificationCenter`](https://developer.apple.com/documentation/foundation/notificationcenter)
 /// when it is presented, dismissed and viewed.
-open class ScreenViewController: UICollectionViewController, UICollectionViewDataSourcePrefetching, ImagePollCellDelegate, TextPollCellDelegate {
+open class ScreenViewController: UICollectionViewController, UICollectionViewDataSourcePrefetching, PollCellDelegate, ImagePollCellDelegate {
     public let experience: Experience
     public let campaignID: String?
     public let screen: Screen
@@ -364,8 +364,8 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath)
         
         
-        if let textPollCell = cell as? TextPollCell {
-            textPollCell.delegate = self
+        if let pollCell = cell as? PollCell {
+            pollCell.delegate = self
         }
         
         if let imagePollCell = cell as? ImagePollCell {
@@ -386,7 +386,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         
         let block = screen.rows[indexPath.section].blocks[indexPath.row]
         
-        if let pollCell = blockCell as? PollCell {
+        if let pollCell = blockCell as? ImagePollCell {
             pollCell.experienceID = self.experience.id
         }
         

@@ -591,9 +591,9 @@ class ImagePollCell: BlockCell, PollCell {
                 // kick off the recursive fetch, but only if we are transitioning into .refreshingResults. If we are already there, then a recursive fetch is already running.
                 switch oldValue {
                 case .refreshingResults:
-                    recursiveFetch()
-                default:
                     break
+                default:
+                    recursiveFetch()
                 }
                 
             }

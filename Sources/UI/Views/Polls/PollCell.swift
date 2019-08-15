@@ -61,4 +61,16 @@ class PollCell: BlockCell {
     func clearResults() {
         fatalError("Must be overridden")
     }
+    
+    func optionSelected(_ option: TextPollBlock.TextPoll.Option) {
+        if let textPollBlock = block as? TextPollBlock {
+            delegate?.didCastVote(on: textPollBlock, for: option)
+        }
+    }
+    
+    func optionSelected(_ option: ImagePollBlock.ImagePoll.Option) {
+        if let imagePollBlock = block as? ImagePollBlock {
+            delegate?.didCastVote(on: imagePollBlock, for: option)
+        }
+    }
 }

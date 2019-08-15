@@ -8,13 +8,7 @@
 
 import Foundation
 
-extension ImagePollBlock {
-    func pollID(containedBy experienceID: String) -> String {
-        return "\(experienceID):\(self.id)"
-    }
-}
-
-extension TextPollBlock {
+extension PollBlock {
     func pollID(containedBy experienceID: String) -> String {
         return "\(experienceID):\(self.id)"
     }

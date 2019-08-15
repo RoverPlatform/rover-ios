@@ -44,38 +44,7 @@ class TextPollCell: PollCell {
             .forEach { optionsList.addArrangedSubview($0) }
         
         questionView.attributedText = textPollBlock.textPoll.question.attributedText(forFormat: .plain)
-    }
-    
-    func optionSelected(_ option: TextPollBlock.TextPoll.Option) {
-        if let textPollBlock = block as? TextPollBlock {
-            delegate?.didCastVote(on: textPollBlock, for: option)
-        }
-        
-        // TODO: Remove this debug/demo implementation
-        
-        guard Double.random(in: 0...1) > 0.5 else {
-            clearResults()
-            isLoading = true
-            return
-        }
-        
-        isLoading = false
-        
-        func randomResult() -> PollCell.OptionResult {
-            let random = Double.random(in: 0...1)
-            return PollCell.OptionResult(
-                selected: random > 0.5,
-                fraction: random,
-                percentage: Int(random * 100)
-            )
-        }
-        
-        let results = (0..<optionsList.arrangedSubviews.count).map { _ in
-            randomResult()
-        }
-        
-        setResults(results, animated: true)
-    }
+    } 
     
     // MARK: Results
     

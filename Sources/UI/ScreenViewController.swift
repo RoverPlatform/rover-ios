@@ -15,7 +15,7 @@ import UIKit
 /// handling button taps. It posts [`Notification`s](https://developer.apple.com/documentation/foundation/notification)
 /// through the default [`NotificationCenter`](https://developer.apple.com/documentation/foundation/notificationcenter)
 /// when it is presented, dismissed and viewed.
-open class ScreenViewController: UICollectionViewController, UICollectionViewDataSourcePrefetching, PollCellAnswerDelegate {
+open class ScreenViewController: UICollectionViewController, UICollectionViewDataSourcePrefetching, ImagePollCellDelegate, TextPollCellDelegate {
     public let experience: Experience
     public let campaignID: String?
     public let screen: Screen
@@ -385,7 +385,13 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         }
         
         let block = screen.rows[indexPath.section].blocks[indexPath.row]
-        blockCell.configure(with: block, for: self.experience)
+        
+        if let pollCell = blockCell as? PollCell {
+            pollCell.experienceID = self.experience.id
+        }
+        
+        blockCell.configure(with: block)
+        
         return blockCell
     }
     
@@ -504,7 +510,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     // MARK: Poll Answer
     
     func castVote(on imagePollBlock: ImagePollBlock, for option: ImagePollBlock.ImagePoll.Option) {
-        PollsVotingService.shared.castVote(pollID: imagePollBlock.pollID(containedBy: experience), givenOptionIds: imagePollBlock.imagePoll.votableOptionIds, optionId: option.id)
+        PollsVotingService.shared.castVote(pollID: imagePollBlock.pollID(containedBy: experience.id), givenOptionIds: imagePollBlock.imagePoll.votableOptionIds, optionId: option.id)
         
         var userInfo: [String: Any] = [
             ScreenViewController.experienceUserInfoKey: experience,
@@ -526,7 +532,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     }
     
     func castVote(on textPollBlock: TextPollBlock, for option: TextPollBlock.TextPoll.Option) {
-        PollsVotingService.shared.castVote(pollID: textPollBlock.pollID(containedBy: experience), givenOptionIds: textPollBlock.textPoll.votableOptionIds, optionId: option.id)
+        PollsVotingService.shared.castVote(pollID: textPollBlock.pollID(containedBy: experience.id), givenOptionIds: textPollBlock.textPoll.votableOptionIds, optionId: option.id)
         
         var userInfo: [String: Any] = [
             ScreenViewController.experienceUserInfoKey: experience,

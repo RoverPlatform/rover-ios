@@ -39,7 +39,7 @@ class BlockCell: UICollectionViewCell {
         }
     }
     
-    func configure(with block: Block, for experience: Experience) {
+    func configure(with block: Block) {
         self.block = block
         
         configureBackgroundColor()

@@ -15,8 +15,8 @@ class WebViewCell: BlockCell {
         return webView
     }
     
-    override func configure(with block: Block, for experience: Experience) {
-        super.configure(with: block, for: experience)
+    override func configure(with block: Block) {
+        super.configure(with: block)
         
         guard let webViewBlock = block as? WebViewBlock else {
             self.webView.isHidden = true

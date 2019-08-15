@@ -294,9 +294,11 @@ class TextPollOptionView: UIView {
 
 // MARK: Cell View
 
-class TextPollCell: BlockCell {
+class TextPollCell: BlockCell, PollCell {
     /// This delegate is informed of a poll option being tapped.
-    weak var delegate: PollCellAnswerDelegate?
+    weak var delegate: TextPollCellDelegate?
+    
+    var experienceID: String?
     
     private let containerView = UIView()
     
@@ -310,8 +312,8 @@ class TextPollCell: BlockCell {
     private var questionView: PollQuestionView?
     private var pollSubscription: AnyObject?
     
-    override func configure(with block: Block, for experience: Experience) {
-        super.configure(with: block, for: experience)
+    override func configure(with block: Block) {
+        super.configure(with: block)
      
         questionView?.removeFromSuperview()
         self.optionStack?.removeFromSuperview()
@@ -332,7 +334,12 @@ class TextPollCell: BlockCell {
             questionView!.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
         ]
         
-        let (initialPollStatus, subscription) = PollsVotingService.shared.subscribeToUpdates(pollID: textPollBlock.pollID(containedBy: experience), givenCurrentOptionIds: textPollBlock.textPoll.votableOptionIds) { [weak self] newPollStatus in
+        guard let experienceID = self.experienceID else {
+            os_log("Attempt to configure Poll block without Experience being configured on it first.", log: .rover, type: .error)
+            return
+        }
+        
+        let (initialPollStatus, subscription) = PollsVotingService.shared.subscribeToUpdates(pollID: textPollBlock.pollID(containedBy: experienceID), givenCurrentOptionIds: textPollBlock.textPoll.votableOptionIds) { [weak self] newPollStatus in
             
             switch newPollStatus {
                 case .answered(let resultsForOptions):
@@ -388,6 +395,12 @@ class TextPollCell: BlockCell {
         
         NSLayoutConstraint.activate(questionConstraints + stackConstraints)
     }
+}
+
+// MARK: Cell Delegate
+
+protocol TextPollCellDelegate: AnyObject {
+    func castVote(on textPollBlock: TextPollBlock, for option: TextPollBlock.TextPoll.Option)
 }
 
 // MARK: Measurement

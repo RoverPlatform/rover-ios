@@ -9,13 +9,13 @@
 import Foundation
 
 extension ImagePollBlock {
-    func pollID(containedBy experience: Experience) -> String {
-        return "\(experience.id):\(self.id)"
+    func pollID(containedBy experienceID: String) -> String {
+        return "\(experienceID):\(self.id)"
     }
 }
 
 extension TextPollBlock {
-    func pollID(containedBy experience: Experience) -> String {
-        return "\(experience.id):\(self.id)"
+    func pollID(containedBy experienceID: String) -> String {
+        return "\(experienceID):\(self.id)"
     }
 }

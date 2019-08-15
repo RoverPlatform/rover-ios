@@ -46,15 +46,15 @@ class ImagePollOptionView: UIView {
         case answered(optionResults: OptionResults)
     }
     
-    public var topMargin: Int {
+    var topMargin: Int {
         return self.option.topMargin
     }
     
-    public var leftMargin: Int {
+    var leftMargin: Int {
         return self.option.leftMargin
     }
     
-    public var optionId: String {
+    var optionId: String {
         return self.option.id
     }
     
@@ -292,9 +292,11 @@ class ImagePollOptionView: UIView {
 
 // MARK: Cell View
 
-class ImagePollCell: BlockCell {
+class ImagePollCell: BlockCell, PollCell {
     /// This delegate is informed of a poll option being tapped.
-    weak var delegate: PollCellAnswerDelegate?
+    weak var delegate: ImagePollCellDelegate?
+    
+    var experienceID: String?
     
     /// a simple container view to the relatively complex layout of the text poll.
     private let containerView = UIView()
@@ -307,12 +309,11 @@ class ImagePollCell: BlockCell {
     }
     
     private var questionView: PollQuestionView?
-
     
     private var pollSubscription: AnyObject?
     
-    override func configure(with block: Block, for experience: Experience) {
-        super.configure(with: block, for: experience)
+    override func configure(with block: Block) {
+        super.configure(with: block)
         
         self.questionView?.removeFromSuperview()
         self.optionStack?.removeFromSuperview()
@@ -324,6 +325,12 @@ class ImagePollCell: BlockCell {
             return
         }
         
+        guard let experienceID = self.experienceID else {
+            os_log("Attempt to configure Poll block without Experience being configured on it first.", log: .rover, type: .error)
+            return
+        }
+        
+        
         self.questionView = PollQuestionView(questionText: imagePollBlock.imagePoll.question)
         self.containerView.addSubview(questionView!)
         let questionConstraints = [
@@ -332,7 +339,7 @@ class ImagePollCell: BlockCell {
             self.questionView!.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
         ]
         
-        let (initialPollStatus, subscription) = PollsVotingService.shared.subscribeToUpdates(pollID: imagePollBlock.pollID(containedBy: experience), givenCurrentOptionIds: imagePollBlock.imagePoll.votableOptionIds) { [weak self] newPollStatus in
+        let (initialPollStatus, subscription) = PollsVotingService.shared.subscribeToUpdates(pollID: imagePollBlock.pollID(containedBy: experienceID), givenCurrentOptionIds: imagePollBlock.imagePoll.votableOptionIds) { [weak self] newPollStatus in
             
             switch newPollStatus {
                 case .answered(let resultsForOptions):
@@ -396,6 +403,12 @@ class ImagePollCell: BlockCell {
 
         NSLayoutConstraint.activate(questionConstraints + stackConstraints)
     }
+}
+
+// MARK: Cell Delegate
+
+protocol ImagePollCellDelegate: AnyObject {
+    func castVote(on imagePollBlock: ImagePollBlock, for option: ImagePollBlock.ImagePoll.Option)
 }
 
 // MARK: Measurement

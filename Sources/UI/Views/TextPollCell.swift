@@ -275,7 +275,7 @@ class TextPollOptionView: UIView {
     
     @objc
     private func handleOptionTapped(_: UIGestureRecognizer) {
-        os_log("OPTION TAPPED")
+        os_log("Text poll option tapped.", log: .rover, type: .debug)
         self.optionTapped()
     }
     

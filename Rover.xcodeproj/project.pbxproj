@@ -15,6 +15,7 @@
 		4914B3EA22B9373900FA395E /* TextPollBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4914B3E922B9373900FA395E /* TextPollBlock.swift */; };
 		4914B3EE22BAB2B800FA395E /* TextPollCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4914B3ED22BAB2B800FA395E /* TextPollCell.swift */; };
 		4914B3F022BABA6500FA395E /* ImagePollCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4914B3EF22BABA6500FA395E /* ImagePollCell.swift */; };
+		491A9FCB2305A7620069E038 /* URLSession+PollsRequests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 491A9FCA2305A7620069E038 /* URLSession+PollsRequests.swift */; };
 		491EDCD622F38899003FD25E /* ModelExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 491EDCD522F38899003FD25E /* ModelExtensions.swift */; };
 		491EDCD822F38A99003FD25E /* LargestRemainder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 491EDCD722F38A99003FD25E /* LargestRemainder.swift */; };
 		492F7A5222E6640D00D1F653 /* UIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492F7A5122E6640D00D1F653 /* UIView.swift */; };
@@ -86,6 +87,7 @@
 		4914B3E922B9373900FA395E /* TextPollBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextPollBlock.swift; sourceTree = "<group>"; };
 		4914B3ED22BAB2B800FA395E /* TextPollCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextPollCell.swift; sourceTree = "<group>"; };
 		4914B3EF22BABA6500FA395E /* ImagePollCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePollCell.swift; sourceTree = "<group>"; };
+		491A9FCA2305A7620069E038 /* URLSession+PollsRequests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLSession+PollsRequests.swift"; sourceTree = "<group>"; };
 		491EDCD522F38899003FD25E /* ModelExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelExtensions.swift; sourceTree = "<group>"; };
 		491EDCD722F38A99003FD25E /* LargestRemainder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LargestRemainder.swift; sourceTree = "<group>"; };
 		492F7A5122E6640D00D1F653 /* UIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIView.swift; sourceTree = "<group>"; };
@@ -162,6 +164,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		491A9FC92305A7500069E038 /* Polls */ = {
+			isa = PBXGroup;
+			children = (
+				491A9FCA2305A7620069E038 /* URLSession+PollsRequests.swift */,
+			);
+			path = Polls;
+			sourceTree = "<group>";
+		};
 		492F7A5022E6640200D1F653 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -184,6 +194,7 @@
 		DB0C8F3F205849D900E0D860 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				491A9FC92305A7500069E038 /* Polls */,
 				DBFDF52220AE2B0B0031EF47 /* Extensions */,
 				DBFDF43520AC81CD0031EF47 /* Models */,
 				DB6ADD7D20B3446D002F226C /* Services */,
@@ -441,6 +452,7 @@
 				4953DD3D22399A8500286C4B /* RectangleBlock.swift in Sources */,
 				4953DD5122399A9C00286C4B /* ExperienceViewController.swift in Sources */,
 				4994669D22A19C99005ECD07 /* URLRequest.swift in Sources */,
+				491A9FCB2305A7620069E038 /* URLSession+PollsRequests.swift in Sources */,
 				4953DD3A22399A8500286C4B /* ImageBlock.swift in Sources */,
 				49C76DFF22E78C1F003E5CC7 /* PollsStorageService.swift in Sources */,
 				4953DD2922399A7600286C4B /* SessionController.swift in Sources */,

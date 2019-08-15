@@ -24,16 +24,16 @@ private let INDICATOR_BULLET_CHARACTER = "•"
 // MARK: Option View
 
 class ImagePollOptionView: UIView {
-    var state: State {
-        didSet {
-            switch state {
-            case .waitingForAnswer:
-                revealQuestionState()
-            case .answered(let optionResults):
-                revealResultsState(animated: true, optionResults: optionResults)
-            }
-        }
-    }
+//    var state: State {
+//        didSet {
+//            switch state {
+//            case .waitingForAnswer:
+//                revealQuestionState()
+//            case .answered(let optionResults):
+//                revealResultsState(animated: true, optionResults: optionResults)
+//            }
+//        }
+//    }
     
     struct OptionResults {
         let selected: Bool
@@ -76,11 +76,9 @@ class ImagePollOptionView: UIView {
     
     init(
         option: ImagePollBlock.ImagePoll.Option,
-        initialState: State,
         optionTapped: @escaping () -> Void
     ) {
         self.option = option
-        self.state = initialState
         self.optionTapped = optionTapped
         self.indicatorAndAnswer = UIStackView(arrangedSubviews: [
             answerTextView,
@@ -192,18 +190,11 @@ class ImagePollOptionView: UIView {
         self.addGestureRecognizer(gestureRecognizer)
         
         NSLayoutConstraint.activate(contentConstraints + fadeOverlayConstraints + answerAndIndicatorConstraints + resultFillBarConstraints + resultPercentageConstraints)
-        
-        switch self.state {
-        case .waitingForAnswer:
-            revealQuestionState()
-        case .answered(let optionResults):
-            revealResultsState(animated: false, optionResults: optionResults)
-        }
     }
     
     // MARK: View States and Animation
     
-    private func revealQuestionState() {
+    func revealQuestionState() {
         self.resultPercentage.alpha = 0.0
         self.resultFillBarArea.alpha = 0.0
         self.resultFadeOverlay.alpha = 0.0
@@ -220,7 +211,7 @@ class ImagePollOptionView: UIView {
     /// Since percentages are animated manually with Timers rather than using UIKit animations, we have to manually interpolate from any prior value.
     private var previousPercentageProportion: Double = 0
     
-    private func revealResultsState(animated: Bool, optionResults: OptionResults) {
+    func revealResultsState(animated: Bool, optionResults: OptionResults) {
         self.percentageAnimationTimer?.invalidate()
         self.percentageAnimationTimer = nil
         self.resultPercentage.text = String(format: "%.0f %%", optionResults.fraction * 100)
@@ -274,7 +265,7 @@ class ImagePollOptionView: UIView {
 
     @objc
     private func handleOptionTapped(_: UIGestureRecognizer) {
-        os_log("OPTION TAPPED")
+        os_log("Image poll option tapped.", log: .rover, type: .debug)
         self.optionTapped()
     }
     
@@ -306,7 +297,9 @@ class ImagePollCell: BlockCell, PollCell {
     
     var experienceID: String?
     
-    enum PollState {
+    enum PollState<P: PollBlock> {
+        case unbound
+        // TODO: I've put pollBlock in each of the below states, but that may become a problem for state restoring. Instead, have unbound (vs all other states) be reflected by the block instance variable.
         case initialState
         case resultsSeeded(initialResults: PollResults)
         case pollAnswered(myAnswer: PollAnswer)
@@ -314,105 +307,27 @@ class ImagePollCell: BlockCell, PollCell {
         case refreshingResults(myAnswer: PollAnswer, currentResults: PollResults)
     }
     
-    var state: PollState = .initialState {
-        willSet {
-            assert(canTransition(from: state, to: newValue), "Invalid state transition!")
-        }
-        
-        // TODO: replace existing logic found in the Behaviour & Aggregation section of PollsSectionService by building out the following:
-        // START HERE!
-        didSet {
-            switch state {
-            case .initialState:
-                // Start loading initial results.
-                // Present UI to allow user to select an answer.
-                // If results load before users selects an answer, transition to .resultsSeeded
-                // If user selects answer before initial results load, transition to .pollAnswered
-                break
-            case let .resultsSeeded(initialResults):
-                // The initial results have loaded.
-                // Keep waiting for user to select an answer.
-                // After the user answers, transition to .submittingAnswer
-                break
-            case let .pollAnswered(myAnswer):
-                // We've got an answer but we haven't received the seed results yet.
-                // Show a loading indicator while we wait.
-                // When results finish loading, transition to .submittingAnswer
-                break
-            case let .submittingAnswer(myAnswer, initialResults):
-                // At this point the initial results have loaded AND the user has answered the poll.
-                // The initialResults will not include the user's answer yet because it hasn't been submitted to the server.
-                // Display the results version of the UI using the initialResults data.
-                // Use the myAnswer data to add +1 to the answer selected by the user and display the indicator circle.
-                // Begin a network request to submit the user's answer to the server.
-                // If the network request fails, try again.
-                // If the network request succeeds, transition to .refreshingResults
-                // The value of currentResults passed to the .refreshingResults case should INCLUDE the user's answer
-                break
-            case let .refreshingResults(myAnswer, currentResults):
-                // At this point we have answered the poll and have the current results which INCLUDE the user's answer.
-                // Use the currentResults to populate the UI and the myAnswer property to display the indicator circle.
-                // Start a 5-second timer and make a network request to refresh the results.
-                // If network request fails, try again in 5-seconds.
-                // If network request succeeds, update the currentResults property with the new results.
-                break
-            }
-        }
-    }
+    private let urlSession = URLSession.shared
     
-    func canTransition(from currentState: PollState, to newState: PollState) -> Bool {
-        switch (currentState, newState) {
-        case (.initialState, .resultsSeeded):
-            return true
-        case (.initialState, .pollAnswered):
-            return true
-        case (.resultsSeeded, .submittingAnswer):
-            return true
-        case (.pollAnswered, .submittingAnswer):
-            return true
-        case (.submittingAnswer, .refreshingResults):
-            return true
-        case (.refreshingResults, .refreshingResults):
-            return true
-        default:
-            return false
-        }
-    }
-    
-    
-    /// a simple container view to the relatively complex layout of the text poll.
-    private let containerView = UIView()
-    
-    private var optionViews = [ImagePollOptionView]()
-    private var optionStack: UIStackView?
-    
-    override var content: UIView? {
-        return containerView
-    }
-    
-    private var questionView: PollQuestionView?
-    
-    private var pollSubscription: AnyObject?
-    
-    override func configure(with block: Block) {
-        super.configure(with: block)
-        
+    private func killUi() {
         self.questionView?.removeFromSuperview()
         self.optionStack?.removeFromSuperview()
-        
-        // unsubscribe from existing poll subscription.
-        self.pollSubscription = nil
-        
-        guard let imagePollBlock = block as? ImagePollBlock else {
+    }
+    
+    /// Drive possible state transitions as required by user input in the form of a tap (meant as a vote) on a given option.
+    private func handleOptionTapped(imagePollBlock: ImagePollBlock, for optionID: String) {
+        switch self.state {
+        case .initialState:
+            self.state = .pollAnswered(myAnswer: optionID)
+        case let .resultsSeeded(initialResults):
+            self.state = .submittingAnswer(myAnswer: optionID, initialResults: initialResults)
+        default:
+            os_log("Vote attempt landed, but not currently in correct state to accept it.", log: .rover, type: .fault)
             return
         }
-        
-        guard let experienceID = self.experienceID else {
-            os_log("Attempt to configure Poll block without Experience being configured on it first.", log: .rover, type: .error)
-            return
-        }
-        
-        
+    }
+    
+    private func buildUiForPoll(imagePollBlock: ImagePollBlock) {
         self.questionView = PollQuestionView(questionText: imagePollBlock.imagePoll.question)
         self.containerView.addSubview(questionView!)
         let questionConstraints = [
@@ -420,44 +335,15 @@ class ImagePollCell: BlockCell, PollCell {
             self.questionView!.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
             self.questionView!.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
         ]
-        
-        let (initialPollStatus, subscription) = PollsStorageService.shared.subscribeToUpdates(pollID: imagePollBlock.pollID(containedBy: experienceID), givenCurrentOptionIds: imagePollBlock.imagePoll.votableOptionIds) { [weak self] newPollStatus in
-            
-            switch newPollStatus {
-                case .answered(let resultsForOptions):
-                let viewOptionStatuses = resultsForOptions.viewOptionStatuses
-                self?.optionViews.forEach { (optionView) in
-                    let optionID = optionView.optionID
-                    guard let optionResults = viewOptionStatuses[optionID] else {
-                        os_log("A result was not given for option: %s.  Did you remember to unsubscribe on recycle?", log: .rover, type: .error, optionID)
-                        return
-                    }
-                    optionView.state = .answered(optionResults: optionResults)
+                
+        self.optionViews = imagePollBlock.imagePoll.options.map { option in
+            ImagePollOptionView(option: option) { [weak self] in
+                guard let self = self else {
+                    return
                 }
-
-                case .waitingForAnswer:
-                    self?.optionViews.forEach({ (optionView) in
-                        optionView.state = .waitingForAnswer
-                    })
+                
+                self.handleOptionTapped(imagePollBlock: imagePollBlock, for: option.id)
             }
-        }
-        
-        self.pollSubscription = subscription
-        
-        switch initialPollStatus {
-            case .answered(let optionResults):
-                let viewOptionStatuses = optionResults.viewOptionStatuses
-                self.optionViews = imagePollBlock.imagePoll.options.map { option in
-                    ImagePollOptionView(option: option, initialState: .answered(optionResults: viewOptionStatuses[option.id]!)) { [weak self] in
-                        self?.delegate?.castVote(on: imagePollBlock, for: option)
-                    }
-                }
-            case .waitingForAnswer:
-                self.optionViews = imagePollBlock.imagePoll.options.map { option in
-                    ImagePollOptionView(option: option, initialState: .waitingForAnswer) { [weak self] in
-                        self?.delegate?.castVote(on: imagePollBlock, for: option)
-                    }
-                }
         }
         
         // we render the poll options in two columns, regardless of device size.  so pair them off.
@@ -484,12 +370,288 @@ class ImagePollCell: BlockCell, PollCell {
         ]
 
         NSLayoutConstraint.activate(questionConstraints + stackConstraints)
+                        
+                        
+    }
+    
+    var state: PollState<ImagePollBlock> = .unbound {
+        willSet {
+            assert(canTransition(from: state, to: newValue), "Invalid state transition!")
+            os_log("Poll block transitioning from %s state to %s.", String(describing: state), String(describing: newValue))
+        }
+        
+        didSet {
+            switch state {
+            case .unbound:
+                killUi()
+            case .initialState:
+                killUi()
+                // Start loading initial results.
+                // Present UI to allow user to select an answer.
+                // If results load before users selects an answer, transition to .resultsSeeded
+                // If user selects answer before initial results load, transition to .pollAnswered
+                
+                guard let imagePollBlock = self.block as? ImagePollBlock else {
+                    os_log("Transitioned into an active state without the block being configured.")
+                    return
+                }
+
+                guard let experienceID = self.experienceID else {
+                    os_log("Attempt to configure poll block cell before informing it of the containing experience. Reverting to unbound.", log: .rover, type: .error)
+                    state = .unbound
+                    return
+                }
+            
+                buildUiForPoll(imagePollBlock: imagePollBlock)
+                
+                self.optionViews.forEach({ (optionView) in
+                    optionView.revealQuestionState()
+                })
+                
+                let currentlyAssignedBlock = imagePollBlock
+                self.urlSession.fetchPollResults(for: imagePollBlock.pollID(containedBy: experienceID), optionIds: imagePollBlock.imagePoll.votableOptionIDs) { [weak self] pollResults in
+                    DispatchQueue.main.async {
+                        guard let self = self else {
+                            return
+                        }
+                        
+                        switch pollResults {
+                        case let .fetched(results):
+                            // we are landing an async request. If current state is one that can accept our freshly acquired results, then transition.
+                            switch self.state {
+                            case .initialState:
+                                if currentlyAssignedBlock.id != imagePollBlock.id {
+                                    return
+                                }
+                                
+                                self.state = .resultsSeeded(initialResults: results.results)
+                                
+                            case let .pollAnswered(myAnswer):
+                                if currentlyAssignedBlock.id != imagePollBlock.id {
+                                    return
+                                }
+                                
+                                self.state = .submittingAnswer(myAnswer: myAnswer, initialResults: results.results)
+                            default:
+                                return
+                            }
+                        case .failed:
+                            // TODO: bother retrying? Or just leave ourselves in the fetch state?
+                            os_log("Initial poll results fetch failed.", log: .rover, type: .error)
+                        }
+                    }
+                }
+                
+                // handleOptionTapped() will check for this state and transition to .pollAnswered if needed.
+                
+            case let .resultsSeeded(initialResults):
+                // The initial results have loaded.
+                // Keep waiting for user to select an answer.
+                // After the user answers, transition to .submittingAnswer
+                
+                // handleOptionTapped() will check for this state and transition to .submittingAnswer.
+                // No need to update option view states, they were correct in the last state.
+                
+                break
+            case let .pollAnswered(myAnswer):
+                // We've got an answer but we haven't received the seed results yet.
+                // Show a loading indicator while we wait.
+                // When results finish loading, transition to .submittingAnswer
+                os_log("Seed results haven't yet arrived, TODO UI indication.")
+                break
+            case let .submittingAnswer(myAnswer, initialResults):
+                // At this point the initial results have loaded AND the user has answered the poll.
+                // The initialResults will not include the user's answer yet because it hasn't been submitted to the server.
+                // Display the results version of the UI using the initialResults data.
+                // Use the myAnswer data to add +1 to the answer selected by the user and display the indicator circle.
+                // Begin a network request to submit the user's answer to the server.
+                // If the network request fails, try again.
+                // If the network request succeeds, transition to .refreshingResults
+                // The value of currentResults passed to the .refreshingResults case should INCLUDE the user's answer
+                
+                guard let imagePollBlock = self.block as? ImagePollBlock else {
+                    os_log("Transitioned into an active state without the block being configured.")
+                    return
+                }
+                
+                guard let experienceID = self.experienceID else {
+                    os_log("Attempt to configure poll block cell before informing it of the containing experience. Reverting to unbound.", log: .rover, type: .error)
+                    state = .unbound
+                    return
+                }
+                
+                let withUsersVoteAdded = initialResults.map { tuple -> (String, Int) in
+                    let (optionID, votes) = tuple
+                    return (optionID, optionID == myAnswer ? votes + 1 : votes)
+                }.reduce(into: PollResults()) { (dictionary, tuple) in
+                    let (optionID, votes) = tuple
+                    dictionary[optionID] = votes
+                }
+                let viewOptionStatuses = withUsersVoteAdded.viewOptionStatuses(userAnswer: myAnswer)
+                self.optionViews.forEach { (optionView) in
+                    let optionID = optionView.optionID
+                    guard let optionResults = viewOptionStatuses[optionID] else {
+                        os_log("A result was not given for option: %s.  Did you remember to unsubscribe on recycle?", log: .rover, type: .error, optionID)
+                        return
+                    }
+                    optionView.revealResultsState(animated: true, optionResults: optionResults)
+                }
+                
+                if let selectedOption = imagePollBlock.imagePoll.options.first(where: { $0.id == myAnswer }) {
+                    self.delegate?.castVote(on: imagePollBlock, for: selectedOption)
+                }
+                
+                let currentlyAssignedBlock = imagePollBlock
+                self.urlSession.castVote(pollID: imagePollBlock.pollID(containedBy: experienceID), optionID: myAnswer) { [weak self] castVoteResults in
+                    DispatchQueue.main.async {
+                        guard let self = self else {
+                            return
+                        }
+                        
+                        switch castVoteResults {
+                        case .succeeded:
+                            // we are landing an async request. If current state is one that can accept our freshly submitted vote, then transition.
+                            switch self.state {
+                            case let .submittingAnswer(myAnswer, _):
+                                if currentlyAssignedBlock.id != imagePollBlock.id {
+                                    return
+                                }
+                                
+                                self.state = .refreshingResults(myAnswer: myAnswer, currentResults: withUsersVoteAdded)
+                                
+                            default:
+                                break
+                            }
+                        case .failed:
+                            // TODO: bother retrying? Or just leave ourselves in the fetch state?
+                            os_log("Initial poll results fetch failed.", log: .rover, type: .error)
+                        }
+                    }
+                }
+            case let .refreshingResults(myAnswer, currentResults):
+                // At this point we have answered the poll and have the current results which INCLUDE the user's answer.
+                // Use the currentResults to populate the UI and the myAnswer property to display the indicator circle.
+                // Start a 5-second timer and make a network request to refresh the results.
+                // If network request fails, try again in 5-seconds.
+                // If network request succeeds, update the currentResults property with the new results.
+                
+                // TODO: particularly when restoring, confirm that currentResults still matches that in imagePollBlock!
+                
+                guard let imagePollBlock = self.block as? ImagePollBlock else {
+                    os_log("Transitioned into an active state without the block being configured.")
+                    return
+                }
+                
+                guard let experienceID = self.experienceID else {
+                    os_log("Attempt to configure poll block cell before informing it of the containing experience. Reverting to unbound.", log: .rover, type: .error)
+                    state = .unbound
+                    return
+                }
+                
+                let viewOptionStatuses = currentResults.viewOptionStatuses(userAnswer: myAnswer)
+                self.optionViews.forEach { (optionView) in
+                    let optionID = optionView.optionID
+                    guard let optionResults = viewOptionStatuses[optionID] else {
+                        os_log("A result was not given for option: %s.  Did you remember to unsubscribe on recycle?", log: .rover, type: .error, optionID)
+                        return
+                    }
+                    optionView.revealResultsState(animated: true, optionResults: optionResults)
+                }
+                
+                let currentlyAssignedBlock = imagePollBlock
+                func recursiveFetch(delay: TimeInterval = 0) {
+                    self.urlSession.fetchPollResults(for: imagePollBlock.pollID(containedBy: experienceID), optionIds: imagePollBlock.imagePoll.votableOptionIDs) { [weak self] results in
+                        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(Int(delay * 1000))) {
+                            switch self?.state {
+                            case .refreshingResults:
+                                if currentlyAssignedBlock.id != imagePollBlock.id {
+                                    return
+                                }
+                                break;
+                            default:
+                                os_log("Poll Block has transitioned away from .refreshingResults, ending automatic refresh.", log: .rover, type: .error)
+                                return
+                            }
+                            
+                            switch results {
+                                case .failed:
+                                    os_log("Unable to fetch poll results. Will retry.", log: .rover, type: .fault)
+                                case let .fetched(results):
+                                    // update local state!
+                                    os_log("Successfully fetched current poll results.", log: .rover, type: .debug)
+                                    
+                                    self?.state = .refreshingResults(myAnswer: myAnswer, currentResults: results.results)
+                            }
+                            // queue up next attempt.
+                            recursiveFetch(delay: 5)
+                        }
+                    }
+                }
+                
+                // kick off the recursive fetch, but only if we are transitioning into .refreshingResults. If we are already there, then a recursive fetch is already running.
+                switch oldValue {
+                case .refreshingResults:
+                    recursiveFetch()
+                default:
+                    break
+                }
+                
+            }
+        }
+    }
+    
+    func canTransition(from currentState: PollState<ImagePollBlock>, to newState: PollState<ImagePollBlock>) -> Bool {
+        switch (currentState, newState) {
+        case(.unbound, .initialState):
+            return true
+        case (.initialState, .resultsSeeded):
+            return true
+        case (.initialState, .pollAnswered):
+            return true
+        case (.resultsSeeded, .submittingAnswer):
+            return true
+        case (.pollAnswered, .submittingAnswer):
+            return true
+        case (.submittingAnswer, .refreshingResults):
+            return true
+        case (.refreshingResults, .refreshingResults):
+            return true
+        default:
+            switch newState {
+            // allow any state to transition back to unbound.
+            case .unbound:
+                return true
+            default:
+                return false
+            }
+        }
+    }
+    
+    
+    /// a simple container view to the relatively complex layout of the text poll.
+    private let containerView = UIView()
+    
+    private var optionViews = [ImagePollOptionView]()
+    private var optionStack: UIStackView?
+    
+    override var content: UIView? {
+        return containerView
+    }
+    
+    private var questionView: PollQuestionView?
+    
+    override func configure(with block: Block) {
+        self.state = .unbound
+        super.configure(with: block)
+        
+        self.state = .initialState
     }
 }
 
 // MARK: Cell Delegate
 
 protocol ImagePollCellDelegate: AnyObject {
+    // TODO: rename to didCastVote.
     func castVote(on imagePollBlock: ImagePollBlock, for option: ImagePollBlock.ImagePoll.Option)
 }
 
@@ -586,6 +748,35 @@ private extension Dictionary where Key == String, Value == PollsStorageService.O
             }
             let optionResults = ImagePollOptionView.OptionResults(
                 selected: optionStatus.selected,
+                fraction: fraction,
+                percentage: roundedPercentagesByOptionIds[optionID]!
+            )
+            
+            return (optionID, optionResults)
+        }.reduce(into: [String: ImagePollOptionView.OptionResults]()) { (dictionary, tuple) in
+            let (optionID, optionStatus) = tuple
+            dictionary[optionID] = optionStatus
+        }
+    }
+}
+
+private extension PollResults {
+    func viewOptionStatuses(userAnswer: String) -> [String: ImagePollOptionView.OptionResults] {
+        let votesByOptionIds = self
+        let totalVotes = votesByOptionIds.values.reduce(0, +)
+        let roundedPercentagesByOptionIds = votesByOptionIds.percentagesWithDistributedRemainder()
+        
+        return self.keys.map { optionID -> (String, ImagePollOptionView.OptionResults) in
+            let optionCount = self[optionID]!
+            
+            let fraction: Double
+            if totalVotes == 0 {
+                fraction = 0
+            } else {
+                fraction = Double(optionCount) / Double(totalVotes)
+            }
+            let optionResults = ImagePollOptionView.OptionResults(
+                selected: optionID == userAnswer,
                 fraction: fraction,
                 percentage: roundedPercentagesByOptionIds[optionID]!
             )

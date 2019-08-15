@@ -296,25 +296,8 @@ class ImagePollCell: BlockCell, PollCell {
     weak var delegate: ImagePollCellDelegate?
     
     var experienceID: String?
-    
-    enum PollState<P: PollBlock> {
-        case unbound
-        // TODO: I've put pollBlock in each of the below states, but that may become a problem for state restoring. Instead, have unbound (vs all other states) be reflected by the block instance variable.
-        case initialState
-        case resultsSeeded(initialResults: PollResults)
-        case pollAnswered(myAnswer: PollAnswer)
-        case submittingAnswer(myAnswer: PollAnswer, initialResults: PollResults)
-        case refreshingResults(myAnswer: PollAnswer, currentResults: PollResults)
-    }
-    
+        
     private let urlSession = URLSession.shared
-    
-    private func killUi() {
-        self.questionView?.removeFromSuperview()
-        self.optionStack?.removeFromSuperview()
-    }
-    
-
     
     /// Drive possible state transitions as required by user input in the form of a tap (meant as a vote) on a given option.
     private func handleOptionTapped(imagePollBlock: ImagePollBlock, for optionID: String) {
@@ -327,6 +310,13 @@ class ImagePollCell: BlockCell, PollCell {
             os_log("Vote attempt landed, but not currently in correct state to accept it.", log: .rover, type: .fault)
             return
         }
+    }
+    
+    // MARK: View Hierarchy
+    
+    private func killUi() {
+        self.questionView?.removeFromSuperview()
+        self.optionStack?.removeFromSuperview()
     }
     
     private func buildUiForPoll(imagePollBlock: ImagePollBlock) {
@@ -373,10 +363,49 @@ class ImagePollCell: BlockCell, PollCell {
 
         NSLayoutConstraint.activate(questionConstraints + stackConstraints)
     }
+    
+    // MARK: State Machine
 
     // TODO: implement non-volatile state restore for State.
     
-    var state: PollState<ImagePollBlock> = .unbound {
+    private enum PollState<P: PollBlock> {
+        case unbound
+        // TODO: I've put pollBlock in each of the below states, but that may become a problem for state restoring. Instead, have unbound (vs all other states) be reflected by the block instance variable.
+        case initialState
+        case resultsSeeded(initialResults: PollResults)
+        case pollAnswered(myAnswer: PollAnswer)
+        case submittingAnswer(myAnswer: PollAnswer, initialResults: PollResults)
+        case refreshingResults(myAnswer: PollAnswer, currentResults: PollResults)
+    }
+    
+    private func canTransition(from currentState: PollState<ImagePollBlock>, to newState: PollState<ImagePollBlock>) -> Bool {
+        switch (currentState, newState) {
+        case(.unbound, .initialState):
+            return true
+        case (.initialState, .resultsSeeded):
+            return true
+        case (.initialState, .pollAnswered):
+            return true
+        case (.resultsSeeded, .submittingAnswer):
+            return true
+        case (.pollAnswered, .submittingAnswer):
+            return true
+        case (.submittingAnswer, .refreshingResults):
+            return true
+        case (.refreshingResults, .refreshingResults):
+            return true
+        default:
+            switch newState {
+            // allow any state to transition back to unbound.
+            case .unbound:
+                return true
+            default:
+                return false
+            }
+        }
+    }
+    
+    private var state: PollState<ImagePollBlock> = .unbound {
         willSet {
             assert(canTransition(from: state, to: newValue), "Invalid state transition!")
             os_log("Poll block transitioning from %s state to %s.", String(describing: state), String(describing: newValue))
@@ -603,34 +632,6 @@ class ImagePollCell: BlockCell, PollCell {
             }
         }
     }
-    
-    func canTransition(from currentState: PollState<ImagePollBlock>, to newState: PollState<ImagePollBlock>) -> Bool {
-        switch (currentState, newState) {
-        case(.unbound, .initialState):
-            return true
-        case (.initialState, .resultsSeeded):
-            return true
-        case (.initialState, .pollAnswered):
-            return true
-        case (.resultsSeeded, .submittingAnswer):
-            return true
-        case (.pollAnswered, .submittingAnswer):
-            return true
-        case (.submittingAnswer, .refreshingResults):
-            return true
-        case (.refreshingResults, .refreshingResults):
-            return true
-        default:
-            switch newState {
-            // allow any state to transition back to unbound.
-            case .unbound:
-                return true
-            default:
-                return false
-            }
-        }
-    }
-    
     
     /// a simple container view to the relatively complex layout of the text poll.
     private let containerView = UIView()

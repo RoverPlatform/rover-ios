@@ -126,6 +126,7 @@ class ImagePollOptionView: UIView {
         // MARK: Indicator
         self.indicator.text = INDICATOR_BULLET_CHARACTER
         self.indicator.font = option.text.font.uiFont
+        self.indicator.textColor = option.text.color.uiColor
         
         let answerAndIndicatorConstraints = [
             self.indicatorAndAnswer.leadingAnchor.constraint(greaterThanOrEqualTo: self.leadingAnchor, constant: OPTION_TEXT_SPACING),

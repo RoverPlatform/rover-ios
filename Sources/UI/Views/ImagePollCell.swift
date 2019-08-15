@@ -54,7 +54,7 @@ class ImagePollOptionView: UIView {
         return self.option.leftMargin
     }
     
-    var optionId: String {
+    var optionID: String {
         return self.option.id
     }
     
@@ -427,9 +427,9 @@ class ImagePollCell: BlockCell, PollCell {
                 case .answered(let resultsForOptions):
                 let viewOptionStatuses = resultsForOptions.viewOptionStatuses
                 self?.optionViews.forEach { (optionView) in
-                    let optionId = optionView.optionId
-                    guard let optionResults = viewOptionStatuses[optionId] else {
-                        os_log("A result was not given for option: %s.  Did you remember to unsubscribe on recycle?", log: .rover, type: .error, optionId)
+                    let optionID = optionView.optionID
+                    guard let optionResults = viewOptionStatuses[optionID] else {
+                        os_log("A result was not given for option: %s.  Did you remember to unsubscribe on recycle?", log: .rover, type: .error, optionID)
                         return
                     }
                     optionView.state = .answered(optionResults: optionResults)
@@ -575,8 +575,8 @@ private extension Dictionary where Key == String, Value == PollsStorageService.O
         let totalVotes = votesByOptionIds.values.reduce(0, +)
         let roundedPercentagesByOptionIds = votesByOptionIds.percentagesWithDistributedRemainder()
         
-        return self.keys.map { optionId -> (String, ImagePollOptionView.OptionResults) in
-            let optionStatus = self[optionId]!
+        return self.keys.map { optionID -> (String, ImagePollOptionView.OptionResults) in
+            let optionStatus = self[optionID]!
             
             let fraction: Double
             if totalVotes == 0 {
@@ -587,13 +587,13 @@ private extension Dictionary where Key == String, Value == PollsStorageService.O
             let optionResults = ImagePollOptionView.OptionResults(
                 selected: optionStatus.selected,
                 fraction: fraction,
-                percentage: roundedPercentagesByOptionIds[optionId]!
+                percentage: roundedPercentagesByOptionIds[optionID]!
             )
             
-            return (optionId, optionResults)
+            return (optionID, optionResults)
         }.reduce(into: [String: ImagePollOptionView.OptionResults]()) { (dictionary, tuple) in
-            let (optionId, optionStatus) = tuple
-            dictionary[optionId] = optionStatus
+            let (optionID, optionStatus) = tuple
+            dictionary[optionID] = optionStatus
         }
     }
 }

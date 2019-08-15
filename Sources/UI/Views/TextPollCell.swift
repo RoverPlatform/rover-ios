@@ -47,7 +47,7 @@ class TextPollOptionView: UIView {
         return self.option.topMargin
     }
     
-    public var optionId: String {
+    public var optionID: String {
         return self.option.id
     }
     
@@ -346,9 +346,9 @@ class TextPollCell: BlockCell, PollCell {
                 case .answered(let resultsForOptions):
                 let viewOptionStatuses = resultsForOptions.viewOptionStatuses
                 self?.optionViews.forEach { (optionView) in
-                    let optionId = optionView.optionId
-                    guard let optionResults = viewOptionStatuses[optionId] else {
-                        os_log("A result was not given for option: %s.  Did you remember to unsubscribe on recycle?", log: .rover, type: .error, optionId)
+                    let optionID = optionView.optionID
+                    guard let optionResults = viewOptionStatuses[optionID] else {
+                        os_log("A result was not given for option: %s.  Did you remember to unsubscribe on recycle?", log: .rover, type: .error, optionID)
                         return
                     }
                     optionView.state = .answered(optionResults: optionResults)
@@ -440,8 +440,8 @@ private extension Dictionary where Key == String, Value == PollsStorageService.O
         let totalVotes = votesByOptionIds.values.reduce(0, +)
         let roundedPercentagesByOptionIds = votesByOptionIds.percentagesWithDistributedRemainder()
         
-        return self.keys.map { (optionId: String) -> (String, TextPollOptionView.OptionResults) in
-            let optionStatus = self[optionId]!
+        return self.keys.map { (optionID: String) -> (String, TextPollOptionView.OptionResults) in
+            let optionStatus = self[optionID]!
             
             let fraction: Double
             if totalVotes == 0 {
@@ -452,12 +452,12 @@ private extension Dictionary where Key == String, Value == PollsStorageService.O
             let optionResults = TextPollOptionView.OptionResults(
                 selected: optionStatus.selected,
                 fraction: fraction,
-                percentage: roundedPercentagesByOptionIds[optionId]!
+                percentage: roundedPercentagesByOptionIds[optionID]!
             )
-            return (optionId, optionResults)
+            return (optionID, optionResults)
         }.reduce(into: [String: TextPollOptionView.OptionResults]()) { (dictionary, tuple) in
-            let (optionId, optionResults) = tuple
-            dictionary[optionId] = optionResults
+            let (optionID, optionResults) = tuple
+            dictionary[optionID] = optionResults
         }
     }
 }

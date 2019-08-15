@@ -32,16 +32,16 @@ class PollsStorageService {
     // TODO: to be moved into UI layer (and subscribe broken into separate concerns, to enable the new sub-states, particularly).
 
     /// Cast a vote on the poll.  Naturally may only be done once.  Synchronous, fire-and-forget, and best-effort. Any subscribers will be instantly notified (if possible) of the update.
-    func castVote(pollID: String, givenOptionIds optionIds: [String], optionId: String) {
+    func castVote(pollID: String, givenOptionIds optionIds: [String], optionID: String) {
         if let _ = self.localStateForPoll(pollID: pollID, givenCurrentOptionIds: optionIds).userVotedForOptionId {
             os_log("Can't vote twice.", log: .rover, type: .fault)
             return
         }
         
-        self.urlSession.dispatchCastVoteRequest(pollID: pollID, optionId: optionId)
+        self.urlSession.dispatchCastVoteRequest(pollID: pollID, optionID: optionID)
 
         // in the meantime, update local state that we voted and also to dead-reckon the increment of our vote being applied.
-        commitVoteToLocalState(pollID: pollID, givenOptionIds: optionIds, optionId: optionId)
+        commitVoteToLocalState(pollID: pollID, givenOptionIds: optionIds, optionID: optionID)
     }
     
     /// Be notified of poll state.  Updates will be emitted on the main thread. Note that this will not immediately yield current state, but it it synchronously.
@@ -200,7 +200,7 @@ class PollsStorageService {
         self.updateStorageForPoll(newState: newState)
     }
     
-    func commitVoteToLocalState(pollID: String, givenOptionIds optionIds: [String], optionId: String) {
+    func commitVoteToLocalState(pollID: String, givenOptionIds optionIds: [String], optionID: String) {
         let localState: PollState = self.localStateForPoll(pollID: pollID, givenCurrentOptionIds: optionIds)
        
         guard localState.userVotedForOptionId == nil else {
@@ -211,13 +211,13 @@ class PollsStorageService {
         let newState: PollState
         if var optionResults = localState.optionResults {
             // results with user's selection incremented.
-            optionResults[optionId]? += 1
-            newState = PollState(pollID: pollID, optionResults: optionResults, userVotedForOptionId: optionId)
+            optionResults[optionID]? += 1
+            newState = PollState(pollID: pollID, optionResults: optionResults, userVotedForOptionId: optionID)
         } else {
-            newState = PollState(pollID: pollID, optionResults: localState.optionResults, userVotedForOptionId: optionId)
+            newState = PollState(pollID: pollID, optionResults: localState.optionResults, userVotedForOptionId: optionID)
         }
         
-        os_log("Recording vote for option %s on poll %s", log: .rover, type: .info, optionId, pollID)
+        os_log("Recording vote for option %s on poll %s", log: .rover, type: .info, optionID, pollID)
         
         updateStorageForPoll(newState: newState)
     }
@@ -273,11 +273,11 @@ extension PollsStorageService.PollState {
             }
 
             // couldn't use mapValues because I needed the key (option id) to do the transform.
-            let optionStatuses = optionResults.keys.map { (optionId) in
-                return (optionId, PollsStorageService.OptionStatus(selected: vote == optionId, voteCount: optionResults[optionId]!))
+            let optionStatuses = optionResults.keys.map { (optionID) in
+                return (optionID, PollsStorageService.OptionStatus(selected: vote == optionID, voteCount: optionResults[optionID]!))
             }.reduce(into: [String: PollsStorageService.OptionStatus]()) { (dictionary, tuple) in
-                let (optionId, optionStatus) = tuple
-                dictionary[optionId] = optionStatus
+                let (optionID, optionStatus) = tuple
+                dictionary[optionID] = optionStatus
             }
             
             return .answered(resultsForOptions: optionStatuses)
@@ -341,13 +341,13 @@ extension URLSession {
         task.resume()
     }
 
-    func dispatchCastVoteRequest(pollID: String, optionId: String) {
+    func dispatchCastVoteRequest(pollID: String, optionID: String) {
         let url = URL(string: "\(POLLS_SERVICE_ENDPOINT)\(pollID)/vote")!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setRoverUserAgent()
-        let requestBody = VoteCastRequest(option: optionId)
+        let requestBody = VoteCastRequest(option: optionID)
         let data: Data
         do {
             let encoder = JSONEncoder()
@@ -378,19 +378,6 @@ extension URLSession {
 
 // MARK: Voting Service REST DTOs
 
-private extension Array where Element == PollsVotingService.SubscriberBox {
-    func garbageCollected() -> [PollsVotingService.SubscriberBox] {
-        return self.filter { subscriberBox in
-            subscriberBox.subscriber != nil
-        }
-    }
-}
-
-private extension Dictionary where Key == String, Value == [PollsVotingService.SubscriberBox] {
-    func garbageCollected() -> [String: [PollsVotingService.SubscriberBox]] {
-        return self.mapValues { subscribers in
-            return subscribers.garbageCollected()
-        }
 private struct VoteCastRequest: Codable {
     var option: String
 }

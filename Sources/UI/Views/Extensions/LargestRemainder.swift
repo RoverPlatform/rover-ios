@@ -69,8 +69,8 @@ extension Dictionary where Value == Int, Key: Comparable {
         
         // and turn it back into a dictionary:
         return distributed.reduce(into: [Key: Int]()) { (dictionary, optionIdAndCount) in
-            let (optionId, voteCount) = optionIdAndCount
-            dictionary[optionId] = voteCount
+            let (optionID, voteCount) = optionIdAndCount
+            dictionary[optionID] = voteCount
         }
     }
 }

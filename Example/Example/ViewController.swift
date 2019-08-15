@@ -15,11 +15,4 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
     }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        let rvc = RoverViewController()
-        rvc.loadExperience(id: "5d4da79b050975001389f090", useDraft: true)
-        self.present(rvc, animated: false)
-    }
-
 }

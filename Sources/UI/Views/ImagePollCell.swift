@@ -291,13 +291,94 @@ class ImagePollOptionView: UIView {
     }
 }
 
+/// Poll results, mapping Option IDs -> Vote Counts.
+typealias PollResults = [String: Int]
+
+/// An option voted for by the user, the Option ID.
+typealias PollAnswer = String
+
 // MARK: Cell View
 
 class ImagePollCell: BlockCell, PollCell {
+    // MARK: Cell Interface
     /// This delegate is informed of a poll option being tapped.
     weak var delegate: ImagePollCellDelegate?
     
     var experienceID: String?
+    
+    enum PollState {
+        case initialState
+        case resultsSeeded(initialResults: PollResults)
+        case pollAnswered(myAnswer: PollAnswer)
+        case submittingAnswer(myAnswer: PollAnswer, initialResults: PollResults)
+        case refreshingResults(myAnswer: PollAnswer, currentResults: PollResults)
+    }
+    
+    var state: PollState = .initialState {
+        willSet {
+            assert(canTransition(from: state, to: newValue), "Invalid state transition!")
+        }
+        
+        // TODO: replace existing logic found in the Behaviour & Aggregation section of PollsSectionService by building out the following:
+        // START HERE!
+        didSet {
+            switch state {
+            case .initialState:
+                // Start loading initial results.
+                // Present UI to allow user to select an answer.
+                // If results load before users selects an answer, transition to .resultsSeeded
+                // If user selects answer before initial results load, transition to .pollAnswered
+                break
+            case let .resultsSeeded(initialResults):
+                // The initial results have loaded.
+                // Keep waiting for user to select an answer.
+                // After the user answers, transition to .submittingAnswer
+                break
+            case let .pollAnswered(myAnswer):
+                // We've got an answer but we haven't received the seed results yet.
+                // Show a loading indicator while we wait.
+                // When results finish loading, transition to .submittingAnswer
+                break
+            case let .submittingAnswer(myAnswer, initialResults):
+                // At this point the initial results have loaded AND the user has answered the poll.
+                // The initialResults will not include the user's answer yet because it hasn't been submitted to the server.
+                // Display the results version of the UI using the initialResults data.
+                // Use the myAnswer data to add +1 to the answer selected by the user and display the indicator circle.
+                // Begin a network request to submit the user's answer to the server.
+                // If the network request fails, try again.
+                // If the network request succeeds, transition to .refreshingResults
+                // The value of currentResults passed to the .refreshingResults case should INCLUDE the user's answer
+                break
+            case let .refreshingResults(myAnswer, currentResults):
+                // At this point we have answered the poll and have the current results which INCLUDE the user's answer.
+                // Use the currentResults to populate the UI and the myAnswer property to display the indicator circle.
+                // Start a 5-second timer and make a network request to refresh the results.
+                // If network request fails, try again in 5-seconds.
+                // If network request succeeds, update the currentResults property with the new results.
+                break
+            }
+        }
+    }
+    
+    func canTransition(from currentState: PollState, to newState: PollState) -> Bool {
+        switch (currentState, newState) {
+        case (.initialState, .resultsSeeded):
+            return true
+        case (.initialState, .pollAnswered):
+            return true
+        case (.resultsSeeded, .submittingAnswer):
+            return true
+        case (.pollAnswered, .submittingAnswer):
+            return true
+        case (.submittingAnswer, .refreshingResults):
+            return true
+        case (.refreshingResults, .refreshingResults):
+            return true
+        default:
+            return false
+        }
+    }
+    
     
     /// a simple container view to the relatively complex layout of the text poll.
     private let containerView = UIView()

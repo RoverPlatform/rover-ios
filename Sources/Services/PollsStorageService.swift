@@ -27,6 +27,9 @@ class PollsStorageService {
         case waitingForAnswer
         case answered(resultsForOptions: [String: OptionStatus])
     }
+    
+    // MARK: Behaviour & Aggregation
+    // TODO: to be moved into UI layer (and subscribe broken into separate concerns, to enable the new sub-states, particularly).
 
     /// Cast a vote on the poll.  Naturally may only be done once.  Synchronous, fire-and-forget, and best-effort. Any subscribers will be instantly notified (if possible) of the update.
     func castVote(pollID: String, givenOptionIds optionIds: [String], optionId: String) {

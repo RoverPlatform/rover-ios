@@ -9,12 +9,12 @@
 import os
 import UIKit
 
-private let POLLS_SERVICE_ENDPOINT = "https://polls.rover.io/v1/polls/"
+
 private let USER_DEFAULTS_STORAGE_KEY = "io.rover.Polls.storage"
 
-class PollsVotingService {
-    /// The shared singleton Voting Service.
-    static let shared = PollsVotingService()
+class PollsStorageService {
+    /// The shared singleton Polls Storage Service.
+    static let shared = PollsStorageService()
     
     // MARK: Types
     
@@ -35,7 +35,7 @@ class PollsVotingService {
             return
         }
         
-        dispatchCastVoteRequest(pollID: pollID, optionId: optionId)
+        self.urlSession.dispatchCastVoteRequest(pollID: pollID, optionId: optionId)
 
         // in the meantime, update local state that we voted and also to dead-reckon the increment of our vote being applied.
         commitVoteToLocalState(pollID: pollID, givenOptionIds: optionIds, optionId: optionId)
@@ -57,14 +57,14 @@ class PollsVotingService {
         
         func recursiveFetch(delay: TimeInterval = 0) {
             DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(Int(delay * 1000))) {
-                self.fetchPollResults(for: pollID, optionIds: optionIds) { [weak self] results in
+                self.urlSession.fetchPollResults(for: pollID, optionIds: optionIds) { [weak self] results in
                     switch results {
                         case .failed:
                             os_log("Unable to fetch poll results.", log: .rover, type: .error)
                         case let .fetched(results):
                             // update local state!
                             os_log("Successfully fetched current poll results.", log: .rover, type: .debug)
-                            self?.updateLocalStateWithResults(pollID: pollID, givenOptionIds: optionIds, pollFetchResponse: results)
+                            self?.updateLocalStateWithResults(pollID: pollID, givenOptionIds: optionIds, fetchedPollResults: results.results)
                             
                             // chain fetch requests recursively, provided at least one subscriber exists for this poll.
                             if let _ = self?.stateSubscribers[pollID]?.first?.subscriber {
@@ -82,7 +82,7 @@ class PollsVotingService {
         return (self.localStatusForPoll(pollID: pollID, givenOptionIds: optionIds), chit)
     }
     
-    // MARK: State & Storage
+
     
     fileprivate class SubscriberBox {
         weak var subscriber: Subscriber?
@@ -106,8 +106,14 @@ class PollsVotingService {
     
     private var stateSubscribers = [String: [SubscriberBox]]()
     
+    private func localStatusForPoll(pollID: String, givenOptionIds optionIds: [String]) -> PollStatus {
+        return localStateForPoll(pollID: pollID, givenCurrentOptionIds: optionIds).pollStatus()
+    }
+    
+        // MARK: State & Storage
+    
     /// Internal representation for storage of poll state on disk.
-    private struct PollState: Codable {
+    struct PollState: Codable {
         let pollID: String
         
         /// The results retrieved for the poll, if available.  Poll Id -> Number of Votes.
@@ -115,28 +121,6 @@ class PollsVotingService {
         
         /// If the user has voted, for which option did they vote?
         let userVotedForOptionId: String?
-        
-        func pollStatus() -> PollStatus {
-            if let vote = self.userVotedForOptionId {
-                // user voted, so show them the response.
-                guard let optionResults = self.optionResults else {
-                    // user voted but optionResults not stored.
-                    os_log("User voted but local copy of option results is missing.", log: .rover, type: .fault)
-                    return .waitingForAnswer
-                }
-
-                // couldn't use mapValues because I needed the key (option id) to do the transform.
-                let optionStatuses = optionResults.keys.map { (optionId) in
-                    return (optionId, PollsVotingService.OptionStatus(selected: vote == optionId, voteCount: optionResults[optionId]!))
-                }.reduce(into: [String: PollsVotingService.OptionStatus]()) { (dictionary, tuple) in
-                    let (optionId, optionStatus) = tuple
-                    dictionary[optionId] = optionStatus
-                }
-                
-                return .answered(resultsForOptions: optionStatuses)
-            }
-            return .waitingForAnswer
-        }
     }
     
     private let storage = UserDefaults()
@@ -194,13 +178,8 @@ class PollsVotingService {
         
         do {
             let newStateJson = try encoder.encode(trimmedNewStates)
-            // TODO: storage update dispatch.
             self.storage.set(newStateJson, forKey: USER_DEFAULTS_STORAGE_KEY)
-            self.stateSubscribers[pollID]?.forEach { subscriber in
-                DispatchQueue.main.async {
-                    subscriber.subscriber?.callback(newState.pollStatus())
-                }
-            }
+            // TODO: this was where the update event was formerly dispatched as a side-effect. No longer.
         } catch {
             os_log("Unable to update local poll storage: %s", log: .rover, type: .error, error.debugDescription)
             return
@@ -208,19 +187,17 @@ class PollsVotingService {
         os_log("Updated local state for poll %s.", log: .rover, type: .debug, pollID)
     }
     
-    private func localStatusForPoll(pollID: String, givenOptionIds optionIds: [String]) -> PollStatus {
-        return localStateForPoll(pollID: pollID, givenCurrentOptionIds: optionIds).pollStatus()
-    }
+
     
-    private func updateLocalStateWithResults(pollID: String, givenOptionIds optionIds: [String], pollFetchResponse: PollFetchResponseBody) {
+    func updateLocalStateWithResults(pollID: String, givenOptionIds optionIds: [String], fetchedPollResults: [String: Int]) {
         // replace locally stored results with a new copy with the results part updated.
         let localState: PollState = self.localStateForPoll(pollID: pollID, givenCurrentOptionIds: optionIds)
 
-        let newState = PollState(pollID: pollID, optionResults: pollFetchResponse.results, userVotedForOptionId: localState.userVotedForOptionId)
+        let newState = PollState(pollID: pollID, optionResults: fetchedPollResults, userVotedForOptionId: localState.userVotedForOptionId)
         self.updateStorageForPoll(newState: newState)
     }
     
-    private func commitVoteToLocalState(pollID: String, givenOptionIds optionIds: [String], optionId: String) {
+    func commitVoteToLocalState(pollID: String, givenOptionIds optionIds: [String], optionId: String) {
         let localState: PollState = self.localStateForPoll(pollID: pollID, givenCurrentOptionIds: optionIds)
        
         guard localState.userVotedForOptionId == nil else {
@@ -242,15 +219,83 @@ class PollsVotingService {
         updateStorageForPoll(newState: newState)
     }
     
-    // MARK: Network Requests
+}
 
-    private func fetchPollResults(for pollID: String, optionIds: [String], callback: @escaping (PollFetchResults) -> Void) {
+// MARK: External Helpers
+
+extension TextPollBlock.TextPoll {
+    /// Gather up votable option IDs from the options on this Poll, for  use with the PollsVotingService.
+    var votableOptionIds: [String] {
+        return self.options.map { option in
+            option.id
+        }
+    }
+}
+
+extension ImagePollBlock.ImagePoll {
+    /// Gather up votable option IDs from the options on this Poll, for  use with the PollsVotingService.
+    var votableOptionIds: [String] {
+        return self.options.map { option in
+            option.id
+        }
+    }
+}
+
+// MARK: Internal Helpers
+
+private extension Array where Element == PollsStorageService.SubscriberBox {
+    func garbageCollected() -> [PollsStorageService.SubscriberBox] {
+        self.filter { subscriberBox in
+            subscriberBox.subscriber != nil
+        }
+    }
+}
+
+private extension Dictionary where Key == String, Value == [PollsStorageService.SubscriberBox] {
+    func garbageCollected() -> [String: [PollsStorageService.SubscriberBox]] {
+        self.mapValues { subscribers in
+            return subscribers.garbageCollected()
+        }
+    }
+}
+
+extension PollsStorageService.PollState {
+    func pollStatus() -> PollsStorageService.PollStatus {
+        if let vote = self.userVotedForOptionId {
+            // user voted, so show them the response.
+            guard let optionResults = self.optionResults else {
+                // user voted but optionResults not stored.
+                os_log("User voted but local copy of option results is missing.", log: .rover, type: .fault)
+                return .waitingForAnswer
+            }
+
+            // couldn't use mapValues because I needed the key (option id) to do the transform.
+            let optionStatuses = optionResults.keys.map { (optionId) in
+                return (optionId, PollsStorageService.OptionStatus(selected: vote == optionId, voteCount: optionResults[optionId]!))
+            }.reduce(into: [String: PollsStorageService.OptionStatus]()) { (dictionary, tuple) in
+                let (optionId, optionStatus) = tuple
+                dictionary[optionId] = optionStatus
+            }
+            
+            return .answered(resultsForOptions: optionStatuses)
+        }
+        return .waitingForAnswer
+    }
+}
+
+
+// MARK: Network Requests
+
+private let POLLS_SERVICE_ENDPOINT = "https://polls.rover.io/v1/polls/"
+
+extension URLSession {
+    func fetchPollResults(for pollID: String, optionIds: [String], callback: @escaping (PollFetchResults) -> Void) {
         var url = URLComponents(string: "\(POLLS_SERVICE_ENDPOINT)\(pollID)")!
         url.queryItems = optionIds.map { URLQueryItem(name: "options", value: $0) }
         var request = URLRequest(url: url.url!)
         request.httpMethod = "GET"
         request.setRoverUserAgent()
-        let task = self.urlSession.dataTask(with: request) { data, urlResponse, error in
+        let task = self.dataTask(with: request) { data, urlResponse, error in
             if let error = error {
                 os_log("Unable to request poll results because: %s", log: .rover, type: .error, error.debugDescription)
                 callback(.failed)
@@ -284,7 +329,7 @@ class PollsVotingService {
                 let decoder = JSONDecoder()
                 decoder.dateDecodingStrategy = .formatted(DateFormatter.rfc3339)
                 
-                let response = try decoder.decode(PollFetchResponseBody.self, from: data)
+                let response = try decoder.decode(PollFetchResults.PollFetchResponseBody.self, from: data)
                 callback(.fetched(results: response))
             } catch {
                 os_log("Unable to decode poll results fetch response body: %s", log: .rover, type: .error, error.debugDescription)
@@ -292,8 +337,8 @@ class PollsVotingService {
         }
         task.resume()
     }
-    
-    private func dispatchCastVoteRequest(pollID: String, optionId: String) {
+
+    func dispatchCastVoteRequest(pollID: String, optionId: String) {
         let url = URL(string: "\(POLLS_SERVICE_ENDPOINT)\(pollID)/vote")!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -315,7 +360,7 @@ class PollsVotingService {
             UIApplication.shared.endBackgroundTask(backgroundTaskID)
         }
         
-        let sessionTask = urlSession.uploadTask(with: request, from: data) { _, _, error in
+        let sessionTask = self.uploadTask(with: request, from: data) { _, _, error in
             if let error = error {
                 os_log("Failed to submit poll cast vote request: %@", log: .rover, type: .error, error.debugDescription)
             }
@@ -326,46 +371,9 @@ class PollsVotingService {
         os_log("Submitting vote...", log: .rover, type: .debug)
         sessionTask.resume()
     }
-    
-    // MARK: Voting Service REST DTOs
-    
-    private struct VoteCastRequest: Codable {
-        var option: String
-    }
-    
-    private enum PollFetchResults {
-        case fetched(results: PollFetchResponseBody)
-        case failed
-    }
-    
-    private struct PollFetchResponseBody: Codable {
-        var results: [
-            String: Int
-        ]
-    }
 }
 
-// MARK: External Helpers
-
-extension TextPollBlock.TextPoll {
-    /// Gather up votable option IDs from the options on this Poll, for  use with the PollsVotingService.
-    var votableOptionIds: [String] {
-        return self.options.map { option in
-            option.id
-        }
-    }
-}
-
-extension ImagePollBlock.ImagePoll {
-    /// Gather up votable option IDs from the options on this Poll, for  use with the PollsVotingService.
-    var votableOptionIds: [String] {
-        return self.options.map { option in
-            option.id
-        }
-    }
-}
-
-// MARK: Internal Helpers
+// MARK: Voting Service REST DTOs
 
 private extension Array where Element == PollsVotingService.SubscriberBox {
     func garbageCollected() -> [PollsVotingService.SubscriberBox] {
@@ -380,5 +388,17 @@ private extension Dictionary where Key == String, Value == [PollsVotingService.S
         return self.mapValues { subscribers in
             return subscribers.garbageCollected()
         }
+private struct VoteCastRequest: Codable {
+    var option: String
+}
+
+enum PollFetchResults {
+    case fetched(results: PollFetchResponseBody)
+    case failed
+    
+    struct PollFetchResponseBody: Codable {
+        var results: [
+            String: Int
+        ]
     }
 }

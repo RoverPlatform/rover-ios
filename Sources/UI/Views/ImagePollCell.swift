@@ -340,7 +340,7 @@ class ImagePollCell: BlockCell, PollCell {
             self.questionView!.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
         ]
         
-        let (initialPollStatus, subscription) = PollsVotingService.shared.subscribeToUpdates(pollID: imagePollBlock.pollID(containedBy: experienceID), givenCurrentOptionIds: imagePollBlock.imagePoll.votableOptionIds) { [weak self] newPollStatus in
+        let (initialPollStatus, subscription) = PollsStorageService.shared.subscribeToUpdates(pollID: imagePollBlock.pollID(containedBy: experienceID), givenCurrentOptionIds: imagePollBlock.imagePoll.votableOptionIds) { [weak self] newPollStatus in
             
             switch newPollStatus {
                 case .answered(let resultsForOptions):
@@ -488,7 +488,7 @@ private extension ImagePollBlock.ImagePoll.Option {
     }
 }
 
-private extension Dictionary where Key == String, Value == PollsVotingService.OptionStatus {
+private extension Dictionary where Key == String, Value == PollsStorageService.OptionStatus {
     var viewOptionStatuses: [String: ImagePollOptionView.OptionResults] {
         let votesByOptionIds = self.mapValues { $0.voteCount }
         let totalVotes = votesByOptionIds.values.reduce(0, +)

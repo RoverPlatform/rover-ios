@@ -340,7 +340,7 @@ class TextPollCell: BlockCell, PollCell {
             return
         }
         
-        let (initialPollStatus, subscription) = PollsVotingService.shared.subscribeToUpdates(pollID: textPollBlock.pollID(containedBy: experienceID), givenCurrentOptionIds: textPollBlock.textPoll.votableOptionIds) { [weak self] newPollStatus in
+        let (initialPollStatus, subscription) = PollsStorageService.shared.subscribeToUpdates(pollID: textPollBlock.pollID(containedBy: experienceID), givenCurrentOptionIds: textPollBlock.textPoll.votableOptionIds) { [weak self] newPollStatus in
             
             switch newPollStatus {
                 case .answered(let resultsForOptions):
@@ -434,7 +434,7 @@ extension TextPollBlock.TextPoll.Option {
     }
 }
 
-private extension Dictionary where Key == String, Value == PollsVotingService.OptionStatus {
+private extension Dictionary where Key == String, Value == PollsStorageService.OptionStatus {
     var viewOptionStatuses: [String: TextPollOptionView.OptionResults] {
         let votesByOptionIds = self.mapValues { $0.voteCount }
         let totalVotes = votesByOptionIds.values.reduce(0, +)

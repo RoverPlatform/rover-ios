@@ -57,11 +57,13 @@ extension Dictionary where Value == Int, Key: Comparable {
 
         // now to distribute the remainder (as whole integers) across the options:
         let distributed = optionsSortedByDecimal.enumerated().map { tuple -> (Key, Int) in
-            let (offset, (optionId, (_, roundedDownPercentage))) = tuple
+            let (offset, keyWithPercentages) = tuple
+            let (key, percentages) = keyWithPercentages
+            let (_, roundedDownPercentage) = percentages
             if offset < remainder {
-                return (optionId, roundedDownPercentage + 1)
+                return (key, roundedDownPercentage + 1)
             } else {
-                return (optionId, roundedDownPercentage)
+                return (key, roundedDownPercentage)
             }
         }
         

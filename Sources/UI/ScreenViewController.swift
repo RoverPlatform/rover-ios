@@ -510,8 +510,6 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     // MARK: Poll Answer
     
     func didCastVote(on imagePollBlock: ImagePollBlock, for option: ImagePollBlock.ImagePoll.Option) {
-        PollsStorageService.shared.castVote(pollID: imagePollBlock.pollID(containedBy: experience.id), givenOptionIds: imagePollBlock.imagePoll.votableOptionIDs, optionID: option.id)
-        
         var userInfo: [String: Any] = [
             ScreenViewController.experienceUserInfoKey: experience,
             ScreenViewController.screenUserInfoKey: screen,
@@ -532,6 +530,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     }
     
     func didCastVote(on textPollBlock: TextPollBlock, for option: TextPollBlock.TextPoll.Option) {
+        // TODO: remove this when state machine is brought online in the text poll cell.
         PollsStorageService.shared.castVote(pollID: textPollBlock.pollID(containedBy: experience.id), givenOptionIds: textPollBlock.textPoll.votableOptionIds, optionID: option.id)
         
         var userInfo: [String: Any] = [

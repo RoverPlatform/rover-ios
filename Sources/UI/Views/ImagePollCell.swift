@@ -368,19 +368,100 @@ class ImagePollCell: BlockCell, PollCell {
 
     // TODO: implement non-volatile state restore for State.
     
-    private enum PollState<P: PollBlock> {
+    private indirect enum PollState: Codable {
+        private enum CodingKeys: String, CodingKey {
+            case typeName
+            case initialResults
+            case myAnswer
+            case currentResults
+        }
+        
+        init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            let typeName = try container.decode(String.self, forKey: .typeName)
+            switch typeName {
+            case "unbound":
+                self = .unbound
+            case "initialState":
+                self = .initialState
+            case "resultsSeeded":
+                let initialResults = try container.decode(PollResults.self, forKey: .initialResults)
+                self = .resultsSeeded(initialResults: initialResults)
+            case "pollAnswered":
+                let myAnswer = try container.decode(PollAnswer.self, forKey: .myAnswer)
+                self = .pollAnswered(myAnswer: myAnswer)
+            case "submittingAnswer":
+                let myAnswer = try container.decode(PollAnswer.self, forKey: .myAnswer)
+                let initialResults = try container.decode(PollResults.self, forKey: .initialResults)
+                self = .submittingAnswer(myAnswer: myAnswer, initialResults: initialResults)
+            case "refreshingResults":
+                let myAnswer = try container.decode(PollAnswer.self, forKey: .myAnswer)
+                let currentResults = try container.decode(PollResults.self, forKey: .currentResults)
+                self = .refreshingResults(myAnswer: myAnswer, currentResults: currentResults)
+            default:
+                throw DecodingError.dataCorruptedError(forKey: .typeName, in: container, debugDescription: "Invalid value: \(typeName)")
+            }
+        }
+        
+        func encode(to encoder: Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            switch self {
+            case .initialState:
+                try container.encode("initialState", forKey: .typeName)
+            case let .resultsSeeded(initialResults):
+                try container.encode("resultsSeeded", forKey: .typeName)
+                try container.encode(initialResults, forKey: .initialResults)
+            case let .pollAnswered(myAnswer):
+                try container.encode("pollAnswered", forKey: .typeName)
+                try container.encode(myAnswer, forKey: .myAnswer)
+            case let .submittingAnswer(myAnswer, initialResults):
+                try container.encode("submittingAnswer", forKey: .typeName)
+                try container.encode(myAnswer, forKey: .myAnswer)
+                try container.encode(initialResults, forKey: .initialResults)
+            case let .refreshingResults(myAnswer, currentResults):
+                try container.encode("refreshingResults", forKey: .typeName)
+                try container.encode(myAnswer, forKey: .myAnswer)
+                try container.encode(currentResults, forKey: .currentResults)
+            case .restoreTo:
+                throw EncodingError.invalidValue(self, EncodingError.Context(codingPath: encoder.codingPath, debugDescription: "Persisting a .restoreTo value is not permitted."))
+            default:
+                throw EncodingError.invalidValue(self, EncodingError.Context(codingPath: encoder.codingPath, debugDescription: "No support for encoding value \(self)"))
+            }
+        }
+        
+        var name: String {
+            switch self {
+            case .unbound:
+                return "unbound"
+            case .initialState:
+                return "initialState"
+            case .resultsSeeded:
+                return "resultsSeeded"
+            case .submittingAnswer:
+                return "submittingAnswer"
+            case .refreshingResults:
+                return "refreshingResults"
+            case .restoreTo:
+                return "restoreTo"
+            case .pollAnswered:
+                return "pollAnswered"
+            }
+        }
+        
         case unbound
-        // TODO: I've put pollBlock in each of the below states, but that may become a problem for state restoring. Instead, have unbound (vs all other states) be reflected by the block instance variable.
         case initialState
         case resultsSeeded(initialResults: PollResults)
         case pollAnswered(myAnswer: PollAnswer)
         case submittingAnswer(myAnswer: PollAnswer, initialResults: PollResults)
         case refreshingResults(myAnswer: PollAnswer, currentResults: PollResults)
+        case restoreTo(state: PollState)
     }
     
-    private func canTransition(from currentState: PollState<ImagePollBlock>, to newState: PollState<ImagePollBlock>) -> Bool {
+    private func canTransition(from currentState: PollState, to newState: PollState) -> Bool {
         switch (currentState, newState) {
         case(.unbound, .initialState):
+            return true
+        case(.unbound, .restoreTo):
             return true
         case (.initialState, .resultsSeeded):
             return true
@@ -395,26 +476,51 @@ class ImagePollCell: BlockCell, PollCell {
         case (.refreshingResults, .refreshingResults):
             return true
         default:
-            switch newState {
-            // allow any state to transition back to unbound.
-            case .unbound:
-                return true
+            switch currentState {
+                // allow restoreTo to transition to any state except for pollAnswered.
+                case let .restoreTo(newState):
+                       // .restoreTo is a special case.  It allows you to restore to all states except for pollAnswered (because that one expects a background side effect to be running).
+                       switch newState {
+                       case .pollAnswered:
+                           return false
+                       default:
+                           return true
+                       }
             default:
-                return false
+                switch newState {
+                  // allow any state to transition back to unbound.
+                  case .unbound:
+                      return true
+                  default:
+                      return false
+                  }
             }
         }
     }
     
-    private var state: PollState<ImagePollBlock> = .unbound {
+    private var state: PollState = .unbound {
         willSet {
-            assert(canTransition(from: state, to: newValue), "Invalid state transition!")
-            os_log("Poll block transitioning from %s state to %s.", String(describing: state), String(describing: newValue))
+            assert(canTransition(from: state, to: newValue), "Invalid state transition from \(state.name) to \(state.name)!")
+            os_log("Poll block transitioning from %s state to %s.", state.name, newValue.name)
         }
         
         didSet {
+            // results should only be animated if we are not restoring.
+            let shouldAnimateResults: Bool
+            switch oldValue {
+            case .restoreTo:
+                shouldAnimateResults = false
+            default:
+                shouldAnimateResults = true
+            }
+            
+            
             switch state {
             case .unbound:
                 killUi()
+                
+                // do not allow the state saving logic below to operate, because without being bound to a poll we aren't able to persist anything on its behalf.
+                return
             case .initialState:
                 killUi()
                 // Start loading initial results.
@@ -423,7 +529,7 @@ class ImagePollCell: BlockCell, PollCell {
                 // If user selects answer before initial results load, transition to .pollAnswered
                 
                 guard let imagePollBlock = self.block as? ImagePollBlock else {
-                    os_log("Transitioned into an active state without the block being configured.")
+                    os_log("Transitioned into .initialState state without the block being configured.")
                     return
                 }
 
@@ -481,7 +587,9 @@ class ImagePollCell: BlockCell, PollCell {
                 // After the user answers, transition to .submittingAnswer
                 
                 // handleOptionTapped() will check for this state and transition to .submittingAnswer.
-                // No need to update option view states, they were correct in the last state.
+                self.optionViews.forEach({ (optionView) in
+                    optionView.revealQuestionState()
+                })
                 
                 break
             case let .pollAnswered(myAnswer):
@@ -501,7 +609,7 @@ class ImagePollCell: BlockCell, PollCell {
                 // The value of currentResults passed to the .refreshingResults case should INCLUDE the user's answer
                 
                 guard let imagePollBlock = self.block as? ImagePollBlock else {
-                    os_log("Transitioned into an active state without the block being configured.")
+                    os_log("Transitioned into .submittingAnswer state without the block being configured.")
                     return
                 }
                 
@@ -525,7 +633,7 @@ class ImagePollCell: BlockCell, PollCell {
                         os_log("A result was not given for option: %s.  Did you remember to unsubscribe on recycle?", log: .rover, type: .error, optionID)
                         return
                     }
-                    optionView.revealResultsState(animated: true, optionResults: optionResults)
+                    optionView.revealResultsState(animated: shouldAnimateResults, optionResults: optionResults)
                 }
                 
                 if let selectedOption = imagePollBlock.imagePoll.options.first(where: { $0.id == myAnswer }) {
@@ -571,7 +679,7 @@ class ImagePollCell: BlockCell, PollCell {
                 // TODO: particularly when restoring, confirm that currentResults still matches that in imagePollBlock!
                 
                 guard let imagePollBlock = self.block as? ImagePollBlock else {
-                    os_log("Transitioned into an active state without the block being configured.")
+                    os_log("Transitioned into .refreshingResults state without the block being configured.")
                     return
                 }
                 
@@ -588,7 +696,7 @@ class ImagePollCell: BlockCell, PollCell {
                         os_log("A result was not given for option: %s.  Did you remember to unsubscribe on recycle?", log: .rover, type: .error, optionID)
                         return
                     }
-                    optionView.revealResultsState(animated: true, optionResults: optionResults)
+                    optionView.revealResultsState(animated: shouldAnimateResults, optionResults: optionResults)
                 }
                 
                 let currentlyAssignedBlock = imagePollBlock
@@ -628,9 +736,32 @@ class ImagePollCell: BlockCell, PollCell {
                 default:
                     recursiveFetch()
                 }
+            case let .restoreTo(newState):
+                DispatchQueue.main.async {
+                    self.state = newState
+                }
                 
+                // do not allow the state saving logic below to operate.
+                return
             }
+            
+            // Now persist the state to disk.
+            
+            guard let imagePollBlock = self.block as? ImagePollBlock else {
+                os_log("Trying to save the state to disk, but the block has not yet been configured.")
+                return
+            }
+            
+            guard let experienceID = self.experienceID else {
+                os_log("Trying to save the state to disk, but the block has not yet been informed of the containing experience. Reverting to unbound.", log: .rover, type: .error)
+                state = .unbound
+                return
+            }
+            
+            UserDefaults().writeStateJsonForPoll(id: imagePollBlock.pollID(containedBy: experienceID), json: self.state)
+            os_log("Wrote new state for Poll %s to disk.", log: .rover, type: .error, imagePollBlock.id)
         }
+        
     }
     
     /// a simple container view to the relatively complex layout of the text poll.
@@ -649,7 +780,35 @@ class ImagePollCell: BlockCell, PollCell {
         self.state = .unbound
         super.configure(with: block)
         
-        self.state = .initialState
+        guard let imagePollBlock = self.block as? ImagePollBlock else {
+            os_log("ImagePollCell configured with a block that is not an Image Poll block.")
+            return
+        }
+        
+        guard let experienceID = self.experienceID else {
+            os_log("Attempt to configure poll block cell before informing it of the containing experience. Reverting to unbound.", log: .rover, type: .error)
+            state = .unbound
+            return
+        }
+        
+        
+        killUi()
+        buildUiForPoll(imagePollBlock: imagePollBlock)
+        
+        // if an existing state is available for the poll, jump to it:
+        
+        if let restoredState: PollState = UserDefaults().retrieveStateJsonForPoll(id: imagePollBlock.pollID(containedBy: experienceID)) {
+            switch restoredState {
+            case .pollAnswered:
+                // The Poll Answered state is a transitive one and expects that a background task is running, which would not be in the event of a restore.  So skip back to the beginning in that case.
+                self.state = .initialState
+            default:
+                os_log("Restoring state to %s.", restoredState.name)
+                self.state = .restoreTo(state: restoredState)
+            }
+        } else {
+            self.state = .initialState
+        }
     }
 }
 
@@ -732,35 +891,6 @@ private extension UIImageView {
 private extension ImagePollBlock.ImagePoll.Option {
     var attributedText: NSAttributedString? {
         return self.text.attributedText(forFormat: .plain)
-    }
-}
-
-private extension Dictionary where Key == String, Value == PollsStorageService.OptionStatus {
-    var viewOptionStatuses: [String: ImagePollOptionView.OptionResults] {
-        let votesByOptionIds = self.mapValues { $0.voteCount }
-        let totalVotes = votesByOptionIds.values.reduce(0, +)
-        let roundedPercentagesByOptionIds = votesByOptionIds.percentagesWithDistributedRemainder()
-        
-        return self.keys.map { optionID -> (String, ImagePollOptionView.OptionResults) in
-            let optionStatus = self[optionID]!
-            
-            let fraction: Double
-            if totalVotes == 0 {
-                fraction = 0
-            } else {
-                fraction = Double(optionStatus.voteCount) / Double(totalVotes)
-            }
-            let optionResults = ImagePollOptionView.OptionResults(
-                selected: optionStatus.selected,
-                fraction: fraction,
-                percentage: roundedPercentagesByOptionIds[optionID]!
-            )
-            
-            return (optionID, optionResults)
-        }.reduce(into: [String: ImagePollOptionView.OptionResults]()) { (dictionary, tuple) in
-            let (optionID, optionStatus) = tuple
-            dictionary[optionID] = optionStatus
-        }
     }
 }
 

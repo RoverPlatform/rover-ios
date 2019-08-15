@@ -509,7 +509,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     
     // MARK: Poll Answer
     
-    func castVote(on imagePollBlock: ImagePollBlock, for option: ImagePollBlock.ImagePoll.Option) {
+    func didCastVote(on imagePollBlock: ImagePollBlock, for option: ImagePollBlock.ImagePoll.Option) {
         PollsStorageService.shared.castVote(pollID: imagePollBlock.pollID(containedBy: experience.id), givenOptionIds: imagePollBlock.imagePoll.votableOptionIDs, optionID: option.id)
         
         var userInfo: [String: Any] = [
@@ -531,7 +531,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         
     }
     
-    func castVote(on textPollBlock: TextPollBlock, for option: TextPollBlock.TextPoll.Option) {
+    func didCastVote(on textPollBlock: TextPollBlock, for option: TextPollBlock.TextPoll.Option) {
         PollsStorageService.shared.castVote(pollID: textPollBlock.pollID(containedBy: experience.id), givenOptionIds: textPollBlock.textPoll.votableOptionIds, optionID: option.id)
         
         var userInfo: [String: Any] = [

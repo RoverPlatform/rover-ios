@@ -368,13 +368,13 @@ class TextPollCell: BlockCell, PollCell {
                 let viewOptionStatuses = optionResults.viewOptionStatuses
                 self.optionViews = textPollBlock.textPoll.options.map { option in
                     TextPollOptionView(option: option, initialState: .answered(optionResults: viewOptionStatuses[option.id] ?? TextPollOptionView.OptionResults(selected: false, fraction: 0, percentage: 0))) { [weak self] in
-                           self?.delegate?.castVote(on: textPollBlock, for: option)
+                           self?.delegate?.didCastVote(on: textPollBlock, for: option)
                     }
                 }
             case .waitingForAnswer:
                 self.optionViews = textPollBlock.textPoll.options.map { option in
                     TextPollOptionView(option: option, initialState: .waitingForAnswer) { [weak self] in
-                           self?.delegate?.castVote(on: textPollBlock, for: option)
+                           self?.delegate?.didCastVote(on: textPollBlock, for: option)
                     }
                 }
         }
@@ -401,7 +401,7 @@ class TextPollCell: BlockCell, PollCell {
 // MARK: Cell Delegate
 
 protocol TextPollCellDelegate: AnyObject {
-    func castVote(on textPollBlock: TextPollBlock, for option: TextPollBlock.TextPoll.Option)
+    func didCastVote(on textPollBlock: TextPollBlock, for option: TextPollBlock.TextPoll.Option)
 }
 
 // MARK: Measurement

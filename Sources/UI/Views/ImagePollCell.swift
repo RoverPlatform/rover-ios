@@ -314,6 +314,8 @@ class ImagePollCell: BlockCell, PollCell {
         self.optionStack?.removeFromSuperview()
     }
     
+
+    
     /// Drive possible state transitions as required by user input in the form of a tap (meant as a vote) on a given option.
     private func handleOptionTapped(imagePollBlock: ImagePollBlock, for optionID: String) {
         switch self.state {
@@ -370,9 +372,9 @@ class ImagePollCell: BlockCell, PollCell {
         ]
 
         NSLayoutConstraint.activate(questionConstraints + stackConstraints)
-                        
-                        
     }
+
+    // TODO: implement non-volatile state restore for State.
     
     var state: PollState<ImagePollBlock> = .unbound {
         willSet {
@@ -436,7 +438,7 @@ class ImagePollCell: BlockCell, PollCell {
                                 return
                             }
                         case .failed:
-                            // TODO: bother retrying? Or just leave ourselves in the fetch state?
+                            // TODO: retry.
                             os_log("Initial poll results fetch failed.", log: .rover, type: .error)
                         }
                     }
@@ -498,10 +500,11 @@ class ImagePollCell: BlockCell, PollCell {
                 }
                 
                 if let selectedOption = imagePollBlock.imagePoll.options.first(where: { $0.id == myAnswer }) {
-                    self.delegate?.castVote(on: imagePollBlock, for: selectedOption)
+                    self.delegate?.didCastVote(on: imagePollBlock, for: selectedOption)
                 }
                 
                 let currentlyAssignedBlock = imagePollBlock
+                
                 self.urlSession.castVote(pollID: imagePollBlock.pollID(containedBy: experienceID), optionID: myAnswer) { [weak self] castVoteResults in
                     DispatchQueue.main.async {
                         guard let self = self else {
@@ -523,8 +526,9 @@ class ImagePollCell: BlockCell, PollCell {
                                 break
                             }
                         case .failed:
-                            // TODO: bother retrying? Or just leave ourselves in the fetch state?
-                            os_log("Initial poll results fetch failed.", log: .rover, type: .error)
+                            // TODO: make this do the same recursive retry pattern as the other requests.
+                            os_log("Cast vote request failed.", log: .rover, type: .error)
+                            
                         }
                     }
                 }
@@ -651,8 +655,7 @@ class ImagePollCell: BlockCell, PollCell {
 // MARK: Cell Delegate
 
 protocol ImagePollCellDelegate: AnyObject {
-    // TODO: rename to didCastVote.
-    func castVote(on imagePollBlock: ImagePollBlock, for option: ImagePollBlock.ImagePoll.Option)
+    func didCastVote(on imagePollBlock: ImagePollBlock, for option: ImagePollBlock.ImagePoll.Option)
 }
 
 // MARK: Measurement

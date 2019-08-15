@@ -10,7 +10,7 @@ import os
 
 // MARK: Largest Remainder Method
 
-extension Dictionary where Value == Int {
+extension Dictionary where Value == Int, Key: Comparable {
     /// Calculates percentages for each Value in the Dictionary, given the total as denominator.  Yields whole-number percentages as the result.  Uses the Largest Remainder Method to ensure they evenly add up to 100%.  Operates on values associated in a dictionary, allowing you to track which percentage value is associated with which input value.
     func percentagesWithDistributedRemainder() -> [Key: Int] {
         // Largest Remainder Method in order to enable us to produce nice integer percentage values for each option that all add up to 100%.
@@ -26,8 +26,6 @@ extension Dictionary where Value == Int {
             (Double(votes) / Double(totalVotes)) * 100
         }
         
-        
-        
         let withRoundedDownPercentages: [Key:(Double, Int)] = asExactPercentages.mapValues { exactPercentage in
             return (exactPercentage, Int(exactPercentage.rounded(.down)))
         }
@@ -38,7 +36,16 @@ extension Dictionary where Value == Int {
         
         let remainder = 100 - totalWithoutRemainders
         
-        let optionsSortedByDecimal = withRoundedDownPercentages.sorted { (firstOption, secondOption) -> Bool in
+        // before we sort the options by the decimal, which is the standard procedure for LRM, we'll pre-sort them by the string key (id) for each option in order to make the distribution of the remainder amongst the options in the last step more deterministic in the event of equal remainders between options.
+        
+        let optionsSortedById = withRoundedDownPercentages.sorted { (firstOption, secondOption) -> Bool in
+            let (firstKey, (_, _)) = firstOption
+            let (secondKey, (_, _)) = secondOption
+            
+            return firstKey > secondKey
+        }
+        
+        let optionsSortedByDecimal = optionsSortedById.sorted { (firstOption, secondOption) -> Bool in
             let (_, (firstPercentage, firstRoundedDownPercentage)) = firstOption
             let (_, (secondPercentage, secondRoundedDownPercentage)) = secondOption
             

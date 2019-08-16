@@ -13,36 +13,6 @@ protocol PollCellDelegate: AnyObject {
     func didCastVote(on pollBlock: PollBlock, for option: PollOption)
 }
 
-class PollCellQuestion: UIView {
-    let textView = UILabel()
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        
-        textView.numberOfLines = 0
-        
-        
-//        textView.clipsToBounds = true
-//        textView.isScrollEnabled = false
-//        textView.backgroundColor = UIColor.clear
-//        textView.isUserInteractionEnabled = false
-//        textView.textContainer.lineFragmentPadding = 0
-//        textView.textContainerInset = UIEdgeInsets.zero
-        textView.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(textView)
-        NSLayoutConstraint.activate([
-            textView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            textView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            textView.topAnchor.constraint(equalTo: topAnchor),
-            textView.trailingAnchor.constraint(equalTo: trailingAnchor)
-        ])
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
-
 class PollCell: BlockCell {
     struct OptionResult {
         let selected: Bool
@@ -60,12 +30,63 @@ class PollCell: BlockCell {
     var isLoading = false {
         didSet {
             alpha = isLoading ? 0.5 : 1.0
-//            isUserInteractionEnabled = !isLoading
+            isUserInteractionEnabled = !isLoading
         }
     }
     
-    let containerView = UIStackView()
-    let question = PollCellQuestion()
+    let containerView = UIView()
+    let question = UITextView()
+    let optionsList = UIStackView()
+    
+    var verticalSpacing: CGFloat = 0 {
+        didSet {
+            optionsList.spacing = verticalSpacing
+            spacingConstraint.constant = verticalSpacing
+        }
+    }
+    
+    var spacingConstraint: NSLayoutConstraint!
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        
+        // question
+        
+        question.clipsToBounds = true
+        question.isScrollEnabled = false
+        question.backgroundColor = UIColor.clear
+        question.isUserInteractionEnabled = false
+        question.textContainer.lineFragmentPadding = 0
+        question.textContainerInset = UIEdgeInsets.zero
+        question.translatesAutoresizingMaskIntoConstraints = false
+        containerView.addSubview(question)
+        
+        NSLayoutConstraint.activate([
+            question.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            question.topAnchor.constraint(equalTo: containerView.topAnchor),
+            question.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
+        ])
+        
+        // optionsList
+        
+        optionsList.axis = .vertical
+        optionsList.translatesAutoresizingMaskIntoConstraints = false
+        containerView.addSubview(optionsList)
+        
+        NSLayoutConstraint.activate([
+            optionsList.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            optionsList.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
+        ])
+        
+        // spacingConstraint
+        
+        spacingConstraint = optionsList.topAnchor.constraint(equalTo: question.bottomAnchor, constant: 0)
+        spacingConstraint.isActive = true
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func configure(with block: Block) {
         state = .unbound
@@ -96,16 +117,6 @@ class PollCell: BlockCell {
         } else {
             self.state = .initialState
         }
-    }
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        containerView.axis = .vertical
-        containerView.addArrangedSubview(question)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
     
     // MARK: Template Methods

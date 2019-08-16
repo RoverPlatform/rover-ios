@@ -10,19 +10,6 @@ import os
 import UIKit
 
 class TextPollCell: PollCell {
-    let optionsList = UIStackView()
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        
-        optionsList.axis = .vertical
-        containerView.addArrangedSubview(optionsList)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     override func configure(with block: Block) {
         super.configure(with: block)
         
@@ -32,9 +19,8 @@ class TextPollCell: PollCell {
         
         let poll = block.textPoll
         let options = poll.options
-        let spacing = CGFloat(options.first?.topMargin ?? 0)
-        containerView.spacing = spacing
-        optionsList.spacing = spacing
+        verticalSpacing = CGFloat(options.first?.topMargin ?? 0)
+        
         optionsList.arrangedSubviews.forEach { $0.removeFromSuperview() }
         
         options
@@ -45,11 +31,7 @@ class TextPollCell: PollCell {
             }
             .forEach { optionsList.addArrangedSubview($0) }
         
-        question.textView.attributedText = poll.question.attributedText(forFormat: .plain)
-//        let question = poll.question
-//        questionLabel.font = question.font.uiFont
-//        questionLabel.text = question.rawValue
-//        questionLabel.textColor = question.color.uiColor
+        question.attributedText = poll.question.attributedText(forFormat: .plain)
     } 
     
     // MARK: Results

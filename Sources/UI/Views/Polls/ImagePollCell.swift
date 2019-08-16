@@ -9,19 +9,6 @@
 import UIKit
 
 class ImagePollCell: PollCell {
-    let grid = UIStackView()
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        
-        grid.axis = .vertical
-        containerView.addArrangedSubview(grid)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     override func configure(with block: Block) {
         super.configure(with: block)
 
@@ -36,12 +23,10 @@ class ImagePollCell: PollCell {
             return
         }
         
+        verticalSpacing = CGFloat(options[0].topMargin)
         let horizontalSpacing = CGFloat(options[1].leftMargin)
-        let verticalSpacing = CGFloat(options[0].topMargin)
         
-        containerView.spacing = verticalSpacing
-        grid.spacing = verticalSpacing
-        grid.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        optionsList.arrangedSubviews.forEach { $0.removeFromSuperview() }
         
         options.tuples
             .map { pair -> (ImagePollOption, ImagePollOption) in
@@ -63,18 +48,13 @@ class ImagePollCell: PollCell {
                 stackView.distribution = .fillEqually
                 return stackView
             }
-            .forEach { grid.addArrangedSubview($0) }
+            .forEach { optionsList.addArrangedSubview($0) }
         
-        question.textView.attributedText = poll.question.attributedText(forFormat: .plain)
-        
-//        questionLabel.font = question.font.uiFont
-//        questionLabel.text = question.rawValue
-//        print("SEANTEST Setting questionLabel.text to: \(question.rawValue)")
-//        questionLabel.textColor = question.color.uiColor
+        question.attributedText = poll.question.attributedText(forFormat: .plain)
     }
     
     override func setResults(_ results: [PollCell.OptionResult], animated: Bool) {
-        let options: [ImagePollOption] = grid.arrangedSubviews.reduce(into: []) { result, row in
+        let options: [ImagePollOption] = optionsList.arrangedSubviews.reduce(into: []) { result, row in
             (row as! UIStackView).arrangedSubviews
                 .map { $0 as! ImagePollOption }
                 .forEach { result.append($0) }
@@ -85,7 +65,7 @@ class ImagePollCell: PollCell {
     }
     
     override func clearResults() {
-        let options: [ImagePollOption] = grid.arrangedSubviews.reduce(into: []) { result, row in
+        let options: [ImagePollOption] = optionsList.arrangedSubviews.reduce(into: []) { result, row in
             (row as! UIStackView).arrangedSubviews
                 .map { $0 as! ImagePollOption }
                 .forEach { result.append($0) }

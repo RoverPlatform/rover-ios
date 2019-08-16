@@ -457,33 +457,36 @@ class PollCell: BlockCell {
                 
                 let currentlyAssignedBlock = pollBlock
                 func recursiveFetch(delay: TimeInterval = 0) {
-                    self.urlSession.fetchPollResults(for: pollBlock.pollID(containedBy: experienceID), optionIds: pollBlock.poll.optionIDs) { [weak self] results in
-                        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(Int(delay * 1000))) {
-                            switch self?.state {
-                            case .refreshingResults:
-                                if currentlyAssignedBlock.id != pollBlock.id {
+                    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(Int(delay * 1000))) {
+                        self.urlSession.fetchPollResults(for: pollBlock.pollID(containedBy: experienceID), optionIds: pollBlock.poll.optionIDs) { [weak self] results in
+                            DispatchQueue.main.async {
+                                switch self?.state {
+                                case .refreshingResults:
+                                    if currentlyAssignedBlock.id != pollBlock.id {
+                                        return
+                                    }
+                                    break;
+                                default:
+                                    os_log("Poll Block has transitioned away from .refreshingResults, ending automatic refresh.", log: .rover, type: .error)
                                     return
                                 }
-                                break;
-                            default:
-                                os_log("Poll Block has transitioned away from .refreshingResults, ending automatic refresh.", log: .rover, type: .error)
-                                return
+                                
+                                switch results {
+                                    case .failed:
+                                        os_log("Unable to fetch poll results. Will retry.", log: .rover, type: .fault)
+                                    case let .fetched(results):
+                                        // update local state!
+                                        os_log("Successfully fetched current poll results.", log: .rover, type: .debug)
+                                        
+                                        self?.state = .refreshingResults(myAnswer: myAnswer, currentResults: results.results)
+                                }
+                                // queue up next attempt.
+                                recursiveFetch(delay: 5)
                             }
-                            
-                            switch results {
-                                case .failed:
-                                    os_log("Unable to fetch poll results. Will retry.", log: .rover, type: .fault)
-                                case let .fetched(results):
-                                    // update local state!
-                                    os_log("Successfully fetched current poll results: %s", log: .rover, type: .debug, String(describing: results.results.values))
-                                    
-                                    self?.state = .refreshingResults(myAnswer: myAnswer, currentResults: results.results)
-                            }
-                            // queue up next attempt.
-                            recursiveFetch(delay: 5)
                         }
                     }
                 }
+                
                 
                 // kick off the recursive fetch, but only if we are transitioning into .refreshingResults. If we are already there, then a recursive fetch is already running.
                 switch oldValue {

@@ -12,7 +12,7 @@ import UIKit
 class TextPollOption: UIView {
     let backgroundView = UIImageView()
     let fillBar: PollOptionFillBar
-    let label: TextPollOptionLabel
+    let textContainer: TextPollOptionTextContainer
     
     let option: TextPollBlock.TextPoll.Option
     let tapHandler: () -> Void
@@ -21,7 +21,7 @@ class TextPollOption: UIView {
         self.option = option
         self.tapHandler = tapHandler
         fillBar = PollOptionFillBar(color: option.resultFillColor)
-        label = TextPollOptionLabel(option: option)
+        textContainer = TextPollOptionTextContainer(option: option)
         super.init(frame: .zero)
         
         clipsToBounds = true
@@ -57,13 +57,13 @@ class TextPollOption: UIView {
         
         // label
         
-        label.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(label)
+        textContainer.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(textContainer)
         NSLayoutConstraint.activate([
-            label.bottomAnchor.constraint(equalTo: bottomAnchor),
-            label.leadingAnchor.constraint(equalTo: leadingAnchor),
-            label.topAnchor.constraint(equalTo: topAnchor),
-            label.trailingAnchor.constraint(equalTo: trailingAnchor)
+            textContainer.bottomAnchor.constraint(equalTo: bottomAnchor),
+            textContainer.leadingAnchor.constraint(equalTo: leadingAnchor),
+            textContainer.topAnchor.constraint(equalTo: topAnchor),
+            textContainer.trailingAnchor.constraint(equalTo: trailingAnchor)
         ])
         
         // gestureRecognizer
@@ -83,14 +83,14 @@ class TextPollOption: UIView {
     
     func setResult(_ result: PollCell.OptionResult, animated: Bool) {
         fillBar.setFillPercentage(to: result.fraction, animated: animated)
-        label.setPercentage(to: result.percentage, animated: animated)
-        label.isSelected = result.selected
+        textContainer.setPercentage(to: result.percentage, animated: animated)
+        textContainer.isSelected = result.selected
     }
     
     func clearResult() {
         fillBar.setFillPercentage(to: 0, animated: false)
-        label.setPercentage(to: nil, animated: false)
-        label.isSelected = false
+        textContainer.setPercentage(to: nil, animated: false)
+        textContainer.isSelected = false
     }
     
     @objc

@@ -10,7 +10,7 @@ import UIKit
 
 class ImagePollOptionOverlay: UIView {
     let fillBar: PollOptionFillBar
-    let label = UILabel()
+    let label = PollOptionPercentageLabel()
     let stackView = UIStackView()
     
     init(option: ImagePollBlock.ImagePoll.Option) {

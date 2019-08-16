@@ -74,8 +74,7 @@ class ImagePollOption: UIView {
     
     func setResult(_ result: PollCell.OptionResult, animated: Bool) {
         overlay.fillBar.setFillPercentage(to: result.fraction, animated: animated)
-//        label.setPercentage(to: result.percentage, animated: animated)
-        overlay.label.text = "\(result.percentage)%"
+        overlay.label.setPercentage(to: result.percentage, animated: animated)
         caption.isSelected = result.selected
         
         let duration: TimeInterval = animated ? 0.167 : 0

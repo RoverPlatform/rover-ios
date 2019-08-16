@@ -15,7 +15,8 @@ import UIKit
 /// handling button taps. It posts [`Notification`s](https://developer.apple.com/documentation/foundation/notification)
 /// through the default [`NotificationCenter`](https://developer.apple.com/documentation/foundation/notificationcenter)
 /// when it is presented, dismissed and viewed.
-open class ScreenViewController: UICollectionViewController, UICollectionViewDataSourcePrefetching, ImagePollCellDelegate, TextPollCellDelegate {
+open class ScreenViewController: UICollectionViewController, UICollectionViewDataSourcePrefetching, PollCellDelegate {
+    
     public let experience: Experience
     public let campaignID: String?
     public let screen: Screen
@@ -364,12 +365,8 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath)
         
         
-        if let textPollCell = cell as? TextPollCell {
-            textPollCell.delegate = self
-        }
-        
-        if let imagePollCell = cell as? ImagePollCell {
-            imagePollCell.delegate = self
+        if let pollCell = cell as? PollCell {
+            pollCell.delegate = self
         }
         
         if let attributes = collectionViewLayout.layoutAttributesForItem(at: indexPath) as? ScreenLayoutAttributes, let clipRect = attributes.clipRect {
@@ -509,35 +506,11 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     
     // MARK: Poll Answer
     
-    func castVote(on imagePollBlock: ImagePollBlock, for option: ImagePollBlock.ImagePoll.Option) {
-        PollsVotingService.shared.castVote(pollID: imagePollBlock.pollID(containedBy: experience.id), givenOptionIds: imagePollBlock.imagePoll.votableOptionIds, optionId: option.id)
-        
+    func didCastVote(on pollBlock: PollBlock, for option: PollOption) {
         var userInfo: [String: Any] = [
             ScreenViewController.experienceUserInfoKey: experience,
             ScreenViewController.screenUserInfoKey: screen,
-            ScreenViewController.blockUserInfoKey: imagePollBlock,
-            ScreenViewController.optionUserInfoKey: option
-        ]
-        
-        if let campaignID = campaignID {
-            userInfo[ScreenViewController.campaignIDUserInfoKey] = campaignID
-        }
-        
-        NotificationCenter.default.post(
-            name: ScreenViewController.pollAnsweredNotification,
-            object: self,
-            userInfo: userInfo
-        )
-        
-    }
-    
-    func castVote(on textPollBlock: TextPollBlock, for option: TextPollBlock.TextPoll.Option) {
-        PollsVotingService.shared.castVote(pollID: textPollBlock.pollID(containedBy: experience.id), givenOptionIds: textPollBlock.textPoll.votableOptionIds, optionId: option.id)
-        
-        var userInfo: [String: Any] = [
-            ScreenViewController.experienceUserInfoKey: experience,
-            ScreenViewController.screenUserInfoKey: screen,
-            ScreenViewController.blockUserInfoKey: textPollBlock,
+            ScreenViewController.blockUserInfoKey: pollBlock,
             ScreenViewController.optionUserInfoKey: option
         ]
         

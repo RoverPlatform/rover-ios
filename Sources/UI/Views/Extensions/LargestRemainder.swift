@@ -42,7 +42,7 @@ extension Dictionary where Value == Int, Key: Comparable {
             let (firstKey, (_, _)) = firstOption
             let (secondKey, (_, _)) = secondOption
             
-            return firstKey > secondKey
+            return firstKey < secondKey
         }
         
         let optionsSortedByDecimal = optionsSortedById.sorted { (firstOption, secondOption) -> Bool in

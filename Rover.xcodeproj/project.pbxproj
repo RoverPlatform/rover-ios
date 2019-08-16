@@ -15,7 +15,6 @@
 		4914B3EA22B9373900FA395E /* TextPollBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4914B3E922B9373900FA395E /* TextPollBlock.swift */; };
 		4914B3F022BABA6500FA395E /* ImagePollCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4914B3EF22BABA6500FA395E /* ImagePollCell.swift */; };
 		491A9FCB2305A7620069E038 /* URLSession+PollsRequests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 491A9FCA2305A7620069E038 /* URLSession+PollsRequests.swift */; };
-		491EDCD622F38899003FD25E /* ModelExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 491EDCD522F38899003FD25E /* ModelExtensions.swift */; };
 		491EDCD822F38A99003FD25E /* LargestRemainder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 491EDCD722F38A99003FD25E /* LargestRemainder.swift */; };
 		492F7A5222E6640D00D1F653 /* UIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492F7A5122E6640D00D1F653 /* UIView.swift */; };
 		492F7A5422E6642900D1F653 /* UIImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492F7A5322E6642900D1F653 /* UIImageView.swift */; };
@@ -95,7 +94,6 @@
 		4914B3E922B9373900FA395E /* TextPollBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextPollBlock.swift; sourceTree = "<group>"; };
 		4914B3EF22BABA6500FA395E /* ImagePollCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePollCell.swift; sourceTree = "<group>"; };
 		491A9FCA2305A7620069E038 /* URLSession+PollsRequests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLSession+PollsRequests.swift"; sourceTree = "<group>"; };
-		491EDCD522F38899003FD25E /* ModelExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelExtensions.swift; sourceTree = "<group>"; };
 		491EDCD722F38A99003FD25E /* LargestRemainder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LargestRemainder.swift; sourceTree = "<group>"; };
 		492F7A5122E6640D00D1F653 /* UIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIView.swift; sourceTree = "<group>"; };
 		492F7A5322E6642900D1F653 /* UIImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImageView.swift; sourceTree = "<group>"; };
@@ -193,7 +191,6 @@
 			children = (
 				492F7A5122E6640D00D1F653 /* UIView.swift */,
 				492F7A5322E6642900D1F653 /* UIImageView.swift */,
-				491EDCD522F38899003FD25E /* ModelExtensions.swift */,
 				491EDCD722F38A99003FD25E /* LargestRemainder.swift */,
 			);
 			path = Extensions;
@@ -519,7 +516,6 @@
 				4953DD3622399A8500286C4B /* Color.swift in Sources */,
 				DB7B853E23060FFB008D628E /* TextPollCell.swift in Sources */,
 				DB8FF7102286064400BDE2DC /* ExperienceStore.swift in Sources */,
-				491EDCD622F38899003FD25E /* ModelExtensions.swift in Sources */,
 				DB7B854623062AAE008D628E /* ImagePollOptionLabel.swift in Sources */,
 				492F7A5422E6642900D1F653 /* UIImageView.swift in Sources */,
 				4953DD3B22399A8500286C4B /* Insets.swift in Sources */,

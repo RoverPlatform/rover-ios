@@ -226,18 +226,10 @@ class PollsStorageService {
 
 // MARK: External Helpers
 
+// TODO: kill
 extension TextPollBlock.TextPoll {
     /// Gather up votable option IDs from the options on this Poll, for  use with the PollsVotingService.
     var votableOptionIds: [String] {
-        return self.options.map { option in
-            option.id
-        }
-    }
-}
-
-extension ImagePollBlock.ImagePoll {
-    /// Gather up votable option IDs from the options on this Poll, for  use with the PollsVotingService.
-    var votableOptionIDs: [String] {
         return self.options.map { option in
             option.id
         }

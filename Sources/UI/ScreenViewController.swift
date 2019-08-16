@@ -16,6 +16,7 @@ import UIKit
 /// through the default [`NotificationCenter`](https://developer.apple.com/documentation/foundation/notificationcenter)
 /// when it is presented, dismissed and viewed.
 open class ScreenViewController: UICollectionViewController, UICollectionViewDataSourcePrefetching, PollCellDelegate, ImagePollCellDelegate {
+    
     public let experience: Experience
     public let campaignID: String?
     public let screen: Screen
@@ -386,7 +387,12 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         
         let block = screen.rows[indexPath.section].blocks[indexPath.row]
         
+        // TODO: delete
         if let pollCell = blockCell as? ImagePollCell {
+            pollCell.experienceID = self.experience.id
+        }
+        
+        if let pollCell = blockCell as? PollCell {
             pollCell.experienceID = self.experience.id
         }
         
@@ -529,14 +535,11 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         
     }
     
-    func didCastVote(on textPollBlock: TextPollBlock, for option: TextPollBlock.TextPoll.Option) {
-        // TODO: remove this when state machine is brought online in the text poll cell.
-        PollsStorageService.shared.castVote(pollID: textPollBlock.pollID(containedBy: experience.id), givenOptionIds: textPollBlock.textPoll.votableOptionIds, optionID: option.id)
-        
+    func didCastVote(on pollBlock: PollBlock, for option: PollOption) {
         var userInfo: [String: Any] = [
             ScreenViewController.experienceUserInfoKey: experience,
             ScreenViewController.screenUserInfoKey: screen,
-            ScreenViewController.blockUserInfoKey: textPollBlock,
+            ScreenViewController.blockUserInfoKey: pollBlock,
             ScreenViewController.optionUserInfoKey: option
         ]
         

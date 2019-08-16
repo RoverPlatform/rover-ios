@@ -96,9 +96,9 @@ class PollCell: BlockCell {
         fatalError("Must be overridden")
     }
     
-    func optionSelected(_ option: TextPollBlock.TextPoll.Option) {
-        if let textPollBlock = block as? TextPollBlock {
-            delegate?.didCastVote(on: textPollBlock, for: option)
+    func optionSelected(_ option: PollOption) {
+        if let pollBlock = block as? PollBlock {
+            delegate?.didCastVote(on: pollBlock, for: option)
         }
         
         switch self.state {
@@ -111,25 +111,6 @@ class PollCell: BlockCell {
             return
         }
     }
-    
-    // TODO: squish one of these.
-    
-    func optionSelected(_ option: ImagePollBlock.ImagePoll.Option) {
-        if let imagePollBlock = block as? ImagePollBlock {
-            delegate?.didCastVote(on: imagePollBlock, for: option)
-        }
-        
-        switch self.state {
-        case .initialState:
-            self.state = .pollAnswered(myAnswer: option.id)
-        case let .resultsSeeded(initialResults):
-            self.state = .submittingAnswer(myAnswer: option.id, initialResults: initialResults)
-        default:
-            os_log("Vote attempt landed, but not currently in correct state to accept it.", log: .rover, type: .fault)
-            return
-        }
-    }
-    
     
     // MARK: State Machine
     
@@ -242,6 +223,8 @@ class PollCell: BlockCell {
             return true
         case (.refreshingResults, .refreshingResults):
             return true
+        case (.refreshingResults, .initialState):
+            return true
         default:
             switch currentState {
                 // allow restoreTo to transition to any state except for pollAnswered.
@@ -267,7 +250,7 @@ class PollCell: BlockCell {
     
     private var state: PollState = .unbound {
         willSet {
-            assert(canTransition(from: state, to: newValue), "Invalid state transition from \(state.name) to \(state.name)!")
+            assert(canTransition(from: state, to: newValue), "Invalid state transition from \(state.name) to \(newValue.name)!")
             os_log("Poll block transitioning from %s state to %s.", log: .rover, type: .debug, state.name, newValue.name)
         }
         
@@ -280,7 +263,6 @@ class PollCell: BlockCell {
             default:
                 shouldAnimateResults = true
             }
-            
             
             switch state {
             case .unbound:
@@ -429,7 +411,6 @@ class PollCell: BlockCell {
                                         break
                                     }
                                 case .failed:
-                                    // TODO: make this do the same recursive retry pattern as the other requests.
                                     os_log("Cast vote request failed. Will retry momentarily.", log: .rover, type: .error)
                                     recursiveVoteAttempt(delay: 1)
                                 }
@@ -457,12 +438,20 @@ class PollCell: BlockCell {
                     state = .unbound
                     return
                 }
-                
+                                
                 let viewOptionResults = currentResults.viewOptionStatuses(userAnswer: myAnswer)
                 
                 // Instead of a dictionary keyed by Option IDs, instead make an array ordered by the original order of the options in the poll.
-                let viewOptionResultsArray = pollBlock.poll.optionIDs.map {
-                    viewOptionResults[$0]!
+                let viewOptionResultsArray = pollBlock.poll.optionIDs.compactMap {
+                    viewOptionResults[$0]
+                }
+                
+                if viewOptionResultsArray.count != pollBlock.poll.optionIDs.count {
+                    os_log("Retrieved option results do not fully match those on the Experience Poll Block.  Resetting poll.", log: .rover, type: .fault)
+                    DispatchQueue.main.async {
+                        self.state = .initialState
+                    }
+                    return
                 }
 
                 setResults(viewOptionResultsArray, animated: shouldAnimateResults)
@@ -490,7 +479,13 @@ class PollCell: BlockCell {
                                         // update local state!
                                         os_log("Successfully fetched current poll results.", log: .rover, type: .debug)
                                         
-                                        self?.state = .refreshingResults(myAnswer: myAnswer, currentResults: results.results)
+                                        if Set(currentResults.keys) == Set(results.results.keys) {
+                                            self?.state = .refreshingResults(myAnswer: myAnswer, currentResults: results.results)
+                                        } else {
+                                            os_log("Currently voted-on results changed since user last voted.  Resetting poll.", log: .rover, type: .info)
+                                            self?.state = .initialState
+                                            return // prevent the refresh behaviour below from kicking in.
+                                        }
                                 }
                                 // queue up next attempt.
                                 recursiveFetch(delay: 5)
@@ -498,7 +493,6 @@ class PollCell: BlockCell {
                         }
                     }
                 }
-                
                 
                 // kick off the recursive fetch, but only if we are transitioning into .refreshingResults. If we are already there, then a recursive fetch is already running.
                 switch oldValue {

@@ -146,6 +146,27 @@ class PollCell: BlockCell {
     private let urlSession = URLSession.shared
     
     private indirect enum PollState: Codable {
+        /// The Poll Cell is not attached to the Poll block, and thus will be displaying nothing.
+        case unbound
+        
+        /// Present UI to allow user to select an answer. If results load before users selects an answer, transition to .resultsSeeded. If user selects answer before initial results load, transition to .pollAnswered
+        case initialState
+        
+        /// The initial results have loaded. Keep waiting for user to select an answer. After the user answers, transition to .submittingAnswer
+        case resultsSeeded(initialResults: PollResults)
+        
+        /// We've got an answer but we haven't received the seed results yet. Show a loading indicator while we wait. When results finish loading, transition to .submittingAnswer
+        case pollAnswered(myAnswer: PollAnswer)
+        
+        /// At this point the initial results have loaded AND the user has answered the poll. The initialResults will not include the user's answer yet because it hasn't been submitted to the server. Display the results version of the UI using the initialResults data. Use the myAnswer data to add +1 to the answer selected by the user and display the indicator circle. Begin a network request to submit the user's answer to the server. If the network request fails, try again. If the network request succeeds, transition to .refreshingResults. The value of currentResults passed to the .refreshingResults case should INCLUDE the user's answer.
+        case submittingAnswer(myAnswer: PollAnswer, initialResults: PollResults)
+        
+        /// At this point we have answered the poll and have the current results which INCLUDE the user's answer. Use the currentResults to populate the UI and the myAnswer property to display the indicator circle. Start a 5-second timer and make a network request to refresh the results. If network request fails, try again in 5-seconds. If network request succeeds, update the currentResults property with the new results.
+        case refreshingResults(myAnswer: PollAnswer, currentResults: PollResults)
+        
+        /// A stored copy of the [PollState] is available on disk. Transition directly to the prior state, where permitted.
+        case restoreTo(state: PollState)
+        
         private enum CodingKeys: String, CodingKey {
             case typeName
             case initialResults
@@ -224,14 +245,6 @@ class PollCell: BlockCell {
                 return "pollAnswered"
             }
         }
-        
-        case unbound
-        case initialState
-        case resultsSeeded(initialResults: PollResults)
-        case pollAnswered(myAnswer: PollAnswer)
-        case submittingAnswer(myAnswer: PollAnswer, initialResults: PollResults)
-        case refreshingResults(myAnswer: PollAnswer, currentResults: PollResults)
-        case restoreTo(state: PollState)
     }
     
     private func canTransition(from currentState: PollState, to newState: PollState) -> Bool {
@@ -294,14 +307,14 @@ class PollCell: BlockCell {
             }
             
             switch state {
+            // MARK: Unbound
             case .unbound:
                 // do not allow the state saving logic below to operate, because without being bound to a poll we aren't able to persist anything on its behalf.
                 return
+                
+            // MARK: Initial State
             case .initialState:
-                // Start loading initial results.
-                // Present UI to allow user to select an answer.
-                // If results load before users selects an answer, transition to .resultsSeeded
-                // If user selects answer before initial results load, transition to .pollAnswered
+                
                 
                 guard let pollBlock = self.block as? PollBlock & Block else {
                     os_log("Transitioned into .initialState state without the block being configured.")
@@ -360,30 +373,20 @@ class PollCell: BlockCell {
                 
                 // handleOptionTapped() will check for this state and transition to .pollAnswered if needed.
                 
+            // MARK: Results Seeded
             case let .resultsSeeded(initialResults):
-                // The initial results have loaded.
-                // Keep waiting for user to select an answer.
-                // After the user answers, transition to .submittingAnswer
-                
                 // handleOptionTapped() will check for this state and transition to .submittingAnswer.
                 self.clearResults()
                 self.isLoading = false
+                
+            // MARK: Poll Answered
             case let .pollAnswered(myAnswer):
-                // We've got an answer but we haven't received the seed results yet.
-                // Show a loading indicator while we wait.
-                // When results finish loading, transition to .submittingAnswer
+                // Waiting for initial results to arrive, which will then transition to .submittingAnswer.
                 self.clearResults()
                 self.isLoading = true
-            case let .submittingAnswer(myAnswer, initialResults):
-                // At this point the initial results have loaded AND the user has answered the poll.
-                // The initialResults will not include the user's answer yet because it hasn't been submitted to the server.
-                // Display the results version of the UI using the initialResults data.
-                // Use the myAnswer data to add +1 to the answer selected by the user and display the indicator circle.
-                // Begin a network request to submit the user's answer to the server.
-                // If the network request fails, try again.
-                // If the network request succeeds, transition to .refreshingResults
-                // The value of currentResults passed to the .refreshingResults case should INCLUDE the user's answer
                 
+            // MARK: Submitting Answer
+            case let .submittingAnswer(myAnswer, initialResults):
                 guard let pollBlock = self.block as? PollBlock else {
                     os_log("Transitioned into .submittingAnswer state without the block being configured.")
                     return
@@ -449,13 +452,9 @@ class PollCell: BlockCell {
                     }
                 }
                 recursiveVoteAttempt()
-            case let .refreshingResults(myAnswer, currentResults):
-                // At this point we have answered the poll and have the current results which INCLUDE the user's answer.
-                // Use the currentResults to populate the UI and the myAnswer property to display the indicator circle.
-                // Start a 5-second timer and make a network request to refresh the results.
-                // If network request fails, try again in 5-seconds.
-                // If network request succeeds, update the currentResults property with the new results.
                 
+            // MARK: Refreshing Results
+            case let .refreshingResults(myAnswer, currentResults):
                 guard let pollBlock = self.block as? PollBlock else {
                     os_log("Transitioned into .refreshingResults state without the block being configured.")
                     return
@@ -533,6 +532,8 @@ class PollCell: BlockCell {
                 default:
                     recursiveFetch()
                 }
+                
+            // MARK: State Restore
             case let .restoreTo(newState):
                 DispatchQueue.main.async {
                     self.state = newState
@@ -541,6 +542,8 @@ class PollCell: BlockCell {
                 // do not allow the state saving logic below to operate.
                 return
             }
+            
+            // MARK: State Persistence
             
             // Now persist the state to disk.
             
@@ -558,7 +561,6 @@ class PollCell: BlockCell {
             UserDefaults().writeStateJsonForPoll(id: pollBlock.pollID(containedBy: experienceID), json: self.state)
             os_log("Wrote new state for Poll %s to disk.", log: .rover, type: .error, pollBlock.id)
         }
-        
     }
 }
 

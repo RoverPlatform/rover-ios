@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct ImagePollBlock: PollBlock {
+public struct ImagePollBlock: Block {
     // MARK: Image Poll fields
     
     public struct ImagePoll: Decodable {

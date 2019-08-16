@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct TextPollBlock: PollBlock {
+public struct TextPollBlock: Block {
     // MARK: Text Poll fields
     
     public struct TextPoll: Decodable {

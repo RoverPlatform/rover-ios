@@ -364,8 +364,6 @@ class ImagePollCell: BlockCell {
     }
     
     // MARK: State Machine
-
-    // TODO: implement non-volatile state restore for State.
     
     private indirect enum PollState: Codable {
         private enum CodingKeys: String, CodingKey {
@@ -545,7 +543,7 @@ class ImagePollCell: BlockCell {
                 })
                 
                 let currentlyAssignedBlock = imagePollBlock
-                self.urlSession.fetchPollResults(for: imagePollBlock.pollID(containedBy: experienceID), optionIds: imagePollBlock.imagePoll.votableOptionIDs) { [weak self] pollResults in
+                self.urlSession.fetchPollResults(for: imagePollBlock.pollID(containedBy: experienceID), optionIds: imagePollBlock.imagePoll.optionIDs) { [weak self] pollResults in
                     DispatchQueue.main.async {
                         guard let self = self else {
                             return
@@ -700,7 +698,7 @@ class ImagePollCell: BlockCell {
                 
                 let currentlyAssignedBlock = imagePollBlock
                 func recursiveFetch(delay: TimeInterval = 0) {
-                    self.urlSession.fetchPollResults(for: imagePollBlock.pollID(containedBy: experienceID), optionIds: imagePollBlock.imagePoll.votableOptionIDs) { [weak self] results in
+                    self.urlSession.fetchPollResults(for: imagePollBlock.pollID(containedBy: experienceID), optionIds: imagePollBlock.imagePoll.optionIDs) { [weak self] results in
                         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(Int(delay * 1000))) {
                             switch self?.state {
                             case .refreshingResults:

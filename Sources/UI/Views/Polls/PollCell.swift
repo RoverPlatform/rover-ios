@@ -330,12 +330,17 @@ class PollCell: BlockCell {
                 clearResults()
                 self.isLoading = false
             
-                let currentlyAssignedBlock = pollBlock
-                func recursiveFetch(delay: TimeInterval = 0) {
+                var recursiveFetch: ((TimeInterval) -> Void)!
+                recursiveFetch = { [weak self] delay in
                     DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(Int(delay * 1000))) {
-                        self.urlSession.fetchPollResults(for: pollBlock.pollID(containedBy: experienceID), optionIds: pollBlock.poll.optionIDs) { [weak self] pollResults in
+                        self?.urlSession.fetchPollResults(for: pollBlock.pollID(containedBy: experienceID), optionIds: pollBlock.poll.optionIDs) { pollResults in
                             DispatchQueue.main.async {
                                 guard let self = self else {
+                                    return
+                                }
+                                
+                                let currentlyAssignedBlock = self.block as? PollBlock
+                                if currentlyAssignedBlock?.id != pollBlock.id {
                                     return
                                 }
                                 
@@ -344,17 +349,8 @@ class PollCell: BlockCell {
                                     // we are landing an async request. If current state is one that can accept our freshly acquired results, then transition.
                                     switch self.state {
                                     case .initialState:
-                                        if currentlyAssignedBlock.id != pollBlock.id {
-                                            return
-                                        }
-                                        
                                         self.state = .resultsSeeded(initialResults: results.results)
-                                        
                                     case let .pollAnswered(myAnswer):
-                                        if currentlyAssignedBlock.id != pollBlock.id {
-                                            return
-                                        }
-                                        
                                         self.state = .submittingAnswer(myAnswer: myAnswer, initialResults: results.results)
                                     default:
                                         return
@@ -362,14 +358,14 @@ class PollCell: BlockCell {
                                 case .failed:
                                     // retry!
                                     os_log("Initial poll results fetch failed.  Will retry momentarily.", log: .rover, type: .error)
-                                    recursiveFetch(delay: 1)
+                                    recursiveFetch(1)
                                 }
                             }
                         }
                     }
                 }
                 
-                recursiveFetch()
+                recursiveFetch(0)
                 
                 // handleOptionTapped() will check for this state and transition to .pollAnswered if needed.
                 
@@ -419,13 +415,17 @@ class PollCell: BlockCell {
                     self.delegate?.didCastVote(on: pollBlock, for: selectedOption)
                 }
                 
-                let currentlyAssignedBlock = pollBlock
-                
-                func recursiveVoteAttempt(delay: TimeInterval = 0) {
+                var recursiveVoteAttempt: ((TimeInterval) -> Void)!
+                recursiveVoteAttempt = { [weak self] delay in
                     DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(Int(delay * 1000))) {
-                        self.urlSession.castVote(pollID: pollBlock.pollID(containedBy: experienceID), optionID: myAnswer) { [weak self] castVoteResults in
+                        self?.urlSession.castVote(pollID: pollBlock.pollID(containedBy: experienceID), optionID: myAnswer) { castVoteResults in
                             DispatchQueue.main.async {
                                 guard let self = self else {
+                                    return
+                                }
+                                
+                                let currentlyAssignedBlock = self.block as? PollBlock
+                                if currentlyAssignedBlock?.id != pollBlock.id {
                                     return
                                 }
                                 
@@ -434,9 +434,7 @@ class PollCell: BlockCell {
                                     // we are landing an async request. If current state is one that can accept our freshly submitted vote, then transition.
                                     switch self.state {
                                     case let .submittingAnswer(myAnswer, _):
-                                        if currentlyAssignedBlock.id != pollBlock.id {
-                                            return
-                                        }
+
                                         
                                         self.state = .refreshingResults(myAnswer: myAnswer, currentResults: withUsersVoteAdded)
                                         
@@ -445,13 +443,13 @@ class PollCell: BlockCell {
                                     }
                                 case .failed:
                                     os_log("Cast vote request failed. Will retry momentarily.", log: .rover, type: .error)
-                                    recursiveVoteAttempt(delay: 1)
+                                    recursiveVoteAttempt(1)
                                 }
                             }
                         }
                     }
                 }
-                recursiveVoteAttempt()
+                recursiveVoteAttempt(0)
                 
             // MARK: Refreshing Results
             case let .refreshingResults(myAnswer, currentResults):
@@ -474,7 +472,9 @@ class PollCell: BlockCell {
                 }
                 
                 if viewOptionResultsArray.count != pollBlock.poll.optionIDs.count {
-                    os_log("Retrieved option results do not fully match those on the Experience Poll Block.  Resetting poll.", log: .rover, type: .fault)
+                    let experienceOptionIDs = pollBlock.poll.optionIDs.sorted()
+                    let stateOptionIDs = currentResults.keys.sorted()
+                    os_log("Retrieved option results do not fully match those on the Experience Poll Block (block has %s, state has %s).  Resetting poll.", log: .rover, type: .fault, String(describing: experienceOptionIDs), String(describing: stateOptionIDs))
                     DispatchQueue.main.async {
                         self.state = .initialState
                     }
@@ -484,19 +484,23 @@ class PollCell: BlockCell {
                 setResults(viewOptionResultsArray, animated: shouldAnimateResults)
                 self.isLoading = false
                 
-                let currentlyAssignedBlock = pollBlock
-                func recursiveFetch(delay: TimeInterval = 0) {
+                var recursiveFetch: ((TimeInterval) -> Void)!
+                recursiveFetch = { [weak self] delay in
                     DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(Int(delay * 1000))) {
-                        self.urlSession.fetchPollResults(for: pollBlock.pollID(containedBy: experienceID), optionIds: pollBlock.poll.optionIDs) { [weak self] results in
+                        self?.urlSession.fetchPollResults(for: pollBlock.pollID(containedBy: experienceID), optionIds: pollBlock.poll.optionIDs) { results in
                             DispatchQueue.main.async {
                                 guard let self = self else {
                                     return
                                 }
+                                
+                                let currentlyAssignedBlock = self.block as? PollBlock
+                                if currentlyAssignedBlock?.id != pollBlock.id {
+                                    return
+                                }
+                                
                                 switch self.state {
                                 case .refreshingResults:
-                                    if currentlyAssignedBlock.id != pollBlock.id {
-                                        return
-                                    }
+                                    
                                     break;
                                 default:
                                     os_log("Poll Block has transitioned away from .refreshingResults, ending automatic refresh.", log: .rover, type: .error)
@@ -519,7 +523,7 @@ class PollCell: BlockCell {
                                         }
                                 }
                                 // queue up next attempt.
-                                recursiveFetch(delay: 5)
+                                recursiveFetch(5)
                             }
                         }
                     }
@@ -530,7 +534,7 @@ class PollCell: BlockCell {
                 case .refreshingResults:
                     break
                 default:
-                    recursiveFetch()
+                    recursiveFetch(0)
                 }
                 
             // MARK: State Restore

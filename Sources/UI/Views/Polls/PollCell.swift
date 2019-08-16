@@ -414,6 +414,7 @@ class PollCell: BlockCell {
                 }
                 
                 setResults(viewOptionResultsArray, animated: shouldAnimateResults)
+                self.isLoading = false
                 
                 if let selectedOption = pollBlock.poll.pollOptions.first(where: { $0.id == myAnswer }) {
                     self.delegate?.didCastVote(on: pollBlock, for: selectedOption)
@@ -486,13 +487,17 @@ class PollCell: BlockCell {
                 }
 
                 setResults(viewOptionResultsArray, animated: shouldAnimateResults)
+                self.isLoading = false
                 
                 let currentlyAssignedBlock = pollBlock
                 func recursiveFetch(delay: TimeInterval = 0) {
                     DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(Int(delay * 1000))) {
                         self.urlSession.fetchPollResults(for: pollBlock.pollID(containedBy: experienceID), optionIds: pollBlock.poll.optionIDs) { [weak self] results in
                             DispatchQueue.main.async {
-                                switch self?.state {
+                                guard let self = self else {
+                                    return
+                                }
+                                switch self.state {
                                 case .refreshingResults:
                                     if currentlyAssignedBlock.id != pollBlock.id {
                                         return
@@ -511,10 +516,10 @@ class PollCell: BlockCell {
                                         os_log("Successfully fetched current poll results.", log: .rover, type: .debug)
                                         
                                         if Set(currentResults.keys) == Set(results.results.keys) {
-                                            self?.state = .refreshingResults(myAnswer: myAnswer, currentResults: results.results)
+                                            self.state = .refreshingResults(myAnswer: myAnswer, currentResults: results.results)
                                         } else {
                                             os_log("Currently voted-on results changed since user last voted.  Resetting poll.", log: .rover, type: .info)
-                                            self?.state = .initialState
+                                            self.state = .initialState
                                             return // prevent the refresh behaviour below from kicking in.
                                         }
                                 }
@@ -568,10 +573,9 @@ typealias PollResults = [String: Int]
 
 /// An option voted for by the user, the Option ID.
 typealias PollAnswer = String
-
 // MARK: Utility
 
-private extension PollResults {
+private extension Dictionary where Key == String, Value == Int  {
     func viewOptionStatuses(userAnswer: String) -> [String: PollCell.OptionResult] {
         let votesByOptionIds = self
         let totalVotes = votesByOptionIds.values.reduce(0, +)

@@ -74,15 +74,25 @@ class SRImagePollCell: PollCell {
     }
     
     override func setResults(_ results: [PollCell.OptionResult], animated: Bool) {
-//        zip(results, optionsList.arrangedSubviews)
-//            .map { ($0, $1 as! TextPollOption) }
-//            .forEach { $1.setResult($0, animated: animated) }
+        let options: [ImagePollOption] = grid.arrangedSubviews.reduce(into: []) { result, row in
+            (row as! UIStackView).arrangedSubviews
+                .map { $0 as! ImagePollOption }
+                .forEach { result.append($0) }
+        }
+        
+        zip(results, options)
+            .forEach { $1.setResult($0, animated: animated) }
     }
     
     override func clearResults() {
-//        optionsList.arrangedSubviews
-//            .map { $0 as! TextPollOption }
-//            .forEach { $0.clearResult() }
+        let options: [ImagePollOption] = grid.arrangedSubviews.reduce(into: []) { result, row in
+            (row as! UIStackView).arrangedSubviews
+                .map { $0 as! ImagePollOption }
+                .forEach { result.append($0) }
+        }
+        
+        options
+            .forEach { $0.clearResult() }
     }
 }
 

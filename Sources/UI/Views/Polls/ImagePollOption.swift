@@ -80,7 +80,7 @@ class ImagePollOption: UIView {
         
         let duration: TimeInterval = animated ? 0.167 : 0
         UIView.animate(withDuration: duration, delay: 0, options: [.curveEaseInOut], animations: { [weak self] in
-            self?.overlay.alpha = result.selected ? 1 : 0
+            self?.overlay.alpha = 1
         })
     }
     
@@ -94,11 +94,6 @@ class ImagePollOption: UIView {
     @objc
     private func didTap(gestureRecognizer: UIGestureRecognizer) {
         tapHandler()
-        
-        // TODO: Remove this
-        
-        let result = PollCell.OptionResult(selected: true, fraction: 0.5, percentage: 50)
-        setResult(result, animated: true)
     }
     
     override func layoutSubviews() {

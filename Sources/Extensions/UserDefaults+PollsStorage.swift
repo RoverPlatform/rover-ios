@@ -21,8 +21,19 @@ extension UserDefaults {
     
     func writeStateJSONForPoll<T: Codable>(id: String, json: T) {
         let encoder = JSONEncoder()
-        
-        let existingRecords: [PollStorageRecord<T>] = retrieveStateJSONForPoll(id: id) ?? []
+        let decoder = JSONDecoder()
+            
+        let existingRecords: [PollStorageRecord<T>]
+        if let existingPollsJson = self.data(forKey: USER_DEFAULTS_STORAGE_KEY) {
+            do {
+                existingRecords = try decoder.decode([PollStorageRecord<T>].self, from: existingPollsJson)
+            } catch {
+                os_log("Existing storage for polls was corrupted, resetting: %s", log: .rover, type: .error, error.debugDescription)
+                existingRecords = []
+            }
+        } else {
+            existingRecords = []
+        }
         
         let record = PollStorageRecord<T>(pollID: id, poll: json)
         
@@ -35,7 +46,7 @@ extension UserDefaults {
         let droppedRecords = records.count - trimmedNewRecords.count
         
         if droppedRecords > 0 {
-            os_log("Dropped %d records.", log: .rover, type: .debug, droppedRecords)
+            os_log("Dropped %d poll storage records.", log: .rover, type: .debug, droppedRecords)
         }
         
         do {
@@ -49,11 +60,11 @@ extension UserDefaults {
         
     }
     
-    func retrieveStateJSONForPoll<J: Codable>(id: String) -> J? {
+    func retrieveStateJSONForPoll<T: Codable>(id: String) -> T? {
         let decoder = JSONDecoder()
         if let existingPollsJson = self.data(forKey: USER_DEFAULTS_STORAGE_KEY) {
             do {
-                let pollStates = try decoder.decode([PollStorageRecord<J>].self, from: existingPollsJson)
+                let pollStates = try decoder.decode([PollStorageRecord<T>].self, from: existingPollsJson)
                 
                 return pollStates.first(where: { $0.pollID == id })?.poll
             } catch {

@@ -107,7 +107,6 @@ extension URLSession {
             }
 
             callback(.succeeded)
-
         }
         
         os_log("Submitting vote...", log: .rover, type: .debug)

@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol PollBlock {
+public protocol PollBlock {
     var poll: Poll { get }
     
     var id: String { get }
@@ -16,34 +16,36 @@ protocol PollBlock {
     func pollID(containedBy experienceID: String) -> String
 }
 
-protocol Poll {
+public protocol Poll {
     var optionIDs: [String] { get }
     
     var pollOptions: [PollOption] { get }
 }
 
-protocol PollOption {
+public protocol PollOption {
     var id: String { get }
+        
+    var text: Text { get }
 }
 
 // MARK: ImagePollBlock
 
 extension ImagePollBlock: PollBlock {
-    var poll: Poll {
+    public var poll: Poll {
         return imagePoll
     }
     
-    func pollID(containedBy experienceID: String) -> String {
+    public func pollID(containedBy experienceID: String) -> String {
         return "\(experienceID):\(self.id)"
     }
 }
 
 extension ImagePollBlock.ImagePoll: Poll {
-    var pollOptions: [PollOption] {
+    public var pollOptions: [PollOption] {
         return self.options
     }
     
-    var optionIDs: [String] {
+    public var optionIDs: [String] {
         return self.options.map { $0.id }
     }
 }
@@ -55,21 +57,21 @@ extension ImagePollBlock.ImagePoll.Option : PollOption {
 // MARK: TextPollBlock
 
 extension TextPollBlock: PollBlock {
-    var poll: Poll {
+    public var poll: Poll {
         return textPoll
     }
     
-    func pollID(containedBy experienceID: String) -> String {
+    public func pollID(containedBy experienceID: String) -> String {
         return "\(experienceID):\(self.id)"
     }
 }
 
 extension TextPollBlock.TextPoll: Poll {
-    var pollOptions: [PollOption] {
+    public var pollOptions: [PollOption] {
         return self.options
     }
     
-    var optionIDs: [String] {
+    public var optionIDs: [String] {
         return self.options.map { $0.id }
     }
 }

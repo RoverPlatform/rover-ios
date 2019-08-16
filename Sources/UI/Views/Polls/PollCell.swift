@@ -129,11 +129,7 @@ class PollCell: BlockCell {
         fatalError("Must be overridden")
     }
     
-    func optionSelected(_ option: PollOption) {
-        if let pollBlock = block as? PollBlock {
-            delegate?.didCastVote(on: pollBlock, for: option)
-        }
-        
+    func optionSelected(_ option: PollOption) {        
         switch self.state {
         case .initialState:
             self.state = .pollAnswered(myAnswer: option.id)

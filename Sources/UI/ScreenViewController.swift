@@ -506,26 +506,6 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     
     // MARK: Poll Answer
     
-    func didCastVote(on imagePollBlock: ImagePollBlock, for option: ImagePollBlock.ImagePoll.Option) {
-        var userInfo: [String: Any] = [
-            ScreenViewController.experienceUserInfoKey: experience,
-            ScreenViewController.screenUserInfoKey: screen,
-            ScreenViewController.blockUserInfoKey: imagePollBlock,
-            ScreenViewController.optionUserInfoKey: option
-        ]
-        
-        if let campaignID = campaignID {
-            userInfo[ScreenViewController.campaignIDUserInfoKey] = campaignID
-        }
-        
-        NotificationCenter.default.post(
-            name: ScreenViewController.pollAnsweredNotification,
-            object: self,
-            userInfo: userInfo
-        )
-        
-    }
-    
     func didCastVote(on pollBlock: PollBlock, for option: PollOption) {
         var userInfo: [String: Any] = [
             ScreenViewController.experienceUserInfoKey: experience,

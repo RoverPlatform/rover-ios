@@ -45,7 +45,7 @@ class PollOptionPercentageLabel: UILabel {
         
         let fontAttributes: [NSAttributedString.Key: Any] = [NSAttributedString.Key.font: font!]
         let size = (textToMeasure as NSString).size(withAttributes: fontAttributes)
-        widthConstraint.constant = size.width
+        widthConstraint.constant = size.width + 1
         
         // Animate
         

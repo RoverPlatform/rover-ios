@@ -53,6 +53,8 @@ class ImagePollOptionCaption: UIView {
         optionLabel.font = option.text.font.uiFont
         optionLabel.text = option.text.rawValue
         optionLabel.textColor = option.text.color.uiColor
+        optionLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        optionLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         stackView.addArrangedSubview(optionLabel)
         
         // indicator
@@ -61,6 +63,7 @@ class ImagePollOptionCaption: UIView {
         indicator.text = "•"
         indicator.textColor = option.text.color.uiColor
         indicator.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        indicator.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
     }
     
     required init?(coder: NSCoder) {

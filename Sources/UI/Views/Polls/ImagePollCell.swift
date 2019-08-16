@@ -1,5 +1,5 @@
 //
-//  SRImagePollCell.swift
+//  ImagePollCell.swift
 //  Rover
 //
 //  Created by Sean Rucker on 2019-08-15.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SRImagePollCell: PollCell {
+class ImagePollCell: PollCell {
     let grid = UIStackView()
     
     override init(frame: CGRect) {

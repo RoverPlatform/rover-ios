@@ -96,11 +96,6 @@ class TextPollOption: UIView {
     @objc
     private func didTap(gestureRecognizer: UIGestureRecognizer) {
         tapHandler()
-        
-        // TODO: Remove this
-        
-        let result = PollCell.OptionResult(selected: true, fraction: 0.5, percentage: 50)
-        setResult(result, animated: true)
     }
     
     override func layoutSubviews() {

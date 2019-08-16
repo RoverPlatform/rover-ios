@@ -15,7 +15,7 @@ import UIKit
 /// handling button taps. It posts [`Notification`s](https://developer.apple.com/documentation/foundation/notification)
 /// through the default [`NotificationCenter`](https://developer.apple.com/documentation/foundation/notificationcenter)
 /// when it is presented, dismissed and viewed.
-open class ScreenViewController: UICollectionViewController, UICollectionViewDataSourcePrefetching, PollCellDelegate, ImagePollCellDelegate {
+open class ScreenViewController: UICollectionViewController, UICollectionViewDataSourcePrefetching, PollCellDelegate {
     
     public let experience: Experience
     public let campaignID: String?
@@ -312,7 +312,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         )
         
         collectionView.register(
-            SRImagePollCell.self,
+            ImagePollCell.self,
             forCellWithReuseIdentifier: ScreenViewController.imagePollViewCellReuseIdentifier
         )
         
@@ -369,10 +369,6 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
             pollCell.delegate = self
         }
         
-        if let imagePollCell = cell as? ImagePollCell {
-            imagePollCell.delegate = self
-        }
-        
         if let attributes = collectionViewLayout.layoutAttributesForItem(at: indexPath) as? ScreenLayoutAttributes, let clipRect = attributes.clipRect {
             let maskLayer = CAShapeLayer()
             maskLayer.path = CGPath(rect: clipRect, transform: nil)
@@ -386,11 +382,6 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         }
         
         let block = screen.rows[indexPath.section].blocks[indexPath.row]
-        
-        // TODO: delete
-        if let pollCell = blockCell as? ImagePollCell {
-            pollCell.experienceID = self.experience.id
-        }
         
         if let pollCell = blockCell as? PollCell {
             pollCell.experienceID = self.experience.id

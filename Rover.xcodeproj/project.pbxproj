@@ -13,7 +13,6 @@
 		4914B3E422B83A3F00FA395E /* PollBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4914B3E322B83A3F00FA395E /* PollBlock.swift */; };
 		4914B3E622B83A4B00FA395E /* ImagePollBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4914B3E522B83A4B00FA395E /* ImagePollBlock.swift */; };
 		4914B3EA22B9373900FA395E /* TextPollBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4914B3E922B9373900FA395E /* TextPollBlock.swift */; };
-		4914B3F022BABA6500FA395E /* ImagePollCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4914B3EF22BABA6500FA395E /* ImagePollCell.swift */; };
 		491A9FCB2305A7620069E038 /* URLSession+PollsRequests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 491A9FCA2305A7620069E038 /* URLSession+PollsRequests.swift */; };
 		491EDCD822F38A99003FD25E /* LargestRemainder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 491EDCD722F38A99003FD25E /* LargestRemainder.swift */; };
 		492F7A5222E6640D00D1F653 /* UIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492F7A5122E6640D00D1F653 /* UIView.swift */; };
@@ -56,7 +55,7 @@
 		4974281A2304813C008F8D35 /* ScreenViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 497428192304813C008F8D35 /* ScreenViewLayout.swift */; };
 		4994669D22A19C99005ECD07 /* URLRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4994669C22A19C99005ECD07 /* URLRequest.swift */; };
 		49C04DB8229DB11100243504 /* ResultShim.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C04DB7229DB11100243504 /* ResultShim.swift */; };
-		49C76DFF22E78C1F003E5CC7 /* PollsStorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C76DFE22E78C1F003E5CC7 /* PollsStorageService.swift */; };
+		49C76DFF22E78C1F003E5CC7 /* UserDefaults+PollsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C76DFE22E78C1F003E5CC7 /* UserDefaults+PollsStorage.swift */; };
 		49ED505722FDE58B0027FAA5 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49ED505622FDE58B0027FAA5 /* Error.swift */; };
 		DB637A872279EFC600F0E791 /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB637A862279EFC600F0E791 /* Analytics.swift */; };
 		DB6BE8AE215D41F7000A1FDA /* OSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6BE8AD215D41F7000A1FDA /* OSLog.swift */; };
@@ -65,7 +64,7 @@
 		DB7B853D23060FFB008D628E /* TextPollOptionLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7B853723060FFB008D628E /* TextPollOptionLabel.swift */; };
 		DB7B853E23060FFB008D628E /* TextPollCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7B853823060FFB008D628E /* TextPollCell.swift */; };
 		DB7B853F23060FFB008D628E /* TextPollOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7B853923060FFB008D628E /* TextPollOption.swift */; };
-		DB7B854223061448008D628E /* SRImagePollCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7B854123061448008D628E /* SRImagePollCell.swift */; };
+		DB7B854223061448008D628E /* ImagePollCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7B854123061448008D628E /* ImagePollCell.swift */; };
 		DB7B854423061CCC008D628E /* ImagePollOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7B854323061CCC008D628E /* ImagePollOption.swift */; };
 		DB7B854623062AAE008D628E /* ImagePollOptionLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7B854523062AAE008D628E /* ImagePollOptionLabel.swift */; };
 		DB7B854823062FFA008D628E /* ImagePollOptionImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7B854723062FFA008D628E /* ImagePollOptionImage.swift */; };
@@ -92,7 +91,6 @@
 		4914B3E322B83A3F00FA395E /* PollBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollBlock.swift; sourceTree = "<group>"; };
 		4914B3E522B83A4B00FA395E /* ImagePollBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePollBlock.swift; sourceTree = "<group>"; };
 		4914B3E922B9373900FA395E /* TextPollBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextPollBlock.swift; sourceTree = "<group>"; };
-		4914B3EF22BABA6500FA395E /* ImagePollCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePollCell.swift; sourceTree = "<group>"; };
 		491A9FCA2305A7620069E038 /* URLSession+PollsRequests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLSession+PollsRequests.swift"; sourceTree = "<group>"; };
 		491EDCD722F38A99003FD25E /* LargestRemainder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LargestRemainder.swift; sourceTree = "<group>"; };
 		492F7A5122E6640D00D1F653 /* UIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIView.swift; sourceTree = "<group>"; };
@@ -102,7 +100,7 @@
 		4994669C22A19C99005ECD07 /* URLRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLRequest.swift; sourceTree = "<group>"; };
 		49952B452242B73A004C5521 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		49C04DB7229DB11100243504 /* ResultShim.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultShim.swift; sourceTree = "<group>"; };
-		49C76DFE22E78C1F003E5CC7 /* PollsStorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollsStorageService.swift; sourceTree = "<group>"; };
+		49C76DFE22E78C1F003E5CC7 /* UserDefaults+PollsStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+PollsStorage.swift"; sourceTree = "<group>"; };
 		49ED505622FDE58B0027FAA5 /* Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
 		DB00FDD92087E09F008D1A57 /* ScreenViewLayoutAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenViewLayoutAttributes.swift; sourceTree = "<group>"; };
 		DB00FDDF208A4961008D1A57 /* BarcodeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarcodeCell.swift; sourceTree = "<group>"; };
@@ -115,7 +113,7 @@
 		DB7B853723060FFB008D628E /* TextPollOptionLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextPollOptionLabel.swift; sourceTree = "<group>"; };
 		DB7B853823060FFB008D628E /* TextPollCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextPollCell.swift; sourceTree = "<group>"; };
 		DB7B853923060FFB008D628E /* TextPollOption.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextPollOption.swift; sourceTree = "<group>"; };
-		DB7B854123061448008D628E /* SRImagePollCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SRImagePollCell.swift; sourceTree = "<group>"; };
+		DB7B854123061448008D628E /* ImagePollCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePollCell.swift; sourceTree = "<group>"; };
 		DB7B854323061CCC008D628E /* ImagePollOption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePollOption.swift; sourceTree = "<group>"; };
 		DB7B854523062AAE008D628E /* ImagePollOptionLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePollOptionLabel.swift; sourceTree = "<group>"; };
 		DB7B854723062FFA008D628E /* ImagePollOptionImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePollOptionImage.swift; sourceTree = "<group>"; };
@@ -226,7 +224,6 @@
 				DB709C6B207EAEED00F96C2B /* ImageStore.swift */,
 				DB6ADD7E20B3449E002F226C /* SessionController.swift */,
 				49C04DB7229DB11100243504 /* ResultShim.swift */,
-				49C76DFE22E78C1F003E5CC7 /* PollsStorageService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -234,7 +231,7 @@
 		DB7B853123060FFB008D628E /* Polls */ = {
 			isa = PBXGroup;
 			children = (
-				DB7B854123061448008D628E /* SRImagePollCell.swift */,
+				DB7B854123061448008D628E /* ImagePollCell.swift */,
 				DB7B854323061CCC008D628E /* ImagePollOption.swift */,
 				DB7B854723062FFA008D628E /* ImagePollOptionImage.swift */,
 				DB7B854523062AAE008D628E /* ImagePollOptionLabel.swift */,
@@ -267,7 +264,6 @@
 				DB9DBEEB2055964E00E5C77F /* RowView.swift */,
 				DB9DBEE62055964E00E5C77F /* TextCell.swift */,
 				DB9DBEEF2055964E00E5C77F /* WebViewCell.swift */,
-				4914B3EF22BABA6500FA395E /* ImagePollCell.swift */,
 				0DAFE6CE22D5453F00F5D47B /* PollQuestionView.swift */,
 			);
 			path = Views;
@@ -349,6 +345,7 @@
 		DBFDF52220AE2B0B0031EF47 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				49C76DFE22E78C1F003E5CC7 /* UserDefaults+PollsStorage.swift */,
 				DB8FF71122861B5800BDE2DC /* DateFormatter.swift */,
 				DB6BE8AD215D41F7000A1FDA /* OSLog.swift */,
 				49005D0322776283009D62F9 /* UIApplication.swift */,
@@ -484,7 +481,7 @@
 				4994669D22A19C99005ECD07 /* URLRequest.swift in Sources */,
 				491A9FCB2305A7620069E038 /* URLSession+PollsRequests.swift in Sources */,
 				4953DD3A22399A8500286C4B /* ImageBlock.swift in Sources */,
-				49C76DFF22E78C1F003E5CC7 /* PollsStorageService.swift in Sources */,
+				49C76DFF22E78C1F003E5CC7 /* UserDefaults+PollsStorage.swift in Sources */,
 				4953DD2922399A7600286C4B /* SessionController.swift in Sources */,
 				4953DD3122399A8500286C4B /* Barcode.swift in Sources */,
 				4953DD4E22399A9700286C4B /* TextCell.swift in Sources */,
@@ -529,9 +526,8 @@
 				4953DD3E22399A8500286C4B /* Row.swift in Sources */,
 				4953DD3322399A8500286C4B /* Block.swift in Sources */,
 				4914B3E622B83A4B00FA395E /* ImagePollBlock.swift in Sources */,
-				DB7B854223061448008D628E /* SRImagePollCell.swift in Sources */,
+				DB7B854223061448008D628E /* ImagePollCell.swift in Sources */,
 				DB7B853A23060FFB008D628E /* PollCell.swift in Sources */,
-				4914B3F022BABA6500FA395E /* ImagePollCell.swift in Sources */,
 				DB7B854A230633C1008D628E /* ImagePollOptionOverlay.swift in Sources */,
 				4953DD3822399A8500286C4B /* Height.swift in Sources */,
 				DB7B853C23060FFB008D628E /* PollOptionFillBar.swift in Sources */,

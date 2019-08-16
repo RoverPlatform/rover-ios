@@ -448,8 +448,6 @@ class PollCell: BlockCell {
                 // If network request fails, try again in 5-seconds.
                 // If network request succeeds, update the currentResults property with the new results.
                 
-                // TODO: particularly when restoring, confirm that currentResults still matches that in pollBlock!
-                
                 guard let pollBlock = self.block as? PollBlock else {
                     os_log("Transitioned into .refreshingResults state without the block being configured.")
                     return
@@ -551,6 +549,14 @@ class PollCell: BlockCell {
         
     }
 }
+
+// MARK: Types
+
+/// Poll results, mapping Option IDs -> Vote Counts.
+typealias PollResults = [String: Int]
+
+/// An option voted for by the user, the Option ID.
+typealias PollAnswer = String
 
 // MARK: Utility
 

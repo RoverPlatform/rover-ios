@@ -11,7 +11,7 @@ import UIKit
 class ImagePollOption: UIView {
     let stackView = UIStackView()
     let image: ImagePollOptionImage
-    let label: ImagePollOptionLabel
+    let caption: ImagePollOptionCaption
     let overlay: ImagePollOptionOverlay
     
     let option: ImagePollBlock.ImagePoll.Option
@@ -21,7 +21,7 @@ class ImagePollOption: UIView {
         self.option = option
         self.tapHandler = tapHandler
         image = ImagePollOptionImage(option: option)
-        label = ImagePollOptionLabel(option: option)
+        caption = ImagePollOptionCaption(option: option)
         overlay = ImagePollOptionOverlay(option: option)
         super.init(frame: .zero)
         
@@ -42,8 +42,8 @@ class ImagePollOption: UIView {
         // image
         stackView.addArrangedSubview(image)
         
-        // label
-        stackView.addArrangedSubview(label)
+        // caption
+        stackView.addArrangedSubview(caption)
         
         // overlay
         
@@ -76,7 +76,7 @@ class ImagePollOption: UIView {
         overlay.fillBar.setFillPercentage(to: result.fraction, animated: animated)
 //        label.setPercentage(to: result.percentage, animated: animated)
         overlay.label.text = "\(result.percentage)%"
-        label.isSelected = result.selected
+        caption.isSelected = result.selected
         
         let duration: TimeInterval = animated ? 0.167 : 0
         UIView.animate(withDuration: duration, delay: 0, options: [.curveEaseInOut], animations: { [weak self] in
@@ -85,7 +85,7 @@ class ImagePollOption: UIView {
     }
     
     func clearResult() {
-        label.isSelected = false
+        caption.isSelected = false
         overlay.alpha = 0
     }
     

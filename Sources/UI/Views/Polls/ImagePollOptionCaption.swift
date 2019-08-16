@@ -1,5 +1,5 @@
 //
-//  ImagePollOptionLabel.swift
+//  ImagePollOptionCaption.swift
 //  Rover
 //
 //  Created by Sean Rucker on 2019-08-15.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ImagePollOptionLabel: UIView {
+class ImagePollOptionCaption: UIView {
     let indicator = UILabel()
     let optionLabel = UILabel()
     let stackView = UIStackView()

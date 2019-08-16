@@ -36,12 +36,16 @@ class ImagePollOptionLabel: UIView {
         // stackView
         
         stackView.spacing = 8
+        stackView.layoutMargins = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 8)
+        stackView.isLayoutMarginsRelativeArrangement = true
         stackView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(stackView)
         NSLayoutConstraint.activate([
             stackView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            stackView.centerXAnchor.constraint(equalTo: centerXAnchor),
+            stackView.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor),
             stackView.topAnchor.constraint(equalTo: topAnchor),
-            stackView.centerXAnchor.constraint(equalTo: centerXAnchor)
+            stackView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor)
         ])
         
         // optionLabel

@@ -176,14 +176,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		491A9FC92305A7500069E038 /* Polls */ = {
-			isa = PBXGroup;
-			children = (
-				491A9FCA2305A7620069E038 /* URLSession+PollsRequests.swift */,
-			);
-			path = Polls;
-			sourceTree = "<group>";
-		};
 		492F7A5022E6640200D1F653 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -205,7 +197,6 @@
 		DB0C8F3F205849D900E0D860 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				491A9FC92305A7500069E038 /* Polls */,
 				DBFDF52220AE2B0B0031EF47 /* Extensions */,
 				DBFDF43520AC81CD0031EF47 /* Models */,
 				DB6ADD7D20B3446D002F226C /* Services */,
@@ -256,8 +247,8 @@
 		DB9DBEE52055964E00E5C77F /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				DB7B853123060FFB008D628E /* Polls */,
 				492F7A5022E6640200D1F653 /* Extensions */,
+				DB7B853123060FFB008D628E /* Polls */,
 				DB00FDDF208A4961008D1A57 /* BarcodeCell.swift */,
 				DB9DBEEE2055964E00E5C77F /* BlockCell.swift */,
 				DB9DBEED2055964E00E5C77F /* ButtonCell.swift */,
@@ -345,12 +336,13 @@
 		DBFDF52220AE2B0B0031EF47 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				49C76DFE22E78C1F003E5CC7 /* UserDefaults+PollsStorage.swift */,
 				DB8FF71122861B5800BDE2DC /* DateFormatter.swift */,
+				49ED505622FDE58B0027FAA5 /* Error.swift */,
 				DB6BE8AD215D41F7000A1FDA /* OSLog.swift */,
 				49005D0322776283009D62F9 /* UIApplication.swift */,
 				4994669C22A19C99005ECD07 /* URLRequest.swift */,
-				49ED505622FDE58B0027FAA5 /* Error.swift */,
+				491A9FCA2305A7620069E038 /* URLSession+PollsRequests.swift */,
+				49C76DFE22E78C1F003E5CC7 /* UserDefaults+PollsStorage.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";

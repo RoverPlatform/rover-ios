@@ -105,7 +105,7 @@ class PollCell: BlockCell {
         
         // if an existing state is available for the poll, jump to it:
         
-        if let restoredState: PollState = UserDefaults().retrieveStateJsonForPoll(id: pollBlock.pollID(containedBy: experienceID)) {
+        if let restoredState: PollState = UserDefaults().retrieveStateJSONForPoll(id: pollBlock.pollID(containedBy: experienceID)) {
             switch restoredState {
             case .pollAnswered:
                 // The Poll Answered state is a transitive one and expects that a background task is running, which would not be in the event of a restore.  So skip back to the beginning in that case.
@@ -333,7 +333,7 @@ class PollCell: BlockCell {
                 var recursiveFetch: ((TimeInterval) -> Void)!
                 recursiveFetch = { [weak self] delay in
                     DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(Int(delay * 1000))) {
-                        self?.urlSession.fetchPollResults(for: pollBlock.pollID(containedBy: experienceID), optionIds: pollBlock.poll.optionIDs) { pollResults in
+                        self?.urlSession.fetchPollResults(for: pollBlock.pollID(containedBy: experienceID), optionIDs: pollBlock.poll.optionIDs) { pollResults in
                             DispatchQueue.main.async {
                                 guard let self = self else {
                                     return
@@ -349,9 +349,9 @@ class PollCell: BlockCell {
                                     // we are landing an async request. If current state is one that can accept our freshly acquired results, then transition.
                                     switch self.state {
                                     case .initialState:
-                                        self.state = .resultsSeeded(initialResults: results.results)
+                                        self.state = .resultsSeeded(initialResults: results)
                                     case let .pollAnswered(myAnswer):
-                                        self.state = .submittingAnswer(myAnswer: myAnswer, initialResults: results.results)
+                                        self.state = .submittingAnswer(myAnswer: myAnswer, initialResults: results)
                                     default:
                                         return
                                     }
@@ -370,13 +370,13 @@ class PollCell: BlockCell {
                 // handleOptionTapped() will check for this state and transition to .pollAnswered if needed.
                 
             // MARK: Results Seeded
-            case let .resultsSeeded(initialResults):
+            case .resultsSeeded:
                 // handleOptionTapped() will check for this state and transition to .submittingAnswer.
                 self.clearResults()
                 self.isLoading = false
                 
             // MARK: Poll Answered
-            case let .pollAnswered(myAnswer):
+            case .pollAnswered:
                 // Waiting for initial results to arrive, which will then transition to .submittingAnswer.
                 self.clearResults()
                 self.isLoading = true
@@ -487,7 +487,7 @@ class PollCell: BlockCell {
                 var recursiveFetch: ((TimeInterval) -> Void)!
                 recursiveFetch = { [weak self] delay in
                     DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(Int(delay * 1000))) {
-                        self?.urlSession.fetchPollResults(for: pollBlock.pollID(containedBy: experienceID), optionIds: pollBlock.poll.optionIDs) { results in
+                        self?.urlSession.fetchPollResults(for: pollBlock.pollID(containedBy: experienceID), optionIDs: pollBlock.poll.optionIDs) { results in
                             DispatchQueue.main.async {
                                 guard let self = self else {
                                     return
@@ -514,8 +514,8 @@ class PollCell: BlockCell {
                                         // update local state!
                                         os_log("Successfully fetched current poll results.", log: .rover, type: .debug)
                                         
-                                        if Set(currentResults.keys) == Set(results.results.keys) {
-                                            self.state = .refreshingResults(myAnswer: myAnswer, currentResults: results.results)
+                                        if Set(currentResults.keys) == Set(results.keys) {
+                                            self.state = .refreshingResults(myAnswer: myAnswer, currentResults: results)
                                         } else {
                                             os_log("Currently voted-on results changed since user last voted.  Resetting poll.", log: .rover, type: .info)
                                             self.state = .initialState
@@ -562,19 +562,12 @@ class PollCell: BlockCell {
                 return
             }
             
-            UserDefaults().writeStateJsonForPoll(id: pollBlock.pollID(containedBy: experienceID), json: self.state)
+            UserDefaults().writeStateJSONForPoll(id: pollBlock.pollID(containedBy: experienceID), json: self.state)
             os_log("Wrote new state for Poll %s to disk.", log: .rover, type: .error, pollBlock.id)
         }
     }
 }
 
-// MARK: Types
-
-/// Poll results, mapping Option IDs -> Vote Counts.
-typealias PollResults = [String: Int]
-
-/// An option voted for by the user, the Option ID.
-typealias PollAnswer = String
 // MARK: Utility
 
 private extension Dictionary where Key == String, Value == Int  {

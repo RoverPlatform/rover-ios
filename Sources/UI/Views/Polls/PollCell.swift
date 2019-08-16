@@ -414,6 +414,7 @@ class PollCell: BlockCell {
                 }
                 
                 setResults(viewOptionResultsArray, animated: shouldAnimateResults)
+                self.isLoading = false
                 
                 if let selectedOption = pollBlock.poll.pollOptions.first(where: { $0.id == myAnswer }) {
                     self.delegate?.didCastVote(on: pollBlock, for: selectedOption)
@@ -486,6 +487,7 @@ class PollCell: BlockCell {
                 }
 
                 setResults(viewOptionResultsArray, animated: shouldAnimateResults)
+                self.isLoading = false
                 
                 let currentlyAssignedBlock = pollBlock
                 func recursiveFetch(delay: TimeInterval = 0) {
@@ -571,10 +573,9 @@ typealias PollResults = [String: Int]
 
 /// An option voted for by the user, the Option ID.
 typealias PollAnswer = String
-
 // MARK: Utility
 
-private extension PollResults {
+private extension Dictionary where Key == String, Value == Int  {
     func viewOptionStatuses(userAnswer: String) -> [String: PollCell.OptionResult] {
         let votesByOptionIds = self
         let totalVotes = votesByOptionIds.values.reduce(0, +)

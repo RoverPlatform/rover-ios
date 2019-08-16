@@ -60,7 +60,7 @@
 		DB6BE8AE215D41F7000A1FDA /* OSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6BE8AD215D41F7000A1FDA /* OSLog.swift */; };
 		DB7B853A23060FFB008D628E /* PollCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7B853223060FFB008D628E /* PollCell.swift */; };
 		DB7B853C23060FFB008D628E /* PollOptionFillBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7B853623060FFB008D628E /* PollOptionFillBar.swift */; };
-		DB7B853D23060FFB008D628E /* TextPollOptionLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7B853723060FFB008D628E /* TextPollOptionLabel.swift */; };
+		DB7B853D23060FFB008D628E /* TextPollOptionTextContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7B853723060FFB008D628E /* TextPollOptionTextContainer.swift */; };
 		DB7B853E23060FFB008D628E /* TextPollCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7B853823060FFB008D628E /* TextPollCell.swift */; };
 		DB7B853F23060FFB008D628E /* TextPollOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7B853923060FFB008D628E /* TextPollOption.swift */; };
 		DB7B854223061448008D628E /* ImagePollCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7B854123061448008D628E /* ImagePollCell.swift */; };
@@ -109,7 +109,7 @@
 		DB709C6B207EAEED00F96C2B /* ImageStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageStore.swift; sourceTree = "<group>"; };
 		DB7B853223060FFB008D628E /* PollCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PollCell.swift; sourceTree = "<group>"; };
 		DB7B853623060FFB008D628E /* PollOptionFillBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PollOptionFillBar.swift; sourceTree = "<group>"; };
-		DB7B853723060FFB008D628E /* TextPollOptionLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextPollOptionLabel.swift; sourceTree = "<group>"; };
+		DB7B853723060FFB008D628E /* TextPollOptionTextContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextPollOptionTextContainer.swift; sourceTree = "<group>"; };
 		DB7B853823060FFB008D628E /* TextPollCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextPollCell.swift; sourceTree = "<group>"; };
 		DB7B853923060FFB008D628E /* TextPollOption.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextPollOption.swift; sourceTree = "<group>"; };
 		DB7B854123061448008D628E /* ImagePollCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePollCell.swift; sourceTree = "<group>"; };
@@ -241,7 +241,7 @@
 				DB7B854B23065669008D628E /* PollOptionPercentageLabel.swift */,
 				DB7B853823060FFB008D628E /* TextPollCell.swift */,
 				DB7B853923060FFB008D628E /* TextPollOption.swift */,
-				DB7B853723060FFB008D628E /* TextPollOptionLabel.swift */,
+				DB7B853723060FFB008D628E /* TextPollOptionTextContainer.swift */,
 			);
 			path = Polls;
 			sourceTree = "<group>";
@@ -506,7 +506,7 @@
 				4953DD112239925B00286C4B /* Rover.swift in Sources */,
 				49ED505722FDE58B0027FAA5 /* Error.swift in Sources */,
 				4953DD4022399A8500286C4B /* BlockTapBehavior.swift in Sources */,
-				DB7B853D23060FFB008D628E /* TextPollOptionLabel.swift in Sources */,
+				DB7B853D23060FFB008D628E /* TextPollOptionTextContainer.swift in Sources */,
 				DB7B854C23065669008D628E /* PollOptionPercentageLabel.swift in Sources */,
 				DB7B853F23060FFB008D628E /* TextPollOption.swift in Sources */,
 				4953DD4422399A8500286C4B /* WebViewBlock.swift in Sources */,

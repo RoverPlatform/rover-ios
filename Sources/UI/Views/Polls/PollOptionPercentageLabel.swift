@@ -13,12 +13,8 @@ class PollOptionPercentageLabel: UILabel {
     var currentFraction = 0.0
     var widthConstraint: NSLayoutConstraint!
     
-    let fontConfiguration: Text.Font
-    
-    init(font fontConfiguration: Text.Font) {
-        self.fontConfiguration = fontConfiguration
-        super.init(frame: .zero)
-        font = fontConfiguration.uiFont
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         widthConstraint = widthAnchor.constraint(equalToConstant: 0)
         widthConstraint.isActive = true
     }
@@ -47,12 +43,9 @@ class PollOptionPercentageLabel: UILabel {
             textToMeasure = "88%"
         }
         
-        let text = Text(rawValue: textToMeasure, alignment: .left, color: .white, font: fontConfiguration)
-        let string = text.attributedText(forFormat: .plain)
-        let bounds = CGSize(width: Double.greatestFiniteMagnitude, height: Double.greatestFiniteMagnitude)
-        let rect = string?.boundingRect(with: bounds, options: [], context: nil)
-        let width = rect?.width.rounded(.up) ?? 0
-        widthConstraint.constant = width + 1
+        let fontAttributes: [NSAttributedString.Key: Any] = [NSAttributedString.Key.font: font!]
+        let size = (textToMeasure as NSString).size(withAttributes: fontAttributes)
+        widthConstraint.constant = size.width
         
         // Animate
         

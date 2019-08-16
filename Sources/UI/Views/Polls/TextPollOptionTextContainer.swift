@@ -1,5 +1,5 @@
 //
-//  TextPollOptionLabel.swift
+//  TextPollOptionTextContainer.swift
 //  Rover
 //
 //  Created by Sean Rucker on 2019-08-15.
@@ -8,15 +8,34 @@
 
 import UIKit
 
-class TextPollOptionLabel: UIStackView {
+class TextPollOptionTextContainer: UIStackView {
     let indicator = Indicator()
     let optionLabel = UILabel()
-    let percentageLabel: PollOptionPercentageLabel
+    let percentageLabel = PollOptionPercentageLabel()
     
     let option: TextPollBlock.TextPoll.Option
     
     init(option: TextPollBlock.TextPoll.Option) {
         self.option = option
+        super.init(frame: .zero)
+        
+        spacing = 8
+        layoutMargins = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        isLayoutMarginsRelativeArrangement = true
+        
+        // indicator
+        indicator.font = option.text.font.uiFont
+        indicator.textColor = option.text.color.uiColor
+        indicator.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        
+        // optionLabel
+        
+        optionLabel.font = option.text.font.uiFont
+        optionLabel.text = option.text.rawValue
+        optionLabel.textColor = option.text.color.uiColor
+        addArrangedSubview(optionLabel)
+        
+        // percentageLabel
         
         // The font weight for the percentageLabel should be two stops heavier and the size should be 5% bigger.
         
@@ -43,28 +62,7 @@ class TextPollOptionLabel: UIStackView {
         }
         
         let bumpedFontSize = option.text.font.size * 1.05
-        let percentageLabelFont = Text.Font(size: bumpedFontSize, weight: bumpedFontWeight)
-        percentageLabel = PollOptionPercentageLabel(font: percentageLabelFont)
-        super.init(frame: .zero)
-        
-        spacing = 8
-        layoutMargins = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-        isLayoutMarginsRelativeArrangement = true
-        
-        // indicator
-        indicator.font = option.text.font.uiFont
-        indicator.textColor = option.text.color.uiColor
-        indicator.setContentHuggingPriority(.defaultHigh, for: .horizontal)
-        
-        // optionLabel
-        
-        optionLabel.font = option.text.font.uiFont
-        optionLabel.text = option.text.rawValue
-        optionLabel.textColor = option.text.color.uiColor
-        addArrangedSubview(optionLabel)
-        
-        // percentageLabel
-        
+        percentageLabel.font = Text.Font(size: bumpedFontSize, weight: bumpedFontWeight).uiFont
         percentageLabel.textAlignment = .right
         percentageLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         percentageLabel.textColor = option.text.color.uiColor

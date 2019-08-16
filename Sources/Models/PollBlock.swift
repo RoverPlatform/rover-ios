@@ -30,7 +30,7 @@ protocol PollOption {
 
 extension ImagePollBlock: PollBlock {
     var poll: Poll {
-        imagePoll
+        return imagePoll
     }
     
     func pollID(containedBy experienceID: String) -> String {
@@ -56,7 +56,7 @@ extension ImagePollBlock.ImagePoll.Option : PollOption {
 
 extension TextPollBlock: PollBlock {
     var poll: Poll {
-        textPoll
+        return textPoll
     }
     
     func pollID(containedBy experienceID: String) -> String {

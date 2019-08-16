@@ -481,7 +481,10 @@ class PollCell: BlockCell {
                     DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(Int(delay * 1000))) {
                         self.urlSession.fetchPollResults(for: pollBlock.pollID(containedBy: experienceID), optionIds: pollBlock.poll.optionIDs) { [weak self] results in
                             DispatchQueue.main.async {
-                                switch self?.state {
+                                guard let self = self else {
+                                    return
+                                }
+                                switch self.state {
                                 case .refreshingResults:
                                     if currentlyAssignedBlock.id != pollBlock.id {
                                         return
@@ -500,10 +503,10 @@ class PollCell: BlockCell {
                                         os_log("Successfully fetched current poll results.", log: .rover, type: .debug)
                                         
                                         if Set(currentResults.keys) == Set(results.results.keys) {
-                                            self?.state = .refreshingResults(myAnswer: myAnswer, currentResults: results.results)
+                                            self.state = .refreshingResults(myAnswer: myAnswer, currentResults: results.results)
                                         } else {
                                             os_log("Currently voted-on results changed since user last voted.  Resetting poll.", log: .rover, type: .info)
-                                            self?.state = .initialState
+                                            self.state = .initialState
                                             return // prevent the refresh behaviour below from kicking in.
                                         }
                                 }

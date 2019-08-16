@@ -31,6 +31,6 @@ class TextCell: BlockCell {
         }
         
         textView.isHidden = false
-        textView.attributedText = textBlock.text.attributedText
+        textView.attributedText = textBlock.text.attributedText()
     }
 }

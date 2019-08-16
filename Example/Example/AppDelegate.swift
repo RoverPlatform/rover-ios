@@ -17,7 +17,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Pass your account token from the Rover Settings app to the Rover SDK.
         Rover.accountToken = "<YOUR_SDK_TOKEN>"
-        
+
         // This method demonstrates how to observe the Rover events mentioned above in your own app.
         observeRoverNotifications()
         return true
@@ -27,8 +27,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // `open(_:options:completionHandler:)` method on `UIApplication` with a URL that matches one of the schemes setup
     // in your `Info.plist` file. These custom URL schemes are commonly referred to as "deep links". This Example app
     // uses a custom URL scheme `example` which is configured in Example/Example/Info.plist.
-    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
-        
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
         // You will need to setup a specific URL structure to be used for presenting Rover experiences in your app. The
         // simplest approach is to use a specific URL path/host and include the experience ID and (optional) campaign
         // ID as query parameters. The below example demonstrates how to route URLs in the format
@@ -80,7 +79,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // This app delegate method is called in response to the user opening a Universal Link, amongst other things such
     // as Handoff.
     func application(_ app: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
-        
         // Check `activityType` to see if this method was called in response to a Universal Link.
         guard userActivity.activityType == NSUserActivityTypeBrowsingWeb, let url = userActivity.webpageURL else {
             return false

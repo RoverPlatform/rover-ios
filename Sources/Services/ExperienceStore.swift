@@ -62,7 +62,7 @@ class ExperienceStore {
     
     enum Failure: LocalizedError {
         case emptyResponseData
-        case invalidResponseData(Error)
+        case invalidResponseData(Error, Data)
         case invalidStatusCode(Int)
         case networkError(Error?)
         
@@ -70,13 +70,13 @@ class ExperienceStore {
             switch self {
             case .emptyResponseData:
                 return "Empty response data"
-            case let .invalidResponseData(error):
-                return "Invalid response data: \(error.localizedDescription)"
+            case let .invalidResponseData(error, messageBody):
+                return "Invalid response data: \(error.debugDescription), given message body: \(String(data: messageBody, encoding: .utf8) ?? "<binary>")"
             case let .invalidStatusCode(statusCode):
                 return "Invalid status code: \(statusCode)"
             case let .networkError(error):
                 if let error = error {
-                    return "Network error: \(error.localizedDescription)"
+                    return "Network error: \(error.debugDescription)"
                 } else {
                     return "Network error"
                 }
@@ -135,7 +135,7 @@ class ExperienceStore {
             
             switch result {
             case let .failure(error):
-                os_log("Failed to fetch experience: %@", log: .rover, type: .error, error.localizedDescription)
+                os_log("Failed to fetch experience: %@", log: .rover, type: .error, error.debugDescription)
             case let .success(experience):
                 let key = CacheKey(identifier: identifier)
                 let value = CacheValue(experience: experience)
@@ -266,7 +266,7 @@ class ExperienceStore {
             let response = try decoder.decode(Response.self, from: data)
             return .success(response.data.experience)
         } catch {
-            let error = ExperienceStore.Failure.invalidResponseData(error)
+            let error = ExperienceStore.Failure.invalidResponseData(error, data)
             return .failure(error)
         }
     }

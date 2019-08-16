@@ -268,7 +268,7 @@ class PollCell: BlockCell {
     private var state: PollState = .unbound {
         willSet {
             assert(canTransition(from: state, to: newValue), "Invalid state transition from \(state.name) to \(state.name)!")
-            os_log("Poll block transitioning from %s state to %s.", state.name, newValue.name)
+            os_log("Poll block transitioning from %s state to %s.", log: .rover, type: .debug, state.name, newValue.name)
         }
         
         didSet {
@@ -452,7 +452,7 @@ class PollCell: BlockCell {
                 let viewOptionResultsArray = pollBlock.poll.optionIDs.map {
                     viewOptionResults[$0]!
                 }
-                
+
                 setResults(viewOptionResultsArray, animated: shouldAnimateResults)
                 
                 let currentlyAssignedBlock = pollBlock
@@ -475,7 +475,7 @@ class PollCell: BlockCell {
                                     os_log("Unable to fetch poll results. Will retry.", log: .rover, type: .fault)
                                 case let .fetched(results):
                                     // update local state!
-                                    os_log("Successfully fetched current poll results.", log: .rover, type: .debug)
+                                    os_log("Successfully fetched current poll results: %s", log: .rover, type: .debug, String(describing: results.results.values))
                                     
                                     self?.state = .refreshingResults(myAnswer: myAnswer, currentResults: results.results)
                             }

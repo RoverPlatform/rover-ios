@@ -27,12 +27,15 @@ class TextPollOptionTextContainer: UIStackView {
         indicator.font = option.text.font.uiFont
         indicator.textColor = option.text.color.uiColor
         indicator.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        indicator.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
         
         // optionLabel
         
         optionLabel.font = option.text.font.uiFont
         optionLabel.text = option.text.rawValue
         optionLabel.textColor = option.text.color.uiColor
+        optionLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        optionLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         addArrangedSubview(optionLabel)
         
         // percentageLabel
@@ -64,8 +67,9 @@ class TextPollOptionTextContainer: UIStackView {
         let bumpedFontSize = option.text.font.size * 1.05
         percentageLabel.font = Text.Font(size: bumpedFontSize, weight: bumpedFontWeight).uiFont
         percentageLabel.textAlignment = .right
-        percentageLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         percentageLabel.textColor = option.text.color.uiColor
+        percentageLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        percentageLabel.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
     }
     
     required init(coder: NSCoder) {

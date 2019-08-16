@@ -10,7 +10,7 @@ import UIKit
 
 class PollOptionFillBar: UIView {
     let fillView = UIView()
-    var widthConstraint: NSLayoutConstraint?
+    var widthConstraint: NSLayoutConstraint!
     
     init(color: Color) {
         super.init(frame: .zero)
@@ -23,6 +23,9 @@ class PollOptionFillBar: UIView {
             fillView.leadingAnchor.constraint(equalTo: leadingAnchor),
             fillView.topAnchor.constraint(equalTo: topAnchor)
         ])
+        
+        widthConstraint = fillView.widthAnchor.constraint(equalToConstant: 0)
+        widthConstraint.isActive = true
     }
     
     required init?(coder: NSCoder) {
@@ -33,13 +36,13 @@ class PollOptionFillBar: UIView {
         assert(fillPercentage >= 0)
         assert(fillPercentage <= 1)
         
-        widthConstraint?.isActive = false
+        widthConstraint.isActive = false
         widthConstraint = fillView.widthAnchor.constraint(
             equalTo: widthAnchor,
             multiplier: CGFloat(fillPercentage)
         )
         
-        widthConstraint?.isActive = true
+        widthConstraint.isActive = true
 
         let duration = animated ? 1.0 : 0.0
         UIView.animate(withDuration: duration, delay: 0, options: [.curveEaseInOut], animations: {

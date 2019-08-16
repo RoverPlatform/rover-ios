@@ -307,38 +307,45 @@ class PollCell: BlockCell {
                 self.isLoading = false
             
                 let currentlyAssignedBlock = pollBlock
-                self.urlSession.fetchPollResults(for: pollBlock.pollID(containedBy: experienceID), optionIds: pollBlock.poll.optionIDs) { [weak self] pollResults in
-                    DispatchQueue.main.async {
-                        guard let self = self else {
-                            return
-                        }
-                        
-                        switch pollResults {
-                        case let .fetched(results):
-                            // we are landing an async request. If current state is one that can accept our freshly acquired results, then transition.
-                            switch self.state {
-                            case .initialState:
-                                if currentlyAssignedBlock.id != pollBlock.id {
+                func recursiveFetch(delay: TimeInterval = 0) {
+                    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(Int(delay * 1000))) {
+                        self.urlSession.fetchPollResults(for: pollBlock.pollID(containedBy: experienceID), optionIds: pollBlock.poll.optionIDs) { [weak self] pollResults in
+                            DispatchQueue.main.async {
+                                guard let self = self else {
                                     return
                                 }
                                 
-                                self.state = .resultsSeeded(initialResults: results.results)
-                                
-                            case let .pollAnswered(myAnswer):
-                                if currentlyAssignedBlock.id != pollBlock.id {
-                                    return
+                                switch pollResults {
+                                case let .fetched(results):
+                                    // we are landing an async request. If current state is one that can accept our freshly acquired results, then transition.
+                                    switch self.state {
+                                    case .initialState:
+                                        if currentlyAssignedBlock.id != pollBlock.id {
+                                            return
+                                        }
+                                        
+                                        self.state = .resultsSeeded(initialResults: results.results)
+                                        
+                                    case let .pollAnswered(myAnswer):
+                                        if currentlyAssignedBlock.id != pollBlock.id {
+                                            return
+                                        }
+                                        
+                                        self.state = .submittingAnswer(myAnswer: myAnswer, initialResults: results.results)
+                                    default:
+                                        return
+                                    }
+                                case .failed:
+                                    // retry!
+                                    os_log("Initial poll results fetch failed.  Will retry momentarily.", log: .rover, type: .error)
+                                    recursiveFetch(delay: 1)
                                 }
-                                
-                                self.state = .submittingAnswer(myAnswer: myAnswer, initialResults: results.results)
-                            default:
-                                return
                             }
-                        case .failed:
-                            // TODO: retry.
-                            os_log("Initial poll results fetch failed.", log: .rover, type: .error)
                         }
                     }
                 }
+                
+                recursiveFetch()
                 
                 // handleOptionTapped() will check for this state and transition to .pollAnswered if needed.
                 
@@ -399,33 +406,38 @@ class PollCell: BlockCell {
                 
                 let currentlyAssignedBlock = pollBlock
                 
-                self.urlSession.castVote(pollID: pollBlock.pollID(containedBy: experienceID), optionID: myAnswer) { [weak self] castVoteResults in
-                    DispatchQueue.main.async {
-                        guard let self = self else {
-                            return
-                        }
-                        
-                        switch castVoteResults {
-                        case .succeeded:
-                            // we are landing an async request. If current state is one that can accept our freshly submitted vote, then transition.
-                            switch self.state {
-                            case let .submittingAnswer(myAnswer, _):
-                                if currentlyAssignedBlock.id != pollBlock.id {
+                func recursiveVoteAttempt(delay: TimeInterval = 0) {
+                    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(Int(delay * 1000))) {
+                        self.urlSession.castVote(pollID: pollBlock.pollID(containedBy: experienceID), optionID: myAnswer) { [weak self] castVoteResults in
+                            DispatchQueue.main.async {
+                                guard let self = self else {
                                     return
                                 }
                                 
-                                self.state = .refreshingResults(myAnswer: myAnswer, currentResults: withUsersVoteAdded)
-                                
-                            default:
-                                break
+                                switch castVoteResults {
+                                case .succeeded:
+                                    // we are landing an async request. If current state is one that can accept our freshly submitted vote, then transition.
+                                    switch self.state {
+                                    case let .submittingAnswer(myAnswer, _):
+                                        if currentlyAssignedBlock.id != pollBlock.id {
+                                            return
+                                        }
+                                        
+                                        self.state = .refreshingResults(myAnswer: myAnswer, currentResults: withUsersVoteAdded)
+                                        
+                                    default:
+                                        break
+                                    }
+                                case .failed:
+                                    // TODO: make this do the same recursive retry pattern as the other requests.
+                                    os_log("Cast vote request failed. Will retry momentarily.", log: .rover, type: .error)
+                                    recursiveVoteAttempt(delay: 1)
+                                }
                             }
-                        case .failed:
-                            // TODO: make this do the same recursive retry pattern as the other requests.
-                            os_log("Cast vote request failed.", log: .rover, type: .error)
-                            
                         }
                     }
                 }
+                recursiveVoteAttempt()
             case let .refreshingResults(myAnswer, currentResults):
                 // At this point we have answered the poll and have the current results which INCLUDE the user's answer.
                 // Use the currentResults to populate the UI and the myAnswer property to display the indicator circle.

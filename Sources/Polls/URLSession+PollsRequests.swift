@@ -118,7 +118,7 @@ extension URLSession {
         
         let task = self.uploadTask(with: request, from: data) { data, urlResponse, error in
             if let error = error {
-                os_log("Unable to request a poll vote castbecause: %s", log: .rover, type: .error, error.debugDescription)
+                os_log("Unable to request a poll vote cast because: %s", log: .rover, type: .error, error.debugDescription)
                 callback(.failed)
                 return
             }

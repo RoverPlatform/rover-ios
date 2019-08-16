@@ -11,15 +11,40 @@ import UIKit
 class TextPollOptionLabel: UIStackView {
     let indicator = Indicator()
     let optionLabel = UILabel()
-    let percentageLabel = UILabel()
-    let percentageLabelWidthConstraint: NSLayoutConstraint
+    let percentageLabel: PollOptionPercentageLabel
     
     let option: TextPollBlock.TextPoll.Option
     
     init(option: TextPollBlock.TextPoll.Option) {
         self.option = option
-        percentageLabelWidthConstraint = percentageLabel.widthAnchor.constraint(equalToConstant: 0)
-        percentageLabelWidthConstraint.isActive = true
+        
+        // The font weight for the percentageLabel should be two stops heavier and the size should be 5% bigger.
+        
+        let bumpedFontWeight: Text.Font.Weight
+        switch option.text.font.weight {
+        case .ultraLight:
+            bumpedFontWeight = .light
+        case .thin:
+            bumpedFontWeight = .regular
+        case .light:
+            bumpedFontWeight = .medium
+        case .regular:
+            bumpedFontWeight = .semiBold
+        case .medium:
+            bumpedFontWeight = .bold
+        case .semiBold:
+            bumpedFontWeight = .heavy
+        case .bold:
+            bumpedFontWeight = .black
+        case .heavy:
+            bumpedFontWeight = .black
+        case .black:
+            bumpedFontWeight = .black
+        }
+        
+        let bumpedFontSize = option.text.font.size * 1.05
+        let percentageLabelFont = Text.Font(size: bumpedFontSize, weight: bumpedFontWeight)
+        percentageLabel = PollOptionPercentageLabel(font: percentageLabelFont)
         super.init(frame: .zero)
         
         spacing = 8
@@ -42,8 +67,6 @@ class TextPollOptionLabel: UIStackView {
         
         percentageLabel.textAlignment = .right
         percentageLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
-        percentageLabel.font = option.text.font.bumpedForPercentageIndicator.uiFont
-        percentageLabel.text = "99%"
         percentageLabel.textColor = option.text.color.uiColor
     }
     
@@ -63,69 +86,14 @@ class TextPollOptionLabel: UIStackView {
         }
     }
     
-    var previousPercentageProportion = 0.0
-    var animationTimer: Timer?
-    
     func setPercentage(to percentage: Int?, animated: Bool) {
-        guard let percentage = percentage else {
-            percentageLabel.text = nil
-            percentageLabelWidthConstraint.constant = 0
+        percentageLabel.setPercentage(to: percentage, animated: animated)
+        
+        if percentage == nil {
             percentageLabel.removeFromSuperview()
-            return
-        }
-        
-        assert(percentage >= 0)
-        assert(percentage <= 100)
-        
-        let textToMeasure: String
-        switch percentage {
-        case 100:
-            textToMeasure = "100%"
-        case let x where x < 10:
-            textToMeasure = "8%"
-        default:
-            textToMeasure = "88%"
-        }
-        
-        let font = option.text.font.bumpedForPercentageIndicator
-        let string = font.attributedText(forPlainText: textToMeasure, color: option.text.color)
-        let bounds = CGSize(width: Double.greatestFiniteMagnitude, height: Double.greatestFiniteMagnitude)
-        let rect = string?.boundingRect(with: bounds, options: [], context: nil)
-        let width = rect?.width.rounded(.up) ?? 0
-        percentageLabelWidthConstraint.constant = width + 1
-        
-        if !arrangedSubviews.contains(percentageLabel) {
+        } else if !arrangedSubviews.contains(percentageLabel) {
             addArrangedSubview(percentageLabel)
         }
-        
-        // Animate
-        
-        if let animationTimer = animationTimer {
-            animationTimer.invalidate()
-            self.animationTimer = nil
-        }
-    
-        let startTime = Date()
-        let startProportion = self.previousPercentageProportion
-        let fraction = Double(percentage) / 100.0
-        if animated && startProportion != fraction {
-            self.animationTimer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true, block: { [weak self] timer in
-                let elapsed = Double(startTime.timeIntervalSinceNow) * -1
-                let elapsedProportion = elapsed / 1.0
-                if elapsedProportion > 1.0 {
-                    self?.percentageLabel.text = "\(percentage)%"
-                    timer.invalidate()
-                    self?.animationTimer = nil
-                } else {
-                    let percentage = (startProportion * 100).rounded(.down) + ((fraction - startProportion) * 100).rounded(.down) * elapsedProportion
-                    self?.percentageLabel.text = String(format: "%.0f%%", percentage)
-                }
-            })
-        } else {
-            self.percentageLabel.text = "\(percentage)%"
-        }
-
-        self.previousPercentageProportion = fraction
     }
 }
 
@@ -149,44 +117,5 @@ class Indicator: UILabel {
     override var intrinsicContentSize: CGSize {
         let size = super.intrinsicContentSize
         return CGSize(width: size.width + 8, height: size.height)
-    }
-}
-
-// MARK: Text Helpers
-
-fileprivate extension Text.Font.Weight {
-    /// Return a weight two stops heavier.
-     var bumped: Text.Font.Weight {
-        switch self {
-        case .ultraLight:
-            return .light
-        case .thin:
-            return .regular
-        case .light:
-            return .medium
-        case .regular:
-            return .semiBold
-        case .medium:
-            return .bold
-        case .semiBold:
-            return .heavy
-        case .bold:
-            return .black
-        case .heavy:
-            return .black
-        case .black:
-            return .black
-        }
-    }
-}
-
-fileprivate extension Text.Font {
-     func attributedText(forPlainText text: String, color: Color) -> NSAttributedString? {
-        let text = Text(rawValue: text, alignment: .left, color: color, font: self)
-        return text.attributedText(forFormat: .plain)
-    }
-    
-    var bumpedForPercentageIndicator: Text.Font {
-        return Text.Font(size: self.size * 1.05, weight: self.weight.bumped)
     }
 }

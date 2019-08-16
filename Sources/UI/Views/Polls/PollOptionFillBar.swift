@@ -1,5 +1,5 @@
 //
-//  TextPollOptionFillBar.swift
+//  PollOptionFillBar.swift
 //  Rover
 //
 //  Created by Sean Rucker on 2019-08-15.
@@ -8,14 +8,14 @@
 
 import UIKit
 
-class TextPollOptionFillBar: UIView {
+class PollOptionFillBar: UIView {
     let fillView = UIView()
     var widthConstraint: NSLayoutConstraint?
     
-    init(option: TextPollBlock.TextPoll.Option) {
+    init(color: Color) {
         super.init(frame: .zero)
-        
-        fillView.backgroundColor = option.resultFillColor.uiColor
+        clipsToBounds = true
+        fillView.backgroundColor = color.uiColor
         fillView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(fillView)
         NSLayoutConstraint.activate([

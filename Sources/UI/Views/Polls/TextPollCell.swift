@@ -26,16 +26,18 @@ class TextPollCell: PollCell {
     override func configure(with block: Block) {
         super.configure(with: block)
         
-        guard let textPollBlock = block as? TextPollBlock else {
+        guard let block = block as? TextPollBlock else {
             return
         }
         
-        let spacing = CGFloat(textPollBlock.textPoll.options.first?.topMargin ?? 0)
+        let poll = block.textPoll
+        let options = poll.options
+        let spacing = CGFloat(options.first?.topMargin ?? 0)
         containerView.spacing = spacing
         optionsList.spacing = spacing
         optionsList.arrangedSubviews.forEach { $0.removeFromSuperview() }
         
-        textPollBlock.textPoll.options
+        options
             .map { option in
                 TextPollOption(option: option) { [weak self] in
                     self?.optionSelected(option)
@@ -43,7 +45,11 @@ class TextPollCell: PollCell {
             }
             .forEach { optionsList.addArrangedSubview($0) }
         
-        questionView.attributedText = textPollBlock.textPoll.question.attributedText(forFormat: .plain)
+        question.textView.attributedText = poll.question.attributedText(forFormat: .plain)
+//        let question = poll.question
+//        questionLabel.font = question.font.uiFont
+//        questionLabel.text = question.rawValue
+//        questionLabel.textColor = question.color.uiColor
     } 
     
     // MARK: Results

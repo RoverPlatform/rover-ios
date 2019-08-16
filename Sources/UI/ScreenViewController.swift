@@ -311,7 +311,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         )
         
         collectionView.register(
-            ImagePollCell.self,
+            SRImagePollCell.self,
             forCellWithReuseIdentifier: ScreenViewController.imagePollViewCellReuseIdentifier
         )
         

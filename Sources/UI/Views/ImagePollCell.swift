@@ -817,33 +817,6 @@ protocol ImagePollCellDelegate: AnyObject {
     func didCastVote(on imagePollBlock: ImagePollBlock, for option: ImagePollBlock.ImagePoll.Option)
 }
 
-// MARK: Measurement
-
-extension ImagePollBlock {
-    func intrinisicHeight(blockWidth: CGFloat) -> CGFloat {
-        let innerWidth = blockWidth - CGFloat(insets.left) - CGFloat(insets.right)
-        
-        let size = CGSize(width: innerWidth, height: CGFloat.greatestFiniteMagnitude)
-        
-        let questionAttributedText = self.imagePoll.question.attributedText(forFormat: .plain)
-        
-        let questionHeight = questionAttributedText?.boundingRect(with: size, options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil).height ?? CGFloat(0)
-        
-        let optionsHeightAndSpacing = self.imagePoll.options.tuples.map { (firstOption, secondOption) in
-            let horizontalSpacing = CGFloat(secondOption.leftMargin)
-            let optionTextHeight = OPTION_TEXT_HEIGHT
-            let verticalSpacing = CGFloat(max(firstOption.topMargin, secondOption.topMargin))
-            
-            let optionImageHeight = (blockWidth - horizontalSpacing) / 2
-            return verticalSpacing + optionTextHeight + optionImageHeight
-        }.reduce(CGFloat(0)) { (accumulator, addend) in
-            return accumulator + addend
-        }
-        
-        return optionsHeightAndSpacing + questionHeight + CGFloat(insets.top + insets.bottom)
-    }
-}
-
 // MARK: Helpers
 
 extension Array {

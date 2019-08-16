@@ -11,7 +11,7 @@ import UIKit
 
 class TextPollOption: UIView {
     let backgroundView = UIImageView()
-    let fillBar: TextPollOptionFillBar
+    let fillBar: PollOptionFillBar
     let label: TextPollOptionLabel
     
     let option: TextPollBlock.TextPoll.Option
@@ -20,7 +20,7 @@ class TextPollOption: UIView {
     init(option: TextPollBlock.TextPoll.Option, tapHandler: @escaping () -> Void) {
         self.option = option
         self.tapHandler = tapHandler
-        fillBar = TextPollOptionFillBar(option: option)
+        fillBar = PollOptionFillBar(color: option.resultFillColor)
         label = TextPollOptionLabel(option: option)
         super.init(frame: .zero)
         
@@ -96,6 +96,11 @@ class TextPollOption: UIView {
     @objc
     private func didTap(gestureRecognizer: UIGestureRecognizer) {
         tapHandler()
+        
+        // TODO: Remove this
+        
+        let result = PollCell.OptionResult(selected: true, fraction: 0.5, percentage: 50)
+        setResult(result, animated: true)
     }
     
     override func layoutSubviews() {

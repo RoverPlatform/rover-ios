@@ -13,6 +13,36 @@ protocol PollCellDelegate: AnyObject {
     func didCastVote(on imagePollBlock: ImagePollBlock, for option: ImagePollBlock.ImagePoll.Option)
 }
 
+class PollCellQuestion: UIView {
+    let textView = UILabel()
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        
+        textView.numberOfLines = 0
+        
+        
+//        textView.clipsToBounds = true
+//        textView.isScrollEnabled = false
+//        textView.backgroundColor = UIColor.clear
+//        textView.isUserInteractionEnabled = false
+//        textView.textContainer.lineFragmentPadding = 0
+//        textView.textContainerInset = UIEdgeInsets.zero
+        textView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(textView)
+        NSLayoutConstraint.activate([
+            textView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            textView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            textView.topAnchor.constraint(equalTo: topAnchor),
+            textView.trailingAnchor.constraint(equalTo: trailingAnchor)
+        ])
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
 class PollCell: BlockCell {
     struct OptionResult {
         let selected: Bool
@@ -34,20 +64,12 @@ class PollCell: BlockCell {
     }
     
     let containerView = UIStackView()
-    let questionView = UITextView()
+    let question = PollCellQuestion()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
-        questionView.clipsToBounds = true
-        questionView.isScrollEnabled = false
-        questionView.backgroundColor = UIColor.clear
-        questionView.isUserInteractionEnabled = false
-        questionView.textContainer.lineFragmentPadding = 0
-        questionView.textContainerInset = UIEdgeInsets.zero
-        
         containerView.axis = .vertical
-        containerView.addArrangedSubview(questionView)
+        containerView.addArrangedSubview(question)
     }
     
     required init?(coder: NSCoder) {

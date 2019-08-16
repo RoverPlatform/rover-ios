@@ -16,7 +16,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Pass your account token from the Rover Settings app to the Rover SDK.
-        Rover.accountToken = "<SDK-TOKEN>"
+        Rover.accountToken = "d6ab40e8a45e3040c372806baba387fd"
         
         // This method demonstrates how to observe the Rover events mentioned above in your own app.
         observeRoverNotifications()

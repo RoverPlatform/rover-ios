@@ -16,6 +16,7 @@ class PollOptionPercentageLabel: UILabel {
     override init(frame: CGRect) {
         super.init(frame: frame)
         widthConstraint = widthAnchor.constraint(equalToConstant: 0)
+        widthConstraint.priority = .defaultHigh
         widthConstraint.isActive = true
     }
     

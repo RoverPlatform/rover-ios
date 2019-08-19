@@ -29,6 +29,13 @@ class TextPollOption: UIView {
         let borderWidth = CGFloat(option.border.width)
         layoutMargins = UIEdgeInsets(top: borderWidth, left: borderWidth, bottom: borderWidth, right: borderWidth)
         
+        // Accessibility
+        
+        isAccessibilityElement = true
+        accessibilityLabel = option.text.rawValue
+        accessibilityHint = "Selects the option"
+        accessibilityTraits = [.button]
+        
         // height
         
         let height = CGFloat(option.height) + layoutMargins.top + layoutMargins.bottom
@@ -88,12 +95,31 @@ class TextPollOption: UIView {
         fillBar.setFillPercentage(to: result.fraction, animated: animated)
         textContainer.setPercentage(to: result.percentage, animated: animated)
         textContainer.isSelected = result.selected
+        
+        // Accessibility
+        
+        accessibilityHint = nil
+        accessibilityTraits.insert(.notEnabled)
+        
+        if result.selected {
+            accessibilityTraits.insert(.selected)
+        } else {
+            accessibilityTraits.remove(.selected)
+        }
+        
+        accessibilityValue = "\(result.percentage)%"
     }
     
     func clearResult() {
         fillBar.setFillPercentage(to: 0, animated: false)
         textContainer.setPercentage(to: nil, animated: false)
         textContainer.isSelected = false
+        
+        // Accessibility
+        
+        accessibilityHint = "Selects the option"
+        accessibilityTraits.remove(.notEnabled)
+        accessibilityTraits.remove(.selected)
     }
     
     @objc

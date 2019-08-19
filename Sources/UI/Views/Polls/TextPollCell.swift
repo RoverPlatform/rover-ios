@@ -61,10 +61,10 @@ extension TextPollBlock {
 
         let questionHeight = questionAttributedText?.boundingRect(with: size, options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil).height ?? CGFloat(0)
 
-        let optionsHeightAndSpacing = self.textPoll.options.flatMap { option in
-            return [option.height, option.topMargin]
-        }.reduce(0) { (accumulator, addend) in
-            return accumulator + addend
+        let borderHeight = CGFloat(textPoll.options.first?.border.width ?? 0) * 2
+        
+        let optionsHeightAndSpacing = self.textPoll.options.reduce(0) { result, option in
+            result + CGFloat(option.height) + CGFloat(option.topMargin) + borderHeight
         }
 
         return CGFloat(optionsHeightAndSpacing) + questionHeight + CGFloat(insets.top + insets.bottom)

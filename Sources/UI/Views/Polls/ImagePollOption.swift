@@ -30,6 +30,13 @@ class ImagePollOption: UIView {
         let borderWidth = CGFloat(option.border.width)
         layoutMargins = UIEdgeInsets(top: borderWidth, left: borderWidth, bottom: borderWidth, right: borderWidth)
         
+        // Accessibility
+        
+        isAccessibilityElement = true
+        accessibilityLabel = option.text.rawValue
+        accessibilityHint = "Selects the option"
+        accessibilityTraits = [.image, .button]
+        
         // stackView
         
         stackView.axis = .vertical
@@ -84,11 +91,30 @@ class ImagePollOption: UIView {
         UIView.animate(withDuration: duration, delay: 0, options: [.curveEaseInOut], animations: { [weak self] in
             self?.overlay.alpha = 1
         })
+        
+        // Accessibility
+        
+        accessibilityHint = nil
+        accessibilityTraits.insert(.notEnabled)
+        
+        if result.selected {
+            accessibilityTraits.insert(.selected)
+        } else {
+            accessibilityTraits.remove(.selected)
+        }
+        
+        accessibilityValue = "\(result.percentage)%"
     }
     
     func clearResult() {
         caption.isSelected = false
         overlay.alpha = 0
+        
+        // Accessibility
+        
+        accessibilityHint = "Selects the option"
+        accessibilityTraits.remove(.notEnabled)
+        accessibilityTraits.remove(.selected)
     }
     
     // MARK: Actions

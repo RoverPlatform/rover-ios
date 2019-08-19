@@ -26,9 +26,12 @@ class TextPollOption: UIView {
         
         clipsToBounds = true
         
+        let borderWidth = CGFloat(option.border.width)
+        layoutMargins = UIEdgeInsets(top: borderWidth, left: borderWidth, bottom: borderWidth, right: borderWidth)
+        
         // height
         
-        let height = CGFloat(option.height)
+        let height = CGFloat(option.height) + layoutMargins.top + layoutMargins.bottom
         let constraint = heightAnchor.constraint(equalToConstant: height)
         constraint.priority = .defaultHigh
         constraint.isActive = true
@@ -55,15 +58,15 @@ class TextPollOption: UIView {
             fillBar.trailingAnchor.constraint(equalTo: trailingAnchor)
         ])
         
-        // label
+        // textContainer
         
         textContainer.translatesAutoresizingMaskIntoConstraints = false
         addSubview(textContainer)
         NSLayoutConstraint.activate([
-            textContainer.bottomAnchor.constraint(equalTo: bottomAnchor),
-            textContainer.leadingAnchor.constraint(equalTo: leadingAnchor),
-            textContainer.topAnchor.constraint(equalTo: topAnchor),
-            textContainer.trailingAnchor.constraint(equalTo: trailingAnchor)
+            textContainer.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor),
+            textContainer.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
+            textContainer.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor),
+            textContainer.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor)
         ])
         
         // gestureRecognizer

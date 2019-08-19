@@ -35,7 +35,22 @@ class PollCell: BlockCell {
     }
     
     let containerView = UIView()
-    let question = UITextView()
+    let question = UILabel()
+    
+    var questionText: Text? {
+        didSet {
+            guard let questionText = questionText else {
+                question.text = nil
+                return
+            }
+            
+            question.text = questionText.rawValue
+            question.font = questionText.font.uiFont
+            question.textColor = questionText.color.uiColor
+            question.textAlignment = questionText.alignment.textAlignment
+        }
+    }
+    
     let optionsList = UIStackView()
     
     var verticalSpacing: CGFloat = 0 {
@@ -52,12 +67,7 @@ class PollCell: BlockCell {
         
         // question
         
-        question.clipsToBounds = true
-        question.isScrollEnabled = false
-        question.backgroundColor = UIColor.clear
-        question.isUserInteractionEnabled = false
-        question.textContainer.lineFragmentPadding = 0
-        question.textContainerInset = UIEdgeInsets.zero
+        question.numberOfLines = 0
         question.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(question)
         

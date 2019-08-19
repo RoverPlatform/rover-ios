@@ -50,7 +50,7 @@ class ImagePollCell: PollCell {
             }
             .forEach { optionsList.addArrangedSubview($0) }
         
-        question.attributedText = poll.question.attributedText(forFormat: .plain)
+        questionText = poll.question
     }
     
     override func setResults(_ results: [PollCell.OptionResult], animated: Bool) {

@@ -29,12 +29,16 @@ class ImagePollOptionImage: UIImageView {
         self.alpha = 0.0
         self.image = nil
     
-        if let image = ImageStore.shared.image(for: option.image, filledInFrame: self.frame) {
-            self.image = image
+        guard let image = option.image else {
+            return
+        }
+        
+        if let imageBitmap = ImageStore.shared.image(for: image, filledInFrame: self.frame) {
+            self.image = imageBitmap
             self.alpha = 1.0
         } else {
             let originalFrame = self.frame
-            ImageStore.shared.fetchImage(for: option.image, filledInFrame: self.frame) { [weak self] image in
+            ImageStore.shared.fetchImage(for: image, filledInFrame: self.frame) { [weak self] image in
                 guard let image = image, self?.frame == originalFrame else {
                     return
                 }

@@ -31,7 +31,7 @@ class TextPollCell: PollCell {
             }
             .forEach { optionsList.addArrangedSubview($0) }
         
-        question.attributedText = poll.question.attributedText(forFormat: .plain)
+        questionText = poll.question
     } 
     
     // MARK: Results

@@ -15,7 +15,7 @@ public struct ImagePollBlock: Block {
         public struct Option: Decodable {
             public var id: String
             public var text: Text
-            public var image: Image
+            public var image: Image?
             public var background: Background
             public var border: Border
             public var opacity: Double

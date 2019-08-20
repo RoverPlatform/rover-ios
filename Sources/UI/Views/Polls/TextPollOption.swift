@@ -26,9 +26,19 @@ class TextPollOption: UIView {
         
         clipsToBounds = true
         
+        let borderWidth = CGFloat(option.border.width)
+        layoutMargins = UIEdgeInsets(top: borderWidth, left: borderWidth, bottom: borderWidth, right: borderWidth)
+        
+        // Accessibility
+        
+        isAccessibilityElement = true
+        accessibilityLabel = option.text.rawValue
+        accessibilityHint = "Selects the option"
+        accessibilityTraits = [.button]
+        
         // height
         
-        let height = CGFloat(option.height)
+        let height = CGFloat(option.height) + layoutMargins.top + layoutMargins.bottom
         let constraint = heightAnchor.constraint(equalToConstant: height)
         constraint.priority = .defaultHigh
         constraint.isActive = true
@@ -55,15 +65,15 @@ class TextPollOption: UIView {
             fillBar.trailingAnchor.constraint(equalTo: trailingAnchor)
         ])
         
-        // label
+        // textContainer
         
         textContainer.translatesAutoresizingMaskIntoConstraints = false
         addSubview(textContainer)
         NSLayoutConstraint.activate([
-            textContainer.bottomAnchor.constraint(equalTo: bottomAnchor),
-            textContainer.leadingAnchor.constraint(equalTo: leadingAnchor),
-            textContainer.topAnchor.constraint(equalTo: topAnchor),
-            textContainer.trailingAnchor.constraint(equalTo: trailingAnchor)
+            textContainer.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor),
+            textContainer.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
+            textContainer.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor),
+            textContainer.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor)
         ])
         
         // gestureRecognizer
@@ -85,12 +95,31 @@ class TextPollOption: UIView {
         fillBar.setFillPercentage(to: result.fraction, animated: animated)
         textContainer.setPercentage(to: result.percentage, animated: animated)
         textContainer.isSelected = result.selected
+        
+        // Accessibility
+        
+        accessibilityHint = nil
+        accessibilityTraits.insert(.notEnabled)
+        
+        if result.selected {
+            accessibilityTraits.insert(.selected)
+        } else {
+            accessibilityTraits.remove(.selected)
+        }
+        
+        accessibilityValue = "\(result.percentage)%"
     }
     
     func clearResult() {
         fillBar.setFillPercentage(to: 0, animated: false)
         textContainer.setPercentage(to: nil, animated: false)
         textContainer.isSelected = false
+        
+        // Accessibility
+        
+        accessibilityHint = "Selects the option"
+        accessibilityTraits.remove(.notEnabled)
+        accessibilityTraits.remove(.selected)
     }
     
     @objc

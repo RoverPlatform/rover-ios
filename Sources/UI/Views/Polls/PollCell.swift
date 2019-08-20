@@ -548,7 +548,7 @@ class PollCell: BlockCell {
                 case .refreshingResults:
                     break
                 default:
-                    recursiveFetch(0)
+                    recursiveFetch(5)
                 }
                 
             // MARK: State Restore

@@ -48,6 +48,10 @@ class PollCell: BlockCell {
             question.font = questionText.font.uiFont
             question.textColor = questionText.color.uiColor
             question.textAlignment = questionText.alignment.textAlignment
+            
+            // Accessibility
+            let numberOfOptions = (block as! PollBlock).poll.pollOptions.count
+            question.accessibilityLabel = "Poll with \(numberOfOptions) options: \(questionText.rawValue)"
         }
     }
     

@@ -26,7 +26,7 @@ class TextPollOptionTextContainer: UIStackView {
         // indicator
         indicator.font = option.text.font.uiFont
         indicator.textColor = option.text.color.uiColor
-        indicator.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        indicator.setContentHuggingPriority(.defaultLow, for: .horizontal)
         indicator.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
         
         // optionLabel
@@ -34,7 +34,7 @@ class TextPollOptionTextContainer: UIStackView {
         optionLabel.font = option.text.font.uiFont
         optionLabel.text = option.text.rawValue
         optionLabel.textColor = option.text.color.uiColor
-        optionLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        optionLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         optionLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         addArrangedSubview(optionLabel)
         
@@ -106,16 +106,16 @@ class Indicator: UILabel {
         super.init(frame: frame)
         text = "•"
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func drawText(in rect: CGRect) {
         let insets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 8)
         super.drawText(in: rect.inset(by: insets))
     }
-    
+
     override var intrinsicContentSize: CGSize {
         let size = super.intrinsicContentSize
         return CGSize(width: size.width + 8, height: size.height)

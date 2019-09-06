@@ -25,7 +25,11 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     override open var preferredStatusBarStyle: UIStatusBarStyle {
         switch screen.statusBar.style {
         case .dark:
-            return .default
+            if #available(iOS 13.0, *) {
+                return .darkContent
+            } else {
+                return .default
+            }
         case .light:
             return .lightContent
         }

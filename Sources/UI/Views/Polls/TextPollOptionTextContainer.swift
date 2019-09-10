@@ -26,7 +26,7 @@ class TextPollOptionTextContainer: UIStackView {
         // indicator
         indicator.font = option.text.font.uiFont
         indicator.textColor = option.text.color.uiColor
-        indicator.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        indicator.setContentHuggingPriority(.defaultLow, for: .horizontal)
         indicator.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
         
         // optionLabel
@@ -34,7 +34,7 @@ class TextPollOptionTextContainer: UIStackView {
         optionLabel.font = option.text.font.uiFont
         optionLabel.text = option.text.rawValue
         optionLabel.textColor = option.text.color.uiColor
-        optionLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        optionLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         optionLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         addArrangedSubview(optionLabel)
         

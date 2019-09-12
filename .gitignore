@@ -2,6 +2,9 @@
 
 .DS_Store
 
+# SwiftPM
+.build
+
 # Xcode
 
 ## Build generated

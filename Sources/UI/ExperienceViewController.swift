@@ -35,16 +35,16 @@ open class ExperienceViewController: UINavigationController {
         self.campaignID = campaignID
         super.init(nibName: nil, bundle: nil)
         
-        let homeScreen: Screen
+        let initialScreen: Screen
         if let initialScreenID = initialScreenID {
-            homeScreen = experience.screens.first { $0.id == initialScreenID } ?? experience.homeScreen
+            initialScreen = experience.screens.first { $0.id == initialScreenID } ?? experience.homeScreen
         } else {
-            homeScreen = experience.homeScreen
+            initialScreen = experience.homeScreen
         }
         
         let homeScreenViewController = screenViewController(
             experience: experience,
-            screen: homeScreen
+            screen: initialScreen
         )
         
         viewControllers = [homeScreenViewController]

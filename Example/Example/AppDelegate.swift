@@ -43,10 +43,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
             let campaignID = queryItems.first(where: { $0.name == "campaignID" })?.value
             
+            // you can optionally pass in a screen ID to navigate to immediately rather than starting at the home screen.
+            let screenID = queryItems.first(where: { $0.name == "screenID" })?.value
+            
             // Instantiate a `RoverViewController` and call the `loadExperience(id:campaignID)` method to load the
             // experience whose id matches the value passed in the query parameter.
             let roverViewController = RoverViewController()
-            roverViewController.loadExperience(id: id, campaignID: campaignID)
+            roverViewController.loadExperience(id: id, campaignID: campaignID, initialScreenID: screenID)
             
             // Use Rover's UIApplication.present() helper extension method to find the currently active view controller,
             // and present the RoverViewController on top.

@@ -30,6 +30,7 @@ open class RoverViewController: UIViewController {
     #endif
     
     private var campaignID: String?
+    private var alternateHomeScreenID: String?
     private var identifier: ExperienceStore.Identifier?
     
     override open func viewDidLoad() {
@@ -41,8 +42,9 @@ open class RoverViewController: UIViewController {
     /// Load a Rover experience into the view controller referenced by its ID.
     ///
     /// - Parameter id: The ID of the experience to load.
-    public func loadExperience(id: String, campaignID: String? = nil, useDraft: Bool = false) {
+    public func loadExperience(id: String, campaignID: String? = nil, useDraft: Bool = false, initialScreenID: String? = nil) {
         self.campaignID = campaignID
+        self.alternateHomeScreenID = initialScreenID
         self.identifier = ExperienceStore.Identifier.experienceID(id: id, useDraft: useDraft)
         loadExperience()
     }
@@ -50,15 +52,17 @@ open class RoverViewController: UIViewController {
     /// Load a Rover experience into the view controller referenced by its associated universal link.
     ///
     /// - Parameter universalLink: The universal link associated with the experience to load.
-    public func loadExperience(universalLink url: URL, campaignID: String? = nil) {
+    public func loadExperience(universalLink url: URL, campaignID: String? = nil, initialScreenID: String? = nil) {
         self.campaignID = campaignID
+        self.alternateHomeScreenID = initialScreenID
         self.identifier = ExperienceStore.Identifier.experienceURL(url: url)
         loadExperience()
     }
     
     /// Present an Experience directly into the view controller without downloading one by an identifier.
-    public func loadExperience(experience: Experience, campaignID: String? = nil) {
+    public func loadExperience(experience: Experience, campaignID: String? = nil, initialScreenID: String? = nil) {
         self.campaignID = campaignID
+        self.alternateHomeScreenID = initialScreenID
         let viewController = experienceViewController(experience: experience)
         setChildViewController(viewController)
         self.setNeedsStatusBarAppearanceUpdate()
@@ -171,6 +175,6 @@ open class RoverViewController: UIViewController {
     /// Construct a view controller to display for a given experience. The default implementation returns an instance of
     /// `ExperienceViewController`. You can override this method if you want to use a different view controller.
     open func experienceViewController(experience: Experience) -> UIViewController {
-        return ExperienceViewController(experience: experience, campaignID: self.campaignID)
+        return ExperienceViewController(experience: experience, campaignID: self.campaignID, alternateHomeScreenID: self.alternateHomeScreenID)
     }
 }

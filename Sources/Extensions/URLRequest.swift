@@ -35,8 +35,6 @@ extension URLRequest {
         let osDescriptor = "iOS/" + UIDevice.current.systemVersion
         
         // RoverSDK/$rover-sdk-version
-        let roverBundle = Bundle(identifier: "io.rover.Rover") ?? Bundle(identifier: "org.cocoapods.Rover")
-        let roverVersion = roverBundle?.infoDictionary?["CFBundleShortVersionString"] ?? "unknown"
-        self.setValue("\(appDescriptor) \(cfNetworkDescriptor) \(darwinDescriptor) \(osDescriptor) RoverSDK/\(roverVersion)", forHTTPHeaderField: "User-Agent")
+        self.setValue("\(appDescriptor) \(cfNetworkDescriptor) \(darwinDescriptor) \(osDescriptor) RoverSDK/\(ROVER_VERSION)", forHTTPHeaderField: "User-Agent")
     }
 }

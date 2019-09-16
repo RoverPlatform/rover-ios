@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		49005D0422776283009D62F9 /* UIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49005D0322776283009D62F9 /* UIApplication.swift */; };
+		490E1F75232FE25A0001718A /* VERSION.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490E1F74232FE25A0001718A /* VERSION.swift */; };
 		4914B3D822B4307300FA395E /* RoverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD88A8020C1B21700085AE0 /* RoverTests.swift */; };
 		4914B3E422B83A3F00FA395E /* PollBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4914B3E322B83A3F00FA395E /* PollBlock.swift */; };
 		4914B3E622B83A4B00FA395E /* ImagePollBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4914B3E522B83A4B00FA395E /* ImagePollBlock.swift */; };
@@ -87,6 +88,7 @@
 
 /* Begin PBXFileReference section */
 		49005D0322776283009D62F9 /* UIApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplication.swift; sourceTree = "<group>"; };
+		490E1F74232FE25A0001718A /* VERSION.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VERSION.swift; sourceTree = "<group>"; };
 		4914B3E322B83A3F00FA395E /* PollBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollBlock.swift; sourceTree = "<group>"; };
 		4914B3E522B83A4B00FA395E /* ImagePollBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePollBlock.swift; sourceTree = "<group>"; };
 		4914B3E922B9373900FA395E /* TextPollBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextPollBlock.swift; sourceTree = "<group>"; };
@@ -204,6 +206,7 @@
 				DBF31B5A20E41C5A005D7C34 /* UI */,
 				4953DD102239925B00286C4B /* Rover.swift */,
 				49952B452242B73A004C5521 /* Info.plist */,
+				490E1F74232FE25A0001718A /* VERSION.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -464,6 +467,7 @@
 				492F7A5222E6640D00D1F653 /* UIView.swift in Sources */,
 				4953DD3422399A8500286C4B /* Border.swift in Sources */,
 				4974281A2304813C008F8D35 /* ScreenViewLayout.swift in Sources */,
+				490E1F75232FE25A0001718A /* VERSION.swift in Sources */,
 				4953DD5022399A9C00286C4B /* RoverViewController.swift in Sources */,
 				4953DD3222399A8500286C4B /* BarcodeBlock.swift in Sources */,
 				4953DD5422399A9C00286C4B /* ScreenViewLayoutAttributes.swift in Sources */,

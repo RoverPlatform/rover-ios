@@ -11,7 +11,7 @@ The recommended way to install the Rover SDK is via [Cocoapods](http://cocoapods
 Add the Rover dependency to your Podfile.
 
 ```ruby
-pod 'Rover', '~> 3.4'
+pod 'Rover', '~> 3.5'
 ```
 
 ### Carthage
@@ -21,7 +21,7 @@ CocoaPods is the simplest approach to installing the Rover SDK but you can also 
 Add the following entry to your Cartfile:
 
 ```ruby
-github "RoverPlatform/rover-ios" == 3.4
+github "RoverPlatform/rover-ios" == 3.5
 ```
 
 ## Initialization

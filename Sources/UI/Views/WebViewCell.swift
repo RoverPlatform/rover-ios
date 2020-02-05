@@ -26,6 +26,9 @@ class WebViewCell: BlockCell {
         self.webView.isHidden = false
         
         let webView = webViewBlock.webView
+        self.webView.isOpaque = false
+        self.webView.backgroundColor = .clear
+        self.webView.scrollView.backgroundColor = .clear
         self.webView.scrollView.isScrollEnabled = webView.isScrollingEnabled
         self.webView.scrollView.bounces = webView.isScrollingEnabled
         let request = URLRequest(url: webView.url)

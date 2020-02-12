@@ -8,7 +8,7 @@
 
 import Foundation
 
-public protocol PollBlock {
+public protocol PollBlock: Block {
     var poll: Poll { get }
     
     var id: String { get }
@@ -17,6 +17,8 @@ public protocol PollBlock {
 }
 
 public protocol Poll {
+    var question: Text { get }
+    
     var optionIDs: [String] { get }
     
     var pollOptions: [PollOption] { get }

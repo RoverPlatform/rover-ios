@@ -147,5 +147,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let block = notification.userInfo?[ScreenViewController.blockUserInfoKey] as! Block
             os_log("Block Tapped: \"%@\"", block.name)
         }
+        
+        NotificationCenter.default.addObserver(forName: ScreenViewController.pollAnsweredNotification, object: nil, queue:nil) { notification in
+            let experience = notification.userInfo?[ExperienceViewController.experienceUserInfoKey] as! Experience
+            let campaignID = notification.userInfo?[ExperienceViewController.campaignIDUserInfoKey] as? String
+            let screen = notification.userInfo?[ScreenViewController.screenUserInfoKey] as! Screen
+            let block = notification.userInfo?[ScreenViewController.blockUserInfoKey] as! PollBlock
+            let option = notification.userInfo?[ScreenViewController.optionUserInfoKey] as! PollOption
+            
+            os_log(
+                "Poll Answered: \"%@\" (campaignID=%@,experienceID=%@,screenID=%@,pollID=%@) answered with option \"%@\" (optionID=%@)",
+                block.poll.question.rawValue,
+                campaignID ?? "none",
+                experience.id,
+                screen.id,
+                block.pollID(containedBy: experience.id),
+                option.text.rawValue,
+                option.id
+            )
+        }
     }
 }

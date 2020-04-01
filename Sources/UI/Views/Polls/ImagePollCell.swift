@@ -101,7 +101,7 @@ extension ImagePollBlock {
         
         let questionAttributedText = self.imagePoll.question.attributedText(forFormat: .plain)
         
-        let questionHeight = questionAttributedText?.boundingRect(with: size, options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil).height ?? CGFloat(0)
+        let questionHeight = questionAttributedText?.measuredHeight(with: size) ?? CGFloat(0)
         
         let optionsHeightAndSpacing = self.imagePoll.options.tuples.map { (firstOption, secondOption) in
             let horizontalSpacing = CGFloat(secondOption.leftMargin)

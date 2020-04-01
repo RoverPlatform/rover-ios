@@ -53,12 +53,12 @@ public struct Text: Decodable {
 // MARK: Convenience Initializers
 
 extension Text {
-    func attributedText(forFormat format: NSAttributedString.DocumentType = .html) -> NSAttributedString? {
+    func attributedText(forFormat format: NSAttributedString.DocumentType) -> NSAttributedString? {
         guard let data = rawValue.data(using: String.Encoding.unicode) else {
             return nil
         }
         
-        let options = [NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.html]
+        let options = [NSAttributedString.DocumentReadingOptionKey.documentType: format]
         
         guard let attributedString = try? NSMutableAttributedString(data: data, options: options, documentAttributes: nil) else {
             return nil
@@ -67,7 +67,6 @@ extension Text {
         let range = NSRange(location: 0, length: attributedString.length)
         
         // Bold and italicize
-        
         attributedString.enumerateAttribute(NSAttributedString.Key.font, in: range, options: []) { value, range, _ in
             guard let value = value as? UIFont else {
                 return
@@ -92,8 +91,7 @@ extension Text {
         
         attributedString.addAttributes(attributes, range: range)
         
-        // Remove double newlines at end of string, as a workaround for an artifact that appears in some of the HTML structure in some experiences saved by older versions of the authoring tool.
-        
+        // Workaround to remove an unwanted trailing newline produced by a closing </p> tag being parsed by NSAttributeString's HTML parser.
         if format == .html {
             let string = attributedString.string
             if attributedString.length > 0 && string.suffix(1) == "\n" {

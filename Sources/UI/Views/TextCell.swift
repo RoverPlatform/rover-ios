@@ -9,12 +9,14 @@
 import UIKit
 
 class TextCell: BlockCell {
-    let textView: UITextView = {
-        let textView = UITextView()
+    let textView: UILabel = {
+        let textView = UILabel()
+        textView.numberOfLines = 0
         textView.backgroundColor = UIColor.clear
-        textView.isUserInteractionEnabled = false
-        textView.textContainer.lineFragmentPadding = 0
-        textView.textContainerInset = UIEdgeInsets.zero
+//        textView.isUserInteractionEnabled = false
+
+//        textView.textContainer.lineFragmentPadding = 0
+//        textView.textContainerInset = UIEdgeInsets.zero
         return textView
     }()
     
@@ -31,6 +33,6 @@ class TextCell: BlockCell {
         }
         
         textView.isHidden = false
-        textView.attributedText = textBlock.text.attributedText()
+        textView.attributedText = textBlock.text.attributedText(forFormat: .html)
     }
 }

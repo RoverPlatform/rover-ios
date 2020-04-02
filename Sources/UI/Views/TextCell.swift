@@ -13,6 +13,7 @@ class TextCell: BlockCell {
         let textView = UITextView()
         textView.backgroundColor = UIColor.clear
         textView.isEditable = false
+        textView.isUserInteractionEnabled = false
         textView.textContainer.lineFragmentPadding = 0
         textView.textContainerInset = UIEdgeInsets.zero
         return textView

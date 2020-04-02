@@ -9,14 +9,12 @@
 import UIKit
 
 class TextCell: BlockCell {
-    let textView: UILabel = {
-        let textView = UILabel()
-        textView.numberOfLines = 0
+    let textView: UITextView = {
+        let textView = UITextView()
         textView.backgroundColor = UIColor.clear
-//        textView.isUserInteractionEnabled = false
-
-//        textView.textContainer.lineFragmentPadding = 0
-//        textView.textContainerInset = UIEdgeInsets.zero
+        textView.isEditable = false
+        textView.textContainer.lineFragmentPadding = 0
+        textView.textContainerInset = UIEdgeInsets.zero
         return textView
     }()
     

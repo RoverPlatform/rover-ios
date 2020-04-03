@@ -47,6 +47,7 @@ class BlockCell: UICollectionViewCell {
         configureBorder()
         configureOpacity()
         configureContent()
+        configureA11yTraits()
     }
     
     func configureBackgroundColor() {
@@ -79,5 +80,33 @@ class BlockCell: UICollectionViewCell {
         }
         
         self.contentView.configureContent(content: content, withInsets: block.insets)
+    }
+    
+    func configureA11yTraits() {
+        guard let block = block else {
+            return
+        }
+        
+        // if no inner content, then apply the a11y traits to the cell itself.
+        let view = content ?? self
+        
+        guard !(block is TextPollBlock), !(block is ImagePollBlock), !(block is WebViewBlock) else {
+            // Polls and webviews implement their own a11y.
+            return
+        }
+        
+        // Some Rover blocks do not currently have a11y alternative descriptions available.
+        let hasContent = !(block is ImageBlock) && !(block is RectangleBlock)
+        
+        // All Rover blocks that have meaningful content should be a11y, or if they at least have tap behaviour.
+        view.isAccessibilityElement = hasContent || block.tapBehavior != .none
+        
+        // tapbehaviour be mapped to the `link` a11y trait:
+        switch block.tapBehavior {
+        case .goToScreen(_), .openURL(_, _), .presentWebsite(_):
+            view.accessibilityTraits.applyTrait(trait: .link, to: true)
+        default:
+            view.accessibilityTraits.applyTrait(trait: .link, to: false)
+        }
     }
 }

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		49005D0422776283009D62F9 /* UIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49005D0322776283009D62F9 /* UIApplication.swift */; };
+		490C86BA24377ABC007A28D6 /* UIAccessibilityTraits+mutation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490C86B924377ABC007A28D6 /* UIAccessibilityTraits+mutation.swift */; };
 		4914B3D822B4307300FA395E /* RoverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD88A8020C1B21700085AE0 /* RoverTests.swift */; };
 		4914B3E422B83A3F00FA395E /* PollBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4914B3E322B83A3F00FA395E /* PollBlock.swift */; };
 		4914B3E622B83A4B00FA395E /* ImagePollBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4914B3E522B83A4B00FA395E /* ImagePollBlock.swift */; };
@@ -88,6 +89,7 @@
 
 /* Begin PBXFileReference section */
 		49005D0322776283009D62F9 /* UIApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplication.swift; sourceTree = "<group>"; };
+		490C86B924377ABC007A28D6 /* UIAccessibilityTraits+mutation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAccessibilityTraits+mutation.swift"; sourceTree = "<group>"; };
 		4914B3E322B83A3F00FA395E /* PollBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollBlock.swift; sourceTree = "<group>"; };
 		4914B3E522B83A4B00FA395E /* ImagePollBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePollBlock.swift; sourceTree = "<group>"; };
 		4914B3E922B9373900FA395E /* TextPollBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextPollBlock.swift; sourceTree = "<group>"; };
@@ -186,6 +188,7 @@
 				492F7A5322E6642900D1F653 /* UIImageView.swift */,
 				491EDCD722F38A99003FD25E /* LargestRemainder.swift */,
 				4999A3B62433DC39007AC095 /* NSAttributedString+measurement.swift */,
+				490C86B924377ABC007A28D6 /* UIAccessibilityTraits+mutation.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -500,6 +503,7 @@
 				4953DD4C22399A9700286C4B /* ImageCell.swift in Sources */,
 				4953DD3F22399A8500286C4B /* Screen.swift in Sources */,
 				491EDCD822F38A99003FD25E /* LargestRemainder.swift in Sources */,
+				490C86BA24377ABC007A28D6 /* UIAccessibilityTraits+mutation.swift in Sources */,
 				4953DD112239925B00286C4B /* Rover.swift in Sources */,
 				49ED505722FDE58B0027FAA5 /* Error.swift in Sources */,
 				4953DD4022399A8500286C4B /* BlockTapBehavior.swift in Sources */,

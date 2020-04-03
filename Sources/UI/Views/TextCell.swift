@@ -13,9 +13,13 @@ class TextCell: BlockCell {
         let textView = UITextView()
         textView.backgroundColor = UIColor.clear
         textView.isEditable = false
+        // Prevent text selection, which is not appropriate for UI content.
         textView.isUserInteractionEnabled = false
         textView.textContainer.lineFragmentPadding = 0
         textView.textContainerInset = UIEdgeInsets.zero
+        textView.isAccessibilityElement = true
+        // a side-effect of userInteractionEnabled being false is Voice Over exclaiming "dimmed!".
+        textView.accessibilityTraits.applyTrait(trait: .notEnabled, to: false)
         return textView
     }()
     

@@ -18,6 +18,8 @@ class BarcodeCell: BlockCell {
         // leaving any unexpected gaps around the outside in case of lack of agreement.
         imageView.contentMode = .scaleToFill
         
+        imageView.accessibilityLabel = "Barcode"
+        
         #if swift(>=4.2)
         imageView.layer.magnificationFilter = CALayerContentsFilter.nearest
         #else

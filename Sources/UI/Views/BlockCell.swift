@@ -83,16 +83,30 @@ class BlockCell: UICollectionViewCell {
     }
     
     func configureA11yTraits() {
-        guard let block = block, let content = content else {
+        guard let block = block else {
             return
         }
         
-        // we always use .link instead of .button, because buttons are meant for *actions* (doing an action, changing some state, or so on), rather than navigating between content.  All Rover Experience actions are about navigating around content, so we will always use .link.
+        // if no inner content, then apply the a11y traits to the cell itself.
+        let view = content ?? self
+        
+        guard !(block is TextPollBlock), !(block is ImagePollBlock), !(block is WebViewBlock) else {
+            // Polls and webviews implement their own a11y.
+            return
+        }
+        
+        // Some Rover blocks do not currently have a11y alternative descriptions available.
+        let hasContent = !(block is ImageBlock) && !(block is RectangleBlock)
+        
+        // All Rover blocks that have meaningful content should be a11y, or if they at least have tap behaviour.
+        view.isAccessibilityElement = hasContent || block.tapBehavior != .none
+        
+        // tapbehaviour be mapped to the `link` a11y trait:
         switch block.tapBehavior {
         case .goToScreen(_), .openURL(_, _), .presentWebsite(_):
-            content.accessibilityTraits.applyTrait(trait: .link, to: true)
+            view.accessibilityTraits.applyTrait(trait: .link, to: true)
         default:
-            content.accessibilityTraits.applyTrait(trait: .link, to: false)
+            view.accessibilityTraits.applyTrait(trait: .link, to: false)
         }
     }
 }

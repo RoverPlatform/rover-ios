@@ -47,6 +47,7 @@ class BlockCell: UICollectionViewCell {
         configureBorder()
         configureOpacity()
         configureContent()
+        configureA11yTraits()
     }
     
     func configureBackgroundColor() {
@@ -79,5 +80,31 @@ class BlockCell: UICollectionViewCell {
         }
         
         self.contentView.configureContent(content: content, withInsets: block.insets)
+    }
+    
+    func configureA11yTraits() {
+        guard let block = block, let content = content else {
+            return
+        }
+        
+        // we always use .link instead of .button, because buttons are meant for *actions* (doing an action, changing some state, or so on), rather than navigating between content.  All Rover Experience actions are about navigating around content, so we will always use .link.
+        switch block.tapBehavior {
+        case .goToScreen(_), .openURL(_, _), .presentWebsite(_):
+            content.accessibilityTraits.applyTrait(trait: .link, to: true)
+        default:
+            content.accessibilityTraits.applyTrait(trait: .link, to: false)
+        }
+    }
+}
+
+private extension UIAccessibilityTraits {
+    mutating func applyTrait(trait: UIAccessibilityTraits, to: Bool) {
+        if to {
+            // set the bit to 1.
+            self = UIAccessibilityTraits(rawValue: self.rawValue | trait.rawValue)
+        } else {
+            // set the bit to 0
+            self = UIAccessibilityTraits(rawValue: self.rawValue & ~trait.rawValue)
+        }
     }
 }

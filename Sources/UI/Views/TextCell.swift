@@ -12,6 +12,7 @@ class TextCell: BlockCell {
     let textView: UITextView = {
         let textView = UITextView()
         textView.backgroundColor = UIColor.clear
+        textView.isEditable = false
         textView.isUserInteractionEnabled = false
         textView.textContainer.lineFragmentPadding = 0
         textView.textContainerInset = UIEdgeInsets.zero
@@ -31,6 +32,6 @@ class TextCell: BlockCell {
         }
         
         textView.isHidden = false
-        textView.attributedText = textBlock.text.attributedText()
+        textView.attributedText = textBlock.text.attributedText(forFormat: .html)
     }
 }

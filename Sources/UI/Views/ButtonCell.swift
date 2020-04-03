@@ -31,5 +31,6 @@ class ButtonCell: BlockCell {
         label.textColor = text.color.uiColor
         label.textAlignment = text.alignment.textAlignment
         label.font = text.font.uiFont
+        label.accessibilityTraits.applyTrait(trait: .button, to: true)
     }
 }

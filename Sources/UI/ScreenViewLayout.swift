@@ -127,28 +127,27 @@ class ScreenViewLayout: UICollectionViewLayout {
                     
                     intrinsicHeight = blockWidth / aspectRatio
                 case let block as ButtonBlock:
-                    guard let attributedText = block.text.attributedText() else {
+                    guard let attributedText = block.text.attributedText(forFormat: .html) else {
                         intrinsicHeight = nil
                         break
                     }
                     
                     let innerWidth = blockWidth - CGFloat(block.insets.left) - CGFloat(block.insets.right)
                     let size = CGSize(width: innerWidth, height: CGFloat.greatestFiniteMagnitude)
-                    let boundingRect = attributedText.boundingRect(with: size, options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil)
-                    intrinsicHeight = boundingRect.height + CGFloat(block.insets.top) + CGFloat(block.insets.bottom)
+                    let measuredHeight = attributedText.measuredHeight(with: size)
+                    intrinsicHeight = measuredHeight + CGFloat(block.insets.top) + CGFloat(block.insets.bottom)
                 case let block as ImageBlock:
                     let aspectRatio = CGFloat(block.image.width) / CGFloat(block.image.height)
                     intrinsicHeight = blockWidth / aspectRatio
                 case let block as TextBlock:
-                    guard let attributedText = block.text.attributedText() else {
+                    guard let attributedText = block.text.attributedText(forFormat: .html) else {
                         intrinsicHeight = nil
                         break
                     }
-                    
                     let innerWidth = blockWidth - CGFloat(block.insets.left) - CGFloat(block.insets.right)
                     let size = CGSize(width: innerWidth, height: CGFloat.greatestFiniteMagnitude)
-                    let boundingRect = attributedText.boundingRect(with: size, options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil)
-                    intrinsicHeight = boundingRect.height + CGFloat(block.insets.top) + CGFloat(block.insets.bottom)
+                    let measuredHeight = attributedText.measuredHeight(with: size)
+                    intrinsicHeight = measuredHeight + CGFloat(block.insets.top) + CGFloat(block.insets.bottom)
                 case let block as TextPollBlock:
                     intrinsicHeight = block.intrinsicHeight(blockWidth: blockWidth)
                 case let block as ImagePollBlock:

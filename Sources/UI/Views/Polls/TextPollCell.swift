@@ -58,8 +58,8 @@ extension TextPollBlock {
         let size = CGSize(width: innerWidth, height: CGFloat.greatestFiniteMagnitude)
 
         let questionAttributedText = self.textPoll.question.attributedText(forFormat: .plain)
-
-        let questionHeight = questionAttributedText?.boundingRect(with: size, options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil).height ?? CGFloat(0)
+        
+        let questionHeight = questionAttributedText?.measuredHeight(with: size) ?? CGFloat(0)
 
         let borderHeight = CGFloat(textPoll.options.first?.border.width ?? 0) * 2
         

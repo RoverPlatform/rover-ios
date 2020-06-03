@@ -60,8 +60,10 @@ public struct ImagePollBlock: Block {
     public var tapBehavior: BlockTapBehavior
     public var keys: [String: String]
     public var tags: [String]
+    public var conversion: Conversion?
+
     
-    public init(background: Background, border: Border, id: String, name: String, insets: Insets, opacity: Double, position: Position, tapBehavior: BlockTapBehavior, keys: [String: String], tags: [String], imagePoll: ImagePoll) {
+    public init(background: Background, border: Border, id: String, name: String, insets: Insets, opacity: Double, position: Position, tapBehavior: BlockTapBehavior, keys: [String: String], tags: [String], imagePoll: ImagePoll, conversion: Conversion?) {
         self.background = background
         self.border = border
         self.id = id
@@ -73,5 +75,6 @@ public struct ImagePollBlock: Block {
         self.keys = keys
         self.tags = tags
         self.imagePoll = imagePoll
+        self.conversion = conversion
     }
 }

@@ -17,4 +17,5 @@ public protocol Block: Decodable {
     var tapBehavior: BlockTapBehavior { get }
     var keys: [String: String] { get }
     var tags: [String] { get }
+    var conversion: Conversion? { get }
 }

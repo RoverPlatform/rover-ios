@@ -18,8 +18,10 @@ public struct WebViewBlock: Block {
     public var webView: WebView
     public var keys: [String: String]
     public var tags: [String]
+    public var conversion: Conversion?
+
     
-    public init(background: Background, border: Border, id: String, name: String, insets: Insets, opacity: Double, position: Position, tapBehavior: BlockTapBehavior, webView: WebView, keys: [String: String], tags: [String]) {
+    public init(background: Background, border: Border, id: String, name: String, insets: Insets, opacity: Double, position: Position, tapBehavior: BlockTapBehavior, webView: WebView, keys: [String: String], tags: [String], conversion: Conversion?) {
         self.background = background
         self.border = border
         self.id = id
@@ -31,5 +33,7 @@ public struct WebViewBlock: Block {
         self.webView = webView
         self.keys = keys
         self.tags = tags
+        self.conversion = conversion
+
     }
 }

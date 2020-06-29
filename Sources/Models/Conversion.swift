@@ -6,6 +6,16 @@
 //  Copyright © 2020 Rover Labs Inc. All rights reserved.
 //
 
+public struct Conversion: Decodable {
+    public var tag: String
+    public var expires: Duration
+    
+    
+    public init(tag: String, expires: Duration) {
+        self.tag = tag
+        self.expires = expires
+    }
+}
 
 public struct Duration: Decodable {
     public enum Unit: String, Decodable {
@@ -32,22 +42,10 @@ public struct Duration: Decodable {
         case .minutes:
             base = 60
         case .hours:
-            base =  60 * 60
+            base = 60 * 60
         case .days:
             base = 24 * 60 * 60
         }
         return TimeInterval(self.value * base)
-    }
-}
-
-
-public struct Conversion: Decodable {
-    public var tag: String
-    public var expires: Duration
-    
-    
-    public init(tag: String, expires: Duration) {
-        self.tag = tag
-        self.expires = expires
     }
 }

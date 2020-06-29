@@ -17,8 +17,10 @@ public struct RectangleBlock: Block {
     public var tapBehavior: BlockTapBehavior
     public var keys: [String: String]
     public var tags: [String]
+    public var conversion: Conversion?
+
     
-    public init(background: Background, border: Border, id: String, name: String, insets: Insets, opacity: Double, position: Position, tapBehavior: BlockTapBehavior, keys: [String: String], tags: [String]) {
+    public init(background: Background, border: Border, id: String, name: String, insets: Insets, opacity: Double, position: Position, tapBehavior: BlockTapBehavior, keys: [String: String], tags: [String], conversion: Conversion?) {
         self.background = background
         self.border = border
         self.id = id
@@ -29,5 +31,7 @@ public struct RectangleBlock: Block {
         self.tapBehavior = tapBehavior
         self.keys = keys
         self.tags = tags
+        self.conversion = conversion
+
     }
 }

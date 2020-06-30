@@ -75,6 +75,7 @@
 		DB8FF71222861B5800BDE2DC /* DateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8FF71122861B5800BDE2DC /* DateFormatter.swift */; };
 		DB8FF7142287423E00BDE2DC /* LoadingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8FF7132287423E00BDE2DC /* LoadingViewController.swift */; };
 		DBF49DDD203DE00F00B54652 /* Rover.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF49DD3203DE00F00B54652 /* Rover.framework */; };
+		F8AAA8042486E6D600FAF812 /* Conversion.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8AAA8032486E6D600FAF812 /* Conversion.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -160,6 +161,7 @@
 		DBFB1A76209B8CC500E99F9F /* Text.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Text.swift; sourceTree = "<group>"; };
 		DBFB1A77209B8CC500E99F9F /* Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		DBFB1A78209B8CC500E99F9F /* ImageBlock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageBlock.swift; sourceTree = "<group>"; };
+		F8AAA8032486E6D600FAF812 /* Conversion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Conversion.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -337,6 +339,7 @@
 				4914B3E322B83A3F00FA395E /* PollBlock.swift */,
 				4914B3E522B83A4B00FA395E /* ImagePollBlock.swift */,
 				4914B3E922B9373900FA395E /* TextPollBlock.swift */,
+				F8AAA8032486E6D600FAF812 /* Conversion.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -516,6 +519,7 @@
 				DB8FF7102286064400BDE2DC /* ExperienceStore.swift in Sources */,
 				DB7B854623062AAE008D628E /* ImagePollOptionCaption.swift in Sources */,
 				492F7A5422E6642900D1F653 /* UIImageView.swift in Sources */,
+				F8AAA8042486E6D600FAF812 /* Conversion.swift in Sources */,
 				4953DD3B22399A8500286C4B /* Insets.swift in Sources */,
 				4953DD3922399A8500286C4B /* Image.swift in Sources */,
 				DB8FF7142287423E00BDE2DC /* LoadingViewController.swift in Sources */,

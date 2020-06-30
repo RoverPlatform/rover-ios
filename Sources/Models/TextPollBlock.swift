@@ -56,8 +56,10 @@ public struct TextPollBlock: Block {
     public var tapBehavior: BlockTapBehavior
     public var keys: [String: String]
     public var tags: [String]
+    public var conversion: Conversion?
+
     
-    public init(background: Background, border: Border, id: String, name: String, insets: Insets, opacity: Double, position: Position, tapBehavior: BlockTapBehavior, keys: [String: String], tags: [String], textPoll: TextPoll) {
+    public init(background: Background, border: Border, id: String, name: String, insets: Insets, opacity: Double, position: Position, tapBehavior: BlockTapBehavior, keys: [String: String], tags: [String], textPoll: TextPoll, conversion: Conversion?) {
         self.background = background
         self.border = border
         self.id = id
@@ -69,5 +71,7 @@ public struct TextPollBlock: Block {
         self.keys = keys
         self.tags = tags
         self.textPoll = textPoll
+        self.conversion = conversion
+
     }
 }

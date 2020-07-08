@@ -6,6 +6,8 @@
 //  Copyright © 2020 Rover Labs Inc. All rights reserved.
 //
 
+import Foundation
+
 public struct Conversion: Decodable {
     public var tag: String
     public var expires: Duration

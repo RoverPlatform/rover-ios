@@ -277,6 +277,8 @@ class PollCell: BlockCell {
             return true
         case (.submittingAnswer, .refreshingResults):
             return true
+        case (.submittingAnswer, .initialState):
+            return true
         case (.refreshingResults, .refreshingResults):
             return true
         case (.refreshingResults, .initialState):
@@ -418,8 +420,17 @@ class PollCell: BlockCell {
                 let viewOptionResults = withUsersVoteAdded.viewOptionStatuses(userAnswer: myAnswer)
                 
                 // Instead of a dictionary keyed by Option IDs, instead make an array ordered by the original order of the options in the poll.
-                let viewOptionResultsArray = pollBlock.poll.optionIDs.map {
-                    viewOptionResults[$0]!
+                let viewOptionResultsArray = pollBlock.poll.optionIDs.compactMap {
+                    viewOptionResults[$0]
+                }
+                
+                if viewOptionResultsArray.count != viewOptionResults.count {
+                    os_log("Options have changed since they were seeded, starting over.", type: .info)
+                    self.isLoading = false
+                    DispatchQueue.main.async {
+                        self.state = .initialState
+                    }
+                    return
                 }
                 
                 setResults(viewOptionResultsArray, animated: shouldAnimateResults)

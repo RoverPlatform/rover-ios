@@ -23,6 +23,15 @@ class Analytics {
         
         tokens = [
             NotificationCenter.default.addObserver(
+                forName: UIApplication.didBecomeActiveNotification,
+                object: nil,
+                queue: nil,
+                using: { [weak self] notification in
+                    self?.trackEvent(name: "App Opened", properties: EmptyProperties())
+                }
+            ),
+            
+            NotificationCenter.default.addObserver(
                 forName: ExperienceViewController.experiencePresentedNotification,
                 object: nil,
                 queue: nil,
@@ -97,6 +106,14 @@ class Analytics {
                         name: "Block Tapped",
                         properties: BlockTappedProperties(userInfo: $0.userInfo)
                     )
+                }
+            ),
+            NotificationCenter.default.addObserver(
+                forName: ScreenViewController.pollAnsweredNotification,
+                object: nil,
+                queue: nil,
+                using: { [weak self] in
+                    self?.trackEvent(name: "Poll Answered", properties: PollAnsweredProperties(userInfo: $0.userInfo))
                 }
             )
         ]
@@ -355,4 +372,50 @@ private struct BlockTappedProperties: Encodable {
             self.campaignID = campaignID
         }
     }
+}
+
+private struct PollAnsweredProperties: Encodable {
+    var experienceID: String
+    var experienceName: String
+    var experienceTags: [String]
+    var screenID: String
+    var screenName: String
+    var screenTags: [String]
+    var blockID: String
+    var blockName: String
+    var blockTags: [String]
+    var optionID: String
+    var optionText: String
+    var optionImage: String? // URL
+    var campaignID: String?
+    
+    init?(userInfo: [AnyHashable: Any]?) {
+        guard let userInfo = userInfo,
+            let experience = userInfo[ScreenViewController.experienceUserInfoKey] as? Experience,
+            let screen = userInfo[ScreenViewController.screenUserInfoKey] as? Screen,
+            let block = userInfo[ScreenViewController.blockUserInfoKey] as? PollBlock,
+            let option = userInfo[ScreenViewController.optionUserInfoKey] as? PollOption
+        else {
+            return nil
+        }
+        
+        self.experienceID = experience.id
+        self.experienceName = experience.name
+        self.experienceTags = experience.tags
+        self.screenID = screen.id
+        self.screenName = screen.name
+        self.screenTags = screen.tags
+        self.blockID = block.id
+        self.blockName = block.name
+        self.blockTags = block.tags
+        self.optionID = option.id
+        self.optionText = option.text.rawValue
+        self.optionImage = (option as? ImagePollBlock.ImagePoll.Option)?.image?.url.absoluteString
+        if let campaignID = userInfo[ScreenViewController.campaignIDUserInfoKey] as? String {
+            self.campaignID = campaignID
+        }
+    }
+}
+
+private struct EmptyProperties: Encodable {
 }

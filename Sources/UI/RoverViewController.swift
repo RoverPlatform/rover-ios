@@ -33,12 +33,6 @@ open class RoverViewController: UIViewController {
     private var initialScreenID: String?
     private var identifier: ExperienceStore.Identifier?
     
-    override open func viewDidLoad() {
-        super.viewDidLoad()
-        
-        Analytics.shared.enable()
-    }
-    
     /// Load a Rover experience into the view controller referenced by its ID.
     ///
     /// - Parameter id: The ID of the experience to load.

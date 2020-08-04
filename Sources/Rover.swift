@@ -10,4 +10,8 @@ import Foundation
 import UIKit
 
 /// Set your Rover Account Token (API Key) here.
-public var accountToken: String?
+public var accountToken: String? {
+    didSet {
+        Analytics.shared.enable()
+    }
+}

@@ -214,10 +214,10 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
             navigationItem.rightBarButtonItem = nil
             navigationItem.setHidesBackButton(false, animated: true)
         case .both:
-            navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Close", style: .plain, target: self, action: #selector(close))
+            navigationItem.rightBarButtonItem = UIBarButtonItem.init(barButtonSystemItem: UIBarButtonItem.SystemItem.done, target: self, action: #selector(close))
             navigationItem.setHidesBackButton(false, animated: true)
         case .close:
-            navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Close", style: .plain, target: self, action: #selector(close))
+            navigationItem.rightBarButtonItem = UIBarButtonItem.init(barButtonSystemItem: UIBarButtonItem.SystemItem.done, target: self, action: #selector(close))
             navigationItem.setHidesBackButton(true, animated: true)
         }
     }

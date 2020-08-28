@@ -132,12 +132,22 @@ open class RoverViewController: UIViewController {
         let alertController: UIAlertController
         
         if shouldRetry {
-            alertController = UIAlertController(title: "Error", message: "Failed to load experience", preferredStyle: UIAlertController.Style.alert)
-            let cancel = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel) { _ in
+            alertController = UIAlertController(
+                title: NSLocalizedString("Error", comment: "Rover Error Dialog Title"),
+                message: NSLocalizedString("Failed to load experience", comment: "Rover Failed to load experience error message"),
+                preferredStyle: UIAlertController.Style.alert
+            )
+            let cancel = UIAlertAction(
+                title: NSLocalizedString("Cancel", comment: "Rover Cancel Action"),
+                style: UIAlertAction.Style.cancel
+            ) { _ in
                 alertController.dismiss(animated: true, completion: nil)
                 self.dismiss(animated: true, completion: nil)
             }
-            let retry = UIAlertAction(title: "Try Again", style: UIAlertAction.Style.default) { _ in
+            let retry = UIAlertAction(
+                title: NSLocalizedString("Try Again", comment: "Rover Try Again Action"),
+                style: UIAlertAction.Style.default
+            ) { _ in
                 alertController.dismiss(animated: true, completion: nil)
                 self.loadExperience()
             }
@@ -145,8 +155,16 @@ open class RoverViewController: UIViewController {
             alertController.addAction(cancel)
             alertController.addAction(retry)
         } else {
-            alertController = UIAlertController(title: "Error", message: "Something went wrong", preferredStyle: UIAlertController.Style.alert)
-            let ok = UIAlertAction(title: "Ok", style: UIAlertAction.Style.default) { _ in
+            alertController = UIAlertController(
+                title: NSLocalizedString("Error", comment: "Rover Error Title"),
+                message: NSLocalizedString("Something went wrong", comment: "Rover Something Went Wrong message"),
+                preferredStyle: UIAlertController.Style.alert
+            )
+
+            let ok = UIAlertAction(
+                title: NSLocalizedString("Ok", comment: "Rover Ok Action"),
+                style: UIAlertAction.Style.default
+            ) { _ in
                 alertController.dismiss(animated: false, completion: nil)
                 self.dismiss(animated: true, completion: nil)
             }

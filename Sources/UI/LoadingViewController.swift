@@ -33,7 +33,7 @@ open class LoadingViewController: UIViewController {
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(activityIndicator)
         
-        cancelButton.setTitle("Cancel", for: .normal)
+        cancelButton.setTitle(NSLocalizedString("Cancel", comment: "Rover Cancel"), for: .normal)
         cancelButton.setTitleColor(.darkText, for: .normal)
         cancelButton.addTarget(self, action: #selector(cancel), for: .touchUpInside)
         cancelButton.translatesAutoresizingMaskIntoConstraints = false

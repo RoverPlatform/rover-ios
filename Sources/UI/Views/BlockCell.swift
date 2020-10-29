@@ -91,17 +91,20 @@ class BlockCell: UICollectionViewCell {
         let view = content ?? self
         
         guard !(block is TextPollBlock), !(block is ImagePollBlock), !(block is WebViewBlock) else {
-            // Polls and webviews implement their own a11y.
+            // Polls, and WebViews implement their own accessibility.
             return
         }
         
-        // Some Rover blocks do not currently have a11y alternative descriptions available.
-        let hasContent = !(block is ImageBlock) && !(block is RectangleBlock)
+        // true if the block is an image and is marked as isDecorative.
+        let isImageWithoutContent = ((block as? ImageBlock)?.image.isDecorative) ?? false
+        
+        // Some Rover blocks should not be visible to accessibility:
+        let hasContent = !(block is RectangleBlock) && !isImageWithoutContent
         
         // All Rover blocks that have meaningful content should be a11y, or if they at least have tap behaviour.
         view.isAccessibilityElement = hasContent || block.tapBehavior != .none
         
-        // tapbehaviour be mapped to the `link` a11y trait:
+        // TabBehavior is mapped to the `link` a11y trait:
         switch block.tapBehavior {
         case .goToScreen(_), .openURL(_, _), .presentWebsite(_):
             view.accessibilityTraits.applyTrait(trait: .link, to: true)

@@ -91,7 +91,7 @@ class BlockCell: UICollectionViewCell {
         let view = content ?? self
         
         guard !(block is TextPollBlock), !(block is ImagePollBlock), !(block is WebViewBlock) else {
-            // Polls, and WebViews implement their own accessibility.
+            // Polls and WebViews implement their own accessibility.
             return
         }
         
@@ -104,7 +104,7 @@ class BlockCell: UICollectionViewCell {
         // All Rover blocks that have meaningful content should be a11y, or if they at least have tap behaviour.
         view.isAccessibilityElement = hasContent || block.tapBehavior != .none
         
-        // TabBehavior is mapped to the `link` a11y trait:
+        // TabBehavior is mapped to the `link` accessibility trait:
         switch block.tapBehavior {
         case .goToScreen(_), .openURL(_, _), .presentWebsite(_):
             view.accessibilityTraits.applyTrait(trait: .link, to: true)

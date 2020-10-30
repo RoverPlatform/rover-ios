@@ -240,6 +240,9 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         
         let background = screen.background
         
+        backgroundImageView.isAccessibilityElement = !(background.image?.isDecorative ?? true)
+        backgroundImageView.accessibilityLabel = background.image?.accessibilityLabel
+        
         switch background.contentMode {
         case .fill:
             backgroundImageView.contentMode = .scaleAspectFill

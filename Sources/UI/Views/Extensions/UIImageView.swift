@@ -16,6 +16,9 @@ extension UIImageView {
         self.alpha = 0.0
         self.image = nil
         
+        self.isAccessibilityElement = background?.image.map { !$0.isDecorative } ?? false
+        self.accessibilityLabel = background?.image?.accessibilityLabel
+        
         // Background color is used for tiled backgrounds
         self.backgroundColor = UIColor.clear
         

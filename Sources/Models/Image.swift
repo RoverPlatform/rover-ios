@@ -15,13 +15,17 @@ public struct Image: Decodable {
     public var size: Int
     public var width: Int
     public var url: URL
+    public var accessibilityLabel: String?
+    public var isDecorative: Bool
     
-    public init(height: Int, isURLOptimizationEnabled: Bool, name: String, size: Int, width: Int, url: URL) {
+    public init(height: Int, isURLOptimizationEnabled: Bool, name: String, size: Int, width: Int, url: URL, accessibilityLabel: String?, isDecorative: Bool) {
         self.height = height
         self.isURLOptimizationEnabled = isURLOptimizationEnabled
         self.name = name
         self.size = size
         self.width = width
         self.url = url
+        self.accessibilityLabel = accessibilityLabel
+        self.isDecorative = isDecorative
     }
 }

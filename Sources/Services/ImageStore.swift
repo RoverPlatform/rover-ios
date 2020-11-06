@@ -231,16 +231,16 @@ extension ImageStore.Optimization {
     var queryItems: [URLQueryItem] {
         switch self {
         case .fill(let bounds):
-            let w = bounds.width * UIScreen.main.scale
-            let h = bounds.height * UIScreen.main.scale
+            let w = bounds.width * UIScreen.main.safeScale
+            let h = bounds.height * UIScreen.main.safeScale
             return [URLQueryItem(name: "fit", value: "min"), URLQueryItem(name: "w", value: w.paramValue), URLQueryItem(name: "h", value: h.paramValue)]
         case .fit(let bounds):
-            let w = bounds.width * UIScreen.main.scale
-            let h = bounds.height * UIScreen.main.scale
+            let w = bounds.width * UIScreen.main.safeScale
+            let h = bounds.height * UIScreen.main.safeScale
             return [URLQueryItem(name: "fit", value: "max"), URLQueryItem(name: "w", value: w.paramValue), URLQueryItem(name: "h", value: h.paramValue)]
         case let .stretch(bounds, originalSize):
-            let w = min(bounds.width * UIScreen.main.scale, originalSize.width)
-            let h = min(bounds.height * UIScreen.main.scale, originalSize.height)
+            let w = min(bounds.width * UIScreen.main.safeScale, originalSize.width)
+            let h = min(bounds.height * UIScreen.main.safeScale, originalSize.height)
             return [URLQueryItem(name: "w", value: w.paramValue), URLQueryItem(name: "h", value: h.paramValue)]
         case let .original(bounds, originalSize, originalScale):
             let width = min(bounds.width * originalScale, originalSize.width)
@@ -250,9 +250,9 @@ extension ImageStore.Optimization {
             let value = [x.paramValue, y.paramValue, width.paramValue, height.paramValue].joined(separator: ",")
             var queryItems = [URLQueryItem(name: "rect", value: value)]
             
-            if UIScreen.main.scale < originalScale {
-                let w = width / originalScale * UIScreen.main.scale
-                let h = height / originalScale * UIScreen.main.scale
+            if UIScreen.main.safeScale < originalScale {
+                let w = width / originalScale * UIScreen.main.safeScale
+                let h = height / originalScale * UIScreen.main.safeScale
                 queryItems.append(contentsOf: [URLQueryItem(name: "w", value: w.paramValue), URLQueryItem(name: "h", value: h.paramValue)])
             }
             
@@ -263,9 +263,9 @@ extension ImageStore.Optimization {
             let value = ["0", "0", width.paramValue, height.paramValue].joined(separator: ",")
             var queryItems = [URLQueryItem(name: "rect", value: value)]
             
-            if UIScreen.main.scale < originalScale {
-                let w = width / originalScale * UIScreen.main.scale
-                let h = height / originalScale * UIScreen.main.scale
+            if UIScreen.main.safeScale < originalScale {
+                let w = width / originalScale * UIScreen.main.safeScale
+                let h = height / originalScale * UIScreen.main.safeScale
                 queryItems.append(contentsOf: [URLQueryItem(name: "w", value: w.paramValue), URLQueryItem(name: "h", value: h.paramValue)])
             }
             
@@ -276,9 +276,9 @@ extension ImageStore.Optimization {
     var scale: CGFloat {
         switch self {
         case .original(_, _, let originalScale):
-            return UIScreen.main.scale < originalScale ? UIScreen.main.scale : originalScale
+            return UIScreen.main.safeScale < originalScale ? UIScreen.main.safeScale : originalScale
         case .tile(_, _, let originalScale):
-            return UIScreen.main.scale < originalScale ? UIScreen.main.scale : originalScale
+            return UIScreen.main.safeScale < originalScale ? UIScreen.main.safeScale : originalScale
         default:
             return 1
         }

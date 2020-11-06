@@ -30,6 +30,8 @@ class ImageCell: BlockCell {
         imageView.alpha = 0.0
         imageView.image = nil
         
+        imageView.accessibilityLabel = imageBlock.image.accessibilityLabel
+                
         if let image = ImageStore.shared.image(for: imageBlock.image, frame: frame) {
             imageView.image = image
             imageView.alpha = 1.0

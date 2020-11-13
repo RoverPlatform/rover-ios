@@ -83,11 +83,7 @@ extension Barcode {
         
         params["inputMessage"] = data
         
-        #if swift(>=4.2)
         let filter = CIFilter(name: filterName, parameters: params)!
-        #else
-        let filter = CIFilter(name: filterName, withInputParameters: params)!
-        #endif
         
         guard let outputImage = filter.outputImage else {
             os_log("Unable to render barcode - see logs emitted directly by CIFilter for details", log: .rover, type: .error)

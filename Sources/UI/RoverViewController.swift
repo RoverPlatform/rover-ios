@@ -19,15 +19,9 @@ import UIKit
 /// Rover SDK comes with a default loading screen `LoadingViewController` which you can override and customize to suit
 /// your needs. You can also supply your own view controller.
 open class RoverViewController: UIViewController {
-    #if swift(>=4.2)
     override open var childForStatusBarStyle: UIViewController? {
         return self.children.first
     }
-    #else
-    override open var childViewControllerForStatusBarStyle: UIViewController? {
-        return self.childViewControllers.first
-    }
-    #endif
     
     private var campaignID: String?
     private var initialScreenID: String?
@@ -98,7 +92,6 @@ open class RoverViewController: UIViewController {
         }
     }
     
-    #if swift(>=4.2)
     private func setChildViewController(_ childViewController: UIViewController) {
         if let existingChildViewController = self.children.first {
             existingChildViewController.willMove(toParent: nil)
@@ -112,21 +105,6 @@ open class RoverViewController: UIViewController {
         view.addSubview(childViewController.view)
         childViewController.didMove(toParent: self)
     }
-    #else
-    private func setChildViewController(_ childViewController: UIViewController) {
-        if let existingChildViewController = self.childViewControllers.first {
-            existingChildViewController.willMove(toParentViewController: nil)
-            existingChildViewController.view.removeFromSuperview()
-            existingChildViewController.removeFromParentViewController()
-        }
-        
-        childViewController.willMove(toParentViewController: self)
-        addChildViewController(childViewController)
-        childViewController.view.frame = view.bounds
-        view.addSubview(childViewController.view)
-        childViewController.didMove(toParentViewController: self)
-    }
-    #endif
     
     private func present(error: Error?, shouldRetry: Bool) {
         let alertController: UIAlertController

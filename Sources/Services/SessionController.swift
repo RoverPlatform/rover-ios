@@ -19,13 +19,8 @@ class SessionController {
     private var observers: [NSObjectProtocol] = []
     
     private init() {
-        #if swift(>=4.2)
         let didBecomeActiveNotification = UIApplication.didBecomeActiveNotification
         let willResignActiveNotification = UIApplication.willResignActiveNotification
-        #else
-        let didBecomeActiveNotification = NSNotification.Name.UIApplicationDidBecomeActive
-        let willResignActiveNotification = NSNotification.Name.UIApplicationWillResignActive
-        #endif
         
         observers = [
             NotificationCenter.default.addObserver(

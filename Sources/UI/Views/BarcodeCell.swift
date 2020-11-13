@@ -20,11 +20,7 @@ class BarcodeCell: BlockCell {
         
         imageView.accessibilityLabel = "Barcode"
         
-        #if swift(>=4.2)
         imageView.layer.magnificationFilter = CALayerContentsFilter.nearest
-        #else
-        imageView.layer.magnificationFilter = kCAFilterNearest
-        #endif
         
         return imageView
     }()

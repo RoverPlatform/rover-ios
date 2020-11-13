@@ -43,12 +43,35 @@ extension UIApplication {
         
         // Find the currently visible view controller and use it as the presenter
         
-        guard let rootViewController = self.keyWindow?.rootViewController else {
+        let uiWindow: UIWindow
+        if #available(iOS 13.0, *) {
+            let sceneWindow = self.connectedScenes.compactMap { (scene: UIScene) -> UIWindowScene? in
+                guard scene.activationState == .foregroundActive else {
+                    return nil
+                }
+                return scene as? UIWindowScene
+
+            }.first?.windows.first
+            guard let window = sceneWindow else {
+                os_log("Failed to present viewControllerToPresent - scene window not found", log: .rover, type: .error)
+                completion?()
+                return
+            }
+            uiWindow = window
+        } else {
+            guard let window = self.keyWindow else {
+                os_log("Failed to present viewControllerToPresent - keyWindow not found", log: .rover, type: .error)
+                completion?()
+                return
+            }
+            uiWindow = window
+        }
+        
+        guard let rootViewController = uiWindow.rootViewController else {
             os_log("Failed to present viewControllerToPresent - rootViewController not found", log: .rover, type: .error)
             completion?()
             return
         }
-        
         var findVisibleViewController: ((UIViewController) -> UIViewController?)?
         findVisibleViewController = { viewController in
             if let presentedViewController = viewController.presentedViewController {

@@ -9,7 +9,7 @@
 import WebKit
 
 class WebViewCell: BlockCell {
-    let webView = WKWebView()
+    let webView = WKWebView(frame: .zero, configuration: WKWebViewConfiguration.roverDefault)
     
     override var content: UIView? {
         return webView
@@ -33,5 +33,14 @@ class WebViewCell: BlockCell {
         self.webView.scrollView.bounces = webView.isScrollingEnabled
         let request = URLRequest(url: webView.url)
         self.webView.load(request)
+    }
+}
+
+extension WKWebViewConfiguration {
+    static var roverDefault: WKWebViewConfiguration {
+        let config = WKWebViewConfiguration()
+        config.allowsInlineMediaPlayback = true
+        config.mediaTypesRequiringUserActionForPlayback = []
+        return config
     }
 }

@@ -63,7 +63,7 @@ fi
 echo "Edit your version numbers (podspec, README, plists) and press return!"
 read -n 1
 
-git commit -a -m "Releasing $VERSION."
+git commit --allow-empty -a -m "Releasing $VERSION."
 
 git flow $RELEASE_OR_HOTFIX finish $VERSION
 

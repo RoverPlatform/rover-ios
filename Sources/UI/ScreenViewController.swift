@@ -499,10 +499,12 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
     /// dismisses the entire experience if the `dismiss` paramter is true. You can override this method if you need to
     /// change this behavior.
     open func openURL(_ url: URL, dismiss: Bool) {
-        UIApplication.shared.open(url, options: [:], completionHandler: nil)
-        
         if dismiss {
-            self.dismiss(animated: true, completion: nil)
+            self.dismiss(animated: true, completion: {
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            })
+        } else {
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
         }
     }
     

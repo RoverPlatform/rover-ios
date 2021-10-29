@@ -6,22 +6,22 @@ The Rover SDK is a Cocoa Touch Framework written in Swift. The SDK is 100% open-
 
 ## Install the SDK
 
+### SwiftPM
+
 The recommended way to install the Rover SDK is via [Cocoapods](http://cocoapods.org/).
+
+In Xcode, in your Project Settings, under Package Dependencies, add a new dependency with the URL of this repository: `https://github.com/rover-platform/rover-ios`.
+
+Note that as of Xcode 13, you have to type the repository URL into the search box and press return.
+
+Leave the dependency rule at the default, "Up To Next Major Version".  Rover follows the standard semver semantic versioning rules.
+
+### Cocoapods
 
 Add the Rover dependency to your Podfile.
 
 ```ruby
 pod 'Rover', '~> 3.8.2'
-```
-
-### Carthage
-
-CocoaPods is the simplest approach to installing the Rover SDK but you can also use Carthage.
-
-Add the following entry to your Cartfile:
-
-```ruby
-github "RoverPlatform/rover-ios" == 3.8.2
 ```
 
 ## Initialization

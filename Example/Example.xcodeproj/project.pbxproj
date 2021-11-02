@@ -3,12 +3,11 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		49005D002273908F009D62F9 /* Rover.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49005CFF2273908F009D62F9 /* Rover.framework */; };
-		49005D012273908F009D62F9 /* Rover.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 49005CFF2273908F009D62F9 /* Rover.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		49AF5F42272CA6C80082D01F /* Rover in Frameworks */ = {isa = PBXBuildFile; productRef = 49AF5F41272CA6C80082D01F /* Rover */; };
 		49D8913322738FC900332E67 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D8913222738FC900332E67 /* AppDelegate.swift */; };
 		49D8913522738FC900332E67 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D8913422738FC900332E67 /* ViewController.swift */; };
 		49D8913822738FC900332E67 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 49D8913622738FC900332E67 /* Main.storyboard */; };
@@ -23,7 +22,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				49005D012273908F009D62F9 /* Rover.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -31,7 +29,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		49005CFF2273908F009D62F9 /* Rover.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Rover.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		49AF5F3F272CA6B40082D01F /* rover-ios */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "rover-ios"; path = ..; sourceTree = "<group>"; };
 		49D8912F22738FC900332E67 /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		49D8913222738FC900332E67 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		49D8913422738FC900332E67 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -46,19 +44,27 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				49005D002273908F009D62F9 /* Rover.framework in Frameworks */,
+				49AF5F42272CA6C80082D01F /* Rover in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		49AF5F40272CA6C80082D01F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		49D8912622738FC900332E67 = {
 			isa = PBXGroup;
 			children = (
-				49005CFF2273908F009D62F9 /* Rover.framework */,
+				49AF5F3F272CA6B40082D01F /* rover-ios */,
 				49D8913122738FC900332E67 /* Example */,
 				49D8913022738FC900332E67 /* Products */,
+				49AF5F40272CA6C80082D01F /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -100,6 +106,9 @@
 			dependencies = (
 			);
 			name = Example;
+			packageProductDependencies = (
+				49AF5F41272CA6C80082D01F /* Rover */,
+			);
 			productName = Example;
 			productReference = 49D8912F22738FC900332E67 /* Example.app */;
 			productType = "com.apple.product-type.application";
@@ -356,6 +365,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		49AF5F41272CA6C80082D01F /* Rover */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Rover;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 49D8912722738FC900332E67 /* Project object */;
 }

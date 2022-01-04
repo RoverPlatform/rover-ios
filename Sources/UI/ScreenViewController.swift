@@ -152,7 +152,7 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         
         // Background color
         
-        navigationBar.barTintColor = {
+        let backgroundColor: UIColor = {
             if !screen.titleBar.useDefaultStyle {
                 return screen.titleBar.backgroundColor.uiColor
             }
@@ -167,6 +167,8 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
             
             return UIColor(red: (247 / 255), green: (247 / 255), blue: (247 / 255), alpha: 1)
         }()
+        
+        navigationBar.barTintColor = backgroundColor
         
         // Button color
         
@@ -188,8 +190,8 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
         
         // Title color
         
-        var nextAttributes = navigationBar.titleTextAttributes ?? [NSAttributedString.Key: Any]()
-        nextAttributes[NSAttributedString.Key.foregroundColor] = {
+        var textAttributes = navigationBar.titleTextAttributes ?? [NSAttributedString.Key: Any]()
+        textAttributes[NSAttributedString.Key.foregroundColor] = {
             if !screen.titleBar.useDefaultStyle {
                 return screen.titleBar.textColor.uiColor
             }
@@ -205,7 +207,16 @@ open class ScreenViewController: UICollectionViewController, UICollectionViewDat
             return UIColor.black
         }()
         
-        navigationBar.titleTextAttributes = nextAttributes
+        navigationBar.titleTextAttributes = textAttributes
+        
+        if #available(iOS 15, *) {
+            let appearance = UINavigationBarAppearance()
+            appearance.configureWithDefaultBackground()
+            appearance.backgroundColor = backgroundColor
+            appearance.titleTextAttributes = textAttributes
+            navigationBar.standardAppearance = appearance
+            navigationBar.scrollEdgeAppearance = appearance
+        }
     }
     
     private func configureNavigationItem() {

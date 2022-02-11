@@ -9,5 +9,5 @@
 import Foundation
 
 public enum Meta {
-    public static let SDKVersion: String = "3.9.0"
+    public static let SDKVersion: String = "3.91"
 }

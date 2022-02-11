@@ -23,7 +23,7 @@ As an alternative, you can use [Cocoapods](http://cocoapods.org/).
 Add the Rover dependency to your Podfile.
 
 ```ruby
-pod 'Rover', '~> 3.9.0'
+pod 'Rover', '~> 3.91'
 ```
 
 ## Initialization

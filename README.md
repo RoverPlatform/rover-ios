@@ -1,6 +1,10 @@
-# Rover iOS SDK
+# Rover Campaigns iOS SDK
 
-The Rover SDK is a Cocoa Touch Framework written in Swift. The SDK is 100% open-source.
+This is Rover Campaigns, the marketing campaigns automation SDK from Rover. Rover Campaigns augments our core Rover Experiences product to enable mobile engagement and monetization with better mobile campaigns.
+
+<hr />
+
+The Campaigns SDK is a collection of Cocoa Touch Frameworks written in Swift. Instead of a single monolithic framework, the Rover SDK takes a modular approach, allowing you to include only the functionality relevant to your application. The SDK is 100% open-source and available on [GitHub](https://github.com/RoverPlatform/rover-campaigns-ios).
 
 ---
 
@@ -8,40 +12,47 @@ The Rover SDK is a Cocoa Touch Framework written in Swift. The SDK is 100% open-
 
 ### SwiftPM
 
-The recommended way to install the Rover SDK is via SwiftPM.
+The recommended way to install the Rover Campaigns SDK is via SwiftPM.
 
-In Xcode, in your Project Settings, under Package Dependencies, add a new dependency with the URL of this repository: `https://github.com/roverplatform/rover-ios`.
+In Xcode, in your Project Settings, under Package Dependencies, add a new dependency with the URL of this repository: `https://github.com/roverplatform/rover-campaigns-ios`.
 
 Note that as of Xcode 13, you have to type the repository URL into the search box and press return.
 
+![SwiftPM Repo Dialog Box](readme-images/swiftpm-select-repo.png)
+
 Leave the dependency rule at the default, "Up To Next Major Version".  Rover follows the standard semver semantic versioning rules.
+
+Then, in the subsequent dialog box, choose the Package Products (frameworks) you wish to use.
+
+![SwiftPM Target Dialog Box](readme-images/swiftpm-select-targets.png)
 
 ### Cocoapods
 
 As an alternative, you can use [Cocoapods](http://cocoapods.org/).
 
-Add the Rover dependency to your Podfile.
+The Rover [Podspec](https://guides.cocoapods.org/syntax/podspec.html) breaks each of the Rover frameworks out into a separate [Subspec](https://guides.cocoapods.org/syntax/podspec.html#group_subspecs).
+
+The simplest approach is to specify `Rover` as a dependency of your app's target which will add all required and optional subspecs to your project.
 
 ```ruby
-pod 'Rover', '~> 3.91'
+target 'MyAppTarget' do
+  pod 'RoverCampaigns', '~> 3.9.3'
+end
 ```
 
-## Initialization
+Alternatively you can specify the exact set of subspecs you want to include.
 
-You must initialize the Rover SDK with your account token. You can find your account token in the Rover [Settings app](https://app.rover.io/settings). Find the token labelled "SDK Token" and click the icon next to it to copy it to your clipboard.
-
-Import Rover in your app delegate and set the `accountToken` variable from within your `application(_:didFinishLaunchingWithOptions:)` method.
-
-```swift
-import Rover
-
-func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-    // ...
-    Rover.accountToken = "<YOUR_SDK_TOKEN>"
-    // ...
-}
+```ruby
+target 'MyAppTarget' do
+    pod 'RoverCampaigns/Foundation',    '~> 3.9.3'
+    pod 'RoverCampaigns/Data',          '~> 3.9.3'
+    pod 'RoverCampaigns/UI',            '~> 3.9.3'
+    pod 'RoverCampaigns/Notifications', '~> 3.9.3'
+    pod 'RoverCampaigns/Location',      '~> 3.9.3'
+    pod 'RoverCampaigns/Debug',         '~> 3.9.3'
+end
 ```
 
 ## Next Steps
 
-The rest of the Rover integration process is described in detail on the Rover developer portal: https://developer.rover.io/v3/ios/.
+Please continue onwards from https://github.com/RoverPlatform/rover-campaigns-ios/wiki.

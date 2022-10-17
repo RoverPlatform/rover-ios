@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14135" systemVersion="18A391" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="19206" systemVersion="20G165" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Beacon" representedClassName=".Beacon" syncable="YES">
-        <attribute name="id" attributeType="String" syncable="YES"/>
-        <attribute name="major" attributeType="Integer 32" minValueString="0" maxValueString="65535" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="minor" attributeType="Integer 32" minValueString="0" maxValueString="65535" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="regionIdentifier" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="tags" attributeType="Transformable" syncable="YES"/>
-        <attribute name="uuid" attributeType="Transformable" syncable="YES"/>
+        <attribute name="id" attributeType="String"/>
+        <attribute name="major" attributeType="Integer 32" minValueString="0" maxValueString="65535" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="minor" attributeType="Integer 32" minValueString="0" maxValueString="65535" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="regionIdentifier" optional="YES" attributeType="String"/>
+        <attribute name="tags" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData"/>
+        <attribute name="uuid" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData"/>
         <uniquenessConstraints>
             <uniquenessConstraint>
                 <constraint value="id"/>
@@ -20,13 +20,13 @@
         </uniquenessConstraints>
     </entity>
     <entity name="Geofence" representedClassName=".Geofence" syncable="YES">
-        <attribute name="id" attributeType="String" defaultValueString="&quot;&quot;" syncable="YES"/>
-        <attribute name="latitude" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="longitude" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="radius" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="regionIdentifier" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="tags" attributeType="Transformable" syncable="YES"/>
+        <attribute name="id" attributeType="String" defaultValueString="&quot;&quot;"/>
+        <attribute name="latitude" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="longitude" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="radius" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="regionIdentifier" optional="YES" attributeType="String"/>
+        <attribute name="tags" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData"/>
         <uniquenessConstraints>
             <uniquenessConstraint>
                 <constraint value="id"/>
@@ -39,7 +39,7 @@
         </uniquenessConstraints>
     </entity>
     <elements>
-        <element name="Beacon" positionX="-63" positionY="18" width="128" height="150"/>
-        <element name="Geofence" positionX="-282.91796875" positionY="25.5" width="128" height="150"/>
+        <element name="Beacon" positionX="-63" positionY="18" width="128" height="134"/>
+        <element name="Geofence" positionX="-282.91796875" positionY="25.5" width="128" height="134"/>
     </elements>
 </model>

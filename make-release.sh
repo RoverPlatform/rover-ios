@@ -50,12 +50,14 @@ if [ $RELEASE_OR_HOTFIX == "hotfix" ]
 then
     echo "Assuming hotfix branch already exists."
     git checkout hotfix/$VERSION
-    echo "Verifying SDK."
-    DEVELOPER_DIR=$SWIFT5_OR_LATER_LOCATION pod lib lint Rover.podspec
+    echo "Verifying SDK with Xcode."
+    pod lib lint RoverCampaigns.podspec
+    pod lib lint RoverAppExtensions.podspec
 else
-    git checkout master
-    echo "Verifying SDK."
-    DEVELOPER_DIR=$SWIFT5_OR_LATER_LOCATION pod lib lint Rover.podspec
+    git checkout develop
+    echo "Verifying SDK with Xcode."
+    pod lib lint RoverCampaigns.podspec
+    pod lib lint RoverAppExtensions.podspec
 
     git flow $RELEASE_OR_HOTFIX start $VERSION
 fi
@@ -72,4 +74,4 @@ git push origin develop
 
 git push origin v$VERSION
 
-echo "Now run 'pod trunk push Rover.podspec'"
+echo "Now run 'pod trunk push RoverCampaigns.podspec && pod trunk push RoverAppExtensions.podspec'"

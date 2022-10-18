@@ -28,7 +28,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Initialize the RoverCampaigns SDK with all modules.
+        // Initialize the Rover SDK with all modules.
         RoverFoundation.initialize(assemblers: [
             FoundationAssembler(),
             DataAssembler(accountToken: "be40ec7dabf7c9a06a451e58a4c39d9823c24974"),
@@ -95,12 +95,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        // The device successfully registered for push notifications. Pass the token to RoverCampaigns.
+        // The device successfully registered for push notifications. Pass the token to Rover.
         RoverFoundation.shared!.resolve(TokenManager.self)?.setToken(deviceToken)
     }
     
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
-        // Let the Router handle RoverCampaigns deep links such as:
+        // Let the Router handle Rover deep links such as:
         //   - rv-example://presentExperience?experienceID=XXX&campaignID=XXX
         //   - rv-example://presentNotificationCenter
         //   - rv-example://presentSettings.
@@ -112,7 +112,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
-        // Let the Router handle RoverCampaigns universal links such as:
+        // Let the Router handle Rover universal links such as:
         //  - https://example.rover.io/XXX
         //  - https://example.rover.io/XXX?campaignID=XXX
         return RoverFoundation.shared?.resolve(Router.self)?.handle(userActivity) ?? false
@@ -173,7 +173,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        // The user tapped a notification. Pass the response to RoverCampaigns to handle the intended behavior.
+        // The user tapped a notification. Pass the response to Rover to handle the intended behavior.
         RoverFoundation.shared?.resolve(NotificationHandler.self)?.handle(response, completionHandler: completionHandler)
     }
 }

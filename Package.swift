@@ -4,7 +4,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "RoverCampaigns",
+    name: "Rover",
     platforms: [.iOS(SupportedPlatform.IOSVersion.v10)],
     products: [
         // Products define the executables and libraries produced by a package, and make them visible to other packages.
@@ -44,9 +44,6 @@ let package = Package(
         .library(
             name: "RoverAppExtensions",
             targets: ["RoverAppExtensions"]),
-    ],
-    dependencies: [
-        .package(url: "https://github.com/RoverPlatform/rover-ios", from: "3.9.0")
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -88,7 +85,7 @@ let package = Package(
             exclude: ["Info.plist"]),
         .target(
             name: "RoverExperiences",
-            dependencies: ["RoverUI", .product(name: "Rover", package: "rover-ios")],
+            dependencies: ["RoverUI", "RoverFoundation", "RoverData"],
             path: "Sources/Experiences",
             exclude: ["Info.plist"]),
         .target(

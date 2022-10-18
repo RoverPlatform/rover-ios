@@ -1,5 +1,5 @@
 //
-//  RoverCampaigns.swift
+//  Rover.swift
 //  RoverFoundation
 //
 //  Created by Sean Rucker on 2017-03-31.
@@ -9,7 +9,7 @@
 import Foundation
 import os.log
 
-public private(set) var shared: RoverCampaignsContainer? = nil
+public private(set) var shared: RoverContainer? = nil
 
 public func initialize(assemblers: [Assembler]) {
     guard shared == nil else {
@@ -17,14 +17,14 @@ public func initialize(assemblers: [Assembler]) {
         return
     }
     
-    shared = RoverCampaignsContainer(assemblers: assemblers)
+    shared = RoverContainer(assemblers: assemblers)
 }
 
 public func deinitialize() {
     shared = nil
 }
 
-public class RoverCampaignsContainer {
+public class RoverContainer {
     var services = [ServiceKey: Any]()
     
     init(assemblers: [Assembler]) {
@@ -39,7 +39,7 @@ public class RoverCampaignsContainer {
 
 // MARK: Container
 
-extension RoverCampaignsContainer: Container {
+extension RoverContainer: Container {
     public func set<Service>(entry: ServiceEntry<Service>, for key: ServiceKey) {
         services[key] = entry
     }
@@ -47,7 +47,7 @@ extension RoverCampaignsContainer: Container {
 
 // MARK: Resolver
 
-extension RoverCampaignsContainer: Resolver {
+extension RoverContainer: Resolver {
     public func entry<Service>(for key: ServiceKey) -> ServiceEntry<Service>? {
         return services[key] as? ServiceEntry<Service>
     }

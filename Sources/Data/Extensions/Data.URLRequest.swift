@@ -45,6 +45,6 @@ extension URLRequest {
         
 
         let roverVersion = Meta.SDKVersion
-        self.setValue("\(appDescriptor) \(cfNetworkDescriptor) \(darwinDescriptor) \(osDescriptor) RoverCampaignsSDK/\(roverVersion)", forHTTPHeaderField: "User-Agent")
+        self.setValue("\(appDescriptor) \(cfNetworkDescriptor) \(darwinDescriptor) \(osDescriptor) RoverSDK/\(roverVersion)", forHTTPHeaderField: "User-Agent")
     }
 }

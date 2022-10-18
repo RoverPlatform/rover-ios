@@ -50,7 +50,7 @@ public class LocationAssembler: Assembler {
             guard let model = NSManagedObjectModel(contentsOf: modelURL) else {
                 fatalError("Core Data model not found for Rover Location module.")
             }
-            // unfortunately the entity names seem to get set to "RoverCampaigns_RoverLocation.ClassName" rather than "RoverLocation.ClassName" causing a runtime failure.  Manually patch it up here.
+            // unfortunately the entity names seem to get set to "Rover_RoverLocation.ClassName" rather than "RoverLocation.ClassName" causing a runtime failure.  Manually patch it up here.
             model.entities.forEach { entity in
                 switch entity.name {
                 case "Beacon":

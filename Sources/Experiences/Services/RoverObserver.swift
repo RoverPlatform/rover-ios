@@ -8,7 +8,6 @@
 
 import Foundation
 import os
-import Rover
 #if !COCOAPODS
 import RoverFoundation
 import RoverData

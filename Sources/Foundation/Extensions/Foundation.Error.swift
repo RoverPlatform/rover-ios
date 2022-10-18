@@ -1,6 +1,6 @@
 //
 //  Error.swift
-//  RoverCampaigns
+//  Rover
 //
 //  Created by Andrew Clunis on 2020-01-30.
 //  Copyright © 2020 Rover Labs Inc. All rights reserved.

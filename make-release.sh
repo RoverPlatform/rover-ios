@@ -51,12 +51,12 @@ then
     echo "Assuming hotfix branch already exists."
     git checkout hotfix/$VERSION
     echo "Verifying SDK with Xcode."
-    pod lib lint RoverCampaigns.podspec
+    pod lib lint Rover.podspec
     pod lib lint RoverAppExtensions.podspec
 else
     git checkout develop
     echo "Verifying SDK with Xcode."
-    pod lib lint RoverCampaigns.podspec
+    pod lib lint Rover.podspec
     pod lib lint RoverAppExtensions.podspec
 
     git flow $RELEASE_OR_HOTFIX start $VERSION
@@ -74,4 +74,4 @@ git push origin develop
 
 git push origin v$VERSION
 
-echo "Now run 'pod trunk push RoverCampaigns.podspec && pod trunk push RoverAppExtensions.podspec'"
+echo "Now run 'pod trunk push Rover.podspec && pod trunk push RoverAppExtensions.podspec'"

@@ -6,7 +6,6 @@
 //  Copyright © 2018 Rover Labs Inc. All rights reserved.
 //
 
-import Rover
 import UIKit
 #if !COCOAPODS
 import RoverFoundation
@@ -87,6 +86,6 @@ public struct ExperiencesAssembler: Assembler {
         resolver.resolve(RoverObserver.self)?.enable()
         
         // Pass the accountToken set on the DataAssembler to the Rover SDK.
-        Rover.accountToken = resolver.resolve(HTTPClient.self)?.accountToken
+        accountToken = resolver.resolve(HTTPClient.self)?.accountToken
     }
 }

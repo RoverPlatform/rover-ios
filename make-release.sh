@@ -9,7 +9,7 @@ if [[ $RELEASE_OR_HOTFIX == "release" || ($RELEASE_OR_HOTFIX == "hotfix") ]]
 then
     echo "You have selected $RELEASE_OR_HOTFIX"
 else
-    echo "usage: You must specify one of release or hotfix. eg $0 release 3.0.0"
+    echo "usage: You must specify one of release or hotfix. eg $0 release 4.0.0"
     exit -1
 fi
 

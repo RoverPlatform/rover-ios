@@ -1,4 +1,4 @@
-# Rover Campaigns iOS SDK
+# Rover iOS SDK
 
 This is Rover Campaigns, the marketing campaigns automation SDK from Rover. Rover Campaigns augments our core Rover Experiences product to enable mobile engagement and monetization with better mobile campaigns.
 
@@ -36,7 +36,7 @@ The simplest approach is to specify `Rover` as a dependency of your app's target
 
 ```ruby
 target 'MyAppTarget' do
-  pod 'Rover', '~> 3.9.3'
+  pod 'Rover', '~> 4.0.0'
 end
 ```
 
@@ -44,12 +44,12 @@ Alternatively you can specify the exact set of subspecs you want to include.
 
 ```ruby
 target 'MyAppTarget' do
-    pod 'Rover/Foundation',    '~> 3.9.3'
-    pod 'Rover/Data',          '~> 3.9.3'
-    pod 'Rover/UI',            '~> 3.9.3'
-    pod 'Rover/Notifications', '~> 3.9.3'
-    pod 'Rover/Location',      '~> 3.9.3'
-    pod 'Rover/Debug',         '~> 3.9.3'
+    pod 'Rover/Foundation',    '~> 4.0.0'
+    pod 'Rover/Data',          '~> 4.0.0'
+    pod 'Rover/UI',            '~> 4.0.0'
+    pod 'Rover/Notifications', '~> 4.0.0'
+    pod 'Rover/Location',      '~> 4.0.0'
+    pod 'Rover/Debug',         '~> 4.0.0'
 end
 ```
 

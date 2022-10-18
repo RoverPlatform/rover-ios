@@ -5,7 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "Rover",
-    platforms: [.iOS(SupportedPlatform.IOSVersion.v10)],
+    platforms: [.iOS(.v10)],
     products: [
         // Products define the executables and libraries produced by a package, and make them visible to other packages.
         .library(

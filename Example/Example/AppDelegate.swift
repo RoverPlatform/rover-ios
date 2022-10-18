@@ -6,7 +6,6 @@
 //  Copyright © 2019 Rover Labs Inc. All rights reserved.
 //
 
-import Rover
 import RoverFoundation
 import RoverData
 import RoverLocation

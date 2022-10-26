@@ -8,6 +8,8 @@
 
 import os.log
 import UIKit
+import RoverFoundation
+import RoverData
 
 class Analytics {
     /// The shared singleton analytics service.
@@ -129,6 +131,11 @@ class Analytics {
     }
     
     private func trackEvent<Properties>(name: String, properties: Properties) where Properties: Encodable {
+        //TODO: adjust analytics to match the rest of the SDK
+        guard let accountToken = RoverFoundation.shared?.resolve(HTTPClient.self)?.accountToken else {
+            return
+        }
+        
         let event = Event(name: name, properties: properties)
         let data: Data
         do {

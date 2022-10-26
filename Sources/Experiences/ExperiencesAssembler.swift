@@ -30,6 +30,19 @@ public struct ExperiencesAssembler: Assembler {
             return resolver.resolve(Action.self, name: "presentView", arguments: viewControllerToPresent)!
         }
         
+        // MARK: ExperienceStore
+        
+        container.register(ExperienceStore.self) { resolver in
+            let client = resolver.resolve(FetchExperienceClient.self)!
+            return ExperienceStoreService(client: client)
+        }
+        
+        // MARK: FetchExperienceClient
+        
+        container.register(FetchExperienceClient.self) { resolver in
+            return resolver.resolve(HTTPClient.self)!
+        }
+        
         // MARK: RouteHandler (experience)
         
         container.register(RouteHandler.self, name: "experience") { resolver in            
@@ -75,6 +88,10 @@ public struct ExperiencesAssembler: Assembler {
             viewController.loadExperience(universalLink: universalLink, campaignID: campaignID, initialScreenID: screenID)
             return viewController
         }
+        
+        // MARK: Analytics
+        //TODO: adjust analytics to match the rest of the SDK
+        Analytics.shared.enable()
     }
     
     public func containerDidAssemble(resolver: Resolver) {
@@ -84,8 +101,5 @@ public struct ExperiencesAssembler: Assembler {
         }
         
         resolver.resolve(RoverObserver.self)?.enable()
-        
-        // Pass the accountToken set on the DataAssembler to the Rover SDK.
-        accountToken = resolver.resolve(HTTPClient.self)?.accountToken
     }
 }

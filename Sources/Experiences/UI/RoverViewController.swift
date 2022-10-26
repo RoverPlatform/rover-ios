@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import RoverFoundation
 
 /// The `RoverViewController` is a container for loading and displaying a Rover experience. The `RoverViewController`
 /// can be instantiated manually or in a story board. After the view controller is instantiated, its primary API is the
@@ -31,7 +32,8 @@ open class RoverViewController: UIViewController {
     
     private var campaignID: String?
     private var initialScreenID: String?
-    private var identifier: ExperienceStore.Identifier?
+    private var identifier: ExperienceIdentifier?
+    private var experienceStore: ExperienceStore? = RoverFoundation.shared?.resolve(ExperienceStore.self)
     
     /// Load a Rover experience into the view controller referenced by its ID.
     ///
@@ -39,7 +41,7 @@ open class RoverViewController: UIViewController {
     public func loadExperience(id: String, campaignID: String? = nil, useDraft: Bool = false, initialScreenID: String? = nil) {
         self.campaignID = campaignID
         self.initialScreenID = initialScreenID
-        self.identifier = ExperienceStore.Identifier.experienceID(id: id, useDraft: useDraft)
+        self.identifier = ExperienceIdentifier.experienceID(id: id, useDraft: useDraft)
         loadExperience()
     }
     
@@ -49,7 +51,7 @@ open class RoverViewController: UIViewController {
     public func loadExperience(universalLink url: URL, campaignID: String? = nil, initialScreenID: String? = nil) {
         self.campaignID = campaignID
         self.initialScreenID = initialScreenID
-        self.identifier = ExperienceStore.Identifier.experienceURL(url: url)
+        self.identifier = ExperienceIdentifier.experienceURL(url: url)
         loadExperience()
     }
     
@@ -64,11 +66,11 @@ open class RoverViewController: UIViewController {
     }
     
     private func loadExperience() {
-        guard let identifier = identifier else {
+        guard let identifier = identifier, let experienceStore = experienceStore else {
             return
         }
         
-        if let experience = ExperienceStore.shared.experience(for: identifier) {
+        if let experience = experienceStore.experience(for: identifier) {
             let viewController = experienceViewController(experience: experience)
             setChildViewController(viewController)
             return
@@ -77,7 +79,7 @@ open class RoverViewController: UIViewController {
         let loadingViewController = self.loadingViewController()
         setChildViewController(loadingViewController)
         
-        ExperienceStore.shared.fetchExperience(for: identifier) { [weak self] result in
+        experienceStore.fetchExperience(for: identifier) { [weak self] result in
             DispatchQueue.main.async {
                 guard let self = self else {
                     return

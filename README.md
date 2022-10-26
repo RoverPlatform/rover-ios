@@ -12,7 +12,7 @@ The Rover SDK is a collection of Cocoa Touch Frameworks written in Swift. Instea
 
 ### SwiftPM
 
-The recommended way to install the Rover SDK is via SwiftPM.
+Rover SDK is installed via SwiftPM.
 
 In Xcode, in your Project Settings, under Package Dependencies, add a new dependency with the URL of this repository: `https://github.com/RoverPlatform/rover-ios`.
 
@@ -26,32 +26,6 @@ Then, in the subsequent dialog box, choose the Package Products (frameworks) you
 
 ![SwiftPM Target Dialog Box](readme-images/swiftpm-select-targets.png)
 
-### Cocoapods
-
-As an alternative, you can use [Cocoapods](http://cocoapods.org/).
-
-The Rover [Podspec](https://guides.cocoapods.org/syntax/podspec.html) breaks each of the Rover frameworks out into a separate [Subspec](https://guides.cocoapods.org/syntax/podspec.html#group_subspecs).
-
-The simplest approach is to specify `Rover` as a dependency of your app's target which will add all required and optional subspecs to your project.
-
-```ruby
-target 'MyAppTarget' do
-  pod 'Rover', '~> 4.0.0'
-end
-```
-
-Alternatively you can specify the exact set of subspecs you want to include.
-
-```ruby
-target 'MyAppTarget' do
-    pod 'Rover/Foundation',    '~> 4.0.0'
-    pod 'Rover/Data',          '~> 4.0.0'
-    pod 'Rover/UI',            '~> 4.0.0'
-    pod 'Rover/Notifications', '~> 4.0.0'
-    pod 'Rover/Location',      '~> 4.0.0'
-    pod 'Rover/Debug',         '~> 4.0.0'
-end
-```
 
 ## Next Steps
 

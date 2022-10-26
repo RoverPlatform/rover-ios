@@ -1,10 +1,10 @@
 # Rover iOS SDK
 
-This is Rover Campaigns, the marketing campaigns automation SDK from Rover. Rover Campaigns augments our core Rover Experiences product to enable mobile engagement and monetization with better mobile campaigns.
+This is the Rover SDK, which includes our core Rover Experiences product and marketing campaigns automation.  The Rover SDK allows for the creation of mobile experiences, with added engagement and monetization for better mobile campaigns.
 
 <hr />
 
-The Campaigns SDK is a collection of Cocoa Touch Frameworks written in Swift. Instead of a single monolithic framework, the Rover SDK takes a modular approach, allowing you to include only the functionality relevant to your application. The SDK is 100% open-source and available on [GitHub](https://github.com/RoverPlatform/rover-campaigns-ios).
+The Rover SDK is a collection of Cocoa Touch Frameworks written in Swift. Instead of a single monolithic framework, the Rover SDK takes a modular approach, allowing you to include only the functionality relevant to your application. The SDK is 100% open-source and available on [GitHub](https://github.com/RoverPlatform/rover-ios).
 
 ---
 
@@ -12,9 +12,9 @@ The Campaigns SDK is a collection of Cocoa Touch Frameworks written in Swift. In
 
 ### SwiftPM
 
-The recommended way to install the Rover Campaigns SDK is via SwiftPM.
+The recommended way to install the Rover SDK is via SwiftPM.
 
-In Xcode, in your Project Settings, under Package Dependencies, add a new dependency with the URL of this repository: `https://github.com/roverplatform/rover-campaigns-ios`.
+In Xcode, in your Project Settings, under Package Dependencies, add a new dependency with the URL of this repository: `https://github.com/RoverPlatform/rover-ios`.
 
 Note that as of Xcode 13, you have to type the repository URL into the search box and press return.
 
@@ -55,4 +55,4 @@ end
 
 ## Next Steps
 
-Please continue onwards from https://github.com/RoverPlatform/rover-campaigns-ios/wiki.
+Please continue onwards from https://github.com/RoverPlatform/rover-ios/wiki.

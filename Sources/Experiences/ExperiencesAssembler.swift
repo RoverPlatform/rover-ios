@@ -88,10 +88,6 @@ public struct ExperiencesAssembler: Assembler {
             viewController.loadExperience(universalLink: universalLink, campaignID: campaignID, initialScreenID: screenID)
             return viewController
         }
-        
-        // MARK: Analytics
-        //TODO: adjust analytics to match the rest of the SDK
-        Analytics.shared.enable()
     }
     
     public func containerDidAssemble(resolver: Resolver) {
@@ -101,5 +97,9 @@ public struct ExperiencesAssembler: Assembler {
         }
         
         resolver.resolve(RoverObserver.self)?.enable()
+        
+        // MARK: Analytics
+        //TODO: adjust analytics to match the rest of the SDK
+        Analytics.shared.enable()
     }
 }

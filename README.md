@@ -1,6 +1,10 @@
 # Rover iOS SDK
 
-The Rover SDK is a Cocoa Touch Framework written in Swift. The SDK is 100% open-source.
+This is the Rover SDK, which includes our core Rover Experiences product and marketing campaigns automation.  The Rover SDK allows for the creation of mobile experiences, with added engagement and monetization for better mobile campaigns.
+
+<hr />
+
+The Rover SDK is a collection of Cocoa Touch Frameworks written in Swift. Instead of a single monolithic framework, the Rover SDK takes a modular approach, allowing you to include only the functionality relevant to your application. The SDK is 100% open-source and available on [GitHub](https://github.com/RoverPlatform/rover-ios).
 
 ---
 
@@ -8,40 +12,21 @@ The Rover SDK is a Cocoa Touch Framework written in Swift. The SDK is 100% open-
 
 ### SwiftPM
 
-The recommended way to install the Rover SDK is via SwiftPM.
+Rover SDK is installed via SwiftPM.
 
-In Xcode, in your Project Settings, under Package Dependencies, add a new dependency with the URL of this repository: `https://github.com/roverplatform/rover-ios`.
+In Xcode, in your Project Settings, under Package Dependencies, add a new dependency with the URL of this repository: `https://github.com/RoverPlatform/rover-ios`.
 
 Note that as of Xcode 13, you have to type the repository URL into the search box and press return.
 
+![SwiftPM Repo Dialog Box](readme-images/swiftpm-select-repo.png)
+
 Leave the dependency rule at the default, "Up To Next Major Version".  Rover follows the standard semver semantic versioning rules.
 
-### Cocoapods
+Then, in the subsequent dialog box, choose the Package Products (frameworks) you wish to use.
 
-As an alternative, you can use [Cocoapods](http://cocoapods.org/).
+![SwiftPM Target Dialog Box](readme-images/swiftpm-select-targets.png)
 
-Add the Rover dependency to your Podfile.
-
-```ruby
-pod 'Rover', '~> 3.91'
-```
-
-## Initialization
-
-You must initialize the Rover SDK with your account token. You can find your account token in the Rover [Settings app](https://app.rover.io/settings). Find the token labelled "SDK Token" and click the icon next to it to copy it to your clipboard.
-
-Import Rover in your app delegate and set the `accountToken` variable from within your `application(_:didFinishLaunchingWithOptions:)` method.
-
-```swift
-import Rover
-
-func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-    // ...
-    Rover.accountToken = "<YOUR_SDK_TOKEN>"
-    // ...
-}
-```
 
 ## Next Steps
 
-The rest of the Rover integration process is described in detail on the Rover developer portal: https://developer.rover.io/v3/ios/.
+Please continue onwards from https://github.com/RoverPlatform/rover-ios/wiki.

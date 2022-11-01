@@ -15,15 +15,15 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>3.8.1</string>
+	<string>4.0.0</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
 			<key>CFBundleURLName</key>
-			<string>io.rover.Example</string>
+			<string>io.rover</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>example</string>
+				<string>rv-example</string>
 			</array>
 		</dict>
 	</array>
@@ -31,6 +31,17 @@
 	<string>1</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>The Rover example app uses your location to deliver relevant notifications based on your current whereabouts</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>The Rover example app uses your location to deliver relevant notifications based on your current whereabouts</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>The Rover example app uses your location to deliver relevant notifications based on your current whereabouts</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

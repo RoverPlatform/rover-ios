@@ -10,9 +10,10 @@ import UIKit
 
 #if !COCOAPODS
 import RoverFoundation
+import RoverData
 #endif
 
-open class SettingsViewController: UIViewController {
+open class RoverSettingsViewController: UIViewController {
     public let isTestDevice = PersistedValue<Bool>(storageKey: "io.rover.RoverDebug.isTestDevice")
     
     public private(set) var navigationBar: UINavigationBar?
@@ -140,7 +141,7 @@ open class SettingsViewController: UIViewController {
 
 // MARK: UITableViewDataSource
 
-extension SettingsViewController: UITableViewDataSource {
+extension RoverSettingsViewController: UITableViewDataSource {
     public func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
@@ -159,7 +160,8 @@ extension SettingsViewController: UITableViewDataSource {
         case 1:
             let cell = LabelAndValueCell()
             cell.label.text = "Device Name"
-            cell.value.text = UIDevice.current.name
+            cell.value.text = RoverFoundation.shared!.resolve(StaticContextProvider.self)?.deviceName
+            cell.value.delegate = self
             return cell
         case 2:
             let cell = LabelAndValueCell()
@@ -226,7 +228,7 @@ extension SettingsViewController: UITableViewDataSource {
     
     class LabelAndValueCell: UITableViewCell {
         let label = UILabel()
-        let value = UILabel()
+        let value = UITextField()
         
         override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
             super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -275,7 +277,7 @@ extension SettingsViewController: UITableViewDataSource {
 
 // MARK: UITableViewDelegate
 
-extension SettingsViewController: UITableViewDelegate {
+extension RoverSettingsViewController: UITableViewDelegate {
     public func tableView(_ tableView: UITableView, shouldShowMenuForRowAt indexPath: IndexPath) -> Bool {
         return indexPath.row == 2
     }
@@ -308,8 +310,29 @@ extension SettingsViewController: UITableViewDelegate {
 
 // MARK: UINavigationBarDelegate
 
-extension SettingsViewController: UINavigationBarDelegate {
+extension RoverSettingsViewController: UINavigationBarDelegate {
     public func position(for bar: UIBarPositioning) -> UIBarPosition {
         return .topAttached
+    }
+}
+
+// MARK: UITextFieldDelegate
+
+extension RoverSettingsViewController: UITextFieldDelegate {
+    public func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+        return true
+    }
+    
+    public func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
+        return true
+    }
+    
+    public func textFieldDidEndEditing(_ textField: UITextField) {
+        RoverFoundation.shared!.resolve(DeviceNameManager.self)?.setDeviceName(textField.text ?? UIDevice.current.name)
+    }
+    
+    public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
     }
 }

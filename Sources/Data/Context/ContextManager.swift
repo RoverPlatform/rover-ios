@@ -15,6 +15,7 @@ import RoverFoundation
 class ContextManager {
     let persistedPushToken = PersistedValue<Context.PushToken>(storageKey: "io.rover.RoverData.pushToken")
     let persistedUserInfo = PersistedValue<Attributes>(storageKey: "io.rover.RoverData.userInfo")
+    let persistedDeviceName = PersistedValue<String>(storageKey: "io.rover.RoverData.deviceName")
     let reachability = Reachability(hostname: "google.com")!
     
     init() { }
@@ -179,7 +180,7 @@ extension ContextManager: StaticContextProvider {
     }
     
     var deviceName: String {
-        return UIDevice.current.name
+        return self.persistedDeviceName.value ?? UIDevice.current.name
     }
     
     var operatingSystemName: String {
@@ -241,5 +242,13 @@ extension ContextManager: UserInfoManager {
     
     func clearUserInfo() {
         self.persistedUserInfo.value = nil
+    }
+}
+
+// MARK: DeviceNameManager
+
+extension ContextManager: DeviceNameManager {
+    func setDeviceName(_ deviceName: String) {
+        self.persistedDeviceName.value = deviceName
     }
 }

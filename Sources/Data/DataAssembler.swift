@@ -88,6 +88,7 @@ public struct DataAssembler: Assembler {
         }
         
         // MARK: DarkModeContextProvider
+        
         container.register(DarkModeContextProvider.self) { resolver in
             resolver.resolve(ContextManager.self)!
         }
@@ -138,6 +139,12 @@ public struct DataAssembler: Assembler {
         // MARK: TokenManager
         
         container.register(TokenManager.self) { resolver in
+            resolver.resolve(ContextManager.self)!
+        }
+        
+        // MARK: DeviceNameManager
+        
+        container.register(DeviceNameManager.self) { resolver in
             resolver.resolve(ContextManager.self)!
         }
         

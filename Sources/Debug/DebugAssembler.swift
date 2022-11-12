@@ -45,7 +45,7 @@ public struct DebugAssembler: Assembler {
         // MARK: UIViewController (settings)
         
         container.register(UIViewController.self, name: "settings", scope: .transient) { _ in
-            SettingsViewController()
+            RoverSettingsViewController()
         }
     }
     

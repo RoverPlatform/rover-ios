@@ -1,32 +1,32 @@
+// Copyright (c) 2020-present, Rover Labs, Inc. All rights reserved.
+// You are hereby granted a non-exclusive, worldwide, royalty-free license to use,
+// copy, modify, and distribute this software in source code or binary form for use
+// in connection with the web services and APIs provided by Rover.
 //
-//  ExperiencesAssembler.swift
-//  RoverExperiences
+// This copyright notice shall be included in all copies or substantial portions of 
+// the software.
 //
-//  Created by Sean Rucker on 2018-05-04.
-//  Copyright © 2018 Rover Labs Inc. All rights reserved.
-//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+// FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+// COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+// CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import UIKit
-#if !COCOAPODS
 import RoverFoundation
 import RoverData
 import RoverUI
-#endif
 
 public struct ExperiencesAssembler: Assembler {
     public init() { }
-    
+
     public func assemble(container: Container) {
         
         // MARK: Action (presentExperience)
         
-        container.register(Action.self, name: "presentExperience", scope: .transient) { (resolver, id: String, campaignID: String?, screenID: String?) in
-            let viewControllerToPresent = resolver.resolve(UIViewController.self, name: "experience", arguments: id, campaignID, screenID)!
-            return resolver.resolve(Action.self, name: "presentView", arguments: viewControllerToPresent)!
-        }
-        
-        container.register(Action.self, name: "presentExperience", scope: .transient) { (resolver, universalLink: URL, campaignID: String?, screenID: String?) in
-            let viewControllerToPresent = resolver.resolve(UIViewController.self, name: "experience", arguments: universalLink, campaignID, screenID)!
+        container.register(Action.self, name: "presentExperience", scope: .transient) { (resolver, url: URL) in
+            let viewControllerToPresent = resolver.resolve(UIViewController.self, name: "experience", arguments: url)!
             return resolver.resolve(Action.self, name: "presentView", arguments: viewControllerToPresent)!
         }
         
@@ -43,20 +43,25 @@ public struct ExperiencesAssembler: Assembler {
             return resolver.resolve(HTTPClient.self)!
         }
         
+        // MARK: NewExperienceManager
+        
+        container.register(ExperienceManager.self) { resolver in
+            let eventQueue = resolver.resolve(EventQueue.self)!
+            let userInfoContextProvider = resolver.resolve(UserInfoContextProvider.self)!
+            return ExperienceManager(
+                eventQueue: eventQueue,
+                userInfoContextProvider: userInfoContextProvider)
+        }
+        
         // MARK: RouteHandler (experience)
         
-        container.register(RouteHandler.self, name: "experience") { resolver in            
-            let idActionProvider: (String, String?, String?) -> Action? = { [weak resolver] id, campaignID, screenID in
-                resolver?.resolve(Action.self, name: "presentExperience", arguments: id, campaignID, screenID)
-            }
-            
-            let universalLinkActionProvider: (URL, String?, String?) -> Action? = { [weak resolver] universalLink, campaignID, screenID in
-                resolver?.resolve(Action.self, name: "presentExperience", arguments: universalLink, campaignID, screenID)
+        container.register(RouteHandler.self, name: "experience") { resolver in
+            let actionProvider: (URL) -> Action? = { [weak resolver] url in
+                resolver?.resolve(Action.self, name: "presentExperience", arguments: url)
             }
             
             return ExperienceRouteHandler(
-                idActionProvider: idActionProvider,
-                universalLinkActionProvider: universalLinkActionProvider
+                actionProvider: actionProvider
             )
         }
         
@@ -77,15 +82,9 @@ public struct ExperiencesAssembler: Assembler {
         
         // MARK: UIViewController (experience)
         
-        container.register(UIViewController.self, name: "experience", scope: .transient) { (resolver, id: String, campaignID: String?, screenID: String?) in
-            let viewController = RoverViewController()
-            viewController.loadExperience(id: id, campaignID: campaignID, initialScreenID: screenID)
-            return viewController
-        }
-        
-        container.register(UIViewController.self, name: "experience", scope: .transient) { (resolver, universalLink: URL, campaignID: String?, screenID: String?) in
-            let viewController = RoverViewController()
-            viewController.loadExperience(universalLink: universalLink, campaignID: campaignID, initialScreenID: screenID)
+        container.register(UIViewController.self, name: "experience", scope: .transient) { (resolver, url: URL) in
+            let viewController = ExperienceViewController()
+            viewController.loadExperience(with: url)
             return viewController
         }
     }
@@ -100,6 +99,6 @@ public struct ExperiencesAssembler: Assembler {
         
         // MARK: Analytics
         //TODO: adjust analytics to match the rest of the SDK
-        Analytics.shared.enable()
+        MiniAnalytics.shared.enable()
     }
 }

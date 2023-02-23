@@ -1,16 +1,21 @@
+// Copyright (c) 2020-present, Rover Labs, Inc. All rights reserved.
+// You are hereby granted a non-exclusive, worldwide, royalty-free license to use,
+// copy, modify, and distribute this software in source code or binary form for use
+// in connection with the web services and APIs provided by Rover.
 //
-//  RouterService.swift
-//  RoverUI
+// This copyright notice shall be included in all copies or substantial portions of 
+// the software.
 //
-//  Created by Sean Rucker on 2018-04-22.
-//  Copyright © 2018 Rover Labs Inc. All rights reserved.
-//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+// FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+// COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+// CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import Foundation
 
-#if !COCOAPODS
 import RoverFoundation
-#endif
 
 class RouterService: Router {
     let associatedDomains: [String]
@@ -64,7 +69,7 @@ class RouterService: Router {
             }
         } else if isDeepLink(url: url) {
             for handler in handlers {
-                if let action = handler.deepLinkAction(url: url) {
+                if let action = handler.deepLinkAction(url: url, domain: associatedDomains.first) {
                     return action
                 }
             }
@@ -78,11 +83,7 @@ class RouterService: Router {
             return false
         }
         
-        guard let host = url.host, associatedDomains.contains(host) else {
-            return false
-        }
-        
-        return true
+        return isValidDomain(for: url)
     }
     
     func isDeepLink(url: URL) -> Bool {
@@ -91,5 +92,13 @@ class RouterService: Router {
         }
 
         return urlSchemes.contains(scheme)
+    }
+    
+    func isValidDomain(for url: URL) -> Bool {
+        guard let host = url.host else {
+            return false
+        }
+        
+        return associatedDomains.contains(host)
     }
 }

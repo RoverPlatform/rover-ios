@@ -1,167 +1,212 @@
+// Copyright (c) 2020-present, Rover Labs, Inc. All rights reserved.
+// You are hereby granted a non-exclusive, worldwide, royalty-free license to use,
+// copy, modify, and distribute this software in source code or binary form for use
+// in connection with the web services and APIs provided by Rover.
 //
-//  ExperienceViewController.swift
-//  Rover
+// This copyright notice shall be included in all copies or substantial portions of 
+// the software.
 //
-//  Created by Sean Rucker on 2017-08-17.
-//  Copyright © 2017 Rover Labs Inc. All rights reserved.
-//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+// FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+// COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+// CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import UIKit
+import RoverFoundation
 
-/// The `ExperienceViewController` displays a Rover experience and is responsible for navigation behavior between
-/// its screens. It posts [`Notification`s](https://developer.apple.com/documentation/foundation/notification) through
-/// the default [`NotificationCenter`](https://developer.apple.com/documentation/foundation/notificationcenter) when it
-/// is presented, dismissed and viewed.
-///
-/// When the `ExperienceViewController` navigates to a Rover screen, it instantiates a view controller by calling its
-/// factory method `screenViewController(experience:screen:)`. The default implementation returns an instance of
-/// `ScreenViewController` but you can override this method if you wan to use a different view controller.
-open class ExperienceViewController: UINavigationController {
-    public let experience: Experience
-    public let campaignID: String?
-    
+/// The `RoverViewController` fetches experiences from Rover's server and displays a loading screen while it is loading.
+/// The loading screen can be customized by overriding the `loadingViewController()` method and supplying your own. The
+/// Rover SDK comes with a default loading screen `LoadingViewController` which you can override and customize to suit
+/// your needs. You can also supply your own view controller.
+open class ExperienceViewController: UIViewController {
     #if swift(>=4.2)
     override open var childForStatusBarStyle: UIViewController? {
-        return self.topViewController
+        return self.children.first
     }
     #else
     override open var childViewControllerForStatusBarStyle: UIViewController? {
-        return self.topViewController
+        return self.childViewControllers.first
     }
     #endif
     
-    public init(experience: Experience, campaignID: String?, initialScreenID: String? = nil) {
-        self.experience = experience
-        self.campaignID = campaignID
-        super.init(nibName: nil, bundle: nil)
+    private var url: URL?
+    private var experienceStore: ExperienceStore = Rover.shared.resolve(ExperienceStore.self)!
+    
+    /// Load a Rover experience into a newly instantiated ExperienceViewController.
+    /// This URL can be:
+    ///  * a file URL
+    ///  * an HTTP URL
+    ///  * a deeplink
+    ///  * a universal link
+    ///
+    /// - Parameter url: The URL  associated with the experience to load.
+    public static func openExperience(with experienceUrl: URL) -> ExperienceViewController {
+        let experienceViewController = ExperienceViewController()
+        experienceViewController.loadExperience(with: experienceUrl)
+        return experienceViewController
+    }
+    
+    /// Load a Rover experience into the view controller referenced by its URL.
+    /// This can be:
+    ///  * a file URL
+    ///  * an HTTP URL
+    ///  * a deeplink
+    ///  * a universal link
+    ///
+    /// - Parameter url: The URL  associated with the experience to load.
+    public func loadExperience(with url: URL) {
+        self.url = url
+        loadExperience()
+    }
+    
+    private func loadExperience() {
+        guard let url = url else {
+            return
+        }
         
-        let initialScreen: Screen
-        if let initialScreenID = initialScreenID {
-            initialScreen = experience.screens.first { $0.id == initialScreenID } ?? experience.homeScreen
+        let loadingViewController = self.loadingViewController()
+        setChildViewController(loadingViewController)
+        
+        experienceStore.fetchExperience(for: url) { [weak self] result in
+            DispatchQueue.main.async {
+                guard let self = self else {
+                    return
+                }
+
+                switch result {
+                case let .failure(error):
+                    self.showError(error: error, shouldRetry: error.isRetryable)
+                case let .success(experience):
+                    let viewController = self.renderViewController(experience: experience)
+                    
+                    self.setChildViewController(viewController)
+                    self.setNeedsStatusBarAppearanceUpdate()
+                }
+            }
+        }
+    }
+    
+    #if swift(>=4.2)
+    private func setChildViewController(_ childViewController: UIViewController) {
+        if let existingChildViewController = self.children.first {
+            existingChildViewController.willMove(toParent: nil)
+            existingChildViewController.view.removeFromSuperview()
+            existingChildViewController.removeFromParent()
+        }
+        
+        childViewController.willMove(toParent: self)
+        addChild(childViewController)
+        childViewController.view.frame = view.bounds
+        view.addSubview(childViewController.view)
+        childViewController.didMove(toParent: self)
+    }
+    #else
+    private func setChildViewController(_ childViewController: UIViewController) {
+        if let existingChildViewController = self.childViewControllers.first {
+            existingChildViewController.willMove(toParentViewController: nil)
+            existingChildViewController.view.removeFromSuperview()
+            existingChildViewController.removeFromParentViewController()
+        }
+        
+        childViewController.willMove(toParentViewController: self)
+        addChildViewController(childViewController)
+        childViewController.view.frame = view.bounds
+        view.addSubview(childViewController.view)
+        childViewController.didMove(toParentViewController: self)
+    }
+    #endif
+    
+    private func showError(error: Error?, shouldRetry: Bool) {
+        if self.presentingViewController != nil {
+            presentError(shouldRetry: shouldRetry)
         } else {
-            initialScreen = experience.homeScreen
+            embedError(shouldRetry: shouldRetry)
         }
-        
-        let homeScreenViewController = screenViewController(
-            experience: experience,
-            screen: initialScreen
-        )
-        
-        viewControllers = [homeScreenViewController]
     }
     
-    @available(*, unavailable)
-    public required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    // MARK: Notifications
-    
-    private var sessionIdentifier: String {
-        var identifier = "experience-\(experience.id)"
-        
-        if let campaignID = self.campaignID {
-            identifier = "\(identifier)-campaign-\(campaignID)"
+    private func embedError(shouldRetry: Bool) {
+        let errorViewController = ErrorViewController(shouldRetry: shouldRetry) {
+            self.loadExperience()
         }
         
-        return identifier
+        self.setChildViewController(errorViewController)
     }
     
-    override open func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        var userInfo: [String: Any] = [
-            ExperienceViewController.experienceUserInfoKey: experience
-        ]
-        
-        if let campaignID = campaignID {
-            userInfo[ExperienceViewController.campaignIDUserInfoKey] = campaignID
-        }
-        
-        NotificationCenter.default.post(
-            name: ExperienceViewController.experiencePresentedNotification,
-            object: self,
-            userInfo: userInfo
-        )
-        
-        SessionController.shared.registerSession(identifier: sessionIdentifier) { [weak self] duration in
-            userInfo[ExperienceViewController.durationUserInfoKey] = duration
-            NotificationCenter.default.post(
-                name: ExperienceViewController.experienceViewedNotification,
-                object: self,
-                userInfo: userInfo
+    private func presentError(shouldRetry: Bool) {
+        let alertController: UIAlertController
+        if shouldRetry {
+            alertController = UIAlertController(
+                title: NSLocalizedString("Error", comment: "Rover Error Dialog Title"),
+                message: NSLocalizedString("Failed to load experience", comment: "Rover Failed to load experience error message"),
+                preferredStyle: UIAlertController.Style.alert
             )
+            let cancel = UIAlertAction(
+                title: NSLocalizedString("Cancel", comment: "Rover Cancel Action"),
+                style: UIAlertAction.Style.cancel
+            ) { _ in
+                alertController.dismiss(animated: true, completion: nil)
+                self.dismiss(animated: true, completion: nil)
+            }
+            let retry = UIAlertAction(
+                title: NSLocalizedString("Try Again", comment: "Rover Try Again Action"),
+                style: UIAlertAction.Style.default
+            ) { _ in
+                alertController.dismiss(animated: true, completion: nil)
+                self.loadExperience()
+            }
+            
+            alertController.addAction(cancel)
+            alertController.addAction(retry)
+        } else {
+            alertController = UIAlertController(
+                title: NSLocalizedString("Error", comment: "Rover Error Title"),
+                message: NSLocalizedString("Something went wrong", comment: "Rover Something Went Wrong message"),
+                preferredStyle: UIAlertController.Style.alert
+            )
+
+            let ok = UIAlertAction(
+                title: NSLocalizedString("Ok", comment: "Rover Ok Action"),
+                style: UIAlertAction.Style.default
+            ) { _ in
+                alertController.dismiss(animated: false, completion: nil)
+                self.dismiss(animated: true, completion: nil)
+            }
+                        
+            alertController.addAction(ok)
         }
-    }
-    
-    override open func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
         
-        var userInfo: [String: Any] = [
-            ExperienceViewController.experienceUserInfoKey: experience
-        ]
-        
-        if let campaignID = campaignID {
-            userInfo[ExperienceViewController.campaignIDUserInfoKey] = campaignID
-        }
-        
-        NotificationCenter.default.post(
-            name: ExperienceViewController.experienceDismissedNotification,
-            object: self,
-            userInfo: userInfo
-        )
-        
-        SessionController.shared.unregisterSession(identifier: sessionIdentifier)
+        self.present(alertController, animated: true, completion: nil)
     }
     
     // MARK: Factories
     
-    open func screenViewController(experience: Experience, screen: Screen) -> ScreenViewController {
-        return ScreenViewController(
-            collectionViewLayout: ScreenViewLayout(screen: screen),
-            experience: experience,
-            campaignID: self.campaignID,
-            screen: screen,
-            viewControllerFactory: { [weak self] experience, screen in
-                self?.screenViewController(experience: experience, screen: screen)
-            }
-        )
+    /// Construct a view controller to display while loading an experience from Rover's server. The default
+    /// returns an instance `LoadingViewController`. You can override this method if you want to use a different view
+    /// controller.
+    open func loadingViewController() -> UIViewController {
+        return LoadingViewController()
     }
-}
-
-// MARK: Notification Names
-
-extension ExperienceViewController {
-    /// The `ExperienceViewController` sends this notification when it is presented.
-    public static let experiencePresentedNotification = Notification.Name("io.rover.experiencePresentedNotification")
     
-    /// The `ExperienceViewController` sends this notification when it is dismissed.
-    public static let experienceDismissedNotification = Notification.Name("io.rover.experienceDismissedNotification")
-    
-    /// The `ExperienceViewController` sends this notification when a user finishes viewing an experience. The user
-    /// starts viewing an experience when the view controller is presented and finishes when it is dismissed. The
-    /// duration the user viewed the experience is included in the `durationUserInfoKey`.
-    ///
-    /// If the user quickly dismisses the view controller and presents it again (or backgrounds the app and restores it)
-    /// the view controller considers this part of the same "viewing session". The notification is not sent until the
-    /// user dismisses the view controller and a specified time passes (default is 10 seconds).
-    ///
-    /// This notification is useful for tracking the amount of time users spend viewing an experience. However if you
-    /// want to be notified immediately when a user views an experience you should use the
-    /// `experiencePresentedNotification`.
-    public static let experienceViewedNotification = Notification.Name("io.rover.experienceViewedNotification")
-}
-
-// MARK: User Info Keys
-
-extension ExperienceViewController {
-    /// A key whose value is the `Experience` associated with the `ExperienceViewController`.
-    public static let experienceUserInfoKey = "experienceUserInfoKey"
-    
-    /// A key whose value is an optional `String` containing the `campaignID` passed into the `RoverViewController` when
-    /// it was initialized.
-    public static let campaignIDUserInfoKey = "campaignIDUserInfoKey"
-    
-    /// A key whose value is a `Double` representing the duration of an experience session.
-    public static let durationUserInfoKey = "durationUserInfoKey"
+    private func renderViewController(experience: LoadedExperience) -> UIViewController {
+        switch experience {
+        case .classic(let classicExperienceModel, let urlParameters):
+            return RenderClassicExperienceViewController(
+                experience: classicExperienceModel,
+                campaignID: urlParameters["campaignID"],
+                initialScreenID: urlParameters["screenID"])
+            
+        case .standard(
+            let experienceModel,
+            let urlParameters,
+            let userInfo,
+            let authorize):
+            return RenderExperienceViewController(
+                experience: experienceModel,
+                urlParameters: urlParameters,
+                userInfo: userInfo,
+                authorize: authorize)
+        }
+    }
 }

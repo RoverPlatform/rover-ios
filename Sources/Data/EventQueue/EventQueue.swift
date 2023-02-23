@@ -1,10 +1,17 @@
+// Copyright (c) 2020-present, Rover Labs, Inc. All rights reserved.
+// You are hereby granted a non-exclusive, worldwide, royalty-free license to use,
+// copy, modify, and distribute this software in source code or binary form for use
+// in connection with the web services and APIs provided by Rover.
 //
-//  EventQueue.swift
-//  RoverData
+// This copyright notice shall be included in all copies or substantial portions of 
+// the software.
 //
-//  Created by Sean Rucker on 2017-09-01.
-//  Copyright © 2017 Rover Labs Inc. All rights reserved.
-//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+// FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+// COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+// CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import os.log
 import UIKit
@@ -232,7 +239,7 @@ public class EventQueue {
                         os_log("Discarding failed events", log: .events, type: .info)
                         self.removeEvents(events)
                     }
-                case .success(let data):
+                case .success(let data, _):
                     do {
                         _ = try JSONDecoder.default.decode(FlushReponse.self, from: data)
                         os_log("Successfully uploaded %d event(s)", log: .events, type: .debug, events.count)

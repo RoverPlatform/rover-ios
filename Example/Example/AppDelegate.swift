@@ -1,10 +1,17 @@
+// Copyright (c) 2020-present, Rover Labs, Inc. All rights reserved.
+// You are hereby granted a non-exclusive, worldwide, royalty-free license to use,
+// copy, modify, and distribute this software in source code or binary form for use
+// in connection with the web services and APIs provided by Rover.
 //
-//  AppDelegate.swift
-//  Example
+// This copyright notice shall be included in all copies or substantial portions of 
+// the software.
 //
-//  Created by Sean Rucker on 2019-04-30.
-//  Copyright © 2019 Rover Labs Inc. All rights reserved.
-//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+// FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+// COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+// CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import RoverFoundation
 import RoverData
@@ -16,10 +23,10 @@ import RoverUI
 import RoverNotifications
 import RoverExperiences
 import RoverDebug
-
 import CoreLocation
 import UIKit
 import UserNotifications
+import os.log
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -28,7 +35,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Initialize the Rover SDK with all modules.
-        RoverFoundation.initialize(assemblers: [
+        Rover.initialize(assemblers: [
             FoundationAssembler(),
             DataAssembler(accountToken: "<YOUR_SDK_TOKEN>"),
             UIAssembler(associatedDomains: ["example.rover.io"], urlSchemes: ["rv-example"]),
@@ -46,9 +53,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         ])
         
         // Sync notifications, beacons and geofences when the app is opened from a terminated state.
-        RoverFoundation.shared?.resolve(SyncCoordinator.self)?.sync {
+        Rover.shared.syncCoordinator.sync {
             // After the first sync call the updateLocation method on the RegionManager to start monitoring for the nearest beacons and geofences.
-            RoverFoundation.shared?.resolve(RegionManager.self)?.updateLocation(manager: self.locationManager)
+            Rover.shared.regionManager.updateLocation(manager: self.locationManager)
         }
         
         // Setting the minimum background fetch interval is required for background fetch to work properly.
@@ -71,8 +78,34 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UNUserNotificationCenter.current().delegate = self
         
         // Set custom info about the current user
-        RoverFoundation.shared?.resolve(UserInfoManager.self)?.updateUserInfo { attributes in
+        Rover.shared.userInfoManager.updateUserInfo { attributes in
             attributes["foo"] = "bar"
+        }
+        
+        // Add a custom action handler:
+        Rover.shared.registerCustomActionCallback { actionEvent in
+            // a recommended pattern for having multiple behaviors for different custom actions
+            // in your experiences to fire is to use a metadata property called `behaviour` on your
+            // experience layer with the action, and then handle it here. Here is an example:
+            switch actionEvent.nodeProperties["behavior"] {
+                case "openWebsite":
+                    UIApplication.shared.open(URL(string: "https://rover.io/")!)
+                case "printLogMessage":
+                    os_log(.default, "Hello from Rover!")
+                default:
+                    os_log(.error, "🤷‍♂️")
+            }
+        }
+        
+        // Add a screen viewed callback handler:
+        Rover.shared.registerScreenViewedCallback { event in
+            // track screen view event into your own analytics tools here.
+            // a common pattern for naming screens in many is to indicate hierarchy with slashes.  We'll
+            // create a screen name out of the experience's name and screen name, if provided.
+            let screenName = "\(event.experienceName ?? "Experience") / \(event.screenName ?? "Screen")"
+            os_log("Rover experience screen viewed: %s", type: .default, screenName)
+            
+            // MyAnalyticsSDK.trackScreen(screenName)
         }
         
         return true
@@ -80,22 +113,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func applicationWillEnterForeground(_ application: UIApplication) {
         // Sync notifications, beacons and geofences when the app is opened while already running in the background.
-        RoverFoundation.shared?.resolve(SyncCoordinator.self)?.sync()
+        Rover.shared.syncCoordinator.sync()
     }
     
     func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         // Sync notifications, beacons and geofences when the app is in the background.
-        RoverFoundation.shared?.resolve(SyncCoordinator.self)?.sync(completionHandler: completionHandler)
+        Rover.shared.syncCoordinator.sync(completionHandler: completionHandler)
     }
     
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         // Sync notifications, beacons and geofences when the Rover server issues requests a sync via remote push.
-        RoverFoundation.shared?.resolve(SyncCoordinator.self)?.sync(completionHandler: completionHandler)
+        Rover.shared.syncCoordinator.sync(completionHandler: completionHandler)
     }
     
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         // The device successfully registered for push notifications. Pass the token to Rover.
-        RoverFoundation.shared!.resolve(TokenManager.self)?.setToken(deviceToken)
+        Rover.shared.tokenManager.setToken(deviceToken)
     }
     
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
@@ -103,18 +136,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //   - rv-example://presentExperience?experienceID=XXX&campaignID=XXX
         //   - rv-example://presentNotificationCenter
         //   - rv-example://presentSettings.
-        if let router = RoverFoundation.shared?.resolve(Router.self), router.handle(url) {
-            return true
-        }
-        
-        return false
+        return Rover.shared.router.handle(url)
     }
     
     func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
         // Let the Router handle Rover universal links such as:
         //  - https://example.rover.io/XXX
         //  - https://example.rover.io/XXX?campaignID=XXX
-        return RoverFoundation.shared?.resolve(Router.self)?.handle(userActivity) ?? false
+        return Rover.shared.router.handle(userActivity)
     }
 }
 
@@ -123,17 +152,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 extension AppDelegate: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         // Report the user's current location to the RegionManager so it can ensure it is monitoring for the nearest geofences and beacons. This will also track a "Location Updated" event which can be used to deliver location-relevant campaigns.
-        RoverFoundation.shared?.resolve(RegionManager.self)?.updateLocation(manager: manager)
+        Rover.shared.regionManager.updateLocation(manager: manager)
     }
     
     func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
         switch region {
         case let region as CLBeaconRegion:
             // The user entered a monitored beacon region. Start ranging for more accurate beacon detection.
-            RoverFoundation.shared?.resolve(RegionManager.self)?.startRangingBeacons(in: region, manager: manager)
+            Rover.shared.regionManager.startRangingBeacons(in: region, manager: manager)
         case let region as CLCircularRegion:
             // The user entered a geofence region. Track a "Geofence Entered" event.
-            RoverFoundation.shared?.resolve(RegionManager.self)?.enterGeofence(region: region)
+            Rover.shared.regionManager.enterGeofence(region: region)
         default:
             break
         }
@@ -143,10 +172,10 @@ extension AppDelegate: CLLocationManagerDelegate {
         switch region {
         case let region as CLBeaconRegion:
             // The user exited a monitored beacon region. Stop ranging to resume geofence monitoring.
-            RoverFoundation.shared?.resolve(RegionManager.self)?.stopRangingBeacons(in: region, manager: manager)
+            Rover.shared.regionManager.stopRangingBeacons(in: region, manager: manager)
         case let region as CLCircularRegion:
             // The user exited a geofence region. Track a "Geofence Exited" event.
-            RoverFoundation.shared?.resolve(RegionManager.self)?.exitGeofence(region: region)
+            Rover.shared.regionManager.exitGeofence(region: region)
         default:
             break
         }
@@ -154,7 +183,7 @@ extension AppDelegate: CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didRangeBeacons beacons: [CLBeacon], in region: CLBeaconRegion) {
         // The set of nearby beacons changed. Compare to the previous set and track beacon enter/exit events as needed.
-        RoverFoundation.shared?.resolve(RegionManager.self)?.updateNearbyBeacons(beacons, in: region, manager: manager)
+        Rover.shared.regionManager.updateNearbyBeacons(beacons, in: region, manager: manager)
     }
 }
 
@@ -164,8 +193,8 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         // A notification was received while the app was in the foreground.
         if let roverNotification = notification.roverNotification {
-            // If it's a Rover notification, add it to the Rover Notification Center immediately. This means if the app is currently open to the notification center the table view can live update to include it immediately.
-            RoverFoundation.shared?.resolve(NotificationStore.self)?.addNotification(roverNotification)
+            // If it's a Rover notification, add it to the Rover Inbox immediately. This means if the app is currently open to the inbox the table view can live update to include it immediately.
+            Rover.shared.notificationStore.addNotification(roverNotification)
         }
         // Tell the operating system to display the notification the same way as if the app was in the background.
         completionHandler([.badge, .sound, .alert])
@@ -173,6 +202,6 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         // The user tapped a notification. Pass the response to Rover to handle the intended behavior.
-        RoverFoundation.shared?.resolve(NotificationHandler.self)?.handle(response, completionHandler: completionHandler)
+        Rover.shared.notificationHandler.handle(response, completionHandler: completionHandler)
     }
 }

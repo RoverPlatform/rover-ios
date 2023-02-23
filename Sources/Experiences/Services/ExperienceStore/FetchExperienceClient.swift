@@ -1,10 +1,17 @@
+// Copyright (c) 2020-present, Rover Labs, Inc. All rights reserved.
+// You are hereby granted a non-exclusive, worldwide, royalty-free license to use,
+// copy, modify, and distribute this software in source code or binary form for use
+// in connection with the web services and APIs provided by Rover.
 //
-//  ExperiencesClient.swift
-//  Rover
+// This copyright notice shall be included in all copies or substantial portions of 
+// the software.
 //
-//  Created by Sean Rucker on 2018-09-11.
-//  Copyright © 2018 Rover Labs Inc. All rights reserved.
-//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+// FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+// COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+// CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 import Foundation
@@ -12,129 +19,83 @@ import os.log
 import RoverData
 
 protocol FetchExperienceClient {
-    func task(with experienceIdentifier: ExperienceIdentifier, completionHandler: @escaping (Result<Experience, Failure>) -> Void) -> URLSessionTask
+    func experienceDataTask(with url: URL, completionHandler: @escaping (Result<ExperienceDownloadResult, Failure>) -> Void) -> URLSessionTask
+    func configurationTask(with url: URL, completionHandler: @escaping (Result<CDNConfiguration, Failure>) -> Void) -> URLSessionTask
 }
-
 extension FetchExperienceClient {
-    func queryItems(experienceIdentifier: ExperienceIdentifier) -> [URLQueryItem] {
-        var queryItems = [URLQueryItem]()
-        
-        let query: String
-        switch experienceIdentifier {
-        case .experienceURL:
-            query = """
-                query FetchExperienceByCampaignURL($campaignURL: String!) {
-                    experience(campaignURL: $campaignURL) {
-                        ...experienceFields
-                    }
-                }
-                """
-        case let .experienceID(_, useDraft):
-            if useDraft {
-                query = """
-                    query FetchExperienceByID($id: ID!) {
-                        experience(id: $id, versionID: "current") {
-                            ...experienceFields
-                        }
-                    }
-                """
-            } else {
-                query = """
-                    query FetchExperienceByID($id: ID!) {
-                        experience(id: $id) {
-                            ...experienceFields
-                        }
-                    }
-                """
-            }
+    func dataResult(result: HTTPResult) -> Result<ExperienceDownloadResult, Failure> {
+        switch result {
+        case let .success(jsonData, urlResponse):
+            let urlParams = getExperienceUrlParameters(urlResponse)
+            let downloadResult = ExperienceDownloadResult(
+                data: jsonData,
+                version: urlResponse.value(forHTTPHeaderField: "Rover-Experience-Version") ?? "2",
+                id: urlResponse.value(forHTTPHeaderField: "Rover-Experience-ID"),
+                name: urlResponse.value(forHTTPHeaderField: "Rover-Experience-Name"),
+                urlParameters: urlParams)
+            return .success(downloadResult)
+        case let .error(error, _):
+            return .failure(.networkError(error))
         }
-        
-        let condensed = query.components(separatedBy: .whitespacesAndNewlines).filter {
-            !$0.isEmpty
-        }.joined(separator: " ")
-        
-        let queryItem = URLQueryItem(name: "query", value: condensed)
-        queryItems.append(queryItem)
-        
-        let variables: RequestVariables
-        switch experienceIdentifier {
-        case let .experienceURL(url):
-            variables = RequestVariables(campaignURL: url.absoluteString, id: nil)
-        case let .experienceID(id, _):
-            variables = RequestVariables(campaignURL: nil, id: id)
-        }
-        
-        let encoder = JSONEncoder()
-        encoder.dateEncodingStrategy = .formatted(DateFormatter.rfc3339)
-        if let encoded = try? encoder.encode(variables) {
-            let value = String(data: encoded, encoding: .utf8)
-            let queryItem = URLQueryItem(name: "variables", value: value)
-            queryItems.append(queryItem)
-        }
-        
-        let fragments = ["experienceFields"]
-        if let encoded = try? encoder.encode(fragments) {
-            let value = String(data: encoded, encoding: .utf8)
-            let queryItem = URLQueryItem(name: "fragments", value: value)
-            queryItems.append(queryItem)
-        }
-        
-        return queryItems
     }
     
-    func result(result: HTTPResult) -> Result<Experience, Failure> {
+    func configurationResult(result: HTTPResult) -> Result<CDNConfiguration, Failure> {
         switch result {
-        case let .error(error, true), let .error(error, false):
-            return .failure(Failure.networkError(error))
-        case let .success(data):
+        case let .success(jsonData, _):
             do {
-                let decoder = JSONDecoder()
-                decoder.dateDecodingStrategy = .formatted(DateFormatter.rfc3339)
-                
-                let response = try decoder.decode(Response.self, from: data)
-                return .success(response.data.experience)
+                let cdnConfiguration = try CDNConfiguration(decode: jsonData)
+                rover_log(.info, "Configuration JSON has been retrieved.")
+                return .success(cdnConfiguration)
             } catch {
-                let error = Failure.invalidResponseData(error, data)
-                return .failure(error)
+                rover_log(.error, "Unable to retrieve Configuration JSON.")
+                return .failure(.invalidResponseData(error, jsonData))
             }
+            
+        case let .error(error, _):
+            rover_log(.error, "Unable to retrieve Configuration JSON.")
+            return .failure(.networkError(error))
         }
+    }
+    
+    func getExperienceUrlParameters(_ response: HTTPURLResponse) -> [String: String] {
+        //get the parameters from the response.
+        let requestParams = response.url?.query?.queryToDictionary() ?? [:]
+        
+        //get the parameters from the headers.
+        let responseParams = response.value(forHTTPHeaderField: "Rover-Experience-Parameters")?.queryToDictionary() ?? [:]
+        
+        return requestParams.merging(responseParams) { (current, _) in current }
     }
 }
 
 // MARK: HTTPClient
 
 extension HTTPClient: FetchExperienceClient {
-    func task(with experienceIdentifier: ExperienceIdentifier, completionHandler: @escaping (Result<Experience, Failure>) -> Void) -> URLSessionTask {
-        let queryItems = self.queryItems(experienceIdentifier: experienceIdentifier)
-        let request = self.downloadRequest(queryItems: queryItems)
+    func experienceDataTask(with url: URL, completionHandler: @escaping (Result<ExperienceDownloadResult, Failure>) -> Void) -> URLSessionTask {
+        var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)!
+        if url.lastPathComponent != "/document.json" {
+            urlComponents.path = urlComponents.path.appending("/document.json")
+        }
+
+        let request = self.downloadRequest(url: urlComponents.url!)
         
         return self.downloadTask(with: request) { httpResult in
-            let result = self.result(result: httpResult)
+            let result = self.dataResult(result: httpResult)
             completionHandler(result)
         }
     }
-}
-
-// MARK: Responses
-
-private struct RequestVariables: Encodable {
-    let campaignURL: String?
-    let id: String?
-}
-
-private struct Response: Decodable {
-    struct Data: Decodable {
-        var experience: Experience
-    }
     
-    var data: Data
-}
-
-// MARK: FetchExperienceResult
-
-public enum FetchExperienceResult {
-    case error(error: Error?, isRetryable: Bool)
-    case success(experience: Experience)
+    func configurationTask(with url: URL, completionHandler: @escaping (Result<CDNConfiguration, Failure>) -> Void) -> URLSessionTask {
+        var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)!
+        urlComponents.query = ""
+        urlComponents.path = "/configuration.json"
+        let request = self.downloadRequest(url: urlComponents.url!)
+        
+        return self.downloadTask(with: request) { httpResult in
+            let result = self.configurationResult(result: httpResult)
+            completionHandler(result)
+        }
+    }
 }
 
 enum Failure: LocalizedError {
@@ -142,6 +103,9 @@ enum Failure: LocalizedError {
     case invalidResponseData(Error, Data)
     case invalidStatusCode(Int)
     case networkError(Error?)
+    case fileError(Error?)
+    case unsupportedExperienceVersion(String)
+    case invalidExperienceData
     
     var errorDescription: String? {
         switch self {
@@ -157,6 +121,16 @@ enum Failure: LocalizedError {
             } else {
                 return "Network error"
             }
+        case let .fileError(error):
+            if let error = error {
+                return "File error: \(error.debugDescription)"
+            } else {
+                return "File error"
+            }
+        case let .unsupportedExperienceVersion(version):
+            return "Version \(version) is unsupported"
+        case .invalidExperienceData:
+            return "Invalid experience data, unable to parse"
         }
     }
     
@@ -164,21 +138,31 @@ enum Failure: LocalizedError {
         switch self {
         case .emptyResponseData, .networkError:
             return true
-        case .invalidResponseData, .invalidStatusCode:
+        case .invalidResponseData,
+                .invalidStatusCode,
+                .fileError,
+                .unsupportedExperienceVersion,
+                .invalidExperienceData:
             return false
         }
     }
 }
 
-// MARK: ExperienceIdentifier
-
-enum ExperienceIdentifier: Equatable, Hashable {
-    case experienceURL(url: URL)
-    case experienceID(id: String, useDraft: Bool)
+enum LoadedExperience {
+    case classic(
+        experience: ClassicExperienceModel,
+        urlParameters: [String: String])
+    case standard(
+        experience: ExperienceModel,
+        urlParameters: [String: String],
+        userInfo: [String: Any],
+        authorize: (inout URLRequest) -> Void)
 }
 
-// MARK: AuthTokenNotConfiguredError
-
-public class AuthTokenNotConfiguredError: Error {
+struct ExperienceDownloadResult {
+    let data: Data
+    let version: String
+    let id: String?
+    let name: String?
+    let urlParameters: [String: String]
 }
-

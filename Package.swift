@@ -5,7 +5,8 @@ import PackageDescription
 
 let package = Package(
     name: "Rover",
-    platforms: [.iOS(.v10)],
+    defaultLocalization: "en",
+    platforms: [.iOS(.v13)],
     products: [
         // Products define the executables and libraries produced by a package, and make them visible to other packages.
         .library(
@@ -45,68 +46,60 @@ let package = Package(
             name: "RoverAppExtensions",
             targets: ["RoverAppExtensions"]),
     ],
+    dependencies: [
+        .package(url: "https://github.com/WeTransfer/Mocker", .revision("8ff37ffda243669ba7827f639f91f99b53fa4b49")),
+        .package(url:"https://github.com/weichsel/ZIPFoundation", .revision("7254c74b49cec2cb81520523ba993c671f71b066"))
+    ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
         // Targets can depend on other targets in this package, and on products in packages which this package depends on.
         .target(
             name: "RoverFoundation",
             dependencies: [],
-            path: "Sources/Foundation",
-            exclude: ["Info.plist"]),
+            path: "Sources/Foundation"),
         .target(
             name: "RoverData",
             dependencies: ["RoverFoundation"],
-            path: "Sources/Data",
-            exclude: ["Info.plist"]),
+            path: "Sources/Data"),
         .target(
             name: "RoverUI",
             dependencies: ["RoverData"],
-            path: "Sources/UI",
-            exclude: ["Info.plist"]),
+            path: "Sources/UI"),
         .target(
             name: "RoverAdSupport",
             dependencies: ["RoverData"],
-            path: "Sources/AdSupport",
-            exclude: ["Info.plist"]),
+            path: "Sources/AdSupport"),
         .target(
             name: "RoverAppExtensions",
             dependencies: ["RoverFoundation"],
-            path: "Sources/AppExtensions",
-            exclude: ["Info.plist"]),
+            path: "Sources/AppExtensions"),
         .target(
             name: "RoverBluetooth",
             dependencies: ["RoverData"],
-            path: "Sources/Bluetooth",
-            exclude: ["Info.plist"]),
+            path: "Sources/Bluetooth"),
         .target(
             name: "RoverDebug",
             dependencies: ["RoverUI"],
-            path: "Sources/Debug",
-            exclude: ["Info.plist"]),
+            path: "Sources/Debug"),
         .target(
             name: "RoverExperiences",
-            dependencies: ["RoverUI", "RoverFoundation", "RoverData"],
-            path: "Sources/Experiences",
-            exclude: ["Info.plist"]),
+            dependencies: ["RoverUI", "RoverFoundation", "RoverData", "ZIPFoundation"],
+            path: "Sources/Experiences"),
         .target(
             name: "RoverLocation",
             dependencies: ["RoverData"],
-            path: "Sources/Location",
-            exclude: ["Info.plist"]),
+            path: "Sources/Location"),
         .target(
             name: "RoverNotifications",
             dependencies: ["RoverUI"],
-            path: "Sources/Notifications",
-            exclude: ["Info.plist"]),
+            path: "Sources/Notifications"),
         .target(
             name: "RoverTelephony",
             dependencies: ["RoverData"],
-            path: "Sources/Telephony",
-            exclude: ["Info.plist"]),
+            path: "Sources/Telephony"),
         .target(
             name: "RoverTicketmaster",
             dependencies: ["RoverData"],
-            path: "Sources/Ticketmaster",
-            exclude: ["Info.plist"])
+            path: "Sources/Ticketmaster")
     ]
 )

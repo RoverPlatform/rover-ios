@@ -1,0 +1,25 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "Mocker",
+        "repositoryURL": "https://github.com/WeTransfer/Mocker",
+        "state": {
+          "branch": null,
+          "revision": "8ff37ffda243669ba7827f639f91f99b53fa4b49",
+          "version": null
+        }
+      },
+      {
+        "package": "ZIPFoundation",
+        "repositoryURL": "https://github.com/weichsel/ZIPFoundation",
+        "state": {
+          "branch": null,
+          "revision": "7254c74b49cec2cb81520523ba993c671f71b066",
+          "version": null
+        }
+      }
+    ]
+  },
+  "version": 1
+}

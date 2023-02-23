@@ -1,18 +1,23 @@
+// Copyright (c) 2020-present, Rover Labs, Inc. All rights reserved.
+// You are hereby granted a non-exclusive, worldwide, royalty-free license to use,
+// copy, modify, and distribute this software in source code or binary form for use
+// in connection with the web services and APIs provided by Rover.
 //
-//  NotificationsAssembler.swift
-//  RoverNotifications
+// This copyright notice shall be included in all copies or substantial portions of
+// the software.
 //
-//  Created by Sean Rucker on 2018-03-07.
-//  Copyright © 2018 Sean Rucker. All rights reserved.
-//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+// FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+// COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+// CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import UIKit
-import UserNotifications
-#if !COCOAPODS
 import RoverFoundation
 import RoverData
 import RoverUI
-#endif
+import UIKit
+import UserNotifications
 
 public struct NotificationsAssembler: Assembler {
     public var appGroup: String?
@@ -47,7 +52,7 @@ public struct NotificationsAssembler: Assembler {
         // MARK: Action (presentNotificationCenter)
         
         container.register(Action.self, name: "presentNotificationCenter", scope: .transient) { resolver in
-            let viewControllerToPresent = resolver.resolve(UIViewController.self, name: "notificationCenter")!
+            let viewControllerToPresent = resolver.resolve(UIViewController.self, name: "inbox")!
             return resolver.resolve(Action.self, name: "presentView", arguments: viewControllerToPresent)!
         }
         
@@ -100,12 +105,12 @@ public struct NotificationsAssembler: Assembler {
         
         // MARK: RouteHandler (notificationCenter)
         
-        container.register(RouteHandler.self, name: "notificationCenter") { resolver in
-            let actionProvider: NotificationCenterRouteHandler.ActionProvider = { [weak resolver] in
+        container.register(RouteHandler.self, name: "inbox") { resolver in
+            let actionProvider: InboxRouteHandler.ActionProvider = { [weak resolver] in
                 resolver?.resolve(Action.self, name: "presentNotificationCenter")
             }
             
-            return NotificationCenterRouteHandler(actionProvider: actionProvider)
+            return InboxRouteHandler(actionProvider: actionProvider)
         }
         
         // MARK: SyncParticipant (notifications)
@@ -116,14 +121,14 @@ public struct NotificationsAssembler: Assembler {
             )
         }
         
-        // MARK: UIViewController (notificationCenter)
+        // MARK: UIViewController (inbox)
         
-        container.register(UIViewController.self, name: "notificationCenter") { resolver in
-            let presentWebsiteActionProvider: NotificationCenterViewController.ActionProvider = { [weak resolver] url in
+        container.register(UIViewController.self, name: "inbox") { resolver in
+            let presentWebsiteActionProvider: InboxViewController.ActionProvider = { [weak resolver] url in
                 resolver?.resolve(Action.self, name: "presentWebsite", arguments: url)
             }
             
-            return NotificationCenterViewController(
+            return InboxViewController(
                 dispatcher: resolver.resolve(Dispatcher.self)!,
                 eventQueue: resolver.resolve(EventQueue.self)!,
                 imageStore: resolver.resolve(ImageStore.self)!,
@@ -143,7 +148,7 @@ public struct NotificationsAssembler: Assembler {
         }
         
         if let router = resolver.resolve(Router.self) {
-            let handler = resolver.resolve(RouteHandler.self, name: "notificationCenter")!
+            let handler = resolver.resolve(RouteHandler.self, name: "inbox")!
             router.addHandler(handler)
         }
         

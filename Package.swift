@@ -47,8 +47,8 @@ let package = Package(
             targets: ["RoverAppExtensions"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/WeTransfer/Mocker", .revision("8ff37ffda243669ba7827f639f91f99b53fa4b49")),
-        .package(url:"https://github.com/weichsel/ZIPFoundation", .revision("7254c74b49cec2cb81520523ba993c671f71b066"))
+        .package(url: "https://github.com/WeTransfer/Mocker", .upToNextMajor(from: "3.0.1")),
+        .package(url:"https://github.com/weichsel/ZIPFoundation", .upToNextMinor(from: "0.9.16"))
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.

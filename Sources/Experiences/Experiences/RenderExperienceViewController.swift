@@ -231,8 +231,8 @@ class RenderExperienceViewController: UIViewController {
                             experienceName: experience.name,
                             screenId: screen.id,
                             screenName: screen.name,
-                            nodeProperties: screen.metadata?.properties ?? [:],
-                            nodeTags: screen.metadata?.tags ?? [],
+                            screenProperties: screen.metadata?.properties ?? [:],
+                            screenTags: screen.metadata?.tags ?? [],
                             campaignId: self.campaignID,
                             data: data,
                             urlParameters: experience.urlParameters

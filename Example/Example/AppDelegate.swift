@@ -108,6 +108,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             // MyAnalyticsSDK.trackScreen(screenName)
         }
         
+        // You can mutate outgoing URLRequests from data sources in your experiences, allowing your experiences to use authenticated
+        // content.
+        Rover.shared.authorize(pattern: "*.apis.myapp.com") { urlRequest in
+            urlRequest.setValue("mytoken", forHTTPHeaderField: "Authorization")
+        }
+        
         return true
     }
     

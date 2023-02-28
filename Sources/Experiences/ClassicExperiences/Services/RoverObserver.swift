@@ -267,8 +267,8 @@ public class RoverObserver {
                     experienceName: experience.name,
                     screenId: screen.id,
                     screenName: screen.name,
-                    nodeProperties: screen.keys,
-                    nodeTags: Set(screen.tags),
+                    screenProperties: screen.keys,
+                    screenTags: Set(screen.tags),
                     campaignId: campaignID,
                     data: nil,
                     urlParameters: [:]

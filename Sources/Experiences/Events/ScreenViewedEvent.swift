@@ -25,8 +25,8 @@ public struct ScreenViewedEvent {
     
     public let screenId: String
     public let screenName: String?
-    public let nodeProperties: [String: String]
-    public let nodeTags: Set<String>
+    public let screenProperties: [String: String]
+    public let screenTags: Set<String>
     
     public let campaignId: String?
 

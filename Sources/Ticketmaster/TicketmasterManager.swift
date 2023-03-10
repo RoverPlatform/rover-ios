@@ -29,11 +29,7 @@ class TicketmasterManager {
         
         /// Return the basic UserInfo dictionary for ticketmaster given just the locally known data.
         var userInfo: [String: String] {
-            let dictWithNulls: [String: String?] = [
-                "email": email,
-                "firstName": firstName
-            ]
-            return dictWithNulls.filter { $0.value != nil}.mapValues { $0! }
+            return ["ticketmasterID": id]
         }
     }
     

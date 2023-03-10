@@ -199,6 +199,16 @@ open class ExperienceViewController: UIViewController {
             
         case .standard(
             let experienceModel,
+            let urlParameters):
+            let experienceManager = Rover.shared.resolve(ExperienceManager.self)!
+            return RenderExperienceViewController(
+                experience: experienceModel,
+                urlParameters: urlParameters,
+                userInfo: experienceManager.userInfo,
+                authorize: experienceManager.authorize(_:))
+            
+        case .file(
+            let experienceModel,
             let urlParameters,
             let userInfo,
             let authorize):

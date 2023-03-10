@@ -154,6 +154,9 @@ enum LoadedExperience {
         urlParameters: [String: String])
     case standard(
         experience: ExperienceModel,
+        urlParameters: [String: String])
+    case file(
+        experience: ExperienceModel,
         urlParameters: [String: String],
         userInfo: [String: Any],
         authorize: (inout URLRequest) -> Void)

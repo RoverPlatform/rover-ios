@@ -264,11 +264,11 @@ open class InboxViewController: UIViewController, UITableViewDataSource, UITable
     // MARK: Reuseable Views
     
     open func registerReusableViews() {
-        tableView.register(InboxCell.self, forCellReuseIdentifier: "notification")
+        tableView.register(InboxCell.self, forCellReuseIdentifier: "inboxCell")
     }
     
     open func cellReuseIdentifier(at indexPath: IndexPath) -> String {
-        return "notification"
+        return "inboxCell"
     }
 
     // MARK: UITableViewDataSource

@@ -79,7 +79,7 @@ class ExperienceStoreService: ExperienceStore {
         if url.isFileURL {
             do {
                 if let experienceObj = try read(contentsOf: url) {
-                    let experience = LoadedExperience.standard(
+                    let experience = LoadedExperience.file(
                         experience: experienceObj,
                         urlParameters: experienceObj.urlParameters,
                         userInfo: experienceObj.userInfo,
@@ -187,15 +187,12 @@ class ExperienceStoreService: ExperienceStore {
                 name: result.name,
                 id: result.id,
                 assetContext: assetContext)
-            let experienceManager = Rover.shared.resolve(ExperienceManager.self)!
             
             let urlParameters = result.urlParameters.merging(experience.urlParameters) { (current, _) in current }
             
             return LoadedExperience.standard(
                 experience: experience,
-                urlParameters: urlParameters,
-                userInfo: experienceManager.userInfo,
-                authorize: experienceManager.authorize(_:))
+                urlParameters: urlParameters)
         } catch {
             return nil
         }

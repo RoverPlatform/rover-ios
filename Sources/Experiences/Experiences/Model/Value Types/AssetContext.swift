@@ -42,7 +42,7 @@ public struct RemoteAssetContext: AssetContext {
             return configuration.locationForAsset(assetType: assetType, name: name)
         }
         
-        let foldername = {
+        let foldername: String = {
             switch assetType {
             case .image:
                 return "images"

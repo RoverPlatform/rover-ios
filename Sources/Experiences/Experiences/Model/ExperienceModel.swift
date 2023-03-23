@@ -143,7 +143,7 @@ final class ExperienceModel: Decodable {
     }
 }
 
-fileprivate extension Array<String> {
+fileprivate extension Array where Element == String {
     func toUserInfo() -> UserInfo {
         var iterator = makeIterator()
         var result: UserInfo = [:]

@@ -28,6 +28,7 @@ class ModularContextProvider {
     weak var timeZoneContextProvider: TimeZoneContextProvider?
     weak var userInfoContextProvider: UserInfoContextProvider?
     weak var conversionsContextProvider: ConversionsContextProvider?
+    weak var appLastSeenContextProvider: AppLastSeenContextProvider?
     
     init(
         adSupportContextProvider: AdSupportContextProvider?,
@@ -43,7 +44,8 @@ class ModularContextProvider {
         telephonyContextProvider: TelephonyContextProvider?,
         timeZoneContextProvider: TimeZoneContextProvider?,
         userInfoContextProvider: UserInfoContextProvider?,
-        conversionsContextProvider:ConversionsContextProvider?
+        conversionsContextProvider: ConversionsContextProvider?,
+        appLastSeenContextProvider: AppLastSeenContextProvider?
     ) {
         self.adSupportContextProvider = adSupportContextProvider
         self.bluetoothContextProvider = bluetoothContextProvider
@@ -59,6 +61,7 @@ class ModularContextProvider {
         self.timeZoneContextProvider = timeZoneContextProvider
         self.userInfoContextProvider = userInfoContextProvider
         self.conversionsContextProvider = conversionsContextProvider
+        self.appLastSeenContextProvider = appLastSeenContextProvider
     }
 }
 
@@ -97,7 +100,8 @@ extension ModularContextProvider: ContextProvider {
             isTestDevice: self.debugContextProvider?.isTestDevice,
             timeZone: self.timeZoneContextProvider?.timeZone,
             userInfo: self.userInfoContextProvider?.userInfo,
-            conversions: self.conversionsContextProvider?.conversions
+            conversions: self.conversionsContextProvider?.conversions,
+            lastSeen: self.appLastSeenContextProvider?.appLastSeen
         )
     }
 }

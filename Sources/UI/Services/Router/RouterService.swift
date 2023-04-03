@@ -68,7 +68,7 @@ class RouterService: Router {
                 }
             }
         } else if isDeepLink(url: url) {
-            guard let domain = url.host, associatedDomains.contains(domain) else {
+            guard let domain = url.host else {
                 return nil
             }
             for handler in handlers {

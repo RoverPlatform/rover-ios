@@ -39,6 +39,8 @@ class LifeCycleTrackerService: LifeCycleTracker {
         self.didBecomeActiveObserver = NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: OperationQueue.main) { [weak self] _ in
             let event = EventInfo(name: "App Opened", namespace: "rover")
             self?.eventQueue.addEvent(event)
+            
+            Rover.shared.resolve(AppLastSeenTimestampManager.self)?.markAppLastSeen()
         }
         
         self.willResignActiveObserver = NotificationCenter.default.addObserver(forName: UIApplication.willResignActiveNotification, object: nil, queue: OperationQueue.main) { [weak self] _ in

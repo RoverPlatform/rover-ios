@@ -26,6 +26,7 @@ open class InboxViewController: UIViewController, UITableViewDataSource, UITable
     public let router: Router
     public let sessionController: SessionController
     public let syncCoordinator: SyncCoordinator
+    let conversionsTracker: ConversionsTrackerService
     
     public typealias ActionProvider = (URL) -> Action?
     public let presentWebsiteActionProvider: ActionProvider
@@ -75,6 +76,7 @@ open class InboxViewController: UIViewController, UITableViewDataSource, UITable
         router: Router,
         sessionController: SessionController,
         syncCoordinator: SyncCoordinator,
+        conversionsTracker: ConversionsTrackerService,
         presentWebsiteActionProvider: @escaping ActionProvider
     ) {
         self.dispatcher = dispatcher
@@ -84,6 +86,7 @@ open class InboxViewController: UIViewController, UITableViewDataSource, UITable
         self.router = router
         self.sessionController = sessionController
         self.syncCoordinator = syncCoordinator
+        self.conversionsTracker = conversionsTracker
         self.presentWebsiteActionProvider = presentWebsiteActionProvider
         
         super.init(nibName: nil, bundle: nil)
@@ -350,6 +353,10 @@ open class InboxViewController: UIViewController, UITableViewDataSource, UITable
                 
                 dispatcher.dispatch(action, completionHandler: nil)
             }
+        }
+        
+        for tag in notification.conversionTags {
+            conversionsTracker.track(tag)
         }
         
         let eventInfo = notification.openedEvent(source: .notificationCenter)

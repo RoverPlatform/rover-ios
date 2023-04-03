@@ -18,18 +18,24 @@ import RoverFoundation
 import RoverData
 
 class OpenNotificationAction: Action {
-    let eventQueue: EventQueue
-    let notification: Notification
-    let notificationStore: NotificationStore
+    private let eventQueue: EventQueue
+    private let notification: Notification
+    private let notificationStore: NotificationStore
+    private let conversionsTracker: ConversionsTrackerService
     
     typealias ActionProvider = (URL) -> Action?
     
     let presentWebsiteActionProvider: ActionProvider
     
-    init(eventQueue: EventQueue, notification: Notification, notificationStore: NotificationStore, presentWebsiteActionProvider: @escaping ActionProvider) {
+    init(eventQueue: EventQueue,
+         notification: Notification,
+         notificationStore: NotificationStore,
+         conversionsTracker: ConversionsTrackerService,
+         presentWebsiteActionProvider: @escaping ActionProvider) {
         self.eventQueue = eventQueue
         self.notification = notification
         self.notificationStore = notificationStore
+        self.conversionsTracker = conversionsTracker
         self.presentWebsiteActionProvider = presentWebsiteActionProvider
 
         super.init()
@@ -56,8 +62,13 @@ class OpenNotificationAction: Action {
             }
         }
         
+        for tag in notification.conversionTags {
+            conversionsTracker.track(tag)
+        }
+        
         let eventInfo = notification.openedEvent(source: .pushNotification)
         eventQueue.addEvent(eventInfo)
+
         finish()
     }
 }

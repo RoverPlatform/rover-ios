@@ -43,6 +43,11 @@ enum DeviceModel {
     case iPhone13Pro
     case iPhone13ProMax
     case iPhone13Mini
+    case iPhoneSE3rdGen
+    case iPhone14
+    case iPhone14Plus
+    case iPhone14Pro
+    case iPhone14ProMax
     case iPodTouch1stGen
     case iPodTouch2ndGen
     case iPodTouch3rdGen
@@ -70,7 +75,13 @@ enum DeviceModel {
     case iPadMini5thGen
     case iPadAir3rdGen
     case iPad8thGen
+    case iPad9thGen
+    case iPadMini6thGen
     case iPadAir4thGen
+    case iPadPro5thGen
+    case iPadAir5thGen
+    case iPad10thGen
+    case iPadPro6thGen
     
     var description: String {
         switch self {
@@ -171,7 +182,17 @@ enum DeviceModel {
         case .iPhone13ProMax:
             return "iPhone 13 Pro Max"
         case .iPhone13Mini:
-            return "iPHone 13 Mini"
+            return "iPhone 13 Mini"
+        case .iPhoneSE3rdGen:
+            return "iPhone SE 3rd Gen"
+        case .iPhone14:
+            return "iPhone 14"
+        case .iPhone14Plus:
+            return "iPhone 14 Plus"
+        case .iPhone14Pro:
+            return "iPhone 14 Pro"
+        case .iPhone14ProMax:
+            return "iPhone 14 Pro Max"
         case .iPodTouch7thGen:
             return "iPod Touch 7th Gen"
         case .iPad7thGen:
@@ -186,8 +207,20 @@ enum DeviceModel {
             return "iPad Air 3rd Gen"
         case .iPad8thGen:
             return "iPad 8th Gen"
+        case .iPad9thGen:
+            return "iPad 9th Gen"
+        case .iPadMini6thGen:
+            return "iPad Mini 6th Gen"
         case .iPadAir4thGen:
             return "iPad Air 4th Gen"
+        case .iPadPro5thGen:
+            return "iPad Pro 5th Gen"
+        case .iPadAir5thGen:
+            return "iPad Air 5th Gen"
+        case .iPad10thGen:
+            return "iPad 10th Gen"
+        case .iPadPro6thGen:
+            return "iPad Pro 6th Gen"
         }
     }
     
@@ -253,6 +286,16 @@ enum DeviceModel {
             self = .iPhone13Mini
         case "iPhone14,5":
             self = .iPhone13
+        case "iPhone14,6":
+            self = .iPhoneSE3rdGen
+        case "iPhone14,7":
+            self = .iPhone14
+        case "iPhone14,8":
+            self = .iPhone14Plus
+        case "iPhone15,2":
+            self = .iPhone14Pro
+        case "iPhone15,3":
+            self = .iPhone14ProMax
         case "iPod1,1":
             self = .iPodTouch1stGen
         case "iPod2,1":
@@ -307,8 +350,20 @@ enum DeviceModel {
             self = .iPadAir3rdGen
         case "iPad11,6", "iPad11,7":
             self = .iPad8thGen
+        case "iPad12,1", "iPad12,2":
+            self = .iPad9thGen
         case "iPad13,1", "iPad13,2":
             self = .iPadAir4thGen
+        case "iPad13,4", "iPad13,5", "iPad13,6", "iPad13,7", "iPad13,8", "iPad13,9", "iPad13,10", "iPad13,11":
+            self = .iPadPro5thGen
+        case "iPad13,16", "iPad13,17":
+            self = .iPadAir5thGen
+        case "iPad13,18", "iPad13,19":
+            self = .iPad10thGen
+        case "iPad14,1", "iPad14,2":
+            self = .iPadMini6thGen
+        case "iPad14,3", "iPad14,4", "iPad14,5", "iPad14,6":
+            self = .iPadPro6thGen
                         
         default:
             return nil

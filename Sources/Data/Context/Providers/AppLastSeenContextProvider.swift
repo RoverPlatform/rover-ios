@@ -15,22 +15,6 @@
 
 import Foundation
 
-extension String {
-    func queryToDictionary() -> [String: String] {
-        var queryStrings: [String: String] = [:]
-    
-        let pairs = self.components(separatedBy: "&").filter { !$0.isEmpty }
-        
-        for pair in pairs {
-            let key = pair.components(separatedBy: "=")[0]
-
-            let value = pair
-                .components(separatedBy: "=")[1]
-                .replacingOccurrences(of: "+", with: " ")
-                .removingPercentEncoding ?? ""
-
-            queryStrings[key] = value
-        }
-        return queryStrings
-    }
+public protocol AppLastSeenContextProvider: AnyObject {
+    var appLastSeen: Date? { get }
 }

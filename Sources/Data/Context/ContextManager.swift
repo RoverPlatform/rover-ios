@@ -21,6 +21,7 @@ class ContextManager {
     let persistedPushToken = PersistedValue<Context.PushToken>(storageKey: "io.rover.RoverData.pushToken")
     let persistedUserInfo = PersistedValue<Attributes>(storageKey: "io.rover.RoverData.userInfo")
     let persistedDeviceName = PersistedValue<String>(storageKey: "io.rover.RoverData.deviceName")
+    let persistedAppLastSeenTimestamp = PersistedValue<Date>(storageKey: "io.rover.RoverData.appLastSeenTimestamp")
     let reachability = Reachability(hostname: "google.com")!
     
     init() { }
@@ -262,5 +263,21 @@ extension ContextManager: UserInfoManager {
 extension ContextManager: DeviceNameManager {
     func setDeviceName(_ deviceName: String) {
         self.persistedDeviceName.value = deviceName
+    }
+}
+
+// MARK: AppLastSeenTimestampManager
+
+extension ContextManager: AppLastSeenTimestampManager {
+    func markAppLastSeen() {
+        self.persistedAppLastSeenTimestamp.value = Date()
+    }
+}
+
+// MARK: AppLastSeenContextProvider
+
+extension ContextManager: AppLastSeenContextProvider {
+    var appLastSeen: Date? {
+        return self.persistedAppLastSeenTimestamp.value
     }
 }

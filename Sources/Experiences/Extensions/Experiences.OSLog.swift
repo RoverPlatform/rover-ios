@@ -13,24 +13,8 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import Foundation
+import os.log
 
-extension String {
-    func queryToDictionary() -> [String: String] {
-        var queryStrings: [String: String] = [:]
-    
-        let pairs = self.components(separatedBy: "&").filter { !$0.isEmpty }
-        
-        for pair in pairs {
-            let key = pair.components(separatedBy: "=")[0]
-
-            let value = pair
-                .components(separatedBy: "=")[1]
-                .replacingOccurrences(of: "+", with: " ")
-                .removingPercentEncoding ?? ""
-
-            queryStrings[key] = value
-        }
-        return queryStrings
-    }
+extension OSLog {
+    public static let experiences = OSLog(subsystem: "io.rover", category: "Experiences")
 }

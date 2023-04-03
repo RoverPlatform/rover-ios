@@ -181,6 +181,9 @@ public struct Context: Codable, Equatable {
     // MARK: Conversions
     public var conversions: [String]?
     
+    // MARK: Last Seen Timestamp
+    public var lastSeen: Date?
+    
     public init(
         advertisingIdentifier: String?,
         isDarkModeEnabled: Bool?,
@@ -214,7 +217,8 @@ public struct Context: Codable, Equatable {
         isTestDevice: Bool?,
         timeZone: String?,
         userInfo: Attributes?,
-        conversions: [String]?
+        conversions: [String]?,
+        lastSeen: Date?
     ) {
         self.advertisingIdentifier = advertisingIdentifier
         self.isDarkModeEnabled = isDarkModeEnabled
@@ -249,5 +253,6 @@ public struct Context: Codable, Equatable {
         self.timeZone = timeZone
         self.userInfo = userInfo
         self.conversions = conversions
+        self.lastSeen = lastSeen
     }
 }

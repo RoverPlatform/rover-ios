@@ -26,7 +26,7 @@ class SettingsRouteHandler: RouteHandler {
         self.actionProvider = actionProvider
     }
     
-    func deepLinkAction(url: URL, domain: String) -> Action? {
+    func deepLinkAction(url: URL, domain: String?) -> Action? {
         guard let host = url.host else {
             return nil
         }

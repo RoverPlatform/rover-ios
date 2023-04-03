@@ -23,12 +23,12 @@ import RoverData
 /// added to the `EventQueue`.
 public class RoverObserver {
     private let eventQueue: EventQueue
-    private let conversionsManager: ExperienceConversionsManager
+    private let conversionsTracker: ConversionsTrackerService
     private var observers: [NSObjectProtocol] = []
     
-    init(eventQueue: EventQueue, conversionsManager: ExperienceConversionsManager) {
+    init(eventQueue: EventQueue, conversionsTracker: ConversionsTrackerService) {
         self.eventQueue = eventQueue
-        self.conversionsManager = conversionsManager
+        self.conversionsTracker = conversionsTracker
     }
     
     deinit {
@@ -448,7 +448,6 @@ public class RoverObserver {
     
     private func trackConversion(notificationName: NSNotification.Name, userInfo: [AnyHashable: Any]?) {
         var tag: String?
-        var expiresIn: TimeInterval?
         
         switch notificationName {
         case ClassicScreenViewController.classicBlockTappedNotification:
@@ -460,7 +459,6 @@ public class RoverObserver {
             }
             
             tag = conversion.tag
-            expiresIn = conversion.expires.timeInterval
             
         case ClassicScreenViewController.classicScreenPresentedNotification:
             guard let userInfo = userInfo,
@@ -470,7 +468,6 @@ public class RoverObserver {
             }
             
             tag = conversion.tag
-            expiresIn = conversion.expires.timeInterval
             
         case ClassicScreenViewController.classicPollAnsweredNotification:
             guard let userInfo = userInfo,
@@ -482,14 +479,13 @@ public class RoverObserver {
             
             let formattedPollOption = pollOption.text.rawValue.replacingOccurrences(of: " ", with: "_").lowercased()
             tag = "\(conversion.tag)_\(formattedPollOption)"
-            expiresIn = conversion.expires.timeInterval
             
         default:
             return
         }
                 
-        if let tag = tag, let expiresIn = expiresIn {
-            conversionsManager.track(tag, expiresIn)
+        if let tag = tag {
+            conversionsTracker.track(tag)
         }
     }
 }

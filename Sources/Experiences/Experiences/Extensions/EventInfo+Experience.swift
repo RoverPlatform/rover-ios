@@ -16,7 +16,11 @@
 import RoverData
 
 extension EventInfo {
-    static func screenViewedEvent(with campaignID: String?, experience: ExperienceModel, screen: Screen) -> EventInfo {
+    static func screenViewedEvent(
+        with campaignID: String?,
+        experience: ExperienceModel,
+        screen: Screen
+    ) -> EventInfo {
         let experienceAttributes = ["id": experience.id,
                                     "name": experience.name ?? "Name",
                                     "campaignID": campaignID]
@@ -30,6 +34,35 @@ extension EventInfo {
                 "screen" : [
                     "id": screen.id,
                     "name": screen.name ?? "Name"]
+            ])
+    }
+    
+    static func experienceButtonTappedEvent(
+        with campaignID: String?,
+        experience: ExperienceModel,
+        screen: Screen,
+        node: Node
+    ) -> EventInfo {
+        let experienceAttributes = ["id": experience.id,
+                                    "name": experience.name,
+                                    "campaignID": campaignID]
+            .compactMapValues { $0 }
+        
+        let screenAttributes = ["id": screen.id,
+                                "name": screen.name]
+            .compactMapValues { $0 }
+        
+        let nodeAttributes = ["id": node.id,
+                              "name": node.name]
+            .compactMapValues { $0 }
+        
+        return EventInfo(
+            name: "Experience Button Tapped",
+            namespace: "rover",
+            attributes: [
+                "experience" : experienceAttributes,
+                "screen" : screenAttributes,
+                "node" : nodeAttributes,
             ])
     }
 }

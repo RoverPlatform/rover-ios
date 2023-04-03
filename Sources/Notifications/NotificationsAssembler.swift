@@ -45,6 +45,7 @@ public struct NotificationsAssembler: Assembler {
                 eventQueue: resolver.resolve(EventQueue.self)!,
                 notification: notification,
                 notificationStore: resolver.resolve(NotificationStore.self)!,
+                conversionsTracker: resolver.resolve(ConversionsTrackerService.self)!,
                 presentWebsiteActionProvider: presentWebsiteActionProvider
             )
         }
@@ -136,6 +137,7 @@ public struct NotificationsAssembler: Assembler {
                 router: resolver.resolve(Router.self)!,
                 sessionController: resolver.resolve(SessionController.self)!,
                 syncCoordinator: resolver.resolve(SyncCoordinator.self)!,
+                conversionsTracker: resolver.resolve(ConversionsTrackerService.self)!,
                 presentWebsiteActionProvider: presentWebsiteActionProvider
             )
         }

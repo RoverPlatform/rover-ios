@@ -60,7 +60,8 @@ public struct DataAssembler: Assembler {
                 telephonyContextProvider: resolver.resolve(TelephonyContextProvider.self),
                 timeZoneContextProvider: resolver.resolve(TimeZoneContextProvider.self),
                 userInfoContextProvider: resolver.resolve(UserInfoContextProvider.self),
-                conversionsContextProvider: resolver.resolve(ConversionsContextProvider.self)
+                conversionsContextProvider: resolver.resolve(ConversionsContextProvider.self),
+                appLastSeenContextProvider:  resolver.resolve(AppLastSeenContextProvider.self)
             )
         }
         
@@ -170,6 +171,36 @@ public struct DataAssembler: Assembler {
         container.register(UserInfoContextProvider.self) { resolver in
             resolver.resolve(ContextManager.self)!
         }
+        
+        // MARK: ConversionsManager
+        
+        container.register(ConversionsManager.self) { resolver in
+            ConversionsManager()
+        }
+        
+        // MARK: ConversionsContextProvider
+        
+        container.register(ConversionsContextProvider.self) { resolver in
+            resolver.resolve(ConversionsManager.self)!
+        }
+        
+        // MARK: ConversionsTrackerService
+        
+        container.register(ConversionsTrackerService.self) { resolver in
+            resolver.resolve(ConversionsManager.self)!
+        }
+        
+        // MARK: AppLastSeenContextManager
+        
+        container.register(AppLastSeenTimestampManager.self) { resolver in
+            resolver.resolve(ContextManager.self)!
+        }
+        
+        // MARK: AppLastSeenContextProvider
+        
+        container.register(AppLastSeenContextProvider.self) { resolver in
+            resolver.resolve(ContextManager.self)!
+        }
     }
     
     public func containerDidAssemble(resolver: Resolver) {
@@ -178,5 +209,9 @@ public struct DataAssembler: Assembler {
         
         // Set the context provider on the event queue after assembly to allow circular dependency injection
         eventQueue.contextProvider = resolver.resolve(ContextProvider.self)!
+        
+        let conversionsManager = resolver.resolve(ConversionsManager.self)!
+        // Migrate any conversion tags from previous versions of Rover
+        conversionsManager.migrateTags()
     }
 }

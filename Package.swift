@@ -91,7 +91,7 @@ let package = Package(
             path: "Sources/Location"),
         .target(
             name: "RoverNotifications",
-            dependencies: ["RoverUI"],
+            dependencies: ["RoverData", "RoverUI"],
             path: "Sources/Notifications"),
         .target(
             name: "RoverTelephony",

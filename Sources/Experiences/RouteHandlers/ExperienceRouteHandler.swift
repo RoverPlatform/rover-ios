@@ -16,12 +16,15 @@
 import Foundation
 import RoverFoundation
 import RoverUI
+import os.log
 
 class ExperienceRouteHandler: RouteHandler {
     let actionProvider: (URL) -> RoverFoundation.Action?
+    let associatedDomains: [String]
     
-    init(actionProvider: @escaping (URL) -> RoverFoundation.Action?) {
+    init(actionProvider: @escaping (URL) -> RoverFoundation.Action?, associatedDomains: [String]) {
         self.actionProvider = actionProvider
+        self.associatedDomains = associatedDomains
     }
     
     func deepLinkAction(url: URL, domain: String?) -> RoverFoundation.Action? {
@@ -32,6 +35,11 @@ class ExperienceRouteHandler: RouteHandler {
         //change this so if the host is present experience, we need to transform the url and route to the older vc
         if host == "presentExperience" {
             return classicActionProvider(url: url, domain: domain)
+        }
+        
+        // verify that the domain is one of associated domains
+        if !associatedDomains.contains(host.lowercased()) {
+            return nil
         }
         
         guard var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true) else {
@@ -45,15 +53,13 @@ class ExperienceRouteHandler: RouteHandler {
     }
     
     func universalLinkAction(url: URL) -> RoverFoundation.Action? {
-        let campaignID: String?
-        let screenID: String?
-        if let queryItems = URLComponents(url: url, resolvingAgainstBaseURL: true)?.queryItems {
-            campaignID = queryItems.first(where: { $0.name == "campaignID" })?.value
-            screenID = queryItems.first(where: { $0.name == "screenID" })?.value
-            
-        } else {
-            campaignID = nil
-            screenID = nil
+        guard let host = url.host else {
+            return nil
+        }
+        
+        // verify that the domain is one of associated domains
+        if !associatedDomains.contains(host.lowercased()) {
+            return nil
         }
         
         return actionProvider(url)
@@ -61,6 +67,11 @@ class ExperienceRouteHandler: RouteHandler {
     
     func classicActionProvider(url: URL, domain: String?) -> RoverFoundation.Action? {
         guard let domain = domain else {
+            return nil
+        }
+        
+        // legacy presentExperiences deep links are mapped onto the first domain you have configured.
+        guard let hostDomain = associatedDomains.first else {
             return nil
         }
         
@@ -89,9 +100,11 @@ class ExperienceRouteHandler: RouteHandler {
         
         var urlComponents = URLComponents()
         urlComponents.scheme = "https"
-        urlComponents.host = domain
+        urlComponents.host = hostDomain
         urlComponents.path = "/v1/experiences/\(experienceID)"
-        urlComponents.queryItems = newQueryItems
+        if !newQueryItems.isEmpty {
+            urlComponents.queryItems = newQueryItems
+        }
         
         return actionProvider(urlComponents.url!)
     }

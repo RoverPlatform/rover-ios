@@ -18,10 +18,20 @@ import UIKit
 import SafariServices
 import os.log
 import RoverFoundation
+import RoverData
 
 extension ExperienceAction {
     func handle(experience: ExperienceModel, node: Node, screen: Screen, data: Any?, urlParameters: [String: String], userInfo: [String: Any], authorize: @escaping (inout URLRequest) -> Void, experienceViewController: RenderExperienceViewController, screenViewController: ScreenViewController) {
         let experienceManager = Rover.shared.resolve(ExperienceManager.self)!
+        
+        let eventQueue = experienceManager.eventQueue
+        let event = EventInfo.experienceButtonTappedEvent(
+            with: urlParameters["campaignID"],
+            experience: experience,
+            screen: screen,
+            node: node
+        )
+        eventQueue.addEvent(event)
         
         switch(self) {
         case .performSegue:

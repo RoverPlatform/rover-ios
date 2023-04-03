@@ -29,12 +29,13 @@ public struct Notification: Codable, Equatable, Hashable {
     public var isRead: Bool
     public var isNotificationCenterEnabled: Bool
     public var isDeleted: Bool
+    public var conversionTags: [String]
     
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id.hashValue)
     }
     
-    public init(id: String, campaignID: String, title: String?, body: String, attachment: NotificationAttachment?, tapBehavior: NotificationTapBehavior, action: Action?, deliveredAt: Date, expiresAt: Date?, isRead: Bool, isNotificationCenterEnabled: Bool, isDeleted: Bool) {
+    public init(id: String, campaignID: String, title: String?, body: String, attachment: NotificationAttachment?, tapBehavior: NotificationTapBehavior, action: Action?, deliveredAt: Date, expiresAt: Date?, isRead: Bool, isNotificationCenterEnabled: Bool, isDeleted: Bool, conversionTags: [String]) {
         self.id = id
         self.campaignID = campaignID
         self.title = title
@@ -46,6 +47,7 @@ public struct Notification: Codable, Equatable, Hashable {
         self.isRead = isRead
         self.isNotificationCenterEnabled = isNotificationCenterEnabled
         self.isDeleted = isDeleted
+        self.conversionTags = conversionTags
     }
 }
 

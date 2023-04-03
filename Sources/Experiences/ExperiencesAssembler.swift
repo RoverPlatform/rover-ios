@@ -60,24 +60,19 @@ public struct ExperiencesAssembler: Assembler {
                 resolver?.resolve(Action.self, name: "presentExperience", arguments: url)
             }
             
+            let associatedDomains = resolver.resolve([String].self, name: "associatedDomains")!
+            
             return ExperienceRouteHandler(
-                actionProvider: actionProvider
+                actionProvider: actionProvider,
+                associatedDomains: associatedDomains
             )
         }
-        
-        // MARK: Services
-        container.register(ConversionsContextProvider.self) { resolver in
-                   resolver.resolve(ExperienceConversionsManager.self)!
-               }
-        
-        container.register(ExperienceConversionsManager.self) { resolver in
-            ExperienceConversionsManager()
-        }
+
         
         // MARK: RoverObserver
         
         container.register(RoverObserver.self) { resolver in
-            RoverObserver(eventQueue: resolver.resolve(EventQueue.self)!, conversionsManager: resolver.resolve(ExperienceConversionsManager.self)!)
+            RoverObserver(eventQueue: resolver.resolve(EventQueue.self)!, conversionsTracker: resolver.resolve(ConversionsTrackerService.self)!)
         }
         
         // MARK: UIViewController (experience)

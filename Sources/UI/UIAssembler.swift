@@ -27,7 +27,7 @@ public struct UIAssembler {
     public var isVersionTrackingEnabled: Bool
     
     public init(associatedDomains: [String] = [], urlSchemes: [String] = [], sessionKeepAliveTime: Int = 30, isLifeCycleTrackingEnabled: Bool = true, isVersionTrackingEnabled: Bool = true) {
-        self.associatedDomains = associatedDomains
+        self.associatedDomains = associatedDomains.map { $0.lowercased() }
         self.urlSchemes = urlSchemes
         self.sessionKeepAliveTime = sessionKeepAliveTime
         self.isLifeCycleTrackingEnabled = isLifeCycleTrackingEnabled
@@ -39,6 +39,12 @@ public struct UIAssembler {
 
 extension UIAssembler: Assembler {
     public func assemble(container: Container) {
+        // MARK: Associated Domains
+        
+        container.register([String].self, name: "associatedDomains", scope: .singleton) { _ in
+            associatedDomains
+        }
+        
         // MARK: Action (openURL)
         
         container.register(Action.self, name: "openURL", scope: .transient) { (_, url: URL) in

@@ -15,6 +15,7 @@
 
 import UIKit
 import RoverFoundation
+import os.log
 
 /// The `RoverViewController` fetches experiences from Rover's server and displays a loading screen while it is loading.
 /// The loading screen can be customized by overriding the `loadingViewController()` method and supplying your own. The
@@ -77,6 +78,7 @@ open class ExperienceViewController: UIViewController {
 
                 switch result {
                 case let .failure(error):
+                    os_log("Unable to load experience (from url %s) due to: %s", log: .experiences, type: .error, url.toString(), error.debugDescription)
                     self.showError(error: error, shouldRetry: error.isRetryable)
                 case let .success(experience):
                     let viewController = self.renderViewController(experience: experience)

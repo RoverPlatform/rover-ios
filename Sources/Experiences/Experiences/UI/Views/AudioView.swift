@@ -15,10 +15,8 @@
 
 import Foundation
 import SwiftUI
-
 import AVKit
 import Combine
-
 
 struct AudioView: View {
     @Environment(\.data) private var data
@@ -43,7 +41,6 @@ struct AudioView: View {
     }
 }
 
-
 private struct AudioPlayerView: UIViewControllerRepresentable {
     var sourceURL: URL
     var looping: Bool
@@ -62,7 +59,6 @@ private struct AudioPlayerView: UIViewControllerRepresentable {
         }
     }
 }
-
 
 private class AudioPlayerViewController: AVPlayerViewController {
     private var looper: AVPlayerLooper?
@@ -85,7 +81,6 @@ private class AudioPlayerViewController: AVPlayerViewController {
         fatalError("init(coder:) has not been implemented")
     }
 }
-
 
 fileprivate struct AudioPlayerFrameModifier: ViewModifier {
     

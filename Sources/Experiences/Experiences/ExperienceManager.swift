@@ -59,6 +59,14 @@ final class ExperienceManager {
         NavBarViewController.init(experience:screen:data:urlParameters:userInfo:authorize:)
     
     let screenViewController = ScreenViewController.init(experience:screen:data:urlParameters:userInfo:authorize:)
+    
+    private var screenViewedObserver: NSObjectProtocol?
+    
+    deinit {
+        if let screenViewedObserver = self.screenViewedObserver {
+            NotificationCenter.default.removeObserver(screenViewedObserver)
+        }
+    }
 }
 
 // MARK: Notifications
@@ -75,6 +83,49 @@ extension ExperienceManager {
     public static let screenViewedNotification: Notification.Name = Notification.Name("RoverScreenViewedNotification")
     
     public static let didRegisterCustomFontNotification = NSNotification.Name("RoverDidRegisterCustomFontNotification")
+}
+
+extension ExperienceManager {
+    internal func observeScreenViews() {
+        guard screenViewedObserver == nil else {
+            return
+        }
+        
+        screenViewedObserver = NotificationCenter.default.addObserver(
+            forName: ExperienceManager.screenViewedNotification,
+            object: nil,
+            queue: OperationQueue.main,
+            using: { notification in
+                let screen = notification.userInfo!["screen"] as! Screen
+                let experience = notification.userInfo!["experience"] as! ExperienceModel
+                let campaignID: String? = notification.userInfo?["campaignID"] as? String
+                let data = notification.userInfo!["data"] as Any
+                
+                let event = EventInfo.screenViewedEvent(
+                    with: campaignID,
+                    experience: experience,
+                    screen: screen
+                )
+                self.eventQueue.addEvent(event)
+                
+                if let callback = self.registeredScreenViewedCallback {
+                    callback(
+                        ScreenViewedEvent(
+                            experienceId: experience.id,
+                            experienceName: experience.name,
+                            screenId: screen.id,
+                            screenName: screen.name,
+                            screenProperties: screen.metadata?.properties ?? [:],
+                            screenTags: screen.metadata?.tags ?? [],
+                            campaignId: campaignID,
+                            data: data,
+                            urlParameters: experience.urlParameters
+                        )
+                    )
+                }
+            }
+        )
+    }
 }
 
 // MARK: Authorizers

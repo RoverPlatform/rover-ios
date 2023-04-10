@@ -129,6 +129,7 @@ class ScreenViewController: UIViewController, UIScrollViewDelegate {
             userInfo: [
                 "experience": experience,
                 "screen": screen,
+                "campaignID": self.urlParameters["campaignID"] as Any,
                 "data": data as Any
             ]
         )

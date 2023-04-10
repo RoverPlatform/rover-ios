@@ -23,8 +23,6 @@ import RoverData
 /// - Tag: ExperienceViewController
 class RenderExperienceViewController: UIViewController {
     
-    private var campaignID: String?
-    
     /// Initialize Experience View Controller with a `Experience`
     /// If a local file URL is used, the initialScreenId, urlParameter, userInfo and authorize will be overriden by the local file's values.
     /// - Parameters:
@@ -48,8 +46,6 @@ class RenderExperienceViewController: UIViewController {
             userInfo: userInfo,
             authorize: authorize
         )
-        
-        self.campaignID = urlParameters["campaignID"]
         
         presentExperience(experience: experience, context: context)
     }
@@ -79,8 +75,6 @@ class RenderExperienceViewController: UIViewController {
             userInfo: userInfo,
             authorize: authorize
         )
-        
-        self.campaignID = urlParameters["campaignID"]
         
         presentExperience(experience: experience, context: context)
     }
@@ -143,7 +137,7 @@ class RenderExperienceViewController: UIViewController {
             }
         }
         
-        observeScreenViews()
+        experienceManager.observeScreenViews()
         
         let navViewController = experienceManager.navBarViewController(
             experience,
@@ -205,47 +199,5 @@ class RenderExperienceViewController: UIViewController {
         childViewController.view.frame = view.bounds
         view.addSubview(childViewController.view)
         childViewController.didMove(toParent: self)
-    }
-    
-    private var screenViewedObserver: NSObjectProtocol?
-    
-    private func observeScreenViews() {
-        screenViewedObserver = NotificationCenter.default.addObserver(
-            forName: ExperienceManager.screenViewedNotification,
-            object: nil,
-            queue: OperationQueue.main,
-            using: { notification in
-                let experienceManager = Rover.shared.resolve(ExperienceManager.self)!
-                
-                let screen = notification.userInfo!["screen"] as! Screen
-                let experience = notification.userInfo!["experience"] as! ExperienceModel
-                let data = notification.userInfo!["data"] as Any
-                
-                let event = EventInfo.screenViewedEvent(with: self.campaignID, experience: experience, screen: screen)
-                experienceManager.eventQueue.addEvent(event)
-                
-                if let callback = experienceManager.registeredScreenViewedCallback {
-                    callback(
-                        ScreenViewedEvent(
-                            experienceId: experience.id,
-                            experienceName: experience.name,
-                            screenId: screen.id,
-                            screenName: screen.name,
-                            screenProperties: screen.metadata?.properties ?? [:],
-                            screenTags: screen.metadata?.tags ?? [],
-                            campaignId: self.campaignID,
-                            data: data,
-                            urlParameters: experience.urlParameters
-                        )
-                    )
-                }
-            }
-        )
-    }
-    
-    deinit {
-        if let screenViewedObserver = self.screenViewedObserver {
-            NotificationCenter.default.removeObserver(screenViewedObserver)
-        }
     }
 }

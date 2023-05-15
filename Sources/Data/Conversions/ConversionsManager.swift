@@ -40,6 +40,12 @@ public class ConversionsManager: ConversionsContextProvider, ConversionsTrackerS
         result.insert(tag, at: 0)
         self.persistedConversions.value = Array(result.prefix(100))
     }
+    
+    public func track(_ tags: [String]) {
+        tags.forEach { tag in
+            track(tag)
+        }
+    }
 }
 
 //This extension is for converting tags from previous versions of the Rover SDK.

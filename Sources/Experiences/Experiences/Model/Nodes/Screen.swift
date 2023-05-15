@@ -19,12 +19,14 @@ final class Screen: Node {
     public let statusBarStyle: StatusBarStyle
     public let backButtonStyle: BackButtonStyle
     public let backgroundColor: ColorReference
+    public let conversionTags: [String]
 
-    public init(id: String = UUID().uuidString, name: String?, parent: Node? = nil, children: [Node] = [], ignoresSafeArea: Set<Edge>? = nil, aspectRatio: CGFloat? = nil, padding: Padding? = nil, frame: Frame? = nil, layoutPriority: CGFloat? = nil, offset: CGPoint? = nil, shadow: Shadow? = nil, opacity: CGFloat? = nil, background: Background? = nil, overlay: Overlay? = nil, mask: Node? = nil, action: ExperienceAction? = nil, accessibility: Accessibility? = nil, metadata: Metadata? = nil, statusBarStyle: StatusBarStyle, backButtonStyle: BackButtonStyle, backgroundColor: ColorReference) {
+    public init(id: String = UUID().uuidString, name: String?, parent: Node? = nil, children: [Node] = [], ignoresSafeArea: Set<Edge>? = nil, aspectRatio: CGFloat? = nil, padding: Padding? = nil, frame: Frame? = nil, layoutPriority: CGFloat? = nil, offset: CGPoint? = nil, shadow: Shadow? = nil, opacity: CGFloat? = nil, background: Background? = nil, overlay: Overlay? = nil, mask: Node? = nil, action: ExperienceAction? = nil, accessibility: Accessibility? = nil, metadata: Metadata? = nil, statusBarStyle: StatusBarStyle, backButtonStyle: BackButtonStyle, backgroundColor: ColorReference, conversionTags: [String]) {
         
         self.statusBarStyle = statusBarStyle
         self.backButtonStyle = backButtonStyle
         self.backgroundColor = backgroundColor
+        self.conversionTags = conversionTags
         
         super.init(id: id, name: name, parent: parent, children: children, ignoresSafeArea: ignoresSafeArea, aspectRatio: aspectRatio, padding: padding, frame: frame, layoutPriority: layoutPriority, offset: offset, shadow: shadow, opacity: opacity, background: background, overlay: overlay, mask: mask, action: action, accessibility: accessibility, metadata: metadata)
     }
@@ -35,6 +37,7 @@ final class Screen: Node {
         case statusBarStyle
         case backButtonStyle
         case backgroundColor
+        case conversionTags
     }
     
     required init(from decoder: Decoder) throws {
@@ -42,6 +45,7 @@ final class Screen: Node {
         statusBarStyle = try container.decode(StatusBarStyle.self, forKey: .statusBarStyle)
         backButtonStyle = try container.decode(BackButtonStyle.self, forKey: .backButtonStyle)
         backgroundColor = try container.decode(ColorReference.self, forKey: .backgroundColor)
+        conversionTags = try container.decodeIfPresent([String].self, forKey: .conversionTags) ?? []
         try super.init(from: decoder)
     }
 }

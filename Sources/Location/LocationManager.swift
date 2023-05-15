@@ -189,12 +189,12 @@ extension LocationManager: RegionManager {
     
     func startRangingBeacons(in region: CLBeaconRegion, manager: CLLocationManager) {
         os_log("Started ranging beacons in region: %@", log: .location, type: .debug, region)
-        manager.startRangingBeacons(in: region)
+        manager.startRangingBeacons(satisfying: region.beaconIdentityConstraint)
     }
     
     func stopRangingBeacons(in region: CLBeaconRegion, manager: CLLocationManager) {
         os_log("Stopped ranging beacons in region: %@", log: .location, type: .debug, region)
-        manager.stopRangingBeacons(in: region)
+        manager.stopRangingBeacons(satisfying: region.beaconIdentityConstraint)
         
         // If there are any lingering beacons when we stop ranging, track exit
         // events and clear them from `beaconMap`.

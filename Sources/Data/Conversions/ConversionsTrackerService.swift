@@ -15,4 +15,6 @@
 
 public protocol ConversionsTrackerService: AnyObject {
     func track(_ tag: String)
+    
+    func track(_ tags: [String])
 }

@@ -130,19 +130,21 @@ public class EventQueue {
     public func addEvent(_ info: EventInfo) {
         let context = self.contextProvider.context
         
+        let event = Event(
+            name: info.name,
+            context: context,
+            namespace: info.namespace,
+            attributes: info.attributes,
+            timestamp: info.timestamp ?? Date()
+        )
+        
         serialQueue.addOperation {
             if self.eventQueue.count == self.maxQueueSize {
                 os_log("Event queue is at capacity (%d) – removing oldest event", log: .events, type: .debug, self.maxQueueSize)
                 self.eventQueue.remove(at: 0)
             }
             
-            let event = Event(
-                name: info.name,
-                context: context,
-                namespace: info.namespace,
-                attributes: info.attributes,
-                timestamp: info.timestamp ?? Date()
-            )
+            
             
             self.eventQueue.append(event)
             os_log("Added event to queue: %@", log: .events, type: .debug, event.name)
@@ -169,7 +171,10 @@ public class EventQueue {
             }
         }
         
-        observers.compactMap { $0.value }.forEach { $0.eventQueue(self, didAddEvent: info) }
+        observers.compactMap { $0.value }.forEach {
+            $0.eventQueue(self, didAddEvent: info)
+            $0.eventQueue(self, didEnqueueEventDetails: event)
+        }
     }
     
     func persistEvents() {

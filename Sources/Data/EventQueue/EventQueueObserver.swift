@@ -14,5 +14,15 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 public protocol EventQueueObserver: AnyObject {
+    /// This delegate method is fired when an event is enqueued, including the name and attributes of the Event.
     func eventQueue(_ eventQueue: EventQueue, didAddEvent info: EventInfo)
+    
+    /// This delegate method is fired when an event is enqueued, providing the fully transformed event, including event ID, captured device context, and more.
+    func eventQueue(_ eventQueue: EventQueue, didEnqueueEventDetails details: Event)
+}
+
+public extension EventQueueObserver {
+    func eventQueue(_ eventQueue: EventQueue, didEnqueueEventDetails details: Event) {
+        // this event is optional.
+    }
 }

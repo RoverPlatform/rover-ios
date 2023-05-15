@@ -48,9 +48,11 @@ public struct ExperiencesAssembler: Assembler {
         container.register(ExperienceManager.self) { resolver in
             let eventQueue = resolver.resolve(EventQueue.self)!
             let userInfoContextProvider = resolver.resolve(UserInfoContextProvider.self)!
+            let conversionsTracker = resolver.resolve(ConversionsTrackerService.self)!
             return ExperienceManager(
                 eventQueue: eventQueue,
-                userInfoContextProvider: userInfoContextProvider)
+                userInfoContextProvider: userInfoContextProvider,
+                conversionsTracker: conversionsTracker)
         }
         
         // MARK: RouteHandler (experience)

@@ -24,6 +24,7 @@ import RoverData
 final class ExperienceManager {
     let eventQueue: EventQueue
     let userInfoContextProvider: UserInfoContextProvider
+    let conversionsTracker: ConversionsTrackerService
     
     var userInfo: [String: Any] {
         userInfoContextProvider.userInfo?.flatRawValue() ?? [:]
@@ -34,9 +35,12 @@ final class ExperienceManager {
     internal var registeredScreenViewedCallback: ((ScreenViewedEvent) -> Void)?
     internal var authorizers: [Authorizer] = []
     
-    init(eventQueue: EventQueue, userInfoContextProvider: UserInfoContextProvider) {
+    init(eventQueue: EventQueue,
+         userInfoContextProvider: UserInfoContextProvider,
+         conversionsTracker: ConversionsTrackerService) {
         self.eventQueue = eventQueue
         self.userInfoContextProvider = userInfoContextProvider
+        self.conversionsTracker = conversionsTracker
     }
     
     internal lazy var downloader: AssetsDownloader = AssetsDownloader(cache: self.assetsURLCache)
@@ -100,6 +104,8 @@ extension ExperienceManager {
                 let experience = notification.userInfo!["experience"] as! ExperienceModel
                 let campaignID: String? = notification.userInfo?["campaignID"] as? String
                 let data = notification.userInfo!["data"] as Any
+                
+                self.conversionsTracker.track(screen.conversionTags)
                 
                 let event = EventInfo.screenViewedEvent(
                     with: campaignID,

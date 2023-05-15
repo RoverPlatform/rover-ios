@@ -355,9 +355,7 @@ open class InboxViewController: UIViewController, UITableViewDataSource, UITable
             }
         }
         
-        for tag in notification.conversionTags {
-            conversionsTracker.track(tag)
-        }
+        conversionsTracker.track(notification.conversionTags)
         
         let eventInfo = notification.openedEvent(source: .notificationCenter)
         eventQueue.addEvent(eventInfo)

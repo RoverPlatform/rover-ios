@@ -62,9 +62,7 @@ class OpenNotificationAction: Action {
             }
         }
         
-        for tag in notification.conversionTags {
-            conversionsTracker.track(tag)
-        }
+        conversionsTracker.track(notification.conversionTags)
         
         let eventInfo = notification.openedEvent(source: .pushNotification)
         eventQueue.addEvent(eventInfo)

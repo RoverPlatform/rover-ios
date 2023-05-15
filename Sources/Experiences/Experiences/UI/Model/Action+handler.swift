@@ -24,6 +24,8 @@ extension ExperienceAction {
     func handle(experience: ExperienceModel, node: Node, screen: Screen, data: Any?, urlParameters: [String: String], userInfo: [String: Any], authorize: @escaping (inout URLRequest) -> Void, experienceViewController: RenderExperienceViewController, screenViewController: ScreenViewController) {
         let experienceManager = Rover.shared.resolve(ExperienceManager.self)!
         
+        experienceManager.conversionsTracker.track(self.conversionTags)
+        
         let eventQueue = experienceManager.eventQueue
         let event = EventInfo.experienceButtonTappedEvent(
             with: urlParameters["campaignID"],
@@ -62,8 +64,9 @@ extension ExperienceAction {
                 
                 screenViewController.present(viewController, animated: true)
             }
-        case let .openURL(url, dismissExperience):
+        case let .openURL(url, dismissExperience, _):
             guard let resolvedURLString = url.evaluatingExpressions(data: data, urlParameters: urlParameters, userInfo: userInfo), let resolvedURL = URL(string: resolvedURLString) else {
+                rover_log(.error, "Unable to resolve URL: %@", url)
                 return
             }
             
@@ -82,14 +85,16 @@ extension ExperienceAction {
                     }
                 }
             }
-        case let .presentWebsite(url):
+        case let .presentWebsite(url, _):
             guard let resolvedURLString = url.evaluatingExpressions(data: data, urlParameters: urlParameters, userInfo: userInfo), var resolvedURLComponents = URLComponents(string: resolvedURLString) else {
+                rover_log(.error, "Unable to resolve URL: %@", url)
                 return
             }
             if !(["https", "http"].contains(resolvedURLComponents.scheme)) {
                 resolvedURLComponents.scheme = "https"
             }
             guard let resolvedURL = resolvedURLComponents.url else {
+                rover_log(.error, "Unable to resolve URL: %@", url)
                 return
             }
             
@@ -97,7 +102,7 @@ extension ExperienceAction {
             screenViewController.present(viewController, animated: true)
         case .close:
             screenViewController.dismiss(animated: true)
-        case let .custom(dismissExperience):
+        case let .custom(dismissExperience, _):
             func behaviour() {
                 if let callback = experienceManager.registeredCustomActionCallback {
                     let campaignID = urlParameters["campaignID"]

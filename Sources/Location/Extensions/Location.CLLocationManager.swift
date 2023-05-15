@@ -22,7 +22,7 @@ extension CLLocationManager {
             self.stopMonitoring(for: regionToRemove)
             
             if let beaconRegion = regionToRemove as? CLBeaconRegion {
-                self.stopRangingBeacons(in: beaconRegion)
+                self.stopRangingBeacons(satisfying: beaconRegion.beaconIdentityConstraint)
             }
         }
         
@@ -31,7 +31,7 @@ extension CLLocationManager {
             self.startMonitoring(for: regionToAdd)
             
             if let beaconRegion = regionToAdd as? CLBeaconRegion {
-                self.startRangingBeacons(in: beaconRegion)
+                self.startRangingBeacons(satisfying: beaconRegion.beaconIdentityConstraint)
             }
         }
     }

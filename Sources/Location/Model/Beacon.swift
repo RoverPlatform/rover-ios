@@ -70,7 +70,7 @@ extension Beacon {
 extension Beacon {
     public var region: CLBeaconRegion {
         return CLBeaconRegion(
-            proximityUUID: self.uuid,
+            uuid: self.uuid,
             major: UInt16(self.major),
             minor: UInt16(self.minor),
             identifier: "\(self.uuid.uuidString):\(self.major):\(self.minor)"

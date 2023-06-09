@@ -159,12 +159,30 @@ extension LocationManager: RegionManager {
         let circularRegions: Set<CLRegion> = Geofence.fetchAll(in: self.context).regions(closestTo: manager.location?.coordinate, maxLength: self.maxGeofenceRegionsToMonitor - beaconRegions.count)
         os_log("Monitoring for %d circular (geofence) regions", log: .location, type: .debug, circularRegions.count)
         
-        let combinedRegions = beaconRegions.union(circularRegions)
-        manager.monitor(for: combinedRegions)
+        let regionsToMonitorFor = beaconRegions.union(circularRegions)
+        
+        // identify all existing regions that are managed by the Rover SDK
+        let regionsToReplace = manager.monitoredRegions.filter { monitoredRegion in
+            monitoredRegion.identifier.starts(with: "Rover") ||
+            regionsToMonitorFor.contains { newRegion in newRegion.reportsSame(region: monitoredRegion )
+            }
+        }
+
+        for region in regionsToReplace {
+            manager.stopMonitoring(for: region)
+        }
+
+        for region in regionsToMonitorFor {
+            let taggedRegion = region.tagIdentifier(tag: "Rover")
+            manager.startMonitoring(for: taggedRegion)
+        }
     }
     
     func enterGeofence(region: CLCircularRegion) {
-        guard let geofence = Geofence.fetch(regionIdentifier: region.identifier, in: self.context) else {
+        guard let geofence = Geofence.fetch(
+            regionIdentifier: region.untaggedIdentifier(tag: "Rover"),
+            in: self.context
+        ) else {
             return
         }
         
@@ -176,7 +194,10 @@ extension LocationManager: RegionManager {
     }
     
     func exitGeofence(region: CLCircularRegion) {
-        guard let geofence = Geofence.fetch(regionIdentifier: region.identifier, in: self.context) else {
+        guard let geofence = Geofence.fetch(
+            regionIdentifier: region.untaggedIdentifier(tag: "Rover"),
+            in: self.context
+        ) else {
             return
         }
         

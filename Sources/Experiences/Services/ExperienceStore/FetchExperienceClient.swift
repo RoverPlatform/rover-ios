@@ -105,7 +105,7 @@ enum Failure: LocalizedError {
     case networkError(Error?)
     case fileError(Error?)
     case unsupportedExperienceVersion(String)
-    case invalidExperienceData
+    case invalidExperienceData(Error)
     
     var errorDescription: String? {
         switch self {
@@ -129,8 +129,8 @@ enum Failure: LocalizedError {
             }
         case let .unsupportedExperienceVersion(version):
             return "Version \(version) is unsupported"
-        case .invalidExperienceData:
-            return "Invalid experience data, unable to parse"
+        case let .invalidExperienceData(error):
+            return "Invalid experience data, unable to parse, details: \(error.debugDescription)"
         }
     }
     

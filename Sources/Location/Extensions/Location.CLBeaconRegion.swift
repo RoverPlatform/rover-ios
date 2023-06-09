@@ -19,7 +19,7 @@ import RoverFoundation
 extension CLBeaconRegion {
     public var attributes: Attributes {
         var attributes: [String: Any] = [
-            "uuid": proximityUUID.uuidString
+            "uuid": uuid.uuidString
         ]
         
         if let major = major {
@@ -31,5 +31,11 @@ extension CLBeaconRegion {
         }
         
         return Attributes(rawValue: attributes)
+    }
+    
+    public func reportsSame(region: CLBeaconRegion) -> Bool {
+        return uuid == region.uuid &&
+        major == region.major &&
+        minor == region.minor
     }
 }

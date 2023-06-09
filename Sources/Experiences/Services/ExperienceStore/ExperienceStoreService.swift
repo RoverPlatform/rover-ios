@@ -128,10 +128,16 @@ class ExperienceStoreService: ExperienceStore {
             case let .success(downloadResult):
                 switch downloadResult.version {
                 case "1":
-                    guard let experience = classicExperience(from: downloadResult) else {
-                        completionHandler(.failure(.invalidExperienceData))
+                    let classicDecodeResult = classicExperience(from: downloadResult)
+                    let experience: LoadedExperience
+                    switch classicDecodeResult {
+                    case .success(let loadedExperience):
+                        experience = loadedExperience
+                    case .failure(let error):
+                        completionHandler(.failure(.invalidExperienceData(error)))
                         return
                     }
+
                     let key = CacheKey(url: experienceUrl)
                     let value = CacheValue(experience: experience)
                     self.cache.setObject(value, forKey: key)
@@ -141,10 +147,16 @@ class ExperienceStoreService: ExperienceStore {
                     let configurationTask = client.configurationTask(with: experienceUrl) { [self] cdnResult in
                         switch cdnResult {
                         case let .success(cdnConfiguration):
-                            guard let experience = newExperience(from: downloadResult, url: experienceUrl, configuration: cdnConfiguration) else {
-                                completionHandler(.failure(.invalidExperienceData))
+                            let experienceDecodeResult = newExperience(from: downloadResult, url: experienceUrl, configuration: cdnConfiguration)
+                            let experience: LoadedExperience
+                            switch experienceDecodeResult {
+                            case .success(let loadedExperience):
+                                experience = loadedExperience
+                            case .failure(let error):
+                                completionHandler(.failure(.invalidExperienceData(error)))
                                 return
                             }
+                        
                             let key = CacheKey(url: experienceUrl)
                             let value = CacheValue(experience: experience)
                             self.cache.setObject(value, forKey: key)
@@ -164,7 +176,7 @@ class ExperienceStoreService: ExperienceStore {
         task.resume()
     }
     
-    private func classicExperience(from result: ExperienceDownloadResult) -> LoadedExperience? {
+    private func classicExperience(from result: ExperienceDownloadResult) -> Result<LoadedExperience, Error> {
         do {
             let decoder = JSONDecoder()
             decoder.dateDecodingStrategy = .formatted(DateFormatter.rfc3339)
@@ -173,13 +185,13 @@ class ExperienceStoreService: ExperienceStore {
             let returnValue = LoadedExperience.classic(
                 experience: experience,
                 urlParameters: result.urlParameters)
-            return returnValue
+            return .success(returnValue)
         } catch {
-            return nil
+            return .failure(error)
         }
     }
     
-    private func newExperience(from result: ExperienceDownloadResult, url: URL, configuration: CDNConfiguration) -> LoadedExperience? {
+    private func newExperience(from result: ExperienceDownloadResult, url: URL, configuration: CDNConfiguration) -> Result<LoadedExperience, Error> {
         do {
             let assetContext = RemoteAssetContext(baseUrl: url, configuration: configuration)
             let experience = try ExperienceModel.decode(
@@ -190,11 +202,11 @@ class ExperienceStoreService: ExperienceStore {
             
             let urlParameters = result.urlParameters.merging(experience.urlParameters) { (current, _) in current }
             
-            return LoadedExperience.standard(
+            return .success(LoadedExperience.standard(
                 experience: experience,
-                urlParameters: urlParameters)
+                urlParameters: urlParameters))
         } catch {
-            return nil
+            return .failure(error)
         }
     }
 }

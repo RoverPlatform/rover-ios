@@ -26,4 +26,10 @@ extension CLCircularRegion {
             "radius": radius
         ]
     }
+    
+    public func reportsSame(region: CLCircularRegion) -> Bool {
+        return center.latitude == region.center.latitude &&
+        center.longitude == region.center.longitude &&
+        radius == region.radius
+    }
 }

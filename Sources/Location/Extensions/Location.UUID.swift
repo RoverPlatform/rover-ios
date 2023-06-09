@@ -17,6 +17,6 @@ import CoreLocation
 
 extension UUID {
     var region: CLBeaconRegion {
-        return CLBeaconRegion(proximityUUID: self, identifier: self.uuidString)
+        return CLBeaconRegion(uuid: self, identifier: "\(self.uuidString)")
     }
 }

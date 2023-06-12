@@ -23,9 +23,9 @@ extension CLRegion {
         
         switch self {
         case is CLBeaconRegion:
-            return self.reportsSame(region: region as! CLBeaconRegion)
+            return (self as! CLBeaconRegion).reportsSame(region: region as! CLBeaconRegion)
         case is CLCircularRegion:
-            return self.reportsSame(region: region as! CLCircularRegion)
+            return (self as! CLCircularRegion).reportsSame(region: region as! CLCircularRegion)
         default: return false
         }
     }

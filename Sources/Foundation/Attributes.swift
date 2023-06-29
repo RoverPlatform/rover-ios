@@ -78,6 +78,19 @@ public class Attributes: NSObject, NSCoding, Codable, RawRepresentable, Expressi
         }
         
         set(newValue) {
+            guard Attributes.isValidKey(index) else {
+                Attributes.assertionFailureEmitter("Invalid key: \(index)")
+                return
+            }
+            
+            //existing behaviour supports nil values in Attributes in memory.
+            if let newValue = newValue,
+                !Attributes.isValidValue(newValue) {
+                let valueType = type(of: newValue)
+                Attributes.assertionFailureEmitter("Invalid value for key \(index) with unsupported type: \(String(describing: valueType))")
+                return
+            }
+            
             rawValue[index] = newValue
         }
     }
@@ -127,44 +140,66 @@ public class Attributes: NSObject, NSCoding, Codable, RawRepresentable, Expressi
             }
         }
         
-        self.rawValue = Attributes.validateDictionary(transformDictionary(dictionary: dictionary))
+        self.rawValue = transformDictionary(dictionary: dictionary)
         
         super.init()
     }
     
-    fileprivate static func validateDictionary(_ dictionary: [String: Any]) -> [String: Any] {
-        var transformed: [String: Any] = [:]
+    fileprivate static func isValidKey(_ key: String) -> Bool {
+        let swiftRange = Range(uncheckedBounds: (key.startIndex, key.endIndex))
+        let nsRange = NSRange(swiftRange, in: key)
+        if roverKeyRegex.matches(in: key, range: nsRange).isEmpty {
+            return false
+        }
+        
+        return true
+    }
+    
+    fileprivate static func isValidValue(_ value: Any) -> Bool {
         // This is a set of mappings of types, which makes for a long closure body, so silence the closure length warning.
         // swiftlint:disable:next closure_body_length
+        if !(
+            value is Attributes ||
+            value is Double ||
+            value is Int ||
+            value is String ||
+            value is Bool ||
+            value is [Double] ||
+            value is [Int] ||
+            value is [String] ||
+            value is [Bool]
+        ) {
+            return false
+        }
+        
+        return true
+    }
+    
+    /// For the given input dictionary, validate its keys and values then depending on build optimization settings:
+    /// * for -0none, throw an assertion for invalid keys/values, otherwise return a copy of the input dictionary
+    /// * for other optimization settings, return a dictionary filtering out invalid keys and values
+    fileprivate static func validateDictionary(_ dictionary: [String: Any]) -> [String: Any] {
+        var transformed: [String: Any] = [:]
+
         dictionary.forEach { key, value in
-            let swiftRange = Range(uncheckedBounds: (key.startIndex, key.endIndex))
-            let nsRange = NSRange(swiftRange, in: key)
-            if roverKeyRegex.matches(in: key, range: nsRange).isEmpty {
+            guard isValidKey(key) else {
                 assertionFailureEmitter("Invalid key: \(key)")
+                return
+            }
+            
+            guard isValidValue(value) else {
+                let valueType = type(of: value)
+                assertionFailureEmitter("Invalid value for key \(key) with unsupported type: \(String(describing: valueType))")
                 return
             }
             
             if let nestedDictionary = value as? Attributes {
                 transformed[key] = nestedDictionary
-                return
+            } else {
+                transformed[key] = value
             }
-            
-            if !(
-                value is Double ||
-                    value is Int ||
-                    value is String ||
-                    value is Bool ||
-                    value is [Double] ||
-                    value is [Int] ||
-                    value is [String] ||
-                    value is [Bool]
-                ) {
-                let valueType = type(of: value)
-                assertionFailureEmitter("Invalid value for key \(key) with unsupported type: \(String(describing: valueType))")
-                return
-            }
-            transformed[key] = value
         }
+        
         return transformed
     }
     

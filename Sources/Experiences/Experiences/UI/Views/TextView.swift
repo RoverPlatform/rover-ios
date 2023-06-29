@@ -22,6 +22,7 @@ struct TextView: View {
     @Environment(\.stringTable) private var stringTable
     @Environment(\.urlParameters) private var urlParameters
     @Environment(\.userInfo) private var userInfo
+    @Environment(\.experience) private var experience
     
     var text: RoverExperiences.Text
     
@@ -32,7 +33,8 @@ struct TextView: View {
             RealizeColor(self.text.textColor) { textColor in
                 SwiftUI.Text(transformed(textValue))
                     .modifier(
-                        FontModifier(font: self.text.font)
+                        FontModifier(font: self.text.font,
+                                     experience: experience)
                     )
                     .foregroundColor(textColor)
             }

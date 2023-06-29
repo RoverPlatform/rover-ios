@@ -83,26 +83,42 @@ extension UINavigationBar {
 
 
 extension UINavigationItem {
-    func configure(navBar: NavBar, stringTable: StringTable, data: Any?, urlParameters: [String: String], userInfo: [String: Any], traits: UITraitCollection, buttonHandler: @escaping (NavBarButton) -> Void) {
-
-        title = stringTable.resolve(key: navBar.title).evaluatingExpressions(data: data, urlParameters: urlParameters, userInfo: userInfo)
+    func configure(
+        navBar: NavBar,
+        experience: ExperienceModel,
+        data: Any?,
+        urlParameters: [String: String],
+        userInfo: [String: Any],
+        traits: UITraitCollection,
+        buttonHandler: @escaping (NavBarButton) -> Void
+    ) {
+        title = experience.localization.resolve(key: navBar.title)
+            .evaluatingExpressions(
+                data: data, urlParameters:
+                    urlParameters,
+                userInfo: userInfo
+            )
 
         hidesBackButton = navBar.hidesBackButton
 
         switch navBar.titleDisplayMode {
         case .large:
             largeTitleDisplayMode = .always
-            configureLargeAppearance(navBar: navBar, traits: traits)
+            configureLargeAppearance(navBar: navBar, traits: traits, experience: experience)
         case .inline:
             largeTitleDisplayMode = .never
-            configureInlineAppearance(navBar: navBar, traits: traits)
+            configureInlineAppearance(
+                navBar: navBar,
+                traits: traits,
+                experience: experience
+            )
         }
 
         leftBarButtonItems = navBar.children
             .compactMap { $0 as? NavBarButton }
             .filter { $0.placement == .leading }
             .map { navBarButton in
-                UIBarButtonItem(navBarButton: navBarButton, stringTable: stringTable, data: data, urlParameters: urlParameters, userInfo: userInfo) {
+                UIBarButtonItem(navBarButton: navBarButton, stringTable: experience.localization, data: data, urlParameters: urlParameters, userInfo: userInfo) {
                     buttonHandler(navBarButton)
                 }
             }
@@ -111,14 +127,19 @@ extension UINavigationItem {
             .compactMap { $0 as? NavBarButton }
             .filter { $0.placement == .trailing }
             .map { navBarButton in
-                UIBarButtonItem(navBarButton: navBarButton, stringTable: stringTable, data: data, urlParameters: urlParameters, userInfo: userInfo) {
+                UIBarButtonItem(navBarButton: navBarButton, stringTable: experience.localization, data: data, urlParameters: urlParameters, userInfo: userInfo) {
                     buttonHandler(navBarButton)
                 }
             }
             .reversed()
     }
 
-    func configureInlineAppearance(navBar: NavBar, traits: UITraitCollection, isScrolling: Bool = false) {
+    func configureInlineAppearance(
+        navBar: NavBar,
+        traits: UITraitCollection,
+        isScrolling: Bool = false,
+        experience: ExperienceModel
+    ) {
         guard navBar.titleDisplayMode == .inline else {
             return
         }
@@ -131,7 +152,7 @@ extension UINavigationItem {
         }
 
         let appearance = UINavigationBarAppearance()
-        appearance.configureFonts(navBar: navBar)
+        appearance.configureFonts(navBar: navBar, experience: experience)
         appearance.configureBackground(background: navBarAppearance.background, traits: traits)
         appearance.configureButtonColor(appearance: navBarAppearance, traits: traits)
         appearance.configureTitleColor(appearance: navBarAppearance, traits: traits)
@@ -144,13 +165,17 @@ extension UINavigationItem {
         }
     }
 
-    func configureLargeAppearance(navBar: NavBar, traits: UITraitCollection) {
+    func configureLargeAppearance(
+        navBar: NavBar,
+        traits: UITraitCollection,
+        experience: ExperienceModel
+    ) {
         guard navBar.titleDisplayMode == .large else {
             return
         }
 
         let largeAppearance = UINavigationBarAppearance()
-        largeAppearance.configureFonts(navBar: navBar)
+        largeAppearance.configureFonts(navBar: navBar, experience: experience)
 
         let navBarAppearance = navBar.appearance
         let navBarAlternateAppearance = navBar.alternateAppearance
@@ -163,7 +188,7 @@ extension UINavigationItem {
 
         if let alternateAppearance = navBarAlternateAppearance {
             let inlineAppearance = UINavigationBarAppearance()
-            inlineAppearance.configureFonts(navBar: navBar)
+            inlineAppearance.configureFonts(navBar: navBar, experience: experience)
             inlineAppearance.configureBackground(background: alternateAppearance.background, traits: traits)
             inlineAppearance.configureButtonColor(appearance: alternateAppearance, traits: traits)
             inlineAppearance.configureTitleColor(appearance: alternateAppearance, traits: traits)
@@ -180,10 +205,13 @@ extension UINavigationItem {
 
 
 private extension UINavigationBarAppearance {
-    func configureFonts(navBar: NavBar) {
-        titleTextAttributes[.font] = navBar.titleFont.uikitFont
-        largeTitleTextAttributes[.font] = navBar.largeTitleFont.uikitFont
-        buttonAppearance.normal.titleTextAttributes[.font] = navBar.buttonFont.uikitFont
+    func configureFonts(
+        navBar: NavBar,
+        experience: ExperienceModel
+    ) {
+        titleTextAttributes[.font] = navBar.titleFont.uikitFont(with: experience)
+        largeTitleTextAttributes[.font] = navBar.largeTitleFont.uikitFont(with: experience)
+        buttonAppearance.normal.titleTextAttributes[.font] = navBar.buttonFont.uikitFont(with: experience)
     }
 
     func configureBackground(background: NavBar.Background, traits: UITraitCollection) {

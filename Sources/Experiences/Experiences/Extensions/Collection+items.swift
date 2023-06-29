@@ -70,10 +70,9 @@ extension Collection {
             let startAt = max(limit.startAt - 1, 0)
             let lowerBound = min(startAt, result.indices.upperBound)
             let limitedRange = result.indices.clamped(to: lowerBound..<result.endIndex)
-            result = Array(result[limitedRange])
+            result = Array(result[limitedRange].prefix(limit.show))
         }
         
-        result = Array(result.prefix(limit?.show ?? 100))
         return result
     }
 }

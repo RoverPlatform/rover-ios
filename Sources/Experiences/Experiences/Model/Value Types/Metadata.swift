@@ -21,4 +21,18 @@ public struct Metadata: Codable, Hashable {
         self.properties = properties
         self.tags = tags
     }
+    
+    private enum CodingKeys: String, CodingKey {
+        case properties
+        case tags
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        let propertiesArray: Array = try container.decode([String].self, forKey: .properties)
+        properties = propertiesArray.toStringDictionary()
+        
+        tags = try container.decode(Set<String>.self, forKey: .tags)
+    }
 }

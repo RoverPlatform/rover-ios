@@ -3,7 +3,7 @@
 // copy, modify, and distribute this software in source code or binary form for use
 // in connection with the web services and APIs provided by Rover.
 //
-// This copyright notice shall be included in all copies or substantial portions of 
+// This copyright notice shall be included in all copies or substantial portions of
 // the software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -15,7 +15,17 @@
 
 import Foundation
 
-public enum Meta {
-    public static let APIVersion: Int = 2
-    public static let SDKVersion: String = "4.2.3"
+internal extension Array where Element == String {
+    func toStringDictionary() -> [String: String] {
+        var iterator = makeIterator()
+        var result: UserInfo = [:]
+        while var current = iterator.next() {
+            if let next = iterator.next() {
+                result[current] = next
+                current = next
+            }
+        }
+        
+        return result
+    }
 }

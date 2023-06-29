@@ -63,3 +63,34 @@ public extension DocumentFont {
         self.sources.map { $0.assetUrl }
     }
 }
+
+extension DocumentFont {
+    func fontForStyle(_ textStyle: SwiftUI.Font.TextStyle) -> CustomFont {
+        switch textStyle {
+        case .largeTitle:
+            return self.largeTitle
+        case .title:
+            return self.title
+        case.title2:
+            return self.title2
+        case .title3:
+            return self.title3
+        case .headline:
+            return self.headline
+        case .body:
+            return self.body
+        case .callout:
+            return self.callout
+        case .subheadline:
+            return self.subheadline
+        case .footnote:
+            return self.footnote
+        case .caption:
+            return self.caption
+        case .caption2:
+            return self.caption2
+        default:
+            return self.body
+        }
+    }
+}

@@ -117,10 +117,10 @@ final class ExperienceModel: Decodable {
         appearance = try container.decode(Appearance.self, forKey: .appearance)
         
         let parameterArray = try container.decode([String].self, forKey: .urlParameters)
-        self.urlParameters = parameterArray.toUserInfo()
+        self.urlParameters = parameterArray.toStringDictionary()
         
         let userArray = try container.decode([String].self, forKey: .userInfo)
-        self.userInfo = userArray.toUserInfo()
+        self.userInfo = userArray.toStringDictionary()
         
         authorizers = try container.decode([DocumentAuthorizer].self, forKey: .authorizers)
 
@@ -140,20 +140,5 @@ final class ExperienceModel: Decodable {
         
         let nodes = try container.decodeNodes(forKey: .nodes)
         try coordinator.resolveRelationships(nodes: nodes, documentColors: colors, documentGradients: gradients)
-    }
-}
-
-fileprivate extension Array where Element == String {
-    func toUserInfo() -> UserInfo {
-        var iterator = makeIterator()
-        var result: UserInfo = [:]
-        while var current = iterator.next() {
-            if let next = iterator.next() {
-                result[current] = next
-                current = next
-            }
-        }
-        
-        return result
     }
 }

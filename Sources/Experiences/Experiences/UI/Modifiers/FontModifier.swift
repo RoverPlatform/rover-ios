@@ -20,27 +20,34 @@ import UIKit
 
 struct FontModifier: ViewModifier {
     @Environment(\.sizeCategory) private var sizeCategory
+    @Environment(\.experience) private var experience
     @State private var uiFont: SwiftUI.Font
 
     var font: RoverExperiences.Font
 
-    init(font: RoverExperiences.Font) {
+    init(font: RoverExperiences.Font,
+         experience: ExperienceModel?) {
         self.font = font
-        self._uiFont = .init(initialValue: getUIFont(for: font))
+        self._uiFont =
+            .init(initialValue: getUIFont(
+                for: font,
+                experience: experience))
     }
 
     func body(content: Content) -> some View {
         content
             .font(uiFont)
             .onReceive(NotificationCenter.default.publisher(for: ExperienceManager.didRegisterCustomFontNotification)) { _ in
-                uiFont = getUIFont(for: font)
+                uiFont = getUIFont(for: font,
+                                   experience: experience)
             }
     }
 }
 
 
-private func getUIFont(for font: RoverExperiences.Font) -> SwiftUI.Font {
-    if let uifont = font.uikitFont {
+private func getUIFont(for font: RoverExperiences.Font,
+                       experience: ExperienceModel?) -> SwiftUI.Font {
+    if let uifont = font.uikitFont(with: experience) {        
         return SwiftUI.Font(uifont)
     }
 

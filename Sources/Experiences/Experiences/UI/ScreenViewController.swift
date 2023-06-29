@@ -141,7 +141,7 @@ class ScreenViewController: UIViewController, UIScrollViewDelegate {
         if let navBar = navBar {
             navigationItem.configure(
                 navBar: navBar,
-                stringTable: experience.localization,
+                experience: experience,
                 data: data,
                 urlParameters: urlParameters,
                 userInfo: userInfo,
@@ -223,7 +223,8 @@ class ScreenViewController: UIViewController, UIScrollViewDelegate {
             navigationItem.configureInlineAppearance(
                 navBar: navBar,
                 traits: traitCollection,
-                isScrolling: isScrolling
+                isScrolling: isScrolling,
+                experience: experience
             )
 
             navigationController?.navigationBar.adjustTintColor(

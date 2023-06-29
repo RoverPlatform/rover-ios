@@ -19,7 +19,7 @@ import UIKit
 import SwiftUI
 
 extension RoverExperiences.Font {
-    var uikitFont: UIFont? {
+    func uikitFont(with experience: ExperienceModel?) -> UIFont? {
         switch self {
         case .dynamic(let textStyle, let emphases):
             let font = UIFont.preferredFont(forTextStyle: textStyle.uiTextStyle)
@@ -37,12 +37,18 @@ extension RoverExperiences.Font {
             return UIFont.systemFont(ofSize: scaledSize, weight: weight.uiWeight)
             
         case .document(let fontFamily, let textStyle):
-            //TODO: how do I get the list of fonts from the document here?  fontFamily must be converted to font name.
             let font: UIFont?
-            
-            //TODO: the app takes the size of the custom font from the font style.  But in order to achieve this, the font family must first be converted to a font name.
-            let scaledSize = UIFontMetrics.default.scaledValue(for: 14)
-            font = UIFont(name: fontFamily, size: scaledSize)
+
+            if let experience = experience,
+               let documentFont = experience.fonts.first(where: { $0.fontFamily == fontFamily }) {
+                let customFont = documentFont.fontForStyle(textStyle)
+                let scaledSize = UIFontMetrics.default.scaledValue(for: customFont.size)
+                font = UIFont(name: customFont.fontName,
+                              size: scaledSize)
+            } else {
+                let scaledSize = UIFontMetrics.default.scaledValue(for: 14)
+                font = UIFont(name: fontFamily, size: scaledSize)
+            }
             
             if font == nil {
                 rover_log(.debug, "Missing font %@", fontFamily)

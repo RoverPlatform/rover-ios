@@ -34,7 +34,7 @@ class ExperienceRouteHandler: RouteHandler {
         
         //change this so if the host is present experience, we need to transform the url and route to the older vc
         if host == "presentExperience" {
-            return classicActionProvider(url: url, domain: domain)
+            return classicActionProvider(url: url)
         }
         
         // verify that the domain is one of associated domains
@@ -65,13 +65,11 @@ class ExperienceRouteHandler: RouteHandler {
         return actionProvider(url)
     }
     
-    func classicActionProvider(url: URL, domain: String?) -> RoverFoundation.Action? {
-        guard let domain = domain else {
-            return nil
-        }
-        
-        // legacy presentExperiences deep links are mapped onto the first domain you have configured.
-        guard let hostDomain = associatedDomains.first else {
+    func classicActionProvider(url: URL) -> RoverFoundation.Action? {
+        // legacy presentExperiences deep links are mapped onto the first Rover domain you have configured.
+        guard let hostDomain = associatedDomains.first(where: { domain in
+            domain.lowercased().hasSuffix(".rover.io")
+        }) else {
             return nil
         }
         

@@ -3,7 +3,7 @@
 // copy, modify, and distribute this software in source code or binary form for use
 // in connection with the web services and APIs provided by Rover.
 //
-// This copyright notice shall be included in all copies or substantial portions of 
+// This copyright notice shall be included in all copies or substantial portions of
 // the software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -14,19 +14,12 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import Foundation
+import RoverFoundation
 
-// This file is duplicated by the testbench's Foundation.JSONEncoder.swift
-// file.  If changes are made here, make the changes in the testbench's
-// Foundation.JSONEncoder.swift file as well.
-
-extension JSONEncoder {
-    public static let `default`: JSONEncoder = {
-        let encoder = JSONEncoder()
-        encoder.dateEncodingStrategy = .formatted(DateFormatter.rfc3339)
-        if #available(iOS 11.0, *) {
-            // Stable ordering of the keys is very helpful with GraphQL caching on the cloud API side.
-            encoder.outputFormatting = [.sortedKeys]
+public extension Rover {
+    var seatGeekAuthorizer: SeatGeekAuthorizer {
+        get {
+            resolve(SeatGeekAuthorizer.self)!
         }
-        return encoder
-    }()
+    }
 }

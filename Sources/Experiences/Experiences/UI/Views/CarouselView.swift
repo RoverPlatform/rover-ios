@@ -15,8 +15,6 @@
 
 import SwiftUI
 
-
-
 struct CarouselView: View {
     @Environment(\.collectionIndex) private var collectionIndex
     @Environment(\.data) private var data
@@ -34,6 +32,7 @@ struct CarouselView: View {
             currentPage: currentPage,
             numberOfPages: numberOfPages
         )
+        .id(pages)
     }
     
     private var currentPage: Binding<Int> {
@@ -87,9 +86,30 @@ struct CarouselView: View {
 }
 
 
-private struct Page: View {
+private struct Page: View, Hashable, Identifiable {
+    var id: String
     var layer: Layer
     var item: Any?
+    
+    static func == (lhs: Page, rhs: Page) -> Bool {
+        lhs.id == rhs.id
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+    
+    init(layer: Layer, item: Any? = nil) {
+        self.layer = layer
+        self.item = item
+        
+        if let item = item,
+           let idString = try? JSONSerialization.data(withJSONObject: item).toString() {
+            self.id = idString
+        } else {
+            self.id = layer.id
+        }
+    }
     
     var body: some View {
         if let item = item {
@@ -99,7 +119,6 @@ private struct Page: View {
         }
     }
 }
-
 
 private struct PageViewController: UIViewControllerRepresentable {
     private let pages: [Page]
@@ -136,7 +155,17 @@ private struct PageViewController: UIViewControllerRepresentable {
         
         if !context.coordinator.controllers.isEmpty {
             guard context.coordinator.controllers.indices.contains(currentPage) else {
-                assertionFailure("Invalid carousel state")
+                // Carousel contents are now smaller while viewing a larger index
+                
+                // Reset current page
+                currentPage = 0
+                
+                // Make the first view controller of the current set visible
+                pageViewController.setViewControllers(
+                    [context.coordinator.controllers[0]],
+                    direction: .forward,
+                    animated: true
+                )
                 return
             }
 

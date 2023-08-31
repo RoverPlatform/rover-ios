@@ -43,6 +43,9 @@ let package = Package(
             name: "RoverTicketmaster",
             targets: ["RoverTicketmaster"]),
         .library(
+            name: "RoverSeatGeek",
+            targets: ["RoverSeatGeek"]),
+        .library(
             name: "RoverAppExtensions",
             targets: ["RoverAppExtensions"]),
     ],
@@ -100,6 +103,10 @@ let package = Package(
         .target(
             name: "RoverTicketmaster",
             dependencies: ["RoverData"],
-            path: "Sources/Ticketmaster")
+            path: "Sources/Ticketmaster"),
+        .target(
+            name: "RoverSeatGeek",
+            dependencies: ["RoverData"],
+            path: "Sources/SeatGeek")
     ]
 )

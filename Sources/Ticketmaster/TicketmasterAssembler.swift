@@ -30,14 +30,5 @@ public class TicketmasterAssembler: Assembler {
             let eventQueue = resolver.resolve(EventQueue.self)!
             return TicketmasterManager(userInfoManager: userInfoManager, eventQueue: eventQueue)
         }
-        
-        container.register(SyncParticipant.self, name: "ticketmaster") { resolver in
-            resolver.resolve(TicketmasterManager.self)!
-        }
-    }
-    
-    public func containerDidAssemble(resolver: Resolver) {
-        let participant = resolver.resolve(SyncParticipant.self, name: "ticketmaster")!
-        resolver.resolve(SyncCoordinator.self)!.participants.append(participant)
     }
 }

@@ -13,20 +13,21 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import Foundation
+import RoverFoundation
+import RoverData
 
-// This file is duplicated by the testbench's Foundation.JSONEncoder.swift
-// file.  If changes are made here, make the changes in the testbench's
-// Foundation.JSONEncoder.swift file as well.
-
-extension JSONEncoder {
-    public static let `default`: JSONEncoder = {
-        let encoder = JSONEncoder()
-        encoder.dateEncodingStrategy = .formatted(DateFormatter.rfc3339)
-        if #available(iOS 11.0, *) {
-            // Stable ordering of the keys is very helpful with GraphQL caching on the cloud API side.
-            encoder.outputFormatting = [.sortedKeys]
+public class SeatGeekAssembler: Assembler {
+    public init() {
+    }
+    
+    public func assemble(container: Container) {
+        container.register(SeatGeekAuthorizer.self) { resolver in
+            resolver.resolve(SeatGeekManager.self)!
         }
-        return encoder
-    }()
+        
+        container.register(SeatGeekManager.self) { resolver in
+            let userInfoManager = resolver.resolve(UserInfoManager.self)!
+            return SeatGeekManager(userInfoManager: userInfoManager)
+        }
+    }
 }

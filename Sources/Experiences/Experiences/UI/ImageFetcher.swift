@@ -17,7 +17,6 @@ import SwiftUI
 import os.log
 import RoverFoundation
 
-
 struct ImageFetcher<Content, Placeholder>: View where Content: View, Placeholder: View {
     var url: URL
     var content: (UIImage) -> Content
@@ -29,7 +28,7 @@ struct ImageFetcher<Content, Placeholder>: View where Content: View, Placeholder
         case failed
     }
 
-    @State private var state = FetchState.loading
+    @State private var uiImage: UIImage?
 
     init(url: URL, @ViewBuilder content: @escaping (UIImage) -> Content, placeholder: () -> Placeholder) {
         self.url = url
@@ -40,6 +39,9 @@ struct ImageFetcher<Content, Placeholder>: View where Content: View, Placeholder
     var body: some View {
         if let uiImage = uiImage {
             content(uiImage)
+                .onValueChanged(of: url, perform: {_ in
+                    startFetch()
+                })
         } else {
             placeholder.onAppear {
                 startFetch()
@@ -47,50 +49,33 @@ struct ImageFetcher<Content, Placeholder>: View where Content: View, Placeholder
         }
     }
 
-    private var uiImage: UIImage? {
-        // first, if this image was already loaded, then return it.
-        if case .loaded(let uiImage) = state {
-            return uiImage
-        }
-        
-        let experienceManager = Rover.shared.resolve(ExperienceManager.self)!
-
-        // secondly, look in the image cache for an already decoded and in-memory copy.
-        if let cachedImage = experienceManager.imageCache.object(forKey: url as NSURL) {
-            return cachedImage
-        }
-
-        // thirdly, look in the HTTP cache for already downloaded copy if this is a smaller image, in order to avoid the async path (with a delay and animation) if an unexpired copy is present in the cache.
-        if let cacheEntry = experienceManager.assetsURLCache.cachedResponse(for: URLRequest(url: url)) {
-            // when displaying the image directly from the cache, then just decode it synchronously on the main thread, blocking rendering: this is desirable to avoid a bit of async state for occurring while waiting for a decode to complete. The tradeoff changes for larger images (especially things like animated GIFs) which we'll fall back to decoding asynchronously on a background queue.
-            if cacheEntry.data.count < 524288 {
-                if let decoded = cacheEntry.data.loadUIImage() {
-                    self.state = .loaded(uiImage: decoded)
-                    experienceManager.imageCache.setObject(decoded, forKey: url as NSURL)
-                    return decoded
-                } else {
-                    rover_log(.error, "Failed to decode presumably corrupted cached image data. Removing it to allow for re-fetch.")
-                    experienceManager.urlCache.removeCachedResponse(for: URLRequest(url: url))
-                }
-            }
-        }
-
-        return nil
-    }
-
     private func startFetch() {
-        guard state == .loading else {
-            return
-        }
-        
         let experienceManager = Rover.shared.resolve(ExperienceManager.self)!
 
         func setState(_ state: FetchState) {
-            DispatchQueue.main.async {
-                withAnimation {
-                    self.state = state
+            switch state {
+            case .loaded(let uiImage):
+                DispatchQueue.main.async {
+                    withAnimation {
+                        self.uiImage = uiImage
+                    }
                 }
+                
+            case .failed:
+                DispatchQueue.main.async {
+                    withAnimation {
+                        self.uiImage = nil
+                    }
+                }
+                
+            default:
+                return
             }
+        }
+        
+        if let cachedImage = ExperienceManager.getCachedImage(for: url) {
+            setState(.loaded(uiImage: cachedImage))
+            return
         }
 
         experienceManager.downloader.download(url: url) { result in
@@ -167,5 +152,32 @@ private extension CGImageSource {
             return gifDelayTime.isZero ? 0.1 : gifDelayTime
         }
         return 0.1
+    }
+}
+
+private extension ExperienceManager {
+    static func getCachedImage(for imageUrl: URL) -> UIImage? {
+        let experienceManager = Rover.shared.resolve(ExperienceManager.self)!
+        
+        // look in the image cache for an already decoded and in-memory copy.
+        if let cachedImage = experienceManager.imageCache.object(forKey: imageUrl as NSURL) {
+            return cachedImage
+        }
+
+        // look in the HTTP cache for already downloaded copy if this is a smaller image, in order to avoid the async path (with a delay and animation) if an unexpired copy is present in the cache.
+        if let cacheEntry = experienceManager.assetsURLCache.cachedResponse(for: URLRequest(url: imageUrl)) {
+            // when displaying the image directly from the cache, then just decode it synchronously on the main thread, blocking rendering: this is desirable to avoid a bit of async state for occurring while waiting for a decode to complete. The tradeoff changes for larger images (especially things like animated GIFs) which we'll fall back to decoding asynchronously on a background queue.
+            if cacheEntry.data.count < 524288 {
+                if let decoded = cacheEntry.data.loadUIImage() {
+                    experienceManager.imageCache.setObject(decoded, forKey: imageUrl as NSURL)
+                    return decoded
+                } else {
+                    rover_log(.error, "Failed to decode presumably corrupted cached image data. Removing it to allow for re-fetch.")
+                    experienceManager.urlCache.removeCachedResponse(for: URLRequest(url: imageUrl))
+                }
+            }
+        }
+        
+        return nil
     }
 }

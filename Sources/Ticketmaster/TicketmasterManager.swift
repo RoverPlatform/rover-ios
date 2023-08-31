@@ -35,29 +35,9 @@ class TicketmasterManager {
     
     var member = PersistedValue<Member>(storageKey: "io.rover.RoverTicketmaster")
     
-    struct LegacyMember: Codable {
-        var hostID: String
-        var teamID: String
-    }
-    var legacyMember = PersistedValue<LegacyMember>(storageKey: "io.rover.RoverTicketmaster")
-    
     init(userInfoManager: UserInfoManager, eventQueue: EventQueue) {
         self.userInfoManager = userInfoManager
         self.eventQueue = eventQueue
-        
-        // do migration from 3.2 and older, if needed.
-        if let legacyData = legacyMember.value, member.value == nil {
-            if !legacyData.hostID.isEmpty {
-                member.value = Member(id: legacyData.hostID, email: nil, firstName: nil)
-                os_log("Migrated Ticketmaster data for TM member: %s", log: .general, legacyData.hostID)
-            } else if !legacyData.teamID.isEmpty {
-                member.value = Member(id: legacyData.teamID, email: nil, firstName: nil)
-                os_log("Migrated Ticketmaster data for Archtics member: %s", log: .general, legacyData.teamID)
-            } else {
-                os_log("Unable to migrate TM data for either type, since neither was present. Ignoring.", log: .general)
-                member.value = nil
-            }
-        }
         
         // Begin observing for TM PSDK's events.
         TicketmasterManager.tmEvents.keys.forEach { notificationName in
@@ -156,7 +136,6 @@ extension TicketmasterManager: TicketmasterAuthorizer {
         let newMember = Member(id: id, email: nil, firstName: nil)
         self.member.value = newMember
         
-        // As a side-effect, set the fields into the `ticketmaster` hash in userInfo so they are immediately available even without a server sync succeeding.
         self.userInfoManager.updateUserInfo {
             if let existingTicketmasterUserInfo = $0.rawValue["ticketmaster"] as? Attributes {
                 // ticketmaster already exists, just clobber the two fields:
@@ -175,70 +154,5 @@ extension TicketmasterManager: TicketmasterAuthorizer {
         self.userInfoManager.updateUserInfo { attributes in
             attributes.rawValue["ticketmaster"] = nil
         }
-    }
-}
-
-// MARK: SyncParticipant
-
-extension SyncQuery {
-    static let ticketmaster = SyncQuery(
-        name: "ticketmasterProfile",
-        body: """
-            attributes
-            """,
-        arguments: [
-            SyncQuery.Argument(name: "id", type: "String")
-        ],
-        fragments: []
-    )
-}
-
-extension TicketmasterManager: SyncParticipant {
-    func initialRequest() -> SyncRequest? {
-        guard let member = self.member.value else {
-            return nil
-        }
-        
-        return SyncRequest(
-            query: .ticketmaster,
-            values: [
-                "id": member.id,
-            ]
-        )
-    }
-    
-    struct Response: Decodable {
-        struct Data: Decodable {
-            struct Profile: Decodable {
-                var attributes: Attributes?
-            }
-            
-            var ticketmasterProfile: Profile
-        }
-        
-        var data: Data
-    }
-    
-    func saveResponse(_ data: Data) -> SyncResult {
-        let response: Response
-        do {
-            response = try JSONDecoder.default.decode(Response.self, from: data)
-        } catch {
-            os_log("Failed to decode response: %@", log: .sync, type: .error, error.logDescription)
-            return .failed
-        }
-        
-        guard let attributes = response.data.ticketmasterProfile.attributes else {
-            return .noData
-        }
-        
-        let localAttributes: [String: Any] = member.value?.userInfo ?? [String: Any]()
-        
-        // Set the `ticketmaster` field on userInfo, but clobber the email and firstName fields that might have come back from the server with our local values.
-        self.userInfoManager.updateUserInfo {
-            $0.rawValue["ticketmaster"] = Attributes(rawValue: localAttributes.merging(attributes.rawValue) { (localValue, _) in localValue })
-        }
-        
-        return .newData(nextRequest: nil)
     }
 }

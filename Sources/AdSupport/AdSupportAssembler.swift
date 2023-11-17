@@ -20,8 +20,10 @@ public class AdSupportAssembler: Assembler {
     public init() { }
     
     public func assemble(container: Container) {
-        container.register(AdSupportContextProvider.self) { _ in
-            AdSupportManager()
+        container.register(AdSupportContextProvider.self) { resolver in
+            AdSupportManager(
+                privacyService: resolver.resolve(PrivacyService.self)!
+            )
         }
     }
 }

@@ -40,7 +40,7 @@ struct PageControlView: View {
                     normalImage: nil,
                     currentImage: nil
                 )
-            case .light:
+            default: // case .light:
                 PageControlViewBody(
                     numberOfPages: numberOfPages,
                     currentPage: currentPage,
@@ -73,16 +73,7 @@ struct PageControlView: View {
             )
         case .inverted:
             switch colorScheme {
-            case .light:
-                PageControlViewBody(
-                    numberOfPages: numberOfPages,
-                    currentPage: currentPage,
-                    hidesForSinglePage: pageControl.hidesForSinglePage,
-                    normalColor: UIColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 0.3),
-                    currentColor: UIColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0),
-                    normalImage: nil,
-                    currentImage: nil
-                )
+            
             case .dark:
                 PageControlViewBody(
                     numberOfPages: numberOfPages,
@@ -90,6 +81,16 @@ struct PageControlView: View {
                     hidesForSinglePage: pageControl.hidesForSinglePage,
                     normalColor: UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.3),
                     currentColor: UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0),
+                    normalImage: nil,
+                    currentImage: nil
+                )
+            default: // .light:
+                PageControlViewBody(
+                    numberOfPages: numberOfPages,
+                    currentPage: currentPage,
+                    hidesForSinglePage: pageControl.hidesForSinglePage,
+                    normalColor: UIColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 0.3),
+                    currentColor: UIColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0),
                     normalImage: nil,
                     currentImage: nil
                 )

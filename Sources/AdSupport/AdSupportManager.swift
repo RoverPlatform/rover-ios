@@ -18,13 +18,16 @@ import RoverData
 
 class AdSupportManager {
     let identifierManager = ASIdentifierManager.shared()
+    let privacyService: PrivacyService
     
-    init() { }
+    init(privacyService: PrivacyService) {
+        self.privacyService = privacyService
+    }
 }
 
 extension AdSupportManager: AdSupportContextProvider {
     var advertisingIdentifier: String? {
-        guard self.identifierManager.isAdvertisingTrackingEnabled else {
+        guard self.identifierManager.isAdvertisingTrackingEnabled, self.privacyService.trackingMode == .default else {
             return nil
         }
         

@@ -23,7 +23,7 @@ import UIKit
 open class LoadingViewController: UIViewController {
     /// The activity indicator displayed in the center of the screen.
     #if swift(>=4.2)
-    public var activityIndicator = UIActivityIndicatorView(style: .whiteLarge)
+    public var activityIndicator = UIActivityIndicatorView(style: .large)
     #else
     public var activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
     #endif

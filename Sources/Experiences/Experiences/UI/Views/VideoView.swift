@@ -24,22 +24,20 @@ struct VideoView: View {
     @Environment(\.userInfo) private var userInfo
 
     let video: RoverExperiences.Video
-    @State private var isVisible = true
 
     var body: some View {
         if let urlString = video.sourceURL.evaluatingExpressions(data: data, urlParameters: urlParameters, userInfo: userInfo), let sourceURL = URL(string: urlString) {
-            VideoPlayerView(
+            Player(
                 sourceURL: sourceURL,
                 posterImageURL: posterURL,
                 resizingMode: video.resizingMode,
                 showControls: video.showControls,
                 autoPlay: video.autoPlay,
                 removeAudio: video.removeAudio,
-                looping: video.looping,
-                isVisible: isVisible
+                looping: video.looping
             )
-            .onDisappear { isVisible = false }
-            .onAppear { isVisible = true }
+            // just in case URL changes.
+            .id(urlString)
         }
     }
     
@@ -52,21 +50,93 @@ struct VideoView: View {
     }
 }
 
-private struct VideoPlayerView: UIViewControllerRepresentable {
+private struct Player: View {
     var sourceURL: URL
+    
     var posterImageURL: URL?
     var resizingMode: RoverExperiences.Video.ResizingMode
     var showControls: Bool
     var autoPlay: Bool
     var removeAudio: Bool
     var looping: Bool
-    var isVisible: Bool
+    
+    
+    @State var player: AVPlayer? = nil
+    @State var looper: AVPlayerLooper? = nil
+    
+    var body: some View {
+        Group {
+            if let player = self.player {
+                VideoPlayerView(
+                    sourceURL: sourceURL,
+                    posterImageURL: posterImageURL,
+                    resizingMode: resizingMode,
+                    showControls: showControls,
+                    autoPlay: autoPlay,
+                    player: player
+                )
+            } else {
+                // dummy view so onAppear below works.
+                SwiftUI.Rectangle().frame(width: 0, height: 0).hidden()
+            }
+        }
+            .onAppear {
+                if (player == nil) {
+                    setupPlayer()
+                } else {
+                    // resume playback if it was set to autoplay
+                    if autoPlay {
+                        player?.play()
+                    }
+                }
+            }
+            .onDisappear {
+                player?.pause()
+            }
+    }
+    
+    func setupPlayer() {
+        if (looping) {
+            player = AVQueuePlayer()
+        } else {
+            player = AVPlayer()
+        }
+        
+        let playerItem = AVPlayerItem(url: sourceURL)
+        
+        if removeAudio {
+            let zeroMix = AVMutableAudioMix()
+            zeroMix.inputParameters = playerItem.asset.tracks(withMediaType: .audio).map { track in
+                let audioInputParams = AVMutableAudioMixInputParameters()
+                audioInputParams.setVolume(0, at: .zero)
+                audioInputParams.trackID = track.trackID
+                return audioInputParams
+            }
+
+            playerItem.audioMix = zeroMix
+        }
+        
+        if looping, let queuePlayer = player as? AVQueuePlayer {
+            self.looper = AVPlayerLooper(player: queuePlayer, templateItem: playerItem)
+        } else {
+            self.player?.replaceCurrentItem(with: playerItem)
+        }
+    }
+}
+
+private struct VideoPlayerView: UIViewControllerRepresentable {
+    var sourceURL: URL
+    var posterImageURL: URL?
+    var resizingMode: RoverExperiences.Video.ResizingMode
+    var showControls: Bool
+    var autoPlay: Bool
+
+    
+    var player: AVPlayer
     
     func makeUIViewController(context: Context) -> AVPlayerViewController {
         let viewController = VideoPlayerViewController(
-            sourceURL: sourceURL,
-            looping: looping,
-            removeAudio: removeAudio
+            player: player
         )
         
         viewController.allowsPictureInPicturePlayback = false
@@ -83,46 +153,24 @@ private struct VideoPlayerView: UIViewControllerRepresentable {
             viewController.setPosterImage(url: url)
         }
         
+        if autoPlay {
+            player.play()
+        }
+        
         return viewController
     }
     
     func updateUIViewController(_ viewController: AVPlayerViewController, context: Context) {
-        if !isVisible {
-            viewController.player?.pause()
-        } else if autoPlay {
-            viewController.player?.play()
-        }
     }
 }
 
 private class VideoPlayerViewController: AVPlayerViewController {
-    private var looper: AVPlayerLooper?
     private var timeControlStatusOberver: AnyCancellable?
     
-    init(sourceURL: URL, looping: Bool, removeAudio: Bool) {
+    init(player: AVPlayer) {
         super.init(nibName: nil, bundle: nil)
         
-        let playerItem = AVPlayerItem(url: sourceURL)
-        
-        if removeAudio {
-            let zeroMix = AVMutableAudioMix()
-            zeroMix.inputParameters = playerItem.asset.tracks(withMediaType: .audio).map { track in
-                let audioInputParams = AVMutableAudioMixInputParameters()
-                audioInputParams.setVolume(0, at: .zero)
-                audioInputParams.trackID = track.trackID
-                return audioInputParams
-            }
-
-            playerItem.audioMix = zeroMix
-        }
-        
-        if looping {
-            let player = AVQueuePlayer()
-            self.player = player
-            self.looper = AVPlayerLooper(player: player, templateItem: playerItem)
-        } else {
-            player = AVPlayer(playerItem: playerItem)
-        }
+        self.player = player
         
         setupBackgroundAudioSupport()
     }

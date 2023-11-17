@@ -56,38 +56,61 @@ struct CarouselView: View {
     }
     
     private var pages: [Page] {
-        let result = carousel.children.flatMap { node -> [Page] in
+        func generatePages(node: Node, item: Any? = nil) -> [Page] {
             switch node {
             case let collection as Collection:
-                let items = collection.items(
-                    data: data,
+                let collectionItems = collection.items(
+                    data: item,
                     urlParameters: urlParameters,
                     userInfo: userInfo
                 )
                 
-                return items.flatMap { item in
-                    collection.children.compactMap { child in
-                        guard let layer = child as? Layer else {
-                            return nil
-                        }
-                        
-                        return Page(layer: layer, item: item)
+                return collectionItems.flatMap { collectionItem in
+                    collection.children.flatMap { child -> [Page] in
+                        generatePages(node: child, item: collectionItem)
                     }
                 }
+                
+            case let conditional as Conditional:
+                if !conditional.allConditionsSatisfied(
+                    data: item,
+                    urlParameters: urlParameters,
+                    userInfo: userInfo
+                ) {
+                    return []
+                }
+                
+                return conditional.children.flatMap { child -> [Page] in
+                    generatePages(node: child, item: item)
+                }
+                
+            case let carousel as Carousel:
+                return carousel.children.flatMap { child -> [Page] in
+                    generatePages(node: child, item: item)
+                }
+                
             case let layer as Layer:
-                return [Page(layer: layer)]
+                return [Page(layer: layer, carouselState: carouselState, item: item)]
+                
             default:
                 return []
             }
         }
-        
-        return result
+
+        return generatePages(node: carousel, item: data)
     }
 }
 
-
 private struct Page: View, Hashable, Identifiable {
     var id: String
+
+    /// Injecting CarouselState through here in order to re-add it to Environment. This is to work around an apparent
+    /// bug in SwiftUI where, at certain lifecycle points, view body evaluations of the page's contents may occur without
+    /// the environment fully hooked up.
+    ///
+    /// That bug was causing a downstream crash in the page control.
+    var carouselState: CarouselState
+
     var layer: Layer
     var item: Any?
     
@@ -99,8 +122,9 @@ private struct Page: View, Hashable, Identifiable {
         hasher.combine(id)
     }
     
-    init(layer: Layer, item: Any? = nil) {
+    init(layer: Layer, carouselState: CarouselState, item: Any? = nil) {
         self.layer = layer
+        self.carouselState = carouselState
         self.item = item
         
         if let item = item,
@@ -113,9 +137,9 @@ private struct Page: View, Hashable, Identifiable {
     
     var body: some View {
         if let item = item {
-            LayerView(layer: layer).environment(\.data, item)
+            LayerView(layer: layer).environment(\.data, item).environmentObject(carouselState)
         } else {
-            LayerView(layer: layer)
+            LayerView(layer: layer).environmentObject(carouselState)
         }
     }
 }

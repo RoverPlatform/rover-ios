@@ -19,12 +19,19 @@ import RoverData
 
 class TelephonyManager {
     let telephonyNetworkInfo = CTTelephonyNetworkInfo()
+    let privacyService: PrivacyService
     
-    init() { }
+    init(privacyService: PrivacyService) {
+        self.privacyService = privacyService
+    }
 }
 
 extension TelephonyManager: TelephonyContextProvider {
     var carrierName: String? {
+        guard self.privacyService.trackingMode == .default else {
+            return nil
+        }
+        
         guard let carrierName = telephonyNetworkInfo.subscriberCellularProvider?.carrierName else {
             os_log("Failed to capture carrier name (this is expected behaviour if you are running a simulator)", log: .telephony, type: .debug)
             return nil
@@ -34,7 +41,11 @@ extension TelephonyManager: TelephonyContextProvider {
     }
     
     var radio: String? {
-        var radio = telephonyNetworkInfo.currentRadioAccessTechnology
+        guard self.privacyService.trackingMode == .default else {
+            return nil
+        }
+        
+        var radio = telephonyNetworkInfo.serviceCurrentRadioAccessTechnology?.values.first
         let prefix = "CTRadioAccessTechnology"
         if radio == nil {
             radio = "None"

@@ -34,4 +34,19 @@ public extension Rover {
             resolve(TokenManager.self)!
         }
     }
+    
+    var privacyService: PrivacyService {
+        get {
+            resolve(PrivacyService.self)!
+        }
+    }
+    
+    var trackingMode: PrivacyService.TrackingMode {
+        get {
+            privacyService.trackingMode
+        }
+        set {
+            privacyService.trackingMode = newValue
+        }
+    }
 }

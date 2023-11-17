@@ -18,8 +18,9 @@ import os.log
 import RoverFoundation
 import RoverData
 
-class SeatGeekManager: SeatGeekAuthorizer {
+class SeatGeekManager: SeatGeekAuthorizer, PrivacyListener {
     private let userInfoManager: UserInfoManager
+    private let privacyService: PrivacyService
     
     private var seatGeekID = PersistedValue<String>(storageKey: "io.rover.SeatGeek")
     
@@ -31,13 +32,18 @@ class SeatGeekManager: SeatGeekAuthorizer {
         return ["seatGeekID": seatGeekID]
     }
     
-    init(userInfoManager: UserInfoManager) {
+    init(userInfoManager: UserInfoManager, privacyService: PrivacyService) {
         self.userInfoManager = userInfoManager
+        self.privacyService = privacyService
     }
 
 // MARK: SeatGeekAuthorizer
     
     func setSeatGeekID(_ id: String) {
+        guard privacyService.trackingMode == .default else {
+            return
+        }
+        
         self.seatGeekID.value = id
         
         if let userInfo = seatGeekUserInfo {
@@ -59,6 +65,15 @@ class SeatGeekManager: SeatGeekAuthorizer {
         self.seatGeekID.value = nil
         self.userInfoManager.updateUserInfo { attributes in
             attributes.rawValue["seatGeek"] = nil
+        }
+    }
+    
+    // MARK: Privacy
+    
+    func trackingModeDidChange(_ trackingMode: PrivacyService.TrackingMode) {
+        if(trackingMode != .default) {
+            os_log("Tracking disabled, seatgeek data cleared", log: .seatgeek)
+            clearCredentials()
         }
     }
 }

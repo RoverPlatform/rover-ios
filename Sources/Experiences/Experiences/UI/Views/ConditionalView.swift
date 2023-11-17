@@ -13,14 +13,13 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
 import SwiftUI
-
 
 struct ConditionalView: View {
     @Environment(\.data) private var data
     @Environment(\.urlParameters) private var urlParameters
     @Environment(\.userInfo) private var userInfo
+    
     var conditional: Conditional
 
     var body: some View {
@@ -32,12 +31,10 @@ struct ConditionalView: View {
     }
     
     private var allConditionsSatisfied: Bool {
-        conditional.conditions.allSatisfy { condition in
-            condition.isSatisfied(
-                data: data,
-                urlParameters: urlParameters,
-                userInfo: userInfo
-            )
-        }
+        conditional.allConditionsSatisfied(
+            data: data,
+            urlParameters: urlParameters,
+            userInfo: userInfo
+        )
     }
 }

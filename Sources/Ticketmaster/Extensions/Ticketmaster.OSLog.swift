@@ -3,7 +3,7 @@
 // copy, modify, and distribute this software in source code or binary form for use
 // in connection with the web services and APIs provided by Rover.
 //
-// This copyright notice shall be included in all copies or substantial portions of 
+// This copyright notice shall be included in all copies or substantial portions of
 // the software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -13,17 +13,8 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import RoverFoundation
-import RoverData
+import os.log
 
-public class TelephonyAssembler: Assembler {
-    public init() { }
-    
-    public func assemble(container: Container) {
-        container.register(TelephonyContextProvider.self) { resolver in
-            TelephonyManager(
-                privacyService: resolver.resolve(PrivacyService.self)!
-            )
-        }
-    }
+extension OSLog {
+    internal static let ticketmaster = OSLog(subsystem: "io.rover", category: "Ticketmaster")
 }

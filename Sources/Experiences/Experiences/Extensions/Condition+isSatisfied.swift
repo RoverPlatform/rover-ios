@@ -178,3 +178,15 @@ extension Condition {
         }
     }
 }
+
+extension Conditional {
+    func allConditionsSatisfied(data: Any?, urlParameters: [String: String], userInfo: [String: Any]) -> Bool {
+        self.conditions.allSatisfy { condition in
+            condition.isSatisfied(
+                data: data,
+                urlParameters: urlParameters,
+                userInfo: userInfo
+            )
+        }
+    }
+}

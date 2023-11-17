@@ -37,16 +37,24 @@ public struct DataAssembler: Assembler {
     
     // swiftlint:disable:next function_body_length // Assemblers are fairly declarative.
     public func assemble(container: Container) {
+        // MARK: Privacy
+        
+        container.register(PrivacyService.self) { _ in
+            PrivacyService()
+        }
+        
         // MARK: ContextManager
         
-        container.register(ContextManager.self) { _ in
-            ContextManager()
+        container.register(ContextManager.self) { resolver in
+            let privacyService = resolver.resolve(PrivacyService.self)!
+            return ContextManager(privacyService: privacyService)
         }
         
         // MARK: ContextProvider
         
         container.register(ContextProvider.self) { resolver in
             ModularContextProvider(
+                privacyContextProvider: resolver.resolve(PrivacyService.self),
                 adSupportContextProvider: resolver.resolve(AdSupportContextProvider.self),
                 bluetoothContextProvider: resolver.resolve(BluetoothContextProvider.self),
                 darkModeContextProvider: resolver.resolve(DarkModeContextProvider.self),
@@ -213,5 +221,7 @@ public struct DataAssembler: Assembler {
         let conversionsManager = resolver.resolve(ConversionsManager.self)!
         // Migrate any conversion tags from previous versions of Rover
         conversionsManager.migrateTags()
+        
+        resolver.resolve(PrivacyService.self)?.refreshAllListeners()
     }
 }

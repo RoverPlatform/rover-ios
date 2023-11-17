@@ -27,7 +27,14 @@ public class SeatGeekAssembler: Assembler {
         
         container.register(SeatGeekManager.self) { resolver in
             let userInfoManager = resolver.resolve(UserInfoManager.self)!
-            return SeatGeekManager(userInfoManager: userInfoManager)
+            let privacyService = resolver.resolve(PrivacyService.self)!
+            return SeatGeekManager(userInfoManager: userInfoManager, privacyService: privacyService)
         }
+    }
+    
+    public func containerDidAssemble(resolver: Resolver) {
+        resolver.resolve(PrivacyService.self)?.registerTrackingEnabledListener(
+            resolver.resolve(SeatGeekManager.self)!
+        )
     }
 }

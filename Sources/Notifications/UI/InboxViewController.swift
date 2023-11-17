@@ -306,17 +306,6 @@ open class InboxViewController: UIViewController, UITableViewDataSource, UITable
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
-    // Swipe to delete in iOS 10
-    
-    open func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
-        return [UITableViewRowAction(style: .destructive, title: "Delete") { _, indexPath in
-            self.deleteNotification(at: indexPath)
-        }]
-    }
-    
-    // Swipe to delete in iOS 11
-    
-    @available(iOS 11.0, *)
     open func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         return UISwipeActionsConfiguration(actions: [
             UIContextualAction(style: .destructive, title: "Delete") { _, _, _ in

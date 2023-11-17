@@ -24,57 +24,94 @@ struct AudioView: View {
     @Environment(\.userInfo) private var userInfo
     
     let audio: RoverExperiences.Audio
-    @State private var isVisible = true
 
     var body: some View {
         if let urlString = audio.sourceURL.evaluatingExpressions(data: data, urlParameters: urlParameters, userInfo: userInfo), let sourceURL = URL(string: urlString) {
-            AudioPlayerView(
+            Player(
                 sourceURL: sourceURL,
                 looping: audio.looping,
-                autoPlay: audio.autoPlay,
-                isVisible: isVisible
+                autoPlay: audio.autoPlay
             )
-            .onDisappear { isVisible = false }
-            .onAppear { isVisible = true }
             .modifier(AudioPlayerFrameModifier())
+            // just in case URL changes.
+            .id(urlString)
         }
     }
 }
 
-private struct AudioPlayerView: UIViewControllerRepresentable {
+private struct Player: View {
     var sourceURL: URL
     var looping: Bool
     var autoPlay: Bool
-    var isVisible: Bool
+    
+    @State var player: AVPlayer? = nil
+    @State var looper: AVPlayerLooper? = nil
+    
+    var body: some View {
+        Group {
+            if let player = self.player {
+                AudioPlayerView(player: player, autoPlay: autoPlay)
+            } else {
+                // dummy view so onAppear below works.
+                SwiftUI.Rectangle().frame(width: 0, height: 0).hidden()
+            }
+        }.onAppear {
+            if (player == nil) {
+                setupPlayer()
+            } else {
+                // resume playback if it was set to autoplay
+                if autoPlay {
+                    player?.play()
+                }
+            }
+        }
+        .onDisappear {
+            player?.pause()
+        }
+    }
+    
+    func setupPlayer() {
+        if (looping) {
+            player = AVQueuePlayer()
+        } else {
+            player = AVPlayer()
+        }
+        
+        let playerItem = AVPlayerItem(url: sourceURL)
+        
+        if looping, let queuePlayer = player as? AVQueuePlayer {
+            self.looper = AVPlayerLooper(player: queuePlayer, templateItem: playerItem)
+        } else {
+            self.player?.replaceCurrentItem(with: playerItem)
+        }
+    }
+    
+}
+
+private struct AudioPlayerView: UIViewControllerRepresentable {
+    var player: AVPlayer
+    var autoPlay: Bool
     
     func makeUIViewController(context: Context) -> AVPlayerViewController {
-        AudioPlayerViewController(sourceURL: sourceURL, looping: looping)
+        let viewController = AudioPlayerViewController(player: player)
+        
+        if autoPlay {
+            player.play()
+        }
+        
+        return viewController
     }
     
     func updateUIViewController(_ viewController: AVPlayerViewController, context: Context) {
-        if !isVisible {
-            viewController.player?.pause()
-        } else if autoPlay {
-            viewController.player?.play()
-        }
+       
     }
 }
 
 private class AudioPlayerViewController: AVPlayerViewController {
-    private var looper: AVPlayerLooper?
-
-    init(sourceURL: URL, looping: Bool) {
+    init(player: AVPlayer) {
         super.init(nibName: nil, bundle: nil)
         
-        let playerItem = AVPlayerItem(url: sourceURL)
-        
-        if looping {
-            let player = AVQueuePlayer()
-            self.player = player
-            self.looper = AVPlayerLooper(player: player, templateItem: playerItem)
-        } else {
-            player = AVPlayer(playerItem: playerItem)
-        }
+        self.player = player
     }
     
     required init?(coder: NSCoder) {

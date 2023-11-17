@@ -18,8 +18,10 @@ import os.log
 import RoverFoundation
 import RoverData
 
-class TicketmasterManager {
+class TicketmasterManager: PrivacyListener {
     private let userInfoManager: UserInfoManager
+    private let privacyService: PrivacyService
+    
     private let eventQueue: EventQueue
     
     struct Member: Codable {
@@ -35,9 +37,10 @@ class TicketmasterManager {
     
     var member = PersistedValue<Member>(storageKey: "io.rover.RoverTicketmaster")
     
-    init(userInfoManager: UserInfoManager, eventQueue: EventQueue) {
+    init(userInfoManager: UserInfoManager, eventQueue: EventQueue, privacyService: PrivacyService) {
         self.userInfoManager = userInfoManager
         self.eventQueue = eventQueue
+        self.privacyService = privacyService
         
         // Begin observing for TM PSDK's events.
         TicketmasterManager.tmEvents.keys.forEach { notificationName in
@@ -52,6 +55,10 @@ class TicketmasterManager {
     
     @objc
     func receiveTicketmasterNotification(_ notification: Foundation.Notification) {
+        guard privacyService.trackingMode == .default else {
+            return
+        }
+        
         guard let roverScreenName = TicketmasterManager.tmEvents[notification.name.rawValue] else {
             os_log("TicketmasterManager received an unexpected NSNotification, ignoring.", log: .general, type: .error)
             return
@@ -133,6 +140,10 @@ class TicketmasterManager {
 
 extension TicketmasterManager: TicketmasterAuthorizer {
     func setTicketmasterID(_ id: String) {
+        guard self.privacyService.trackingMode == .default else {
+            return
+        }
+        
         let newMember = Member(id: id, email: nil, firstName: nil)
         self.member.value = newMember
         
@@ -153,6 +164,15 @@ extension TicketmasterManager: TicketmasterAuthorizer {
         self.member.value = nil
         self.userInfoManager.updateUserInfo { attributes in
             attributes.rawValue["ticketmaster"] = nil
+        }
+    }
+    
+    // MARK: Privacy
+    
+    func trackingModeDidChange(_ trackingMode: PrivacyService.TrackingMode) {
+        if(trackingMode != .default) {
+            os_log("Tracking disabled, Ticketmaster data cleared.", log: .ticketmaster)
+            clearCredentials()
         }
     }
 }

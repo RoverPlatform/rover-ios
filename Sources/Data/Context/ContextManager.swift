@@ -23,8 +23,11 @@ class ContextManager {
     let persistedDeviceName = PersistedValue<String>(storageKey: "io.rover.RoverData.deviceName")
     let persistedAppLastSeenTimestamp = PersistedValue<Date>(storageKey: "io.rover.RoverData.appLastSeenTimestamp")
     let reachability = Reachability(hostname: "google.com")!
+    let privacyService: PrivacyService
     
-    init() { }
+    init(privacyService: PrivacyService) {
+        self.privacyService = privacyService
+    }
 }
 
 // MARK: DarkModeContextProvider
@@ -121,14 +124,16 @@ extension ContextManager: StaticContextProvider {
         }
         
         let scanner = Scanner(string: embeddedProfile)
-        var string: NSString?
+
         
-        guard scanner.scanUpTo("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", into: nil), scanner.scanUpTo("</plist>", into: &string) else {
+    
+        guard scanner.scanUpToString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>") != nil,
+              let string = scanner.scanUpToString("</plist>") else {
             os_log("Unrecognized provisioning profile structure", log: .context, type: .error)
             return .production
         }
         
-        guard let data = string?.appending("</plist>").data(using: String.Encoding.utf8) else {
+        guard let data = string.appending("</plist>").data(using: String.Encoding.utf8) else {
             os_log("Failed to decode provisioning profile", log: .context, type: .error)
             return .production
         }
@@ -173,9 +178,7 @@ extension ContextManager: StaticContextProvider {
             }
         }
         
-        guard let modelName = String(validatingUTF8: modelCode) else {
-            fatalError("Invalid data")
-        }
+        let modelName = String(modelCode)
         
         guard let deviceModel = DeviceModel(modelName: modelName) else {
             os_log("Unknown model name: %@", log: .context, type: .error, modelName)

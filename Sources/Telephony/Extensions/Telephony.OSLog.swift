@@ -16,5 +16,5 @@
 import os.log
 
 extension OSLog {
-    public static let telephony = OSLog(subsystem: "io.rover", category: "Telephony")
+    internal static let telephony = OSLog(subsystem: "io.rover", category: "Telephony")
 }

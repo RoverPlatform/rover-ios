@@ -14,6 +14,7 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 class ModularContextProvider {
+    weak var privacyContextProvider: PrivacyContextProvider?
     weak var adSupportContextProvider: AdSupportContextProvider?
     weak var bluetoothContextProvider: BluetoothContextProvider?
     weak var darkModeContextProvider: DarkModeContextProvider?
@@ -31,6 +32,7 @@ class ModularContextProvider {
     weak var appLastSeenContextProvider: AppLastSeenContextProvider?
     
     init(
+        privacyContextProvider: PrivacyContextProvider?,
         adSupportContextProvider: AdSupportContextProvider?,
         bluetoothContextProvider: BluetoothContextProvider?,
         darkModeContextProvider: DarkModeContextProvider?,
@@ -47,6 +49,7 @@ class ModularContextProvider {
         conversionsContextProvider: ConversionsContextProvider?,
         appLastSeenContextProvider: AppLastSeenContextProvider?
     ) {
+        self.privacyContextProvider = privacyContextProvider
         self.adSupportContextProvider = adSupportContextProvider
         self.bluetoothContextProvider = bluetoothContextProvider
         self.darkModeContextProvider = darkModeContextProvider
@@ -68,6 +71,7 @@ class ModularContextProvider {
 extension ModularContextProvider: ContextProvider {
     var context: Context {
         return Context(
+            trackingMode: self.privacyContextProvider?.trackingModeString,
             advertisingIdentifier: self.adSupportContextProvider?.advertisingIdentifier,
             isDarkModeEnabled: self.darkModeContextProvider?.isDarkModeEnabled,
             isBluetoothEnabled: self.bluetoothContextProvider?.isBluetoothEnabled,

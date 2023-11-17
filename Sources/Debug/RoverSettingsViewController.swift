@@ -14,330 +14,141 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import UIKit
+import SwiftUI
 
 import RoverFoundation
 import RoverData
 
-open class RoverSettingsViewController: UIViewController {
+open class RoverSettingsViewController: UIHostingController<RoverSettingsView> {
     public let isTestDevice = PersistedValue<Bool>(storageKey: "io.rover.RoverDebug.isTestDevice")
     
-    public private(set) var navigationBar: UINavigationBar?
-    public private(set) var tableView = UITableView()
+    public let controller = RoverSDKController()
     
     override open var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
     
-    public init() {
-        super.init(nibName: nil, bundle: nil)
+    init() {
+        super.init(rootView: RoverSettingsView(controller: controller) { })
+        rootView = RoverSettingsView(controller: controller) { self.dismiss(animated: true) }
     }
     
-    @available(*, unavailable)
     public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    override open func viewDidLoad() {
-        super.viewDidLoad()
-        
-        title = "Rover Settings"
-        
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.backgroundColor = UIColor(red: 93 / 255, green: 93 / 255, blue: 93 / 255, alpha: 1.0)
-        tableView.tableFooterView = UIView()
-        tableView.separatorColor = UIColor(red: 129 / 255, green: 129 / 255, blue: 129 / 255, alpha: 1.0)
-        tableView.separatorInset = UIEdgeInsets(top: 0, left: 24, bottom: 0, right: 24)
-        tableView.dataSource = self
-        tableView.delegate = self
-        view.addSubview(tableView)
-    }
-    
-    override open func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        makeNavigationBar()
-        configureConstraints()
-    }
-    
-    // MARK: Layout
-    
-    open func makeNavigationBar() {
-        if let existingNavigationBar = self.navigationBar {
-            existingNavigationBar.removeFromSuperview()
-        }
-        
-        if navigationController != nil {
-            self.navigationBar = nil
-            return
-        }
-        
-        let navigationBar = UINavigationBar()
-        navigationBar.delegate = self
-        navigationBar.translatesAutoresizingMaskIntoConstraints = false
-        navigationBar.barTintColor = UIColor(red: 50 / 255, green: 50 / 255, blue: 50 / 255, alpha: 1.0)
-        navigationBar.tintColor = UIColor(red: 42 / 255, green: 197 / 255, blue: 214 / 255, alpha: 1.0)
-        UINavigationBar.appearance().titleTextAttributes = [
-            .foregroundColor: UIColor.white
-        ]
+}
 
-        let navigationItem = makeNavigationItem()
-        navigationBar.items = [navigationItem]
-        
-        view.addSubview(navigationBar)
-        self.navigationBar = navigationBar
-    }
+public struct RoverSettingsView: View {
+
+    @ObservedObject internal var controller: RoverSDKController
     
-    open func makeNavigationItem() -> UINavigationItem {
-        let navigationItem = UINavigationItem()
-        navigationItem.title = title
-        
-        if presentingViewController != nil {
-            navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(done(_:)))
-        }
-        
-        return navigationItem
-    }
+    public let dismiss: () -> Void
     
-    open func configureConstraints() {
-        NSLayoutConstraint.activate([
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-        ])
-        
-        if let navigationBar = navigationBar {
-            NSLayoutConstraint.activate([
-                navigationBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                navigationBar.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-            ])
-        }
-        
-        if #available(iOS 11, *) {
-            let layoutGuide = view.safeAreaLayoutGuide
-            tableView.bottomAnchor.constraint(equalTo: layoutGuide.bottomAnchor).isActive = true
-            
-            if let navigationBar = navigationBar {
-                NSLayoutConstraint.activate([
-                    navigationBar.topAnchor.constraint(equalTo: layoutGuide.topAnchor),
-                    tableView.topAnchor.constraint(equalTo: navigationBar.bottomAnchor)
-                ])
-            } else {
-                tableView.topAnchor.constraint(equalTo: layoutGuide.topAnchor).isActive = true
+    public var body: some View {
+        NavigationView {
+            List {
+                BooleanRow(label: "Test Device", value: controller.isTestDevice)
+                PrivacyModeView(value: controller.trackingMode)
+                StringRow(label: "Device Name", value: controller.deviceName)
+                StringRow(label: "Device Identifier", value: .constant(
+                    UIDevice.current.identifierForVendor?.uuidString ?? "Unknown Identifier"
+                ), readOnly: true)
             }
-        } else {
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-            
-            if let navigationBar = navigationBar {
-                NSLayoutConstraint.activate([
-                    navigationBar.topAnchor.constraint(equalTo: topLayoutGuide.bottomAnchor),
-                    tableView.topAnchor.constraint(equalTo: navigationBar.bottomAnchor)
-                ])
-            } else {
-                tableView.topAnchor.constraint(equalTo: topLayoutGuide.bottomAnchor).isActive = true
+            .listStyle(GroupedListStyle())
+            .navigationBarTitle("Rover Settings")
+            .navigationBarItems(trailing: Button {
+                dismiss()
+            } label: {
+                Image(systemName: "xmark")
+            })
+        }
+    }
+    
+    
+}
+
+public class RoverSDKController: ObservableObject {
+    internal var deviceName: Binding<String> {
+        Binding {
+            Rover.shared.resolve(StaticContextProvider.self)?.deviceName ?? UIDevice.current.name
+        } set: { newValue in
+            self.objectWillChange.send()
+            Rover.shared.resolve(DeviceNameManager.self)?.setDeviceName(newValue)
+        }
+    }
+    
+    internal var isTestDevice: Binding<Bool> {
+        Binding {
+            self.isTestDeviceField.value ?? false
+        } set: { newValue in
+            self.objectWillChange.send()
+            self.isTestDeviceField.value = newValue
+        }
+    }
+    
+    internal var trackingMode: Binding<PrivacyService.TrackingMode> {
+        Binding {
+            Rover.shared.trackingMode
+        } set: { value in
+            self.objectWillChange.send()
+            Rover.shared.trackingMode = value
+        }
+    }
+    
+    internal let isTestDeviceField = PersistedValue<Bool>(storageKey: "io.rover.RoverDebug.isTestDevice")
+}
+
+private struct PrivacyModeView: View {
+    @Binding var value: PrivacyService.TrackingMode
+    
+
+    
+    var body: some View {
+        Picker("Tracking Mode", selection: $value) {
+            Text("Default").tag(PrivacyService.TrackingMode.default)
+            Text("Anonymous").tag(PrivacyService.TrackingMode.anonymous)
+        }
+    }
+}
+
+struct BooleanRow: View {
+    var label: String
+    @Binding var value: Bool
+    
+    var body: some View {
+        HStack {
+            Text(label)
+                .font(.system(size: 19))
+            Spacer()
+            Toggle("", isOn: $value)
+                .labelsHidden()
+                .toggleStyle(SwitchToggleStyle())
+        }
+    }
+}
+
+struct StringRow: View {
+    var label: String
+    @Binding var value: String
+    var readOnly: Bool = false
+    
+    var body: some View {
+        VStack(alignment: .leading) {
+            Text(label)
+                .font(.system(size: 15))
+            HStack {
+                TextField("", text: $value)
+                    .font(.system(size: 19))
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .disabled(readOnly)
+                if readOnly {
+                    Button {
+                        UIPasteboard.general.string = value
+                    } label: {
+                        Image(systemName: "doc.on.doc")
+                    }
+                }
             }
         }
-    }
-    
-    // MARK: Actions
-    
-    @objc
-    func done(_ sender: Any) {
-        dismiss(animated: true, completion: nil)
-    }
-}
-
-// MARK: UITableViewDataSource
-
-extension RoverSettingsViewController: UITableViewDataSource {
-    public func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
-    }
-    
-    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 3
-    }
-    
-    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch indexPath.row {
-        case 0:
-            let cell = TestDeviceCell()
-            cell.toggle.isOn = isTestDevice.value ?? false
-            cell.toggle.addTarget(self, action: #selector(toggleTestDevice(_:)), for: .valueChanged)
-            return cell
-        case 1:
-            let cell = LabelAndValueCell()
-            cell.label.text = "Device Name"
-            cell.value.text = Rover.shared.resolve(StaticContextProvider.self)?.deviceName
-            cell.value.delegate = self
-            return cell
-        case 2:
-            let cell = LabelAndValueCell()
-            cell.label.text = "Device Identifier"
-            cell.value.text = UIDevice.current.identifierForVendor?.uuidString
-            return cell
-        default:
-            fatalError("Non-existent column asked for in SettingsViewController.")
-        }
-    }
-    
-    @objc
-    func toggleTestDevice(_ sender: Any) {
-        guard let toggle = sender as? UISwitch else {
-            return
-        }
-        
-        isTestDevice.value = toggle.isOn
-    }
-    
-    class TestDeviceCell: UITableViewCell {
-        let label = UILabel()
-        let toggle = UISwitch()
-        
-        override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-            super.init(style: style, reuseIdentifier: reuseIdentifier)
-            self.configure()
-        }
-        
-        @available(*, unavailable)
-        required init?(coder aDecoder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
-        
-        func configure() {
-            backgroundColor = UIColor(red: 93 / 255, green: 93 / 255, blue: 93 / 255, alpha: 1.0)
-            selectionStyle = .none
-            
-            label.translatesAutoresizingMaskIntoConstraints = false
-            label.font = UIFont.systemFont(ofSize: 19)
-            label.textColor = UIColor(red: 216 / 255, green: 216 / 255, blue: 216 / 255, alpha: 1.0)
-            label.text = "Test Device"
-            contentView.addSubview(label)
-            
-            toggle.translatesAutoresizingMaskIntoConstraints = false
-            toggle.onTintColor = UIColor(red: 42 / 255, green: 197 / 255, blue: 214 / 255, alpha: 1.0)
-            contentView.addSubview(toggle)
-            
-            NSLayoutConstraint.activate([
-                label.heightAnchor.constraint(equalToConstant: 24.0),
-                label.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 24.0),
-                label.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 24.0),
-                label.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -24.0)
-            ])
-            
-            let bottomConstraint = label.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -24.0)
-            bottomConstraint.priority = UILayoutPriority.defaultLow
-            bottomConstraint.isActive = true
-            
-            toggle.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -24.0).isActive = true
-            toggle.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
-        }
-    }
-    
-    class LabelAndValueCell: UITableViewCell {
-        let label = UILabel()
-        let value = UITextField()
-        
-        override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-            super.init(style: style, reuseIdentifier: reuseIdentifier)
-            self.configure()
-        }
-        
-        func configure() {
-            backgroundColor = UIColor(red: 93 / 255, green: 93 / 255, blue: 93 / 255, alpha: 1.0)
-            selectionStyle = .none
-            
-            label.translatesAutoresizingMaskIntoConstraints = false
-            label.font = UIFont.systemFont(ofSize: 15)
-            label.textColor = UIColor(red: 216 / 255, green: 216 / 255, blue: 216 / 255, alpha: 1.0)
-            contentView.addSubview(label)
-            
-            value.translatesAutoresizingMaskIntoConstraints = false
-            value.font = UIFont.systemFont(ofSize: 19)
-            value.textColor = UIColor.white
-            contentView.addSubview(value)
-            
-            NSLayoutConstraint.activate([
-                label.heightAnchor.constraint(equalToConstant: 24.0),
-                label.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 24.0),
-                label.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 24.0),
-                label.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -24.0)
-            ])
-            
-            NSLayoutConstraint.activate([
-                value.heightAnchor.constraint(equalToConstant: 24.0),
-                value.topAnchor.constraint(equalTo: label.bottomAnchor),
-                value.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 24.0),
-                value.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -24.0)
-            ])
-            
-            let bottomConstraint = value.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -23.0)
-            bottomConstraint.priority = UILayoutPriority.defaultLow
-            bottomConstraint.isActive = true
-        }
-        
-        @available(*, unavailable)
-        required init?(coder aDecoder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
-    }
-}
-
-// MARK: UITableViewDelegate
-
-extension RoverSettingsViewController: UITableViewDelegate {
-    public func tableView(_ tableView: UITableView, shouldShowMenuForRowAt indexPath: IndexPath) -> Bool {
-        return indexPath.row == 2
-    }
-    
-    public func tableView(_ tableView: UITableView, canPerformAction action: Selector, forRowAt indexPath: IndexPath, withSender sender: Any?) -> Bool {
-        switch action {
-        case #selector(copy(_:)):
-            return true
-        default:
-            return false
-        }
-    }
-    
-    public func tableView(_ tableView: UITableView, performAction action: Selector, forRowAt indexPath: IndexPath, withSender sender: Any?) {
-        guard let cell = tableView.cellForRow(at: indexPath) as? LabelAndValueCell else {
-            return
-        }
-        
-        UIPasteboard.general.string = cell.value.text
-    }
-    
-    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if let cell = tableView.cellForRow(at: indexPath) as? TestDeviceCell {
-            cell.toggle.setOn(!cell.toggle.isOn, animated: true)
-        }
-        
-        tableView.deselectRow(at: indexPath, animated: false)
-    }
-}
-
-// MARK: UINavigationBarDelegate
-
-extension RoverSettingsViewController: UINavigationBarDelegate {
-    public func position(for bar: UIBarPositioning) -> UIBarPosition {
-        return .topAttached
-    }
-}
-
-// MARK: UITextFieldDelegate
-
-extension RoverSettingsViewController: UITextFieldDelegate {
-    public func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
-        return true
-    }
-    
-    public func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
-        return true
-    }
-    
-    public func textFieldDidEndEditing(_ textField: UITextField) {
-        Rover.shared.resolve(DeviceNameManager.self)?.setDeviceName(textField.text ?? UIDevice.current.name)
-    }
-    
-    public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
-        return true
     }
 }

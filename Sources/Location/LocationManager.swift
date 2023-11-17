@@ -26,6 +26,7 @@ class LocationManager {
     let context: NSManagedObjectContext
     let eventQueue: EventQueue
     let geocoder = CLGeocoder()
+    let privacyService: PrivacyService
     
     var location: Context.Location?
     
@@ -48,10 +49,12 @@ class LocationManager {
     
     init(
         context: NSManagedObjectContext,
+        privacyService: PrivacyService,
         eventQueue: EventQueue,
         maxGeofenceRegionsToMonitor: Int,
         maxBeaconRegionsToMonitor: Int
     ) {
+        self.privacyService = privacyService
         self.maxGeofenceRegionsToMonitor = maxGeofenceRegionsToMonitor
         self.maxBeaconRegionsToMonitor = maxBeaconRegionsToMonitor
         let theoreticalMaximumGeofences = 20
@@ -70,6 +73,10 @@ class LocationManager {
 
 extension LocationManager: LocationContextProvider {
     var locationAuthorization: String {
+        guard privacyService.trackingMode  == .default else {
+            return "denied"
+        }
+        
         let authorizationStatus: String
         switch CLLocationManager.authorizationStatus() {
         case .authorizedAlways:
@@ -90,6 +97,10 @@ extension LocationManager: LocationContextProvider {
     }
     
     var isLocationServicesEnabled: Bool {
+        guard privacyService.trackingMode == .default else {
+            return false
+        }
+        
         return CLLocationManager.locationServicesEnabled()
     }
 }
@@ -98,6 +109,11 @@ extension LocationManager: LocationContextProvider {
 
 extension LocationManager: RegionManager {
     func updateLocation(manager: CLLocationManager) {
+        guard privacyService.trackingMode == .default else {
+            self.updateMonitoredRegions(manager: manager)
+            return
+        }
+        
         if manager.location?.coordinate.latitude == lastReportedLocation?.coordinate.latitude,
             manager.location?.coordinate.longitude == lastReportedLocation?.coordinate.longitude,
             manager.location?.altitude == lastReportedLocation?.altitude,
@@ -122,6 +138,10 @@ extension LocationManager: RegionManager {
         if self.geocoder.isGeocoding {
             os_log("Cancelling in-progress geocode", log: .location, type: .debug)
             self.geocoder.cancelGeocode()
+        }
+        
+        guard privacyService.trackingMode == .default else {
+           return
         }
         
         os_log("Geocoding location...", log: .location, type: .debug)
@@ -161,7 +181,7 @@ extension LocationManager: RegionManager {
         
         let regionsToMonitorFor = beaconRegions.union(circularRegions)
         
-        // identify all existing regions that are managed by the Rover SDK
+        // identify all existing regions that are managed by the Rover SDK, and remove them:
         let regionsToReplace = manager.monitoredRegions.filter { monitoredRegion in
             monitoredRegion.identifier.starts(with: "Rover") ||
             regionsToMonitorFor.contains { newRegion in newRegion.reportsSame(region: monitoredRegion )
@@ -171,14 +191,22 @@ extension LocationManager: RegionManager {
         for region in regionsToReplace {
             manager.stopMonitoring(for: region)
         }
+        
+        guard privacyService.trackingMode == .default else {
+           return
+        }
 
         for region in regionsToMonitorFor {
             let taggedRegion = region.tagIdentifier(tag: "Rover")
             manager.startMonitoring(for: taggedRegion)
         }
     }
-    
+        
     func enterGeofence(region: CLCircularRegion) {
+        guard privacyService.trackingMode == .default else {
+            return
+        }
+        
         guard let geofence = Geofence.fetch(
             regionIdentifier: region.untaggedIdentifier(tag: "Rover"),
             in: self.context
@@ -194,6 +222,10 @@ extension LocationManager: RegionManager {
     }
     
     func exitGeofence(region: CLCircularRegion) {
+        guard privacyService.trackingMode == .default else {
+            return
+        }
+        
         guard let geofence = Geofence.fetch(
             regionIdentifier: region.untaggedIdentifier(tag: "Rover"),
             in: self.context
@@ -209,11 +241,19 @@ extension LocationManager: RegionManager {
     }
     
     func startRangingBeacons(in region: CLBeaconRegion, manager: CLLocationManager) {
+        guard privacyService.trackingMode == .default else {
+            return
+        }
+        
         os_log("Started ranging beacons in region: %@", log: .location, type: .debug, region)
         manager.startRangingBeacons(satisfying: region.beaconIdentityConstraint)
     }
     
     func stopRangingBeacons(in region: CLBeaconRegion, manager: CLLocationManager) {
+        guard privacyService.trackingMode == .default else {
+            return
+        }
+        
         os_log("Stopped ranging beacons in region: %@", log: .location, type: .debug, region)
         manager.stopRangingBeacons(satisfying: region.beaconIdentityConstraint)
         
@@ -229,6 +269,10 @@ extension LocationManager: RegionManager {
     }
     
     func updateNearbyBeacons(_ beacons: [CLBeacon], in region: CLBeaconRegion, manager: CLLocationManager) {
+        guard privacyService.trackingMode == .default else {
+            return
+        }
+        
         os_log("Found %d nearby beacons in region: %@", log: .location, type: .debug, beacons.count, region)
         
         let previousBeacons = self.beaconMap[region] ?? Set<Beacon>()
@@ -255,5 +299,17 @@ extension LocationManager: RegionManager {
         }
         
         beaconObservers.notify(parameters: self.currentBeacons)
+    }
+}
+
+// MARK: PrivacyListener
+
+extension LocationManager: PrivacyListener {
+    func trackingModeDidChange(_ trackingMode: PrivacyService.TrackingMode) {
+        if trackingMode != .default {
+            // Geofences and beacons cannot be cleared immediately, but will be on the next updateLocation() call.
+            os_log("Tracking disabled, location cleared.")
+            self.location = nil
+        }
     }
 }

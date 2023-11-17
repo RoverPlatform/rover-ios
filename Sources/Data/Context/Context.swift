@@ -17,6 +17,9 @@ import Foundation
 import RoverFoundation
 
 public struct Context: Codable, Equatable {
+    // MARK: Privacy
+    public var trackingMode: String?
+    
     // MARK: AdSupport
     
     public var advertisingIdentifier: String?
@@ -185,6 +188,7 @@ public struct Context: Codable, Equatable {
     public var lastSeen: Date?
     
     public init(
+        trackingMode: String?,
         advertisingIdentifier: String?,
         isDarkModeEnabled: Bool?,
         isBluetoothEnabled: Bool?,
@@ -220,6 +224,7 @@ public struct Context: Codable, Equatable {
         conversions: [String]?,
         lastSeen: Date?
     ) {
+        self.trackingMode = trackingMode
         self.advertisingIdentifier = advertisingIdentifier
         self.isDarkModeEnabled = isDarkModeEnabled
         self.isBluetoothEnabled = isBluetoothEnabled

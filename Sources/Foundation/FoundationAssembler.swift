@@ -21,4 +21,7 @@ public struct FoundationAssembler: Assembler {
             DispatcherService()
         }
     }
+    
+    public func containerDidAssemble(resolver: Resolver) {
+    }
 }

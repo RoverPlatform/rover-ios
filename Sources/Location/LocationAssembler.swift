@@ -86,6 +86,7 @@ public class LocationAssembler: Assembler {
         container.register(LocationManager.self) { resolver in
             LocationManager(
                 context: resolver.resolve(NSManagedObjectContext.self, name: "location.viewContext")!,
+                privacyService: resolver.resolve(PrivacyService.self)!,
                 eventQueue: resolver.resolve(EventQueue.self)!,
                 maxGeofenceRegionsToMonitor: self.maxGeofenceRegionsToMonitor,
                 maxBeaconRegionsToMonitor: self.maxBeaconRegionsToMonitor
@@ -116,5 +117,9 @@ public class LocationAssembler: Assembler {
             resolver.resolve(SyncParticipant.self, name: "location.beacons")!,
             resolver.resolve(SyncParticipant.self, name: "location.geofences")!
         ])
+        
+        resolver.resolve(PrivacyService.self)!.registerTrackingEnabledListener(
+            resolver.resolve(LocationManager.self)!
+        )
     }
 }

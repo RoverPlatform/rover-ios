@@ -15,6 +15,7 @@
 
 
 import SwiftUI
+import Combine
 import os.log
 
 internal struct ExperienceViewControllerHolder {
@@ -97,6 +98,14 @@ internal struct AuthorizeKey: EnvironmentKey {
 
 internal struct CollectionIndexKey: EnvironmentKey {
     static var defaultValue = 0
+}
+
+internal struct PageDidDisappearKey: EnvironmentKey {
+    static var defaultValue: AnyPublisher<Void, Never> = PassthroughSubject<Void, Never>().eraseToAnyPublisher()
+}
+
+internal struct PageDidAppearKey: EnvironmentKey {
+    static var defaultValue: AnyPublisher<Void, Never> = PassthroughSubject<Void, Never>().eraseToAnyPublisher()
 }
 
 
@@ -218,6 +227,26 @@ internal extension EnvironmentValues {
         
         set {
             self[CollectionIndexKey.self] = newValue
+        }
+    }
+    
+    var pageDidDisappear: AnyPublisher<Void, Never> {
+        get {
+            return self[PageDidDisappearKey.self]
+        }
+        
+        set {
+            self[PageDidDisappearKey.self] = newValue
+        }
+    }
+    
+    var pageDidAppear: AnyPublisher<Void, Never> {
+        get {
+            return self[PageDidAppearKey.self]
+        }
+        
+        set {
+            self[PageDidAppearKey.self] = newValue
         }
     }
 }

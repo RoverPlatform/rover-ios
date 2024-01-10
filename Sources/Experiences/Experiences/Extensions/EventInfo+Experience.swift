@@ -23,7 +23,8 @@ extension EventInfo {
     ) -> EventInfo {
         let experienceAttributes = ["id": experience.id,
                                     "name": experience.name ?? "Name",
-                                    "campaignID": campaignID]
+                                    "campaignID": campaignID,
+                                    "url": experience.sourceUrl?.absoluteString]
             .compactMapValues { $0 }
         
         return EventInfo(
@@ -45,7 +46,8 @@ extension EventInfo {
     ) -> EventInfo {
         let experienceAttributes = ["id": experience.id,
                                     "name": experience.name,
-                                    "campaignID": campaignID]
+                                    "campaignID": campaignID,
+                                    "url": experience.sourceUrl?.absoluteString]
             .compactMapValues { $0 }
         
         let screenAttributes = ["id": screen.id,

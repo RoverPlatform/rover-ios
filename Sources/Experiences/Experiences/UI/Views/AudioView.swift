@@ -47,6 +47,9 @@ private struct Player: View {
     @State var player: AVPlayer? = nil
     @State var looper: AVPlayerLooper? = nil
     
+    @Environment(\.pageDidDisappear) var pageDidDisappear
+    @Environment(\.pageDidAppear) var pageDidAppear
+    
     var body: some View {
         Group {
             if let player = self.player {
@@ -68,6 +71,16 @@ private struct Player: View {
         .onDisappear {
             player?.pause()
         }
+        // the following two publisher listeners listen for messages sent down by CarouselView, to ensure that playback is paused/resumed correctly when paging between media in a carousel.
+        .onReceive(pageDidDisappear, perform: { _ in
+            player?.pause()
+        })
+        .onReceive(pageDidAppear, perform: { _ in
+            // carousel page is (re-) appearing, (re)start playback.
+            if autoPlay {
+                player?.play()
+            }
+        })
     }
     
     func setupPlayer() {

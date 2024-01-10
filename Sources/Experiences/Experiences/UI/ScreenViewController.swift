@@ -24,10 +24,7 @@ class ScreenViewController: UIViewController, UIScrollViewDelegate {
     let urlParameters: [String: String]
     let userInfo: [String: Any]
     let authorize: (inout URLRequest) -> Void
-
-    // This is a work around for holding onto the CarouselState
-    // which requires iOS 13 when the SDK supports a minimum of iOS 11
-    private var carouselState: AnyObject?
+    let carouselState: CarouselState
 
     init(experience: ExperienceModel, screen: Screen, data: Any? = nil, urlParameters: [String: String], userInfo: [String: Any], authorize: @escaping (inout URLRequest) -> Void) {
         self.experience = experience
@@ -36,12 +33,9 @@ class ScreenViewController: UIViewController, UIScrollViewDelegate {
         self.urlParameters = urlParameters
         self.userInfo = userInfo
         self.authorize = authorize
+        self.carouselState = CarouselState()
         super.init(nibName: nil, bundle: nil)
         super.restorationIdentifier = screen.id
-
-        if #available(iOS 13, *) {
-            carouselState = CarouselState()
-        }
     }
 
     required init?(coder: NSCoder) {
@@ -49,21 +43,17 @@ class ScreenViewController: UIViewController, UIScrollViewDelegate {
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        if #available(iOS 13, *) {
-            switch screen.statusBarStyle {
-            case .default:
-                return .default
-            case .light:
-                return .lightContent
-            case .dark:
-                return .darkContent
-            case .inverted:
-                return traitCollection.userInterfaceStyle == .dark
-                ? .darkContent
-                : .lightContent
-            }
-        } else {
+        switch screen.statusBarStyle {
+        case .default:
             return .default
+        case .light:
+            return .lightContent
+        case .dark:
+            return .darkContent
+        case .inverted:
+            return traitCollection.userInterfaceStyle == .dark
+            ? .darkContent
+            : .lightContent
         }
     }
 
@@ -89,20 +79,16 @@ class ScreenViewController: UIViewController, UIScrollViewDelegate {
         }
 
         // Background Color
-        if #available(iOS 13, *) {
-            view.backgroundColor = screen.backgroundColor.uikitUIColor(
-                colorScheme: traitCollection.colorScheme,
-                colorSchemeContrast: traitCollection.colorSchemeContrast
-            )
-        }
+        view.backgroundColor = screen.backgroundColor.uikitUIColor(
+            colorScheme: traitCollection.colorScheme,
+            colorSchemeContrast: traitCollection.colorSchemeContrast
+        )
 
         showOrHideNavBarIfNeeded()
 
-        if #available(iOS 13, *) {
-            self.configureNavBar()
-            NotificationCenter.default.addObserver(self, selector: #selector(self.configureNavBar), name: ExperienceManager.didRegisterCustomFontNotification, object: nil)
-            addChildren()
-        }
+        self.configureNavBar()
+        NotificationCenter.default.addObserver(self, selector: #selector(self.configureNavBar), name: ExperienceManager.didRegisterCustomFontNotification, object: nil)
+        addChildren()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -110,13 +96,11 @@ class ScreenViewController: UIViewController, UIScrollViewDelegate {
 
         showOrHideNavBarIfNeeded()
 
-        if #available(iOS 13, *) {
-            if let navBar = navBar {
-                navigationController?.navigationBar.adjustTintColor(
-                    navBar: navBar,
-                    traits: traitCollection
-                )
-            }
+        if let navBar = navBar {
+            navigationController?.navigationBar.adjustTintColor(
+                navBar: navBar,
+                traits: traitCollection
+            )
         }
     }
 
@@ -135,8 +119,6 @@ class ScreenViewController: UIViewController, UIScrollViewDelegate {
         )
     }
 
-
-    @available(iOS 13, *)
     @objc private func configureNavBar() {
         if let navBar = navBar {
             navigationItem.configure(
@@ -193,23 +175,21 @@ class ScreenViewController: UIViewController, UIScrollViewDelegate {
             return
         }
 
-        if #available(iOS 13, *) {
-            switch navBarButton.style {
-            case .close, .done:
-                dismiss(animated: true)
-            case .custom:
-                navBarButton.action?.handle(
-                    experience: self.experience,
-                    node: navBarButton,
-                    screen: screen,
-                    data: data,
-                    urlParameters: urlParameters,
-                    userInfo: userInfo,
-                    authorize: authorize,
-                    experienceViewController: experienceViewController,
-                    screenViewController: self
-                )
-            }
+        switch navBarButton.style {
+        case .close, .done:
+            dismiss(animated: true)
+        case .custom:
+            navBarButton.action?.handle(
+                experience: self.experience,
+                node: navBarButton,
+                screen: screen,
+                data: data,
+                urlParameters: urlParameters,
+                userInfo: userInfo,
+                authorize: authorize,
+                experienceViewController: experienceViewController,
+                screenViewController: self
+            )
         }
     }
 
@@ -218,7 +198,6 @@ class ScreenViewController: UIViewController, UIScrollViewDelegate {
             return
         }
 
-        if #available(iOS 13, *) {
         let isScrolling = scrollView.contentOffset.y + scrollView.adjustedContentInset.top > 0
             navigationItem.configureInlineAppearance(
                 navBar: navBar,
@@ -232,19 +211,16 @@ class ScreenViewController: UIViewController, UIScrollViewDelegate {
                 traits: traitCollection,
                 isScrolling: isScrolling
             )
-        }
     }
 
     // MARK: - Children
 
-    @available(iOS 13, *)
     private func addChildren() {
         screen.children.compactMap { $0 as? Layer }.reversed().forEach { [unowned self] layer in
             addLayer(layer)
         }
     }
 
-    @available(iOS 13, *)
     private func addLayer(_ layer: Layer) {
         let rootView = viewForLayer(layer).environment(\.data, data)
 
@@ -290,7 +266,6 @@ class ScreenViewController: UIViewController, UIScrollViewDelegate {
         hostingController.didMove(toParent: self)
     }
 
-    @available(iOS 13, *)
     @ViewBuilder
     private func viewForLayer(_ layer: Layer) -> some View {
         if isRootScrollContainer(layer) {
@@ -303,11 +278,11 @@ class ScreenViewController: UIViewController, UIScrollViewDelegate {
         }
     }
 
-    @available(iOS 13, *)
+
     private func _viewForLayer(_ layer: Layer) -> some View {
         SwiftUI.ZStack {
             LayerView(layer: layer)
-                .environmentObject(carouselState as! CarouselState)
+                .environmentObject(carouselState)
                 .environment(\.presentAction, { [weak self] viewController in
                     self?.present(viewController, animated: true)
                 })

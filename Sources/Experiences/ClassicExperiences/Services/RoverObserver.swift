@@ -142,18 +142,11 @@ public class RoverObserver {
                 return
         }
         
-        let attributes: Attributes = [
-            "experience": [
-                "id": experience.id,
-                "name": experience.name,
-                "keys": experience.keys,
-                "tags": experience.tags
-            ]
-        ]
+        let campaignID = userInfo[RenderClassicExperienceViewController.campaignIDUserInfoKey] as? String
         
-        if let campaignID = userInfo[RenderClassicExperienceViewController.campaignIDUserInfoKey] as? String {
-            (attributes["experience"] as? Attributes)?["campaignID"] = campaignID
-        }
+        let attributes: Attributes = [
+            "experience": experienceAttributes(experience, campaignID: campaignID)
+        ]
         
         let eventInfo = EventInfo(
             name: "Classic Experience Presented",
@@ -170,18 +163,12 @@ public class RoverObserver {
                 return
         }
         
+        let campaignID = userInfo[RenderClassicExperienceViewController.campaignIDUserInfoKey] as? String
+        
         let attributes: Attributes = [
-            "experience": [
-                "id": experience.id,
-                "name": experience.name,
-                "keys": experience.keys,
-                "tags": experience.tags
-            ]
+            "experience": experienceAttributes(experience, campaignID: campaignID)
         ]
         
-        if let campaignID = userInfo[RenderClassicExperienceViewController.campaignIDUserInfoKey] as? String {
-            (attributes["experience"] as? Attributes)?["campaignID"] = campaignID
-        }
         
         let eventInfo = EventInfo(
             name: "Classic Experience Dismissed",
@@ -199,19 +186,12 @@ public class RoverObserver {
                 return
         }
         
+        let campaignID = userInfo[RenderClassicExperienceViewController.campaignIDUserInfoKey] as? String
+        
         let attributes: Attributes = [
-            "experience": [
-                "id": experience.id,
-                "name": experience.name,
-                "keys": experience.keys,
-                "tags": experience.tags
-            ],
+            "experience": experienceAttributes(experience, campaignID: campaignID),
             "duration": duration
         ]
-        
-        if let campaignID = userInfo[RenderClassicExperienceViewController.campaignIDUserInfoKey] as? String {
-            (attributes["experience"] as? Attributes)?["campaignID"] = campaignID
-        }
         
         let eventInfo = EventInfo(
             name: "Classic Experience Viewed",
@@ -231,23 +211,9 @@ public class RoverObserver {
                 
         let campaignID = userInfo[ClassicScreenViewController.campaignIDUserInfoKey] as? String
         
-        var experienceAttributes: [String : Any] = ["id": experience.id,
-                                                    "name": experience.name,
-                                                    "keys": experience.keys,
-                                                    "tags": experience.tags]
-        
-        if campaignID != nil {
-            experienceAttributes["campaignID"] = campaignID
-        }
-        
         let attributes: Attributes = [
-            "experience": experienceAttributes,
-            "screen": [
-                "id": screen.id,
-                "name": screen.name,
-                "keys": screen.keys,
-                "tags": screen.tags
-            ]
+            "experience": experienceAttributes(experience, campaignID: campaignID),
+            "screen": screenAttributes(screen)
         ]
         
         let eventInfo = EventInfo(
@@ -284,24 +250,12 @@ public class RoverObserver {
                 return
         }
         
-        let attributes: Attributes = [
-            "experience": [
-                "id": experience.id,
-                "name": experience.name,
-                "keys": experience.keys,
-                "tags": experience.tags
-            ],
-            "screen": [
-                "id": screen.id,
-                "name": screen.name,
-                "keys": screen.keys,
-                "tags": screen.tags
-            ]
-        ]
+        let campaignID = userInfo[ClassicScreenViewController.campaignIDUserInfoKey] as? String
         
-        if let campaignID = userInfo[ClassicScreenViewController.campaignIDUserInfoKey] as? String {
-            (attributes["experience"] as? Attributes)?["campaignID"] = campaignID
-        }
+        let attributes: Attributes = [
+            "experience": experienceAttributes(experience, campaignID: campaignID),
+            "screen": screenAttributes(screen)
+        ]
         
         let eventInfo = EventInfo(
             name: "Classic Screen Dismissed",
@@ -320,25 +274,13 @@ public class RoverObserver {
                 return
         }
         
+        let campaignID = userInfo[ClassicScreenViewController.campaignIDUserInfoKey] as? String
+        
         let attributes: Attributes = [
-            "experience": [
-                "id": experience.id,
-                "name": experience.name,
-                "keys": experience.keys,
-                "tags": experience.tags
-            ],
-            "screen": [
-                "id": screen.id,
-                "name": screen.name,
-                "keys": screen.keys,
-                "tags": screen.tags
-            ],
+            "experience": experienceAttributes(experience, campaignID: campaignID),
+            "screen": screenAttributes(screen),
             "duration": duration
         ]
-        
-        if let campaignID = userInfo[ClassicScreenViewController.campaignIDUserInfoKey] as? String {
-            (attributes["experience"] as? Attributes)?["campaignID"] = campaignID
-        }
         
         let eventInfo = EventInfo(
             name: "Classic Screen Viewed",
@@ -357,19 +299,11 @@ public class RoverObserver {
                 return
         }
         
+        let campaignID = userInfo[ClassicScreenViewController.campaignIDUserInfoKey] as? String
+        
         let attributes: Attributes = [
-            "experience": [
-                "id": experience.id,
-                "name": experience.name,
-                "keys": experience.keys,
-                "tags": experience.tags
-            ],
-            "screen": [
-                "id": screen.id,
-                "name": screen.name,
-                "keys": screen.keys,
-                "tags": screen.tags
-            ],
+            "experience": experienceAttributes(experience, campaignID: campaignID),
+            "screen": screenAttributes(screen),
             "block": [
                 "id": block.id,
                 "name": block.name,
@@ -377,10 +311,6 @@ public class RoverObserver {
                 "tags": block.tags
             ]
         ]
-        
-        if let campaignID = userInfo[ClassicScreenViewController.campaignIDUserInfoKey] as? String {
-            (attributes["experience"] as? Attributes)?["campaignID"] = campaignID
-        }
         
         let eventInfo = EventInfo(
             name: "Classic Block Tapped",
@@ -411,18 +341,8 @@ public class RoverObserver {
         }
         
         let attributes: Attributes = [
-            "experience": [
-                "id": experience.id,
-                "name": experience.name,
-                "keys": experience.keys,
-                "tags": experience.tags
-            ],
-            "screen": [
-                "id": screen.id,
-                "name": screen.name,
-                "keys": screen.keys,
-                "tags": screen.tags
-            ],
+            "experience": experienceAttributes(experience),
+            "screen": screenAttributes(screen),
             "block": [
                 "id": block.id,
                 "name": block.name,
@@ -487,5 +407,27 @@ public class RoverObserver {
         if let tag = tag {
             conversionsTracker.track(tag)
         }
+    }
+    
+    private func experienceAttributes(_ experience: ClassicExperienceModel, campaignID: String? = nil) -> [String: Any] {
+        let experienceAttributes: [String: Any?] = [
+            "id": experience.id,
+            "name": experience.name,
+            "keys": experience.keys,
+            "tags": experience.tags,
+            "campaignId" : campaignID,
+            "url": experience.sourceUrl?.absoluteString
+        ]
+        
+        return experienceAttributes.compactMapValues { $0 }
+    }
+    
+    private func screenAttributes(_ screen: ClassicScreen) -> [String: Any] {
+        return [
+            "id": screen.id,
+            "name": screen.name,
+            "keys": screen.keys,
+            "tags": screen.tags
+        ]
     }
 }

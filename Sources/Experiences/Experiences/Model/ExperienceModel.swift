@@ -53,6 +53,8 @@ final class ExperienceModel: Decodable {
     var initialScreenID: Screen.ID {
         return initialScreen!.id
     }
+    
+    var sourceUrl: URL?
 
     /// Initialize Experience from data (JSON)
     /// - Parameter data: Experience data.

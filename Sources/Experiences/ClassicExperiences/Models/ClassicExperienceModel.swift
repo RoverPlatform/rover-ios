@@ -13,6 +13,8 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+import Foundation
+
 public struct ClassicExperienceModel {
     public var id: String
     public var name: String
@@ -20,6 +22,7 @@ public struct ClassicExperienceModel {
     public var screens: [ClassicScreen]
     public var keys: [String: String]
     public var tags: [String]
+    public var sourceUrl: URL?
     
     public init(id: String, name: String, homeScreen: ClassicScreen, screens: [ClassicScreen], keys: [String: String], tags: [String]) {
         self.id = id

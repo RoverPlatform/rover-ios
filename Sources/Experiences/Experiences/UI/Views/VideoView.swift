@@ -64,8 +64,11 @@ private struct Player: View {
     @State var player: AVPlayer? = nil
     @State var looper: AVPlayerLooper? = nil
     
+    @Environment(\.pageDidDisappear) var pageDidDisappear
+    @Environment(\.pageDidAppear) var pageDidAppear
+    
     var body: some View {
-        Group {
+        SwiftUI.Group {
             if let player = self.player {
                 VideoPlayerView(
                     sourceURL: sourceURL,
@@ -80,19 +83,29 @@ private struct Player: View {
                 SwiftUI.Rectangle().frame(width: 0, height: 0).hidden()
             }
         }
-            .onAppear {
-                if (player == nil) {
-                    setupPlayer()
-                } else {
-                    // resume playback if it was set to autoplay
-                    if autoPlay {
-                        player?.play()
-                    }
+        .onAppear {
+            if (player == nil) {
+                setupPlayer()
+            } else {
+                // resume playback if it was set to autoplay
+                if autoPlay {
+                    player?.play()
                 }
             }
-            .onDisappear {
-                player?.pause()
+        }
+        .onDisappear {
+            player?.pause()
+        }
+        // the following two publisher listeners listen for messages sent down by CarouselView, to ensure that playback is paused/resumed correctly when paging between media in a carousel.
+        .onReceive(pageDidDisappear, perform: { _ in
+            player?.pause()
+        })
+        .onReceive(pageDidAppear, perform: { _ in
+            // carousel page is (re-) appearing, (re)start playback.
+            if autoPlay {
+                player?.play()
             }
+        })
     }
     
     func setupPlayer() {

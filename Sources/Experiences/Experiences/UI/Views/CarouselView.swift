@@ -14,6 +14,7 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import SwiftUI
+import Combine
 
 struct CarouselView: View {
     @Environment(\.collectionIndex) private var collectionIndex
@@ -139,7 +140,10 @@ private struct Page: View, Hashable, Identifiable {
         if let item = item {
             LayerView(layer: layer).environment(\.data, item).environmentObject(carouselState)
         } else {
-            LayerView(layer: layer).environmentObject(carouselState)
+            LayerView(layer: layer)
+                .environmentObject(carouselState)
+                // safe areas are enforced at the screen children level only.
+                .edgesIgnoringSafeArea(.all)
         }
     }
 }
@@ -210,7 +214,7 @@ private struct PageViewController: UIViewControllerRepresentable {
             parent = pageViewController
             self.loop = loop
             controllers = parent.pages.map {
-                let controller = UIHostingController(rootView: $0)
+                let controller = CarouselPageHostController(pageContent: $0)
                 controller.view.backgroundColor = .clear
                 return controller
             }
@@ -252,5 +256,51 @@ private struct PageViewController: UIViewControllerRepresentable {
                 parent.currentPage = index
             }
         }
+    }
+}
+
+/// This overload of UIHostingController exposes publishers in the SwiftUI environment to the page content to inform it when the carousel/uipageviewcontroller page is about to appear or disappear.
+///
+/// This is a workaround for the standard SwiftUI onAppear/onDisappear modifiers not working as expected within UIPageViewController.
+internal class CarouselPageHostController<V>: UIHostingController<CarouselPageHostWrapperView<V>> where V: View {
+    private var pageDidDisappear = PassthroughSubject<Void, Never>()
+    private var pageDidAppear = PassthroughSubject<Void, Never>()
+    
+    override init(rootView: CarouselPageHostWrapperView<V>) {
+        super.init(
+            rootView: rootView
+        )
+    }
+    
+    convenience init(pageContent: V) {
+        self.init(rootView: CarouselPageHostWrapperView(content: pageContent, pageDidDisappear: PassthroughSubject<Void, Never>(), pageDidAppear: PassthroughSubject<Void, Never>()))
+        self.rootView = CarouselPageHostWrapperView(content: pageContent, pageDidDisappear: pageDidDisappear, pageDidAppear: pageDidAppear)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        pageDidAppear.send()
+        super.viewDidAppear(animated)
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        pageDidDisappear.send()
+        super.viewDidDisappear(animated)
+    }
+}
+
+internal struct CarouselPageHostWrapperView<Content>: View where Content: View {
+    var content: Content
+    
+    var pageDidDisappear: PassthroughSubject<Void, Never>
+    var pageDidAppear: PassthroughSubject<Void, Never>
+    
+    var body: some View {
+        content
+            .environment(\.pageDidDisappear, pageDidDisappear.eraseToAnyPublisher())
+            .environment(\.pageDidAppear, pageDidAppear.eraseToAnyPublisher())
     }
 }

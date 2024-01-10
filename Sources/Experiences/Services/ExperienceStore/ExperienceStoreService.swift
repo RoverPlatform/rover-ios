@@ -128,7 +128,7 @@ class ExperienceStoreService: ExperienceStore {
             case let .success(downloadResult):
                 switch downloadResult.version {
                 case "1":
-                    let classicDecodeResult = classicExperience(from: downloadResult)
+                    let classicDecodeResult = classicExperience(from: downloadResult, url: experienceUrl)
                     let experience: LoadedExperience
                     switch classicDecodeResult {
                     case .success(let loadedExperience):
@@ -176,12 +176,14 @@ class ExperienceStoreService: ExperienceStore {
         task.resume()
     }
     
-    private func classicExperience(from result: ExperienceDownloadResult) -> Result<LoadedExperience, Error> {
+    private func classicExperience(from result: ExperienceDownloadResult, url: URL?) -> Result<LoadedExperience, Error> {
         do {
             let decoder = JSONDecoder()
             decoder.dateDecodingStrategy = .formatted(DateFormatter.rfc3339)
             
-            let experience = try decoder.decode(ClassicExperienceModel.self, from: result.data)
+            var experience = try decoder.decode(ClassicExperienceModel.self, from: result.data)
+            experience.sourceUrl = url
+            
             let returnValue = LoadedExperience.classic(
                 experience: experience,
                 urlParameters: result.urlParameters)
@@ -201,6 +203,19 @@ class ExperienceStoreService: ExperienceStore {
                 assetContext: assetContext)
             
             let urlParameters = result.urlParameters.merging(experience.urlParameters) { (current, _) in current }
+            
+            var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
+            urlComponents?.queryItems = nil
+            
+            let queryParams = result.urlParameters.map { urlPamameter in
+                return URLQueryItem(name: urlPamameter.key, value: urlPamameter.value)
+            }
+            
+            if !queryParams.isEmpty {
+                urlComponents?.queryItems = queryParams
+            }
+            
+            experience.sourceUrl = urlComponents?.url
             
             return .success(LoadedExperience.standard(
                 experience: experience,

@@ -17,7 +17,6 @@ import SwiftUI
 
 import os.log
 
-
 struct ImageView: View {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.urlParameters) private var urlParameters
@@ -48,6 +47,33 @@ struct ImageView: View {
         }
     }
     
+#if compiler(>=5.9)
+    @ViewBuilder
+    private func imageView(uiImage: UIImage) -> some View {
+        if #available(iOS 17, *) {
+            AccessibleAnimatedImageView(
+                uiImage: uiImage,
+                scale: scale,
+                resizingMode: image.resizingMode,
+                size: estimatedImageSize
+            )
+        } else if uiImage.isAnimated {
+            AnimatedImageView(
+                uiImage: uiImage,
+                scale: scale,
+                resizingMode: image.resizingMode,
+                size: estimatedImageSize
+            )
+        } else {
+            StaticImageView(
+                uiImage: uiImage,
+                scale: scale,
+                resizingMode: image.resizingMode,
+                size: estimatedImageSize
+            )
+        }
+    }
+#else
     @ViewBuilder
     private func imageView(uiImage: UIImage) -> some View {
         if uiImage.isAnimated {
@@ -66,6 +92,7 @@ struct ImageView: View {
             )
         }
     }
+#endif
     
     private var inlineImage: UIImage? {
         switch colorScheme {
@@ -139,7 +166,6 @@ private extension UIImage {
 
 // MARK: - StaticImageView
 
-
 private struct StaticImageView: View {
     var uiImage: UIImage
     var scale: CGFloat
@@ -188,7 +214,6 @@ private struct StaticImageView: View {
 
 // MARK: - AnimatedImage
 
-
 private struct AnimatedImageView: View {
     var uiImage: UIImage
     var scale: CGFloat
@@ -234,8 +259,39 @@ private struct AnimatedImageView: View {
     }
 }
 
-// MARK: - TilingImage
+// MARK: - AccessibleAnimatedImage
 
+#if compiler(>=5.9)
+@available(iOS 17.0, *)
+private struct AccessibleAnimatedImageView: View {
+    @Environment(\.accessibilityPlayAnimatedImages) private var playAnimatedImages
+    
+    var uiImage: UIImage
+    var scale: CGFloat
+    var resizingMode: RoverExperiences.Image.ResizingMode
+    var size: CGSize?
+
+    var body: some View {
+        if uiImage.isAnimated && playAnimatedImages {
+            AnimatedImageView(
+                uiImage: uiImage,
+                scale: scale,
+                resizingMode: resizingMode,
+                size: size
+            )
+        } else {
+            StaticImageView(
+                uiImage: uiImage,
+                scale: scale,
+                resizingMode: resizingMode,
+                size: size
+            )
+        }
+    }
+}
+#endif
+
+// MARK: - TilingImage
 
 private struct TilingImage: View {
     var uiImage: UIImage

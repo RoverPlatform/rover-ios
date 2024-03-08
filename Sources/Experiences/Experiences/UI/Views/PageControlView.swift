@@ -18,6 +18,30 @@ import RoverFoundation
 
 struct PageControlView: View {
     @Environment(\.collectionIndex) private var collectionIndex
+    @EnvironmentObject private var carouselState: CarouselState
+    let pageControl: PageControl
+    
+    var body: some View {
+        if !isStoryStyle {
+            DefaultPageControlView(pageControl: pageControl)
+        } else {
+            let viewID = ViewID(nodeID: pageControl.carousel!.id, collectionIndex: collectionIndex)
+            StoryControlView(pageControl: pageControl, viewID: viewID)
+        }
+    }
+    
+    private var isStoryStyle: Bool {
+        guard let carousel = pageControl.carousel else {
+            return false
+        }
+        
+        let viewID = ViewID(nodeID: carousel.id, collectionIndex: collectionIndex)
+        return carouselState.storyStyleStatusForCarousel[viewID] ?? false
+    }
+}
+
+struct DefaultPageControlView: View {
+    @Environment(\.collectionIndex) private var collectionIndex
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.data) private var data
     @Environment(\.urlParameters) private var urlParameters

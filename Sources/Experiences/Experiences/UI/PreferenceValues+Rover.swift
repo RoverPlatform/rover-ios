@@ -13,13 +13,16 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import Foundation
+import SwiftUI
+import Combine
+import os.log
 
-struct ViewID: Hashable {
-    var nodeID: String
-    var collectionIndex = 0
+internal struct IsMediaPresentKey: PreferenceKey {
+    static var defaultValue: Bool = false
     
-    func toString() -> String {
-        return "\(nodeID)-\(collectionIndex)"
+    static func reduce(value: inout Bool, nextValue: () -> Bool) {
+        if nextValue() {
+            value = true
+        }
     }
 }

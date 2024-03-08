@@ -230,12 +230,15 @@ public class RoverObserver {
             callback(
                 ScreenViewedEvent(
                     experienceId: experience.id,
+                    experienceID: experience.id,
                     experienceName: experience.name,
                     screenId: screen.id,
+                    screenID: screen.id,
                     screenName: screen.name,
                     screenProperties: screen.keys,
                     screenTags: Set(screen.tags),
                     campaignId: campaignID,
+                    campaignID: campaignID,
                     data: nil,
                     urlParameters: [:]
                 )

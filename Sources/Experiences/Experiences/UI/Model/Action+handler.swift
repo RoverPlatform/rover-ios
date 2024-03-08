@@ -35,6 +35,8 @@ extension ExperienceAction {
         )
         eventQueue.addEvent(event)
         
+        let campaignID = urlParameters["campaignID"]
+        
         switch(self) {
         case .performSegue:
             let segue = experience.segues.filter {
@@ -105,20 +107,24 @@ extension ExperienceAction {
         case let .custom(dismissExperience, _):
             func behaviour() {
                 if let callback = experienceManager.registeredCustomActionCallback {
-                    let campaignID = urlParameters["campaignID"]
+                    
                     callback(
                         CustomActionActivationEvent(
                             nodeId: node.id,
+                            nodeID: node.id,
                             nodeName: node.name,
                             nodeProperties: node.metadata?.properties ?? [:],
                             nodeTags: node.metadata?.tags ?? [],
                             screenId: screen.id,
+                            screenID: screen.id,
                             screenName: screen.name,
                             screenProperties: screen.metadata?.properties ?? [:],
                             screenTags: screen.metadata?.tags ?? [],
                             experienceId: experience.id,
+                            experienceID: experience.id,
                             experienceName: experience.name,
                             campaignId: campaignID,
+                            campaignID: campaignID,
                             data: data,
                             urlParameters: urlParameters,
                             userInfo: userInfo,
@@ -135,6 +141,25 @@ extension ExperienceAction {
                 behaviour()
             }
         }
+        
+        experienceManager.registeredButtonTappedCallback?(
+            ButtonTappedEvent(
+                nodeID: node.id,
+                nodeName: node.name,
+                nodeProperties: node.metadata?.properties ?? [:],
+                nodeTags: node.metadata?.tags ?? [],
+                screenID: screen.id,
+                screenName: screen.name,
+                screenProperties: screen.metadata?.properties ?? [:],
+                screenTags: screen.metadata?.tags ?? [],
+                experienceID: experience.id,
+                experienceName: experience.name,
+                campaignID: campaignID,
+                data: data,
+                urlParameters: urlParameters,
+                userInfo: userInfo
+            )
+        )
     }
     
     func performDismissExperience(experienceViewController: UIViewController, callback: @escaping () -> Void) {

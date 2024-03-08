@@ -14,9 +14,74 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import Combine
+import RoverFoundation
 
 
 final class CarouselState: ObservableObject {
     @Published var currentPageForCarousel: [ViewID: Int] = [:]
     @Published var currentNumberOfPagesForCarousel: [ViewID: Int] = [:]
+    @Published var storyStyleStatusForCarousel: [ViewID: Bool] = [:]
+    @Published var currentBarProgressForCarousel: [ViewID: [Double]] = [:]
+    private let experienceId: String?
+    
+    private let persistedCarouselPositions = PersistedValue<[String: Int]>(storageKey: "io.rover.experience.carouselPositions")
+    
+    init(experienceId: String?) {
+        self.experienceId = experienceId
+    }
+    
+    func setPersistedPosition(for viewID: ViewID, newValue: Int) {
+        let carouselIdentifier = "\(experienceId ?? "local")-\(viewID.toString())"
+        
+        guard var carouselPositions = persistedCarouselPositions.value else {
+            persistedCarouselPositions.value = [carouselIdentifier: newValue]
+            return
+        }
+        
+        carouselPositions[carouselIdentifier] = newValue
+        persistedCarouselPositions.value = carouselPositions
+    }
+    
+    func getPersistedPosition(for viewID: ViewID) -> Int {
+        let carouselIdentifier = "\(experienceId ?? "local")-\(viewID.toString())"
+        
+        guard let carouselPositions = persistedCarouselPositions.value,
+              let value = carouselPositions[carouselIdentifier] else {
+            return 0
+        }
+        
+        return value
+    }
+    
+    func getBarProgress(for viewID: ViewID, index: Int) -> Double {
+        if self.currentBarProgressForCarousel[viewID] == nil {
+            self.currentBarProgressForCarousel[viewID] = [Double](repeating: 0.0, count: currentNumberOfPagesForCarousel[viewID] ?? 1)
+        }
+        
+        return self.currentBarProgressForCarousel[viewID]?[index] ?? 0.0
+    }
+    
+    func setBarProgress(for viewID: ViewID, index: Int, value: Double) {
+        if self.currentBarProgressForCarousel[viewID] == nil {
+            self.currentBarProgressForCarousel[viewID] = [Double](repeating: 0.0, count: currentNumberOfPagesForCarousel[viewID] ?? 1)
+        }
+        
+        self.currentBarProgressForCarousel[viewID]?.insert(value, at: index)
+    }
+    
+    func addBarProgress(for viewID: ViewID, index: Int, value: Double) {
+        let incremented = self.getBarProgress(for: viewID, index: index) + value
+        setBarProgress(for: viewID, index: index, value: incremented)
+    }
+    
+    func resetBarProgress(for viewID: ViewID) {
+        if self.currentBarProgressForCarousel[viewID] == nil {
+            self.currentBarProgressForCarousel[viewID] = [Double](repeating: 0.0, count: currentNumberOfPagesForCarousel[viewID] ?? 1)
+            return
+        }
+        
+        for index in 0...(currentNumberOfPagesForCarousel[viewID] ?? 1) {
+            self.currentBarProgressForCarousel[viewID]?[index] = 0.0
+        }
+    }
 }

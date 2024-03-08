@@ -111,7 +111,7 @@ extension ContextManager: StaticContextProvider {
     
     var buildEnvironment: Context.BuildEnvironment {
         #if targetEnvironment(simulator)
-        return .simulator
+        return .development
         #else
         guard let path = Bundle.main.path(forResource: "embedded", ofType: "mobileprovision") else {
             os_log("Provisioning profile not found", log: .context, type: .error)

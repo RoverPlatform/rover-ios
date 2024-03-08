@@ -34,21 +34,17 @@ internal struct ScreenViewControllerHolder {
     }
 }
 
-
 internal struct ExperienceKey: EnvironmentKey {
     static let defaultValue: ExperienceModel? = nil
 }
-
 
 internal struct ScreenKey: EnvironmentKey {
     static let defaultValue: Screen? = nil
 }
 
-
 internal struct StringTableKey: EnvironmentKey {
     static let defaultValue: StringTable = StringTable()
 }
-
 
 internal struct PresentActionKey: EnvironmentKey {
     static let defaultValue: (UIViewController) -> Void = {
@@ -57,7 +53,6 @@ internal struct PresentActionKey: EnvironmentKey {
     }
 }
 
-
 internal struct ShowActionKey: EnvironmentKey {
     static let defaultValue: (UIViewController) -> Void = {
         _ in
@@ -65,49 +60,57 @@ internal struct ShowActionKey: EnvironmentKey {
     }
 }
 
-
 internal struct ScreenViewControllerKey: EnvironmentKey {
     static let defaultValue: ScreenViewControllerHolder? = nil
 }
-
 
 internal struct ExperienceViewControllerKey: EnvironmentKey {
     static let defaultValue: ExperienceViewControllerHolder? = nil
 }
 
-
 internal struct DataKey: EnvironmentKey {
     static let defaultValue: Any? = nil
 }
-
 
 internal struct URLParametersKey: EnvironmentKey {
     static let defaultValue: [String: String] = [:]
 }
 
-
 internal struct UserInfoKey: EnvironmentKey {
     static let defaultValue: [String: Any] = [:]
 }
-
 
 internal struct AuthorizeKey: EnvironmentKey {
     static let defaultValue: (inout URLRequest) -> Void = { _ in }
 }
 
-
 internal struct CollectionIndexKey: EnvironmentKey {
     static var defaultValue = 0
 }
 
-internal struct PageDidDisappearKey: EnvironmentKey {
-    static var defaultValue: AnyPublisher<Void, Never> = PassthroughSubject<Void, Never>().eraseToAnyPublisher()
+internal struct CarouselViewIDKey: EnvironmentKey {
+    static var defaultValue: ViewID? = nil
 }
 
-internal struct PageDidAppearKey: EnvironmentKey {
-    static var defaultValue: AnyPublisher<Void, Never> = PassthroughSubject<Void, Never>().eraseToAnyPublisher()
+internal struct CarouselPageNumberKey: EnvironmentKey {
+    static var defaultValue: Int? = nil
 }
 
+internal struct CarouselCurrentPageKey: EnvironmentKey {
+    static var defaultValue: Int? = nil
+}
+
+internal struct MediaDidFinishingPlayingKey: EnvironmentKey {
+    static var defaultValue: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
+}
+
+internal struct MediaCurrentTimeKey: EnvironmentKey {
+    static var defaultValue: CurrentValueSubject<TimeInterval, Never> = CurrentValueSubject<TimeInterval, Never>(0.0)
+}
+
+internal struct MediaDurationKey: EnvironmentKey {
+    static var defaultValue: CurrentValueSubject<TimeInterval, Never> = CurrentValueSubject<TimeInterval, Never>(0.0)
+}
 
 internal extension EnvironmentValues {
     var experience: ExperienceModel? {
@@ -230,23 +233,64 @@ internal extension EnvironmentValues {
         }
     }
     
-    var pageDidDisappear: AnyPublisher<Void, Never> {
+    var mediaDidFinishPlaying: PassthroughSubject<Void, Never> {
         get {
-            return self[PageDidDisappearKey.self]
+            return self[MediaDidFinishingPlayingKey.self]
         }
         
         set {
-            self[PageDidDisappearKey.self] = newValue
+            self[MediaDidFinishingPlayingKey.self] = newValue
         }
     }
     
-    var pageDidAppear: AnyPublisher<Void, Never> {
+    var mediaCurrentTime: CurrentValueSubject<TimeInterval, Never> {
         get {
-            return self[PageDidAppearKey.self]
+            return self[MediaCurrentTimeKey.self]
         }
         
         set {
-            self[PageDidAppearKey.self] = newValue
+            self[MediaCurrentTimeKey.self] = newValue
+        }
+    }
+    
+    var mediaDuration: CurrentValueSubject<TimeInterval, Never> {
+        get {
+            return self[MediaDurationKey.self]
+        }
+        
+        set {
+            self[MediaDurationKey.self] = newValue
+        }
+    }
+    
+    var carouselViewID: ViewID? {
+        get {
+            return self[CarouselViewIDKey.self]
+        }
+        
+        set {
+            self[CarouselViewIDKey.self] = newValue
+        }
+    }
+    
+    var carouselPageNumber: Int? {
+        get {
+            return self[CarouselPageNumberKey.self]
+        }
+        
+        set {
+            self[CarouselPageNumberKey.self] = newValue
+        }
+        
+    }
+    
+    var carouselCurrentPage: Int? {
+        get {
+            return self[CarouselCurrentPageKey.self]
+        }
+        
+        set {
+            self[CarouselCurrentPageKey.self] = newValue
         }
     }
 }

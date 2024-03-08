@@ -17,5 +17,5 @@ import Foundation
 
 public enum Meta {
     public static let APIVersion: Int = 2
-    public static let SDKVersion: String = "4.4.1"
+    public static let SDKVersion: String = "4.5.0"
 }

@@ -34,6 +34,13 @@ extension Rover {
         Rover.shared.resolve(ExperienceManager.self)?.registeredScreenViewedCallback = callback
     }
     
+    /// Register a callback that the Rover SDK will call when the user taps a button.  Use this to integrate with other analytics solutions.
+    ///
+    /// The callback is given a ``ScreenViewedEvent`` value.
+    public func registerButtonTappedCallback(_ callback: @escaping (ButtonTappedEvent) -> Void) {
+        Rover.shared.resolve(ExperienceManager.self)?.registeredButtonTappedCallback = callback
+    }
+    
     /// Supply the domain name this authorizer matches against including subdomain. You can optionally supply an asterisk for the subdomain if you want to match against all subdomains.
     
     public func authorize(pattern: String, block: @escaping (inout URLRequest) -> Void) {

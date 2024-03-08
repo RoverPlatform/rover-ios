@@ -108,6 +108,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             // MyAnalyticsSDK.trackScreen(screenName)
         }
         
+        Rover.shared.registerButtonTappedCallback { event in
+            // track an experience button tapped event into your own analytics tools here.
+            os_log("Rover experience button tapped: %s", type: .default, event.nodeName ?? "Button")
+            
+            // MyAnalyticsSDK.trackEvent("Button Tapped", ["tags": event.nodeTags])
+        }
+        
         // You can mutate outgoing URLRequests from data sources in your experiences, allowing your experiences to use authenticated
         // content.
         Rover.shared.authorize(pattern: "*.apis.myapp.com") { urlRequest in

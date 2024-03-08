@@ -98,7 +98,7 @@ final class ExperienceModel: Decodable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let coordinator = decoder.userInfo[.decodingCoordinator] as! DecodingCoordinator
-        
+
         if let experienceId = decoder.userInfo[.experienceId] as? String {
             id = experienceId
         } else {

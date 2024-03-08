@@ -33,6 +33,7 @@ final class ExperienceManager {
     
     internal var registeredCustomActionCallback: ((CustomActionActivationEvent) -> Void)?
     internal var registeredScreenViewedCallback: ((ScreenViewedEvent) -> Void)?
+    internal var registeredButtonTappedCallback: ((ButtonTappedEvent) -> Void)?
     internal var authorizers: [Authorizer] = []
     
     init(eventQueue: EventQueue,
@@ -118,12 +119,15 @@ extension ExperienceManager {
                     callback(
                         ScreenViewedEvent(
                             experienceId: experience.id,
+                            experienceID: experience.id,
                             experienceName: experience.name,
                             screenId: screen.id,
+                            screenID: screen.id,
                             screenName: screen.name,
                             screenProperties: screen.metadata?.properties ?? [:],
                             screenTags: screen.metadata?.tags ?? [],
                             campaignId: campaignID,
+                            campaignID: campaignID,
                             data: data,
                             urlParameters: experience.urlParameters
                         )

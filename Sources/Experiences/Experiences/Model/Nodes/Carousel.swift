@@ -18,9 +18,13 @@ import SwiftUI
 final class Carousel: Layer {
     /// Indicates whether the Carousel continually wraps around to the first/last elements as you scroll.
     public let isLoopEnabled: Bool
+    public let isStoryStyleEnabled: Bool
+    public let storyAutoAdvanceDuration: Int
     
-    public init(id: String = UUID().uuidString, name: String?, parent: Node? = nil, children: [Node] = [], ignoresSafeArea: Set<Edge>? = nil, aspectRatio: CGFloat? = nil, padding: Padding? = nil, frame: Frame? = nil, layoutPriority: CGFloat? = nil, offset: CGPoint? = nil, shadow: Shadow? = nil, opacity: CGFloat? = nil, background: Background? = nil, overlay: Overlay? = nil, mask: Node? = nil, action: ExperienceAction? = nil, accessibility: Accessibility? = nil, metadata: Metadata? = nil, isLoopEnabled: Bool) {
+    public init(id: String = UUID().uuidString, name: String?, parent: Node? = nil, children: [Node] = [], ignoresSafeArea: Set<Edge>? = nil, aspectRatio: CGFloat? = nil, padding: Padding? = nil, frame: Frame? = nil, layoutPriority: CGFloat? = nil, offset: CGPoint? = nil, shadow: Shadow? = nil, opacity: CGFloat? = nil, background: Background? = nil, overlay: Overlay? = nil, mask: Node? = nil, action: ExperienceAction? = nil, accessibility: Accessibility? = nil, metadata: Metadata? = nil, isLoopEnabled: Bool, isStoryStyleEnabled: Bool, storyAutoAdvanceDuration: Int) {
         self.isLoopEnabled = isLoopEnabled
+        self.isStoryStyleEnabled = isStoryStyleEnabled
+        self.storyAutoAdvanceDuration = storyAutoAdvanceDuration
         super.init(id: id, name: name, parent: parent, children: children, ignoresSafeArea: ignoresSafeArea, aspectRatio: aspectRatio, padding: padding, frame: frame, layoutPriority: layoutPriority, offset: offset, shadow: shadow, opacity: opacity, background: background, overlay: overlay, mask: mask, action: action, accessibility: accessibility, metadata: metadata)
     }
 
@@ -28,11 +32,37 @@ final class Carousel: Layer {
     
     private enum CodingKeys: String, CodingKey {
         case isLoopEnabled
+        case isAutoAdvanceEnabled
+        case autoAdvanceDuration
+        case isRememberPositionEnabled
+        case isStoryStyleEnabled
+        case storyAutoAdvanceDuration
     }
     
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         isLoopEnabled = try container.decode(Bool.self, forKey: .isLoopEnabled)
+        
+        //Introduced in document version 16
+        if let isStoryStyleEnabled = try container.decodeIfPresent(Bool.self, forKey: .isStoryStyleEnabled) {
+            self.isStoryStyleEnabled = isStoryStyleEnabled
+        } else if let isAutoAdvanceEnabled = try container.decodeIfPresent(Bool.self, forKey: .isAutoAdvanceEnabled) {
+            //Upgraded from document version 14
+            self.isStoryStyleEnabled = isAutoAdvanceEnabled
+        } else {
+            isStoryStyleEnabled = false
+        }
+        
+        //Introduced in document version 16
+        if let storyAutoAdvanceDuration = try container.decodeIfPresent(Int.self, forKey: .storyAutoAdvanceDuration) {
+            self.storyAutoAdvanceDuration = storyAutoAdvanceDuration
+        } else if let storyAutoAdvanceDuration = try container.decodeIfPresent(Int.self, forKey: .autoAdvanceDuration) {
+            //Upgraded from document version 14
+            self.storyAutoAdvanceDuration = storyAutoAdvanceDuration
+        } else {
+            storyAutoAdvanceDuration = 0
+        }
+
         try super.init(from: decoder)
     }
 }

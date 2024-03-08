@@ -46,41 +46,56 @@ private struct Player: View {
     
     @State var player: AVPlayer? = nil
     @State var looper: AVPlayerLooper? = nil
+    @State var didPlayToEndTimeObserver: NSObjectProtocol? = nil
+    @State var willEnterForegroundObserver: NSObjectProtocol? = nil
+    @State var playerCurrentTimeObserver: Any? = nil
+    @State var playerDuration: TimeInterval = 0.0
     
-    @Environment(\.pageDidDisappear) var pageDidDisappear
-    @Environment(\.pageDidAppear) var pageDidAppear
+    @Environment(\.mediaDidFinishPlaying) var mediaDidFinishPlaying
+    @Environment(\.mediaCurrentTime) var mediaCurrentTime
+    @Environment(\.mediaDuration) var mediaDuration
+    
+    // For coordinating with carousel/stories.
+    @EnvironmentObject var carouselState: CarouselState
+    @Environment(\.carouselViewID) var carouselViewID
+    @Environment(\.carouselPageNumber) var carouselPageNumber
+    @Environment(\.carouselCurrentPage) var carouselCurrentPage
     
     var body: some View {
-        Group {
-            if let player = self.player {
-                AudioPlayerView(player: player, autoPlay: autoPlay)
-            } else {
-                // dummy view so onAppear below works.
-                SwiftUI.Rectangle().frame(width: 0, height: 0).hidden()
-            }
-        }.onAppear {
-            if (player == nil) {
-                setupPlayer()
-            } else {
-                // resume playback if it was set to autoplay
-                if autoPlay {
-                    player?.play()
+        if let player = self.player {
+            AudioPlayerView(player: player, autoPlay: autoPlay)
+                .preference(key: IsMediaPresentKey.self, value: true)
+                .onAppear {
+                    addObservers()
+                    
+                    if autoPlay && (carouselPageNumber == carouselCurrentPage) {
+                        player.play()
+                    }
                 }
-            }
+                .onValueChanged(of: carouselCurrentPage) { carouselCurrentPage in
+                    if autoPlay && (carouselCurrentPage == carouselPageNumber) {
+                        // when being revealed in a carousel, we should seek to the beginning and resume if autoplay
+                        player.seek(to: CMTime.zero)
+                        player.play()
+                    } else {
+                        player.pause()
+                    }
+                }
+                .onDisappear {
+                    removeObservers()
+                    player.pause()
+                }
+            
+        } else {
+            SwiftUI.Rectangle()
+                .frame(width: 0, height: 0)
+                .hidden()
+                .onAppear {
+                    if (player == nil) {
+                        setupPlayer()
+                    }
+                }
         }
-        .onDisappear {
-            player?.pause()
-        }
-        // the following two publisher listeners listen for messages sent down by CarouselView, to ensure that playback is paused/resumed correctly when paging between media in a carousel.
-        .onReceive(pageDidDisappear, perform: { _ in
-            player?.pause()
-        })
-        .onReceive(pageDidAppear, perform: { _ in
-            // carousel page is (re-) appearing, (re)start playback.
-            if autoPlay {
-                player?.play()
-            }
-        })
     }
     
     func setupPlayer() {
@@ -96,6 +111,78 @@ private struct Player: View {
             self.looper = AVPlayerLooper(player: queuePlayer, templateItem: playerItem)
         } else {
             self.player?.replaceCurrentItem(with: playerItem)
+        }
+        
+        if #available(iOS 15.0, *) {
+            player?.audiovisualBackgroundPlaybackPolicy = .pauses
+        }
+    }
+    
+    private func addObservers() {
+        guard let player = player else {
+            return
+        }
+        
+        if self.playerCurrentTimeObserver == nil {
+            let interval = CMTime(value: 1, timescale: 60)
+            self.playerCurrentTimeObserver = player.addPeriodicTimeObserver(
+                forInterval: interval,
+                queue: .main
+            ) { time in
+                mediaCurrentTime.send(time.seconds)
+                mediaDuration.send(player.currentItem?.duration.seconds ?? 0.0)
+            }
+        }
+        
+        if self.didPlayToEndTimeObserver == nil {
+            self.didPlayToEndTimeObserver = NotificationCenter.default.addObserver(
+                forName: .AVPlayerItemDidPlayToEndTime,
+                object: player.currentItem,
+                queue: .main
+            ) { _ in
+                mediaDidFinishPlaying.send()
+            }
+        }
+        
+        if self.willEnterForegroundObserver == nil {
+            self.willEnterForegroundObserver = NotificationCenter.default.addObserver(
+                forName: UIApplication.willEnterForegroundNotification,
+                object: nil,
+                queue: .main
+            ) { _ in
+                // resume playback of autoplay videos when returning from background.
+                // however, when present in a carousel, we want to be sure we are the current page before autoplaying.
+                // also, with carousels, we cannot use the \.carouselCurrentPage environment value in this context since it is a changing value that will be stale in this context where this callback closure has an old captured view struct without an up-to-date environment variable. To work around this, we will retrieve the carousel's current page directly from CarouselState.
+                if let carouselViewID = self.carouselViewID, let carouselCurrentPage = self.carouselState.currentPageForCarousel[carouselViewID] {
+                    // we are in a carousel and have a current page:
+                    if autoPlay && (carouselPageNumber == carouselCurrentPage) {
+                        player.play()
+                    }
+                } else {
+                    // not in a carousel, do standard behaviour
+                    if autoPlay {
+                        player.play()
+                    }
+                }
+            }
+        }
+    }
+    
+    private func removeObservers() {
+        if let didPlayToEndTimeObserver = self.didPlayToEndTimeObserver {
+            NotificationCenter.default.removeObserver(didPlayToEndTimeObserver)
+            self.didPlayToEndTimeObserver = nil
+        }
+        
+        if let willEnterForegroundObserver = self.willEnterForegroundObserver {
+            NotificationCenter.default.removeObserver(willEnterForegroundObserver)
+            self.willEnterForegroundObserver = nil
+        }
+        
+        if let player = player,
+           let playerCurrentTimeObserver = playerCurrentTimeObserver {
+            player.removeTimeObserver(playerCurrentTimeObserver)
+            self.playerCurrentTimeObserver = nil
         }
     }
     
@@ -125,6 +212,7 @@ private class AudioPlayerViewController: AVPlayerViewController {
         super.init(nibName: nil, bundle: nil)
         
         self.player = player
+        self.updatesNowPlayingInfoCenter = false
     }
     
     required init?(coder: NSCoder) {
@@ -133,7 +221,6 @@ private class AudioPlayerViewController: AVPlayerViewController {
 }
 
 fileprivate struct AudioPlayerFrameModifier: ViewModifier {
-    
     @ViewBuilder
     func body(content: Content) -> some View {
         if #available(iOS 16.0, *) {

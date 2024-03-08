@@ -15,7 +15,6 @@
 
 import SwiftUI
 
-
 struct ActionModifier: ViewModifier {
     var layer: Layer
     
@@ -32,9 +31,12 @@ struct ActionModifier: ViewModifier {
     
     @ViewBuilder
     func body(content: Content) -> some View {
-        if let action = layer.action, let experience = experience, let screen = screen, let experienceViewController = experienceViewControllerHolder?.experienceViewController, let screenViewController = screenViewControllerHolder?.screenViewController {
+        if let action = layer.action {
             Button {
-                action.handle(experience: experience, node: layer, screen: screen, data: data, urlParameters: urlParameters, userInfo: userInfo, authorize: authorize, experienceViewController: experienceViewController, screenViewController: screenViewController)
+                // NB: Being very careful here to not capture the view controllers from the Environment in this button callback closure, otherwise you get a hard-to-trace retain cycle through the SwiftUI environment.
+                if let experience = experience, let screen = screen, let experienceViewController = experienceViewControllerHolder?.experienceViewController, let screenViewController = screenViewControllerHolder?.screenViewController {
+                    action.handle(experience: experience, node: layer, screen: screen, data: data, urlParameters: urlParameters, userInfo: userInfo, authorize: authorize, experienceViewController: experienceViewController, screenViewController: screenViewController)
+                }
             } label: {
                 content
             }
@@ -44,4 +46,4 @@ struct ActionModifier: ViewModifier {
         }
     }
 }
- 
+

@@ -30,25 +30,45 @@ struct CarouselView: View {
         PageViewController(
             pages: pages,
             loop: carousel.isLoopEnabled,
+            storyStyle: carousel.isStoryStyleEnabled,
+            autoAdvanceDuration: carousel.storyAutoAdvanceDuration,
             currentPage: currentPage,
-            numberOfPages: numberOfPages
+            numberOfPages: numberOfPages,
+            viewID: viewID
         )
+        .environment(\.carouselCurrentPage, currentPage.wrappedValue)
+        .environment(\.carouselViewID, viewID)
+        .onAppear {
+            carouselState.storyStyleStatusForCarousel[viewID] = carousel.isStoryStyleEnabled
+        }
         .id(pages)
     }
     
+    private var viewID: ViewID {
+        return ViewID(nodeID: carousel.id, collectionIndex: collectionIndex)
+    }
+    
     private var currentPage: Binding<Int> {
-        let viewID = ViewID(nodeID: carousel.id, collectionIndex: collectionIndex)
-        
         return Binding {
-            carouselState.currentPageForCarousel[viewID] ?? 0
+            guard let currentPage = carouselState.currentPageForCarousel[viewID] else {
+                if carousel.isStoryStyleEnabled {
+                    carouselState.currentPageForCarousel[viewID] = carouselState.getPersistedPosition(for: viewID)
+                }
+                
+                return carouselState.currentPageForCarousel[viewID] ?? 0
+            }
+            
+            return currentPage
         } set: { newValue in
             carouselState.currentPageForCarousel[viewID] = newValue
+            
+            if carousel.isStoryStyleEnabled {
+                carouselState.setPersistedPosition(for: viewID, newValue: newValue)
+            }
         }
     }
     
     private var numberOfPages: Binding<Int> {
-        let viewID = ViewID(nodeID: carousel.id, collectionIndex: collectionIndex)
-        
         return Binding {
             carouselState.currentNumberOfPagesForCarousel[viewID] ?? 0
         } set: { newValue in
@@ -97,7 +117,7 @@ struct CarouselView: View {
                 return []
             }
         }
-
+        
         return generatePages(node: carousel, item: data)
     }
 }
@@ -114,7 +134,7 @@ private struct Page: View, Hashable, Identifiable {
 
     var layer: Layer
     var item: Any?
-    
+
     static func == (lhs: Page, rhs: Page) -> Bool {
         lhs.id == rhs.id
     }
@@ -151,18 +171,50 @@ private struct Page: View, Hashable, Identifiable {
 private struct PageViewController: UIViewControllerRepresentable {
     private let pages: [Page]
     private let loop: Bool
+    private let storyStyle: Bool
+    private let autoAdvanceDuration: Int
+    private let viewID: ViewID
     @Binding private var currentPage: Int
     @Binding private var numberOfPages: Int
+    
+    @EnvironmentObject private var carouselState: CarouselState
 
-    init(pages: [Page], loop: Bool, currentPage: Binding<Int>, numberOfPages: Binding<Int>) {
+    init(
+        pages: [Page],
+        loop: Bool,
+        storyStyle: Bool,
+        autoAdvanceDuration: Int,
+        currentPage: Binding<Int>,
+        numberOfPages: Binding<Int>,
+        viewID: ViewID
+    ) {
         self.pages = pages
         self.loop = loop
+        self.storyStyle = storyStyle
+        self.autoAdvanceDuration = autoAdvanceDuration
         self._currentPage = currentPage
         self._numberOfPages = numberOfPages
+        self.viewID = viewID
     }
 
     func makeCoordinator() -> Coordinator {
-        Coordinator(self, loop: loop)
+        let coordinator = Coordinator(
+            self,
+            carouselState: carouselState,
+            viewID: viewID,
+            loop: loop,
+            autoAdvanceDuration: autoAdvanceDuration
+        )
+        
+        if storyStyle {
+            coordinator.controllers.forEach { controller in
+                if let controller = controller as? CarouselPageHostController<Page> {
+                    controller.autoAdvanceDelegate = coordinator
+                }
+            }
+        }
+        
+        return coordinator
     }
 
     func makeUIViewController(context: Context) -> UIPageViewController {
@@ -196,25 +248,51 @@ private struct PageViewController: UIViewControllerRepresentable {
                 )
                 return
             }
+            
+            // filter out unnecessary updates, which can have undesirable side effects.
+            guard context.coordinator.lastUpdatedForPage != currentPage else {
+                return
+            }
+            context.coordinator.lastUpdatedForPage = currentPage
 
             pageViewController.setViewControllers(
                 [context.coordinator.controllers[currentPage]],
-                direction: .forward,
+                direction: context.coordinator.direction,
                 animated: true
             )
         }
     }
 
-    class Coordinator: NSObject, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
+    class Coordinator: NSObject, UIPageViewControllerDataSource, UIPageViewControllerDelegate, AutoAdvanceDelegate {
         var parent: PageViewController
         var controllers: [UIViewController]
         var loop: Bool
+        var direction: UIPageViewController.NavigationDirection = .forward
+        var carouselState: CarouselState
+        var viewID: ViewID
+        
+        /// This tracks the value of `currentPage`, used for filtering out unnecessary updates being made to the page view controller's child view controller list, which is a side-effect of other data on CarouselState being updated.
+        var lastUpdatedForPage: Int? = nil
 
-        init(_ pageViewController: PageViewController, loop: Bool) {
+        init(_ 
+             pageViewController: PageViewController,
+             carouselState: CarouselState,
+             viewID: ViewID,
+             loop: Bool,
+             autoAdvanceDuration: Int
+        ) {
             parent = pageViewController
+            self.carouselState = carouselState
             self.loop = loop
-            controllers = parent.pages.map {
-                let controller = CarouselPageHostController(pageContent: $0)
+            self.viewID = viewID
+            controllers = parent.pages.enumerated().map { (index, page) in
+                let controller = CarouselPageHostController(
+                    pageContent: page,
+                    autoAdvanceDuration: autoAdvanceDuration,
+                    carouselState: carouselState,
+                    index: index,
+                    viewID: viewID
+                )
                 controller.view.backgroundColor = .clear
                 return controller
             }
@@ -256,6 +334,26 @@ private struct PageViewController: UIViewControllerRepresentable {
                 parent.currentPage = index
             }
         }
+        
+        func advancePage() {
+            if self.parent.currentPage + 1 < self.parent.numberOfPages {
+                self.parent.currentPage += 1
+                self.direction = .forward
+            } else if loop {
+                self.parent.currentPage = 0
+                self.direction = .forward
+            }
+        }
+        
+        func previousPage() {
+            if self.parent.currentPage > 0 {
+                self.parent.currentPage -= 1
+                self.direction = .reverse
+            } else if loop {
+                self.parent.currentPage = self.parent.numberOfPages - 1
+                self.direction = .reverse
+            }
+        }
     }
 }
 
@@ -263,44 +361,200 @@ private struct PageViewController: UIViewControllerRepresentable {
 ///
 /// This is a workaround for the standard SwiftUI onAppear/onDisappear modifiers not working as expected within UIPageViewController.
 internal class CarouselPageHostController<V>: UIHostingController<CarouselPageHostWrapperView<V>> where V: View {
-    private var pageDidDisappear = PassthroughSubject<Void, Never>()
-    private var pageDidAppear = PassthroughSubject<Void, Never>()
+    private var viewModel: ViewModel
+    private var carouselState: CarouselState
+    var autoAdvanceDuration: Int
+    var index: Int
+    var viewID: ViewID
     
-    override init(rootView: CarouselPageHostWrapperView<V>) {
-        super.init(
-            rootView: rootView
+    weak var autoAdvanceDelegate: AutoAdvanceDelegate? {
+        didSet {
+            self.rootView.autoAdvanceDelegate = autoAdvanceDelegate
+        }
+    }
+
+    var mediaProgressObserver: AnyCancellable?
+    var timer: Timer?
+    
+    private init(
+        rootView: CarouselPageHostWrapperView<V>,
+        viewModel: ViewModel,
+        carouselState: CarouselState,
+        autoAdvanceDuration: Int,
+        index: Int,
+        viewID: ViewID
+    ) {
+        self.viewModel = viewModel
+        self.carouselState = carouselState
+        self.autoAdvanceDuration = autoAdvanceDuration
+        self.index = index
+        self.viewID = viewID
+        super.init(rootView: rootView)
+    }
+    
+    convenience init(
+        pageContent: V,
+        autoAdvanceDuration: Int,
+        carouselState: CarouselState,
+        index: Int,
+        viewID: ViewID
+    ) {
+        let viewModel: ViewModel = ViewModel()
+        
+        let rootView = CarouselPageHostWrapperView(
+            content: pageContent,
+            index: index,
+            viewModel: viewModel
+        )
+
+        self.init(
+            rootView: rootView,
+            viewModel: viewModel,
+            carouselState: carouselState,
+            autoAdvanceDuration: autoAdvanceDuration,
+            index: index,
+            viewID: viewID
         )
     }
     
-    convenience init(pageContent: V) {
-        self.init(rootView: CarouselPageHostWrapperView(content: pageContent, pageDidDisappear: PassthroughSubject<Void, Never>(), pageDidAppear: PassthroughSubject<Void, Never>()))
-        self.rootView = CarouselPageHostWrapperView(content: pageContent, pageDidDisappear: pageDidDisappear, pageDidAppear: pageDidAppear)
+    @MainActor required dynamic init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
+    deinit {
+        self.stopTimer()
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        pageDidAppear.send()
+        carouselState.setBarProgress(for: viewID, index: index, value: 0.0)
+        
+        mediaProgressObserver = viewModel.$mediaCurrentTime.sink { [weak self] currentTime in
+            guard let host = self else {
+                return
+            }
+            let mediaDuration = host.viewModel.mediaDuration
+            
+            guard mediaDuration > 0.0 else {
+                return
+            }
+            
+            host.carouselState.setBarProgress(for: host.viewID, index: host.index, value: currentTime / mediaDuration)
+        }
+        
+        self.startTimer()
+        
         super.viewDidAppear(animated)
     }
     
     override func viewDidDisappear(_ animated: Bool) {
-        pageDidDisappear.send()
+        self.stopTimer()
+
         super.viewDidDisappear(animated)
+    }
+}
+
+// MARK: Timer
+
+extension CarouselPageHostController {
+    func startTimer() {
+        self.stopTimer()
+        
+        self.timer = Timer.scheduledTimer(
+            withTimeInterval: TimeInterval(0.167),
+            repeats: true
+        ) { [weak self] _ in
+            guard let host = self else {
+                return
+            }
+            
+            if !(host.viewModel.isMediaPresent) {
+                host.carouselState.addBarProgress(for: host.viewID, index: host.index, value: 0.167 / Double(host.autoAdvanceDuration))
+                
+                if host.carouselState.getBarProgress(for: host.viewID, index: host.index) >= 1.0 {
+                    host.autoAdvanceDelegate?.advancePage()
+                    host.stopTimer()
+                }
+            }
+        }
+    }
+    
+    func stopTimer() {
+        guard let timer = self.timer else {
+            return
+        }
+        
+        timer.invalidate()
+        self.timer = nil
     }
 }
 
 internal struct CarouselPageHostWrapperView<Content>: View where Content: View {
     var content: Content
+    var index: Int
     
-    var pageDidDisappear: PassthroughSubject<Void, Never>
-    var pageDidAppear: PassthroughSubject<Void, Never>
+    var mediaDidFinishPlaying: PassthroughSubject<Void, Never>  = PassthroughSubject<Void, Never>()
+    var mediaCurrentTimePlaying: CurrentValueSubject<TimeInterval, Never> = CurrentValueSubject<TimeInterval, Never>(0.0)
+    var mediaDuration: CurrentValueSubject<TimeInterval, Never> = CurrentValueSubject<TimeInterval, Never>(0.0)
+    weak var autoAdvanceDelegate: AutoAdvanceDelegate?
+    @ObservedObject var viewModel: ViewModel
     
     var body: some View {
         content
-            .environment(\.pageDidDisappear, pageDidDisappear.eraseToAnyPublisher())
-            .environment(\.pageDidAppear, pageDidAppear.eraseToAnyPublisher())
+            .environment(\.carouselPageNumber, index)
+            .environment(\.mediaDidFinishPlaying, mediaDidFinishPlaying)
+            .environment(\.mediaCurrentTime, mediaCurrentTimePlaying)
+            .environment(\.mediaDuration, mediaDuration)
+            .onPreferenceChange(IsMediaPresentKey.self) { value in
+                viewModel.isMediaPresent = value
+            }
+            .onReceive(mediaDidFinishPlaying) {
+                if viewModel.isMediaPresent {
+                    autoAdvanceDelegate?.advancePage()
+                }
+            }
+            .onReceive(mediaCurrentTimePlaying) { time in
+                viewModel.mediaCurrentTime = time
+            }
+            .onReceive(mediaDuration) { duration in
+                viewModel.mediaDuration = duration
+            }
+            .modifier(AutoAdvanceModifier(autoAdvanceDelegate: autoAdvanceDelegate))
+    }
+}
+
+internal protocol AutoAdvanceDelegate: AnyObject {
+    func advancePage()
+    func previousPage()
+}
+
+class ViewModel: ObservableObject {
+    @Published var isMediaPresent = false
+    @Published var mediaDuration: TimeInterval = 0.0
+    @Published var mediaCurrentTime: TimeInterval = 0.0
+}
+
+fileprivate struct AutoAdvanceModifier: ViewModifier {
+    weak var autoAdvanceDelegate: AutoAdvanceDelegate?
+    
+    func body(content: Content) -> some View {
+        if let autoAdvanceDelegate = self.autoAdvanceDelegate,
+            #available(iOS 17, *) {
+            GeometryReader { geometry in
+                content
+                    .onTapGesture { location in
+                        if location.x > (geometry.frame(in: .local).width * 0.15) {
+                            autoAdvanceDelegate.advancePage()
+                        } else {
+                            autoAdvanceDelegate.previousPage()
+                        }
+                    }
+                    .frame(
+                        width: geometry.size.width,
+                        height: geometry.size.height
+                    )
+            }
+        } else {
+            content
+        }
     }
 }

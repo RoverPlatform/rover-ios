@@ -39,9 +39,9 @@ struct ImageFetcher<Content, Placeholder>: View where Content: View, Placeholder
     var body: some View {
         if let uiImage = uiImage {
             content(uiImage)
-                .onValueChanged(of: url, perform: {_ in
+                .onValueChanged(of: url) { _ in
                     startFetch()
-                })
+                }
         } else {
             placeholder.onAppear {
                 startFetch()

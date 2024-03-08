@@ -497,6 +497,28 @@ open class ClassicScreenViewController: UICollectionViewController, UICollection
             object: self,
             userInfo: userInfo
         )
+        
+        if let callback = Rover.shared.resolve(ExperienceManager.self)?
+            .registeredButtonTappedCallback {
+            callback(
+                ButtonTappedEvent(
+                    nodeID: block.id,
+                    nodeName: block.name,
+                    nodeProperties: block.keys,
+                    nodeTags: Set(block.tags),
+                    screenID: screen.id,
+                    screenName: screen.name,
+                    screenProperties: screen.keys,
+                    screenTags: Set(screen.tags),
+                    experienceID: experience.id,
+                    experienceName: experience.name,
+                    campaignID: campaignID,
+                    data: nil,
+                    urlParameters: [:],
+                    userInfo: [:]
+                )
+            )
+        }
     }
     
     // MARK: Block Tap Actions
@@ -544,16 +566,20 @@ open class ClassicScreenViewController: UICollectionViewController, UICollection
             callback(
                 CustomActionActivationEvent(
                     nodeId: block.id,
+                    nodeID: block.id,
                     nodeName: block.name,
                     nodeProperties: block.keys,
                     nodeTags: Set(block.tags),
                     screenId: screen.id,
+                    screenID: screen.id,
                     screenName: screen.name,
                     screenProperties: screen.keys,
                     screenTags: Set(screen.tags),
                     experienceId: experience.id,
+                    experienceID: experience.id,
                     experienceName: experience.name,
                     campaignId: campaignID,
+                    campaignID: campaignID,
                     data: nil,
                     urlParameters: [:],
                     userInfo: [:],

@@ -15,28 +15,28 @@
 
 import Foundation
 
-/// Describes a user's screen view in a Rover experience. A value of this type is given to the registered screen view callback registered with the shared Rover foundation object.
+/// Describes a user's tap of a block or layer in a Rover experience. A value of this type is given to the registered button tapped callback registered with the shared Rover foundation object.
 ///
-/// This type provides the context for the user screen view, giving the screen, and experience ids and names in addition to the data context (URL parameters, user info, and data from a Web API data source).
+/// This type provides the context for the user's button tap, giving the screen, and experience ids and names in addition to the data context (URL parameters, user info, and data from a Web API data source).
 
-public struct ScreenViewedEvent {
-    @available(*, deprecated, renamed: "experienceID")
-    public let experienceId: String?
-    public let experienceID: String?
-    public let experienceName: String?
+public struct ButtonTappedEvent {
+    public let nodeID: String
+    public let nodeName: String?
+    public let nodeProperties: [String: String]
+    public let nodeTags: Set<String>
     
-    @available(*, deprecated, renamed: "screenID")
-    public let screenId: String
     public let screenID: String
     public let screenName: String?
     public let screenProperties: [String: String]
     public let screenTags: Set<String>
     
-    @available(*, deprecated, renamed: "campaignID")
-    public let campaignId: String?
+    public let experienceID: String?
+    public let experienceName: String?
+    
     public let campaignID: String?
 
     /// This value can be any of the types one might typically find in decoded JSON, ie., String, Int, dictionaries, arrays, and so on.
     public let data: Any?
     public let urlParameters: [String: String]
+    public let userInfo: [String: Any]
 }

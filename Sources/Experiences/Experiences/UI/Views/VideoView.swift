@@ -22,11 +22,12 @@ struct VideoView: View {
     @Environment(\.data) private var data
     @Environment(\.urlParameters) private var urlParameters
     @Environment(\.userInfo) private var userInfo
+    @Environment(\.deviceContext) private var deviceContext
     
     let video: RoverExperiences.Video
 
     var body: some View {
-        if let urlString = video.sourceURL.evaluatingExpressions(data: data, urlParameters: urlParameters, userInfo: userInfo), let sourceURL = URL(string: urlString) {
+        if let urlString = video.sourceURL.evaluatingExpressions(data: data, urlParameters: urlParameters, userInfo: userInfo, deviceContext: deviceContext), let sourceURL = URL(string: urlString) {
             Player(
                 sourceURL: sourceURL,
                 posterImageURL: posterURL,

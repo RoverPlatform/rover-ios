@@ -21,7 +21,7 @@ import RoverFoundation
 import RoverData
 
 extension ExperienceAction {
-    func handle(experience: ExperienceModel, node: Node, screen: Screen, data: Any?, urlParameters: [String: String], userInfo: [String: Any], authorize: @escaping (inout URLRequest) -> Void, experienceViewController: RenderExperienceViewController, screenViewController: ScreenViewController) {
+    func handle(experience: ExperienceModel, node: Node, screen: Screen, data: Any?, urlParameters: [String: String], userInfo: [String: Any], deviceContext: [String: Any], authorize: @escaping (inout URLRequest) -> Void, experienceViewController: RenderExperienceViewController, screenViewController: ScreenViewController) {
         let experienceManager = Rover.shared.resolve(ExperienceManager.self)!
         
         experienceManager.conversionsTracker.track(self.conversionTags)
@@ -67,7 +67,7 @@ extension ExperienceAction {
                 screenViewController.present(viewController, animated: true)
             }
         case let .openURL(url, dismissExperience, _):
-            guard let resolvedURLString = url.evaluatingExpressions(data: data, urlParameters: urlParameters, userInfo: userInfo), let resolvedURL = URL(string: resolvedURLString) else {
+            guard let resolvedURLString = url.evaluatingExpressions(data: data, urlParameters: urlParameters, userInfo: userInfo, deviceContext: deviceContext), let resolvedURL = URL(string: resolvedURLString) else {
                 rover_log(.error, "Unable to resolve URL: %@", url)
                 return
             }
@@ -88,7 +88,7 @@ extension ExperienceAction {
                 }
             }
         case let .presentWebsite(url, _):
-            guard let resolvedURLString = url.evaluatingExpressions(data: data, urlParameters: urlParameters, userInfo: userInfo), var resolvedURLComponents = URLComponents(string: resolvedURLString) else {
+            guard let resolvedURLString = url.evaluatingExpressions(data: data, urlParameters: urlParameters, userInfo: userInfo, deviceContext: deviceContext), var resolvedURLComponents = URLComponents(string: resolvedURLString) else {
                 rover_log(.error, "Unable to resolve URL: %@", url)
                 return
             }

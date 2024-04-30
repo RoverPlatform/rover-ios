@@ -1,4 +1,4 @@
-// swift-tools-version:5.3
+// swift-tools-version:5.9
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -28,17 +28,11 @@ let package = Package(
             name: "RoverLocation",
             targets: ["RoverLocation"]),
         .library(
-            name: "RoverBluetooth",
-            targets: ["RoverBluetooth"]),
-        .library(
             name: "RoverDebug",
             targets: ["RoverDebug"]),
         .library(
             name: "RoverTelephony",
             targets: ["RoverTelephony"]),
-        .library(
-            name: "RoverAdSupport",
-            targets: ["RoverAdSupport"]),
         .library(
             name: "RoverTicketmaster",
             targets: ["RoverTicketmaster"]),
@@ -50,8 +44,7 @@ let package = Package(
             targets: ["RoverAppExtensions"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/WeTransfer/Mocker", .upToNextMajor(from: "3.0.1")),
-        .package(url:"https://github.com/weichsel/ZIPFoundation", .upToNextMinor(from: "0.9.16"))
+        .package(url:"https://github.com/weichsel/ZIPFoundation", .upToNextMinor(from: "0.9.19"))
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -59,27 +52,22 @@ let package = Package(
         .target(
             name: "RoverFoundation",
             dependencies: [],
-            path: "Sources/Foundation"),
+            path: "Sources/Foundation",
+            resources: [.copy("Resources/PrivacyInfo.xcprivacy")]),
         .target(
             name: "RoverData",
             dependencies: ["RoverFoundation"],
-            path: "Sources/Data"),
+            path: "Sources/Data",
+            resources: [.copy("Resources/PrivacyInfo.xcprivacy")]),
         .target(
             name: "RoverUI",
             dependencies: ["RoverData"],
-            path: "Sources/UI"),
-        .target(
-            name: "RoverAdSupport",
-            dependencies: ["RoverData"],
-            path: "Sources/AdSupport"),
+            path: "Sources/UI",
+            resources: [.copy("Resources/PrivacyInfo.xcprivacy")]),
         .target(
             name: "RoverAppExtensions",
             dependencies: ["RoverFoundation"],
             path: "Sources/AppExtensions"),
-        .target(
-            name: "RoverBluetooth",
-            dependencies: ["RoverData"],
-            path: "Sources/Bluetooth"),
         .target(
             name: "RoverDebug",
             dependencies: ["RoverUI"],
@@ -87,26 +75,32 @@ let package = Package(
         .target(
             name: "RoverExperiences",
             dependencies: ["RoverUI", "RoverFoundation", "RoverData", "ZIPFoundation"],
-            path: "Sources/Experiences"),
+            path: "Sources/Experiences",
+            resources: [.copy("Resources/PrivacyInfo.xcprivacy")]),
         .target(
             name: "RoverLocation",
             dependencies: ["RoverData"],
-            path: "Sources/Location"),
+            path: "Sources/Location",
+            resources: [.copy("Resources/PrivacyInfo.xcprivacy")]),
         .target(
             name: "RoverNotifications",
             dependencies: ["RoverData", "RoverUI"],
-            path: "Sources/Notifications"),
+            path: "Sources/Notifications",
+            resources: [.copy("Resources/PrivacyInfo.xcprivacy")]),
         .target(
             name: "RoverTelephony",
             dependencies: ["RoverData"],
-            path: "Sources/Telephony"),
+            path: "Sources/Telephony",
+            resources: [.copy("Resources/PrivacyInfo.xcprivacy")]),
         .target(
             name: "RoverTicketmaster",
             dependencies: ["RoverData"],
-            path: "Sources/Ticketmaster"),
+            path: "Sources/Ticketmaster",
+            resources: [.copy("Resources/PrivacyInfo.xcprivacy")]),
         .target(
             name: "RoverSeatGeek",
             dependencies: ["RoverData"],
-            path: "Sources/SeatGeek")
+            path: "Sources/SeatGeek",
+            resources: [.copy("Resources/PrivacyInfo.xcprivacy")]),
     ]
 )

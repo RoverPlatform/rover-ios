@@ -23,6 +23,7 @@ struct WebViewView: View {
     @Environment(\.isEnabled) private var isEnabled
     @Environment(\.urlParameters) private var urlParameters
     @Environment(\.userInfo) private var userInfo
+    @Environment(\.deviceContext) private var deviceContext
     
     var webView: WebView
     
@@ -44,7 +45,8 @@ struct WebViewView: View {
             let maybeValue = value.evaluatingExpressions(
                 data: data,
                 urlParameters: urlParameters,
-                userInfo: userInfo
+                userInfo: userInfo,
+                deviceContext: deviceContext
             )
                 
             guard let value = maybeValue else {
@@ -56,7 +58,8 @@ struct WebViewView: View {
             let maybeValue = value.evaluatingExpressions(
                 data: data,
                 urlParameters: urlParameters,
-                userInfo: userInfo
+                userInfo: userInfo,
+                deviceContext: deviceContext
             )
                 
             guard let value = maybeValue else {

@@ -7,9 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4FBB82D628FF56F80052F3D9 /* RoverAdSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 4FBB82D528FF56F80052F3D9 /* RoverAdSupport */; };
 		4FBB82D828FF56F80052F3D9 /* RoverAppExtensions in Frameworks */ = {isa = PBXBuildFile; productRef = 4FBB82D728FF56F80052F3D9 /* RoverAppExtensions */; };
-		4FBB82DA28FF56F80052F3D9 /* RoverBluetooth in Frameworks */ = {isa = PBXBuildFile; productRef = 4FBB82D928FF56F80052F3D9 /* RoverBluetooth */; };
 		4FBB82DC28FF56F80052F3D9 /* RoverData in Frameworks */ = {isa = PBXBuildFile; productRef = 4FBB82DB28FF56F80052F3D9 /* RoverData */; };
 		4FBB82DE28FF56F80052F3D9 /* RoverDebug in Frameworks */ = {isa = PBXBuildFile; productRef = 4FBB82DD28FF56F80052F3D9 /* RoverDebug */; };
 		4FBB82E028FF56F80052F3D9 /* RoverExperiences in Frameworks */ = {isa = PBXBuildFile; productRef = 4FBB82DF28FF56F80052F3D9 /* RoverExperiences */; };
@@ -74,12 +72,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4FBB82D628FF56F80052F3D9 /* RoverAdSupport in Frameworks */,
 				4FBB82E628FF56F90052F3D9 /* RoverNotifications in Frameworks */,
 				4FBB82E228FF56F90052F3D9 /* RoverFoundation in Frameworks */,
 				4FBB82EC28FF56F90052F3D9 /* RoverUI in Frameworks */,
 				4FBB82DC28FF56F80052F3D9 /* RoverData in Frameworks */,
-				4FBB82DA28FF56F80052F3D9 /* RoverBluetooth in Frameworks */,
 				4FBB82E428FF56F90052F3D9 /* RoverLocation in Frameworks */,
 				4FBB82DE28FF56F80052F3D9 /* RoverDebug in Frameworks */,
 				4FBB82D828FF56F80052F3D9 /* RoverAppExtensions in Frameworks */,
@@ -178,9 +174,7 @@
 			);
 			name = Example;
 			packageProductDependencies = (
-				4FBB82D528FF56F80052F3D9 /* RoverAdSupport */,
 				4FBB82D728FF56F80052F3D9 /* RoverAppExtensions */,
-				4FBB82D928FF56F80052F3D9 /* RoverBluetooth */,
 				4FBB82DB28FF56F80052F3D9 /* RoverData */,
 				4FBB82DD28FF56F80052F3D9 /* RoverDebug */,
 				4FBB82DF28FF56F80052F3D9 /* RoverExperiences */,
@@ -571,17 +565,9 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		4FBB82D528FF56F80052F3D9 /* RoverAdSupport */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = RoverAdSupport;
-		};
 		4FBB82D728FF56F80052F3D9 /* RoverAppExtensions */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = RoverAppExtensions;
-		};
-		4FBB82D928FF56F80052F3D9 /* RoverBluetooth */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = RoverBluetooth;
 		};
 		4FBB82DB28FF56F80052F3D9 /* RoverData */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -16,8 +16,12 @@
 import Foundation
 
 extension Collection {
-    func items(data: Any?, urlParameters: [String: String], userInfo: [String: Any]) -> [Any] {
-        guard var result = JSONSerialization.value(forKeyPath: keyPath, data: data, urlParameters: urlParameters, userInfo: userInfo) as? [Any] else {
+    func items(data: Any?, 
+               urlParameters: [String: String],
+               userInfo: [String: Any],
+               deviceContext: [String: Any]
+    ) -> [Any] {
+        guard var result = JSONSerialization.value(forKeyPath: keyPath, data: data, urlParameters: urlParameters, userInfo: userInfo, deviceContext: deviceContext) as? [Any] else {
             return []
         }
         
@@ -26,7 +30,8 @@ extension Collection {
                 condition.isSatisfied(
                     data: data,
                     urlParameters: urlParameters,
-                    userInfo: userInfo
+                    userInfo: userInfo,
+                    deviceContext: deviceContext
                 )
             }
         }
@@ -38,14 +43,16 @@ extension Collection {
                         forKeyPath: descriptor.keyPath,
                         data: a,
                         urlParameters: urlParameters,
-                        userInfo: userInfo
+                        userInfo: userInfo,
+                        deviceContext: deviceContext
                     )
                     
                     let b = JSONSerialization.value(
                         forKeyPath: descriptor.keyPath,
                         data: b,
                         urlParameters: urlParameters,
-                        userInfo: userInfo
+                        userInfo: userInfo,
+                        deviceContext: deviceContext
                     )
                     
                     switch (a, b) {

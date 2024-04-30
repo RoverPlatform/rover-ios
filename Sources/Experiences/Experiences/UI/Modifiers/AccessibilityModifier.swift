@@ -49,10 +49,11 @@ private struct LabelModifier: ViewModifier {
     @Environment(\.stringTable) private var stringTable
     @Environment(\.urlParameters) private var urlParameters
     @Environment(\.userInfo) private var userInfo
+    @Environment(\.deviceContext) private var deviceContext
     
     @ViewBuilder
     func body(content: Content) -> some View {
-        if let label = accessibility.label, let textValue = stringTable.resolve(key: label).evaluatingExpressions(data: data, urlParameters: urlParameters, userInfo: userInfo) {
+        if let label = accessibility.label, let textValue = stringTable.resolve(key: label).evaluatingExpressions(data: data, urlParameters: urlParameters, userInfo: userInfo, deviceContext: deviceContext) {
             content.accessibility(label: SwiftUI.Text(textValue))
         } else {
             content

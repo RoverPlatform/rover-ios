@@ -3,7 +3,7 @@
 // copy, modify, and distribute this software in source code or binary form for use
 // in connection with the web services and APIs provided by Rover.
 //
-// This copyright notice shall be included in all copies or substantial portions of 
+// This copyright notice shall be included in all copies or substantial portions of
 // the software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -13,20 +13,11 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import CoreBluetooth
-import RoverFoundation
-import RoverData
+import Foundation
 
-public class BluetoothAssembler: Assembler {
-    let showPowerAlertKey: Bool
-    
-    public init(showPowerAlertKey: Bool = false) {
-        self.showPowerAlertKey = showPowerAlertKey
-    }
-    
-    public func assemble(container: Container) {
-        container.register(BluetoothContextProvider.self) { _ in
-            BluetoothManager(showPowerAlertKey: self.showPowerAlertKey)
-        }
+extension Double {
+    func roundToDecimal(_ decimalPlaces: Int) -> Double {
+        let multiplier = pow(10, Double(decimalPlaces))
+        return Darwin.round(self * multiplier) / multiplier
     }
 }

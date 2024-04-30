@@ -22,13 +22,14 @@ struct DataSourceView: View {
     var dataSource: RoverExperiences.DataSource
     var dataSourceUrlString: String? {
         get {
-            return dataSource.url.evaluatingExpressions(data: parentData, urlParameters: urlParameters, userInfo: userInfo)
+            return dataSource.url.evaluatingExpressions(data: parentData, urlParameters: urlParameters, userInfo: userInfo, deviceContext: deviceContext)
         }
     }
     
     @Environment(\.data) private var parentData
     @Environment(\.urlParameters) private var urlParameters
     @Environment(\.userInfo) private var userInfo
+    @Environment(\.deviceContext) private var deviceContext
     @Environment(\.authorize) private var authorize
     
     @State private var cancellables: Set<AnyCancellable> = []
@@ -85,11 +86,11 @@ struct DataSourceView: View {
         request.httpMethod = dataSource.httpMethod.rawValue
         
         request.httpBody = dataSource.httpBody?
-            .evaluatingExpressions(data: parentData, urlParameters: urlParameters, userInfo: userInfo)?
+            .evaluatingExpressions(data: parentData, urlParameters: urlParameters, userInfo: userInfo, deviceContext: deviceContext)?
             .data(using: .utf8)
         
         request.allHTTPHeaderFields = dataSource.headers.reduce(nil) { result, header in
-            guard let value = header.value.evaluatingExpressions(data: parentData, urlParameters: urlParameters, userInfo: userInfo) else {
+            guard let value = header.value.evaluatingExpressions(data: parentData, urlParameters: urlParameters, userInfo: userInfo, deviceContext: deviceContext) else {
                 return result
             }
             

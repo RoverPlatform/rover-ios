@@ -106,7 +106,7 @@ private struct PrivacyModeView: View {
     var body: some View {
         Picker("Tracking Mode", selection: $value) {
             Text("Default").tag(PrivacyService.TrackingMode.default)
-            Text("Anonymous").tag(PrivacyService.TrackingMode.anonymous)
+            Text("Anonymized").tag(PrivacyService.TrackingMode.anonymized)
         }
     }
 }

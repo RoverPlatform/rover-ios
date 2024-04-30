@@ -20,26 +20,15 @@ public struct Context: Codable, Equatable {
     // MARK: Privacy
     public var trackingMode: String?
     
-    // MARK: AdSupport
-    
-    public var advertisingIdentifier: String?
-    
-    // MARK: Bluetooth
-    
-    public var isBluetoothEnabled: Bool?
-    
     // MARK: Dark Mode
-    
     public var isDarkModeEnabled: Bool?
     
     // MARK: Locale
-    
     public var localeLanguage: String?
     public var localeRegion: String?
     public var localeScript: String?
     
     // MARK: Location
-    
     public struct Location: Codable, Equatable {
         public struct Coordinate: Codable, Equatable {
             public var latitude: Double
@@ -65,33 +54,24 @@ public struct Context: Codable, Equatable {
         }
         
         public struct Address: Codable, Equatable {
-            public var street: String?
             public var city: String?
             public var state: String?
-            public var postalCode: String?
             public var country: String?
             public var isoCountryCode: String?
             public var subAdministrativeArea: String?
-            public var subLocality: String?
             
             public init(
-                street: String?,
                 city: String?,
                 state: String?,
-                postalCode: String?,
                 country: String?,
                 isoCountryCode: String?,
-                subAdministrativeArea: String?,
-                subLocality: String?
+                subAdministrativeArea: String?
                 ) {
-                self.street = street
                 self.city = city
                 self.state = state
-                self.postalCode = postalCode
                 self.country = country
                 self.isoCountryCode = isoCountryCode
                 self.subAdministrativeArea = subAdministrativeArea
-                self.subLocality = subLocality
             }
         }
         
@@ -124,11 +104,9 @@ public struct Context: Codable, Equatable {
     public var locationAuthorization: String?
     
     // MARK: Notifications
-    
     public var notificationAuthorization: String?
     
     // MARK: Push Token
-    
     public struct PushToken: Codable, Equatable {
         public internal(set) var value: String
         public internal(set) var timestamp: Date
@@ -137,12 +115,10 @@ public struct Context: Codable, Equatable {
     public var pushToken: PushToken?
     
     // MARK: Reachability
-    
     public var isCellularEnabled: Bool?
     public var isWifiEnabled: Bool?
     
     // MARK: Static Context
-    
     public enum BuildEnvironment: String, Codable, Equatable {
         case production = "PRODUCTION"
         case development = "DEVELOPMENT"
@@ -160,25 +136,21 @@ public struct Context: Codable, Equatable {
     public var deviceName: String?
     public var operatingSystemName: String?
     public var operatingSystemVersion: String?
-    public var screenHeight: Int?
-    public var screenWidth: Int?
+    public var screenHeight: Double?
+    public var screenWidth: Double?
     public var sdkVersion: String?
     
     // MARK: Telephony
-    
     public var carrierName: String?
     public var radio: String?
     
     // MARK: Testing
-    
     public var isTestDevice: Bool?
     
     // MARK: Time Zone
-    
     public var timeZone: String?
     
     // MARK: User Info
-    
     public var userInfo: Attributes?
     
     // MARK: Conversions
@@ -189,9 +161,7 @@ public struct Context: Codable, Equatable {
     
     public init(
         trackingMode: String?,
-        advertisingIdentifier: String?,
         isDarkModeEnabled: Bool?,
-        isBluetoothEnabled: Bool?,
         localeLanguage: String?,
         localeRegion: String?,
         localeScript: String?,
@@ -213,8 +183,8 @@ public struct Context: Codable, Equatable {
         deviceName: String?,
         operatingSystemName: String?,
         operatingSystemVersion: String?,
-        screenHeight: Int?,
-        screenWidth: Int?,
+        screenHeight: Double?,
+        screenWidth: Double?,
         sdkVersion: String?,
         carrierName: String?,
         radio: String?,
@@ -225,9 +195,7 @@ public struct Context: Codable, Equatable {
         lastSeen: Date?
     ) {
         self.trackingMode = trackingMode
-        self.advertisingIdentifier = advertisingIdentifier
         self.isDarkModeEnabled = isDarkModeEnabled
-        self.isBluetoothEnabled = isBluetoothEnabled
         self.localeLanguage = localeLanguage
         self.localeRegion = localeRegion
         self.localeScript = localeScript

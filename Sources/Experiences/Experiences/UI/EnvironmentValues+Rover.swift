@@ -80,6 +80,10 @@ internal struct UserInfoKey: EnvironmentKey {
     static let defaultValue: [String: Any] = [:]
 }
 
+internal struct DeviceContextKey: EnvironmentKey {
+    static let defaultValue: [String: Any] = [:]
+}
+
 internal struct AuthorizeKey: EnvironmentKey {
     static let defaultValue: (inout URLRequest) -> Void = { _ in }
 }
@@ -210,6 +214,16 @@ internal extension EnvironmentValues {
         
         set {
             self[UserInfoKey.self] = newValue
+        }
+    }
+    
+    var deviceContext: [String: Any] {
+        get {
+            return self[DeviceContextKey.self]
+        }
+        
+        set {
+            self[DeviceContextKey.self] = newValue
         }
     }
     

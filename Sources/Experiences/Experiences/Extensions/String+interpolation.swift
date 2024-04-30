@@ -31,10 +31,14 @@ private let localDateCreator: ISO8601DateFormatter = {
 }()
 
 extension String {
-    func evaluatingExpressions(data: Any?, urlParameters: [String: String], userInfo: [String: Any]) -> String? {
+    func evaluatingExpressions(data: Any?,
+                               urlParameters: [String: String],
+                               userInfo: [String: Any],
+                               deviceContext: [String: Any]
+    ) -> String? {
         do {
             var result = self
-            try result.evaluateExpressions(data: data, urlParameters: urlParameters, userInfo: userInfo)
+            try result.evaluateExpressions(data: data, urlParameters: urlParameters, userInfo: userInfo, deviceContext: deviceContext)
             return result
         } catch {
             rover_log(.error, "Invalid string interpolation expression, ignoring: '%@'. Reason: %@", self, error.debugDescription)
@@ -42,9 +46,18 @@ extension String {
         }
     }
 
-    mutating func evaluateExpressions(data: Any?, urlParameters: [String: String], userInfo: [String: Any]) throws {
+    mutating func evaluateExpressions(data: Any?, 
+                                      urlParameters: [String: String],
+                                      userInfo: [String: Any],
+                                      deviceContext: [String: Any]
+    ) throws {
 
-        let expressionHelper = ExpressionHelper(data: data, urlParameters: urlParameters, userInfo: userInfo)
+        let expressionHelper = ExpressionHelper(
+            data: data,
+            urlParameters: urlParameters,
+            userInfo: userInfo,
+            deviceContext: deviceContext
+        )
 
         func nextMatch(for pattern: String = "\\{\\{(.*?)\\}\\}", in string: String) -> NSTextCheckingResult? {
             let range = NSRange(location: 0, length: string.utf16.count)
@@ -103,11 +116,17 @@ private struct ExpressionHelper {
     private let data: Any?
     private let urlParameters: [String: String]
     private let userInfo: [String: Any]
+    private let deviceContext: [String: Any]
 
-    init(data: Any?, urlParameters: [String: String], userInfo: [String: Any]) {
+    init(data: Any?, 
+         urlParameters: [String: String],
+         userInfo: [String: Any],
+         deviceContext: [String: Any]
+    ) {
         self.data = data
         self.urlParameters = urlParameters
         self.userInfo = userInfo
+        self.deviceContext = deviceContext
     }
 
     /// Evaluates the passed expression
@@ -149,7 +168,8 @@ private struct ExpressionHelper {
             forKeyPath: keyPathOrStringLiteral,
             data: data,
             urlParameters: urlParameters,
-            userInfo: userInfo
+            userInfo: userInfo,
+            deviceContext: deviceContext
         )
 
         switch value {
@@ -372,7 +392,8 @@ private struct ExpressionHelper {
             forKeyPath: keyPathOrStringLiteral,
             data: data,
             urlParameters: urlParameters,
-            userInfo: userInfo
+            userInfo: userInfo,
+            deviceContext: deviceContext
         )
 
         switch value {

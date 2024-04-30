@@ -182,6 +182,7 @@ private struct PageControlViewBody: UIViewRepresentable {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.urlParameters) private var urlParameters
     @Environment(\.userInfo) private var userInfo
+    @Environment(\.deviceContext) private var deviceContext
     @Binding private var numberOfPages: Int
     @Binding private var currentPage: Int
     private var hidesForSinglePage: Bool
@@ -219,7 +220,7 @@ private struct PageControlViewBody: UIViewRepresentable {
     }
 
     func updateUIView(_ pageControl: UIPageControl, context: Context) {
-        images.fetchImages(data: data, colorScheme: colorScheme, urlParameters: urlParameters, userInfo: _userInfo.wrappedValue)
+        images.fetchImages(data: data, colorScheme: colorScheme, urlParameters: urlParameters, userInfo: _userInfo.wrappedValue, deviceContext: deviceContext)
         
         //Update page count, before iterating on the number of pages.
         pageControl.numberOfPages = numberOfPages
@@ -270,8 +271,8 @@ private final class Images: ObservableObject {
     private var data: Any?
     private var colorScheme: ColorScheme?
     private var urlParameters: [String: String] = [:]
-        
     private var userInfo: [String: Any] = [:]
+    private var deviceContext: [String: Any] = [:]
 
     @Published var normalUIImage: UIImage?
     @Published var currentUIImage: UIImage?
@@ -281,7 +282,7 @@ private final class Images: ObservableObject {
         self.currentImage = currentImage
     }
 
-    func fetchImages(data: Any?, colorScheme: ColorScheme, urlParameters: [String: String], userInfo: [String: Any]) {
+    func fetchImages(data: Any?, colorScheme: ColorScheme, urlParameters: [String: String], userInfo: [String: Any], deviceContext: [String: Any]) {
         // we need Equatable to do the comparison so re-wrap in JSON.
         let currentUserInfo = try? JSON(self.userInfo)
         let newUserInfo = try? JSON(userInfo)
@@ -294,6 +295,7 @@ private final class Images: ObservableObject {
         self.colorScheme = colorScheme
         self.urlParameters = urlParameters
         self.userInfo = userInfo
+        self.deviceContext = deviceContext
                 
         if let normalImage = normalImage {
             fetch(image: normalImage) { uiImage in
@@ -310,7 +312,7 @@ private final class Images: ObservableObject {
 
     private func fetch(image: RoverExperiences.Image, completion: @escaping (UIImage) -> Void) {
         let scale = self.scale(for: image)
-        if let urlString = urlString(for: image)?.evaluatingExpressions(data: data, urlParameters: urlParameters, userInfo: userInfo), let resolvedURL = URL(string: urlString)  {
+        if let urlString = urlString(for: image)?.evaluatingExpressions(data: data, urlParameters: urlParameters, userInfo: userInfo, deviceContext: deviceContext), let resolvedURL = URL(string: urlString)  {
             fetchImage(url: resolvedURL) { uiImage in
                 DispatchQueue.main.async {
                     completion(UIImage.scale(image: uiImage, by: scale))

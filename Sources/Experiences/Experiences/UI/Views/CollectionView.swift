@@ -21,6 +21,7 @@ struct CollectionView: View {
     @Environment(\.data) private var data
     @Environment(\.urlParameters) private var urlParameters
     @Environment(\.userInfo) private var userInfo
+    @Environment(\.deviceContext) private var deviceContext
     var collection: Collection
 
     var body: some View {
@@ -39,7 +40,8 @@ struct CollectionView: View {
         collection.items(
             data: data,
             urlParameters: urlParameters,
-            userInfo: userInfo
+            userInfo: userInfo,
+            deviceContext: deviceContext
         )
     }
     

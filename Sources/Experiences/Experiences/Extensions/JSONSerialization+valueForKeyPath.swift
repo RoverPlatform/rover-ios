@@ -25,12 +25,15 @@ extension JSONSerialization {
     /// - Returns: The value defined at the supplied key path where `data` refers to the JSON
     /// data, `url` refers to the document's `urlParameters` and `user` refers to the document's
     /// `userInfo`. If there is no value at the specified `keyPath`, nil is returned.
-    public static func value(forKeyPath keyPath: String, data: Any?, urlParameters: [String: String], userInfo: [String: Any]) -> Any? {
+    public static func value(forKeyPath keyPath: String, data: Any?, urlParameters: [String: String], userInfo: [String: Any], deviceContext: [String: Any]) -> Any? {
         var object: [String: Any] = [
             "url": urlParameters.reduce(into: [:]) {
                 $0[$1.0] = $1.1
             },
             "user": userInfo.reduce(into: [:]) {
+                $0[$1.0] = $1.1
+            },
+            "device": deviceContext.reduce(into: [:]) {
                 $0[$1.0] = $1.1
             }
         ]

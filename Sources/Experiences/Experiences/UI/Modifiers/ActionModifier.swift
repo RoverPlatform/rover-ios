@@ -27,6 +27,7 @@ struct ActionModifier: ViewModifier {
     @Environment(\.data) private var data
     @Environment(\.urlParameters) private var urlParameters
     @Environment(\.userInfo) private var userInfo
+    @Environment(\.deviceContext) private var deviceContext
     @Environment(\.authorize) private var authorize
     
     @ViewBuilder
@@ -35,7 +36,7 @@ struct ActionModifier: ViewModifier {
             Button {
                 // NB: Being very careful here to not capture the view controllers from the Environment in this button callback closure, otherwise you get a hard-to-trace retain cycle through the SwiftUI environment.
                 if let experience = experience, let screen = screen, let experienceViewController = experienceViewControllerHolder?.experienceViewController, let screenViewController = screenViewControllerHolder?.screenViewController {
-                    action.handle(experience: experience, node: layer, screen: screen, data: data, urlParameters: urlParameters, userInfo: userInfo, authorize: authorize, experienceViewController: experienceViewController, screenViewController: screenViewController)
+                    action.handle(experience: experience, node: layer, screen: screen, data: data, urlParameters: urlParameters, userInfo: userInfo, deviceContext: deviceContext, authorize: authorize, experienceViewController: experienceViewController, screenViewController: screenViewController)
                 }
             } label: {
                 content

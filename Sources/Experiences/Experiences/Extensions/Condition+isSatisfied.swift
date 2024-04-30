@@ -16,12 +16,18 @@
 import Foundation
 
 extension Condition {
-    func isSatisfied(data: Any?, urlParameters: [String: String], userInfo: [String: Any]) -> Bool {
+    func isSatisfied(
+        data: Any?,
+        urlParameters: [String: String],
+        userInfo: [String: Any],
+        deviceContext: [String: Any]
+    ) -> Bool {
         let lhs = JSONSerialization.value(
             forKeyPath: keyPath,
             data: data,
             urlParameters: urlParameters,
-            userInfo: userInfo
+            userInfo: userInfo,
+            deviceContext: deviceContext
         )
         
         switch (predicate, self.value) {
@@ -29,7 +35,8 @@ extension Condition {
             let maybeValue = value.evaluatingExpressions(
                 data: data,
                 urlParameters: urlParameters,
-                userInfo: userInfo
+                userInfo: userInfo,
+                deviceContext: deviceContext
             )
             
             guard let rhs = maybeValue else {
@@ -43,7 +50,8 @@ extension Condition {
             let maybeValue = value.evaluatingExpressions(
                 data: data,
                 urlParameters: urlParameters,
-                userInfo: userInfo
+                userInfo: userInfo,
+                deviceContext: deviceContext
             )
             
             guard let rhs = maybeValue else {
@@ -180,12 +188,18 @@ extension Condition {
 }
 
 extension Conditional {
-    func allConditionsSatisfied(data: Any?, urlParameters: [String: String], userInfo: [String: Any]) -> Bool {
+    func allConditionsSatisfied(
+        data: Any?,
+        urlParameters: [String: String],
+        userInfo: [String: Any],
+        deviceContext: [String: Any]
+    ) -> Bool {
         self.conditions.allSatisfy { condition in
             condition.isSatisfied(
                 data: data,
                 urlParameters: urlParameters,
-                userInfo: userInfo
+                userInfo: userInfo,
+                deviceContext: deviceContext
             )
         }
     }

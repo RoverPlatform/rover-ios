@@ -19,8 +19,8 @@ import RoverData
 extension CLLocation {
     public func context(placemark: CLPlacemark?) -> Context.Location {
         let coordinate = Context.Location.Coordinate(
-            latitude: self.coordinate.latitude,
-            longitude: self.coordinate.longitude
+            latitude: self.coordinate.latitude.roundToDecimal(2),
+            longitude: self.coordinate.longitude.roundToDecimal(2)
         )
         
         let address: Context.Location.Address? = {
@@ -29,14 +29,11 @@ extension CLLocation {
             }
             
             return Context.Location.Address(
-                street: placemark.thoroughfare,
                 city: placemark.locality,
                 state: placemark.administrativeArea,
-                postalCode: placemark.postalCode,
                 country: placemark.country,
                 isoCountryCode: placemark.isoCountryCode,
-                subAdministrativeArea: placemark.administrativeArea,
-                subLocality: placemark.subLocality
+                subAdministrativeArea: placemark.administrativeArea
             )
         }()
         

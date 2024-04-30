@@ -18,8 +18,12 @@ import Foundation
 /// This object is responsible for the global privacy settings of the Rover SDK.
 public class PrivacyService: PrivacyContextProvider {
     public enum TrackingMode: String, Identifiable, CaseIterable {
+        public static var allCases: [PrivacyService.TrackingMode] = [.default, .anonymized]
+        
         case `default`
+        @available(*, deprecated, message: "Use TrackingMode.anonymized")
         case anonymous
+        case anonymized
         
         public var id: Self { self }
     }

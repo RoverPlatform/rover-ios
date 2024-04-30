@@ -21,6 +21,7 @@ struct ImageView: View {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.urlParameters) private var urlParameters
     @Environment(\.userInfo) private var userInfo
+    @Environment(\.deviceContext) private var deviceContext
     @Environment(\.data) private var data
     
     var image: RoverExperiences.Image
@@ -28,7 +29,7 @@ struct ImageView: View {
     var body: some View {
         if let inlineImage = inlineImage {
             imageView(uiImage: inlineImage)
-        } else if let urlString = urlString?.evaluatingExpressions(data: data, urlParameters: urlParameters, userInfo: userInfo), let resolvedURL = URL(string: urlString) {
+        } else if let urlString = urlString?.evaluatingExpressions(data: data, urlParameters: urlParameters, userInfo: userInfo, deviceContext: deviceContext), let resolvedURL = URL(string: urlString) {
             imageFetcher(url: resolvedURL)
         }
     }

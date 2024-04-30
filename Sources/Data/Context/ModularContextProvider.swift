@@ -15,8 +15,6 @@
 
 class ModularContextProvider {
     weak var privacyContextProvider: PrivacyContextProvider?
-    weak var adSupportContextProvider: AdSupportContextProvider?
-    weak var bluetoothContextProvider: BluetoothContextProvider?
     weak var darkModeContextProvider: DarkModeContextProvider?
     weak var debugContextProvider: DebugContextProvider?
     weak var localeContextProvider: LocaleContextProvider?
@@ -33,8 +31,6 @@ class ModularContextProvider {
     
     init(
         privacyContextProvider: PrivacyContextProvider?,
-        adSupportContextProvider: AdSupportContextProvider?,
-        bluetoothContextProvider: BluetoothContextProvider?,
         darkModeContextProvider: DarkModeContextProvider?,
         debugContextProvider: DebugContextProvider?,
         locationContextProvider: LocationContextProvider?,
@@ -50,8 +46,6 @@ class ModularContextProvider {
         appLastSeenContextProvider: AppLastSeenContextProvider?
     ) {
         self.privacyContextProvider = privacyContextProvider
-        self.adSupportContextProvider = adSupportContextProvider
-        self.bluetoothContextProvider = bluetoothContextProvider
         self.darkModeContextProvider = darkModeContextProvider
         self.debugContextProvider = debugContextProvider
         self.localeContextProvider = localeContextProvider
@@ -72,9 +66,7 @@ extension ModularContextProvider: ContextProvider {
     var context: Context {
         return Context(
             trackingMode: self.privacyContextProvider?.trackingModeString,
-            advertisingIdentifier: self.adSupportContextProvider?.advertisingIdentifier,
             isDarkModeEnabled: self.darkModeContextProvider?.isDarkModeEnabled,
-            isBluetoothEnabled: self.bluetoothContextProvider?.isBluetoothEnabled,
             localeLanguage: self.localeContextProvider?.localeLanguage,
             localeRegion: self.localeContextProvider?.localeRegion,
             localeScript: self.localeContextProvider?.localeScript,

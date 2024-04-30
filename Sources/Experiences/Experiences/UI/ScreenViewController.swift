@@ -16,6 +16,7 @@
 
 import SwiftUI
 import Combine
+import RoverFoundation
 
 class ScreenViewController: UIViewController, UIScrollViewDelegate {
     let experience: ExperienceModel
@@ -23,6 +24,7 @@ class ScreenViewController: UIViewController, UIScrollViewDelegate {
     let data: Any?
     let urlParameters: [String: String]
     let userInfo: [String: Any]
+    let deviceContext: [String: Any] = Rover.shared.deviceContext
     let authorize: (inout URLRequest) -> Void
     let carouselState: CarouselState
 
@@ -127,6 +129,7 @@ class ScreenViewController: UIViewController, UIScrollViewDelegate {
                 data: data,
                 urlParameters: urlParameters,
                 userInfo: userInfo,
+                deviceContext: deviceContext,
                 traits: traitCollection,
                 buttonHandler: { [weak self] navBarButton in self?.navBarButtonTapped(navBarButton) }
             )
@@ -186,6 +189,7 @@ class ScreenViewController: UIViewController, UIScrollViewDelegate {
                 data: data,
                 urlParameters: urlParameters,
                 userInfo: userInfo,
+                deviceContext: deviceContext,
                 authorize: authorize,
                 experienceViewController: experienceViewController,
                 screenViewController: self
@@ -296,6 +300,7 @@ class ScreenViewController: UIViewController, UIScrollViewDelegate {
                 .environment(\.stringTable, experience.localization)
                 .environment(\.urlParameters, urlParameters)
                 .environment(\.userInfo, userInfo)
+                .environment(\.deviceContext, deviceContext)
                 .environment(\.authorize, authorize)
         }
     }

@@ -27,7 +27,7 @@ public protocol StaticContextProvider: AnyObject {
     var deviceName: String { get }
     var operatingSystemName: String { get }
     var operatingSystemVersion: String { get }
-    var screenHeight: Int { get }
-    var screenWidth: Int { get }
+    var screenHeight: Double { get }
+    var screenWidth: Double { get }
     var sdkVersion: String { get }
 }

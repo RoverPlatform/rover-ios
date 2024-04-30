@@ -89,14 +89,16 @@ extension UINavigationItem {
         data: Any?,
         urlParameters: [String: String],
         userInfo: [String: Any],
+        deviceContext: [String: Any],
         traits: UITraitCollection,
         buttonHandler: @escaping (NavBarButton) -> Void
     ) {
         title = experience.localization.resolve(key: navBar.title)
             .evaluatingExpressions(
-                data: data, urlParameters:
-                    urlParameters,
-                userInfo: userInfo
+                data: data, 
+                urlParameters: urlParameters,
+                userInfo: userInfo,
+                deviceContext: deviceContext
             )
 
         hidesBackButton = navBar.hidesBackButton
@@ -118,7 +120,7 @@ extension UINavigationItem {
             .compactMap { $0 as? NavBarButton }
             .filter { $0.placement == .leading }
             .map { navBarButton in
-                UIBarButtonItem(navBarButton: navBarButton, stringTable: experience.localization, data: data, urlParameters: urlParameters, userInfo: userInfo) {
+                UIBarButtonItem(navBarButton: navBarButton, stringTable: experience.localization, data: data, urlParameters: urlParameters, userInfo: userInfo, deviceContext: deviceContext) {
                     buttonHandler(navBarButton)
                 }
             }
@@ -127,7 +129,7 @@ extension UINavigationItem {
             .compactMap { $0 as? NavBarButton }
             .filter { $0.placement == .trailing }
             .map { navBarButton in
-                UIBarButtonItem(navBarButton: navBarButton, stringTable: experience.localization, data: data, urlParameters: urlParameters, userInfo: userInfo) {
+                UIBarButtonItem(navBarButton: navBarButton, stringTable: experience.localization, data: data, urlParameters: urlParameters, userInfo: userInfo, deviceContext: deviceContext) {
                     buttonHandler(navBarButton)
                 }
             }
@@ -268,7 +270,7 @@ private extension UIBarButtonItem {
         }
     }
 
-    convenience init(navBarButton: NavBarButton, stringTable: StringTable, data: Any?, urlParameters: [String: String], userInfo: [String: Any], onTap: @escaping () -> Void) {
+    convenience init(navBarButton: NavBarButton, stringTable: StringTable, data: Any?, urlParameters: [String: String], userInfo: [String: Any], deviceContext: [String: Any], onTap: @escaping () -> Void) {
         switch navBarButton.style {
         case .close:
             self.init(
@@ -292,7 +294,7 @@ private extension UIBarButtonItem {
                 )
             } else {
                 self.init(
-                    title: navBarButton.title.flatMap { stringTable.resolve(key: $0).evaluatingExpressions(data: data, urlParameters: urlParameters, userInfo: userInfo) },
+                    title: navBarButton.title.flatMap { stringTable.resolve(key: $0).evaluatingExpressions(data: data, urlParameters: urlParameters, userInfo: userInfo, deviceContext: deviceContext) },
                     style: .plain,
                     target: nil,
                     action: nil

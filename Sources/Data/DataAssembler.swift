@@ -55,8 +55,6 @@ public struct DataAssembler: Assembler {
         container.register(ContextProvider.self) { resolver in
             ModularContextProvider(
                 privacyContextProvider: resolver.resolve(PrivacyService.self),
-                adSupportContextProvider: resolver.resolve(AdSupportContextProvider.self),
-                bluetoothContextProvider: resolver.resolve(BluetoothContextProvider.self),
                 darkModeContextProvider: resolver.resolve(DarkModeContextProvider.self),
                 debugContextProvider: resolver.resolve(DebugContextProvider.self),
                 locationContextProvider: resolver.resolve(LocationContextProvider.self),

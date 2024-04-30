@@ -200,12 +200,12 @@ extension ContextManager: StaticContextProvider {
         return UIDevice.current.systemVersion
     }
     
-    var screenHeight: Int {
-        return Int(UIScreen.main.bounds.height)
+    var screenHeight: Double {
+        return UIScreen.main.bounds.height
     }
     
-    var screenWidth: Int {
-        return Int(UIScreen.main.bounds.width)
+    var screenWidth: Double {
+        return UIScreen.main.bounds.width
     }
     
     var sdkVersion: String {

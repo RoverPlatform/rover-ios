@@ -19,6 +19,7 @@ struct ConditionalView: View {
     @Environment(\.data) private var data
     @Environment(\.urlParameters) private var urlParameters
     @Environment(\.userInfo) private var userInfo
+    @Environment(\.deviceContext) private var deviceContext
     
     var conditional: Conditional
 
@@ -34,7 +35,8 @@ struct ConditionalView: View {
         conditional.allConditionsSatisfied(
             data: data,
             urlParameters: urlParameters,
-            userInfo: userInfo
+            userInfo: userInfo,
+            deviceContext: deviceContext
         )
     }
 }

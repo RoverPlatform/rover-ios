@@ -19,7 +19,7 @@ import os.log
 import RoverFoundation
 import RoverData
 
-class LocationManager {
+class LocationManager: NSObject {
     let maxGeofenceRegionsToMonitor: Int
     let maxBeaconRegionsToMonitor: Int
     
@@ -32,6 +32,9 @@ class LocationManager {
     
     // Used to avoid tracking redundant location change events
     var lastReportedLocation: CLLocation?
+    
+    private var currentAuthorizationStatus: CLAuthorizationStatus?
+    private var locationManager = CLLocationManager()
     
     typealias RegionIdentifier = String
     
@@ -66,6 +69,19 @@ class LocationManager {
         }
         self.context = context
         self.eventQueue = eventQueue
+        super.init()
+        self.locationManager.delegate = self
+    }
+}
+
+// MARK: CLLocationManagerDelegate
+
+extension LocationManager: CLLocationManagerDelegate {
+    func locationManager(
+        _ manager: CLLocationManager,
+        didChangeAuthorization status: CLAuthorizationStatus
+    ) {
+        self.currentAuthorizationStatus = status
     }
 }
 
@@ -73,35 +89,44 @@ class LocationManager {
 
 extension LocationManager: LocationContextProvider {
     var locationAuthorization: String {
-        guard privacyService.trackingMode  == .default else {
+        guard privacyService.trackingMode  == .default,
+              let authorizationStatus = self.currentAuthorizationStatus else {
             return "denied"
         }
         
-        let authorizationStatus: String
-        switch CLLocationManager.authorizationStatus() {
+        let result: String
+        
+        switch authorizationStatus {
         case .authorizedAlways:
-            authorizationStatus = "authorizedAlways"
+            result = "authorizedAlways"
         case .authorizedWhenInUse:
-            authorizationStatus = "authorizedWhenInUse"
+            result = "authorizedWhenInUse"
         case .denied:
-            authorizationStatus = "denied"
+            result = "denied"
         case .notDetermined:
-            authorizationStatus = "notDetermined"
+            result = "notDetermined"
         case .restricted:
-            authorizationStatus = "restricted"
+            result = "restricted"
         @unknown default:
-            authorizationStatus = "notDetermined"
+            result = "notDetermined"
         }
         
-        return authorizationStatus
+        return result
     }
     
     var isLocationServicesEnabled: Bool {
-        guard privacyService.trackingMode == .default else {
+        guard privacyService.trackingMode == .default,
+              let authorizationStatus = self.currentAuthorizationStatus else {
             return false
         }
         
-        return CLLocationManager.locationServicesEnabled()
+        switch authorizationStatus {
+        case .authorizedAlways, .authorizedWhenInUse:
+            return true
+            
+        default:
+            return false
+        }
     }
 }
 

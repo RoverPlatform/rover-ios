@@ -21,6 +21,7 @@ struct CarouselView: View {
     @Environment(\.data) private var data
     @Environment(\.urlParameters) private var urlParameters
     @Environment(\.userInfo) private var userInfo
+    @Environment(\.deviceContext) private var deviceContext
     
     let carousel: Carousel
 
@@ -83,7 +84,8 @@ struct CarouselView: View {
                 let collectionItems = collection.items(
                     data: item,
                     urlParameters: urlParameters,
-                    userInfo: userInfo
+                    userInfo: userInfo,
+                    deviceContext: deviceContext
                 )
                 
                 return collectionItems.flatMap { collectionItem in
@@ -96,7 +98,8 @@ struct CarouselView: View {
                 if !conditional.allConditionsSatisfied(
                     data: item,
                     urlParameters: urlParameters,
-                    userInfo: userInfo
+                    userInfo: userInfo,
+                    deviceContext: deviceContext
                 ) {
                     return []
                 }

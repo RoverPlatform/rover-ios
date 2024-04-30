@@ -16,7 +16,6 @@
 import RoverFoundation
 import RoverData
 import RoverLocation
-import RoverAdSupport
 import RoverTelephony
 import RoverTicketmaster
 import RoverUI
@@ -43,7 +42,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             NotificationsAssembler(appGroup: "group.io.rover.Example"), // Used to share `UserDefaults` data between the main app target and the notification service extension.
             LocationAssembler(),
             DebugAssembler(),
-            AdSupportAssembler(),
             TelephonyAssembler(),
             TicketmasterAssembler(),
             

@@ -232,6 +232,7 @@ public class RoverObserver {
                     experienceId: experience.id,
                     experienceID: experience.id,
                     experienceName: experience.name,
+                    experienceUrl: experience.sourceUrl,
                     screenId: screen.id,
                     screenID: screen.id,
                     screenName: screen.name,

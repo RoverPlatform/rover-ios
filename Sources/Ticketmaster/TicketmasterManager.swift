@@ -17,6 +17,9 @@ import Foundation
 import os.log
 import RoverFoundation
 import RoverData
+import TicketmasterTickets
+import TicketmasterPurchase
+import TicketmasterDiscoveryAPI
 
 class TicketmasterManager: PrivacyListener {
     private let userInfoManager: UserInfoManager
@@ -41,99 +44,24 @@ class TicketmasterManager: PrivacyListener {
         self.userInfoManager = userInfoManager
         self.eventQueue = eventQueue
         self.privacyService = privacyService
-        
-        // Begin observing for TM PSDK's events.
-        TicketmasterManager.tmEvents.keys.forEach { notificationName in
-            NotificationCenter.default.addObserver(
-                self,
-                selector: #selector(self.receiveTicketmasterNotification),
-                name: NSNotification.Name(rawValue: notificationName),
-                object: nil
-            )
-        }
     }
     
-    @objc
-    func receiveTicketmasterNotification(_ notification: Foundation.Notification) {
-        guard privacyService.trackingMode == .default else {
-            return
-        }
-        
-        guard let roverScreenName = TicketmasterManager.tmEvents[notification.name.rawValue] else {
-            os_log("TicketmasterManager received an unexpected NSNotification, ignoring.", log: .general, type: .error)
-            return
-        }
-        
-        let attributes: Attributes = ["screenName": roverScreenName]
-        
-        // the same fields are common amongst all the events we monitor for.
-        let eventAttributes: Attributes = [:]
-        let venueAttributes: Attributes = [:]
-        let artistAttributes: Attributes = [:]
-        
-        if let eventID = notification.userInfo?["event_id"] {
-            eventAttributes["id"] = eventID
-        }
-        
-        if let eventName = notification.userInfo?["event_name"] {
-            eventAttributes["name"] = eventName
-        }
-
-        if let eventDate = notification.userInfo?["event_date"] as? Date {
-            // In order to be (somewhat) consistent with the Android version of the Presence SDK (which yields a pre-rendered date string in a non-standard format), render it into the following format:
-            // Mon, Apr 13, 7:00 PM
-            let formatter = DateFormatter()
-            formatter.locale = Locale(identifier: "en_US_POSIX")
-            formatter.setLocalizedDateFormatFromTemplate("E, MMM d, h:mm a")
-            eventAttributes["date"] = formatter.string(from: eventDate)
-        }
-        
-        if let eventImageURL = notification.userInfo?["event_image_url"] {
-            eventAttributes["imageURL"] = eventImageURL
-        }
-        
-        if let venueName = notification.userInfo?["venue_name"] {
-            venueAttributes["name"] = venueName
-        }
-        
-        if let venueID = notification.userInfo?["venue_id"] {
-            venueAttributes["id"] = venueID
-        }
-        
-        if let currentTicketCount = notification.userInfo?["current_ticket_count"] {
-            attributes["currentTicketCount"] = currentTicketCount
-        }
-        
-        if let artistName = notification.userInfo?["artist_name"] ?? notification.userInfo?["atrist_name"] /* [sic] */ {
-            artistAttributes["name"] = artistName
-        }
-        
-        if let artistID = notification.userInfo?["artist_id"] {
-            artistAttributes["id"] = artistID
-        }
-        
-        if !eventAttributes.rawValue.isEmpty {
-            attributes["event"] = eventAttributes
-        }
-        if !venueAttributes.rawValue.isEmpty {
-            attributes["venue"] = venueAttributes
-        }
-        if !artistAttributes.rawValue.isEmpty {
-            attributes["artist"] = artistAttributes
-        }
-        
-        let eventInfo = EventInfo(name: "Screen Viewed", namespace: "ticketmaster", attributes: attributes)
-        
-        eventQueue.addEvent(eventInfo)
-    }
-    
-    private static let tmEvents = [
-        "TMX_MYTICKETSCREENSHOWED": "My Tickets",
-        "TMX_MANAGETICKETSCREENSHOWED": "Manage Ticket",
-        "TMX_ADDPAYMENTINFOSCREENSHOWED": "Add Payment Info",
-        "TMX_MYTICKETBARCODESCREENSHOWED": "Ticket Barcode",
-        "TMX_TICKETDETAILSSCREENSHOWED": "Ticket Details"
+    private static let tmActions = [
+        "addTicketToWalletButton": "Add Ticket To Wallet Button Tapped",
+        "barcodeScreenshot": "Barcode Screenshot Taken",
+        "transferSendButton": "Ticket Transfer Send Button Tapped",
+        "transferCancelButton": "Ticket Transfer Cancel Button Tapped"
     ]
+    
+    private static let tmPages = [
+        "eventTickets": "My Tickets",
+        "events": "Events",
+        "eventModules": "Event Modules",
+        "ticketBarcode": "Ticket Barcode",
+        "ticketDelivery": "Ticket Delivery",
+        "ticketDetails": "Ticket Details",
+    ]
+
 }
 
 // MARK: TicketmasterAuthorizer
@@ -174,5 +102,192 @@ extension TicketmasterManager: TicketmasterAuthorizer {
             os_log("Tracking disabled, Ticketmaster data cleared.", log: .ticketmaster)
             clearCredentials()
         }
+    }
+}
+
+extension TicketmasterManager: TicketmasterAnalytics {
+    func postTicketmasterScreenViewed(page: TMTickets.Analytics.Page, metadata: TMTickets.Analytics.MetadataType) {
+        guard self.privacyService.trackingMode == .default else {
+            return
+        }
+        
+        guard let roverPageName = TicketmasterManager.tmPages[page.rawValue] else {
+            os_log("TicketmasterManager received an unexpected page name, ignoring.", log: .general, type: .debug)
+            return
+        }
+        
+        switch metadata {
+        case .events(let events):
+            for event in events {
+                eventQueue.addEvent(event.roverEvent(screenName: roverPageName))
+            }
+            
+        case .event(let event):
+            eventQueue.addEvent(event.roverEvent(screenName: roverPageName))
+            
+        default:
+            return
+        }
+    }
+    
+    func postTicketmasterAction(action: TMTickets.Analytics.Action, metadata: TMTickets.Analytics.MetadataType) {
+        guard self.privacyService.trackingMode == .default else {
+            return
+        }
+        
+        guard let roverActionName = TicketmasterManager.tmActions[action.rawValue] else {
+            os_log("TicketmasterManager received an unexpected action name, ignoring.", log: .general, type: .debug)
+            return
+        }
+        
+        switch metadata {
+        case .events(let events):
+            for event in events {
+                eventQueue.addEvent(event.roverEvent(actionName: roverActionName))
+            }
+            
+        case .event(let event):
+            eventQueue.addEvent(event.roverEvent(actionName: roverActionName))
+            
+        case .eventTicket(let event, _):
+            eventQueue.addEvent(event.roverEvent(actionName: roverActionName))
+            
+        case .eventTickets(let event, _):
+            eventQueue.addEvent(event.roverEvent(actionName: roverActionName))
+            
+        default:
+            return
+        }
+    }
+    
+    func didBeginCheckout(for event: DiscoveryEvent) {
+        guard self.privacyService.trackingMode == .default else {
+            return
+        }
+        
+        eventQueue.addEvent(event.roverEvent("Did Begin Checkout"))
+    }
+    
+    func didEndCheckout(for event: DiscoveryEvent, because reason: TMEndCheckoutReason) {
+        guard self.privacyService.trackingMode == .default else {
+            return
+        }
+        
+        eventQueue.addEvent(event.roverEvent("Did End Checkout", reason: reason.rawValue))
+    }
+    
+    func didBeginTicketSelection(for event: DiscoveryEvent) {
+        guard self.privacyService.trackingMode == .default else {
+            return
+        }
+        
+        eventQueue.addEvent(event.roverEvent("Did Begin Ticket Selection"))
+    }
+    
+    func didEndTicketSelection(for event: DiscoveryEvent, because reason: TMEndTicketSelectionReason) {
+        guard self.privacyService.trackingMode == .default else {
+            return
+        }
+        
+        eventQueue.addEvent(event.roverEvent("Did End Ticket Selection", reason: reason.rawValue))
+    }
+}
+
+fileprivate extension TMPurchasedEvent {
+    func roverEvent(actionName: String) -> EventInfo {
+        let attributes = roverAttributes()
+        
+        return EventInfo(
+            name: actionName,
+            namespace: "ticketmaster",
+            attributes: attributes
+        )
+    }
+    
+    
+    func roverEvent(screenName: String) -> EventInfo {
+        let attributes = roverAttributes()
+        
+        attributes["screenName"] = screenName
+        
+        return EventInfo(
+            name: "Screen Viewed",
+            namespace: "ticketmaster",
+            attributes: attributes
+        )
+    }
+    
+    func roverAttributes() -> Attributes {
+        let attributes: Attributes = Attributes()
+        var currentTicketCount: Int = 0
+        
+        if let orders = self.orders {
+            for order in orders {
+                currentTicketCount += order.tickets.count
+            }
+        }
+        
+        var eventAttributes = ["id": self.info.identifier,
+                               "name": self.info.name,
+                               "imageUrl": self.info.imageInfo?.url?.absoluteString,
+                               "currentTicketCount": currentTicketCount]
+            .compactMapValues { $0 }
+        
+        if let eventDate = self.info.dateInfo?.dateTimeUTC as? Date {
+            // In order to be (somewhat) consistent with the Android version of the Presence SDK (which yields a pre-rendered date string in a non-standard format), render it into the following format:
+            // Mon, Apr 13, 7:00 PM
+            let formatter = DateFormatter()
+            formatter.locale = Locale(identifier: "en_US_POSIX")
+            formatter.setLocalizedDateFormatFromTemplate("E, MMM d, h:mm a")
+            eventAttributes["date"] = formatter.string(from: eventDate)
+        }
+        
+        let venueAttributes = ["name": self.info.venue?.name,
+                               "id": self.info.venue?.identifier]
+            .compactMapValues { $0 }
+        
+        if !eventAttributes.isEmpty {
+            attributes["event"] = Attributes(rawValue: eventAttributes)
+        }
+        
+        if !venueAttributes.isEmpty {
+            attributes["venue"] = Attributes(rawValue: venueAttributes)
+        }
+        
+        return attributes
+    }
+}
+
+fileprivate extension DiscoveryEvent {
+    func roverEvent(_ eventName: String, reason: String? = nil) -> EventInfo {
+        let attributes: Attributes = [:]
+        
+        if let reason = reason {
+            attributes["reason"] = reason
+        }
+        
+        let eventAttributes = ["id": self.eventIdentifier.rawValue,
+                               "name": self.name,
+                               "imageUrl": self.imageMetadataArray.first?.url.absoluteString,
+                               "type": self.type]
+            .compactMapValues { $0 }
+        
+        let venueAttributes = ["name": self.venueArray.first?.name,
+                               "id": self.venueArray.first?.venueIdentifier.rawValue]
+            .compactMapValues { $0 }
+        
+        if !eventAttributes.isEmpty {
+            attributes["event"] = Attributes(rawValue: eventAttributes)
+        }
+        
+        if !venueAttributes.isEmpty {
+            attributes["venue"] = Attributes(rawValue: venueAttributes)
+        }
+
+        return EventInfo(
+            name: eventName,
+            namespace: "ticketmaster",
+            attributes: attributes
+        )
     }
 }

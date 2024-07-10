@@ -14,6 +14,7 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import RoverData
+import RoverFoundation
 
 extension EventInfo {
     static func screenViewedEvent(
@@ -66,5 +67,33 @@ extension EventInfo {
                 "screen" : screenAttributes,
                 "node" : nodeAttributes,
             ])
+    }
+    
+    static func carouselViewedEvent(
+        with campaignID: String?,
+        experience: ExperienceModel,
+        carousel: Carousel,
+        position: Int
+    ) -> EventInfo {
+        let experienceAttributes = ["id": experience.id,
+                                    "name": experience.name,
+                                    "campaignID": campaignID,
+                                    "url": experience.sourceUrl?.absoluteString]
+            .compactMapValues { $0 }
+        
+        let carouselAttributes: Attributes = [
+            "id": carousel.id,
+            "storyStyle": carousel.isStoryStyleEnabled,
+            "loop": carousel.isLoopEnabled]
+        
+        return EventInfo(
+            name: "Carousel Page Viewed",
+            namespace: "rover",
+            attributes: [
+                "experience": experienceAttributes,
+                "carousel": carouselAttributes,
+                "position": position
+            ]
+        )
     }
 }

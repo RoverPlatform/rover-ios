@@ -24,7 +24,7 @@ import RoverData
 final class ExperienceManager {
     let eventQueue: EventQueue
     let userInfoContextProvider: UserInfoContextProvider
-    let conversionsTracker: ConversionsTrackerService
+    let conversionsTracker: InterpolatingConversionsTracker
     
     var userInfo: [String: Any] {
         userInfoContextProvider.userInfo?.flatRawValue() ?? [:]
@@ -41,7 +41,7 @@ final class ExperienceManager {
          conversionsTracker: ConversionsTrackerService) {
         self.eventQueue = eventQueue
         self.userInfoContextProvider = userInfoContextProvider
-        self.conversionsTracker = conversionsTracker
+        self.conversionsTracker = InterpolatingConversionsTracker(conversionsTracker: conversionsTracker)
     }
     
     internal lazy var downloader: AssetsDownloader = AssetsDownloader(cache: self.assetsURLCache)
@@ -106,13 +106,19 @@ extension ExperienceManager {
                 let campaignID: String? = notification.userInfo?["campaignID"] as? String
                 let data = notification.userInfo!["data"] as Any
                 
-                self.conversionsTracker.track(screen.conversionTags)
+                self.conversionsTracker.track(
+                    tags:screen.conversionTags,
+                    data: data,
+                    urlParameters: experience.urlParameters,
+                    userInfo: self.userInfo,
+                    deviceContext: Rover.shared.deviceContext)
                 
                 let event = EventInfo.screenViewedEvent(
                     with: campaignID,
                     experience: experience,
                     screen: screen
                 )
+                
                 self.eventQueue.addEvent(event)
                 
                 if let callback = self.registeredScreenViewedCallback {
@@ -121,6 +127,7 @@ extension ExperienceManager {
                             experienceId: experience.id,
                             experienceID: experience.id,
                             experienceName: experience.name,
+                            experienceUrl: experience.sourceUrl,
                             screenId: screen.id,
                             screenID: screen.id,
                             screenName: screen.name,

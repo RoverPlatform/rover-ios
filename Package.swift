@@ -6,9 +6,8 @@ import PackageDescription
 let package = Package(
     name: "Rover",
     defaultLocalization: "en",
-    platforms: [.iOS(.v13)],
+    platforms: [.iOS(.v15)],
     products: [
-        // Products define the executables and libraries produced by a package, and make them visible to other packages.
         .library(
             name: "RoverFoundation",
             targets: ["RoverFoundation"]),
@@ -40,11 +39,15 @@ let package = Package(
             name: "RoverSeatGeek",
             targets: ["RoverSeatGeek"]),
         .library(
+            name: "RoverAdobeExperience",
+            targets: ["RoverAdobeExperience"]),
+        .library(
             name: "RoverAppExtensions",
             targets: ["RoverAppExtensions"]),
     ],
     dependencies: [
-        .package(url:"https://github.com/weichsel/ZIPFoundation", .upToNextMinor(from: "0.9.19"))
+        .package(url:"https://github.com/weichsel/ZIPFoundation", .upToNextMinor(from: "0.9.19")),
+        .package(url:"https://github.com/ticketmaster/iOS-TicketmasterSDK.git", .upToNextMinor(from: "1.7.0")),
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -94,13 +97,32 @@ let package = Package(
             resources: [.copy("Resources/PrivacyInfo.xcprivacy")]),
         .target(
             name: "RoverTicketmaster",
-            dependencies: ["RoverData"],
+            dependencies: [
+                "RoverData",
+                .product(name: "TicketmasterFoundation",
+                         package: "iOS-TicketmasterSDK"),
+                .product(name: "TicketmasterAuthentication",
+                         package: "iOS-TicketmasterSDK"),
+                .product(name: "TicketmasterSecureEntry",
+                         package: "iOS-TicketmasterSDK"),
+                .product(name: "TicketmasterTickets",
+                         package: "iOS-TicketmasterSDK"),
+                .product(name: "TicketmasterDiscoveryAPI",
+                         package: "iOS-TicketmasterSDK"),
+                .product(name: "TicketmasterPurchase",
+                        package: "iOS-TicketmasterSDK"),
+            ],
             path: "Sources/Ticketmaster",
             resources: [.copy("Resources/PrivacyInfo.xcprivacy")]),
         .target(
             name: "RoverSeatGeek",
             dependencies: ["RoverData"],
             path: "Sources/SeatGeek",
+            resources: [.copy("Resources/PrivacyInfo.xcprivacy")]),
+        .target(
+            name: "RoverAdobeExperience",
+            dependencies: ["RoverData"],
+            path: "Sources/AdobeExperience",
             resources: [.copy("Resources/PrivacyInfo.xcprivacy")]),
     ]
 )

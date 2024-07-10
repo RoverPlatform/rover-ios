@@ -24,6 +24,7 @@ public struct ScreenViewedEvent {
     public let experienceId: String?
     public let experienceID: String?
     public let experienceName: String?
+    public let experienceUrl: URL?
     
     @available(*, deprecated, renamed: "screenID")
     public let screenId: String

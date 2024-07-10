@@ -16,30 +16,25 @@
 import RoverFoundation
 import RoverData
 
-public class TicketmasterAssembler: Assembler {
+public class AdobeExperienceAssembler: Assembler {
     public init() {
     }
     
     public func assemble(container: Container) {
-        container.register(TicketmasterAuthorizer.self) { resolver in
-            resolver.resolve(TicketmasterManager.self)!
+        container.register(AdobeExperienceAuthorizer.self) { resolver in
+            resolver.resolve(AdobeExperienceManager.self)!
         }
         
-        container.register(TicketmasterAnalytics.self) { resolver in
-            resolver.resolve(TicketmasterManager.self)!
-        }
-        
-        container.register(TicketmasterManager.self) { resolver in
+        container.register(AdobeExperienceManager.self) { resolver in
             let userInfoManager = resolver.resolve(UserInfoManager.self)!
-            let eventQueue = resolver.resolve(EventQueue.self)!
             let privacyService = resolver.resolve(PrivacyService.self)!
-            return TicketmasterManager(userInfoManager: userInfoManager, eventQueue: eventQueue, privacyService: privacyService)
+            return AdobeExperienceManager(userInfoManager: userInfoManager, privacyService: privacyService)
         }
     }
     
     public func containerDidAssemble(resolver: Resolver) {
         resolver.resolve(PrivacyService.self)?.registerTrackingEnabledListener(
-            resolver.resolve(TicketmasterManager.self)!
+            resolver.resolve(AdobeExperienceManager.self)!
         )
     }
 }

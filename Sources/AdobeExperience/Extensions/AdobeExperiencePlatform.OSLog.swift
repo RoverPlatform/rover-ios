@@ -13,19 +13,8 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import Foundation
-import RoverFoundation
+import os.log
 
-public extension Rover {
-    var ticketmasterAuthorizer: TicketmasterAuthorizer {
-        get {
-            resolve(TicketmasterAuthorizer.self)!
-        }
-    }
-    
-    var ticketmasterAnalytics: TicketmasterAnalytics {
-        get {
-            resolve(TicketmasterAnalytics.self)!
-        }
-    }
+extension OSLog {
+    internal static let AdobeExperience = OSLog(subsystem: "io.rover", category: "AdobeExperience")
 }

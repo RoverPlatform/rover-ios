@@ -13,34 +13,56 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-/// An API to set and clear Ticketmaster credentials after a user signs in with the [Presence SDK](https://developer.ticketmaster.com/products-and-docs/sdks/presence-sdk/).
-public protocol TicketmasterAuthorizer {        
+import TicketmasterTickets
+
+/// An API to set and clear Ticketmaster credentials after a user signs in with the [Ignite SDK](https://ignite.ticketmaster.com/docs/ignite-overview).
+public protocol TicketmasterAuthorizer {
     /**
-     Set the user's Ticketmaster credentials after a successful sign-in with the [Presence SDK](https://developer.ticketmaster.com/products-and-docs/sdks/presence-sdk/). Implement the `onMemberUpdated(backendName:member:)` method in your `PresenceLoginDelegate` and call this method passing in values from the `PresenceMember`.
+     Set the user's Ticketmaster credentials after a successful sign-in with the [Ignite SDK](https://ignite.ticketmaster.com/docs/ignite-overview).  Implement the `onStateChanged(backend:state: .loginCompleted, error:)` method in your `TMAuthenticationDelegate`, then call `TMAuthetication.shared.memberInfo` and call this method passing in the `localID` value from the `MemberInfo`.
      
      - Parameters:
-     - id: The value of the `PresenceMember`'s `id` property.
+     - id: The value of the `MemberInfo`'s `localID` property.
      
      ````
-     extension MyViewController: PresenceLoginDelegate {
-         func onMemberUpdated(backendName: PresenceLogin.BackendName, member: PresenceMember?) {
-             if let pMember = member {
-                 Rover.shared.ticketmasterAuthorizer.setTicketmasterID(pMember.id)
-             }
-         }
+     extension MyViewController: TMAuthenticationDelegate {
+         //...
+     func onStateChanged(
+         backend: TMAuthentication.BackendService?,
+         state: TMAuthentication.ServiceState,
+         error: Error?
+     ) {
+        // ...
+        switch state {
+            // ...
+            case .loginCompleted:
+                TMAuthentication.shared.memberInfo { memberInfo in
+                    Rover.sharedticketmasterAuthorizer.setTicketmasterID(memberInfo.localID)
+                } failure: { oldMemberInfo, error, backend in
+                    print("MemberInfo Error: \(error.localizedDescription)")
+                }
+        }
      }
      ````
      */
     func setTicketmasterID(_ id: String)
+    
     /**
-     Clear the user's Ticketmaster credentials after a successful sign-out with the [Presence SDK](https://developer.ticketmaster.com/products-and-docs/sdks/presence-sdk/). Implement the `onLogoutAllSuccessful()` method in your `PresenceLoginDelegate` and call this method.
+     Clear the user's Ticketmaster credentials after a successful sign-out with the [Ignite SDK](https://ignite.ticketmaster.com/v1/docs/analytics-ios-1). Implement the `onStateChanged(backend:state: .loggedOut, error:)` method in your `TMAuthenticationDelegate` and call this method.
      
      ````
-     extension MyViewController: PresenceLoginDelegate {
+     extension MyViewController: TMAuthenticationDelegate {
          //...
-         func onLogoutAllSuccessful() {
-             Rover.shared.ticketmasterAuthorizer.clearCredentials()
-         }
+     func onStateChanged(
+         backend: TMAuthentication.BackendService?,
+         state: TMAuthentication.ServiceState,
+         error: Error?
+     ) {
+        // ...
+        switch state {
+            // ...
+            case .loggedOut:
+                Rover.shared.ticketmasterAuthorizer.clearCredentials()
+        }
      }
      ````
      */

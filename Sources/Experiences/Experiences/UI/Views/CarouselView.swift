@@ -13,8 +13,11 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import SwiftUI
 import Combine
+import RoverFoundation
+import RoverData
+import SwiftUI
+
 
 struct CarouselView: View {
     @Environment(\.collectionIndex) private var collectionIndex
@@ -22,6 +25,7 @@ struct CarouselView: View {
     @Environment(\.urlParameters) private var urlParameters
     @Environment(\.userInfo) private var userInfo
     @Environment(\.deviceContext) private var deviceContext
+    @Environment(\.experience) private var experience
     
     let carousel: Carousel
 
@@ -35,7 +39,10 @@ struct CarouselView: View {
             autoAdvanceDuration: carousel.storyAutoAdvanceDuration,
             currentPage: currentPage,
             numberOfPages: numberOfPages,
-            viewID: viewID
+            viewID: viewID,
+            carousel: carousel,
+            experience: experience,
+            campaignID: urlParameters["campaignID"]
         )
         .environment(\.carouselCurrentPage, currentPage.wrappedValue)
         .environment(\.carouselViewID, viewID)
@@ -177,6 +184,9 @@ private struct PageViewController: UIViewControllerRepresentable {
     private let storyStyle: Bool
     private let autoAdvanceDuration: Int
     private let viewID: ViewID
+    private let carousel: Carousel
+    private let experience: ExperienceModel?
+    private let campaignID: String?
     @Binding private var currentPage: Int
     @Binding private var numberOfPages: Int
     
@@ -189,7 +199,10 @@ private struct PageViewController: UIViewControllerRepresentable {
         autoAdvanceDuration: Int,
         currentPage: Binding<Int>,
         numberOfPages: Binding<Int>,
-        viewID: ViewID
+        viewID: ViewID,
+        carousel: Carousel,
+        experience: ExperienceModel?,
+        campaignID: String?
     ) {
         self.pages = pages
         self.loop = loop
@@ -198,6 +211,9 @@ private struct PageViewController: UIViewControllerRepresentable {
         self._currentPage = currentPage
         self._numberOfPages = numberOfPages
         self.viewID = viewID
+        self.carousel = carousel
+        self.experience = experience
+        self.campaignID = campaignID
     }
 
     func makeCoordinator() -> Coordinator {
@@ -220,7 +236,7 @@ private struct PageViewController: UIViewControllerRepresentable {
         return coordinator
     }
 
-    func makeUIViewController(context: Context) -> UIPageViewController {
+    func makeUIViewController(context: UIViewControllerRepresentableContext<Self>) -> UIPageViewController {
         let pageViewController = UIPageViewController(
             transitionStyle: .scroll,
             navigationOrientation: .horizontal)
@@ -232,7 +248,7 @@ private struct PageViewController: UIViewControllerRepresentable {
         return pageViewController
     }
 
-    func updateUIViewController(_ pageViewController: UIPageViewController, context: Context) {
+    func updateUIViewController(_ pageViewController: UIPageViewController, context: UIViewControllerRepresentableContext<Self>) {
         context.coordinator.parent = self
         context.coordinator.loop = self.loop
         
@@ -263,6 +279,18 @@ private struct PageViewController: UIViewControllerRepresentable {
                 direction: context.coordinator.direction,
                 animated: true
             )
+
+            if let experience = experience,
+               let experienceManager = Rover.shared.resolve(ExperienceManager.self) {
+                let eventQueue = experienceManager.eventQueue
+                let event = EventInfo.carouselViewedEvent(
+                    with: campaignID,
+                    experience: experience,
+                    carousel: carousel,
+                    position: currentPage
+                )
+                eventQueue.addEvent(event)
+            }
         }
     }
 

@@ -39,6 +39,7 @@ public struct CustomActionActivationEvent {
     public let experienceId: String?
     public let experienceID: String?
     public let experienceName: String?
+    public let experienceUrl: URL?
     
     @available(*, deprecated, renamed: "campaignID")
     public let campaignId: String?

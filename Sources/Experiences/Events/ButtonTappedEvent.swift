@@ -32,6 +32,7 @@ public struct ButtonTappedEvent {
     
     public let experienceID: String?
     public let experienceName: String?
+    public let experienceUrl: URL?
     
     public let campaignID: String?
 

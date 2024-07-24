@@ -24,7 +24,12 @@ extension ExperienceAction {
     func handle(experience: ExperienceModel, node: Node, screen: Screen, data: Any?, urlParameters: [String: String], userInfo: [String: Any], deviceContext: [String: Any], authorize: @escaping (inout URLRequest) -> Void, experienceViewController: RenderExperienceViewController, screenViewController: ScreenViewController) {
         let experienceManager = Rover.shared.resolve(ExperienceManager.self)!
         
-        experienceManager.conversionsTracker.track(self.conversionTags)
+        experienceManager.conversionsTracker.track(
+            tags: conversionTags,
+            data: data,
+            urlParameters: urlParameters,
+            userInfo: userInfo,
+            deviceContext: deviceContext)
         
         let eventQueue = experienceManager.eventQueue
         let event = EventInfo.experienceButtonTappedEvent(
@@ -123,6 +128,7 @@ extension ExperienceAction {
                             experienceId: experience.id,
                             experienceID: experience.id,
                             experienceName: experience.name,
+                            experienceUrl: experience.sourceUrl,
                             campaignId: campaignID,
                             campaignID: campaignID,
                             data: data,
@@ -154,6 +160,7 @@ extension ExperienceAction {
                 screenTags: screen.metadata?.tags ?? [],
                 experienceID: experience.id,
                 experienceName: experience.name,
+                experienceUrl: experience.sourceUrl,
                 campaignID: campaignID,
                 data: data,
                 urlParameters: urlParameters,

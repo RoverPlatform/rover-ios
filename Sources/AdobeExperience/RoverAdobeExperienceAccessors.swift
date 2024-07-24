@@ -17,15 +17,9 @@ import Foundation
 import RoverFoundation
 
 public extension Rover {
-    var ticketmasterAuthorizer: TicketmasterAuthorizer {
+    var adobeExperienceAuthorizer: AdobeExperienceAuthorizer {
         get {
-            resolve(TicketmasterAuthorizer.self)!
-        }
-    }
-    
-    var ticketmasterAnalytics: TicketmasterAnalytics {
-        get {
-            resolve(TicketmasterAnalytics.self)!
+            resolve(AdobeExperienceAuthorizer.self)!
         }
     }
 }

@@ -13,9 +13,18 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import Foundation
-
-public enum Meta {
-    public static let APIVersion: Int = 2
-    public static let SDKVersion: String = "4.8.0"
+/// An API to set and clear AXS credentials after a user signs in.
+public protocol AXSAuthorizer {
+    /**
+     Set the user's AXS credentials after a successful sign-in.
+     
+     - Parameters:
+     - userId: The value of the `userId` property.
+     */
+    func setUserId(_ userId: String)
+    
+    /**
+     Clear the user's AXS credentials after a successful sign-out.
+     */
+    func clearCredentials()
 }

@@ -3,7 +3,7 @@
 // copy, modify, and distribute this software in source code or binary form for use
 // in connection with the web services and APIs provided by Rover.
 //
-// This copyright notice shall be included in all copies or substantial portions of 
+// This copyright notice shall be included in all copies or substantial portions of
 // the software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -13,9 +13,8 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import Foundation
+import os.log
 
-public enum Meta {
-    public static let APIVersion: Int = 2
-    public static let SDKVersion: String = "4.8.0"
+extension OSLog {
+    internal static let axs = OSLog(subsystem: "io.rover", category: "axs")
 }

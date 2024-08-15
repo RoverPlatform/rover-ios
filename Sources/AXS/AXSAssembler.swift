@@ -13,9 +13,28 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import Foundation
+import RoverFoundation
+import RoverData
 
-public enum Meta {
-    public static let APIVersion: Int = 2
-    public static let SDKVersion: String = "4.8.0"
+public class AXSAssembler: Assembler {
+    public init() {
+    }
+    
+    public func assemble(container: Container) {
+        container.register(AXSAuthorizer.self) { resolver in
+            resolver.resolve(AXSManager.self)!
+        }
+        
+        container.register(AXSManager.self) { resolver in
+            let userInfoManager = resolver.resolve(UserInfoManager.self)!
+            let privacyService = resolver.resolve(PrivacyService.self)!
+            return AXSManager(userInfoManager: userInfoManager, privacyService: privacyService)
+        }
+    }
+    
+    public func containerDidAssemble(resolver: Resolver) {
+        resolver.resolve(PrivacyService.self)?.registerTrackingEnabledListener(
+            resolver.resolve(AXSManager.self)!
+        )
+    }
 }

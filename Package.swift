@@ -39,6 +39,9 @@ let package = Package(
             name: "RoverSeatGeek",
             targets: ["RoverSeatGeek"]),
         .library(
+            name: "RoverAxs",
+            targets: ["RoverAxs"]),
+        .library(
             name: "RoverAdobeExperience",
             targets: ["RoverAdobeExperience"]),
         .library(
@@ -47,7 +50,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url:"https://github.com/weichsel/ZIPFoundation", .upToNextMinor(from: "0.9.19")),
-        .package(url:"https://github.com/ticketmaster/iOS-TicketmasterSDK.git", .upToNextMinor(from: "1.7.0")),
+        .package(url:"https://github.com/ticketmaster/iOS-TicketmasterSDK.git", .upToNextMajor(from: "1.7.0")),
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -118,6 +121,11 @@ let package = Package(
             name: "RoverSeatGeek",
             dependencies: ["RoverData"],
             path: "Sources/SeatGeek",
+            resources: [.copy("Resources/PrivacyInfo.xcprivacy")]),
+        .target(
+            name: "RoverAxs",
+            dependencies: ["RoverData"],
+            path: "Sources/AXS",
             resources: [.copy("Resources/PrivacyInfo.xcprivacy")]),
         .target(
             name: "RoverAdobeExperience",

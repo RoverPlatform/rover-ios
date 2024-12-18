@@ -160,8 +160,8 @@ extension ContextManager: StaticContextProvider {
         #endif
     }
     
-    var deviceIdentifier: String {
-        return UIDevice.current.identifierForVendor!.uuidString
+    var deviceIdentifier: String? {
+        return UIDevice.current.identifierForVendor?.uuidString
     }
     
     var deviceManufacturer: String {

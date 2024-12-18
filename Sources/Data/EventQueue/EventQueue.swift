@@ -130,6 +130,10 @@ public class EventQueue {
     public func addEvent(_ info: EventInfo) {
         let context = self.contextProvider.context
         
+        guard context.deviceIdentifier != nil else {
+            return
+        }
+        
         let event = Event(
             name: info.name,
             context: context,

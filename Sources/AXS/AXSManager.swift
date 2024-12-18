@@ -23,46 +23,71 @@ class AXSManager: AXSAuthorizer, PrivacyListener {
     private let privacyService: PrivacyService
     
     private var userID = PersistedValue<String>(storageKey: "io.rover.axs")
-    
+    private var flashMemberID = PersistedValue<String>(storageKey: "io.rover.axs.flashMemberID")
+    private var flashMobileID = PersistedValue<String>(storageKey: "io.rover.axs.flashMobileID")
+
     private var axsUserInfo: [String: String]? {
-        guard let userID = self.userID.value else {
-            return nil
+        var dictionary = [String: String]()
+        
+        if let userID = self.userID.value {
+            dictionary["userID"] = userID
         }
         
-        return ["userID": userID]
+        if let flashMemberID = self.flashMemberID.value {
+            dictionary["flashMemberID"] = flashMemberID
+        }
+        
+        if let flashMobileID = self.flashMobileID.value {
+            dictionary["flashMobileID"] = flashMobileID
+        }
+        
+        return dictionary
     }
-    
+
     init(userInfoManager: UserInfoManager, privacyService: PrivacyService) {
         self.userInfoManager = userInfoManager
         self.privacyService = privacyService
     }
 
 // MARK: AxsAuthorizer
-    
+
     func setUserId(_ id: String) {
+        setUserID(id, flashMemberID: nil, flashMobileID: nil)
+    }
+    
+    func setUserID(_ userID: String?, flashMemberID: String?, flashMobileID: String?) {
         guard privacyService.trackingMode == .default else {
             return
         }
         
-        self.userID.value = id
+        guard let userID else {
+            clearCredentials()
+            return
+        }
+
+        self.userID.value = userID
+        self.flashMemberID.value = flashMemberID
+        self.flashMobileID.value = flashMobileID
+
+        guard let userInfo = axsUserInfo else {
+            return
+        }
         
-        if let userInfo = axsUserInfo {
-            self.userInfoManager.updateUserInfo {
-                if let existingAxsUserInfo = $0.rawValue["axs"] as? Attributes {
-                    // axs data already exists, just clobber it:
-                    $0.rawValue["axs"] = Attributes(rawValue: existingAxsUserInfo.rawValue.merging(userInfo) { $1 })
-                } else {
-                    // axs data does not already exist, so set it:
-                    $0.rawValue["axs"] = Attributes(rawValue: userInfo)
-                }
-            }
-            
-            os_log("AXSID has been set: %s", log: .general, userID.value!)
+        updateUserInfo(userInfo)
+        
+        os_log("AXS IDs have been set. user ID: %s, flashMemberID: %s, flashMobileID: %s", log: .general, userID, flashMemberID ?? "nil", flashMobileID ?? "nil")
+    }
+
+    private func updateUserInfo(_ userInfo: [String: String]) {
+        self.userInfoManager.updateUserInfo {
+            $0.rawValue["axs"] = Attributes(rawValue: userInfo)
         }
     }
-    
+
     func clearCredentials() {
         self.userID.value = nil
+        self.flashMemberID.value = nil
+        self.flashMobileID.value = nil
         self.userInfoManager.updateUserInfo { attributes in
             attributes.rawValue["axs"] = nil
         }
@@ -72,7 +97,7 @@ class AXSManager: AXSAuthorizer, PrivacyListener {
     
     func trackingModeDidChange(_ trackingMode: PrivacyService.TrackingMode) {
         if(trackingMode != .default) {
-            os_log("Tracking disabled, axs data cleared", log: .axs)
+            os_log("Tracking disabled, AXS data cleared", log: .axs)
             clearCredentials()
         }
     }

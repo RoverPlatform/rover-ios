@@ -35,7 +35,7 @@ class ScreenViewController: UIViewController, UIScrollViewDelegate {
         self.urlParameters = urlParameters
         self.userInfo = userInfo
         self.authorize = authorize
-        self.carouselState = CarouselState(experienceId: experience.id)
+        self.carouselState = CarouselState(experienceUrl: experience.sourceUrl?.absoluteString)
         super.init(nibName: nil, bundle: nil)
         super.restorationIdentifier = screen.id
     }

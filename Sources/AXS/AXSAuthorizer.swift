@@ -18,13 +18,23 @@ public protocol AXSAuthorizer {
     /**
      Set the user's AXS credentials after a successful sign-in.
      
-     - Parameters:
-     - userId: The value of the `userId` property.
+     - Parameter userId: The value of the `userID` property.
      */
+    @available(*, deprecated, renamed: "setUserID")
     func setUserId(_ userId: String)
-    
+
+    /**
+     Set the user's AXS credentials after a successful sign-in. If `userID` is nil, then it is treated as a sign out.
+
+     - Parameter userID: The value of the `userID` property.
+     - Parameter flashMemberID: A Flash Seats Member ID.
+     - Parameter flashMobileID: A Flash Seats Mobile ID.
+     */
+    func setUserID(_ userID: String?, flashMemberID: String?, flashMobileID: String?)
+
     /**
      Clear the user's AXS credentials after a successful sign-out.
      */
     func clearCredentials()
 }
+

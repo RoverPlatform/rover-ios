@@ -26,6 +26,10 @@ class NotificationsSyncParticipant: SyncParticipant {
     }
     
     func initialRequest() -> SyncRequest? {
+        guard let uuidString = UIDevice.current.identifierForVendor?.uuidString else {
+            return nil
+        }
+        
         let orderBy: Attributes = [
             "field": "CREATED_AT",
             "direction": "DESC"
@@ -36,7 +40,7 @@ class NotificationsSyncParticipant: SyncParticipant {
             values: [
                 "last": 500,
                 "orderBy": orderBy,
-                "deviceIdentifier": UIDevice.current.identifierForVendor!.uuidString
+                "deviceIdentifier": uuidString
             ]
         )
     }

@@ -33,7 +33,7 @@ final class ExperienceModel: Decodable {
     var gradients = [DocumentGradient]()
     var localization = StringTable()
     var fonts = [DocumentFont]()
-    
+
     /// Font download URLs
     var fontURLs: [URL] {
         fonts.flatMap { $0.sources.map {$0.assetUrl} }
@@ -54,6 +54,9 @@ final class ExperienceModel: Decodable {
         return initialScreen!.id
     }
     
+    /// The URL this experience was loaded from.
+    ///
+    /// NB. Unlike the other fields, this one is not populated from the contents of the experience JSON.
     var sourceUrl: URL?
 
     /// Initialize Experience from data (JSON)

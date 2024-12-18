@@ -21,7 +21,7 @@ public protocol StaticContextProvider: AnyObject {
     var appIdentifier: String { get }
     var appVersion: String { get }
     var buildEnvironment: Context.BuildEnvironment { get }
-    var deviceIdentifier: String { get }
+    var deviceIdentifier: String? { get }
     var deviceManufacturer: String { get }
     var deviceModel: String { get }
     var deviceName: String { get }

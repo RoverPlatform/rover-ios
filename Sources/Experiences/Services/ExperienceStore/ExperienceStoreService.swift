@@ -79,6 +79,7 @@ class ExperienceStoreService: ExperienceStore {
         if url.isFileURL {
             do {
                 if let experienceObj = try read(contentsOf: url) {
+                    experienceObj.sourceUrl = url
                     let experience = LoadedExperience.file(
                         experience: experienceObj,
                         urlParameters: experienceObj.urlParameters,
@@ -156,7 +157,7 @@ class ExperienceStoreService: ExperienceStore {
                                 completionHandler(.failure(.invalidExperienceData(error)))
                                 return
                             }
-                        
+                            
                             let key = CacheKey(url: experienceUrl)
                             let value = CacheValue(experience: experience)
                             self.cache.setObject(value, forKey: key)

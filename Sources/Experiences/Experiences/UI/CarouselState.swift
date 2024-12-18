@@ -13,6 +13,7 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+import Foundation
 import Combine
 import RoverFoundation
 
@@ -22,16 +23,21 @@ final class CarouselState: ObservableObject {
     @Published var currentNumberOfPagesForCarousel: [ViewID: Int] = [:]
     @Published var storyStyleStatusForCarousel: [ViewID: Bool] = [:]
     @Published var currentBarProgressForCarousel: [ViewID: [Double]] = [:]
-    private let experienceId: String?
+    private let experienceUrl: String?
     
     private let persistedCarouselPositions = PersistedValue<[String: Int]>(storageKey: "io.rover.experience.carouselPositions")
     
-    init(experienceId: String?) {
-        self.experienceId = experienceId
+    init(experienceUrl: String?) {
+        self.experienceUrl = experienceUrl
+    }
+    
+    private func persistenceKey(for viewID: ViewID) -> String {
+        let urlBase64 = experienceUrl.flatMap { $0.data(using: .utf8)?.base64EncodedString() }
+        return "\(urlBase64 ?? "unknown")-\(viewID.toString())"
     }
     
     func setPersistedPosition(for viewID: ViewID, newValue: Int) {
-        let carouselIdentifier = "\(experienceId ?? "local")-\(viewID.toString())"
+        let carouselIdentifier = persistenceKey(for: viewID)
         
         guard var carouselPositions = persistedCarouselPositions.value else {
             persistedCarouselPositions.value = [carouselIdentifier: newValue]
@@ -43,8 +49,7 @@ final class CarouselState: ObservableObject {
     }
     
     func getPersistedPosition(for viewID: ViewID) -> Int {
-        let carouselIdentifier = "\(experienceId ?? "local")-\(viewID.toString())"
-        
+        let carouselIdentifier = persistenceKey(for: viewID)
         guard let carouselPositions = persistedCarouselPositions.value,
               let value = carouselPositions[carouselIdentifier] else {
             return 0

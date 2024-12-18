@@ -39,17 +39,17 @@ struct ImageFetcher<Content, Placeholder>: View where Content: View, Placeholder
     var body: some View {
         if let uiImage = uiImage {
             content(uiImage)
-                .onValueChanged(of: url) { _ in
-                    startFetch()
+                .onValueChanged(of: url) { url in
+                    startFetch(url: url)
                 }
         } else {
             placeholder.onAppear {
-                startFetch()
+                startFetch(url: url)
             }
         }
     }
 
-    private func startFetch() {
+    private func startFetch(url: URL) {
         let experienceManager = Rover.shared.resolve(ExperienceManager.self)!
 
         func setState(_ state: FetchState) {

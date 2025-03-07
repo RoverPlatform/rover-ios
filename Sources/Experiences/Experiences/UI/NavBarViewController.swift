@@ -23,10 +23,10 @@ class NavBarViewController: UINavigationController, UIScrollViewDelegate {
     // as it requires iOS 13 when the SDK supports a minimum of iOS 11
     private var titleDisplayObserver: AnyObject?
 
-    init(experience: ExperienceModel, screen: Screen, data: Any? = nil, urlParameters: [String: String], userInfo: [String: Any], authorize: @escaping (inout URLRequest) -> Void) {
+    init(experience: ExperienceModel, screen: Screen, data: Any? = nil, urlParameters: [String: String], userInfo: [String: Any], authorizers: Authorizers) {
         let experienceManager = Rover.shared.resolve(ExperienceManager.self)!
         
-        let screenVC = experienceManager.screenViewController(experience, screen, data, urlParameters, userInfo, authorize)
+        let screenVC = experienceManager.screenViewController(experience, screen, data, urlParameters, userInfo, authorizers)
         super.init(rootViewController: screenVC)
         restorationIdentifier = screen.id
 

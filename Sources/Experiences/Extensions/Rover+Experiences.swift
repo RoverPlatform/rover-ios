@@ -41,9 +41,39 @@ extension Rover {
         Rover.shared.resolve(ExperienceManager.self)?.registeredButtonTappedCallback = callback
     }
     
-    /// Supply the domain name this authorizer matches against including subdomain. You can optionally supply an asterisk for the subdomain if you want to match against all subdomains.
-    
+    /// Authorizers allow you to modify URLRequests for data sources in experiences. This allows you to add custom authorization headers, API keys, etc.
+    ///
+    /// Supply the domain name this authorizer matches against including subdomain. You can optionally supply an asterisk for the subdomain if you want to match against all subdomains, using a standard globbing pattern.
     public func authorize(pattern: String, block: @escaping (inout URLRequest) -> Void) {
-        Rover.shared.resolve(ExperienceManager.self)?.authorize(pattern, with: block)
+        Rover.shared.resolve(ExperienceManager.self)?.authorizers.authorize(pattern, with: block)
+    }
+    
+    /// Authorizers allow you to modify URLRequests for data sources in experiences. ``AsyncAuthorizer`` alllws This allows you to add custom authorization headers, API keys, etc.
+    ///
+    /// Supply the domain name this authorizer matches against including subdomain. You can optionally supply an asterisk for the subdomain if you want to match against all subdomains, using a standard globbing pattern.
+    public func authorizeAsync(pattern: String, block: @escaping (inout URLRequest) async -> Void) {
+        Rover.shared.resolve(ExperienceManager.self)?.authorizers.authorizeAsync(pattern, with: block)
+    }
+}
+
+/// To provide a JWT token to authorize `api.rover.io` data source requests for the signed in user (for ticketing data, etc.).
+///
+/// This securely attests to the user's identity to enable additional personalization features.
+///
+/// Whenever Rover needs to make a secured data request, it will call this callback to obtain the JWT token.  It is a suspending function so you are able to perform a token refresh operation if needed first.
+public protocol RoverJWTAuthorizationProvider {
+    
+    /// Implement this method and return an up to date JWT token.
+    func getJWTToken() async -> String?
+}
+
+struct JWTAuthorizer: RoverAuthorizer {
+    let jwtProvider: RoverJWTAuthorizationProvider
+    
+    func authorize(request: inout URLRequest) async {
+        guard let token = await jwtProvider.getJWTToken() else {
+            return
+        }
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
     }
 }

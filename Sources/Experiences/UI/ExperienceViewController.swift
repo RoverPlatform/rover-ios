@@ -207,18 +207,18 @@ open class ExperienceViewController: UIViewController {
                 experience: experienceModel,
                 urlParameters: urlParameters,
                 userInfo: experienceManager.userInfo,
-                authorize: experienceManager.authorize(_:))
+                authorizers: experienceManager.authorizers)
             
         case .file(
             let experienceModel,
             let urlParameters,
             let userInfo,
-            let authorize):
+            let authorizers):
             return RenderExperienceViewController(
                 experience: experienceModel,
                 urlParameters: urlParameters,
                 userInfo: userInfo,
-                authorize: authorize)
+                authorizers: authorizers)
         }
     }
 }

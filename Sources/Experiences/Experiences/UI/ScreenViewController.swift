@@ -25,17 +25,19 @@ class ScreenViewController: UIViewController, UIScrollViewDelegate {
     let urlParameters: [String: String]
     let userInfo: [String: Any]
     let deviceContext: [String: Any] = Rover.shared.deviceContext
-    let authorize: (inout URLRequest) -> Void
+    let authorizers: Authorizers
     let carouselState: CarouselState
+    let experienceManager: ExperienceManager
 
-    init(experience: ExperienceModel, screen: Screen, data: Any? = nil, urlParameters: [String: String], userInfo: [String: Any], authorize: @escaping (inout URLRequest) -> Void) {
+    init(experience: ExperienceModel, screen: Screen, data: Any? = nil, urlParameters: [String: String], userInfo: [String: Any], authorizers: Authorizers) {
         self.experience = experience
         self.screen = screen
         self.data = data
         self.urlParameters = urlParameters
         self.userInfo = userInfo
-        self.authorize = authorize
+        self.authorizers = authorizers
         self.carouselState = CarouselState(experienceUrl: experience.sourceUrl?.absoluteString)
+        self.experienceManager = Rover.shared.resolve(ExperienceManager.self)!
         super.init(nibName: nil, bundle: nil)
         super.restorationIdentifier = screen.id
     }
@@ -190,7 +192,7 @@ class ScreenViewController: UIViewController, UIScrollViewDelegate {
                 urlParameters: urlParameters,
                 userInfo: userInfo,
                 deviceContext: deviceContext,
-                authorize: authorize,
+                authorizers: authorizers,
                 experienceViewController: experienceViewController,
                 screenViewController: self
             )
@@ -295,13 +297,14 @@ class ScreenViewController: UIViewController, UIScrollViewDelegate {
                 })
                 .environment(\.screenViewController, screenViewControllerHolder)
                 .environment(\.experienceViewController, experienceViewControllerHolder)
+                .environment(\.experienceManager, experienceManager)
                 .environment(\.experience, experience)
                 .environment(\.screen, screen)
                 .environment(\.stringTable, experience.localization)
                 .environment(\.urlParameters, urlParameters)
                 .environment(\.userInfo, userInfo)
                 .environment(\.deviceContext, deviceContext)
-                .environment(\.authorize, authorize)
+                .environment(\.authorizers, authorizers)
         }
     }
 

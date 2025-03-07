@@ -1,6 +1,15 @@
 {
   "pins" : [
     {
+      "identity" : "ios-ticketmastersdk",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ticketmaster/iOS-TicketmasterSDK.git",
+      "state" : {
+        "revision" : "c678c0373f8b212109ff82475da35ba41009dd4a",
+        "version" : "1.13.4"
+      }
+    },
+    {
       "identity" : "zipfoundation",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/weichsel/ZIPFoundation",

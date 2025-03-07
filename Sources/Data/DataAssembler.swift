@@ -91,11 +91,13 @@ public struct DataAssembler: Assembler {
         
         // MARK: HTTPClient
         
-        container.register(HTTPClient.self) { [accountToken, endpoint] _ in
-            HTTPClient(
+        container.register(HTTPClient.self) { [accountToken, endpoint] resolver in
+            let authContext = resolver.resolve(AuthenticationContext.self)!
+            return HTTPClient(
                 accountToken: accountToken,
                 endpoint: endpoint,
-                session: URLSession(configuration: URLSessionConfiguration.default)
+                session: URLSession(configuration: URLSessionConfiguration.default),
+                authContext: authContext
             )
         }
         
@@ -206,6 +208,12 @@ public struct DataAssembler: Assembler {
         
         container.register(AppLastSeenContextProvider.self) { resolver in
             resolver.resolve(ContextManager.self)!
+        }
+        
+        // MARK: AuthContext
+        
+        container.register(AuthenticationContext.self) { resolver in
+            AuthenticationContext()
         }
     }
     

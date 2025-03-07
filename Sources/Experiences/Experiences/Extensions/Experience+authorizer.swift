@@ -16,28 +16,19 @@
 import Foundation
 
 extension ExperienceModel {
-    func authorize(_ request: inout URLRequest) {
-        guard let url = request.url, let host = request.url?.host else {
-            return
-        }
+    /// Convert the document-level authorizers, intended for design-time use, into live authorizers that can be used by the SDK.
+    func getAuthorizers() -> Authorizers {
+        var authorizers = Authorizers()
         
-        let requestTokens = Array(host.split(separator: "."))
-        guard requestTokens.count >= 2 else {
-            return
-        }
-        
-        for authorizer in self.authorizers {
-            let wildcardAndRoot = authorizer.pattern.components(separatedBy: "*.")
-            guard let root = wildcardAndRoot.last, wildcardAndRoot.count <= 2 else {
-                break
-            }
-            
-            let hasWildcard = wildcardAndRoot.count > 1
-            
-            if (!hasWildcard && host == authorizer.pattern) || (hasWildcard && (host == root || host.hasSuffix(".\(root)"))) {
-                switch authorizer.method {
+        for documentAuthorizer in self.authorizers {
+            authorizers.authorize(documentAuthorizer.pattern) { request in
+                guard let url = request.url, let host = request.url?.host else {
+                    return
+                }
+                
+                switch documentAuthorizer.method {
                 case .header:
-                    request.setValue(authorizer.value, forHTTPHeaderField: authorizer.key)
+                    request.setValue(documentAuthorizer.value, forHTTPHeaderField: documentAuthorizer.key)
                 case .queryString:
                     guard var components = URLComponents(url: url, resolvingAgainstBaseURL: true) else {
                         return
@@ -45,12 +36,14 @@ extension ExperienceModel {
                     
                     var queryItems = components.queryItems ?? []
                     
-                    let queryItem = URLQueryItem(name: authorizer.key, value: authorizer.value)
+                    let queryItem = URLQueryItem(name: documentAuthorizer.key, value: documentAuthorizer.value)
                     queryItems.append(queryItem)
                     components.queryItems = queryItems
                     request.url = components.url
                 }
             }
         }
+        
+        return authorizers
     }
 }

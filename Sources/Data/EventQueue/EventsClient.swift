@@ -17,17 +17,22 @@ import Foundation
 import os.log
 
 public protocol EventsClient {
-    func task(with events: [Event], completionHandler: @escaping (HTTPResult) -> Void) -> URLSessionTask
+    func sendEvents(with events: [Event]) async -> HTTPResult
 }
 
 extension HTTPClient: EventsClient {
-    public func task(with events: [Event], completionHandler: @escaping (HTTPResult) -> Void) -> URLSessionTask {
-        let request = self.uploadRequest()
+    public func sendEvents(with events: [Event]) async -> HTTPResult {
+        let request = await self.authContext.authenticateRequest(request: self.uploadRequest())
+        
         let payload = EventsPayload(events: events)
-        let bodyData = self.bodyData(payload: payload)
-        return self.uploadTask(with: request, from: bodyData, completionHandler: completionHandler)
+        guard let bodyData = self.bodyData(payload: payload) else {
+            return HTTPResult.error(error: NoDataError(), isRetryable: false)
+        }
+        return await self.upload(with: request, from: bodyData)
     }
 }
+
+private struct NoDataError: Error { }
 
 private struct EventsPayload {
     var query: String {

@@ -45,7 +45,7 @@ public class EventQueue {
     // The following variables comprise the state of the EventQueueService and should only be modified from within an operation on the serial queue
     
     var eventQueue = [Event]()
-    var uploadTask: URLSessionTask?
+    var uploadTask: Task<Void, Never>?
     var timer: Timer?
     
     var backgroundTask = UIBackgroundTaskIdentifier.invalid
@@ -235,7 +235,8 @@ public class EventQueue {
             let events = Array(self.eventQueue.prefix(self.maxBatchSize))
             os_log("Uploading %d event(s) to server", log: .events, type: .debug, events.count)
             
-            let uploadTask = self.client.task(with: events) { result in
+            let uploadTask = Task {
+                let result = await self.client.sendEvents(with: events)
                 switch result {
                 case let .error(error, isRetryable):
                     if let error = error {
@@ -263,7 +264,6 @@ public class EventQueue {
                 self.endBackgroundTask()
             }
             
-            uploadTask.resume()
             self.uploadTask = uploadTask
         }
     }

@@ -25,6 +25,7 @@ final class ExperienceManager {
     let eventQueue: EventQueue
     let userInfoContextProvider: UserInfoContextProvider
     let conversionsTracker: InterpolatingConversionsTracker
+    let authContext: AuthenticationContext
     
     var userInfo: [String: Any] {
         userInfoContextProvider.userInfo?.flatRawValue() ?? [:]
@@ -34,14 +35,17 @@ final class ExperienceManager {
     internal var registeredCustomActionCallback: ((CustomActionActivationEvent) -> Void)?
     internal var registeredScreenViewedCallback: ((ScreenViewedEvent) -> Void)?
     internal var registeredButtonTappedCallback: ((ButtonTappedEvent) -> Void)?
-    internal var authorizers: [Authorizer] = []
+    internal var authorizers: Authorizers = Authorizers()
     
     init(eventQueue: EventQueue,
          userInfoContextProvider: UserInfoContextProvider,
-         conversionsTracker: ConversionsTrackerService) {
+         conversionsTracker: ConversionsTrackerService,
+         authContext: AuthenticationContext
+    ) {
         self.eventQueue = eventQueue
         self.userInfoContextProvider = userInfoContextProvider
         self.conversionsTracker = InterpolatingConversionsTracker(conversionsTracker: conversionsTracker)
+        self.authContext = authContext
     }
     
     internal lazy var downloader: AssetsDownloader = AssetsDownloader(cache: self.assetsURLCache)
@@ -61,9 +65,9 @@ final class ExperienceManager {
     lazy var imageFetchAndDecodeQueue: DispatchQueue = DispatchQueue(label: "io.rover.ImageFetchAndDecode", attributes: .concurrent)
     
     let navBarViewController =
-        NavBarViewController.init(experience:screen:data:urlParameters:userInfo:authorize:)
+        NavBarViewController.init(experience:screen:data:urlParameters:userInfo:authorizers:)
     
-    let screenViewController = ScreenViewController.init(experience:screen:data:urlParameters:userInfo:authorize:)
+    let screenViewController = ScreenViewController.init(experience:screen:data:urlParameters:userInfo:authorizers:)
     
     private var screenViewedObserver: NSObjectProtocol?
     
@@ -142,48 +146,5 @@ extension ExperienceManager {
                 }
             }
         )
-    }
-}
-
-// MARK: Authorizers
-
-struct Authorizer {
-    var pattern: String
-    var block: (inout URLRequest) -> Void
-    
-    func authorize(_ request: inout URLRequest) {
-        block(&request)
-    }
-}
-
-extension ExperienceManager {
-    public func authorize(_ pattern: String, with block: @escaping (inout URLRequest) -> Void) {
-        authorizers.append(
-            Authorizer(pattern: pattern, block: block)
-        )
-    }
-    
-    func authorize(_ request: inout URLRequest) {
-        guard let host = request.url?.host else {
-            return
-        }
-        
-        let requestTokens = Array(host.split(separator: "."))
-        guard requestTokens.count >= 2 else {
-            return
-        }
-        
-        for authorizer in self.authorizers {
-            let wildcardAndRoot = authorizer.pattern.components(separatedBy: "*.")
-            guard let root = wildcardAndRoot.last, wildcardAndRoot.count <= 2 else {
-                break
-            }
-            
-            let hasWildcard = wildcardAndRoot.count > 1
-            
-            if (!hasWildcard && host == authorizer.pattern) || (hasWildcard && (host == root || host.hasSuffix(".\(root)"))) {
-                authorizer.authorize(&request)
-            }
-        }
     }
 }

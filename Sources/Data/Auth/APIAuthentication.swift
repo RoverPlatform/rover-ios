@@ -14,39 +14,17 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import Foundation
-import RoverFoundation
 
-public extension Rover {
-    var userInfoManager: UserInfoManager {
-        get {
-            resolve(UserInfoManager.self)!
+extension AuthenticationContext {
+    func authenticateRequest(request: URLRequest) async -> URLRequest {
+        var request = request
+        for pattern in self.sdkAuthenticationEnabledDomains {
+            if let host = request.url?.host, matchDomainPattern(string: host, pattern: pattern) {
+                if let token = await self.obtainSDKAuthenticationIDToken() {
+                    request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+                }
+            }
         }
-    }
-    
-    var syncCoordinator: SyncCoordinator {
-        get {
-            resolve(SyncCoordinator.self)!
-        }
-    }
-    
-    var tokenManager: TokenManager {
-        get {
-            resolve(TokenManager.self)!
-        }
-    }
-    
-    var privacyService: PrivacyService {
-        get {
-            resolve(PrivacyService.self)!
-        }
-    }
-    
-    var trackingMode: PrivacyService.TrackingMode {
-        get {
-            privacyService.trackingMode
-        }
-        set {
-            privacyService.trackingMode = newValue
-        }
+        return request
     }
 }

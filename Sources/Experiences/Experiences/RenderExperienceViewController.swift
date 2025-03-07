@@ -30,13 +30,13 @@ class RenderExperienceViewController: UIViewController {
     ///   - screenID: Optional. Override experience's initial screen identifier.
     ///   - urlParameters: Optional parameters from the URL used to launch the experience.
     ///   - userInfo: Optional properties about the current user which can be used to personalize the experience.
-    ///   - authorize: Optional callback to authorize URL reqeusts made by `DataSource`s.
+    ///   - authorizers: Authorize URL reqeusts made by `DataSource`s.
     
     init(
         experience: ExperienceModel,
         urlParameters: [String: String],
         userInfo: [String: Any],
-        authorize: @escaping (inout URLRequest) -> Void = { _ in }
+        authorizers: Authorizers
     ) {
         super.init(nibName: nil, bundle: nil)
         
@@ -44,7 +44,7 @@ class RenderExperienceViewController: UIViewController {
             initialScreenID: urlParameters["screenID"],
             urlParameters: urlParameters,
             userInfo: userInfo,
-            authorize: authorize
+            authorizers: authorizers
         )
         
         presentExperience(experience: experience, context: context)
@@ -65,7 +65,7 @@ class RenderExperienceViewController: UIViewController {
         coder: NSCoder,
         urlParameters: [String: String],
         userInfo: [String: Any],
-        authorize: @escaping (inout URLRequest) -> Void = { _ in }
+        authorizers: Authorizers
     ) {
         super.init(coder: coder)
         
@@ -73,7 +73,7 @@ class RenderExperienceViewController: UIViewController {
             initialScreenID: urlParameters["screenID"],
             urlParameters: urlParameters,
             userInfo: userInfo,
-            authorize: authorize
+            authorizers: authorizers
         )
         
         presentExperience(experience: experience, context: context)
@@ -100,7 +100,7 @@ class RenderExperienceViewController: UIViewController {
         var initialScreenID: Screen.ID?
         var urlParameters = [String: String]()
         var userInfo = [String: Any]()
-        var authorize: (inout URLRequest) -> Void = { _ in }
+        var authorizers: Authorizers
     }
     
     private func presentExperience(experience: ExperienceModel, context: LaunchContext) {
@@ -145,7 +145,7 @@ class RenderExperienceViewController: UIViewController {
             nil,
             context.urlParameters,
             context.userInfo,
-            context.authorize
+            context.authorizers
         )
         
         self.restorationIdentifier = String(describing: experience.id)

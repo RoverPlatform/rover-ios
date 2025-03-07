@@ -84,7 +84,7 @@ class ExperienceStoreService: ExperienceStore {
                         experience: experienceObj,
                         urlParameters: experienceObj.urlParameters,
                         userInfo: experienceObj.userInfo,
-                        authorize: experienceObj.authorize(_:))
+                        authorizers: experienceObj.getAuthorizers())
                     completionHandler(.success(experience))
                 } else {
                     completionHandler(.failure(.fileError(nil)))

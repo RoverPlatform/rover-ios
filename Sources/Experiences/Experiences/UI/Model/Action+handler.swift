@@ -21,7 +21,7 @@ import RoverFoundation
 import RoverData
 
 extension ExperienceAction {
-    func handle(experience: ExperienceModel, node: Node, screen: Screen, data: Any?, urlParameters: [String: String], userInfo: [String: Any], deviceContext: [String: Any], authorize: @escaping (inout URLRequest) -> Void, experienceViewController: RenderExperienceViewController, screenViewController: ScreenViewController) {
+    func handle(experience: ExperienceModel, node: Node, screen: Screen, data: Any?, urlParameters: [String: String], userInfo: [String: Any], deviceContext: [String: Any], authorizers: Authorizers, experienceViewController: RenderExperienceViewController, screenViewController: ScreenViewController) {
         let experienceManager = Rover.shared.resolve(ExperienceManager.self)!
         
         experienceManager.conversionsTracker.track(
@@ -55,11 +55,11 @@ extension ExperienceAction {
             
             switch segue.style {
             case .push:
-                let viewController = experienceManager.screenViewController(experience, segue.destination, data, urlParameters, userInfo, authorize)
+                let viewController = experienceManager.screenViewController(experience, segue.destination, data, urlParameters, userInfo, authorizers)
                 screenViewController.show(viewController, sender: screenViewController)
                 
             case let .modal(presentationStyle):
-                let viewController = experienceManager.navBarViewController(experience, segue.destination, data, urlParameters, userInfo, authorize)
+                let viewController = experienceManager.navBarViewController(experience, segue.destination, data, urlParameters, userInfo, authorizers)
                 
                 switch presentationStyle {
                 case .fullScreen:

@@ -20,11 +20,13 @@ public final class HTTPClient {
     public let endpoint: URL
     public let accountToken: String
     public let session: URLSession
+    public let authContext: AuthenticationContext
     
-    public init(accountToken: String, endpoint: URL, session: URLSession) {
+    public init(accountToken: String, endpoint: URL, session: URLSession, authContext: AuthenticationContext) {
         self.accountToken = accountToken
         self.endpoint = endpoint
         self.session = session
+        self.authContext = authContext
     }
 }
 
@@ -89,6 +91,24 @@ extension HTTPClient {
         return self.session.uploadTask(with: request, from: bodyData) { data, urlResponse, error in
             let result = HTTPResult(data: data, urlResponse: urlResponse, error: error)
             completionHandler(result)
+        }
+    }
+
+    public func download(with request: URLRequest) async -> HTTPResult {
+        do {
+            let (data, urlResponse) = try await self.session.data(for: request)
+            return HTTPResult(data: data, urlResponse: urlResponse, error: nil)
+        } catch {
+            return HTTPResult(data: nil, urlResponse: nil, error: error)
+        }
+    }
+
+    public func upload(with request: URLRequest, from bodyData: Data) async -> HTTPResult {
+        do {
+            let (data, urlResponse) = try await self.session.upload(for: request, from: bodyData)
+            return HTTPResult(data: data, urlResponse: urlResponse, error: nil)
+        } catch {
+            return HTTPResult(data: nil, urlResponse: nil, error: error)
         }
     }
 }

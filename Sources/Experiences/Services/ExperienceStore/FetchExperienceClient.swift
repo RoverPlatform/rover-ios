@@ -159,7 +159,7 @@ enum LoadedExperience {
         experience: ExperienceModel,
         urlParameters: [String: String],
         userInfo: [String: Any],
-        authorize: (inout URLRequest) -> Void)
+        authorizers: Authorizers)
 }
 
 struct ExperienceDownloadResult {

@@ -68,6 +68,10 @@ internal struct ExperienceViewControllerKey: EnvironmentKey {
     static let defaultValue: ExperienceViewControllerHolder? = nil
 }
 
+internal struct ExperienceManagerKey: EnvironmentKey {
+    static let defaultValue: ExperienceManager? = nil
+}
+
 internal struct DataKey: EnvironmentKey {
     static let defaultValue: Any? = nil
 }
@@ -85,7 +89,7 @@ internal struct DeviceContextKey: EnvironmentKey {
 }
 
 internal struct AuthorizeKey: EnvironmentKey {
-    static let defaultValue: (inout URLRequest) -> Void = { _ in }
+    static let defaultValue: Authorizers = Authorizers()
 }
 
 internal struct CollectionIndexKey: EnvironmentKey {
@@ -187,6 +191,16 @@ internal extension EnvironmentValues {
         }
     }
     
+    var experienceManager: ExperienceManager? {
+        get {
+            self[ExperienceManagerKey.self]
+        }
+        
+        set {
+            self[ExperienceManagerKey.self] = newValue
+        }
+    }
+    
     var data: Any? {
         get {
             return self[DataKey.self]
@@ -227,7 +241,7 @@ internal extension EnvironmentValues {
         }
     }
     
-    var authorize: (inout URLRequest) -> Void {
+    var authorizers: Authorizers {
         get {
             return self[AuthorizeKey.self]
         }

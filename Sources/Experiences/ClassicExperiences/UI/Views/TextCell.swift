@@ -34,15 +34,27 @@ class TextCell: BlockCell {
         return textView
     }
     
+    private var currentBlockID: String?
+    
     override func configure(with block: ClassicBlock) {
         super.configure(with: block)
-        
+
         guard let textBlock = block as? ClassicTextBlock else {
             textView.isHidden = true
             return
         }
         
         textView.isHidden = false
-        textView.attributedText = textBlock.text.attributedText(forFormat: .html)
+        self.currentBlockID = block.id
+        
+        // NSAttributedString, when initialized with the HTML options that we use, internally uses WebKit/NSHTMLReader. These have internal async operations that can synchronously run a mainloop tick, but given that configure() is running in the context of func collectionView(:, cellForItemAt:), this could potentially cause NSInternalConsistencyException under certain conditions.
+        DispatchQueue.main.async { [weak self] in
+            // check that this callback isn't stale, and would clobber a configure() that has occurred since.
+            guard let self = self, block.id == self.currentBlockID else {
+                return
+            }
+            
+            textView.attributedText = textBlock.text.attributedText(forFormat: .html)
+        }
     }
 }

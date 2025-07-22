@@ -139,9 +139,9 @@ open class InboxViewController: UIViewController, UITableViewDataSource, UITable
         }
     }
     
-    /// Reset the application icon badge number to 0 any time the inbox is viewed, regardless of the number of unread messages
+    /// Unused; the classic Inbox can no longer update the app badge number.
     open func resetApplicationIconBadgeNumber() {
-        UIApplication.shared.applicationIconBadgeNumber = 0
+        // Removed
     }
     
     override open func viewWillAppear(_ animated: Bool) {
@@ -159,10 +159,6 @@ open class InboxViewController: UIViewController, UITableViewDataSource, UITable
         sessionController.registerSession(identifier: "inbox") { duration in
             let attributes: Attributes = ["duration": duration]
             return EventInfo(name: "Notification Center Viewed", namespace: "rover", attributes: attributes)
-        }
-        
-        if UIApplication.shared.applicationState == .active {
-            resetApplicationIconBadgeNumber()
         }
     }
     

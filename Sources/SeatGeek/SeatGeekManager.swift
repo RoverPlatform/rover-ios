@@ -41,6 +41,7 @@ class SeatGeekManager: SeatGeekAuthorizer, PrivacyListener {
     
     func setSeatGeekID(_ id: String) {
         guard privacyService.trackingMode == .default else {
+            os_log("SeatGeek ID set while privacy is in anonymous/anonymized mode, ignored", log: .seatgeek, type: .info)
             return
         }
         

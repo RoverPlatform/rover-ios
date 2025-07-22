@@ -24,8 +24,9 @@ public struct DataAssembler: Assembler {
     public var flushEventsInterval: Double
     public var maxEventBatchSize: Int
     public var maxEventQueueSize: Int
+    public var engageEndpoint: URL
     
-    public init(accountToken: String, endpoint: URL = URL(string: "https://api.rover.io/graphql")!, flushEventsAt: Int = 20, flushEventsInterval: Double = 30.0, maxEventBatchSize: Int = 100, maxEventQueueSize: Int = 1_000) {
+    public init(accountToken: String, endpoint: URL = URL(string: "https://api.rover.io/graphql")!, engageEndpoint: URL = URL(string: "https://engage.rover.io")!, flushEventsAt: Int = 20, flushEventsInterval: Double = 30.0, maxEventBatchSize: Int = 100, maxEventQueueSize: Int = 1_000) {
         self.accountToken = accountToken
         self.endpoint = endpoint
         
@@ -33,6 +34,7 @@ public struct DataAssembler: Assembler {
         self.flushEventsInterval = flushEventsInterval
         self.maxEventBatchSize = maxEventBatchSize
         self.maxEventQueueSize = maxEventQueueSize
+        self.engageEndpoint = engageEndpoint
     }
     
     // swiftlint:disable:next function_body_length // Assemblers are fairly declarative.
@@ -96,6 +98,7 @@ public struct DataAssembler: Assembler {
             return HTTPClient(
                 accountToken: accountToken,
                 endpoint: endpoint,
+                engageEndpoint: engageEndpoint,
                 session: URLSession(configuration: URLSessionConfiguration.default),
                 authContext: authContext
             )

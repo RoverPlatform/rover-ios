@@ -13,13 +13,18 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import RoverFoundation
-import UserNotifications
+import Foundation
 
-public protocol NotificationHandler {
-    @available(*, deprecated, message: "Replaced by Rover.shared.userNotificationCenterDidReceive(response:withCompletionHandler:)")
-    @discardableResult
-    func handle(_ response: UNNotificationResponse, completionHandler: (() -> Void)?) -> Bool
+/// JSON DTO for Posts from the Rover Engage API
+struct PostItem: Equatable, Identifiable, Codable {
+    typealias ID = UUID
 
-    func action(for response: UNNotificationResponse) -> Action?
+    var id: ID = ID()
+    var subject: String
+    var previewText: String
+    var receivedAt: Date
+    var url: URL?
+    var coverImageURL: URL?
+    var subscriptionID: SubscriptionItem.ID?
+    var isRead: Bool
 }

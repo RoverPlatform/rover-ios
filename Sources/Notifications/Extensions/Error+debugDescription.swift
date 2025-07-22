@@ -13,13 +13,11 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import RoverFoundation
-import UserNotifications
+import Foundation
 
-public protocol NotificationHandler {
-    @available(*, deprecated, message: "Replaced by Rover.shared.userNotificationCenterDidReceive(response:withCompletionHandler:)")
-    @discardableResult
-    func handle(_ response: UNNotificationResponse, completionHandler: (() -> Void)?) -> Bool
-
-    func action(for response: UNNotificationResponse) -> Action?
+extension Error {
+    /// Get a string giving a much more comprehensive explanation of the error, particularly when coming from certain platform types (Codable, in particular).
+    var debugDescription: String {
+        return "Error: \(self.localizedDescription), details: \((self as NSError).userInfo.debugDescription)"
+    }
 }

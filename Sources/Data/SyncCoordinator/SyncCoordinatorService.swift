@@ -16,106 +16,155 @@
 import os.log
 import UIKit
 
+/// A service that coordinates syncs between the app and the server, with special support for participants in the single batched GraphQL sync endpoint.
 class SyncCoordinatorService: SyncCoordinator {
     let client: SyncClient
     
-    var syncTask: URLSessionTask?
-    var completionHandlers = [(UIBackgroundFetchResult) -> Void]()
+    private var syncTask: Task<UIBackgroundFetchResult, Never>?
     
     var participants = [SyncParticipant]()
+    var standaloneParticipants = [SyncStandaloneParticipant]()
     
     init(client: SyncClient) {
         self.client = client
     }
     
+    func registerStandaloneParticipant(_ participant: SyncStandaloneParticipant) {
+        standaloneParticipants.append(participant)
+    }
+    
     func sync(completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        var intialParticipants = [SyncParticipant]()
-        var intialRequests = [SyncRequest]()
+
+        var initialParticipants = [SyncParticipant]()
+        var initialRequests = [SyncRequest]()
         
         for participant in self.participants {
             if let request = participant.initialRequest() {
-                intialParticipants.append(participant)
-                intialRequests.append(request)
+                initialParticipants.append(participant)
+                initialRequests.append(request)
             }
         }
-        
-        self.sync(participants: intialParticipants, requests: intialRequests, completionHandler: completionHandler)
+
+        os_log("SyncCoordinator beginning sync for participants: %@, standalone participants: %@", log: .sync, type: .info, initialParticipants.map { String(describing: type(of: $0)) }.joined(separator: ", "), standaloneParticipants.map { String(describing: type(of: $0)) }.joined(separator: ", "))
+
+        self.sync(participants: initialParticipants, requests: initialRequests, completionHandler: completionHandler)
+    }
+
+    func syncAsync() async {
+        await performAsyncSync()
     }
     
     func sync(participants: [SyncParticipant], requests: [SyncRequest], completionHandler: ((UIBackgroundFetchResult) -> Void)? = nil) {
-        if let newHandler = completionHandler {
-            self.completionHandlers.append(newHandler)
-        }
-        
-        if self.syncTask != nil {
-            os_log("Sync already in-progress", log: .sync, type: .debug)
-            return
-        }
-        
-        self.recursiveSync(participants: participants, requests: requests)
-    }
-    
-    func recursiveSync(participants: [SyncParticipant], requests: [SyncRequest], newData: Bool = false) {
-        if participants.isEmpty || requests.isEmpty {
-            if newData {
-                self.invokeCompletionHandlers(.newData)
+        Task {
+            let result: UIBackgroundFetchResult
+            
+            if let existingTask = self.syncTask {
+                os_log("Sync already in-progress, waiting for completion", log: .sync, type: .debug)
+                result = await existingTask.value
             } else {
-                self.invokeCompletionHandlers(.noData)
+                self.syncTask = Task {
+                    let syncResult = await performAsyncSync(participants: participants, requests: requests)
+                    await MainActor.run {
+                        self.syncTask = nil
+                    }
+                    return syncResult
+                }
+                result = await self.syncTask!.value
             }
             
-            return
+            completionHandler?(result)
+        }
+    }
+
+    @discardableResult
+    private func performAsyncSync(participants: [SyncParticipant] = [], requests: [SyncRequest] = []) async -> UIBackgroundFetchResult {
+        let initialParticipants = participants.isEmpty ? getInitialParticipants() : participants
+        let initialRequests = requests.isEmpty ? getInitialRequests() : requests
+        
+        // Run GraphQL sync and standalone sync concurrently, ensuring standalone always runs
+        async let graphqlResult = syncGraphQLParticipants(participants: initialParticipants, requests: initialRequests)
+        async let standaloneResult = syncStandaloneParticipants()
+        
+        let (graphqlHadNewData, standaloneHadNewData) = await (graphqlResult, standaloneResult)
+        
+        os_log("Rover sync completed", log: .sync, type: .info)
+        
+        if graphqlHadNewData || standaloneHadNewData {
+            return .newData
+        } else {
+            return .noData
+        }
+    }
+    
+    private func getInitialParticipants() -> [SyncParticipant] {
+        return participants.compactMap { participant in
+            return participant.initialRequest() != nil ? participant : nil
+        }
+    }
+    
+    private func getInitialRequests() -> [SyncRequest] {
+        return participants.compactMap { participant in
+            return participant.initialRequest()
+        }
+    }
+    
+    private func syncGraphQLParticipants(participants: [SyncParticipant], requests: [SyncRequest]) async -> Bool {
+        guard !participants.isEmpty && !requests.isEmpty else {
+            return false
         }
         
-        // Refactoring this wouldn't add a lot of value, so silence the closure length warning.
-        // swiftlint:disable:next closure_body_length
-        let task = self.client.task(with: requests) { [weak self] result in
-            DispatchQueue.main.async {
-                guard let _self = self else {
-                    return
-                }
+        var currentParticipants = participants
+        var currentRequests = requests
+        var hasNewData = false
+        
+        repeat {
+            do {
+                let data = try await client.sync(with: currentRequests)
                 
-                _self.syncTask = nil
+                var nextParticipants = [SyncParticipant]()
+                var nextRequests = [SyncRequest]()
                 
-                switch result {
-                case .error(let error, _):
-                    if let error = error {
-                        os_log("Sync task failed: %@", log: .sync, type: .error, error.logDescription)
-                    } else {
-                        os_log("Sync task failed", log: .sync, type: .error)
-                    }
+                for participant in currentParticipants {
+                    let result = participant.saveResponse(data)
                     
-                    _self.invokeCompletionHandlers(.failed)
-                case .success(let data, _):
-                    var results = [SyncResult]()
-                    var nextParticipants = [SyncParticipant]()
-                    var nextRequests = [SyncRequest]()
-                    var newData = newData
-                    
-                    for participant in participants {
-                        let result = participant.saveResponse(data)
-                        results.append(result)
-                        
-                        if case .newData(let nextRequest) = result {
-                            newData = true
-                            if let nextRequest = nextRequest {
-                                nextParticipants.append(participant)
-                                nextRequests.append(nextRequest)
-                            }
+                    switch result {
+                    case .newData(let nextRequest):
+                        hasNewData = true
+                        if let nextRequest = nextRequest {
+                            nextParticipants.append(participant)
+                            nextRequests.append(nextRequest)
                         }
+                    case .noData:
+                        break
+                    case .failed:
+                        os_log("GraphQL participant failed to process response", log: .sync, type: .error)
+                        break
                     }
-                    
-                    _self.recursiveSync(participants: nextParticipants, requests: nextRequests, newData: newData)
                 }
+                
+                currentParticipants = nextParticipants
+                currentRequests = nextRequests
+                
+            } catch {
+                os_log("GraphQL sync failed: %@", log: .sync, type: .error, error.localizedDescription)
+                return hasNewData
+            }
+        } while !currentParticipants.isEmpty && !currentRequests.isEmpty
+        
+        return hasNewData
+    }
+    
+    private func syncStandaloneParticipants() async -> Bool {
+        var hasNewData = false
+        
+        for participant in standaloneParticipants {
+            let success = await participant.sync()
+            if success {
+                hasNewData = true
             }
         }
         
-        task.resume()
-        self.syncTask = task
+        return hasNewData
     }
     
-    func invokeCompletionHandlers(_ result: UIBackgroundFetchResult) {
-        let completionHandlers = self.completionHandlers
-        self.completionHandlers = []
-        completionHandlers.forEach { $0(result) }
-    }
 }

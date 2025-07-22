@@ -69,6 +69,7 @@ class TicketmasterManager: PrivacyListener {
 extension TicketmasterManager: TicketmasterAuthorizer {
     func setTicketmasterID(_ id: String) {
         guard self.privacyService.trackingMode == .default else {
+            os_log("Ticketmaster ID set while privacy is in anonymous/anonymized mode, ignored", log: .ticketmaster, type: .info)
             return
         }
         
@@ -85,7 +86,7 @@ extension TicketmasterManager: TicketmasterAuthorizer {
             }
         }
         
-        os_log("Ticketmaster member identity has been set: %s", log: .general, newMember.email ?? "none")
+        os_log("Ticketmaster member identity has been set", log: .general)
     }
     
     func clearCredentials() {

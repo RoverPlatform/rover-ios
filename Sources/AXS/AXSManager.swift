@@ -57,6 +57,7 @@ class AXSManager: AXSAuthorizer, PrivacyListener {
     
     func setUserID(_ userID: String?, flashMemberID: String?, flashMobileID: String?) {
         guard privacyService.trackingMode == .default else {
+            os_log("AXS user ID (with flash IDs) set while privacy is in anonymous/anonymized mode, ignored", log: .axs, type: .info)
             return
         }
         

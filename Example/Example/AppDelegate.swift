@@ -132,11 +132,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Rover.shared.syncCoordinator.sync(completionHandler: completionHandler)
     }
     
+    // Called when a push arrives while app is backgrounded and it has content-available is set to 1
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        // Sync notifications, beacons and geofences when the Rover server issues requests a sync via remote push.
-        Rover.shared.syncCoordinator.sync(completionHandler: completionHandler)
+        if Rover.shared.didReceiveRemoteNotification(userInfo: userInfo, fetchCompletionHandler: completionHandler) {
+            return
+        }
+
+        completionHandler(.noData)
     }
-    
+
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         // The device successfully registered for push notifications. Pass the token to Rover.
         Rover.shared.tokenManager.setToken(deviceToken)
@@ -202,17 +206,21 @@ extension AppDelegate: CLLocationManagerDelegate {
 
 extension AppDelegate: UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        // A notification was received while the app was in the foreground.
-        if let roverNotification = notification.roverNotification {
-            // If it's a Rover notification, add it to the Rover Inbox immediately. This means if the app is currently open to the inbox the table view can live update to include it immediately.
-            Rover.shared.notificationStore.addNotification(roverNotification)
+        if Rover.shared.userNotificationCenterWillPresent(notification: notification, withCompletionHandler: completionHandler) {
+            return
         }
+
         // Tell the operating system to display the notification the same way as if the app was in the background.
-        completionHandler([.badge, .sound, .alert])
+        completionHandler([.badge, .sound, .banner])
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         // The user tapped a notification. Pass the response to Rover to handle the intended behavior.
-        Rover.shared.notificationHandler.handle(response, completionHandler: completionHandler)
+        if Rover.shared.userNotificationCenterDidReceive(response: response, withCompletionHandler: completionHandler) {
+            return
+        }
+
+        // If Rover didn't handle the notification and it returns false, then we need to handle it ourselves.
+        completionHandler()
     }
 }

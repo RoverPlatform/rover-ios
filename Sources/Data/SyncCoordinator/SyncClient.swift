@@ -17,7 +17,7 @@ import Foundation
 import RoverFoundation
 
 public protocol SyncClient {
-    func task(with syncRequests: [SyncRequest], completionHandler: @escaping (HTTPResult) -> Void) -> URLSessionTask
+    func sync(with syncRequests: [SyncRequest]) async throws -> Data
 }
 
 extension SyncClient {
@@ -86,10 +86,17 @@ extension SyncClient {
     }
 }
 
-extension HTTPClient: SyncClient {
-    public func task(with syncRequests: [SyncRequest], completionHandler: @escaping (HTTPResult) -> Void) -> URLSessionTask {
+extension HTTPClient: SyncClient {    
+    public func sync(with syncRequests: [SyncRequest]) async throws -> Data {
         let queryItems = self.queryItems(syncRequests: syncRequests)
         let urlRequest = self.downloadRequest(queryItems: queryItems)
-        return self.downloadTask(with: urlRequest, completionHandler: completionHandler)
+        let result = await self.download(with: urlRequest)
+        
+        switch result {
+        case .success(let data, _):
+            return data
+        case .error(let error, _):
+            throw error ?? URLError(.unknown)
+        }
     }
 }

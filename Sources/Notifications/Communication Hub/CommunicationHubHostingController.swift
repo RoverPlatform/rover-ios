@@ -13,13 +13,19 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+import SwiftUI
+import UIKit
 import RoverFoundation
-import UserNotifications
 
-public protocol NotificationHandler {
-    @available(*, deprecated, message: "Replaced by Rover.shared.userNotificationCenterDidReceive(response:withCompletionHandler:)")
-    @discardableResult
-    func handle(_ response: UNNotificationResponse, completionHandler: (() -> Void)?) -> Bool
-
-    func action(for response: UNNotificationResponse) -> Action?
+/// Displays the Communication Hub as a UIViewController (suitable for modal presentation within the routing system), or when embedding in a UIKit UITabBarController.
+public class CommunicationHubHostingController: UIHostingController<CommunicationHubView> {
+    
+    public init(initialPostID: String? = nil, title: String? = nil, accentColor: Color = .accentColor) {
+        let communicationHubView = CommunicationHubView(title: title, accentColor: accentColor, initialPostID: initialPostID)
+        super.init(rootView: communicationHubView)
+    }
+    
+    @MainActor required dynamic init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 }

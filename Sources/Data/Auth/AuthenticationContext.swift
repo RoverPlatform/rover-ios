@@ -17,8 +17,8 @@ import Foundation
 import os.log
 
 public class AuthenticationContext {
-    public private(set) var sdkAuthenticationEnabledDomains = Set<String>(["*.rover.io"])
-
+    public private(set) var sdkAuthenticationEnabledDomains = Set<String>(["api.rover.io"])
+    
     private var sdkAuthenticationIDTokenRefreshCallback: () -> Void = {}
     
     private let userDefaults: UserDefaults

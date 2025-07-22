@@ -55,7 +55,14 @@ public extension Rover {
             resolve(AuthenticationContext.self)!
         }
     }
-    
+
+    /// Use the Rover Event queue to track custom events into Rover's events pipeline.
+    var eventQueue: EventQueue {
+        get {
+            resolve(EventQueue.self)!
+        }
+    }
+
     /// Set a JWT token for the signed-in user, signed (RS256 or better).
     ///
     /// This securely attests to the user's identity to enable additional personalization features.

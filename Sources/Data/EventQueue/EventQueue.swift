@@ -255,7 +255,8 @@ public class EventQueue {
                         os_log("Successfully uploaded %d event(s)", log: .events, type: .debug, events.count)
                         self.removeEvents(events)
                     } catch {
-                        os_log("Failed to upload events: %@", log: .events, type: .error, error.logDescription)
+                        let responseBodyString = String(data: data, encoding: .utf8) ?? "none"
+                        os_log("Failed to upload events: %@, response body: %s", log: .events, type: .error, error.logDescription, responseBodyString)
                         os_log("Will retry failed events", log: .events, type: .info)
                     }
                 }

@@ -17,4 +17,5 @@ import os.log
 
 extension OSLog {
     public static let notifications = OSLog(subsystem: "io.rover", category: "Notifications")
+    public static let communicationHub = OSLog(subsystem: "io.rover", category: "CommunicationHub")
 }

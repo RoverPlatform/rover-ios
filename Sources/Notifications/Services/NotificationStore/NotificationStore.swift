@@ -29,7 +29,11 @@ public protocol NotificationStore {
 }
 
 extension NotificationStore {
+    @available(*, deprecated, message: "Replaced by Rover.userNotificationCenterWillPresent(notification:withCompletionHandler:)")
     public func addNotification(_ notification: Notification) {
+        // the historical usage for this API was the willPresent UNUserNotificationCenterDelegate method, so this replacement makes that purpose explicit.
+
+        // add notification to the store:
         addNotifications([notification])
     }
 }

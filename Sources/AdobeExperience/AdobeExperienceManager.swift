@@ -33,6 +33,7 @@ class AdobeExperienceManager: AdobeExperienceAuthorizer, PrivacyListener {
     
     func setECID(_ ecid: String) {
         guard privacyService.trackingMode == .default else {
+            os_log("Adobe Experience ECID set while privacy is in anonymous/anonymized mode, ignored", log: .AdobeExperience, type: .info)
             return
         }
         

@@ -1,12 +1,57 @@
 {
   "pins" : [
     {
+      "identity" : "appcenter-sdk-apple",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/microsoft/appcenter-sdk-apple.git",
+      "state" : {
+        "revision" : "9308921a2f6ef828cf9fae898ea4f080a81cdf11",
+        "version" : "5.0.6"
+      }
+    },
+    {
+      "identity" : "auth0.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/auth0/Auth0.swift",
+      "state" : {
+        "revision" : "3190066c4f9b682dee1def3b1f26e63d46ea3781",
+        "version" : "2.13.0"
+      }
+    },
+    {
       "identity" : "ios-ticketmastersdk",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/ticketmaster/iOS-TicketmasterSDK.git",
+      "location" : "https://github.com/ticketmaster/iOS-TicketmasterSDK",
       "state" : {
-        "revision" : "c678c0373f8b212109ff82475da35ba41009dd4a",
-        "version" : "1.13.4"
+        "revision" : "b6a3c2da0761e25d028362a67c6a0fce0925fef3",
+        "version" : "1.15.0"
+      }
+    },
+    {
+      "identity" : "jwtdecode.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/auth0/JWTDecode.swift.git",
+      "state" : {
+        "revision" : "36a5ce735a61c4bc119593f43ce2c027b4ca7392",
+        "version" : "3.3.0"
+      }
+    },
+    {
+      "identity" : "plcrashreporter",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/microsoft/PLCrashReporter.git",
+      "state" : {
+        "revision" : "fec2ff791b27fd9b9ceab9072025dea56409cca1",
+        "version" : "1.11.3"
+      }
+    },
+    {
+      "identity" : "simplekeychain",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/auth0/SimpleKeychain.git",
+      "state" : {
+        "revision" : "776c4a6db74d5c6c143974be91c383680d468630",
+        "version" : "1.3.0"
       }
     },
     {

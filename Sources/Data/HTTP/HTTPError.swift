@@ -18,7 +18,7 @@ import Foundation
 enum HTTPError: Error {
     case emptyResponseData
     case failedToUnzipResponseData
-    case invalidStatusCode(statusCode: Int)
+    case invalidStatusCode(statusCode: Int, responseBody: Data?)
 }
 
 extension HTTPError: LocalizedError {
@@ -28,8 +28,9 @@ extension HTTPError: LocalizedError {
             return "Empty response data"
         case .failedToUnzipResponseData:
             return "Failed to unzip response data"
-        case let .invalidStatusCode(statusCode):
-            return "Invalid status code: \(statusCode)"
+        case let .invalidStatusCode(statusCode, responseBody):
+            let bodyString = responseBody.flatMap { String(data: $0, encoding: .utf8) } ?? "<binary or empty>"
+            return "Invalid status code: \(statusCode), response body: \(bodyString)"
         }
     }
 }

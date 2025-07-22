@@ -14,19 +14,33 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import Foundation
-import RoverFoundation
+import SwiftUI
 
-public extension Rover {
-    var notificationHandler: NotificationHandler {
-        get {
-            resolve(NotificationHandler.self)!
+/// Navigation state for post loading and display
+enum PostNavigationState: Equatable {
+    case idle
+    case loading
+    case found(Post)
+    case notFound
+    case error(String)
+    
+    var isError: Bool {
+        if case .error = self {
+            return true
         }
+        return false
     }
     
-    var notificationStore: NotificationStore {
-        get {
-            resolve(NotificationStore.self)!
+    static func == (lhs: PostNavigationState, rhs: PostNavigationState) -> Bool {
+        switch (lhs, rhs) {
+        case (.idle, .idle), (.loading, .loading), (.notFound, .notFound):
+            return true
+        case (.found(let lhsPost), .found(let rhsPost)):
+            return lhsPost.id == rhsPost.id
+        case (.error(let lhsMessage), .error(let rhsMessage)):
+            return lhsMessage == rhsMessage
+        default:
+            return false
         }
     }
 }
-

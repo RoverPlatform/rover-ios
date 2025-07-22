@@ -33,7 +33,7 @@ extension HTTPResult {
         }
         
         if httpResponse.statusCode != 200 {
-            let error = HTTPError.invalidStatusCode(statusCode: httpResponse.statusCode)
+            let error = HTTPError.invalidStatusCode(statusCode: httpResponse.statusCode, responseBody: data)
             self = .error(error: error, isRetryable: false)
             return
         }

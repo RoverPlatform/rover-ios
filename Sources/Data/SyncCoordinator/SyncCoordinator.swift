@@ -19,8 +19,11 @@ public protocol SyncCoordinator: AnyObject {
     var participants: [SyncParticipant] { get set }
     
     func sync()
+    func syncAsync() async
     func sync(completionHandler: @escaping () -> Void)
     func sync(completionHandler: @escaping (UIBackgroundFetchResult) -> Void)
+
+    func registerStandaloneParticipant(_ participant: SyncStandaloneParticipant)
 }
 
 extension SyncCoordinator {

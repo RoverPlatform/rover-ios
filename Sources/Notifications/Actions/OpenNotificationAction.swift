@@ -43,7 +43,7 @@ class OpenNotificationAction: Action {
     }
     
     override func execute() {
-        notificationStore.addNotification(notification)
+        notificationStore.addNotifications([notification])
         
         if !notification.isRead {
             notificationStore.markNotificationRead(notification.id)

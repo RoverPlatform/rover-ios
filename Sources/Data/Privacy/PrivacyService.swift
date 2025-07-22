@@ -14,6 +14,7 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import Foundation
+import os.log
 
 /// This object is responsible for the global privacy settings of the Rover SDK.
 public class PrivacyService: PrivacyContextProvider {
@@ -34,7 +35,10 @@ public class PrivacyService: PrivacyContextProvider {
             return TrackingMode(rawValue: value) ?? .default
         }
         set {
+            let oldValue = trackingMode
             UserDefaults.standard.set(newValue.rawValue, forKey: "io.rover.TrackingMode")
+            
+            os_log("Privacy tracking mode changed from %s to %s", log: .general, type: .info, oldValue.rawValue, newValue.rawValue)
             
             // re-emit to listeners
             refreshAllListeners()

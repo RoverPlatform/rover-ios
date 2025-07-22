@@ -13,13 +13,10 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import RoverFoundation
-import UserNotifications
+import Foundation
 
-public protocol NotificationHandler {
-    @available(*, deprecated, message: "Replaced by Rover.shared.userNotificationCenterDidReceive(response:withCompletionHandler:)")
-    @discardableResult
-    func handle(_ response: UNNotificationResponse, completionHandler: (() -> Void)?) -> Bool
-
-    func action(for response: UNNotificationResponse) -> Action?
+/// Services that wish to sync when requested by SyncCoordinator (but do not participate in the GraphQL sync API) should implement this protocol.
+public protocol SyncStandaloneParticipant: AnyObject {
+    /// Syncs this module. Returns false if the sync was unsuccessful.
+    func sync() async -> Bool
 }

@@ -18,13 +18,15 @@ import os.log
 
 public final class HTTPClient {
     public let endpoint: URL
+    public let engageEndpoint: URL
     public let accountToken: String
     public let session: URLSession
     public let authContext: AuthenticationContext
     
-    public init(accountToken: String, endpoint: URL, session: URLSession, authContext: AuthenticationContext) {
+    public init(accountToken: String, endpoint: URL, engageEndpoint: URL, session: URLSession, authContext: AuthenticationContext) {
         self.accountToken = accountToken
         self.endpoint = endpoint
+        self.engageEndpoint = engageEndpoint
         self.session = session
         self.authContext = authContext
     }

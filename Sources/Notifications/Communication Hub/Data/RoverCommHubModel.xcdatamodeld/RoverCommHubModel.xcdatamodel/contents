@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23788.4" systemVersion="24F74" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Cursor" representedClassName="Cursor" syncable="YES" codeGenerationType="class">
+        <attribute name="cursor" optional="YES" attributeType="String"/>
+        <attribute name="roverEntity" attributeType="String"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="roverEntity"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="Post" representedClassName="Post" syncable="YES" codeGenerationType="class">
+        <attribute name="coverImageURL" optional="YES" attributeType="URI"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="isRead" attributeType="Boolean" defaultValue="NO" usesScalarValueType="YES"/>
+        <attribute name="previewText" attributeType="String"/>
+        <attribute name="receivedAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="subject" attributeType="String"/>
+        <attribute name="url" attributeType="URI"/>
+        <relationship name="subscription" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Subscription" inverseName="posts" inverseEntity="Subscription"/>
+    </entity>
+    <entity name="Subscription" representedClassName="Subscription" syncable="YES" codeGenerationType="class">
+        <attribute name="id" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="optIn" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="status" attributeType="String"/>
+        <attribute name="subscriptionDescription" optional="YES" attributeType="String"/>
+        <relationship name="posts" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Post" inverseName="subscription" inverseEntity="Post"/>
+    </entity>
+</model>

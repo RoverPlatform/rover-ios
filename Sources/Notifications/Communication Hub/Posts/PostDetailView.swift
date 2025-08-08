@@ -18,6 +18,7 @@ import WebKit
 import SafariServices
 import os.log
 import RoverData
+import RoverFoundation
 
 struct PostDetailView: View {
     let post: Post

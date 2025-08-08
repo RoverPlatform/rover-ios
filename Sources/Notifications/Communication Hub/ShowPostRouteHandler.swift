@@ -18,18 +18,14 @@ import os.log
 import RoverFoundation
 import RoverUI
 
-class CommunicationHubRouteHandler: RouteHandler {
-    typealias CommunicationHubActionProvider = (String?) -> Action?
+class ShowPostRouteHandler: RouteHandler {
     typealias PostsListActionProvider = (String?) -> Action?
-    
-    let communicationHubActionProvider: CommunicationHubActionProvider
+
     let postsListActionProvider: PostsListActionProvider
     
     init(
-        communicationHubActionProvider: @escaping CommunicationHubActionProvider,
         postsListActionProvider: @escaping PostsListActionProvider
     ) {
-        self.communicationHubActionProvider = communicationHubActionProvider
         self.postsListActionProvider = postsListActionProvider
     }
     
@@ -44,34 +40,18 @@ class CommunicationHubRouteHandler: RouteHandler {
         let pathComponents = url.pathComponents.filter { $0 != "/" }
         
         switch host {
-        case "inbox":
-            if pathComponents.isEmpty {
-                // rv-myapp://inbox
-                os_log("Routing to Communication Hub inbox", log: .communicationHub, type: .debug)
-                return communicationHubActionProvider(nil)
-            } else if pathComponents.count == 1 && pathComponents[0] == "posts" {
-                // rv-myapp://inbox/posts
-                os_log("Routing to Communication Hub posts list", log: .communicationHub, type: .debug)
-                return communicationHubActionProvider(nil)
-            } else if pathComponents.count == 2 && pathComponents[0] == "posts" {
-                // rv-myapp://inbox/posts/:id
-                let postId = pathComponents[1]
-                os_log("Routing to Communication Hub with post ID: %@", log: .communicationHub, type: .debug, postId)
-                return communicationHubActionProvider(postId)
-            }
             
         case "posts":
-            if pathComponents.isEmpty {
-                // rv-myapp://posts
-                os_log("Routing to standalone posts list", log: .communicationHub, type: .debug)
-                return postsListActionProvider(nil)
-            } else if pathComponents.count == 1 {
+            if pathComponents.count == 1 {
                 // rv-myapp://posts/:id
                 let postId = pathComponents[0]
                 os_log("Routing to standalone posts with post ID: %@", log: .communicationHub, type: .debug, postId)
                 return postsListActionProvider(postId)
+            } else {
+                os_log("Invalid deep link: %@", log: .communicationHub, type: .default, host)
+                return nil
             }
-            
+
         default:
             os_log("Unrecognized deep link host: %@", log: .communicationHub, type: .default, host)
             return nil

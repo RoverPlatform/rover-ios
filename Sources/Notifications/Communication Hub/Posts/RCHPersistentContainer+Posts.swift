@@ -196,7 +196,7 @@ extension RCHPersistentContainer {
             newSubscription.id = subscriptionID
             newSubscription.name = nil
             newSubscription.optIn = true
-            newSubscription.status = "PUBLISHED"
+            newSubscription.status = "published"
             newSubscription.subscriptionDescription = nil
             post.subscription = newSubscription
           os_log(

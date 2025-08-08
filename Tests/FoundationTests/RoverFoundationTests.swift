@@ -29,8 +29,17 @@ class MockService {
 }
 
 class RoverFoundationTests: XCTestCase {
+
+    override func setUp() {
+        Rover.initialize(assemblers: [])
+    }
+
+    override func tearDown() {
+        Rover.deinitialize()
+    }
+
     func testRegisterWithoutNameWithoutScopeAndZeroArgs() {
-        let rover = Rover()
+        let rover = Rover.shared
         rover.register(MockService.self) { _ in MockService(arg1: "foo") }
         
         let result1 = rover.resolve(MockService.self)
@@ -42,7 +51,7 @@ class RoverFoundationTests: XCTestCase {
     }
     
     func testRegisterWithNameWithoutScopeAndZeroArgs() {
-        let rover = Rover()
+        let rover = Rover.shared
         rover.register(MockService.self, name: "bar") { _ in MockService(arg1: "foo") }
         
         let result1 = rover.resolve(MockService.self)
@@ -60,7 +69,7 @@ class RoverFoundationTests: XCTestCase {
     }
     
     func testRegisterWithoutNameTransientScopeAndZeroArgs() {
-        let rover = Rover()
+        let rover = Rover.shared
         rover.register(MockService.self, scope: .transient) { _ in MockService(arg1: "foo") }
         
         let result1 = rover.resolve(MockService.self)
@@ -74,7 +83,7 @@ class RoverFoundationTests: XCTestCase {
     }
     
     func testRegisterWithNameTransientScopeAndZeroArgs() {
-        let rover = Rover()
+        let rover = Rover.shared
         rover.register(MockService.self, name: "bar", scope: .transient) { _ in MockService(arg1: "foo") }
         
         let result1 = rover.resolve(MockService.self)
@@ -94,7 +103,7 @@ class RoverFoundationTests: XCTestCase {
     }
     
     func testRegisterWithoutNameWithoutScopeAndOneArg() {
-        let rover = Rover()
+        let rover = Rover.shared
         rover.register(MockService.self) { (_, arg1: String) in MockService(arg1: arg1) }
         
         let result1 = rover.resolve(MockService.self)
@@ -115,7 +124,7 @@ class RoverFoundationTests: XCTestCase {
     }
     
     func testRegisterWithNameWithoutScopeAndOneArg() {
-        let rover = Rover()
+        let rover = Rover.shared
         rover.register(MockService.self, name: "bar") { (_, arg1: String) in MockService(arg1: arg1) }
         
         let result1 = rover.resolve(MockService.self)
@@ -145,7 +154,7 @@ class RoverFoundationTests: XCTestCase {
     }
     
     func testRegisterWithoutNameTransientScopeAndOneArg() {
-        let rover = Rover()
+        let rover = Rover.shared
         rover.register(MockService.self, scope: .transient) { (_, arg1: String) in MockService(arg1: arg1) }
         
         let result1 = rover.resolve(MockService.self)
@@ -168,7 +177,7 @@ class RoverFoundationTests: XCTestCase {
     }
     
     func testRegisterWithNameTransientScopeAndOneArg() {
-        let rover = Rover()
+        let rover = Rover.shared
         rover.register(MockService.self, name: "bar", scope: .transient) { (_, arg1: String) in MockService(arg1: arg1) }
         
         let result1 = rover.resolve(MockService.self)
@@ -200,7 +209,7 @@ class RoverFoundationTests: XCTestCase {
     }
     
     func testRegisterWithoutNameWithoutScopeAndTwoArgs() {
-        let rover = Rover()
+        let rover = Rover.shared
         rover.register(MockService.self) { (_, arg1: String, arg2: Int) in MockService(arg1: arg1, arg2: arg2) }
         
         let result1 = rover.resolve(MockService.self)
@@ -231,7 +240,7 @@ class RoverFoundationTests: XCTestCase {
     }
     
     func testRegisterWithNameWithoutScopeAndTwoArgs() {
-        let rover = Rover()
+        let rover = Rover.shared
         rover.register(MockService.self, name: "bar") { (_, arg1: String, arg2: Int) in MockService(arg1: arg1, arg2: arg2) }
         
         let result1 = rover.resolve(MockService.self)
@@ -283,7 +292,7 @@ class RoverFoundationTests: XCTestCase {
     }
     
     func testRegisterWithoutNameTransientScopeAndTwoArgs() {
-        let rover = Rover()
+        let rover = Rover.shared
         rover.register(MockService.self, scope: .transient) { (_, arg1: String, arg2: Int) in MockService(arg1: arg1, arg2: arg2) }
         
         let result1 = rover.resolve(MockService.self)

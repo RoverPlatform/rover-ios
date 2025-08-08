@@ -3,7 +3,7 @@
 // copy, modify, and distribute this software in source code or binary form for use
 // in connection with the web services and APIs provided by Rover.
 //
-// This copyright notice shall be included in all copies or substantial portions of 
+// This copyright notice shall be included in all copies or substantial portions of
 // the software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -13,22 +13,16 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-@testable import RoverTicketmaster
-import XCTest
+import UIKit
+import SwiftUI
 
-class RoverTicketmasterTests: XCTestCase {
-    override func setUp() {
-        super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+public class ShowPostHostingController: UIHostingController<ShowPostView> {
+    public init(postID: String?) {
+        let showPostView = ShowPostView(postID: postID)
+        super.init(rootView: showPostView)
     }
-    
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-        super.tearDown()
-    }
-    
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+
+    @MainActor required dynamic init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }

@@ -40,6 +40,24 @@ actor RCHSync: ObservableObject, SyncStandaloneParticipant {
             return await existingTask.value
         }
 
+        // Create and store sync task atomically to prevent race conditions.
+        // Subsequent sync requests will wait for this task rather than starting new ones.
+        let syncTask = Task { await performActualSync() }
+        activeSyncTask = syncTask
+        
+        return await syncTask.value
+    }
+    
+    private func performActualSync() async -> Bool {
+        defer {
+            // Always clear activeSyncTask when the task completes, regardless of how it finished
+            // (success, failure, or cancellation). This ensures that future sync requests can
+            // start fresh and aren't blocked by a stale task reference. If we only cleared on
+            // success (!isCancelled), cancelled tasks would remain in activeSyncTask and prevent
+            // subsequent sync operations from proceeding.
+            activeSyncTask = nil
+        }
+
         // Wait for persistence to finish loading before proceeding with sync
         let isLoaded = await MainActor.run { persistentContainer.loaded }
         if !isLoaded {
@@ -56,69 +74,54 @@ actor RCHSync: ObservableObject, SyncStandaloneParticipant {
             }
         }
 
-        // Create and store a new sync task
-        let syncTask = Task {
-            defer {
-                // Clear the reference when done
-                if activeSyncTask?.isCancelled == false {
-                    activeSyncTask = nil
-                }
-            }
+        os_log(.debug, log: .communicationHub, "Sync started")
 
-            os_log(.debug, log: .communicationHub, "Sync started")
+        // First sync subscriptions
+        let subscriptionsResponse = await httpClient.getSubscriptions()
 
-            // First sync subscriptions
-            let subscriptionsResponse = await httpClient.getSubscriptions()
-
-            switch subscriptionsResponse {
-            case .success(let response):
-                await MainActor.run {
-                    persistentContainer.upsertSubscriptions(response.subscriptions)
-                    os_log(
-                        .debug, log: .communicationHub, "Synced %d subscriptions", response.subscriptions.count)
-                }
-            case .failure(let error):
+        switch subscriptionsResponse {
+        case .success(let response):
+            await MainActor.run {
+                persistentContainer.upsertSubscriptions(response.subscriptions)
                 os_log(
-                    "Failed to sync subscriptions: %@", log: .communicationHub, type: .error,
-                    error.localizedDescription)
-                // Continue with posts sync even if subscriptions fail
+                    .debug, log: .communicationHub, "Synced %d subscriptions", response.subscriptions.count)
             }
-
-            // Get the cursor from Core Data
-            let currentCursor = await MainActor.run { persistentContainer.getPostsCursor() }
-
-            let postsResponse = await httpClient.getPosts(from: currentCursor)
-
-            switch postsResponse {
-            case .success(let response):
-                if currentCursor == nil {
-                    os_log(
-                        .debug, log: .communicationHub,
-                        "Sync completed, \(response.posts.count) initial posts retrieved")
-                } else {
-                    os_log(
-                        .debug, log: .communicationHub,
-                        "Sync completed, \(response.posts.count) new posts retrieved")
-                }
-
-                if !response.posts.isEmpty {
-                    // Update Core Data with the new posts
-                    await self.updateCoreData(with: response.posts, nextCursor: response.nextCursor)
-                }
-
-                return !response.posts.isEmpty
-            case .failure(let error):
-                os_log(
-                    "Failed to sync posts: %@", log: .communicationHub, type: .error,
-                    error.localizedDescription)
-                return false
-            }
+        case .failure(let error):
+            os_log(
+                "Failed to sync subscriptions: %@", log: .communicationHub, type: .error,
+                error.localizedDescription)
+            // Continue with posts sync even if subscriptions fail
         }
 
-        activeSyncTask = syncTask
+        // Get the cursor from Core Data
+        let currentCursor = await MainActor.run { persistentContainer.getPostsCursor() }
 
-        // Wait for the sync to complete
-        return await syncTask.value
+        let postsResponse = await httpClient.getPosts(from: currentCursor)
+
+        switch postsResponse {
+        case .success(let response):
+            if currentCursor == nil {
+                os_log(
+                    .debug, log: .communicationHub,
+                    "Sync completed, \(response.posts.count) initial posts retrieved")
+            } else {
+                os_log(
+                    .debug, log: .communicationHub,
+                    "Sync completed, \(response.posts.count) new posts retrieved")
+            }
+
+            if !response.posts.isEmpty {
+                // Update Core Data with the new posts
+                await self.updateCoreData(with: response.posts, nextCursor: response.nextCursor)
+            }
+
+            return !response.posts.isEmpty
+        case .failure(let error):
+            os_log(
+                "Failed to sync posts: %@", log: .communicationHub, type: .error,
+                error.localizedDescription)
+            return false
+        }
     }
 
     @MainActor
@@ -144,18 +147,19 @@ actor RCHSync: ObservableObject, SyncStandaloneParticipant {
 
 // MARK: - DTOs for API Communication
 
-struct PostsSyncResponse: Decodable {
+struct PostsSyncResponse: Codable {
     let posts: [PostItem]
     let nextCursor: String?
     let hasMore: Bool
 }
 
-struct SubscriptionsSyncResponse: Decodable {
+struct SubscriptionsSyncResponse: Codable {
     let subscriptions: [SubscriptionItem]
 }
 
+
 extension HTTPClient {
-    fileprivate func getSubscriptions() async -> Result<SubscriptionsSyncResponse, Error> {
+    func getSubscriptions() async -> Result<SubscriptionsSyncResponse, Error> {
         let endpoint = self.engageEndpoint.appendingPathComponent("subscriptions")
 
         let request = downloadRequest(url: endpoint)
@@ -191,19 +195,34 @@ extension HTTPClient {
     }
 
     /// Recurse, retrieving subsequent sync pages, until we have all the posts.
-    fileprivate func getPosts(from cursor: String?) async -> Result<PostsSyncResponse, Error> {
-        let response = await getPostsPage(cursor: cursor)
-
-        switch response {
-        case .success(let response):
-            if response.hasMore {
-                return await getPosts(from: response.nextCursor)
-            } else {
-                return .success(response)
+    func getPosts(from cursor: String?) async -> Result<PostsSyncResponse, Error> {
+        /// Recursively retrieve all pages of posts, accumulating results
+        func getPostsRecursive(from cursor: String?, accumulatedPosts: [PostItem]) async -> Result<PostsSyncResponse, Error> {
+            let pageResponse = await getPostsPage(cursor: cursor)
+            
+            switch pageResponse {
+            case .success(let response):
+                let newAccumulatedPosts = accumulatedPosts + response.posts
+                
+                if response.hasMore {
+                    // Continue recursively accumulating posts from subsequent pages
+                    return await getPostsRecursive(from: response.nextCursor, accumulatedPosts: newAccumulatedPosts)
+                } else {
+                    // Return all accumulated posts from all pages
+                    return .success(PostsSyncResponse(
+                        posts: newAccumulatedPosts,
+                        nextCursor: response.nextCursor,
+                        hasMore: false
+                    ))
+                }
+                
+            case .failure(let error):
+                return .failure(error)
             }
-        case .failure(let error):
-            return .failure(error)
         }
+        
+        // Start the recursive accumulation with empty array
+        return await getPostsRecursive(from: cursor, accumulatedPosts: [])
     }
 
     fileprivate func getPostsPage(cursor: String? = nil) async -> Result<PostsSyncResponse, Error> {

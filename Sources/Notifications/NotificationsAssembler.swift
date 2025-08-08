@@ -78,10 +78,8 @@ public struct NotificationsAssembler: Assembler {
         
         container.register(Action.self, name: "presentPostsList", scope: .transient) { (resolver, initialPostID: String?) in
 
-            // for now, posts list is exactly the same as Comm Hub.
-            let viewControllerToPresent = CommunicationHubHostingController(
-                initialPostID: initialPostID,
-                title: "Inbox"
+            let viewControllerToPresent = ShowPostHostingController(
+                postID: initialPostID,
             )
 
             os_log("Presenting Communication Hub", log: .communicationHub, type: .debug)
@@ -149,16 +147,11 @@ public struct NotificationsAssembler: Assembler {
         // MARK: RouteHandler (communicationHub)
         
         container.register(RouteHandler.self, name: "communicationHub") { resolver in
-            let communicationHubActionProvider: CommunicationHubRouteHandler.CommunicationHubActionProvider = { [weak resolver] postId in
-                resolver?.resolve(Action.self, name: "presentCommunicationHub", arguments: postId)
-            }
-            
-            let postsListActionProvider: CommunicationHubRouteHandler.PostsListActionProvider = { [weak resolver] postId in
+            let postsListActionProvider: ShowPostRouteHandler.PostsListActionProvider = { [weak resolver] postId in
                 resolver?.resolve(Action.self, name: "presentPostsList", arguments: postId)
             }
             
-            return CommunicationHubRouteHandler(
-                communicationHubActionProvider: communicationHubActionProvider,
+            return ShowPostRouteHandler(
                 postsListActionProvider: postsListActionProvider
             )
         }

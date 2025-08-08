@@ -114,6 +114,8 @@ let package = Package(
                          package: "iOS-TicketmasterSDK"),
                 .product(name: "TicketmasterPurchase",
                         package: "iOS-TicketmasterSDK"),
+                .product(name: "TicketmasterSwiftProtobuf",
+                         package: "iOS-TicketmasterSDK"),
             ],
             path: "Sources/Ticketmaster",
             resources: [.copy("Resources/PrivacyInfo.xcprivacy")]),
@@ -132,5 +134,43 @@ let package = Package(
             dependencies: ["RoverData"],
             path: "Sources/AdobeExperience",
             resources: [.copy("Resources/PrivacyInfo.xcprivacy")]),
+        
+        // Test targets
+        .testTarget(
+            name: "RoverFoundationTests",
+            dependencies: ["RoverFoundation"],
+            path: "Tests/FoundationTests"),
+        .testTarget(
+            name: "RoverDataTests",
+            dependencies: ["RoverData"],
+            path: "Tests/DataTests"),
+        .testTarget(
+            name: "RoverUITests",
+            dependencies: ["RoverUI"],
+            path: "Tests/UITests"),
+        .testTarget(
+            name: "RoverAppExtensionsTests",
+            dependencies: ["RoverAppExtensions"],
+            path: "Tests/AppExtensionsTests"),
+        .testTarget(
+            name: "RoverDebugTests",
+            dependencies: ["RoverDebug"],
+            path: "Tests/DebugTests"),
+        .testTarget(
+            name: "RoverExperiencesTests",
+            dependencies: ["RoverExperiences"],
+            path: "Tests/ExperiencesTests"),
+        .testTarget(
+            name: "RoverNotificationsTests",
+            dependencies: ["RoverNotifications", "RoverData"],
+            path: "Tests/NotificationsTests"),
+        .testTarget(
+            name: "RoverTelephonyTests",
+            dependencies: ["RoverTelephony"],
+            path: "Tests/TelephonyTests"),
+        .testTarget(
+            name: "RoverTicketmasterTests",
+            dependencies: ["RoverTicketmaster"],
+            path: "Tests/TicketmasterTests"),
     ]
 )

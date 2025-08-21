@@ -15,7 +15,6 @@
 		4FBB82E428FF56F90052F3D9 /* RoverLocation in Frameworks */ = {isa = PBXBuildFile; productRef = 4FBB82E328FF56F90052F3D9 /* RoverLocation */; };
 		4FBB82E628FF56F90052F3D9 /* RoverNotifications in Frameworks */ = {isa = PBXBuildFile; productRef = 4FBB82E528FF56F90052F3D9 /* RoverNotifications */; };
 		4FBB82E828FF56F90052F3D9 /* RoverTelephony in Frameworks */ = {isa = PBXBuildFile; productRef = 4FBB82E728FF56F90052F3D9 /* RoverTelephony */; };
-		4FBB82EA28FF56F90052F3D9 /* RoverTicketmaster in Frameworks */ = {isa = PBXBuildFile; productRef = 4FBB82E928FF56F90052F3D9 /* RoverTicketmaster */; };
 		4FBB82EC28FF56F90052F3D9 /* RoverUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4FBB82EB28FF56F90052F3D9 /* RoverUI */; };
 		4FBB82EE28FF5E8B0052F3D9 /* RoverAppExtensions in Frameworks */ = {isa = PBXBuildFile; productRef = 4FBB82ED28FF5E8B0052F3D9 /* RoverAppExtensions */; };
 		DB637A3E2278F93C00F0E791 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB637A3D2278F93C00F0E791 /* AppDelegate.swift */; };
@@ -81,7 +80,6 @@
 				4FBB82D828FF56F80052F3D9 /* RoverAppExtensions in Frameworks */,
 				4FBB82E828FF56F90052F3D9 /* RoverTelephony in Frameworks */,
 				4FBB82E028FF56F80052F3D9 /* RoverExperiences in Frameworks */,
-				4FBB82EA28FF56F90052F3D9 /* RoverTicketmaster in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -182,7 +180,6 @@
 				4FBB82E328FF56F90052F3D9 /* RoverLocation */,
 				4FBB82E528FF56F90052F3D9 /* RoverNotifications */,
 				4FBB82E728FF56F90052F3D9 /* RoverTelephony */,
-				4FBB82E928FF56F90052F3D9 /* RoverTicketmaster */,
 				4FBB82EB28FF56F90052F3D9 /* RoverUI */,
 			);
 			productName = Example;
@@ -457,7 +454,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = WDEZX8QD47;
 				INFOPLIST_FILE = Example/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -478,7 +475,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = WDEZX8QD47;
 				INFOPLIST_FILE = Example/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -497,7 +494,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = WDEZX8QD47;
 				INFOPLIST_FILE = NotificationService/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -518,7 +515,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = WDEZX8QD47;
 				INFOPLIST_FILE = NotificationService/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -596,10 +593,6 @@
 		4FBB82E728FF56F90052F3D9 /* RoverTelephony */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = RoverTelephony;
-		};
-		4FBB82E928FF56F90052F3D9 /* RoverTicketmaster */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = RoverTicketmaster;
 		};
 		4FBB82EB28FF56F90052F3D9 /* RoverUI */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ticketmaster/iOS-TicketmasterSDK.git",
       "state" : {
-        "revision" : "2b5bedc092e8b44c11354c7c205af0190f7084ee",
-        "version" : "1.7.0"
+        "revision" : "7da490a31772f15bcbc43b5d79080033ce882c38",
+        "version" : "1.16.2"
       }
     },
     {

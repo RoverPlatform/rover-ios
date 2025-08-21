@@ -13,220 +13,246 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+import CoreData
 import SwiftUI
 import UIKit
-import CoreData
 import os.log
 
 struct PostsListView: View {
-    var initialPostID: String? = nil
+  @ObservedObject var navigator: CommunicationHubNavigator
 
-    @Environment(\.communicationHubContainer) private var container
-    @Environment(\.refreshCommunicationHub) var refreshCommunicationHub
-    @Environment(\.rchSync) private var rchSync
+  @Environment(\.communicationHubContainer) private var container
+  @Environment(\.refreshCommunicationHub) var refreshCommunicationHub
+  @Environment(\.rchSync) private var rchSync
 
-    @State private var searchText: String = ""
-    @State private var hasNavigatedToInitialPost = false
+  @State private var searchText: String = ""
+  @State private var postNavigationState: PostNavigationState = .idle
 
-    @Binding private var navigationPath: NavigationPath
-    @State private var postNavigationState: PostNavigationState = .idle
+  @Binding private var navigationPath: NavigationPath
 
-    // Core Data fetch requests
-    @FetchRequest private var posts: FetchedResults<Post>
+  // Core Data fetch requests
+  @FetchRequest private var posts: FetchedResults<Post>
 
-    init(navigationPath: Binding<NavigationPath>, initialPostID: String? = nil) {
-        self.initialPostID = initialPostID
+  init(navigationPath: Binding<NavigationPath>, navigator: CommunicationHubNavigator) {
+    self.navigator = navigator
 
-        // Initialize the fetch request for posts
-        _posts = FetchRequest(fetchRequest: RCHPersistentContainer.fetchPosts())
+    // Initialize the fetch request for posts
+    _posts = FetchRequest(fetchRequest: RCHPersistentContainer.fetchPosts())
 
-        _navigationPath = navigationPath
+    _navigationPath = navigationPath
+  }
+
+  var body: some View {
+    List {
+      ForEach(filteredPosts, id: \.id) { post in
+        PostRowView(post: post)
+      }
+
+    }
+    .refreshable {
+      await refreshCommunicationHub()
+    }
+    .listStyle(.plain)
+    .navigationDestination(for: Post.self) { post in
+      PostDetailView(post: post)
+    }
+    .task {
+      os_log("PostsListView: checking for pending navigation", log: .communicationHub, type: .debug)
+      if let pendingPostID = navigator.consumePendingPostID() {
+        await navigateToPost(id: pendingPostID)
+      }
+    }
+    .onChange(of: navigator.pendingPostID) { pendingPostID in
+      Task {
+        if let postID = pendingPostID {
+          await navigateToPost(id: postID)
+        }
+      }
+    }
+    .overlay {
+      if case .loading = postNavigationState {
+        VStack {
+          ProgressView("Loading post...")
+            .progressViewStyle(CircularProgressViewStyle())
+            .padding()
+            .background(Color(.systemBackground))
+            .cornerRadius(10)
+            .shadow(radius: 5)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.black.opacity(0.3))
+      }
+    }
+    .alert("Post Not Found", isPresented: .constant(postNavigationState == .notFound)) {
+      Button("OK") {
+        postNavigationState = .idle
+      }
+    } message: {
+      Text("The requested post could not be found.")
+    }
+    .alert("Error", isPresented: .constant(postNavigationState.isError)) {
+      Button("OK") {
+        postNavigationState = .idle
+      }
+    } message: {
+      if case .error(let message) = postNavigationState {
+        Text(message)
+      }
+    }
+    .searchable(text: $searchText)
+  }
+
+  func navigateToPost(id: String) async {
+    guard let container = container else {
+      navigator.completeNavigation()
+      return
     }
 
-    var body: some View {
-        List {
-            ForEach(filteredPosts, id: \.id) { post in
-                PostRowView(post: post)
-            }
+    // Mark this post as processed to prevent duplicate navigation
+    let _ = navigator.consumePendingPostID()
 
-        }
-        .refreshable {
-            await refreshCommunicationHub()
-        }
-        .listStyle(.plain)
-        .navigationDestination(for: Post.self) { post in
-            PostDetailView(post: post)
-        }
-        .task {
-            os_log("PostsListView: navigating to Post ID", log: .communicationHub, type: .debug)
-            if let initialPostID = initialPostID, !hasNavigatedToInitialPost {
-                hasNavigatedToInitialPost = true
-                await navigateToPost(id: initialPostID)
-            }
-        }
-        .onChange(of: initialPostID) { _ in
-            hasNavigatedToInitialPost = false
-        }
-        .overlay {
-            if case .loading = postNavigationState {
-                VStack {
-                    ProgressView("Loading post...")
-                        .progressViewStyle(CircularProgressViewStyle())
-                        .padding()
-                        .background(Color(.systemBackground))
-                        .cornerRadius(10)
-                        .shadow(radius: 5)
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Color.black.opacity(0.3))
-            }
-        }
-        .alert("Post Not Found", isPresented: .constant(postNavigationState == .notFound)) {
-            Button("OK") {
-                postNavigationState = .idle
-            }
-        } message: {
-            Text("The requested post could not be found.")
-        }
-        .alert("Error", isPresented: .constant(postNavigationState.isError)) {
-            Button("OK") {
-                postNavigationState = .idle
-            }
-        } message: {
-            if case .error(let message) = postNavigationState {
-                Text(message)
-            }
-        }
-        .searchable(text: $searchText)
-    }
-    
-    func navigateToPost(id: String) async {
-        guard let container = container else { return }
-        
-        // Phase 1: Fast local lookup
-        if let post = container.fetchPostByID(uuidString: id) {
-            // FAST PATH: Post exists locally, navigate immediately
-            navigationPath.append(post)
-            return
-        }
-        
-        // Phase 2: Post missing, sync and retry
-        postNavigationState = .loading
-        
-        guard let rchSync = rchSync else {
-            postNavigationState = .error("Sync service not available")
-            return
-        }
-        
-        let syncSuccess = await rchSync.sync()
-        
-        if syncSuccess, let post = container.fetchPostByID(uuidString: id) {
-            // Post found after sync
-            postNavigationState = .found(post)
-            navigationPath.append(post)
-        } else {
-            // Post still not found
-            postNavigationState = .notFound
-        }
+    // Phase 1: Fast local lookup
+    if let post = container.fetchPostByID(uuidString: id) {
+      // FAST PATH: Post exists locally, navigate immediately
+      navigateToPostInStack(post)
+      navigator.completeNavigation()
+      return
     }
 
-    var filteredPosts: [Post] {
-        if searchText.isEmpty {
-            return Array(posts)
-        } else {
-            return posts.filter {
-                $0.subject?.localizedCaseInsensitiveContains(searchText) == true ||
-                $0.previewText?.localizedCaseInsensitiveContains(searchText) == true
-            }
-        }
+    // Phase 2: Post missing, sync and retry
+    postNavigationState = .loading
+
+    guard let rchSync = rchSync else {
+      postNavigationState = .error("Sync service not available")
+      navigator.completeNavigation()
+      return
     }
 
-    private func markPostAsRead(_ post: Post) {
-        guard let container = container else { return }
-        container.markPostAsRead(post)
+    let syncSuccess = await rchSync.sync()
+
+    if syncSuccess, let post = container.fetchPostByID(uuidString: id) {
+      // Post found after sync
+      postNavigationState = .found(post)
+      navigateToPostInStack(post)
+    } else {
+      // Post still not found
+      postNavigationState = .notFound
     }
+
+    // Mark navigation as complete
+    navigator.completeNavigation()
+  }
+
+  /// Navigate to post in stack, replacing current post if already viewing one
+  private func navigateToPostInStack(_ post: Post) {
+    if navigationPath.count > 0 {
+      // Currently viewing a post, replace it instead of stacking
+      navigationPath.removeLast()
+      navigationPath.append(post)
+    } else {
+      // At inbox root, append normally
+      navigationPath.append(post)
+    }
+  }
+
+  var filteredPosts: [Post] {
+    if searchText.isEmpty {
+      return Array(posts)
+    } else {
+      return posts.filter {
+        $0.subject?.localizedCaseInsensitiveContains(searchText) == true
+          || $0.previewText?.localizedCaseInsensitiveContains(searchText) == true
+      }
+    }
+  }
+
+  private func markPostAsRead(_ post: Post) {
+    guard let container = container else { return }
+    container.markPostAsRead(post)
+  }
 }
 
 private struct PostRowView: View {
-    @ObservedObject var post: Post
+  @ObservedObject var post: Post
 
-    var body: some View {
-        NavigationLink(value: post) {
-            HStack(alignment: .top, spacing: 0) {
-                // Content column
-                VStack(alignment: .leading, spacing: 4) {
-                    HStack {
-                        if !post.isRead {
-                            Circle()
-                                .fill(Color.accentColor)
-                                .frame(width: 10, height: 10)
-                        }
-                        Text(post.subject ?? "")
-                            .bold()
-                            .lineLimit(1)
-                            .foregroundColor(post.isRead ? .secondary : .primary)
-                    }
-                    Text(post.previewText ?? "")
-                        .font(.subheadline)
-                        .foregroundColor(post.isRead ? .secondary : .primary)
-                        .lineLimit(2)
-                    HStack(spacing: 4) {
-                        Text(post.receivedAt?.formattedTimestamp() ?? "")
-
-                        if let subscription = post.subscription {
-                            SubscriptionCaptionView(subscription: subscription)
-                        }
-                    }
-                    .font(.footnote)
-                    .foregroundColor(.secondary)
-                }
-
-                Spacer(minLength: 4)
-
-                // Cover image as square thumbnail
-                if let coverImageURL = post.coverImageURL {
-                    AsyncImage(url: coverImageURL) { phase in
-                        switch phase {
-                        case .empty:
-                            Rectangle()
-                                .fill(Color(.systemGray5))
-                                .frame(width: 70, height: 70)
-                                .cornerRadius(8)
-                        case .success(let image):
-                            image
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: 70, height: 70)
-                                .cornerRadius(8)
-                                .clipped()
-                        case .failure:
-                            Rectangle()
-                                .fill(Color(.systemGray6))
-                                .frame(width: 70, height: 70)
-                                .cornerRadius(8)
-                                .overlay(
-                                    Image(systemName: "photo")
-                                        .font(.headline)
-                                        .foregroundColor(.gray)
-                                )
-                        @unknown default:
-                            EmptyView()
-                        }
-                    }
-                }
+  var body: some View {
+    NavigationLink(value: post) {
+      HStack(alignment: .top, spacing: 0) {
+        // Content column
+        VStack(alignment: .leading, spacing: 4) {
+          HStack {
+            if !post.isRead {
+              Circle()
+                .fill(Color.accentColor)
+                .frame(width: 10, height: 10)
             }
+            Text(post.subject ?? "")
+              .bold()
+              .lineLimit(1)
+              .foregroundColor(post.isRead ? .secondary : .primary)
+          }
+          Text(post.previewText ?? "")
+            .font(.subheadline)
+            .foregroundColor(post.isRead ? .secondary : .primary)
+            .lineLimit(2)
+          HStack(spacing: 4) {
+            Text(post.receivedAt?.formattedTimestamp() ?? "")
+
+            if let subscription = post.subscription {
+              SubscriptionCaptionView(subscription: subscription)
+            }
+          }
+          .font(.footnote)
+          .foregroundColor(.secondary)
         }
+
+        Spacer(minLength: 4)
+
+        // Cover image as square thumbnail
+        if let coverImageURL = post.coverImageURL {
+          AsyncImage(url: coverImageURL) { phase in
+            switch phase {
+            case .empty:
+              Rectangle()
+                .fill(Color(.systemGray5))
+                .frame(width: 70, height: 70)
+                .cornerRadius(8)
+            case .success(let image):
+              image
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+                .frame(width: 70, height: 70)
+                .cornerRadius(8)
+                .clipped()
+            case .failure:
+              Rectangle()
+                .fill(Color(.systemGray6))
+                .frame(width: 70, height: 70)
+                .cornerRadius(8)
+                .overlay(
+                  Image(systemName: "photo")
+                    .font(.headline)
+                    .foregroundColor(.gray)
+                )
+            @unknown default:
+              EmptyView()
+            }
+          }
+        }
+      }
     }
+  }
 }
 
 private struct SubscriptionCaptionView: View {
-    @ObservedObject var subscription: Subscription
+  @ObservedObject var subscription: Subscription
 
-    @ViewBuilder
-    var body: some View {
-        if let name = subscription.name {
-            Text("•")
-            Text(name)
-        }
+  @ViewBuilder
+  var body: some View {
+    if let name = subscription.name {
+      Text("•")
+      Text(name)
+        .lineLimit(1)
     }
+  }
 }

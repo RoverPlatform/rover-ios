@@ -63,9 +63,8 @@ public struct NotificationsAssembler: Assembler {
         
         // MARK: Action (presentCommunicationHub)
         
-        container.register(Action.self, name: "presentCommunicationHub", scope: .transient) { (resolver, initialPostID: String?) in
+        container.register(Action.self, name: "presentCommunicationHub", scope: .transient) { (resolver) in
             let viewControllerToPresent = CommunicationHubHostingController(
-                initialPostID: initialPostID,
                 title: "Inbox"
             )
 
@@ -74,15 +73,15 @@ public struct NotificationsAssembler: Assembler {
             return resolver.resolve(Action.self, name: "presentView", arguments: viewControllerToPresent as UIViewController)!
         }
         
-        // MARK: Action (presentPostsList)
+        // MARK: Action (presentPost)
         
-        container.register(Action.self, name: "presentPostsList", scope: .transient) { (resolver, initialPostID: String?) in
+        container.register(Action.self, name: "presentPost", scope: .transient) { (resolver, postID: String?) in
 
             let viewControllerToPresent = ShowPostHostingController(
-                postID: initialPostID,
+                postID: postID,
             )
 
-            os_log("Presenting Communication Hub", log: .communicationHub, type: .debug)
+            os_log("Presenting Post Detail", log: .communicationHub, type: .debug)
 
             return resolver.resolve(Action.self, name: "presentView", arguments: viewControllerToPresent as UIViewController)!
         }
@@ -148,7 +147,7 @@ public struct NotificationsAssembler: Assembler {
         
         container.register(RouteHandler.self, name: "communicationHub") { resolver in
             let postsListActionProvider: ShowPostRouteHandler.PostsListActionProvider = { [weak resolver] postId in
-                resolver?.resolve(Action.self, name: "presentPostsList", arguments: postId)
+                resolver?.resolve(Action.self, name: "presentPost", arguments: postId)
             }
             
             return ShowPostRouteHandler(

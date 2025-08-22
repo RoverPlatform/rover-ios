@@ -36,7 +36,9 @@ class ViewController: UITabBarController {
       /// Optionally specify the Communication Hub's title bar text, if needed. It defaults to "Inbox".
       title: "Inbox",
       // Optionally specify the accent color to use for buttons and links. It defaults to your app's accent color.
-      // accentColor: Color("Brand Accent Color")
+      accentColor: .green,
+      navigationBarBackgroundColor: Color.blue,
+      navigationBarColorScheme: .dark
     )
     communicationHubController.tabBarItem = UITabBarItem(
       title: "Inbox", image: UIImage(systemName: "envelope.open"), tag: 0)

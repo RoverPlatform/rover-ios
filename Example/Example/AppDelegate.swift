@@ -123,17 +123,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
 
-    // Example use of UINavigationBar appearance to adjust the theme:
-    //    let appearance = UINavigationBarAppearance()
-    //    appearance.backgroundColor = UIColor.blue
-    //    appearance.titleTextAttributes = [.foregroundColor: UIColor.white]
-    //    appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
-    //
-    //    UINavigationBar.appearance().standardAppearance = appearance
-    //    UINavigationBar.appearance().compactAppearance = appearance
-    //    UINavigationBar.appearance().scrollEdgeAppearance = appearance
-    // Fix search bar text visibility on dark navigation bar:
-    //    UISearchBar.appearance().overrideUserInterfaceStyle = .dark
+    // Global UINavigationBarAppearance settings, commonly used pattern in apps.
+    let appearance = UINavigationBarAppearance()
+    appearance.backgroundColor = UIColor.green
+    appearance.titleTextAttributes = [.foregroundColor: UIColor.white]
+    appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
+
+    UINavigationBar.appearance().standardAppearance = appearance
+    UINavigationBar.appearance().compactAppearance = appearance
+    UINavigationBar.appearance().scrollEdgeAppearance = appearance
+
 
     return true
   }

@@ -21,24 +21,34 @@ import SwiftUI
 public struct CommunicationHubView: View {
   var title: String?
   var accentColor: Color
+  var navigationBarBackgroundColor: Color? = nil
+  var navigationBarColorScheme: ColorScheme? = nil
 
   @StateObject var navigator: CommunicationHubNavigator = CommunicationHubNavigator()
 
-  public init(title: String? = nil, accentColor: Color = .accentColor) {
+  public init(title: String? = nil, accentColor: Color = .accentColor, navigationBarBackgroundColor: Color? = nil, navigationBarColorScheme: ColorScheme? = nil) {
     self.title = title
     self.accentColor = accentColor
+    self.navigationBarBackgroundColor = navigationBarBackgroundColor
+    self.navigationBarColorScheme = navigationBarColorScheme
   }
 
   public init(
-    navigator: CommunicationHubNavigator, title: String? = nil, accentColor: Color = .accentColor
+    navigator: CommunicationHubNavigator, title: String? = nil, accentColor: Color = .accentColor, navigationBarBackgroundColor: Color? = nil, navigationBarColorScheme: ColorScheme? = nil
   ) {
     self._navigator = StateObject(wrappedValue: navigator)
     self.title = title
     self.accentColor = accentColor
+    self.navigationBarBackgroundColor = navigationBarBackgroundColor
+    self.navigationBarColorScheme = navigationBarColorScheme
   }
 
   public var body: some View {
-    ContentView(navigator: navigator)
+    ContentView(
+      navigator: navigator,
+      navigationBarBackgroundColor: navigationBarBackgroundColor,
+      navigationBarColorScheme: navigationBarColorScheme
+    )
       .environment(\.communicationHubContainer, persistentContainer)
       .environment(\.managedObjectContext, persistentContainer.viewContext)
       .environment(\.refreshCommunicationHub, { await refreshPosts() })
@@ -64,13 +74,15 @@ public struct CommunicationHubView: View {
 private struct ContentView: View {
   @ObservedObject var navigator: CommunicationHubNavigator
 
+  var navigationBarBackgroundColor: Color?
+  var navigationBarColorScheme: ColorScheme?
+
   @Environment(\.isPresented) private var isPresented
   @Environment(\.dismiss) private var dismiss
 
   var body: some View {
     NavigationStack(path: $navigator.navigationPath) {
-      PostsListView(navigationPath: $navigator.navigationPath, navigator: navigator)
-        .navigationTitle("Inbox")
+      contentWithNavBackground
         .toolbar {
           if isPresented {
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -80,6 +92,23 @@ private struct ContentView: View {
             }
           }
         }
+    }
+  }
+
+  var listContent: some View {
+    PostsListView(navigationPath: $navigator.navigationPath, navigator: navigator, navigationBarBackgroundColor: navigationBarBackgroundColor, navigationBarColorScheme: navigationBarColorScheme)
+      .navigationTitle("Inbox")
+      .toolbarColorScheme(navigationBarColorScheme, for: .navigationBar)
+  }
+
+  @ViewBuilder
+  var contentWithNavBackground: some View {
+    if let navigationBarBackgroundColor {
+      listContent
+        .toolbarBackground(.visible, for: .navigationBar)
+        .toolbarBackground(navigationBarBackgroundColor, for: .navigationBar)
+    } else {
+      listContent
     }
   }
 }

@@ -20,6 +20,8 @@ import os.log
 
 struct PostsListView: View {
   @ObservedObject var navigator: CommunicationHubNavigator
+  var navigationBarBackgroundColor: Color?
+  var navigationBarColorScheme: ColorScheme?
 
   @Environment(\.communicationHubContainer) private var container
   @Environment(\.refreshCommunicationHub) var refreshCommunicationHub
@@ -33,13 +35,15 @@ struct PostsListView: View {
   // Core Data fetch requests
   @FetchRequest private var posts: FetchedResults<Post>
 
-  init(navigationPath: Binding<NavigationPath>, navigator: CommunicationHubNavigator) {
+  init(navigationPath: Binding<NavigationPath>, navigator: CommunicationHubNavigator, navigationBarBackgroundColor: Color?, navigationBarColorScheme: ColorScheme?) {
     self.navigator = navigator
 
     // Initialize the fetch request for posts
     _posts = FetchRequest(fetchRequest: RCHPersistentContainer.fetchPosts())
 
     _navigationPath = navigationPath
+    self.navigationBarBackgroundColor = navigationBarBackgroundColor
+    self.navigationBarColorScheme = navigationBarColorScheme
   }
 
   var body: some View {
@@ -54,7 +58,7 @@ struct PostsListView: View {
     }
     .listStyle(.plain)
     .navigationDestination(for: Post.self) { post in
-      PostDetailView(post: post)
+      contentWithNavBackground(post: post)
     }
     .task {
       os_log("PostsListView: checking for pending navigation", log: .communicationHub, type: .debug)
@@ -100,6 +104,23 @@ struct PostsListView: View {
       }
     }
     .searchable(text: $searchText)
+  }
+
+
+  func postContent(post: Post) -> some View {
+    PostDetailView(post: post)
+      .toolbarColorScheme(navigationBarColorScheme, for: .navigationBar)
+  }
+
+  @ViewBuilder
+  func contentWithNavBackground(post: Post) -> some View {
+    if let navigationBarBackgroundColor {
+      postContent(post: post)
+        .toolbarBackground(.visible, for: .navigationBar)
+        .toolbarBackground(navigationBarBackgroundColor, for: .navigationBar)
+    } else {
+      postContent(post: post)
+    }
   }
 
   func navigateToPost(id: String) async {

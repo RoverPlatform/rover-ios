@@ -59,17 +59,24 @@ actor RCHSync: ObservableObject, SyncStandaloneParticipant {
         }
 
         // Wait for persistence to finish loading before proceeding with sync
-        let isLoaded = await MainActor.run { persistentContainer.loaded }
-        if !isLoaded {
+        let state = await MainActor.run { persistentContainer.state }
+        if state != .loaded {
             os_log(
                 .debug, log: .communicationHub,
                 "Sync waiting for persistence (Core Data) to finish initialization")
 
-            // Wait for loaded to become true using the publisher
-            for await loaded in await MainActor.run(body: { persistentContainer.$loaded.values }) {
-                if loaded {
-                    os_log(.debug, log: .communicationHub, "Persistence loading completed")
-                    break
+            // Wait for the loaded state before proceeding
+            waitLoop: for await state in await MainActor.run(body: { persistentContainer.$state.values }) {
+                switch state {
+                case .loading:
+                    // continue to wait.
+                    continue waitLoop
+                case .failed:
+                    os_log("Communication Hub persistent container not available, aborting sync")
+                    return false
+                case .loaded:
+                    os_log(.debug, log: .communicationHub, "Persistence loading completed, now can sync")
+                    break waitLoop
                 }
             }
         }

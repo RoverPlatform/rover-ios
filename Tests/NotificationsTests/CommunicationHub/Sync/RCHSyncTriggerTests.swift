@@ -57,7 +57,7 @@ final class RCHSyncTriggerTests: RCHSyncTestBase {
 
     // Test that persistence container is properly loaded before sync
     // This is handled internally by RCHSync.performActualSync()
-    let isLoaded = await MainActor.run { testContainer.loaded }
+    let isLoaded = await MainActor.run { testContainer.state == .loaded }
     XCTAssertTrue(isLoaded, "Persistence container should be loaded during app launch sync")
   }
 

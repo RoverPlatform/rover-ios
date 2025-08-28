@@ -20,10 +20,8 @@ import Combine
 import os.log
 final class RCHPersistentContainer: NSPersistentContainer, @unchecked Sendable {
 
-    /// Observe this bool to discover when initial restore has completed.
-    ///
-    /// WIll never revert back to false.
-    @Published var loaded: Bool = false
+    /// Observe this state to discover when initial restore has completed.
+    @Published var state: State = .loading
 
     init(storage: Storage) {
         os_log("Initializing Core Data CommunicationPersistentContainer in storage mode: %{public}@", log: .communicationHub, type: .debug, storage.rawValue)
@@ -60,36 +58,49 @@ final class RCHPersistentContainer: NSPersistentContainer, @unchecked Sendable {
     }
 
     private func configureWithSqlite() {
+        loadPersistentStoresWithRetry(isRetry: false)
+    }
+    
+    private func loadPersistentStoresWithRetry(isRetry: Bool) {
         loadPersistentStores { description, error in
-            defer {
-                self.loaded = true
-            }
-
             if let error = error {
-                os_log("Error loading Core Data persistent store: %{public}@", log: .communicationHub, type: .error, error.localizedDescription)
-
-                // Get the URL from the description
-                if let url = description.url {
-                    do {
-                        let coordinator = self.persistentStoreCoordinator
-
-                        // Destroy the persistent store
-                        try coordinator.destroyPersistentStore(at: url, ofType: NSSQLiteStoreType, options: nil)
-                        os_log("Successfully destroyed Core Data persistent store at: %{public}@", log: .communicationHub, type: .info, url.path)
-
-                        // Recreate the persistent store
-                        try coordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: url, options: nil)
-                        os_log("Successfully recreated Core Data persistent store at: %{public}@", log: .communicationHub, type: .info, url.path)
-
-                    } catch {
-                        os_log("Failed to reset Core Data persistent store: %{public}@", log: .communicationHub, type: .error, error.localizedDescription)
-                        fatalError("Unable to recover from Core Data store failure")
-                    }
-                } else {
-                    fatalError("Failed to get URL from Core Data persistent store description")
+                os_log("Error loading Core Data persistent store%{public}@: %{public}@", log: .communicationHub, type: .error, isRetry ? " (retry)" : "", error.localizedDescription)
+                
+                // If this was already a retry attempt, fall back to in-memory storage
+                guard !isRetry else {
+                    os_log("Retry attempt failed, falling back to in-memory storage", log: .communicationHub, type: .error)
+                    self.fallbackToInMemoryStorage()
+                    return
                 }
+                
+                // Get the URL from the description in order to attempt dropping and recreating the DB.
+                guard let storeURL = description.url else {
+                    os_log("loadPersistentStores() error state occurred, but unable to obtain store URLs to attempt dropping DB, falling back to in-memory storage", log: .communicationHub, type: .error)
+                    self.fallbackToInMemoryStorage()
+                    return
+                }
+                
+                do {
+                    let coordinator = self.persistentStoreCoordinator
+                    
+                    // Destroy the persistent store
+                    try coordinator.destroyPersistentStore(at: storeURL, ofType: NSSQLiteStoreType, options: nil)
+                    os_log("Successfully destroyed Core Data persistent store at: %{public}@", log: .communicationHub, type: .info, storeURL.path)
+                    
+                    // Attempt to load the persistent stores one more time
+                    os_log("Attempting to retry loading persistent stores after recreation", log: .communicationHub, type: .info)
+                    self.loadPersistentStoresWithRetry(isRetry: true)
+                    
+                } catch {
+                    os_log("Failed to reset Core Data persistent store: %{public}@", log: .communicationHub, type: .error, error.localizedDescription)
+                    os_log("Falling back to in-memory storage after failed store recreation", log: .communicationHub, type: .error)
+                    self.fallbackToInMemoryStorage()
+                    
+                }
+                
             } else {
-                os_log("Successfully loaded Core Data Communication Hub persistent stores", log: .communicationHub, type: .info)
+                os_log("Successfully loaded Core Data Communication Hub persistent stores%{public}@", log: .communicationHub, type: .info, isRetry ? " (after retry)" : "")
+                self.state = .loaded
             }
         }
     }
@@ -102,11 +113,41 @@ final class RCHPersistentContainer: NSPersistentContainer, @unchecked Sendable {
 
         self.loadPersistentStores { description, error in
             defer {
-                self.loaded = true
+                self.state = .loaded
             }
             
             if let error = error {
                 fatalError("Failed to create in-memory persistent store: \(error)")
+            }
+        }
+    }
+    
+    private func fallbackToInMemoryStorage() {
+        os_log("Configuring fallback to in-memory storage due to persistent store failures", log: .communicationHub, type: .info)
+        
+        // Clean up any existing persistent stores
+        let coordinator = self.persistentStoreCoordinator
+        for store in coordinator.persistentStores {
+            do {
+                try coordinator.remove(store)
+            } catch {
+                os_log("Failed to remove existing persistent store during fallback: %{public}@", log: .communicationHub, type: .error, error.localizedDescription)
+            }
+        }
+        
+        // Configure for in-memory storage
+        let description = NSPersistentStoreDescription()
+        description.type = NSInMemoryStoreType
+        self.persistentStoreDescriptions = [description]
+        
+        // Load the in-memory store
+        self.loadPersistentStores { description, error in
+            if let error = error {
+                os_log("Critical error: Failed to create in-memory fallback store: %{public}@", log: .communicationHub, type: .fault, error.localizedDescription)
+                self.state = .failed
+            } else {
+                os_log("Successfully configured in-memory fallback storage", log: .communicationHub, type: .info)
+                self.state = .loaded
             }
         }
     }
@@ -135,7 +176,14 @@ final class RCHPersistentContainer: NSPersistentContainer, @unchecked Sendable {
         /// Using in-memory, meant for SwiftUI previews and other testing scenarios.
         case inMemory
     }
+
+    enum State: String {
+        case loading
+        case loaded
+        case failed
+    }
 }
+
 
 // MARK: - Badge Count Extension
 extension RCHPersistentContainer {

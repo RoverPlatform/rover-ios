@@ -3,7 +3,7 @@
 // copy, modify, and distribute this software in source code or binary form for use
 // in connection with the web services and APIs provided by Rover.
 //
-// This copyright notice shall be included in all copies or substantial portions of 
+// This copyright notice shall be included in all copies or substantial portions of
 // the software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -23,11 +23,11 @@ class ImageStore {
     // MARK: Cache
     
     fileprivate enum Optimization: Equatable, Hashable {
-        case fill(bounds: CGRect)
-        case fit(bounds: CGRect)
-        case stretch(bounds: CGRect, originalSize: CGSize)
-        case original(bounds: CGRect, originalSize: CGSize, originalScale: CGFloat)
-        case tile(bounds: CGRect, originalSize: CGSize, originalScale: CGFloat)
+        case fill(bounds: HashableCGRect)
+        case fit(bounds: HashableCGRect)
+        case stretch(bounds: HashableCGRect, originalSize: HashableCGSize)
+        case original(bounds: HashableCGRect, originalSize: HashableCGSize, originalScale: CGFloat)
+        case tile(bounds: HashableCGRect, originalSize: HashableCGSize, originalScale: CGFloat)
     }
     
     fileprivate struct Configuration: Equatable, Hashable {
@@ -74,8 +74,9 @@ class ImageStore {
         let configuration = Configuration(image: image, frame: frame)
         return self.image(for: configuration)
     }
-    
+
     func image(for image: ClassicImage, filledInFrame frame: CGRect) -> UIImage? {
+        let frame = HashableCGRect(frame)
         let optimization: ImageStore.Optimization = .fill(bounds: frame)
         let configuration = Configuration(url: image.url, optimization: optimization)
         return self.image(for: configuration)
@@ -115,6 +116,7 @@ class ImageStore {
     }
     
     func fetchImage(for image: ClassicImage, filledInFrame frame: CGRect, completionHandler: ((UIImage?) -> Void)? = nil) {
+        let frame = HashableCGRect(frame)
         let optimization: ImageStore.Optimization = .fill(bounds: frame)
         let configuration = Configuration(url: image.url, optimization: optimization)
         fetchImage(for: configuration, completionHandler: completionHandler)
@@ -193,11 +195,12 @@ extension ImageStore.Configuration {
         guard let image = background.image else {
             return nil
         }
-        
+
+        let frame = HashableCGRect(frame)
         let optimization: ImageStore.Optimization?
         if image.isURLOptimizationEnabled {
-            let originalSize = CGSize(width: CGFloat(image.width), height: CGFloat(image.height))
-            
+            let originalSize = HashableCGSize(width: CGFloat(image.width), height: CGFloat(image.height))
+
             let originalScale: CGFloat
             switch background.scale {
             case .x1:
@@ -228,7 +231,8 @@ extension ImageStore.Configuration {
     }
     
     init(image: ClassicImage, frame: CGRect) {
-        let originalSize = CGSize(width: CGFloat(image.width), height: CGFloat(image.height))
+        let frame = HashableCGRect(frame)
+        let originalSize = HashableCGSize(width: CGFloat(image.width), height: CGFloat(image.height))
         let optimization = ImageStore.Optimization.stretch(bounds: frame, originalSize: originalSize)
         self.init(url: image.url, optimization: optimization)
     }
@@ -292,24 +296,92 @@ extension ImageStore.Optimization {
     }
 }
 
-fileprivate extension CGFloat {
-    var paramValue: String {
+extension CGFloat {
+    fileprivate var paramValue: String {
         let rounded = self.rounded()
         let int = Int(rounded)
         return int.description
     }
 }
 
-extension CGSize: Hashable {
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(width)
-        hasher.combine(height)
+/// Wrapper type providing Hashable and Sendable conformance for CGSize without extending public CoreGraphics types (to avoid public extension conflicts and ABI/compatibility issues). Offers conversion helper (cgSize) for interop.
+fileprivate struct HashableCGSize: Hashable, Sendable {
+    var width: CGFloat
+    var height: CGFloat
+
+    init(_ size: CGSize) {
+        self.init(width: size.width, height: size.height)
+    }
+
+    init(width: CGFloat, height: CGFloat) {
+        self.width = width
+        self.height = height
+    }
+
+    var cgSize: CGSize {
+        CGSize(width: width, height: height)
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(Double(width))
+        hasher.combine(Double(height))
+    }
+
+    static func == (lhs: HashableCGSize, rhs: HashableCGSize) -> Bool {
+        lhs.width == rhs.width && lhs.height == rhs.height
     }
 }
 
-extension CGRect: Hashable {
-    public func hash(into hasher: inout Hasher) {
+/// Wrapper type providing Hashable and Sendable conformance for CGRect without extending public CoreGraphics types (to avoid public extension conflicts and ABI/compatibility issues). Offers conversion helper (cgRect) for interop.
+fileprivate struct HashableCGRect: Hashable, Sendable {
+    var origin: HashableCGPoint
+    var size: HashableCGSize
+
+    init(_ rect: CGRect) {
+        self.origin = HashableCGPoint(rect.origin)
+        self.size = HashableCGSize(rect.size)
+    }
+
+    var cgRect: CGRect {
+        CGRect(origin: origin.cgPoint, size: size.cgSize)
+    }
+
+    var width: CGFloat {
+        size.width
+    }
+
+    var height: CGFloat {
+        size.height
+    }
+
+    func hash(into hasher: inout Hasher) {
         hasher.combine(origin)
         hasher.combine(size)
+    }
+
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.origin == rhs.origin && lhs.size == rhs.size
+    }
+}
+
+/// Wrapper type providing Hashable and Sendable conformance for CGPoint without extending public CoreGraphics types (to avoid public extension conflicts and ABI/compatibility issues). Offers conversion helper (cgPoint) for interop.
+fileprivate struct HashableCGPoint: Hashable, Sendable {
+    var x: CGFloat
+    var y: CGFloat
+
+    init(_ point: CGPoint) {
+        self.x = point.x
+        self.y = point.y
+    }
+
+    var cgPoint: CGPoint { CGPoint(x: x, y: y) }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(Double(x))
+        hasher.combine(Double(y))
+    }
+
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.x == rhs.x && lhs.y == rhs.y
     }
 }

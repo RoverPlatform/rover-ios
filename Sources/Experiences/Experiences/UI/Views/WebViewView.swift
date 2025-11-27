@@ -16,8 +16,6 @@
 import SwiftUI
 import WebKit
 
-
-
 struct WebViewView: View {
     @Environment(\.data) private var data
     @Environment(\.isEnabled) private var isEnabled
@@ -141,8 +139,12 @@ private struct WebViewUI: UIViewRepresentable {
 
         switch source {
         case .url(let value):
-            let url = URL(string: value) ?? URL(string: "about:blank")!
-            webView.load(URLRequest(url: url))
+            if let embeddedVideoHTML = handleEmbeddedVideo(value) {
+                webView.loadHTMLString(embeddedVideoHTML, baseURL: URL(string: "https://localhost")!)
+            } else {
+                let url = URL(string: value) ?? URL(string: "about:blank")!
+                webView.load(URLRequest(url: url))
+            }
         case .html(let value):
             webView.loadHTMLString(value, baseURL: nil)
         }
@@ -174,9 +176,106 @@ private struct WebViewUI: UIViewRepresentable {
             parent.onFailure?(error)
         }
     }
+
+    private func handleEmbeddedVideo(_ urlString: String) -> String? {
+        // Ensure we have a URL
+        guard let url = URL(string: urlString),
+              let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+              let host = components.host else {
+            return nil
+        }
+
+        func hostMatches(_ host: String, domain: String) -> Bool {
+            let lowercasedHost = host.lowercased()
+            let lowercasedDomain = domain.lowercased()
+
+            // Exact match
+            if lowercasedHost == lowercasedDomain {
+                return true
+            }
+
+            // Check if host ends with ".{domain}"
+            let suffix = ".\(lowercasedDomain)"
+            if lowercasedHost.hasSuffix(suffix) {
+                // Ensure there's at least one character before the suffix
+                // and the host doesn't start with a dot
+                let prefixLength = lowercasedHost.count - suffix.count
+                return prefixLength > 0 && !lowercasedHost.hasPrefix(".")
+            }
+
+            return false
+        }
+
+        let isYouTubeHost = hostMatches(host, domain: "youtube.com")
+        let isYouTubeNoCookieHost = hostMatches(host, domain: "youtube-nocookie.com")
+        let isYouTubeEmbed = isYouTubeHost && url.pathComponents.contains("embed")
+        let isYouTubeNoCookie = isYouTubeNoCookieHost && url.pathComponents.contains("embed")
+
+        let isVimeoEmbed = hostMatches(host, domain: "player.vimeo.com")
+
+        guard isYouTubeEmbed || isYouTubeNoCookie || isVimeoEmbed else {
+            return nil
+        }
+
+        // HTML-escape the URL for safe interpolation into HTML attribute
+        // Validate URL scheme before using it
+        guard let scheme = url.scheme, (scheme == "http" || scheme == "https") else {
+            return nil
+        }
+        
+        // HTML-escape the URL for safe interpolation into HTML attribute
+        let escapedURL = url.absoluteString.htmlEscaped
+
+        let html = """
+        <!doctype html>
+        <html>
+          <head>
+            <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+            <meta name="referrer" content="origin">
+            <style>
+              html, body {
+                margin: 0;
+                padding: 0;
+                background: transparent;
+                height: 100%;
+                overflow: hidden;
+              }
+              iframe {
+                border: 0;
+                width: 100%;
+                height: 100%;
+              }
+            </style>
+          </head>
+          <body>
+            <iframe
+              src="\(escapedURL)"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allowfullscreen>
+            </iframe>
+          </body>
+        </html>
+        """
+
+        return html
+    }
 }
 
 // MARK: Modifiers
+
+extension String {
+    /// HTML-escapes special characters in a string for safe use in HTML attribute values.
+    fileprivate var htmlEscaped: String {
+        var result = self
+        result = result.replacingOccurrences(of: "&", with: "&amp;")
+        result = result.replacingOccurrences(of: "<", with: "&lt;")
+        result = result.replacingOccurrences(of: ">", with: "&gt;")
+        result = result.replacingOccurrences(of: "\"", with: "&quot;")
+        result = result.replacingOccurrences(of: "'", with: "&#39;")
+        return result
+    }
+}
 
 
 private extension WebViewUI {

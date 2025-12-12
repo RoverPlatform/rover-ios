@@ -13,10 +13,10 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import Foundation
-import SwiftUI
 import AVKit
 import Combine
+import Foundation
+import SwiftUI
 
 struct AudioView: View {
     @Environment(\.data) private var data
@@ -73,7 +73,7 @@ private struct Player: View {
                         player.play()
                     }
                 }
-                .onValueChanged(of: carouselCurrentPage) { carouselCurrentPage in
+                .onChange(of: carouselCurrentPage) { _, carouselCurrentPage in
                     if autoPlay && (carouselCurrentPage == carouselPageNumber) {
                         // when being revealed in a carousel, we should seek to the beginning and resume if autoplay
                         player.seek(to: CMTime.zero)
@@ -114,9 +114,7 @@ private struct Player: View {
             self.player?.replaceCurrentItem(with: playerItem)
         }
         
-        if #available(iOS 15.0, *) {
-            player?.audiovisualBackgroundPlaybackPolicy = .pauses
-        }
+        player?.audiovisualBackgroundPlaybackPolicy = .pauses
     }
     
     private func addObservers() {
@@ -221,13 +219,9 @@ private class AudioPlayerViewController: AVPlayerViewController {
     }
 }
 
-fileprivate struct AudioPlayerFrameModifier: ViewModifier {
+private struct AudioPlayerFrameModifier: ViewModifier {
     @ViewBuilder
     func body(content: Content) -> some View {
-        if #available(iOS 16.0, *) {
-            content.frame(height: 110)
-        } else {
-            content.frame(height: 44)
-        }
+        content.frame(height: 110)
     }
 }

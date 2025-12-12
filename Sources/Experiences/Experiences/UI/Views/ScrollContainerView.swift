@@ -3,7 +3,7 @@
 // copy, modify, and distribute this software in source code or binary form for use
 // in connection with the web services and APIs provided by Rover.
 //
-// This copyright notice shall be included in all copies or substantial portions of 
+// This copyright notice shall be included in all copies or substantial portions of
 // the software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -13,10 +13,8 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import SwiftUI
 import Combine
-
-
+import SwiftUI
 
 struct ScrollContainerView: View {
     var scrollContainer: ScrollContainer
@@ -83,18 +81,13 @@ fileprivate struct RefreshModifier: ViewModifier {
     func body(content: Content) -> some View {
         // Enabling a refresh control only applies to ScrollContainers at the root of the screen
         if scrollContainer.parent is Screen,
-            axis == .vertical,
-            !scrollContainer.disableScrollBar,
-            hasDataSources {
-            if #available(iOS 16.0, *) {
-                content.refreshable {
-                    scrollContainer.nestedDataSources.forEach {
-                        $0.objectWillChange.send()
-                    }
-                }
-            } else {
-                content.introspectScrollView { scrollView in
-                    scrollView.refreshControl = refreshControl()
+           axis == .vertical,
+           !scrollContainer.disableScrollBar,
+           hasDataSources
+        {
+            content.refreshable {
+                scrollContainer.nestedDataSources.forEach {
+                    $0.objectWillChange.send()
                 }
             }
         } else {
@@ -104,20 +97,5 @@ fileprivate struct RefreshModifier: ViewModifier {
     
     private var hasDataSources: Bool {
         !scrollContainer.nestedDataSources.isEmpty
-    }
-
-    private func refreshControl() -> UIRefreshControl {
-        let refreshControl = UIRefreshControl()
-
-        refreshControl.addAction(for: .valueChanged) { sender in
-            guard let refreshControl = sender as? UIRefreshControl else { return }
-            refreshControl.endRefreshing()
-
-            scrollContainer.nestedDataSources.forEach {
-                $0.objectWillChange.send()
-            }
-        }
-
-        return refreshControl
     }
 }

@@ -568,8 +568,7 @@ fileprivate struct AutoAdvanceModifier: ViewModifier {
     weak var autoAdvanceDelegate: AutoAdvanceDelegate?
     
     func body(content: Content) -> some View {
-        if let autoAdvanceDelegate = self.autoAdvanceDelegate,
-            #available(iOS 17, *) {
+        if let autoAdvanceDelegate = self.autoAdvanceDelegate {
             GeometryReader { geometry in
                 content
                     .onTapGesture { location in

@@ -191,17 +191,9 @@ struct TextStyleValue: Decodable {
         case "title":
             textStyle = .title
         case "title2":
-            if #available(iOS 14.0, *) {
-                textStyle = .title2
-            } else {
-                textStyle = .title
-            }
+            textStyle = .title2
         case "title3":
-            if #available(iOS 14.0, *) {
-                textStyle = .title3
-            } else {
-                textStyle = .title
-            }
+            textStyle = .title3
         case "headline":
             textStyle = .headline
         case "body":
@@ -215,11 +207,7 @@ struct TextStyleValue: Decodable {
         case "caption":
             textStyle = .caption
         case "caption2":
-            if #available(iOS 14.0, *) {
-                textStyle = .caption2
-            } else {
-                textStyle = .caption
-            }
+            textStyle = .caption2
         default:
             throw DecodingError.dataCorruptedError(
                 in: container,

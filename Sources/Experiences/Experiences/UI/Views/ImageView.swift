@@ -47,53 +47,16 @@ struct ImageView: View {
             .transition(.opacity)
         }
     }
-    
-#if compiler(>=5.9)
+
     @ViewBuilder
     private func imageView(uiImage: UIImage) -> some View {
-        if #available(iOS 17, *) {
-            AccessibleAnimatedImageView(
-                uiImage: uiImage,
-                scale: scale,
-                resizingMode: image.resizingMode,
-                size: estimatedImageSize
-            )
-        } else if uiImage.isAnimated {
-            AnimatedImageView(
-                uiImage: uiImage,
-                scale: scale,
-                resizingMode: image.resizingMode,
-                size: estimatedImageSize
-            )
-        } else {
-            StaticImageView(
-                uiImage: uiImage,
-                scale: scale,
-                resizingMode: image.resizingMode,
-                size: estimatedImageSize
-            )
-        }
+        AccessibleAnimatedImageView(
+            uiImage: uiImage,
+            scale: scale,
+            resizingMode: image.resizingMode,
+            size: estimatedImageSize
+        )
     }
-#else
-    @ViewBuilder
-    private func imageView(uiImage: UIImage) -> some View {
-        if uiImage.isAnimated {
-            AnimatedImageView(
-                uiImage: uiImage,
-                scale: scale,
-                resizingMode: image.resizingMode,
-                size: estimatedImageSize
-            )
-        } else {
-            StaticImageView(
-                uiImage: uiImage,
-                scale: scale,
-                resizingMode: image.resizingMode,
-                size: estimatedImageSize
-            )
-        }
-    }
-#endif
     
     private var inlineImage: UIImage? {
         switch colorScheme {
@@ -301,32 +264,14 @@ private struct TilingImage: View {
 
     var body: some View {
         // tiling only uses the UIImage scale, it cannot be applied after .scaleEffect. so, generate a suitably large tiled image at the default 1x scale, and then scale the entire results down afterwards.
-        if #available(iOS 14.0, *) {
-            GeometryReader { geometry in
-                SwiftUI.Image(uiImage: uiImage)
-                    .resizable(resizingMode: .tile)
-                    // make sure enough tile is generated to accommodate the scaleEffect below.
-                    .frame(
-                        width: geometry.size.width,
-                        height: geometry.size.height
-                    )
-            }
-        } else {
-            // we cannot reliably use GeometryReader in all contexts on iOS 13, so instead, we'll just generate a default amount of tile that will accomodate most situations rather than the exact amount. this will waste some vram.
-            SwiftUI.Rectangle()
-                .fill(Color.clear)
-                .overlay(
-                    SwiftUI.Image(uiImage: uiImage)
-                        .resizable(resizingMode: .tile)
-                        // make sure enough tile is generated to accommodate the scaleEffect below.
-                        .frame(
-                            width: 600,
-                            height: 1000
-                        )
-                    ,
-                    alignment: .topLeading
+        GeometryReader { geometry in
+            SwiftUI.Image(uiImage: uiImage)
+                .resizable(resizingMode: .tile)
+            // make sure enough tile is generated to accommodate the scaleEffect below.
+                .frame(
+                    width: geometry.size.width,
+                    height: geometry.size.height
                 )
-                .clipped()
         }
     }
 }
@@ -343,11 +288,7 @@ private struct PlaceholderView: View {
     
     @ViewBuilder
     var body: some View {
-        if #available(iOS 14.0, *) {
-            dummyView.redacted(reason: .placeholder)
-        } else {
-            dummyView
-        }
+        dummyView.redacted(reason: .placeholder)
     }
     
     /// A clear, dummy view that mimics the sizing behaviour of the image.

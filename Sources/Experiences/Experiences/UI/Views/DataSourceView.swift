@@ -61,36 +61,30 @@ struct DataSourceViewFdsaf: View {
     
     @ViewBuilder
     private var redactedView: some View {
-        if #available(iOS 14.0, *) {
-            ForEach(layers) {
-                LayerView(layer: $0)
-            }
-            .redacted(reason: .placeholder)
-            .onAppear { print("BUT THIS WORKS OLOLOL?")}
-            .task {
-                while(true) {
+        ForEach(layers) {
+            LayerView(layer: $0)
+        }
+        .redacted(reason: .placeholder)
+        .task {
+            while(true) {
+                do {
+                    fetchedData = try await fetchData()
+                } catch {
+                    // do nothing, and fallthrough to polling below
+                    os_log(.error, "Error fetching data source: %s", error.localizedDescription)
+                }
+
+                if let pollInterval = dataSource.pollInterval {
                     do {
-                        fetchedData = try await fetchData()
+                        try await Task.sleep(nanoseconds: UInt64(pollInterval * 1_000_000_000))
                     } catch {
-                        // do nothing, and fallthrough to polling below
-                        os_log(.error, "Error fetching data source: %s", error.localizedDescription)
-                    }
-                    
-                    if let pollInterval = dataSource.pollInterval {
-                        do {
-                            try await Task.sleep(nanoseconds: UInt64(pollInterval * 1_000_000_000))
-                        } catch {
-                            // task cancelled
-                            break
-                        }
-                    } else {
+                        // task cancelled
                         break
                     }
+                } else {
+                    break
                 }
             }
-        } else {
-            // TODO: Anything better we can do here?
-            EmptyView()
         }
     }
     
@@ -247,17 +241,12 @@ struct DataSourceViewAsyncTask: View {
     
     @ViewBuilder
     private var redactedView: some View {
-        if #available(iOS 14.0, *) {
-            ForEach(layers) {
-                LayerView(layer: $0)
-            }
-            .redacted(reason: .placeholder)
-        } else {
-            // TODO: Anything better we can do here?
-            EmptyView()
+        ForEach(layers) {
+            LayerView(layer: $0)
         }
+        .redacted(reason: .placeholder)
     }
-    
+
     private func setRefreshTimer() {
         if let pollInterval = dataSource.pollInterval, refreshTimer == nil {
             refreshTimer = Timer.scheduledTimer(withTimeInterval: TimeInterval(pollInterval), repeats:true ) { _ in
@@ -372,15 +361,10 @@ struct DataSourceView: View {
     
     @ViewBuilder
     private var redactedView: some View {
-        if #available(iOS 14.0, *) {
-            ForEach(layers) {
-                LayerView(layer: $0)
-            }
-            .redacted(reason: .placeholder)
-        } else {
-            // TODO: Anything better we can do here?
-            EmptyView()
+        ForEach(layers) {
+            LayerView(layer: $0)
         }
+        .redacted(reason: .placeholder)
     }
     
     private func setRefreshTimer() {

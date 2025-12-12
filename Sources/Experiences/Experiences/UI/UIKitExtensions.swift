@@ -161,10 +161,7 @@ extension UINavigationItem {
 
         compactAppearance = appearance
         standardAppearance = appearance
-        
-        if #available(iOS 15, *) {
-            scrollEdgeAppearance = appearance
-        }
+        scrollEdgeAppearance = appearance
     }
 
     func configureLargeAppearance(

@@ -218,29 +218,16 @@ open class InboxViewController: UIViewController, UITableViewDataSource, UITable
             ])
         }
         
-        if #available(iOS 11, *) {
-            let layoutGuide = view.safeAreaLayoutGuide
-            tableView.bottomAnchor.constraint(equalTo: layoutGuide.bottomAnchor).isActive = true
-            
-            if let navigationBar = navigationBar {
-                NSLayoutConstraint.activate([
-                    navigationBar.topAnchor.constraint(equalTo: layoutGuide.topAnchor),
-                    tableView.topAnchor.constraint(equalTo: navigationBar.bottomAnchor)
-                ])
-            } else {
-                tableView.topAnchor.constraint(equalTo: layoutGuide.topAnchor).isActive = true
-            }
+        let layoutGuide = view.safeAreaLayoutGuide
+        tableView.bottomAnchor.constraint(equalTo: layoutGuide.bottomAnchor).isActive = true
+        
+        if let navigationBar = navigationBar {
+            NSLayoutConstraint.activate([
+                navigationBar.topAnchor.constraint(equalTo: layoutGuide.topAnchor),
+                tableView.topAnchor.constraint(equalTo: navigationBar.bottomAnchor)
+            ])
         } else {
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-            
-            if let navigationBar = navigationBar {
-                NSLayoutConstraint.activate([
-                    navigationBar.topAnchor.constraint(equalTo: topLayoutGuide.bottomAnchor),
-                    tableView.topAnchor.constraint(equalTo: navigationBar.bottomAnchor)
-                ])
-            } else {
-                tableView.topAnchor.constraint(equalTo: topLayoutGuide.bottomAnchor).isActive = true
-            }
+            tableView.topAnchor.constraint(equalTo: layoutGuide.topAnchor).isActive = true
         }
     }
     

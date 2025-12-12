@@ -38,27 +38,11 @@ open class InboxCell: UITableViewCell {
     
     open func configureBackgroundColor() {
         guard let notification = notification else {
-            #if swift(>=5.1)
-            if #available(iOS 13.0, *) {
-                backgroundColor = .systemBackground
-            } else {
-                backgroundColor = .white
-            }
-            #else
-            backgroundColor = .white
-            #endif
+            backgroundColor = .systemBackground
             return
         }
-        
-        #if swift(>=5.1)
-        if #available(iOS 13.0, *) {
-            backgroundColor = notification.isRead ? UIColor.systemBackground : UIColor.systemGray5
-        } else {
-            backgroundColor = notification.isRead ? UIColor.white : UIColor(red: 0.898039, green: 0.898039, blue: 0.917647, alpha: 1.0)
-        }
-        #else
-        backgroundColor = notification.isRead ? UIColor.white : UIColor(red: 0.898039, green: 0.898039, blue: 0.917647, alpha: 1.0)
-        #endif
+
+        backgroundColor = notification.isRead ? UIColor.systemBackground : UIColor.systemGray5
     }
     
     open func configureTextLabel() {

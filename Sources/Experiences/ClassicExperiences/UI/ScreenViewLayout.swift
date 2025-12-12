@@ -303,12 +303,7 @@ class ScreenViewLayout: UICollectionViewLayout {
             return rowAttributes + blockAttributes
         }
         
-        let offset: CGFloat
-        if #available(iOS 11.0, *) {
-            offset = collectionView!.contentOffset.y + collectionView!.adjustedContentInset.top
-        } else {
-            offset = collectionView!.contentOffset.y + collectionView!.contentInset.top
-        }
+        let offset = collectionView!.contentOffset.y + collectionView!.adjustedContentInset.top
         
         guard offset < 0 else {
             return rowAttributes + blockAttributes

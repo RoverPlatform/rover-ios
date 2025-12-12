@@ -15,8 +15,8 @@
 
 import AVKit
 import Combine
-import SwiftUI
 import RoverFoundation
+import SwiftUI
 
 struct VideoView: View {
     @Environment(\.data) private var data
@@ -93,7 +93,7 @@ private struct Player: View {
                     player.play()
                 }
             }
-            .onValueChanged(of: carouselCurrentPage) { carouselCurrentPage in
+            .onChange(of: carouselCurrentPage) { _, carouselCurrentPage in
                 if autoPlay && (carouselCurrentPage == carouselPageNumber) {
                     // when being revealed in a carousel, we should seek to the beginning and resume if autoplay
                     player.seek(to: CMTime.zero)
@@ -144,10 +144,8 @@ private struct Player: View {
         } else {
             self.player?.replaceCurrentItem(with: playerItem)
         }
-        
-        if #available(iOS 15.0, *) {
-            player?.audiovisualBackgroundPlaybackPolicy = .pauses
-        }
+
+        player?.audiovisualBackgroundPlaybackPolicy = .pauses
     }
     
     private func addObservers() {
@@ -234,11 +232,9 @@ private struct VideoPlayerView: UIViewControllerRepresentable {
         
         viewController.allowsPictureInPicturePlayback = false
         viewController.showsPlaybackControls = showControls
-        
-        if #available(iOS 16.0, *) {
-            viewController.allowsVideoFrameAnalysis = false
-        }
-        
+
+        viewController.allowsVideoFrameAnalysis = false
+
         switch resizingMode {
         case .scaleToFill:
             viewController.videoGravity = .resizeAspectFill

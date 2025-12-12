@@ -78,10 +78,8 @@ extension PagingSyncParticipant {
         }
         
         os_log("Inserting %d objects", log: .sync, type: .debug, nodes.count)
-        
-        if #available(iOS 12.0, *) {
-            os_signpost(.begin, log: .sync, name: "insertObjects", "count=%d", nodes.count)
-        }
+
+        os_signpost(.begin, log: .sync, name: "insertObjects", "count=%d", nodes.count)
         
         if (context.persistentStoreCoordinator?.persistentStores.count).map({ $0 == 0 }) ?? true {
             os_log("Rover's Core Data persistent store not configured, unable to insert objects.", type: .error)
@@ -116,10 +114,8 @@ extension PagingSyncParticipant {
         }
         
         os_log("Successfully inserted %d objects", log: .sync, type: .debug, nodes.count)
-        
-        if #available(iOS 12.0, *) {
-            os_signpost(.end, log: .sync, name: "insertObjects", "count=%d", nodes.count)
-        }
+
+        os_signpost(.end, log: .sync, name: "insertObjects", "count=%d", nodes.count)
         
         return true
     }

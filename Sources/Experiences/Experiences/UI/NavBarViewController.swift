@@ -30,15 +30,13 @@ class NavBarViewController: UINavigationController, UIScrollViewDelegate {
         super.init(rootViewController: screenVC)
         restorationIdentifier = screen.id
 
-        if #available(iOS 13, *) {
-            switch experience.appearance {
-            case .light:
-                overrideUserInterfaceStyle = .light
-            case .dark:
-                overrideUserInterfaceStyle = .dark
-            case .auto:
-                break
-            }
+        switch experience.appearance {
+        case .light:
+            overrideUserInterfaceStyle = .light
+        case .dark:
+            overrideUserInterfaceStyle = .dark
+        case .auto:
+            break
         }
     }
 
@@ -48,9 +46,7 @@ class NavBarViewController: UINavigationController, UIScrollViewDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        if #available(iOS 13, *) {
-            observeLargeTitleDisplay()
-        }
+        observeLargeTitleDisplay()
     }
 
     // MARK: Status Bar
@@ -99,14 +95,12 @@ class NavBarViewController: UINavigationController, UIScrollViewDelegate {
         super.setNavigationBarHidden(hidden, animated: animated)
     }
 
-    @available(iOS 13, *)
     private func observeLargeTitleDisplay() {
        titleDisplayObserver = LargeTitleDisplayObserver(navigationBar: navigationBar, parent: parent) {  [unowned self] isDisplayingLargeTitle in
             largeTitleDisplayDidChange(isDisplayingLargeTitle)
         }
     }
 
-    @available(iOS 13, *)
     private func largeTitleDisplayDidChange(_ isDisplayingLargeTitle: Bool) {
         guard let screenVC = visibleViewController as? ScreenViewController,
               let navBar = screenVC.navBar else {

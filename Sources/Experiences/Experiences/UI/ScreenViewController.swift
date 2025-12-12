@@ -67,19 +67,13 @@ class ScreenViewController: UIViewController, UIScrollViewDelegate {
         // Back Button Style
         switch screen.backButtonStyle {
         case .default(let title):
-            if #available(iOS 14.0, *) {
-                navigationItem.backButtonDisplayMode = .default
-            }
+            navigationItem.backButtonDisplayMode = .default
 
             navigationItem.backButtonTitle = experience.localization.resolve(key: title)
         case .generic:
-            if #available(iOS 14.0, *) {
-                navigationItem.backButtonDisplayMode = .generic
-            }
+            navigationItem.backButtonDisplayMode = .generic
         case .minimal:
-            if #available(iOS 14.0, *) {
-                navigationItem.backButtonDisplayMode = .minimal
-            }
+            navigationItem.backButtonDisplayMode = .minimal
         }
 
         // Background Color

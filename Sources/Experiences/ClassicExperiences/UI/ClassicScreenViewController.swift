@@ -32,16 +32,8 @@ open class ClassicScreenViewController: UICollectionViewController, UICollection
     
     override open var preferredStatusBarStyle: UIStatusBarStyle {
         switch screen.statusBar.style {
-        case .dark:            
-            #if swift(>=5.1)
-            if #available(iOS 13.0, *) {
-                return .darkContent
-            } else {
-                return .default
-            }
-            #else
-            return .default
-            #endif
+        case .dark:
+            return .darkContent
         case .light:
             return .lightContent
         }
@@ -216,15 +208,13 @@ open class ClassicScreenViewController: UICollectionViewController, UICollection
         }()
         
         navigationBar.titleTextAttributes = textAttributes
-        
-        if #available(iOS 15, *) {
-            let appearance = UINavigationBarAppearance()
-            appearance.configureWithDefaultBackground()
-            appearance.backgroundColor = backgroundColor
-            appearance.titleTextAttributes = textAttributes
-            navigationBar.standardAppearance = appearance
-            navigationBar.scrollEdgeAppearance = appearance
-        }
+
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithDefaultBackground()
+        appearance.backgroundColor = backgroundColor
+        appearance.titleTextAttributes = textAttributes
+        navigationBar.standardAppearance = appearance
+        navigationBar.scrollEdgeAppearance = appearance
     }
     
     private func configureNavigationItem() {

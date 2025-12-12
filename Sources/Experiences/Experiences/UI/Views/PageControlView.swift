@@ -228,18 +228,16 @@ private struct PageControlViewBody: UIViewRepresentable {
         // Store current value. currentPage is a binding and it's value may change.
         let currentPageValue = currentPage
 
-        if #available(iOS 14.0, *) {
-            for page in 0..<pageControl.numberOfPages {
-                let image: UIImage?
-                if page == currentPageValue {
-                    image = images.currentUIImage
-                } else {
-                    image = images.normalUIImage
-                }
+        for page in 0..<pageControl.numberOfPages {
+            let image: UIImage?
+            if page == currentPageValue {
+                image = images.currentUIImage
+            } else {
+                image = images.normalUIImage
+            }
 
-                if let image = image {
-                    pageControl.setIndicatorImage(image, forPage: page)
-                }
+            if let image = image {
+                pageControl.setIndicatorImage(image, forPage: page)
             }
         }
 

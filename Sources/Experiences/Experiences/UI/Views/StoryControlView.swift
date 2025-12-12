@@ -170,7 +170,7 @@ fileprivate struct StoryControlViewBody: View {
                                 StoryControlAnimationModifier(barProgress: barProgress)
                             )
                     }
-                    .onValueChanged(of: currentPage) { _ in
+                    .onChange(of: currentPage) { _, _ in
                         carouselState.resetBarProgress(for: viewID)
                     }
                 }

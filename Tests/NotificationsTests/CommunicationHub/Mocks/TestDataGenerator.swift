@@ -17,7 +17,7 @@ import Foundation
 
 @testable import RoverNotifications
 
-/// Utility for generating test data for Communication Hub sync tests
+/// Utility for generating test data for the Hub sync tests
 class TestDataGenerator {
 
   // MARK: - Subscription Generation

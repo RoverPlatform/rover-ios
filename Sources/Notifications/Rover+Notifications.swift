@@ -44,11 +44,11 @@ public extension Rover {
     ///
     /// If the notification was handled as Rover notification, Rover calls completionHandler for you and returns true.
     func didReceiveRemoteNotification(userInfo: [AnyHashable: Any], fetchCompletionHandler: @escaping (UIBackgroundFetchResult) -> Void) -> Bool {
-        guard let persistentContainer = self.resolve(RCHPersistentContainer.self) else {
+        guard let persistentContainer = self.resolve(InboxPersistentContainer.self) else {
             os_log("Rover.didReceiveRemoteNotification: called before Rover is initialized (or RoverNotifications module missing)", log: .notifications, type: .error)
             return false
         }
-        // Check if this is a Rover notification using the Communication Hub container
+        // Check if this is a Rover notification using the Hub container
         if persistentContainer.receiveFromPush(userInfo: userInfo) {
             // rover handled the notification.
             fetchCompletionHandler(.newData)
@@ -64,7 +64,7 @@ public extension Rover {
     /// 
     /// If the notification was handled as Rover notification, Rover calls completionHandler for you and returns true.
     func userNotificationCenterWillPresent(notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) -> Bool {
-        guard let persistentContainer = self.resolve(RCHPersistentContainer.self) else {
+        guard let persistentContainer = self.resolve(InboxPersistentContainer.self) else {
             os_log("Rover.willPresent: called before Rover is initialized (or RoverNotifications module missing)", log: .notifications, type: .error)
             return false
         }
@@ -104,11 +104,15 @@ public extension Rover {
         return notificationHandler.handle(response, completionHandler: completionHandler)
     }
 
-    /// Reset all data in the Rover Communication Hub.
+    /// Reset all data in the Rover Hub.
     /// 
     /// Note that this will leave the store in a dropped state, and the app (and Rover SDK) should be restarted afterward.
-    func resetCommunicationHub() {
-        let container = self.resolve(RCHPersistentContainer.self)
+    func resetHub() {
+        let container = self.resolve(InboxPersistentContainer.self)
         container?.reset()
+    }
+
+    func resetCommunicationHub() {
+        resetHub()
     }
 }

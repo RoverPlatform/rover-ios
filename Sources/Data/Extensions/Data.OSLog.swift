@@ -3,7 +3,7 @@
 // copy, modify, and distribute this software in source code or binary form for use
 // in connection with the web services and APIs provided by Rover.
 //
-// This copyright notice shall be included in all copies or substantial portions of 
+// This copyright notice shall be included in all copies or substantial portions of
 // the software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -18,6 +18,8 @@ import os.log
 extension OSLog {
     public static let context = OSLog(subsystem: "io.rover", category: "Context")
     public static let auth = OSLog(subsystem: "io.rover", category: "Auth")
+    public static let config = OSLog(subsystem: "io.rover", category: "Config")
+    public static let homeView = OSLog(subsystem: "io.rover", category: "homeView")
     public static let events = OSLog(subsystem: "io.rover", category: "Events")
     public static let networking = OSLog(subsystem: "io.rover", category: "Networking")
     public static let persistence = OSLog(subsystem: "io.rover", category: "Persistence")

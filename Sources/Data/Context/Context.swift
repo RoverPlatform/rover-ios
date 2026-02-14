@@ -3,7 +3,7 @@
 // copy, modify, and distribute this software in source code or binary form for use
 // in connection with the web services and APIs provided by Rover.
 //
-// This copyright notice shall be included in all copies or substantial portions of 
+// This copyright notice shall be included in all copies or substantial portions of
 // the software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -19,54 +19,54 @@ import RoverFoundation
 public struct Context: Codable, Equatable {
     // MARK: Privacy
     public var trackingMode: String?
-    
+
     // MARK: Dark Mode
     public var isDarkModeEnabled: Bool?
-    
+
     // MARK: Locale
     public var localeLanguage: String?
     public var localeRegion: String?
     public var localeScript: String?
-    
+
     // MARK: Location
     public struct Location: Codable, Equatable {
         public struct Coordinate: Codable, Equatable {
             public var latitude: Double
             public var longitude: Double
-            
+
             public init(latitude: Double, longitude: Double) {
                 self.latitude = latitude
                 self.longitude = longitude
             }
-            
+
             public init(from decoder: Decoder) throws {
                 var container = try decoder.unkeyedContainer()
                 let latitude = try container.decode(Double.self)
                 let longitude = try container.decode(Double.self)
                 self.init(latitude: latitude, longitude: longitude)
             }
-            
+
             public func encode(to encoder: Encoder) throws {
                 var container = encoder.unkeyedContainer()
                 try container.encode(latitude)
                 try container.encode(longitude)
             }
         }
-        
+
         public struct Address: Codable, Equatable {
             public var city: String?
             public var state: String?
             public var country: String?
             public var isoCountryCode: String?
             public var subAdministrativeArea: String?
-            
+
             public init(
                 city: String?,
                 state: String?,
                 country: String?,
                 isoCountryCode: String?,
                 subAdministrativeArea: String?
-                ) {
+            ) {
                 self.city = city
                 self.state = state
                 self.country = country
@@ -74,14 +74,14 @@ public struct Context: Codable, Equatable {
                 self.subAdministrativeArea = subAdministrativeArea
             }
         }
-        
+
         public var coordinate: Coordinate
         public var altitude: Double
         public var horizontalAccuracy: Double
         public var verticalAccuracy: Double
         public var address: Address?
         public var timestamp: Date
-        
+
         public init(
             coordinate: Coordinate,
             altitude: Double,
@@ -89,7 +89,7 @@ public struct Context: Codable, Equatable {
             verticalAccuracy: Double,
             address: Address?,
             timestamp: Date
-            ) {
+        ) {
             self.coordinate = coordinate
             self.altitude = altitude
             self.horizontalAccuracy = horizontalAccuracy
@@ -98,33 +98,54 @@ public struct Context: Codable, Equatable {
             self.timestamp = timestamp
         }
     }
-    
+
     public var isLocationServicesEnabled: Bool?
     public var location: Location?
     public var locationAuthorization: String?
-    
+
     // MARK: Notifications
     public var notificationAuthorization: String?
-    
+
     // MARK: Push Token
     public struct PushToken: Codable, Equatable {
         public internal(set) var value: String
         public internal(set) var timestamp: Date
+
+        public init(value: String, timestamp: Date) {
+            self.value = value
+            self.timestamp = timestamp
+        }
     }
-    
+
     public var pushToken: PushToken?
-    
+
+    // MARK: Live Activity Tokens
+    public struct LiveActivityToken: Codable, Equatable {
+        public var name: String
+        public var pushToStartToken: PushToken?
+
+        public init(
+            name: String,
+            pushToStartToken: PushToken?,
+        ) {
+            self.name = name
+            self.pushToStartToken = pushToStartToken
+        }
+    }
+
+    public var liveActivityTokens: [LiveActivityToken]?
+
     // MARK: Reachability
     public var isCellularEnabled: Bool?
     public var isWifiEnabled: Bool?
-    
+
     // MARK: Static Context
     public enum BuildEnvironment: String, Codable, Equatable {
         case production = "PRODUCTION"
         case development = "DEVELOPMENT"
         case simulator = "SIMULATOR"
     }
-    
+
     public var appBadgeNumber: Int?
     public var appBuild: String?
     public var appIdentifier: String?
@@ -139,26 +160,26 @@ public struct Context: Codable, Equatable {
     public var screenHeight: Double?
     public var screenWidth: Double?
     public var sdkVersion: String?
-    
+
     // MARK: Telephony
     public var carrierName: String?
     public var radio: String?
-    
+
     // MARK: Testing
     public var isTestDevice: Bool?
-    
+
     // MARK: Time Zone
     public var timeZone: String?
-    
+
     // MARK: User Info
     public var userInfo: Attributes?
-    
+
     // MARK: Conversions
     public var conversions: [String]?
-    
+
     // MARK: Last Seen Timestamp
     public var lastSeen: Date?
-    
+
     public init(
         trackingMode: String?,
         isDarkModeEnabled: Bool?,
@@ -170,6 +191,7 @@ public struct Context: Codable, Equatable {
         locationAuthorization: String?,
         notificationAuthorization: String?,
         pushToken: PushToken?,
+        liveActivityTokens: [LiveActivityToken]?,
         isCellularEnabled: Bool?,
         isWifiEnabled: Bool?,
         appBadgeNumber: Int?,
@@ -204,6 +226,7 @@ public struct Context: Codable, Equatable {
         self.locationAuthorization = locationAuthorization
         self.notificationAuthorization = notificationAuthorization
         self.pushToken = pushToken
+        self.liveActivityTokens = liveActivityTokens
         self.isCellularEnabled = isCellularEnabled
         self.isWifiEnabled = isWifiEnabled
         self.appBadgeNumber = appBadgeNumber

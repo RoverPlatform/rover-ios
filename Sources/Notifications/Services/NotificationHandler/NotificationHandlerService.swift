@@ -35,8 +35,8 @@ class NotificationHandlerService: NotificationHandler {
         // notification from the influence tracker so we don't erroneously track an influenced open.
         influenceTracker.clearLastReceivedNotification()
 
-        // If a Communication Hub post is bundled with the notification, then insert it.
-        if let persistentContainer = Rover.shared.resolve(RCHPersistentContainer.self) {
+        // If a Hub post is bundled with the notification, then insert it.
+        if let persistentContainer = Rover.shared.resolve(InboxPersistentContainer.self) {
             // discarding the boolean result from receiveFromPush, since getting a post from the notification is only a side-effect for now.
             let _ = persistentContainer.receiveFromPush(userInfo: response.notification.request.content.userInfo)
         }

@@ -17,91 +17,38 @@ import Foundation
 import RoverFoundation
 import SwiftUI
 
-/// Navigator object for managing Communication Hub navigation state and operations.
+/// Navigator object for managing Hub navigation state and operations.
 /// Users should instantiate this object, hold onto it, and pass it to CommunicationHubView.
 @MainActor
 public class CommunicationHubNavigator: ObservableObject {
-  @Published private(set) var navigationState: NavigationState = .idle
-  @Published private(set) var pendingPostID: String?
-  private var processingPostID: String?
+    @Published private(set) var navigationState: NavigationState = .idle
+    @Published private(set) var pendingPostID: String?
 
-  /// The navigation path managed by this navigator
-  @Published public var navigationPath = NavigationPath()
+    /// The navigation path managed by this navigator
+    @Published public var navigationPath = NavigationPath()
 
-  public init() {}
+    public init() {}
 
-  /// Navigate to a specific post by ID
-  public func navigateToPost(id: String) {
-    // Only set pending if we're not already processing this same post
-    if id != processingPostID {
-      pendingPostID = id
-      navigationState = .navigatingToPost(id)
-    }
-  }
+    /// Navigate to a specific post by ID
+    public func navigateToPost(id: String) {}
 
-  /// Navigate to supported content. Only will use relevant query parameters from the URL, but the URL can otherwise be your own custom deep linking scheme.
-  public func navigateToURL(_ url: URL) {
-    if let postID = extractPostID(from: url) {
-      navigateToPost(id: postID)
-    }
-  }
-
-  // MARK: - Internal methods for CommunicationHubView
-
-  /// Clear any pending navigation
-  internal func clearNavigation() {
-    pendingPostID = nil
-    navigationState = .idle
-    processingPostID = nil
-  }
-
-  /// Reset navigation path to root
-  internal func popToRoot() {
-    navigationPath = NavigationPath()
-    clearNavigation()
-  }
-
-  internal func consumePendingPostID() -> String? {
-    guard let postID = pendingPostID else { return nil }
-    // Mark as currently processing and clear pending state
-    processingPostID = postID
-    pendingPostID = nil
-    navigationState = .idle
-    return postID
-  }
-
-  /// Mark navigation as complete, allowing re-navigation to the same post
-  internal func completeNavigation() {
-    processingPostID = nil
-  }
-
-  internal func setNavigationState(_ state: NavigationState) {
-    navigationState = state
-  }
-
-  // MARK: - Private helpers
-
-  private func extractPostID(from url: URL) -> String? {
-    return URLComponents(url: url, resolvingAgainstBaseURL: false)?
-      .queryItems?
-      .first(where: { $0.name == "postID" })?
-      .value
-  }
+    /// Navigate to supported content. Only will use relevant query parameters from the URL, but the URL can otherwise be your own custom deep linking scheme.
+    public func navigateToURL(_ url: URL) {}
 }
 
-/// Navigation state for the Communication Hub
+/// Navigation state for the Hub
 public enum NavigationState: Equatable {
-  case idle
-  case navigatingToPost(String)
+    case idle
+    case navigatingToPost(String)
 
-  public static func == (lhs: NavigationState, rhs: NavigationState) -> Bool {
-    switch (lhs, rhs) {
-    case (.idle, .idle):
-      return true
-    case (.navigatingToPost(let lhsID), .navigatingToPost(let rhsID)):
-      return lhsID == rhsID
-    default:
-      return false
+    public static func == (lhs: NavigationState, rhs: NavigationState) -> Bool {
+        switch (lhs, rhs) {
+        case (.idle, .idle):
+            return true
+        case (.navigatingToPost(let lhsID), .navigatingToPost(let rhsID)):
+            return lhsID == rhsID
+        default:
+            return false
+        }
     }
-  }
 }

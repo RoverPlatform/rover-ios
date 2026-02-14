@@ -13,12 +13,12 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import RoverFoundation
 import RoverData
+import RoverFoundation
 import RoverUI
+import SwiftUI
 import UIKit
 import UserNotifications
-import SwiftUI
 import os.log
 
 public struct NotificationsAssembler: Assembler {
@@ -28,23 +28,27 @@ public struct NotificationsAssembler: Assembler {
     public var maxNotifications: Int
     public var updateAppBadge: Bool
 
-    public init(appGroup: String? = nil, isInfluenceTrackingEnabled: Bool = true, influenceTime: Int = 120, maxNotifications: Int = 200, updateAppBadge: Bool = true) {
+    public init(
+        appGroup: String? = nil, isInfluenceTrackingEnabled: Bool = true, influenceTime: Int = 120,
+        maxNotifications: Int = 200, updateAppBadge: Bool = true
+    ) {
         self.appGroup = appGroup
         self.influenceTime = influenceTime
         self.isInfluenceTrackingEnabled = isInfluenceTrackingEnabled
         self.maxNotifications = maxNotifications
         self.updateAppBadge = updateAppBadge
     }
-    
+
     // swiftlint:disable:next function_body_length // Assemblers are fairly declarative.
     public func assemble(container: Container) {
         // MARK: Action (openNotification)
-        
-        container.register(Action.self, name: "openNotification", scope: .transient) { (resolver, notification: Notification) in
+
+        container.register(Action.self, name: "openNotification", scope: .transient) {
+            (resolver, notification: Notification) in
             let presentWebsiteActionProvider: OpenNotificationAction.ActionProvider = { [weak resolver] url in
                 resolver?.resolve(Action.self, name: "presentWebsite", arguments: url)!
             }
-            
+
             return OpenNotificationAction(
                 eventQueue: resolver.resolve(EventQueue.self)!,
                 notification: notification,
@@ -53,41 +57,50 @@ public struct NotificationsAssembler: Assembler {
                 presentWebsiteActionProvider: presentWebsiteActionProvider
             )
         }
-        
+
         // MARK: Action (presentNotificationCenter)
-        
+
         container.register(Action.self, name: "presentNotificationCenter", scope: .transient) { resolver in
             let viewControllerToPresent = resolver.resolve(UIViewController.self, name: "inbox")!
             return resolver.resolve(Action.self, name: "presentView", arguments: viewControllerToPresent)!
         }
-        
-        // MARK: Action (presentCommunicationHub)
-        
-        container.register(Action.self, name: "presentCommunicationHub", scope: .transient) { (resolver) in
-            let viewControllerToPresent = CommunicationHubHostingController(
-                title: "Inbox"
-            )
 
-            os_log("Presenting Communication Hub", log: .communicationHub, type: .debug)
+        // MARK: Action (presentHub)
 
-            return resolver.resolve(Action.self, name: "presentView", arguments: viewControllerToPresent as UIViewController)!
+        container.register(Action.self, name: "presentHub", scope: .transient) { (resolver) in
+            let viewControllerToPresent = HubHostingController()
+
+            os_log("Presenting Hub", log: .hub, type: .debug)
+
+            return resolver.resolve(
+                Action.self, name: "presentView", arguments: viewControllerToPresent as UIViewController)!
         }
-        
+
         // MARK: Action (presentPost)
-        
+
         container.register(Action.self, name: "presentPost", scope: .transient) { (resolver, postID: String?) in
 
             let viewControllerToPresent = ShowPostHostingController(
                 postID: postID,
             )
 
-            os_log("Presenting Post Detail", log: .communicationHub, type: .debug)
+            os_log("Presenting Post Detail", log: .hub, type: .debug)
 
-            return resolver.resolve(Action.self, name: "presentView", arguments: viewControllerToPresent as UIViewController)!
+            return resolver.resolve(
+                Action.self, name: "presentView", arguments: viewControllerToPresent as UIViewController)!
         }
-        
+
+        // MARK: Action (navigateToPost)
+
+        container.register(Action.self, name: "navigateToPost", scope: .transient) { (resolver, postID: String) in
+            NavigateToPostAction(
+                coordinator: resolver.resolve(HubCoordinator.self)!,
+                postID: postID
+            )
+        }
+
         // MARK: InfluenceTracker
-        
+
         container.register(InfluenceTracker.self) { resolver in
             InfluenceTrackerService(
                 influenceTime: self.influenceTime,
@@ -96,35 +109,35 @@ public struct NotificationsAssembler: Assembler {
                 userDefaults: UserDefaults(suiteName: self.appGroup)!
             )
         }
-        
+
         // MARK: NotificationAuthorizationManager
-        
+
         container.register(NotificationAuthorizationManager.self) { _ in
             NotificationAuthorizationManager()
         }
-        
+
         // MARK: NotificationContextProvider
-        
+
         container.register(NotificationsContextProvider.self) { resolver in
             resolver.resolve(NotificationAuthorizationManager.self)!
         }
-        
+
         // MARK: NotificationHandler
-        
+
         container.register(NotificationHandler.self) { resolver in
             let actionProvider: NotificationHandlerService.ActionProvider = { [weak resolver] notification in
                 resolver?.resolve(Action.self, name: "openNotification", arguments: notification)
             }
-            
+
             return NotificationHandlerService(
                 dispatcher: resolver.resolve(Dispatcher.self)!,
                 influenceTracker: resolver.resolve(InfluenceTracker.self)!,
                 actionProvider: actionProvider
             )
         }
-        
+
         // MARK: NotificationStore
-        
+
         container.register(NotificationStore.self) { [maxNotifications] resolver in
             NotificationStoreService(
                 maxSize: maxNotifications,
@@ -132,49 +145,65 @@ public struct NotificationsAssembler: Assembler {
                 userDefaults: UserDefaults(suiteName: self.appGroup)!
             )
         }
-        
+
         // MARK: RouteHandler (notificationCenter)
-        
+
         container.register(RouteHandler.self, name: "inbox") { resolver in
             let actionProvider: InboxRouteHandler.ActionProvider = { [weak resolver] in
                 resolver?.resolve(Action.self, name: "presentNotificationCenter")
             }
-            
+
             return InboxRouteHandler(actionProvider: actionProvider)
         }
-        
-        // MARK: RouteHandler (communicationHub)
-        
-        container.register(RouteHandler.self, name: "communicationHub") { resolver in
-            let postsListActionProvider: ShowPostRouteHandler.PostsListActionProvider = { [weak resolver] postId in
+
+        // MARK: RouteHandler (Hub)
+
+        container.register(RouteHandler.self, name: "hub") { resolver in
+            let presentPostActionProvider: (String?) -> Action? = { [weak resolver] postId in
                 resolver?.resolve(Action.self, name: "presentPost", arguments: postId)
             }
-            
-            return ShowPostRouteHandler(
-                postsListActionProvider: postsListActionProvider
-            )
+
+            let navigateToPostActionProvider: (String) -> Action? = { [weak resolver] postID in
+                resolver?.resolve(Action.self, name: "navigateToPost", arguments: postID)
+            }
+
+            return MainActor.assumeIsolatedOrFatalError {
+                HubRouteHandler(
+                    coordinator: resolver.resolve(HubCoordinator.self)!,
+                    presentPostActionProvider: presentPostActionProvider,
+                    navigateToPostActionProvider: navigateToPostActionProvider
+                )
+            }
         }
-        
+
         // MARK: SyncParticipant (notifications)
-        
+
         container.register(SyncParticipant.self, name: "notifications") { resolver in
             NotificationsSyncParticipant(
                 store: resolver.resolve(NotificationStore.self)!
             )
         }
 
-         
-        // MARK: Communication Hub
+        // MARK: Hub
 
-        container.register(RCHPersistentContainer.self, scope: .singleton) { resolver in
-            RCHPersistentContainer(storage: .persistent)
+        container.register(InboxPersistentContainer.self, scope: .singleton) { resolver in
+            InboxPersistentContainer(storage: .persistent)
         }
 
-        container.register(RCHSync.self, scope: .singleton) { resolver in
+        container.register(InboxSync.self, scope: .singleton) { resolver in
             return MainActor.assumeIsolatedOrFatalError {
-                RCHSync(
-                    persistentContainer: resolver.resolve(RCHPersistentContainer.self)!,
+                InboxSync(
+                    persistentContainer: resolver.resolve(InboxPersistentContainer.self)!,
                     httpClient: resolver.resolve(HTTPClient.self)!
+                )
+            }
+        }
+
+        container.register(HubCoordinator.self, scope: .singleton) { resolver in
+            return MainActor.assumeIsolatedOrFatalError {
+                HubCoordinator(
+                    configManager: resolver.resolve(ConfigManager.self)!,
+                    homeViewManager: resolver.resolve(HomeViewManager.self)!
                 )
             }
         }
@@ -183,20 +212,20 @@ public struct NotificationsAssembler: Assembler {
             container.register(RoverBadge.self, scope: .singleton) { resolver in
                 return MainActor.assumeIsolatedOrFatalError {
                     RoverBadge(
-                        persistentContainer: resolver.resolve(RCHPersistentContainer.self)!,
+                        persistentContainer: resolver.resolve(InboxPersistentContainer.self)!,
                         updateAppBadge: updateAppBadge
                     )
                 }
             }
         }
-        
+
         // MARK: UIViewController (inbox)
-        
+
         container.register(UIViewController.self, name: "inbox") { resolver in
             let presentWebsiteActionProvider: InboxViewController.ActionProvider = { [weak resolver] url in
                 resolver?.resolve(Action.self, name: "presentWebsite", arguments: url)
             }
-            
+
             return InboxViewController(
                 dispatcher: resolver.resolve(Dispatcher.self)!,
                 eventQueue: resolver.resolve(EventQueue.self)!,
@@ -210,29 +239,28 @@ public struct NotificationsAssembler: Assembler {
             )
         }
     }
-    
+
     public func containerDidAssemble(resolver: Resolver) {
         if isInfluenceTrackingEnabled {
             let influenceTracker = resolver.resolve(InfluenceTracker.self)!
             influenceTracker.startMonitoring()
         }
-        
+
         if let router = resolver.resolve(Router.self) {
             let inboxHandler = resolver.resolve(RouteHandler.self, name: "inbox")!
             router.addHandler(inboxHandler)
-            
-            let communicationHubHandler = resolver.resolve(RouteHandler.self, name: "communicationHub")!
-            router.addHandler(communicationHubHandler)
+
+            let hubHandler = resolver.resolve(RouteHandler.self, name: "hub")!
+            router.addHandler(hubHandler)
         }
-        
+
         let store = resolver.resolve(NotificationStore.self)!
         store.restore()
 
         // start up persistence and sync for comms hub
-        let commSync = resolver.resolve(RCHSync.self)!
+        let commSync = resolver.resolve(InboxSync.self)!
 
         resolver.resolve(SyncCoordinator.self)!.registerStandaloneParticipant(commSync)
-
 
         let syncParticipant = resolver.resolve(SyncParticipant.self, name: "notifications")!
         resolver.resolve(SyncCoordinator.self)!.participants.append(syncParticipant)
@@ -240,11 +268,11 @@ public struct NotificationsAssembler: Assembler {
 }
 
 private extension MainActor {
-    static func assumeIsolatedOrFatalError<T>(_ operation: @MainActor () -> T) -> T where T : Sendable {
+    static func assumeIsolatedOrFatalError<T>(_ operation: @MainActor () -> T) -> T where T: Sendable {
         if Thread.isMainThread {
-                return MainActor.assumeIsolated {
-                    operation()
-                }
+            return MainActor.assumeIsolated {
+                operation()
+            }
         } else {
             fatalError("Rover must be initialized on the main thread")
         }

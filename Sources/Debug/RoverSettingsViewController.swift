@@ -3,7 +3,7 @@
 // copy, modify, and distribute this software in source code or binary form for use
 // in connection with the web services and APIs provided by Rover.
 //
-// This copyright notice shall be included in all copies or substantial portions of 
+// This copyright notice shall be included in all copies or substantial portions of
 // the software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -13,26 +13,25 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import UIKit
-import SwiftUI
-
-import RoverFoundation
 import RoverData
+import RoverFoundation
+import SwiftUI
+import UIKit
 
 open class RoverSettingsViewController: UIHostingController<RoverSettingsView> {
     public let isTestDevice = PersistedValue<Bool>(storageKey: "io.rover.RoverDebug.isTestDevice")
-    
+
     public let controller = RoverSDKController()
-    
+
     override open var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
-    
+
     init() {
-        super.init(rootView: RoverSettingsView(controller: controller) { })
+        super.init(rootView: RoverSettingsView(controller: controller) {})
         rootView = RoverSettingsView(controller: controller) { self.dismiss(animated: true) }
     }
-    
+
     public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -41,30 +40,32 @@ open class RoverSettingsViewController: UIHostingController<RoverSettingsView> {
 public struct RoverSettingsView: View {
 
     @ObservedObject internal var controller: RoverSDKController
-    
+
     public let dismiss: () -> Void
-    
+
     public var body: some View {
         NavigationView {
             List {
                 BooleanRow(label: "Test Device", value: controller.isTestDevice)
                 PrivacyModeView(value: controller.trackingMode)
                 StringRow(label: "Device Name", value: controller.deviceName)
-                StringRow(label: "Device Identifier", value: .constant(
-                    UIDevice.current.identifierForVendor?.uuidString ?? "Unknown Identifier"
-                ), readOnly: true)
+                StringRow(
+                    label: "Device Identifier",
+                    value: .constant(
+                        UIDevice.current.identifierForVendor?.uuidString ?? "Unknown Identifier"
+                    ), readOnly: true)
             }
             .listStyle(GroupedListStyle())
             .navigationBarTitle("Rover Settings")
-            .navigationBarItems(trailing: Button {
-                dismiss()
-            } label: {
-                Image(systemName: "xmark")
-            })
+            .navigationBarItems(
+                trailing: Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: "xmark")
+                })
         }
     }
-    
-    
+
 }
 
 public class RoverSDKController: ObservableObject {
@@ -76,7 +77,7 @@ public class RoverSDKController: ObservableObject {
             Rover.shared.resolve(DeviceNameManager.self)?.setDeviceName(newValue)
         }
     }
-    
+
     internal var isTestDevice: Binding<Bool> {
         Binding {
             self.isTestDeviceField.value ?? false
@@ -85,7 +86,7 @@ public class RoverSDKController: ObservableObject {
             self.isTestDeviceField.value = newValue
         }
     }
-    
+
     internal var trackingMode: Binding<PrivacyService.TrackingMode> {
         Binding {
             Rover.shared.trackingMode
@@ -94,15 +95,13 @@ public class RoverSDKController: ObservableObject {
             Rover.shared.trackingMode = value
         }
     }
-    
+
     internal let isTestDeviceField = PersistedValue<Bool>(storageKey: "io.rover.RoverDebug.isTestDevice")
 }
 
 private struct PrivacyModeView: View {
     @Binding var value: PrivacyService.TrackingMode
-    
 
-    
     var body: some View {
         Picker("Tracking Mode", selection: $value) {
             Text("Default").tag(PrivacyService.TrackingMode.default)
@@ -114,7 +113,7 @@ private struct PrivacyModeView: View {
 struct BooleanRow: View {
     var label: String
     @Binding var value: Bool
-    
+
     var body: some View {
         HStack {
             Text(label)
@@ -131,7 +130,7 @@ struct StringRow: View {
     var label: String
     @Binding var value: String
     var readOnly: Bool = false
-    
+
     var body: some View {
         VStack(alignment: .leading) {
             Text(label)

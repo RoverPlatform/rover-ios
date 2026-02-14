@@ -3,7 +3,7 @@
 // copy, modify, and distribute this software in source code or binary form for use
 // in connection with the web services and APIs provided by Rover.
 //
-// This copyright notice shall be included in all copies or substantial portions of 
+// This copyright notice shall be included in all copies or substantial portions of
 // the software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -21,6 +21,7 @@ class ModularContextProvider {
     weak var locationContextProvider: LocationContextProvider?
     weak var notificationsContextProvider: NotificationsContextProvider?
     weak var pushTokenContextProvider: PushTokenContextProvider?
+    weak var liveActivityTokensContextProvider: LiveActivityTokensContextProvider?
     weak var reachabilityContextProvider: ReachabilityContextProvider?
     weak var staticContextProvider: StaticContextProvider?
     weak var telephonyContextProvider: TelephonyContextProvider?
@@ -28,7 +29,7 @@ class ModularContextProvider {
     weak var userInfoContextProvider: UserInfoContextProvider?
     weak var conversionsContextProvider: ConversionsContextProvider?
     weak var appLastSeenContextProvider: AppLastSeenContextProvider?
-    
+
     init(
         privacyContextProvider: PrivacyContextProvider?,
         darkModeContextProvider: DarkModeContextProvider?,
@@ -37,6 +38,7 @@ class ModularContextProvider {
         localeContextProvider: LocaleContextProvider?,
         notificationsContextProvider: NotificationsContextProvider?,
         pushTokenContextProvider: PushTokenContextProvider?,
+        liveActivityTokensContextProvider: LiveActivityTokensContextProvider?,
         reachabilityContextProvider: ReachabilityContextProvider?,
         staticContextProvider: StaticContextProvider,
         telephonyContextProvider: TelephonyContextProvider?,
@@ -52,6 +54,7 @@ class ModularContextProvider {
         self.locationContextProvider = locationContextProvider
         self.notificationsContextProvider = notificationsContextProvider
         self.pushTokenContextProvider = pushTokenContextProvider
+        self.liveActivityTokensContextProvider = liveActivityTokensContextProvider
         self.reachabilityContextProvider = reachabilityContextProvider
         self.staticContextProvider = staticContextProvider
         self.telephonyContextProvider = telephonyContextProvider
@@ -75,6 +78,7 @@ extension ModularContextProvider: ContextProvider {
             locationAuthorization: self.locationContextProvider?.locationAuthorization,
             notificationAuthorization: self.notificationsContextProvider?.notificationAuthorization,
             pushToken: self.pushTokenContextProvider?.pushToken,
+            liveActivityTokens: self.liveActivityTokensContextProvider?.liveActivityTokens,
             isCellularEnabled: self.reachabilityContextProvider?.isCellularEnabled,
             isWifiEnabled: self.reachabilityContextProvider?.isWifiEnabled,
             appBadgeNumber: self.staticContextProvider?.appBadgeNumber,

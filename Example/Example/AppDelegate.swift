@@ -38,7 +38,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // Initialize the Rover SDK with all modules.
     Rover.initialize(assemblers: [
       FoundationAssembler(),
-      DataAssembler(accountToken: "<YOUR_SDK_TOKEN>"),
+      DataAssembler(accountToken: "<YOUR_SDK_TOKEN>", appGroup: "group.io.rover.Example"),
       UIAssembler(associatedDomains: ["example.rover.io"], urlSchemes: ["rv-example"]),
       ExperiencesAssembler(),
       NotificationsAssembler(appGroup: "group.io.rover.Example"),  // Used to share `UserDefaults` data between the main app target and the notification service extension.

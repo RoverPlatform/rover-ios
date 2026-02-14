@@ -3,7 +3,7 @@
 // copy, modify, and distribute this software in source code or binary form for use
 // in connection with the web services and APIs provided by Rover.
 //
-// This copyright notice shall be included in all copies or substantial portions of 
+// This copyright notice shall be included in all copies or substantial portions of
 // the software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -14,6 +14,14 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import Foundation
 
+/// Result of revalidating a cached experience.
+enum RevalidationResult {
+    case unchanged
+    case updated(LoadedExperience)
+    case failure(Failure)
+}
+
 protocol ExperienceStore {
     func fetchExperience(for url: URL, completionHandler: @escaping (Result<LoadedExperience, Failure>) -> Void)
+    func revalidateExperience(for url: URL, completionHandler: @escaping (RevalidationResult) -> Void)
 }

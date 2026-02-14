@@ -47,6 +47,18 @@ let package = Package(
         .library(
             name: "RoverAppExtensions",
             targets: ["RoverAppExtensions"]),
+        .library(
+            name: "RoverLiveActivities",
+            targets: ["RoverLiveActivities"]),
+        .library(
+            name: "RoverNBALiveActivities",
+            targets: ["RoverNBALiveActivities"]),
+        .library(
+            name: "RoverNFLLiveActivities",
+            targets: ["RoverNFLLiveActivities"]),
+        .library(
+            name: "RoverNHLLiveActivities",
+            targets: ["RoverNHLLiveActivities"]),
     ],
     dependencies: [
         .package(url:"https://github.com/weichsel/ZIPFoundation", .upToNextMinor(from: "0.9.19")),
@@ -90,7 +102,7 @@ let package = Package(
             resources: [.copy("Resources/PrivacyInfo.xcprivacy")]),
         .target(
             name: "RoverNotifications",
-            dependencies: ["RoverData", "RoverUI"],
+            dependencies: ["RoverData", "RoverUI", "RoverExperiences"],
             path: "Sources/Notifications",
             resources: [.copy("Resources/PrivacyInfo.xcprivacy")]),
         .target(
@@ -134,7 +146,34 @@ let package = Package(
             dependencies: ["RoverData"],
             path: "Sources/AdobeExperience",
             resources: [.copy("Resources/PrivacyInfo.xcprivacy")]),
-        
+        .target(
+            name: "RoverLiveActivities",
+            dependencies: ["RoverData"],
+            path: "Sources/LiveActivities",
+            resources: [.copy("Resources/PrivacyInfo.xcprivacy")]),
+        .target(
+            name: "RoverNBALiveActivities",
+            path: "Sources/NBALiveActivities",
+            resources: [
+                .process("Resources/Assets.xcassets"),
+                .copy("Resources/PrivacyInfo.xcprivacy"),
+
+            ]),
+        .target(
+            name: "RoverNFLLiveActivities",
+            path: "Sources/NFLLiveActivities",
+            resources: [
+                .process("Resources/Assets.xcassets"),
+                .copy("Resources/PrivacyInfo.xcprivacy"),
+
+            ]),
+        .target(
+            name: "RoverNHLLiveActivities",
+            path: "Sources/NHLLiveActivities",
+            resources: [
+                .process("Resources/Assets.xcassets"),
+                .copy("Resources/PrivacyInfo.xcprivacy"),
+            ]),
         // Test targets
         .testTarget(
             name: "RoverFoundationTests",
@@ -172,5 +211,9 @@ let package = Package(
             name: "RoverTicketmasterTests",
             dependencies: ["RoverTicketmaster"],
             path: "Tests/TicketmasterTests"),
+        .testTarget(
+            name: "RoverLiveActivitiesTests",
+            dependencies: ["RoverLiveActivities", "RoverData"],
+            path: "Tests/LiveActivitiesTests"),
     ]
 )

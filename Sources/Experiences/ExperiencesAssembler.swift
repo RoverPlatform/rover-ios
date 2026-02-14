@@ -34,7 +34,8 @@ public struct ExperiencesAssembler: Assembler {
         
         container.register(ExperienceStore.self) { resolver in
             let client = resolver.resolve(FetchExperienceClient.self)!
-            return ExperienceStoreService(client: client)
+            let router = resolver.resolve(Router.self)!
+            return ExperienceStoreService(client: client, router: router)
         }
         
         // MARK: FetchExperienceClient

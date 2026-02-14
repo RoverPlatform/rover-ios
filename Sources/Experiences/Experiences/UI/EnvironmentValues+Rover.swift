@@ -3,7 +3,7 @@
 // copy, modify, and distribute this software in source code or binary form for use
 // in connection with the web services and APIs provided by Rover.
 //
-// This copyright notice shall be included in all copies or substantial portions of 
+// This copyright notice shall be included in all copies or substantial portions of
 // the software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -13,9 +13,8 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
-import SwiftUI
 import Combine
+import SwiftUI
 import os.log
 
 internal struct ExperienceViewControllerHolder {
@@ -118,6 +117,26 @@ internal struct MediaCurrentTimeKey: EnvironmentKey {
 
 internal struct MediaDurationKey: EnvironmentKey {
     static var defaultValue: CurrentValueSubject<TimeInterval, Never> = CurrentValueSubject<TimeInterval, Never>(0.0)
+}
+
+internal struct PresentWebsiteActionKey: EnvironmentKey {
+    static let defaultValue: ((SafariURL) -> Void)? = nil
+}
+
+internal struct DismissActionKey: EnvironmentKey {
+    static let defaultValue: (() -> Void)? = nil
+}
+
+internal struct NavigationPathKey: EnvironmentKey {
+    static var defaultValue: Binding<NavigationPath> = .constant(NavigationPath())
+}
+
+internal struct FullScreenModalKey: EnvironmentKey {
+    static var defaultValue: ((ScreenDestination) -> Void)? = nil
+}
+
+internal struct ScreenModalKey: EnvironmentKey {
+    static var defaultValue: ((ScreenDestination) -> Void)? = nil
 }
 
 internal extension EnvironmentValues {
@@ -319,6 +338,56 @@ internal extension EnvironmentValues {
         
         set {
             self[CarouselCurrentPageKey.self] = newValue
+        }
+    }
+
+    var presentWebsiteAction: ((SafariURL) -> Void)? {
+        get {
+            self[PresentWebsiteActionKey.self]
+        }
+
+        set {
+            self[PresentWebsiteActionKey.self] = newValue
+        }
+    }
+
+    var dismissAction: (() -> Void)? {
+        get {
+            self[DismissActionKey.self]
+        }
+
+        set {
+            self[DismissActionKey.self] = newValue
+        }
+    }
+
+    var navigationPath: Binding<NavigationPath> {
+        get {
+            return self[NavigationPathKey.self]
+        }
+
+        set {
+            self[NavigationPathKey.self] = newValue
+        }
+    }
+
+    var fullScreenModal: ((ScreenDestination) -> Void)? {
+        get {
+            return self[FullScreenModalKey.self]
+        }
+
+        set {
+            self[FullScreenModalKey.self] = newValue
+        }
+    }
+
+    var screenModal: ((ScreenDestination) -> Void)? {
+        get {
+            return self[ScreenModalKey.self]
+        }
+
+        set {
+            self[ScreenModalKey.self] = newValue
         }
     }
 }

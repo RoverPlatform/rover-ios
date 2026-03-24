@@ -264,6 +264,10 @@ public struct NotificationsAssembler: Assembler {
 
         let syncParticipant = resolver.resolve(SyncParticipant.self, name: "notifications")!
         resolver.resolve(SyncCoordinator.self)!.participants.append(syncParticipant)
+
+        if updateAppBadge {
+            _ = resolver.resolve(RoverBadge.self)
+        }
     }
 }
 

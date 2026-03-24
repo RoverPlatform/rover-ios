@@ -3,7 +3,7 @@
 // copy, modify, and distribute this software in source code or binary form for use
 // in connection with the web services and APIs provided by Rover.
 //
-// This copyright notice shall be included in all copies or substantial portions of 
+// This copyright notice shall be included in all copies or substantial portions of
 // the software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -17,5 +17,5 @@ import Foundation
 
 public enum Meta {
     public static let APIVersion: Int = 2
-    public static let SDKVersion: String = "4.14.0"
+    public static let SDKVersion: String = "4.14.1"
 }

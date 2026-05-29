@@ -55,6 +55,7 @@ struct HubContentView: View {
                     inboxOrEmpty
                 }
             }
+            .resetNavBarAppearance()
             .onAppear {
                 Task {
                     await configSync?.sync()

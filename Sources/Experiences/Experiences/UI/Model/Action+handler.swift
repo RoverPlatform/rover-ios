@@ -260,7 +260,7 @@ extension ExperienceAction {
                 }
             }
 
-        case .openURL(let url, _, _):
+        case let .openURL(url, dismissExperience, _):
             guard
                 let resolvedURLString = url.evaluatingExpressions(
                     data: data,
@@ -271,6 +271,10 @@ extension ExperienceAction {
             else {
                 rover_log(.error, "Unable to resolve URL: %@", url)
                 return
+            }
+
+            if dismissExperience {
+                dismissAction?()
             }
 
             UIApplication.shared.open(resolvedURL) { success in

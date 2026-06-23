@@ -32,6 +32,11 @@ struct ScreenDestination: Hashable, Identifiable {
     }
 }
 
+/// Renders a single screen within an experience, managing navigation to child screens and
+/// handling deep-link and web URL actions.
+///
+/// - Note: This view is used exclusively by the Hub. It is not part of
+///   the standard Rover Experiences rendering path used by `RoverExperiences` elsewhere in the SDK.
 struct ScreenView: View {
     let experience: ExperienceModel
     let screen: Screen
@@ -161,7 +166,6 @@ struct ScreenView: View {
                 }
             }
         }
-        .toolbarColorScheme(statusBarStyle: screen.statusBarStyle, colorScheme: colorScheme)
         .environment(\.data, data)
         .onAppear {
             NotificationCenter.default.post(
@@ -376,20 +380,6 @@ extension View {
             self.toolbarVisibility(visibility, for: .navigationBar)
         } else {
             self.toolbar(visibility, for: .navigationBar)
-        }
-    }
-
-    @ViewBuilder
-    func toolbarColorScheme(statusBarStyle: StatusBarStyle, colorScheme: ColorScheme) -> some View {
-        switch statusBarStyle {
-        case .default:
-            self
-        case .light:
-            self.toolbarColorScheme(.dark, for: .navigationBar)
-        case .dark:
-            self.toolbarColorScheme(.light, for: .navigationBar)
-        case .inverted:
-            self.toolbarColorScheme(colorScheme == .dark ? .light : .dark, for: .navigationBar)
         }
     }
 }

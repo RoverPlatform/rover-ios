@@ -36,18 +36,29 @@ struct NavBarAppearanceReset: UIViewControllerRepresentable {
             }
 
             let standard = UINavigationBarAppearance()
-            standard.configureWithDefaultBackground()
-
-            let scroll = UINavigationBarAppearance()
-            scroll.configureWithTransparentBackground()
+            standard.configureWithTransparentBackground()
 
             bar.standardAppearance = standard
-            bar.scrollEdgeAppearance = scroll
+            bar.scrollEdgeAppearance = standard
             bar.compactAppearance = standard
-            bar.compactScrollEdgeAppearance = scroll
+            bar.compactScrollEdgeAppearance = standard
 
             bar.tintColor = nil
             bar.isTranslucent = true
+            bar.backgroundColor = nil
+            bar.barStyle = .default
+            bar.shadowImage = nil
+            bar.setBackgroundImage(nil, for: .default)
+            bar.setBackgroundImage(nil, for: .compact)
+            bar.setBackgroundImage(nil, for: .defaultPrompt)
+            bar.setBackgroundImage(nil, for: .compactPrompt)
+            bar.titleTextAttributes = nil
+            bar.largeTitleTextAttributes = nil
+            bar.backIndicatorImage = nil
+            bar.backIndicatorTransitionMaskImage = nil
+            for metrics in [UIBarMetrics.default, .compact, .defaultPrompt, .compactPrompt] {
+                bar.setTitleVerticalPositionAdjustment(0, for: metrics)
+            }
         }
     }
 }

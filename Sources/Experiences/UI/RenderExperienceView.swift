@@ -23,6 +23,9 @@ import os.log
 /// `RenderExperienceViewController` which manages its own UIKit `UINavigationController` internally.
 ///
 /// Used internally by `ExperienceView`.
+///
+/// - Note: This view is used exclusively by the Hub. It is not part of
+///   the standard Rover Experiences rendering path used by `RoverExperiences` elsewhere in the SDK.
 struct RenderExperienceView: View {
 
     let experienceManager = Rover.shared.resolve(ExperienceManager.self)!

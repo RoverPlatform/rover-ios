@@ -42,7 +42,7 @@ struct HubContentView: View {
                         .toolbar {
                             if coordinator.isInboxEnabled {
                                 ToolbarItem(placement: .topBarTrailing) {
-                                    Button {
+                                    CompatibleToolbarButton {
                                         coordinator.navigationPath.append(HubPath.messages)
                                     } label: {
                                         Image(systemName: "envelope")

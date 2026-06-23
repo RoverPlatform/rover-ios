@@ -22,6 +22,9 @@ import os.log
 /// Loading is triggered on appear and when the URL changes, and the same URL is not
 /// reloaded. When presented modally, errors are surfaced via an alert; otherwise the
 /// inline error view is shown.
+///
+/// - Note: This view is used exclusively by the Hub. It is not part of
+///   the standard Rover Experiences rendering path used by `RoverExperiences` elsewhere in the SDK.
 public struct ExperienceView: View {
     @StateObject private var state: ExperienceViewState
     @Environment(\.dismiss) private var dismiss

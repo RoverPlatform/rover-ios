@@ -40,6 +40,16 @@ public struct RoverConfig: Codable, Equatable {
             self.isSettingsViewEnabled = isSettingsViewEnabled
             self.deeplink = deeplink
         }
+
+        private enum CodingKeys: String, CodingKey {
+            case isHomeEnabled
+            case isInboxEnabled
+            case isSettingsViewEnabled
+            // The backend serializes this field as camelCase `deepLink`, but the
+            // public Swift property is `deeplink`. Map it explicitly so the value
+            // actually decodes instead of silently staying nil.
+            case deeplink = "deepLink"
+        }
     }
 
     public var hub: Hub

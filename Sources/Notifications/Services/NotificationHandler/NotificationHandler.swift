@@ -16,10 +16,34 @@
 import RoverFoundation
 import UserNotifications
 
+let defaultNotificationPresentationOptions: UNNotificationPresentationOptions = [.sound, .banner]
+
 public protocol NotificationHandler {
-    @available(*, deprecated, message: "Replaced by Rover.shared.userNotificationCenterDidReceive(response:withCompletionHandler:)")
+    @available(
+        *,
+        deprecated,
+        message: "Replaced by Rover.shared.userNotificationCenterDidReceive(response:withCompletionHandler:)"
+    )
     @discardableResult
     func handle(_ response: UNNotificationResponse, completionHandler: (() -> Void)?) -> Bool
 
     func action(for response: UNNotificationResponse) -> Action?
+
+    func willPresent(
+        userInfo: [AnyHashable: Any],
+        displayedConversationID: UUID?
+    ) -> UNNotificationPresentationOptions
+
+    func clearDeliveredNotifications(for conversationID: UUID) async
+}
+
+public extension NotificationHandler {
+    func willPresent(
+        userInfo: [AnyHashable: Any],
+        displayedConversationID: UUID?
+    ) -> UNNotificationPresentationOptions {
+        defaultNotificationPresentationOptions
+    }
+
+    func clearDeliveredNotifications(for conversationID: UUID) async {}
 }

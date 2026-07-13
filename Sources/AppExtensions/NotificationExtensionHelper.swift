@@ -3,7 +3,7 @@
 // copy, modify, and distribute this software in source code or binary form for use
 // in connection with the web services and APIs provided by Rover.
 //
-// This copyright notice shall be included in all copies or substantial portions of 
+// This copyright notice shall be included in all copies or substantial portions of
 // the software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -14,68 +14,105 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import MobileCoreServices
-import UserNotifications
 import RoverFoundation
+import UserNotifications
+import os
 
+private let helperLogger = Logger(subsystem: "io.rover.sdk", category: "NotificationExtension")
+
+/// Use `NotificationExtensionHelper` from your `UNNotificationServiceExtension` to let Rover
+/// finish processing a notification before delivery.
+///
+/// Create a mutable copy of the incoming content in your extension's
+/// `didReceive(_:withContentHandler:)`.
+///
+/// Use `didReceive(_:withContent:withContentHandler:)`. This lets Rover hand Apple's enriched
+/// `UNNotificationContent` back through your content handler, which is required when the system
+/// replaces the original mutable content during communication-notification updates.
 public class NotificationExtensionHelper {
     let userDefaults: UserDefaults
+    let conversationEnricher: ConversationNotificationEnriching
 
     public init?(appGroup: String) {
         guard let userDefaults = UserDefaults(suiteName: appGroup) else {
             return nil
         }
         self.userDefaults = userDefaults
+        self.conversationEnricher = ConversationNotificationEnricher.live
     }
-    
+
+    init(userDefaults: UserDefaults, conversationEnricher: ConversationNotificationEnriching) {
+        self.userDefaults = userDefaults
+        self.conversationEnricher = conversationEnricher
+    }
+
     public var unreadNotifications: Int {
         return userDefaults.integer(forKey: "io.rover.unreadNotifications")
     }
 
+    /// Applies Rover's standard notification-service-extension behavior in place.
+    ///
+    /// Call this overload when your extension only needs Rover's receipt tracking and media
+    /// attachment handling on the mutable notification content provided by iOS.
     @discardableResult
-    public func didReceive(_ request: UNNotificationRequest, withContent content: UNMutableNotificationContent) -> Bool {
-        guard let data = try? JSONSerialization.data(withJSONObject: content.userInfo, options: []) else {
-            clearLastReceivedNotification()
-            return false
-        }
-
-        struct Payload: Decodable {
-            struct Rover: Decodable {
-                struct Notification: Decodable {
-                    var id: String
-                    var campaignID: String
-
-                    struct Attachment: Decodable {
-                        var url: URL
-                    }
-
-                    var attachment: Attachment?
-                }
-
-                var notification: Notification
-            }
-
-            var rover: Rover
-        }
-
-        guard let payload = try? JSONDecoder.default.decode(Payload.self, from: data) else {
-            // This is not a Rover notification – clear the last received notification so we're not taking credit for an influenced open.
-            clearLastReceivedNotification()
-            return false
-        }
-
-        let notification = payload.rover.notification
-        setLastReceivedNotification(notificationID: notification.id, campaignID: notification.campaignID)
-
-        if let attachment = notification.attachment {
-            attachMedia(from: attachment.url, to: content)
-        }
-
-        return true
+    public func didReceive(_ request: UNNotificationRequest, withContent content: UNMutableNotificationContent) -> Bool
+    {
+        handleRoverNotification(for: request, withContent: content)
     }
 
-    /*
-     * When a notification is received, store its ID and the time it was received in UserDefaults. These values are used by the InfluenceTracker to determine if an influenced open has occured.
-     */
+    /// Applies Rover notification processing and delivers the final notification content.
+    ///
+    /// Call this overload when you want Rover to upgrade eligible conversation pushes into
+    /// Apple's communication-notification presentation. Rover still applies its standard receipt
+    /// tracking and media attachment handling before it calls your content handler with the final
+    /// notification content.
+    public func didReceive(
+        _ request: UNNotificationRequest,
+        withContent content: UNMutableNotificationContent,
+        withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
+    ) {
+        Task {
+            let deliveredContent = await notificationContent(for: request, withContent: content)
+            helperLogger.debug(
+                "delivering content for request \(request.identifier, privacy: .public) with title \(deliveredContent.title, privacy: .private)"
+            )
+            contentHandler(deliveredContent)
+        }
+    }
+
+    /// Applies Rover notification handling then attempts conversation-notification enrichment.
+    ///
+    /// Always returns usable content: returns the enriched content on success, or `content`
+    /// (the mutable copy) as a fallback when the push is not a conversation push or enrichment fails.
+    func notificationContent(
+        for request: UNNotificationRequest,
+        withContent content: UNMutableNotificationContent
+    ) async -> UNNotificationContent {
+        handleRoverNotification(for: request, withContent: content)
+
+        // Communication notifications are sourced from the conversation-specific payload, not
+        // from the standard `rover.notification` title/body metadata.
+        guard let conversationPayload = ConversationPushPayload.from(userInfo: content.userInfo) else {
+            return content
+        }
+        if let updatedContent = await conversationEnricher.enrichedContent(
+            payload: conversationPayload,
+            from: content
+        ) {
+            helperLogger.debug(
+                "conversation enrichment succeeded for conversation \(conversationPayload.rover.conversation.id, privacy: .public)"
+            )
+            return updatedContent
+        }
+
+        return content
+    }
+
+    /// Stores the delivered-notification receipt used by Rover's influence tracker.
+    ///
+    /// Communication notifications still pass through this bookkeeping path today because the
+    /// branch intentionally preserves the existing Rover notification contract while layering the
+    /// new conversation semantics on top.
     func setLastReceivedNotification(notificationID: String, campaignID: String) {
         struct NotificationReceipt: Encodable {
             var notificationID: String
@@ -84,7 +121,8 @@ public class NotificationExtensionHelper {
         }
 
         let now = Date()
-        let lastReceivedNotification = NotificationReceipt(notificationID: notificationID, campaignID: campaignID, receivedAt: now)
+        let lastReceivedNotification = NotificationReceipt(
+            notificationID: notificationID, campaignID: campaignID, receivedAt: now)
 
         guard let data = try? PropertyListEncoder().encode(lastReceivedNotification) else {
             clearLastReceivedNotification()
@@ -92,6 +130,50 @@ public class NotificationExtensionHelper {
         }
 
         userDefaults.set(data, forKey: "io.rover.lastReceivedNotification")
+    }
+
+    @discardableResult
+    func handleRoverNotification(
+        for request: UNNotificationRequest,
+        withContent content: UNMutableNotificationContent
+    ) -> Bool {
+        guard let data = try? JSONSerialization.data(withJSONObject: content.userInfo, options: []) else {
+            helperLogger.error(
+                "failed to serialize userInfo for request \(request.identifier, privacy: .public)"
+            )
+            clearLastReceivedNotification()
+            return false
+        }
+
+        guard let payload = try? JSONDecoder.default.decode(RoverNotificationPushPayload.self, from: data) else {
+            helperLogger.debug(
+                "payload is not a standard Rover notification for request \(request.identifier, privacy: .public)"
+            )
+            // Only clear the receipt if this is definitely not a Rover push.
+            // Conversation pushes that lack rover.notification must not
+            // erase an existing campaign receipt — the user may open that campaign notification
+            // shortly after, and the influenced-open attribution would be lost.
+            if ConversationPushPayload.from(userInfo: content.userInfo) == nil {
+                clearLastReceivedNotification()
+            }
+            return false
+        }
+
+        let notification = payload.rover.notification
+        setLastReceivedNotification(notificationID: notification.id, campaignID: notification.campaignID)
+        helperLogger.debug(
+            "decoded Rover notification \(notification.id, privacy: .public) for campaign \(notification.campaignID, privacy: .public)"
+        )
+
+        // Keep Rover's standard notification behavior intact before attempting any
+        // conversation-specific upgrade path.
+        if let attachment = notification.attachment {
+            helperLogger.debug(
+                "attempting media attachment from \(attachment.url.absoluteString, privacy: .private)"
+            )
+            attachMedia(from: attachment.url, to: content)
+        }
+        return true
     }
 
     func clearLastReceivedNotification() {
@@ -127,7 +209,7 @@ public class NotificationExtensionHelper {
         let downloadResult = downloadAttachment(attachmentURL)
 
         if let error = downloadResult.error {
-            print(error.logDescription)
+            helperLogger.error("media attachment download failed: \(error.logDescription, privacy: .public)")
             return
         }
 
@@ -140,7 +222,8 @@ public class NotificationExtensionHelper {
             if ext.isEmpty {
                 return nil
             }
-            let uti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, ext as CFString, nil)?.takeRetainedValue()
+            let uti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, ext as CFString, nil)?
+                .takeRetainedValue()
 
             if let uti = uti {
                 // return nil if dynamic UTI is assigned, which means the platform could not infer a type from the path extension.
@@ -157,14 +240,18 @@ public class NotificationExtensionHelper {
                 return nil
             }
 
-            return UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, mimeType as CFString, nil)?.takeRetainedValue()
+            return UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, mimeType as CFString, nil)?
+                .takeRetainedValue()
         }
 
         guard let uti = utiFromURL(attachmentURL) ?? utiFromResponse(downloadResult.response) else {
             return
         }
 
-        let acceptedTypes = [kUTTypeAudioInterchangeFileFormat, kUTTypeWaveformAudio, kUTTypeMP3, kUTTypeMPEG4Audio, kUTTypeJPEG, kUTTypeGIF, kUTTypePNG, kUTTypeMPEG, kUTTypeMPEG2Video, kUTTypeMPEG4, kUTTypeAVIMovie]
+        let acceptedTypes = [
+            kUTTypeAudioInterchangeFileFormat, kUTTypeWaveformAudio, kUTTypeMP3, kUTTypeMPEG4Audio, kUTTypeJPEG,
+            kUTTypeGIF, kUTTypePNG, kUTTypeMPEG, kUTTypeMPEG2Video, kUTTypeMPEG4, kUTTypeAVIMovie,
+        ]
 
         guard acceptedTypes.contains(uti) else {
             return

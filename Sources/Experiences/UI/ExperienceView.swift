@@ -33,18 +33,121 @@ public struct ExperienceView: View {
     @Binding var path: NavigationPath
     let isPresentedModally: Bool
 
+    /// An optional dismissal closure for a full-screen, dismissable App Screens
+    /// presentation. Pass when presenting the experience full-screen and dismissable;
+    /// the closure performs the dismissal (e.g. `dismiss(animated:)` from the actual
+    /// presenter, such as `@Environment(\.dismiss)`). Leave unset when embedding.
+    /// Threaded to the wrapped `ExperienceViewController`, which installs an xmark
+    /// close item on the App Screens root host when it is non-`nil`. `nil` for the
+    /// Hub embed / document path.
+    private let onDismissButtonPressed: (() -> Void)?
+
+    /// An optional native item to install on the App Screens ROOT screen only (the
+    /// Hub inbox affordance). Ignored by the document-experience path. Threaded to
+    /// the wrapped `ExperienceViewController` and kept in sync on update so badge
+    /// changes propagate. `nil` for the public init.
+    private let appScreensRootBarItem: AppScreensRootBarItem?
+
+    /// The Hub's `HubCoordinator.appScreensResetGeneration`. Each increment signals
+    /// the embedded App Screens flow to pop its child navigation stack to root (and
+    /// dismiss any App Screens sheets), so a coordinator-driven navigation never
+    /// reveals a stale pushed detail on back-out. `0` for the public init, whose
+    /// callers do not embed the Hub-driven App Screens home view.
+    private let appScreensResetGeneration: Int
+
+    /// Creates an experience view for the given URL.
+    ///
+    /// - Parameters:
+    ///   - url: The experience URL to load.
+    ///   - path: The external navigation path the experience drives.
+    ///   - onDismissButtonPressed: An optional dismissal closure. Pass when
+    ///     presenting the experience full-screen and dismissable; the closure
+    ///     performs the dismissal (e.g. `dismiss(animated:)` from the actual
+    ///     presenter, such as `@Environment(\.dismiss)`). When set, a full-screen
+    ///     App Screens experience shows an xmark close item on its root screen whose
+    ///     action invokes this closure. Leave unset when embedding.
     public init(
         url: URL,
         path: Binding<NavigationPath>,
-        isPresentedModally: Bool = false
+        onDismissButtonPressed: (() -> Void)? = nil
+    ) {
+        self.url = url
+        self._state = StateObject(wrappedValue: ExperienceViewState())
+        self._path = path
+        self.isPresentedModally = false
+        self.onDismissButtonPressed = onDismissButtonPressed
+        self.appScreensRootBarItem = nil
+        self.appScreensResetGeneration = 0
+    }
+
+    /// Creates an experience view, opting into the v2 document-experience modal
+    /// error-alert style.
+    ///
+    /// - Note: `isPresentedModally` only toggles whether a failed *document*
+    ///   experience surfaces its error via an alert (modal) or an inline error view;
+    ///   despite the name it does not control close chrome. Prefer
+    ///   ``init(url:path:onDismissButtonPressed:)`` and supply a dismissal closure to
+    ///   present a dismissable full-screen experience.
+    @available(
+        *,
+        deprecated,
+        message:
+            "isPresentedModally only gates the v2 document error-alert style, not close chrome. Use init(url:path:onDismissButtonPressed:)."
+    )
+    public init(
+        url: URL,
+        path: Binding<NavigationPath>,
+        isPresentedModally: Bool
     ) {
         self.url = url
         self._state = StateObject(wrappedValue: ExperienceViewState())
         self._path = path
         self.isPresentedModally = isPresentedModally
+        self.onDismissButtonPressed = nil
+        self.appScreensRootBarItem = nil
+        self.appScreensResetGeneration = 0
+    }
+
+    /// Additive `package` initializer (the public init is untouched) that lets the
+    /// Hub supply a native root bar item for a V3 App Screens home view — the inbox
+    /// affordance restored natively after the outer SwiftUI toolbar was hidden to
+    /// avoid a double nav bar — and a reset generation that pops the App Screens
+    /// child stack to root on a coordinator-driven navigation. No public API change.
+    package init(
+        url: URL,
+        path: Binding<NavigationPath>,
+        isPresentedModally: Bool = false,
+        appScreensResetGeneration: Int = 0,
+        appScreensRootBarItem: AppScreensRootBarItem?
+    ) {
+        self.url = url
+        self._state = StateObject(wrappedValue: ExperienceViewState())
+        self._path = path
+        self.isPresentedModally = isPresentedModally
+        self.onDismissButtonPressed = nil
+        self.appScreensRootBarItem = appScreensRootBarItem
+        self.appScreensResetGeneration = appScreensResetGeneration
     }
 
     public var body: some View {
+        if ExperienceURLClassifier.classify(url) == .appScreens {
+            // V3 App Screens gets one construction path: wrap the UIKit
+            // ExperienceViewController (which owns the child nav + skeleton) and
+            // hide the outer SwiftUI toolbar so there is no double nav bar.
+            AppScreensExperienceRepresentable(
+                url: url,
+                rootBarItem: appScreensRootBarItem,
+                resetGeneration: appScreensResetGeneration,
+                onDismissButtonPressed: onDismissButtonPressed
+            )
+            .ignoresSafeArea()
+            .toolbar(.hidden, for: .navigationBar)
+        } else {
+            documentExperienceBody
+        }
+    }
+
+    private var documentExperienceBody: some View {
         SwiftUI.ZStack {
             switch state.loadingState {
             case .loading:
@@ -99,6 +202,70 @@ public struct ExperienceView: View {
     }
 }
 
+/// Wraps the UIKit `ExperienceViewController` so V3 App Screens can render inside
+/// `ExperienceView` (SwiftUI). The controller owns the child navigation controller,
+/// skeleton, and reveal; this representable only bridges the URL in and reloads
+/// when it changes.
+private struct AppScreensExperienceRepresentable: UIViewControllerRepresentable {
+    let url: URL
+    let rootBarItem: AppScreensRootBarItem?
+    /// The Hub's reset generation. Each new value pops the App Screens child stack
+    /// to root; see `ExperienceView.appScreensResetGeneration`.
+    let resetGeneration: Int
+    /// Forwarded to `ExperienceViewController.onDismissButtonPressed`; installs the
+    /// xmark close item on the App Screens root host when non-`nil`. See
+    /// `ExperienceView.onDismissButtonPressed`.
+    let onDismissButtonPressed: (() -> Void)?
+
+    func makeCoordinator() -> Coordinator {
+        // Seed with the current generation so the first render never fires a pop.
+        Coordinator(url: url, lastResetGeneration: resetGeneration)
+    }
+
+    func makeUIViewController(context: Context) -> ExperienceViewController {
+        let viewController = ExperienceViewController()
+        // Set the root bar item and dismissal handler before loading so both are
+        // installed on the root host the moment `loadExperience` creates it.
+        viewController.setAppScreensRootBarItem(rootBarItem)
+        viewController.onDismissButtonPressed = onDismissButtonPressed
+        viewController.loadExperience(with: url)
+        return viewController
+    }
+
+    func updateUIViewController(_ uiViewController: ExperienceViewController, context: Context) {
+        // Propagate a changed root bar item (e.g. a live badge-count update) in
+        // place; the setter no-ops when nothing visible changed.
+        uiViewController.setAppScreensRootBarItem(rootBarItem)
+
+        // A bumped reset generation means the Hub performed a coordinator-driven
+        // navigation reset: pop the App Screens child stack to root (and dismiss any
+        // App Screens sheets) so backing out never reveals a stale pushed detail.
+        // Runs before the URL-change reload so a reset that coincides with a URL
+        // change still releases the old stack's sessions.
+        if context.coordinator.lastResetGeneration != resetGeneration {
+            context.coordinator.lastResetGeneration = resetGeneration
+            uiViewController.popAppScreensNavigationToRoot()
+        }
+
+        // Only reload when the URL actually changed.
+        guard context.coordinator.url != url else {
+            return
+        }
+        context.coordinator.url = url
+        uiViewController.loadExperience(with: url)
+    }
+
+    final class Coordinator {
+        var url: URL
+        var lastResetGeneration: Int
+
+        init(url: URL, lastResetGeneration: Int) {
+            self.url = url
+            self.lastResetGeneration = lastResetGeneration
+        }
+    }
+}
+
 /// View model backing `ExperienceView`.
 ///
 /// Tracks loading and error state, coordinates initial fetches, and revalidates
@@ -138,7 +305,9 @@ private class ExperienceViewState: ObservableObject {
         errorAlertConfig = ExperienceErrorAlertConfig(
             message: isRetryable
                 ? NSLocalizedString(
-                    "Failed to load experience", comment: "Rover Failed to load experience error message")
+                    "Failed to load experience",
+                    comment: "Rover Failed to load experience error message"
+                )
                 : NSLocalizedString("Something went wrong", comment: "Rover Something Went Wrong message"),
             isRetryable: isRetryable
         )
@@ -156,8 +325,12 @@ private class ExperienceViewState: ObservableObject {
                 switch result {
                 case .failure(let error):
                     os_log(
-                        "Unable to load experience (from url %s) due to: %s", log: .experiences, type: .error,
-                        url.toString(), error.debugDescription)
+                        "Unable to load experience (from url %s) due to: %s",
+                        log: .experiences,
+                        type: .error,
+                        url.toString(),
+                        error.debugDescription
+                    )
                     let isRetryable = error.isRetryable
                     self.loadingState = .error(error, isRetryable: isRetryable)
 
@@ -183,7 +356,11 @@ private class ExperienceViewState: ObservableObject {
                         self.loadingState = .loaded(state)
 
                     case .file(
-                        experience: let experienceModel, urlParameters: let urlParams, let userInfo, let authorizers):
+                        experience: let experienceModel,
+                        urlParameters: let urlParams,
+                        let userInfo,
+                        let authorizers
+                    ):
                         let state = ExperienceState(
                             experience: experienceModel,
                             urlParameters: urlParams,
@@ -212,9 +389,12 @@ private class ExperienceViewState: ObservableObject {
                 // discard these results to avoid overwriting state for the new URL.
                 guard revalidatingURL == self.currentURL else {
                     os_log(
-                        .debug, log: .experiences,
+                        .debug,
+                        log: .experiences,
                         "Revalidation result for stale URL ignored (expected %s, got %s).",
-                        self.currentURL?.absoluteString ?? "nil", revalidatingURL.absoluteString)
+                        self.currentURL?.absoluteString ?? "nil",
+                        revalidatingURL.absoluteString
+                    )
                     return
                 }
 
@@ -236,7 +416,8 @@ private class ExperienceViewState: ObservableObject {
                                 urlParameters: urlParams,
                                 userInfo: experienceManager.userInfo,
                                 authorizers: experienceManager.authorizers
-                            ))
+                            )
+                        )
                     case .file:
                         // File experiences are not supported as we wouldn't be downloading them from the server
                         break
@@ -245,11 +426,12 @@ private class ExperienceViewState: ObservableObject {
                     // This is a silent failure - we don't want to show an error to the user
                     // They already have an experience.
                     os_log(
-                        "Unable to revalidate experience (from url %s) due to: %s", 
-                        log: .experiences, 
+                        "Unable to revalidate experience (from url %s) due to: %s",
+                        log: .experiences,
                         type: .error,
-                        url.toString(), 
-                        error.debugDescription)
+                        url.toString(),
+                        error.debugDescription
+                    )
                 }
             }
         }

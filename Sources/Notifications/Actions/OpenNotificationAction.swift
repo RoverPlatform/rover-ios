@@ -3,7 +3,7 @@
 // copy, modify, and distribute this software in source code or binary form for use
 // in connection with the web services and APIs provided by Rover.
 //
-// This copyright notice shall be included in all copies or substantial portions of 
+// This copyright notice shall be included in all copies or substantial portions of
 // the software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -13,25 +13,27 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import UIKit
-import RoverFoundation
 import RoverData
+import RoverFoundation
+import UIKit
 
 class OpenNotificationAction: Action {
     private let eventQueue: EventQueue
     private let notification: Notification
     private let notificationStore: NotificationStore
     private let conversionsTracker: ConversionsTrackerService
-    
+
     typealias ActionProvider = (URL) -> Action?
-    
+
     let presentWebsiteActionProvider: ActionProvider
-    
-    init(eventQueue: EventQueue,
-         notification: Notification,
-         notificationStore: NotificationStore,
-         conversionsTracker: ConversionsTrackerService,
-         presentWebsiteActionProvider: @escaping ActionProvider) {
+
+    init(
+        eventQueue: EventQueue,
+        notification: Notification,
+        notificationStore: NotificationStore,
+        conversionsTracker: ConversionsTrackerService,
+        presentWebsiteActionProvider: @escaping ActionProvider
+    ) {
         self.eventQueue = eventQueue
         self.notification = notification
         self.notificationStore = notificationStore
@@ -41,14 +43,14 @@ class OpenNotificationAction: Action {
         super.init()
         name = "Open Notification"
     }
-    
+
     override func execute() {
         notificationStore.addNotifications([notification])
-        
+
         if !notification.isRead {
             notificationStore.markNotificationRead(notification.id)
         }
-        
+
         switch notification.tapBehavior {
         case .openApp:
             break
@@ -61,9 +63,9 @@ class OpenNotificationAction: Action {
                 produceAction(action)
             }
         }
-        
+
         conversionsTracker.track(notification.conversionTags)
-        
+
         let eventInfo = notification.openedEvent(source: .pushNotification)
         eventQueue.addEvent(eventInfo)
 

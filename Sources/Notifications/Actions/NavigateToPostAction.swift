@@ -35,6 +35,8 @@ class NavigateToPostAction: HubAction, @unchecked Sendable {
     /// Executes the navigation to the post.
     override func execute() {
         DispatchQueue.main.async {
+            // Defer to the next main-queue turn so any in-flight action processing
+            // finishes before we present the hub and mutate navigation state.
             if !self.postID.isEmpty {
                 self.presentHub()
                 self.coordinator.navigateToPost(id: self.postID)

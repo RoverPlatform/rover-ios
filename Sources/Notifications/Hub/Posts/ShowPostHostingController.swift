@@ -50,7 +50,7 @@ private struct ShowPostView: View {
         }
         .environment(\.hubContainer, Rover.shared.resolve(InboxPersistentContainer.self)!)
         .environment(\.eventQueue, Rover.shared.eventQueue)
-        .environment(\.inboxSync, Rover.shared.resolve(InboxSync.self)!)
+        .environment(\.postSync, Rover.shared.resolve(PostSync.self)!)
         .optionalColorScheme(colorScheme)
     }
 

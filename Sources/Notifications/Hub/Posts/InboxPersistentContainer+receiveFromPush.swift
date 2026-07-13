@@ -13,78 +13,217 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import Foundation
 import CoreData
+import Foundation
 import os.log
-import UIKit
 
 extension InboxPersistentContainer {
+    /// The kind of Hub content a push payload carries, or `nil` if it is not a Hub push.
+    ///
+    /// Single source of truth for "is this a Hub push?" — used both by `receiveFromPush` to decide
+    /// what to insert and by `HubSyncCoordinator`'s 410 reset to decide which delivered
+    /// notifications to clear. Keeping one predicate prevents the insert side and the clear side
+    /// from drifting apart (a drift that would let a stale, tappable notification survive a reset
+    /// and re-insert previous-identity content on tap).
+    enum HubPushKind {
+        case post
+        case conversation
+    }
+
+    nonisolated static func hubPushKind(from userInfo: [AnyHashable: Any]) -> HubPushKind? {
+        guard let rover = userInfo["rover"] as? [AnyHashable: Any] else {
+            return nil
+        }
+        if rover["post"] is [AnyHashable: Any] {
+            return .post
+        }
+        if rover["conversation"] is [AnyHashable: Any] {
+            return .conversation
+        }
+        return nil
+    }
+
     /// Returns true if the processed APNs notification user info was handled by Rover.
     func receiveFromPush(userInfo: [AnyHashable: Any]) -> Bool {
-        // Push notification delegates are called on main thread, and viewContext uses main queue by default
-        assert(Thread.isMainThread, "receiveFromPush should be called on main thread")
+        // Push delegate callbacks are not guaranteed to arrive on the main thread,
+        // but this path persists via viewContext and must return synchronously.
+        if Thread.isMainThread {
+            return receiveFromPushOnMainQueue(userInfo: userInfo)
+        } else {
+            return DispatchQueue.main.sync {
+                receiveFromPushOnMainQueue(userInfo: userInfo)
+            }
+        }
+    }
 
-        guard let roverObject = userInfo["rover"] as? [AnyHashable: Any], let postObject = roverObject["post"] as? [AnyHashable: Any] else {
-            // not a Rover post push.
+    private func receiveFromPushOnMainQueue(userInfo: [AnyHashable: Any]) -> Bool {
+        assert(Thread.isMainThread, "receiveFromPushOnMainQueue should be called on main thread")
+
+        guard let roverObject = userInfo["rover"] as? [AnyHashable: Any] else {
             return false
         }
 
-        guard let postItem = PostItem.from(dictionary: postObject) else {
-            os_log("InboxPersistentContainer.receiveFromPush: received post item, but it's not a valid post item", log: .notifications, type: .error)
+        switch Self.hubPushKind(from: userInfo) {
+        case .post:
+            guard let postObject = roverObject["post"] as? [AnyHashable: Any] else {
+                return false
+            }
+            return receivePostFromPush(postObject: postObject)
+        case .conversation:
+            guard let conversationObject = roverObject["conversation"] as? [AnyHashable: Any],
+                let replyObject = roverObject["reply"] as? [AnyHashable: Any],
+                let participantObject = roverObject["participant"] as? [AnyHashable: Any]
+            else {
+                return false
+            }
+            return receiveConversationFromPush(
+                conversationObject: conversationObject,
+                replyObject: replyObject,
+                participantObject: participantObject
+            )
+        case .none:
+            return false
+        }
+    }
+
+    private func receivePostFromPush(postObject: [AnyHashable: Any]) -> Bool {
+        assert(Thread.isMainThread, "receivePostFromPush should be called on main thread")
+
+        guard let postItem = decodePushItem(postObject, as: PostItem.self, label: "PostItem") else {
             return false
         }
 
-        os_log("InboxPersistentContainer.receiveFromPush: received post item, storing it", log: .notifications, type: .debug)
-        
-        self.createOrUpdatePost(from: postItem)
+        os_log(
+            "InboxPersistentContainer.receiveFromPush: received post item, storing it",
+            log: .notifications,
+            type: .debug
+        )
+
+        MainActor.assumeIsolated {
+            _ = self.createOrUpdatePost(from: postItem)
+        }
 
         do {
             try self.viewContext.save()
-            os_log("InboxPersistentContainer.createOrUpdatePost: successfully saved post received from push", log: .hub, type: .debug)
+            os_log(
+                "InboxPersistentContainer.receivePostFromPush: successfully saved post received from push",
+                log: .hub,
+                type: .debug
+            )
         } catch {
-            os_log("InboxPersistentContainer.createOrUpdatePost: failed to save Core Data context: %@", log: .hub, type: .error, error.localizedDescription)
+            os_log(
+                "InboxPersistentContainer.receivePostFromPush: failed to save Core Data context: %@",
+                log: .hub,
+                type: .error,
+                error.localizedDescription
+            )
             return false
         }
 
+        return true
+    }
 
-        UIApplication.shared.applicationIconBadgeNumber = self.getBadgeCount()
+    private func receiveConversationFromPush(
+        conversationObject: [AnyHashable: Any],
+        replyObject: [AnyHashable: Any],
+        participantObject: [AnyHashable: Any]
+    ) -> Bool {
+        assert(Thread.isMainThread, "receiveConversationFromPush should be called on main thread")
+
+        guard
+            let conversationItem = decodePushItem(
+                conversationObject,
+                as: ConversationItem.self,
+                label: "ConversationItem"
+            ),
+            let replyItem = decodePushItem(replyObject, as: ReplyItem.self, label: "ReplyItem"),
+            let participantItem = decodePushItem(
+                participantObject,
+                as: ParticipantItem.self,
+                label: "ParticipantItem"
+            )
+        else {
+            return false
+        }
+
+        os_log(
+            "InboxPersistentContainer.receiveFromPush: received conversation push for %{private}@, storing it",
+            log: .hub,
+            type: .debug,
+            conversationItem.id.uuidString
+        )
+
+        guard replyItem.conversationID == conversationItem.id else {
+            os_log(
+                "InboxPersistentContainer.receiveFromPush: reply %{private}@ has mismatched conversationID %{private}@ for conversation %{private}@",
+                log: .hub,
+                type: .error,
+                replyItem.id.uuidString,
+                replyItem.conversationID.uuidString,
+                conversationItem.id.uuidString
+            )
+            return false
+        }
+
+        let upsertResult = MainActor.assumeIsolated { () -> Result<Void, Error> in
+            do {
+                let conversation = try stageConversation(conversationItem, participants: [participantItem])
+                try stageReply(replyItem, into: conversation)
+                return .success(())
+            } catch {
+                viewContext.rollback()
+                return .failure(error)
+            }
+        }
+
+        guard case .success = upsertResult else {
+            os_log(
+                "InboxPersistentContainer.receiveFromPush: failed to upsert conversation or reply for %{private}@",
+                log: .hub,
+                type: .error,
+                conversationItem.id.uuidString
+            )
+            return false
+        }
+
+        do {
+            try viewContext.save()
+            os_log(
+                "InboxPersistentContainer.receiveFromPush: successfully saved conversation push for %{private}@",
+                log: .hub,
+                type: .debug,
+                conversationItem.id.uuidString
+            )
+        } catch {
+            os_log(
+                "InboxPersistentContainer.receiveFromPush: failed to save Core Data context: %@",
+                log: .hub,
+                type: .error,
+                error.localizedDescription
+            )
+            return false
+        }
 
         return true
     }
-}
 
-private extension PostItem {
-   static func from(dictionary: [AnyHashable: Any]) -> PostItem? {
-       guard let idString = dictionary["id"] as? String,
-             let id = UUID(uuidString: idString),
-             let subject = dictionary["subject"] as? String,
-             let previewText = dictionary["previewText"] as? String,
-             let receivedAtString = dictionary["receivedAt"] as? String,
-             let urlString = dictionary["url"] as? String,
-             let url = URL(string: urlString),
-             let subscriptionID = dictionary["subscriptionID"] as? String else {
-           return nil
-       }
-
-       let iso8601Formatter = ISO8601DateFormatter()
-       iso8601Formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-
-       guard let receivedAt = iso8601Formatter.date(from: receivedAtString) else {
-           return nil
-       }
-
-       let coverImageURL = (dictionary["coverImageURL"] as? String).flatMap { URL(string: $0) }
-       let isRead = dictionary["isRead"] as? Bool ?? false
-
-       return PostItem(
-           id: id,
-           subject: subject,
-           previewText: previewText,
-           receivedAt: receivedAt,
-           url: url,
-           coverImageURL: coverImageURL,
-           subscriptionID: subscriptionID,
-           isRead: isRead
-       )
-   }
+    private func decodePushItem<T: Decodable>(
+        _ object: [AnyHashable: Any],
+        as type: T.Type,
+        label: String
+    ) -> T? {
+        do {
+            let data = try JSONSerialization.data(withJSONObject: object)
+            return try JSONDecoder.default.decode(type, from: data)
+        } catch {
+            os_log(
+                "InboxPersistentContainer.receiveFromPush: failed to decode %{public}@: %@",
+                log: .hub,
+                type: .error,
+                label,
+                error.localizedDescription
+            )
+            return nil
+        }
+    }
 }

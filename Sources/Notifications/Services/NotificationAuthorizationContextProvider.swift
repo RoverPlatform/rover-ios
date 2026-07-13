@@ -13,15 +13,15 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import RoverFoundation
 import RoverData
+import RoverFoundation
 import UserNotifications
 
 class NotificationAuthorizationManager {
     let authorizationStatus = PersistedValue<Int>(storageKey: "io.rover.RoverNotifications.authorizationStatus")
     let userNotificationCenter = UNUserNotificationCenter.current()
-    
-    init() { }
+
+    init() {}
 }
 
 extension NotificationAuthorizationManager: NotificationsContextProvider {
@@ -30,15 +30,17 @@ extension NotificationAuthorizationManager: NotificationsContextProvider {
         userNotificationCenter.getNotificationSettings { settings in
             self.authorizationStatus.value = settings.authorizationStatus.rawValue
         }
-        
+
         let authorizationStatus: UNAuthorizationStatus = {
-            guard let value = self.authorizationStatus.value, let authorizationStatus = UNAuthorizationStatus(rawValue: value) else {
-                return  .notDetermined
+            guard let value = self.authorizationStatus.value,
+                let authorizationStatus = UNAuthorizationStatus(rawValue: value)
+            else {
+                return .notDetermined
             }
-            
+
             return authorizationStatus
         }()
-        
+
         switch authorizationStatus {
         case .authorized:
             return "authorized"
@@ -49,8 +51,8 @@ extension NotificationAuthorizationManager: NotificationsContextProvider {
         case .provisional:
             return "provisional"
         #if swift(>=5.3)
-        case .ephemeral:
-            return "ephemeral"
+            case .ephemeral:
+                return "ephemeral"
         #endif
         @unknown default:
             return "notDetermined"

@@ -25,6 +25,10 @@ struct PostDestination: Hashable {
     }
 }
 
+struct ConversationDestination: Hashable {
+    let conversationID: UUID
+}
+
 enum HubPath: Hashable {
     case messages
 }

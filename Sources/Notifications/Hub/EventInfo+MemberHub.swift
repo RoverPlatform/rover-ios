@@ -29,7 +29,7 @@ extension EventInfo {
             ]
         )
     }
-    
+
     /// Creates a "Post Link Clicked" event for analytics
     /// - Parameters:
     ///   - postID: The ID of the post containing the link
@@ -45,4 +45,18 @@ extension EventInfo {
             ]
         )
     }
+
+    /// Creates a "Conversation Opened" event for analytics
+    /// - Parameter conversationID: The ID of the conversation that was opened
+    /// - Returns: EventInfo configured for conversation opened tracking
+    static func conversationOpened(conversationID: UUID) -> EventInfo {
+        return EventInfo(
+            name: "Conversation Opened",
+            namespace: "rover",
+            attributes: [
+                "conversationID": conversationID.uuidString
+            ]
+        )
+    }
+
 }

@@ -29,8 +29,11 @@ public struct NotificationsAssembler: Assembler {
     public var updateAppBadge: Bool
 
     public init(
-        appGroup: String? = nil, isInfluenceTrackingEnabled: Bool = true, influenceTime: Int = 120,
-        maxNotifications: Int = 200, updateAppBadge: Bool = true
+        appGroup: String? = nil,
+        isInfluenceTrackingEnabled: Bool = true,
+        influenceTime: Int = 120,
+        maxNotifications: Int = 200,
+        updateAppBadge: Bool = true
     ) {
         self.appGroup = appGroup
         self.influenceTime = influenceTime
@@ -73,7 +76,10 @@ public struct NotificationsAssembler: Assembler {
             os_log("Presenting Hub", log: .hub, type: .debug)
 
             return resolver.resolve(
-                Action.self, name: "presentView", arguments: viewControllerToPresent as UIViewController)!
+                Action.self,
+                name: "presentView",
+                arguments: viewControllerToPresent as UIViewController
+            )!
         }
 
         // MARK: Action (presentPost)
@@ -87,7 +93,28 @@ public struct NotificationsAssembler: Assembler {
             os_log("Presenting Post Detail", log: .hub, type: .debug)
 
             return resolver.resolve(
-                Action.self, name: "presentView", arguments: viewControllerToPresent as UIViewController)!
+                Action.self,
+                name: "presentView",
+                arguments: viewControllerToPresent as UIViewController
+            )!
+        }
+
+        // MARK: Action (presentConversation)
+
+        container.register(Action.self, name: "presentConversation", scope: .transient) {
+            (resolver, conversationID: UUID) in
+
+            let viewControllerToPresent = ShowConversationHostingController(
+                conversationID: conversationID
+            )
+
+            os_log("Presenting Conversation Detail", log: .hub, type: .debug)
+
+            return resolver.resolve(
+                Action.self,
+                name: "presentView",
+                arguments: viewControllerToPresent as UIViewController
+            )!
         }
 
         // MARK: Action (navigateToPost)
@@ -96,6 +123,16 @@ public struct NotificationsAssembler: Assembler {
             NavigateToPostAction(
                 coordinator: resolver.resolve(HubCoordinator.self)!,
                 postID: postID
+            )
+        }
+
+        // MARK: Action (navigateToConversation)
+
+        container.register(Action.self, name: "navigateToConversation", scope: .transient) {
+            (resolver, conversationID: UUID) in
+            NavigateToConversationAction(
+                coordinator: resolver.resolve(HubCoordinator.self)!,
+                conversationID: conversationID
             )
         }
 
@@ -125,14 +162,22 @@ public struct NotificationsAssembler: Assembler {
         // MARK: NotificationHandler
 
         container.register(NotificationHandler.self) { resolver in
-            let actionProvider: NotificationHandlerService.ActionProvider = { [weak resolver] notification in
+            let notificationActionProvider: NotificationHandlerService.NotificationActionProvider = {
+                [weak resolver] notification in
                 resolver?.resolve(Action.self, name: "openNotification", arguments: notification)
+            }
+
+            let openURLActionProvider: NotificationHandlerService.URLActionProvider = { [weak resolver] url in
+                resolver?.resolve(Action.self, name: "openURL", arguments: url)
             }
 
             return NotificationHandlerService(
                 dispatcher: resolver.resolve(Dispatcher.self)!,
                 influenceTracker: resolver.resolve(InfluenceTracker.self)!,
-                actionProvider: actionProvider
+                notificationActionProvider: notificationActionProvider,
+                openURLActionProvider: openURLActionProvider,
+                replySync: resolver.resolve(ReplySync.self)!,
+                inboxPersistentContainer: resolver.resolve(InboxPersistentContainer.self)
             )
         }
 
@@ -167,11 +212,21 @@ public struct NotificationsAssembler: Assembler {
                 resolver?.resolve(Action.self, name: "navigateToPost", arguments: postID)
             }
 
+            let presentConversationActionProvider: (UUID) -> Action? = { [weak resolver] conversationID in
+                resolver?.resolve(Action.self, name: "presentConversation", arguments: conversationID)
+            }
+
+            let navigateToConversationActionProvider: (UUID) -> Action? = { [weak resolver] conversationID in
+                resolver?.resolve(Action.self, name: "navigateToConversation", arguments: conversationID)
+            }
+
             return MainActor.assumeIsolatedOrFatalError {
                 HubRouteHandler(
                     coordinator: resolver.resolve(HubCoordinator.self)!,
                     presentPostActionProvider: presentPostActionProvider,
-                    navigateToPostActionProvider: navigateToPostActionProvider
+                    navigateToPostActionProvider: navigateToPostActionProvider,
+                    presentConversationActionProvider: presentConversationActionProvider,
+                    navigateToConversationActionProvider: navigateToConversationActionProvider
                 )
             }
         }
@@ -190,20 +245,58 @@ public struct NotificationsAssembler: Assembler {
             InboxPersistentContainer(storage: .persistent)
         }
 
-        container.register(InboxSync.self, scope: .singleton) { resolver in
-            return MainActor.assumeIsolatedOrFatalError {
-                InboxSync(
+        container.register(PostSync.self, scope: .singleton) { resolver in
+            MainActor.assumeIsolatedOrFatalError {
+                PostSync(
                     persistentContainer: resolver.resolve(InboxPersistentContainer.self)!,
-                    httpClient: resolver.resolve(HTTPClient.self)!
+                    hubSyncCoordinator: resolver.resolve(HubSyncCoordinator.self)!
                 )
             }
+        }
+
+        container.register(HubSyncCoordinator.self, scope: .singleton) { resolver in
+            MainActor.assumeIsolatedOrFatalError {
+                HubSyncCoordinator(
+                    httpClient: resolver.resolve(HTTPClient.self)!,
+                    persistentContainer: resolver.resolve(InboxPersistentContainer.self)!
+                )
+            }
+        }
+
+        container.register(ConversationSync.self, scope: .singleton) { resolver in
+            ConversationSync(
+                persistentContainer: resolver.resolve(InboxPersistentContainer.self)!,
+                hubSyncCoordinator: resolver.resolve(HubSyncCoordinator.self)!
+            )
+        }
+
+        container.register(SubscriptionSync.self, scope: .singleton) { resolver in
+            SubscriptionSync(
+                persistentContainer: resolver.resolve(InboxPersistentContainer.self)!,
+                hubSyncCoordinator: resolver.resolve(HubSyncCoordinator.self)!
+            )
+        }
+
+        container.register(ParticipantSync.self, scope: .singleton) { resolver in
+            ParticipantSync(
+                persistentContainer: resolver.resolve(InboxPersistentContainer.self)!,
+                hubSyncCoordinator: resolver.resolve(HubSyncCoordinator.self)!
+            )
+        }
+
+        container.register(ReplySync.self, scope: .singleton) { resolver in
+            ReplySync(
+                persistentContainer: resolver.resolve(InboxPersistentContainer.self)!,
+                hubSyncCoordinator: resolver.resolve(HubSyncCoordinator.self)!
+            )
         }
 
         container.register(HubCoordinator.self, scope: .singleton) { resolver in
             return MainActor.assumeIsolatedOrFatalError {
                 HubCoordinator(
                     configManager: resolver.resolve(ConfigManager.self)!,
-                    homeViewManager: resolver.resolve(HomeViewManager.self)!
+                    homeViewManager: resolver.resolve(HomeViewManager.self)!,
+                    notificationHandler: resolver.resolve(NotificationHandler.self)!
                 )
             }
         }
@@ -240,7 +333,47 @@ public struct NotificationsAssembler: Assembler {
         }
     }
 
+    /// The `UNNotificationCategory` objects that Rover requires to be registered with
+    /// `UNUserNotificationCenter` for interactive notification features to work.
+    ///
+    /// Rover registers these automatically during SDK initialisation. However, if your app
+    /// calls `UNUserNotificationCenter.current().setNotificationCategories(_:)` **after**
+    /// calling `Rover.initialize(...)`, it will replace the registered set and remove
+    /// Rover's categories. To avoid this, merge Rover's categories with your own:
+    ///
+    /// ```swift
+    /// let categories = NotificationsAssembler.roverNotificationCategories
+    ///     .union(myAppCategories)
+    /// UNUserNotificationCenter.current().setNotificationCategories(categories)
+    /// ```
+    public static var roverNotificationCategories: Set<UNNotificationCategory> {
+        let replyAction = UNTextInputNotificationAction(
+            identifier: NotificationCategories.inlineReplyAction,
+            title: "Reply",
+            options: [],
+            textInputButtonTitle: "Send",
+            textInputPlaceholder: "Reply..."
+        )
+        let conversationReplyCategory = UNNotificationCategory(
+            identifier: NotificationCategories.conversationReply,
+            actions: [replyAction],
+            intentIdentifiers: []
+        )
+        return [conversationReplyCategory]
+    }
+
     public func containerDidAssemble(resolver: Resolver) {
+        // Register Rover's notification categories by merging them into any categories the
+        // host app has already registered. This handles the common case where Rover is
+        // initialised before the host app sets its own categories.
+        //
+        // NOTE: If the host app calls setNotificationCategories *after* Rover initialises,
+        // it must include Rover's categories — see `roverNotificationCategories` above.
+        UNUserNotificationCenter.current().getNotificationCategories { existing in
+            let merged = existing.union(NotificationsAssembler.roverNotificationCategories)
+            UNUserNotificationCenter.current().setNotificationCategories(merged)
+        }
+
         if isInfluenceTrackingEnabled {
             let influenceTracker = resolver.resolve(InfluenceTracker.self)!
             influenceTracker.startMonitoring()
@@ -258,12 +391,38 @@ public struct NotificationsAssembler: Assembler {
         store.restore()
 
         // start up persistence and sync for comms hub
-        let commSync = resolver.resolve(InboxSync.self)!
+        let syncCoordinator = resolver.resolve(SyncCoordinator.self)!
 
-        resolver.resolve(SyncCoordinator.self)!.registerStandaloneParticipant(commSync)
+        let postSync = resolver.resolve(PostSync.self)!
+        syncCoordinator.registerStandaloneParticipant(postSync)
+
+        let replySync = resolver.resolve(ReplySync.self)!
+        syncCoordinator.registerStandaloneParticipant(replySync)
+
+        let conversationSync = resolver.resolve(ConversationSync.self)!
+        syncCoordinator.registerStandaloneParticipant(conversationSync)
+
+        let subscriptionSync = resolver.resolve(SubscriptionSync.self)!
+        syncCoordinator.registerStandaloneParticipant(subscriptionSync)
+
+        let participantSync = resolver.resolve(ParticipantSync.self)!
+        syncCoordinator.registerStandaloneParticipant(participantSync)
+
+        // HubSyncCoordinator is @MainActor (see its doc comment); containerDidAssemble is a
+        // synchronous, main-thread call at SDK startup, so this bridges into that isolation
+        // rather than hopping through an unstructured Task, preserving the guarantee that every
+        // sync actor is registered before any sync can possibly start.
+        let hubSyncCoordinator = resolver.resolve(HubSyncCoordinator.self)!
+        MainActor.assumeIsolatedOrFatalError {
+            hubSyncCoordinator.register(replySync)
+            hubSyncCoordinator.register(conversationSync)
+            hubSyncCoordinator.register(participantSync)
+            hubSyncCoordinator.register(postSync)
+            hubSyncCoordinator.register(subscriptionSync)
+        }
 
         let syncParticipant = resolver.resolve(SyncParticipant.self, name: "notifications")!
-        resolver.resolve(SyncCoordinator.self)!.participants.append(syncParticipant)
+        syncCoordinator.participants.append(syncParticipant)
 
         if updateAppBadge {
             _ = resolver.resolve(RoverBadge.self)

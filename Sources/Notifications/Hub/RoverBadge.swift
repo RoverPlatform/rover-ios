@@ -13,10 +13,11 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import SwiftUI
-import RoverData
 import CoreData
 import Foundation
+import RoverData
+import SwiftUI
+import UserNotifications
 import os.log
 
 /// This object is responsible for updating the main app badge, and also offers API for obtaining (and observing) the badge count for a Hub tab.
@@ -34,10 +35,10 @@ public class RoverBadge: ObservableObject {
         self.persistentContainer = persistentContainer
         self.updateAppBadge = updateAppBadge
 
-        // Observe changes to unread posts in Core Data
-        observeUnreadPostsChanges()
+        // Observe changes to unread hub items in Core Data
+        observeUnreadHubItemChanges()
     }
-    
+
     private var observerToken: NSObjectProtocol?
 
     deinit {
@@ -45,8 +46,8 @@ public class RoverBadge: ObservableObject {
             NotificationCenter.default.removeObserver(token)
         }
     }
-    
-    private func observeUnreadPostsChanges() {
+
+    private func observeUnreadHubItemChanges() {
         // Set up a NotificationCenter observer for Core Data changes
         observerToken = NotificationCenter.default.addObserver(
             forName: .NSManagedObjectContextDidSave,
@@ -57,22 +58,21 @@ public class RoverBadge: ObservableObject {
                 self?.updateBadgeCount()
             }
         }
-            
+
         // Initial badge count
         updateBadgeCount()
     }
-    
+
     private func updateBadgeCount() {
         Task { @MainActor in
             let unreadCount = persistentContainer.getBadgeCount()
-            
+
             self.newBadge = unreadCount > 0 ? String(unreadCount) : nil
-            
+
             if self.updateAppBadge {
                 os_log("Updating app badge number to %d", log: .hub, type: .info, unreadCount)
-                UIApplication.shared.applicationIconBadgeNumber = unreadCount
+                try? await UNUserNotificationCenter.current().setBadgeCount(unreadCount)
             }
         }
     }
 }
-

@@ -3,7 +3,7 @@
 // copy, modify, and distribute this software in source code or binary form for use
 // in connection with the web services and APIs provided by Rover.
 //
-// This copyright notice shall be included in all copies or substantial portions of 
+// This copyright notice shall be included in all copies or substantial portions of
 // the software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -14,8 +14,8 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import Foundation
-import RoverFoundation
 import RoverData
+import RoverFoundation
 
 public struct Notification: Codable, Equatable, Hashable {
     public var id: String
@@ -30,12 +30,26 @@ public struct Notification: Codable, Equatable, Hashable {
     public var isNotificationCenterEnabled: Bool
     public var isDeleted: Bool
     public var conversionTags: [String]
-    
+
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id.hashValue)
     }
-    
-    public init(id: String, campaignID: String, title: String?, body: String, attachment: NotificationAttachment?, tapBehavior: NotificationTapBehavior, action: Action?, deliveredAt: Date, expiresAt: Date?, isRead: Bool, isNotificationCenterEnabled: Bool, isDeleted: Bool, conversionTags: [String]) {
+
+    public init(
+        id: String,
+        campaignID: String,
+        title: String?,
+        body: String,
+        attachment: NotificationAttachment?,
+        tapBehavior: NotificationTapBehavior,
+        action: Action?,
+        deliveredAt: Date,
+        expiresAt: Date?,
+        isRead: Bool,
+        isNotificationCenterEnabled: Bool,
+        isDeleted: Bool,
+        conversionTags: [String]
+    ) {
         self.id = id
         self.campaignID = campaignID
         self.title = title

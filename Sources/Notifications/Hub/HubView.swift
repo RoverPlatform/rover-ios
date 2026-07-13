@@ -22,13 +22,16 @@ public struct HubView: View {
     public init() {}
 
     public var body: some View {
-        HubContentView(coordinator: coordinator)
+        HubContentView(coordinator: coordinator, badge: roverBadge)
+            .environmentObject(coordinator)
             .environment(\.hubContainer, persistentContainer)
             .environment(\.managedObjectContext, persistentContainer.viewContext)
             .environment(\.refreshHub, { await refreshHub() })
-            .environment(\.inboxSync, inboxSync)
+            .environment(\.postSync, postSync)
             .environment(\.eventQueue, Rover.shared.eventQueue)
             .environment(\.configSync, configSync)
+            .environment(\.conversationSync, conversationSync)
+            .environment(\.replySync, replySync)
     }
 
     var coordinator: HubCoordinator {
@@ -39,12 +42,24 @@ public struct HubView: View {
         Rover.shared.resolve(InboxPersistentContainer.self)!
     }
 
-    var inboxSync: InboxSync {
-        Rover.shared.resolve(InboxSync.self)!
+    var postSync: PostSync {
+        Rover.shared.resolve(PostSync.self)!
     }
 
     var configSync: ConfigSync {
         Rover.shared.resolve(ConfigSync.self)!
+    }
+
+    var conversationSync: ConversationSync {
+        Rover.shared.resolve(ConversationSync.self)!
+    }
+
+    var roverBadge: RoverBadge {
+        Rover.shared.resolve(RoverBadge.self)!
+    }
+
+    var replySync: ReplySync {
+        Rover.shared.resolve(ReplySync.self)!
     }
 
     func refreshHub() async {

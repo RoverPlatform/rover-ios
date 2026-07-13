@@ -19,39 +19,6 @@ import os.log
 extension HTTPClient {
     func getConfig() async -> Result<RoverConfig, Error> {
         let endpoint = engageEndpoint.appendingPathComponent("config")
-        let request = downloadRequest(url: endpoint)
-
-        os_log(.debug, log: .config, "Retrieving config")
-
-        let result = await download(with: request)
-
-        let jsonData: Data
-        switch result {
-        case .success(let data, _):
-            os_log(.debug, log: .config, "Successfully retrieved config")
-            jsonData = data
-        case .error(let error, _):
-            os_log(
-                .error, log: .config, "Failed to fetch config from %@: %@",
-                endpoint.absoluteString, error?.localizedDescription ?? "unknown reason")
-            return .failure(
-                ConfigSyncError(message: error?.localizedDescription ?? "unknown reason"))
-        }
-
-        do {
-            let config = try JSONDecoder().decode(RoverConfig.self, from: jsonData)
-            return .success(config)
-        } catch {
-            let responseBodyString = String(data: jsonData, encoding: .utf8) ?? "none"
-            os_log(
-                .error, log: .config,
-                "Failed to decode config response: %@, response body: %@",
-                error.localizedDescription, responseBodyString)
-            return .failure(ConfigSyncError(message: error.localizedDescription))
-        }
+        return await authenticatedDownloadDecoding(RoverConfig.self, url: endpoint, log: .config, label: "config")
     }
-}
-
-struct ConfigSyncError: Error {
-    let message: String
 }

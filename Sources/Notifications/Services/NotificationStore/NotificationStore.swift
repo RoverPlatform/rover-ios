@@ -18,10 +18,10 @@ import Foundation
 public protocol NotificationStore {
     var notifications: [Notification] { get }
     var unreadCount: Int { get }
-    
+
     func addObserver(block: @escaping ([Notification]) -> Void) -> NSObjectProtocol
     func removeObserver(_ token: NSObjectProtocol)
-    
+
     func restore()
     func addNotifications(_ notifications: [Notification])
     func markNotificationDeleted(_ notificationID: String)
@@ -29,7 +29,11 @@ public protocol NotificationStore {
 }
 
 extension NotificationStore {
-    @available(*, deprecated, message: "Replaced by Rover.userNotificationCenterWillPresent(notification:withCompletionHandler:)")
+    @available(
+        *,
+        deprecated,
+        message: "Replaced by Rover.userNotificationCenterWillPresent(notification:withCompletionHandler:)"
+    )
     public func addNotification(_ notification: Notification) {
         // the historical usage for this API was the willPresent UNUserNotificationCenterDelegate method, so this replacement makes that purpose explicit.
 

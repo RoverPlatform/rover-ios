@@ -3,7 +3,7 @@
 // copy, modify, and distribute this software in source code or binary form for use
 // in connection with the web services and APIs provided by Rover.
 //
-// This copyright notice shall be included in all copies or substantial portions of 
+// This copyright notice shall be included in all copies or substantial portions of
 // the software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -27,15 +27,15 @@ extension NotificationTapBehavior: Codable {
     private enum CodingKeys: String, CodingKey {
         case typeName = "__typename"
     }
-    
+
     private enum OpenURLKeys: String, CodingKey {
         case url
     }
-    
+
     private enum PresentWebsiteKeys: String, CodingKey {
         case url
     }
-    
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let typeName = try container.decode(String.self, forKey: .typeName)
@@ -51,10 +51,15 @@ extension NotificationTapBehavior: Codable {
             let url = try container.decode(URL.self, forKey: .url)
             self = .presentWebsite(url: url)
         default:
-            throw DecodingError.dataCorruptedError(forKey: CodingKeys.typeName, in: container, debugDescription: "Expected one of OpenAppNotificationTapBehavior, OpenURLNotificationTapBehavior or PresentWebsiteNotificationTapBehavior – found \(typeName)")
+            throw DecodingError.dataCorruptedError(
+                forKey: CodingKeys.typeName,
+                in: container,
+                debugDescription:
+                    "Expected one of OpenAppNotificationTapBehavior, OpenURLNotificationTapBehavior or PresentWebsiteNotificationTapBehavior – found \(typeName)"
+            )
         }
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         switch self {

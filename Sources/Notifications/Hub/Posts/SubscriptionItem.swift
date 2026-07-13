@@ -17,17 +17,18 @@ import Foundation
 
 /// JSON DTO for Subscriptions from the Rover Engage API
 struct SubscriptionItem: Equatable, Identifiable, Codable {
-  typealias ID = String
+    typealias ID = String
 
-  var id: ID = ID()
-  var name: String
-  var description: String
-  var optIn: Bool
-  var status: Status
+    var id: ID = ID()
+    var name: String
+    var description: String
+    var optIn: Bool
+    var status: Status
+    var logoURL: URL?
 
-  enum Status: String, Codable {
-    case unpublished = "unpublished"
-    case published = "published"
-    case archived = "archived"
-  }
+    enum Status: String, Codable {
+        case unpublished = "unpublished"
+        case published = "published"
+        case archived = "archived"
+    }
 }

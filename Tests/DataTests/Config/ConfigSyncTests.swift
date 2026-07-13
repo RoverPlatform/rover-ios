@@ -34,7 +34,8 @@ final class ConfigSyncTests: XCTestCase {
             endpoint: URL(string: "https://api.test.com")!,
             engageEndpoint: URL(string: "https://engage.test.com")!,
             session: session,
-            authContext: authContext
+            authContext: authContext,
+            userInfoManager: MockUserInfoManager()
         )
 
         configManager = await MainActor.run {
@@ -63,7 +64,7 @@ final class ConfigSyncTests: XCTestCase {
                     "isHomeEnabled": true,
                     "isInboxEnabled": true,
                     "isSettingsViewEnabled": true,
-                    "deeplink": "testbench-deep-link://tab/inbox"
+                    "deepLink": "testbench-deep-link://tab/inbox"
                 },
                 "colorScheme": "auto",
                 "accentColor": "#4F2683"
@@ -248,6 +249,14 @@ final class ConfigSyncTests: XCTestCase {
         let configSync = ConfigSync(httpClient: httpClient, configManager: configManager)
         _ = await configSync.sync()
 
-        XCTAssertEqual(capturedURL?.absoluteString, "https://engage.test.com/config")
+        XCTAssertEqual(capturedURL?.host, "engage.test.com")
+        XCTAssertEqual(capturedURL?.path, "/config")
+        let queryItems = capturedURL.flatMap {
+            URLComponents(url: $0, resolvingAgainstBaseURL: false)?.queryItems
+        }
+        XCTAssertNotNil(
+            queryItems?.first(where: { $0.name == "deviceIdentifier" }),
+            "config request must include deviceIdentifier"
+        )
     }
 }

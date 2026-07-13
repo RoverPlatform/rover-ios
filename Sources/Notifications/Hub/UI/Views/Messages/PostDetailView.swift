@@ -24,7 +24,7 @@ struct PostDetailView: View {
 
     @Environment(\.hubContainer) private var container
     @Environment(\.eventQueue) private var eventQueue
-    @Environment(\.inboxSync) private var inboxSync
+    @Environment(\.postSync) private var postSync
     @Environment(\.dismiss) private var dismiss
     @Environment(\.isPresented) private var isPresented
     @State private var post: Post?
@@ -141,14 +141,14 @@ struct PostDetailView: View {
         // Phase 2: Not found locally, trigger sync and retry
         isLoadingOverlay = true
 
-        guard let inboxSync = inboxSync else {
+        guard let postSync = postSync else {
             isLoadingOverlay = false
             showError(.error("Sync service unavailable"))
             return
         }
 
         // Trigger sync and wait for completion
-        let syncSuccess = await inboxSync.sync()
+        let syncSuccess = await postSync.sync()
 
         // Phase 3: Retry after sync
         isLoadingOverlay = false
@@ -356,7 +356,8 @@ struct WebViewContainer: UIViewRepresentable {
         }
 
         func webView(
-            _ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction,
+            _ webView: WKWebView,
+            decidePolicyFor navigationAction: WKNavigationAction,
             decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
         ) {
             guard let url = navigationAction.request.url else {

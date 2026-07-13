@@ -23,14 +23,14 @@ enum PostNavigationState: Equatable {
     case found(Post)
     case notFound
     case error(String)
-    
+
     var isError: Bool {
         if case .error = self {
             return true
         }
         return false
     }
-    
+
     static func == (lhs: PostNavigationState, rhs: PostNavigationState) -> Bool {
         switch (lhs, rhs) {
         case (.idle, .idle), (.loading, .loading), (.notFound, .notFound):

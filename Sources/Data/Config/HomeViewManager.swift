@@ -14,7 +14,6 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import Foundation
-import UIKit
 import os.log
 
 /// Manager for the Hub home view experience URL.
@@ -23,9 +22,10 @@ import os.log
 /// UserDefaults, and publishes changes for SwiftUI observation. The cached value is
 /// loaded during initialization so the most recent URL is available immediately.
 ///
-/// **Fetch strategy:** Requests include the most specific available identifier
-/// (user ID, Ticketmaster ID, SeatGeek ID, then device identifier). On success, the
-/// response is persisted and published; on failure, the cached value is preserved.
+/// **Fetch strategy:** Requests always include the device identifier and, when
+/// available, a user ID (direct user ID, Ticketmaster ID, SeatGeek client ID, or
+/// SeatGeek ID in priority order). On success, the response is persisted and
+/// published; on failure, the cached value is preserved.
 ///
 /// - SeeAlso: `ConfigManager` for the configuration caching pattern.
 @MainActor
@@ -48,7 +48,11 @@ public class HomeViewManager: ObservableObject {
     ///   - httpClient: The HTTP client used to fetch from the `/home` endpoint.
     ///   - userDefaults: The UserDefaults instance for caching the URL.
     ///   - userInfoManager: The user info manager for resolving user identity.
-    public init(httpClient: HTTPClient, userDefaults: UserDefaults, userInfoManager: UserInfoManager) {
+    public init(
+        httpClient: HTTPClient,
+        userDefaults: UserDefaults,
+        userInfoManager: UserInfoManager
+    ) {
         self.httpClient = httpClient
         self.userDefaults = userDefaults
         self.userInfoManager = userInfoManager
@@ -60,8 +64,7 @@ public class HomeViewManager: ObservableObject {
     /// On success, the response is cached and `experienceURL` is updated if the value
     /// changed. On failure, the cached value is preserved.
     public func fetch() async {
-        let identifier = resolveIdentifier()
-        let result = await httpClient.getHomeView(identifier: identifier)
+        let result = await httpClient.getHomeView()
         switch result {
         case .success(let response):
             if experienceURL != response.experienceURL {
@@ -72,42 +75,12 @@ public class HomeViewManager: ObservableObject {
         case .failure(let error):
             // Silent failure - preserve cached URL
             os_log(
-                .error, log: .homeView, "Failed to fetch home view URL: %@",
-                error.localizedDescription)
+                .error,
+                log: .homeView,
+                "Failed to fetch home view URL: %@",
+                error.localizedDescription
+            )
         }
-    }
-
-    private func resolveIdentifier() -> HomeViewIdentifier {
-        let userInfo = userInfoManager.currentUserInfo
-
-        if let userID = userInfo["userID"] as? String, !userID.isEmpty {
-            return .userID(userID)
-        }
-
-        if let ticketmasterID = userInfo["ticketmaster.ticketmasterID"] as? String,
-            !ticketmasterID.isEmpty
-        {
-            return .userID(ticketmasterID)
-        }
-
-        if let seatGeekClientID = userInfo["seatGeek.seatGeekClientID"] as? String,
-            !seatGeekClientID.isEmpty
-        {
-            return .userID(seatGeekClientID)
-        }
-
-        // Note: seatGeekID is the SeatGeek CRM ID
-        if let seatGeekID = userInfo["seatGeek.seatGeekID"] as? String,
-            !seatGeekID.isEmpty
-        {
-            return .userID(seatGeekID)
-        }
-
-        guard let deviceID = UIDevice.current.identifierForVendor?.uuidString else {
-            os_log(.error, log: .homeView, "Device identifier unavailable")
-            return .deviceIdentifier("")
-        }
-        return .deviceIdentifier(deviceID)
     }
 
     private func loadCachedResponse() -> HomeViewResponse? {

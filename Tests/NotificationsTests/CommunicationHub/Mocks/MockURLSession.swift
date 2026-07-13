@@ -19,16 +19,16 @@ import Foundation
 /// Replaces the existing MockURLSession with proper URLSession configuration
 class MockURLSession {
 
-  /// Creates a URLSession configured to use URLProtocolMock for request interception
-  /// - Returns: URLSession instance with ephemeral configuration and URLProtocolMock registered
-  static func createConfiguredSession() -> URLSession {
-    let config = URLSessionConfiguration.ephemeral
-    config.protocolClasses = [URLProtocolMock.self]
+    /// Creates a URLSession configured to use URLProtocolMock for request interception
+    /// - Returns: URLSession instance with ephemeral configuration and URLProtocolMock registered
+    static func createConfiguredSession() -> URLSession {
+        let config = URLSessionConfiguration.ephemeral
+        config.protocolClasses = [URLProtocolMock.self]
 
-    // Disable caching to ensure fresh responses in tests
-    config.urlCache = nil
-    config.requestCachePolicy = .reloadIgnoringLocalAndRemoteCacheData
+        // Disable caching to ensure fresh responses in tests
+        config.urlCache = nil
+        config.requestCachePolicy = .reloadIgnoringLocalAndRemoteCacheData
 
-    return URLSession(configuration: config)
-  }
+        return URLSession(configuration: config)
+    }
 }

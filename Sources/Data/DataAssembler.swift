@@ -109,7 +109,8 @@ public struct DataAssembler: Assembler {
                 endpoint: endpoint,
                 engageEndpoint: engageEndpoint,
                 session: URLSession(configuration: URLSessionConfiguration.default),
-                authContext: authContext
+                authContext: authContext,
+                userInfoManager: resolver.resolve(UserInfoManager.self)!
             )
         }
 
@@ -275,6 +276,11 @@ public struct DataAssembler: Assembler {
 
         let configSync = resolver.resolve(ConfigSync.self)!
         resolver.resolve(SyncCoordinator.self)!.registerStandaloneParticipant(configSync)
+
+        if let authContext = resolver.resolve(AuthenticationContext.self),
+           let engageHost = engageEndpoint.host {
+            authContext.enableSDKAuthIDTokenRefreshForDomain(pattern: engageHost)
+        }
     }
 }
 

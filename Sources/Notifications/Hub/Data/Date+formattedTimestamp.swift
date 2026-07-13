@@ -24,9 +24,9 @@ extension Date {
         let nowComponents = calendar.dateComponents([.year, .month, .day], from: now)
 
         // If it occurred today, just display the time
-        if components.year == nowComponents.year &&
-            components.month == nowComponents.month &&
-            components.day == nowComponents.day {
+        if components.year == nowComponents.year && components.month == nowComponents.month
+            && components.day == nowComponents.day
+        {
             let formatter = DateFormatter()
             formatter.dateFormat = "h:mm a"
             return formatter.string(from: self)
@@ -34,15 +34,17 @@ extension Date {
 
         // If it occurred yesterday, display "Yesterday"
         if let yesterday = calendar.date(byAdding: .day, value: -1, to: now),
-           calendar.isDate(yesterday, inSameDayAs: self) {
+            calendar.isDate(yesterday, inSameDayAs: self)
+        {
             return "Yesterday"
         }
 
         // If it occurred this week, display the day-of-the-week
         if let oneWeekAgo = calendar.date(byAdding: .day, value: -7, to: now),
-           self > oneWeekAgo {
+            self > oneWeekAgo
+        {
             let formatter = DateFormatter()
-            formatter.dateFormat = "EEEE" // Full day name
+            formatter.dateFormat = "EEEE"  // Full day name
             return formatter.string(from: self)
         }
 

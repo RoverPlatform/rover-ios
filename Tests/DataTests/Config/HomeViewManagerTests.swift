@@ -28,6 +28,7 @@ final class HomeViewManagerTests: XCTestCase {
         try await super.setUp()
 
         URLProtocolStub.requestHandler = nil
+        mockUserInfoManager = MockUserInfoManager()
 
         let session = MockURLSessionFactory.create()
         let authContext = AuthenticationContext(userDefaults: UserDefaults())
@@ -36,11 +37,11 @@ final class HomeViewManagerTests: XCTestCase {
             endpoint: URL(string: "https://api.test.com")!,
             engageEndpoint: URL(string: "https://engage.test.com")!,
             session: session,
-            authContext: authContext
+            authContext: authContext,
+            userInfoManager: mockUserInfoManager
         )
 
         userDefaults = UserDefaults(suiteName: testSuiteName)!
-        mockUserInfoManager = MockUserInfoManager()
     }
 
     override func tearDown() async throws {
@@ -206,7 +207,11 @@ final class HomeViewManagerTests: XCTestCase {
         URLProtocolStub.requestHandler = { request in
             capturedURL = request.url
             let response = HTTPURLResponse(
-                url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
+                url: request.url!,
+                statusCode: 200,
+                httpVersion: nil,
+                headerFields: nil
+            )!
             return (response, json)
         }
 
@@ -214,15 +219,20 @@ final class HomeViewManagerTests: XCTestCase {
 
         let manager = await MainActor.run {
             HomeViewManager(
-                httpClient: httpClient, userDefaults: userDefaults,
-                userInfoManager: mockUserInfoManager)
+                httpClient: httpClient,
+                userDefaults: userDefaults,
+                userInfoManager: mockUserInfoManager
+            )
         }
 
         await manager.fetch()
 
         let components = URLComponents(url: capturedURL!, resolvingAgainstBaseURL: false)!
-        XCTAssertEqual(components.queryItems?.first?.name, "userID")
-        XCTAssertEqual(components.queryItems?.first?.value, "user-abc")
+        XCTAssertEqual(components.queryItems?.count, 2)
+        XCTAssertEqual(components.queryItems?.first(where: { $0.name == "userID" })?.value, "user-abc")
+        XCTAssertNotNil(
+            components.queryItems?.first(where: { $0.name == "deviceIdentifier" })?.value
+        )
     }
 
     func testFetchPassesTicketmasterIDWhenNoDirectUserID() async {
@@ -234,23 +244,35 @@ final class HomeViewManagerTests: XCTestCase {
         URLProtocolStub.requestHandler = { request in
             capturedURL = request.url
             let response = HTTPURLResponse(
-                url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
+                url: request.url!,
+                statusCode: 200,
+                httpVersion: nil,
+                headerFields: nil
+            )!
             return (response, json)
         }
 
-        mockUserInfoManager.userInfo = ["ticketmaster.ticketmasterID": "tm-123"]
+        mockUserInfoManager.userInfo = ["ticketmaster": ["ticketmasterID": "tm-123"]]
 
         let manager = await MainActor.run {
             HomeViewManager(
-                httpClient: httpClient, userDefaults: userDefaults,
-                userInfoManager: mockUserInfoManager)
+                httpClient: httpClient,
+                userDefaults: userDefaults,
+                userInfoManager: mockUserInfoManager
+            )
         }
 
         await manager.fetch()
 
         let components = URLComponents(url: capturedURL!, resolvingAgainstBaseURL: false)!
-        XCTAssertEqual(components.queryItems?.first?.name, "userID")
-        XCTAssertEqual(components.queryItems?.first?.value, "tm-123")
+        XCTAssertEqual(components.queryItems?.count, 2)
+        XCTAssertEqual(
+            components.queryItems?.first(where: { $0.name == "userID" })?.value,
+            "tm-123"
+        )
+        XCTAssertNotNil(
+            components.queryItems?.first(where: { $0.name == "deviceIdentifier" })?.value
+        )
     }
 
     func testFetchPassesSeatGeekIDWhenNoOtherUserID() async {
@@ -262,23 +284,35 @@ final class HomeViewManagerTests: XCTestCase {
         URLProtocolStub.requestHandler = { request in
             capturedURL = request.url
             let response = HTTPURLResponse(
-                url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
+                url: request.url!,
+                statusCode: 200,
+                httpVersion: nil,
+                headerFields: nil
+            )!
             return (response, json)
         }
 
-        mockUserInfoManager.userInfo = ["seatGeek.seatGeekID": "sg-456"]
+        mockUserInfoManager.userInfo = ["seatGeek": ["seatGeekID": "sg-456"]]
 
         let manager = await MainActor.run {
             HomeViewManager(
-                httpClient: httpClient, userDefaults: userDefaults,
-                userInfoManager: mockUserInfoManager)
+                httpClient: httpClient,
+                userDefaults: userDefaults,
+                userInfoManager: mockUserInfoManager
+            )
         }
 
         await manager.fetch()
 
         let components = URLComponents(url: capturedURL!, resolvingAgainstBaseURL: false)!
-        XCTAssertEqual(components.queryItems?.first?.name, "userID")
-        XCTAssertEqual(components.queryItems?.first?.value, "sg-456")
+        XCTAssertEqual(components.queryItems?.count, 2)
+        XCTAssertEqual(
+            components.queryItems?.first(where: { $0.name == "userID" })?.value,
+            "sg-456"
+        )
+        XCTAssertNotNil(
+            components.queryItems?.first(where: { $0.name == "deviceIdentifier" })?.value
+        )
     }
 
     func testFetchPassesSeatGeekClientIDWhenNoOtherUserID() async {
@@ -290,25 +324,35 @@ final class HomeViewManagerTests: XCTestCase {
         URLProtocolStub.requestHandler = { request in
             capturedURL = request.url
             let response = HTTPURLResponse(
-                url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
+                url: request.url!,
+                statusCode: 200,
+                httpVersion: nil,
+                headerFields: nil
+            )!
             return (response, json)
         }
 
-        mockUserInfoManager.userInfo = [
-            "seatGeek.seatGeekClientID": "client-123"
-        ]
+        mockUserInfoManager.userInfo = ["seatGeek": ["seatGeekClientID": "client-123"]]
 
         let manager = await MainActor.run {
             HomeViewManager(
-                httpClient: httpClient, userDefaults: userDefaults,
-                userInfoManager: mockUserInfoManager)
+                httpClient: httpClient,
+                userDefaults: userDefaults,
+                userInfoManager: mockUserInfoManager
+            )
         }
 
         await manager.fetch()
 
         let components = URLComponents(url: capturedURL!, resolvingAgainstBaseURL: false)!
-        XCTAssertEqual(components.queryItems?.first?.name, "userID")
-        XCTAssertEqual(components.queryItems?.first?.value, "client-123")
+        XCTAssertEqual(components.queryItems?.count, 2)
+        XCTAssertEqual(
+            components.queryItems?.first(where: { $0.name == "userID" })?.value,
+            "client-123"
+        )
+        XCTAssertNotNil(
+            components.queryItems?.first(where: { $0.name == "deviceIdentifier" })?.value
+        )
     }
 
     func testFetchPrefersSeatGeekClientIDOverSeatGeekCRMIDWhenNoHigherPriorityID() async {
@@ -320,26 +364,37 @@ final class HomeViewManagerTests: XCTestCase {
         URLProtocolStub.requestHandler = { request in
             capturedURL = request.url
             let response = HTTPURLResponse(
-                url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
+                url: request.url!,
+                statusCode: 200,
+                httpVersion: nil,
+                headerFields: nil
+            )!
             return (response, json)
         }
 
         mockUserInfoManager.userInfo = [
-            "seatGeek.seatGeekClientID": "client-123",
-            "seatGeek.seatGeekID": "crm-456"
+            "seatGeek": ["seatGeekClientID": "client-123", "seatGeekID": "crm-456"]
         ]
 
         let manager = await MainActor.run {
             HomeViewManager(
-                httpClient: httpClient, userDefaults: userDefaults,
-                userInfoManager: mockUserInfoManager)
+                httpClient: httpClient,
+                userDefaults: userDefaults,
+                userInfoManager: mockUserInfoManager
+            )
         }
 
         await manager.fetch()
 
         let components = URLComponents(url: capturedURL!, resolvingAgainstBaseURL: false)!
-        XCTAssertEqual(components.queryItems?.first?.name, "userID")
-        XCTAssertEqual(components.queryItems?.first?.value, "client-123")
+        XCTAssertEqual(components.queryItems?.count, 2)
+        XCTAssertEqual(
+            components.queryItems?.first(where: { $0.name == "userID" })?.value,
+            "client-123"
+        )
+        XCTAssertNotNil(
+            components.queryItems?.first(where: { $0.name == "deviceIdentifier" })?.value
+        )
     }
 
     func testFetchPrefersDirectUserIDOverTicketmaster() async {
@@ -351,26 +406,38 @@ final class HomeViewManagerTests: XCTestCase {
         URLProtocolStub.requestHandler = { request in
             capturedURL = request.url
             let response = HTTPURLResponse(
-                url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
+                url: request.url!,
+                statusCode: 200,
+                httpVersion: nil,
+                headerFields: nil
+            )!
             return (response, json)
         }
 
         mockUserInfoManager.userInfo = [
             "userID": "direct-user",
-            "ticketmaster": ["ticketmasterID": "tm-123"],
+            "ticketmaster": ["ticketmasterID": "tm-123"]
         ]
 
         let manager = await MainActor.run {
             HomeViewManager(
-                httpClient: httpClient, userDefaults: userDefaults,
-                userInfoManager: mockUserInfoManager)
+                httpClient: httpClient,
+                userDefaults: userDefaults,
+                userInfoManager: mockUserInfoManager
+            )
         }
 
         await manager.fetch()
 
         let components = URLComponents(url: capturedURL!, resolvingAgainstBaseURL: false)!
-        XCTAssertEqual(components.queryItems?.first?.name, "userID")
-        XCTAssertEqual(components.queryItems?.first?.value, "direct-user")
+        XCTAssertEqual(components.queryItems?.count, 2)
+        XCTAssertEqual(
+            components.queryItems?.first(where: { $0.name == "userID" })?.value,
+            "direct-user"
+        )
+        XCTAssertNotNil(
+            components.queryItems?.first(where: { $0.name == "deviceIdentifier" })?.value
+        )
     }
 
     func testFetchPassesDeviceIdentifierWhenNoUserID() async {
@@ -382,7 +449,11 @@ final class HomeViewManagerTests: XCTestCase {
         URLProtocolStub.requestHandler = { request in
             capturedURL = request.url
             let response = HTTPURLResponse(
-                url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
+                url: request.url!,
+                statusCode: 200,
+                httpVersion: nil,
+                headerFields: nil
+            )!
             return (response, json)
         }
 
@@ -391,13 +462,16 @@ final class HomeViewManagerTests: XCTestCase {
 
         let manager = await MainActor.run {
             HomeViewManager(
-                httpClient: httpClient, userDefaults: userDefaults,
-                userInfoManager: mockUserInfoManager)
+                httpClient: httpClient,
+                userDefaults: userDefaults,
+                userInfoManager: mockUserInfoManager
+            )
         }
 
         await manager.fetch()
 
         let components = URLComponents(url: capturedURL!, resolvingAgainstBaseURL: false)!
+        XCTAssertEqual(components.queryItems?.count, 1)
         XCTAssertEqual(components.queryItems?.first?.name, "deviceIdentifier")
         // Value comes from UIDevice.current.identifierForVendor in simulator
         XCTAssertNotNil(components.queryItems?.first?.value)

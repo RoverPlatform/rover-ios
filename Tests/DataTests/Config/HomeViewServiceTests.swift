@@ -20,11 +20,13 @@ import XCTest
 final class HomeViewServiceTests: XCTestCase {
 
     private var httpClient: HTTPClient!
+    private var mockUserInfoManager: MockUserInfoManager!
 
     override func setUp() async throws {
         try await super.setUp()
 
         URLProtocolStub.requestHandler = nil
+        mockUserInfoManager = MockUserInfoManager()
 
         let session = MockURLSessionFactory.create()
         let authContext = AuthenticationContext(userDefaults: UserDefaults())
@@ -33,7 +35,8 @@ final class HomeViewServiceTests: XCTestCase {
             endpoint: URL(string: "https://api.test.com")!,
             engageEndpoint: URL(string: "https://engage.test.com")!,
             session: session,
-            authContext: authContext
+            authContext: authContext,
+            userInfoManager: mockUserInfoManager
         )
     }
 
@@ -63,7 +66,7 @@ final class HomeViewServiceTests: XCTestCase {
             return (response, json)
         }
 
-        let result = await httpClient.getHomeView(identifier: .deviceIdentifier("test-device"))
+        let result = await httpClient.getHomeView()
 
         switch result {
         case .success(let response):
@@ -90,7 +93,7 @@ final class HomeViewServiceTests: XCTestCase {
             return (response, json)
         }
 
-        let result = await httpClient.getHomeView(identifier: .deviceIdentifier("test-device"))
+        let result = await httpClient.getHomeView()
 
         switch result {
         case .success(let response):
@@ -105,7 +108,7 @@ final class HomeViewServiceTests: XCTestCase {
             throw URLError(.notConnectedToInternet)
         }
 
-        let result = await httpClient.getHomeView(identifier: .deviceIdentifier("test-device"))
+        let result = await httpClient.getHomeView()
 
         switch result {
         case .success:
@@ -126,7 +129,7 @@ final class HomeViewServiceTests: XCTestCase {
             return (response, Data())
         }
 
-        let result = await httpClient.getHomeView(identifier: .deviceIdentifier("test-device"))
+        let result = await httpClient.getHomeView()
 
         switch result {
         case .success:
@@ -152,7 +155,7 @@ final class HomeViewServiceTests: XCTestCase {
             return (response, json)
         }
 
-        let result = await httpClient.getHomeView(identifier: .deviceIdentifier("test-device"))
+        let result = await httpClient.getHomeView()
 
         switch result {
         case .success:
@@ -182,12 +185,13 @@ final class HomeViewServiceTests: XCTestCase {
             return (response, json)
         }
 
-        _ = await httpClient.getHomeView(identifier: .deviceIdentifier("test-device"))
+        _ = await httpClient.getHomeView()
 
-        XCTAssertEqual(capturedURL?.absoluteString, "https://engage.test.com/home?deviceIdentifier=test-device")
+        XCTAssertEqual(capturedURL?.host, "engage.test.com")
+        XCTAssertEqual(capturedURL?.path, "/home")
     }
 
-    func testGetHomeViewPassesUserIDAsQueryParam() async {
+    func testGetHomeViewPassesUserIDAndDeviceIdentifierAsQueryParams() async {
         var capturedURL: URL?
 
         let json = """
@@ -205,15 +209,18 @@ final class HomeViewServiceTests: XCTestCase {
             return (response, json)
         }
 
-        _ = await httpClient.getHomeView(identifier: .userID("user-123"))
+        mockUserInfoManager.userInfo["userID"] = "user-123"
+        _ = await httpClient.getHomeView()
 
         let components = URLComponents(url: capturedURL!, resolvingAgainstBaseURL: false)!
-        XCTAssertEqual(components.queryItems?.count, 1)
-        XCTAssertEqual(components.queryItems?.first?.name, "userID")
-        XCTAssertEqual(components.queryItems?.first?.value, "user-123")
+        XCTAssertEqual(
+            components.queryItems?.first(where: { $0.name == "userID" })?.value,
+            "user-123"
+        )
+        XCTAssertNotNil(components.queryItems?.first(where: { $0.name == "deviceIdentifier" }))
     }
 
-    func testGetHomeViewPassesDeviceIdentifierAsQueryParam() async {
+    func testGetHomeViewPassesOnlyDeviceIdentifierWhenNoUserID() async {
         var capturedURL: URL?
 
         let json = """
@@ -231,11 +238,15 @@ final class HomeViewServiceTests: XCTestCase {
             return (response, json)
         }
 
-        _ = await httpClient.getHomeView(identifier: .deviceIdentifier("device-456"))
+        _ = await httpClient.getHomeView()
 
         let components = URLComponents(url: capturedURL!, resolvingAgainstBaseURL: false)!
-        XCTAssertEqual(components.queryItems?.count, 1)
+        XCTAssertEqual(
+            components.queryItems?.count,
+            1,
+            "only deviceIdentifier should be present when there is no userID"
+        )
         XCTAssertEqual(components.queryItems?.first?.name, "deviceIdentifier")
-        XCTAssertEqual(components.queryItems?.first?.value, "device-456")
+        XCTAssertNil(components.queryItems?.first(where: { $0.name == "userID" }))
     }
 }

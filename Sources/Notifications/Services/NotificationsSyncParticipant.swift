@@ -13,28 +13,28 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import os.log
-import RoverFoundation
 import RoverData
+import RoverFoundation
 import UIKit
+import os.log
 
 class NotificationsSyncParticipant: SyncParticipant {
     let store: NotificationStore
-    
+
     init(store: NotificationStore) {
         self.store = store
     }
-    
+
     func initialRequest() -> SyncRequest? {
         guard let uuidString = UIDevice.current.identifierForVendor?.uuidString else {
             return nil
         }
-        
+
         let orderBy: Attributes = [
             "field": "CREATED_AT",
             "direction": "DESC"
         ]
-        
+
         return SyncRequest(
             query: SyncQuery.notifications,
             values: [
@@ -44,7 +44,7 @@ class NotificationsSyncParticipant: SyncParticipant {
             ]
         )
     }
-    
+
     func saveResponse(_ data: Data) -> SyncResult {
         let response: Response
         do {
@@ -53,11 +53,11 @@ class NotificationsSyncParticipant: SyncParticipant {
             os_log("Failed to decode response: %@", log: .sync, type: .error, error.logDescription)
             return .failed
         }
-        
+
         guard let nodes = response.data.notifications.nodes, nodes != self.store.notifications else {
             return .noData
         }
-        
+
         self.store.addNotifications(nodes)
         return .newData(nextRequest: nil)
     }
@@ -68,9 +68,9 @@ private struct Response: Decodable {
         struct Notifications: Decodable {
             var nodes: [Notification]?
         }
-        
+
         var notifications: Notifications
     }
-    
+
     var data: Data
 }

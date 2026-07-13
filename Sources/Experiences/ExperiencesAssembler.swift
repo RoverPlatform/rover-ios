@@ -3,7 +3,7 @@
 // copy, modify, and distribute this software in source code or binary form for use
 // in connection with the web services and APIs provided by Rover.
 //
-// This copyright notice shall be included in all copies or substantial portions of 
+// This copyright notice shall be included in all copies or substantial portions of
 // the software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -13,39 +13,50 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import UIKit
-import RoverFoundation
 import RoverData
+import RoverFoundation
 import RoverUI
+import UIKit
 
 public struct ExperiencesAssembler: Assembler {
-    public init() { }
+    public init() {}
 
     public func assemble(container: Container) {
-        
+
         // MARK: Action (presentExperience)
-        
+
         container.register(Action.self, name: "presentExperience", scope: .transient) { (resolver, url: URL) in
             let viewControllerToPresent = resolver.resolve(UIViewController.self, name: "experience", arguments: url)!
             return resolver.resolve(Action.self, name: "presentView", arguments: viewControllerToPresent)!
         }
-        
+
         // MARK: ExperienceStore
-        
+
         container.register(ExperienceStore.self) { resolver in
             let client = resolver.resolve(FetchExperienceClient.self)!
             let router = resolver.resolve(Router.self)!
             return ExperienceStoreService(client: client, router: router)
         }
-        
+
         // MARK: FetchExperienceClient
-        
+
         container.register(FetchExperienceClient.self) { resolver in
             return resolver.resolve(HTTPClient.self)!
         }
-        
+
+        // MARK: AppScreensNavigator
+
+        container.register(AppScreensNavigator.self, scope: .singleton) { resolver in
+            return MainActor.assumeIsolatedOrFatalError {
+                AppScreensNavigator(
+                    httpClient: resolver.resolve(HTTPClient.self)!,
+                    configManager: resolver.resolve(ConfigManager.self)!
+                )
+            }
+        }
+
         // MARK: NewExperienceManager
-        
+
         container.register(ExperienceManager.self) { resolver in
             let eventQueue = resolver.resolve(EventQueue.self)!
             let userInfoContextProvider = resolver.resolve(UserInfoContextProvider.self)!
@@ -58,48 +69,70 @@ public struct ExperiencesAssembler: Assembler {
                 authContext: authContext
             )
         }
-        
+
         // MARK: RouteHandler (experience)
-        
+
         container.register(RouteHandler.self, name: "experience") { resolver in
             let actionProvider: (URL) -> Action? = { [weak resolver] url in
                 resolver?.resolve(Action.self, name: "presentExperience", arguments: url)
             }
-            
+
             let associatedDomains = resolver.resolve([String].self, name: "associatedDomains")!
-            
+
             return ExperienceRouteHandler(
                 actionProvider: actionProvider,
                 associatedDomains: associatedDomains
             )
         }
 
-        
         // MARK: RoverObserver
-        
+
         container.register(RoverObserver.self) { resolver in
-            RoverObserver(eventQueue: resolver.resolve(EventQueue.self)!, conversionsTracker: resolver.resolve(ConversionsTrackerService.self)!)
+            RoverObserver(
+                eventQueue: resolver.resolve(EventQueue.self)!,
+                conversionsTracker: resolver.resolve(ConversionsTrackerService.self)!
+            )
         }
-        
+
         // MARK: UIViewController (experience)
-        
+
         container.register(UIViewController.self, name: "experience", scope: .transient) { (resolver, url: URL) in
             let viewController = ExperienceViewController()
+            // Deep-link / notification presentations are full-screen and owned by
+            // `PresentViewAction`, which presents this controller modally. Declare it
+            // dismissable so the App Screens root host shows an xmark close item;
+            // dismissing this controller tears down that presentation, preserving
+            // today's behavior exactly.
+            viewController.onDismissButtonPressed = { [weak viewController] in
+                viewController?.dismiss(animated: true)
+            }
             viewController.loadExperience(with: url)
             return viewController
         }
     }
-    
+
     public func containerDidAssemble(resolver: Resolver) {
         if let router = resolver.resolve(Router.self) {
             let handler = resolver.resolve(RouteHandler.self, name: "experience")!
             router.addHandler(handler)
         }
-        
+
         resolver.resolve(RoverObserver.self)?.enable()
-        
+
         // MARK: Analytics
         //TODO: adjust analytics to match the rest of the SDK
         MiniAnalytics.shared.enable()
+    }
+}
+
+private extension MainActor {
+    static func assumeIsolatedOrFatalError<T>(_ operation: @MainActor () -> T) -> T where T: Sendable {
+        if Thread.isMainThread {
+            return MainActor.assumeIsolated {
+                operation()
+            }
+        } else {
+            fatalError("Rover must be initialized on the main thread")
+        }
     }
 }

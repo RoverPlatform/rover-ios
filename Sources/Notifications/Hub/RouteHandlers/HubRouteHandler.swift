@@ -18,72 +18,62 @@ import RoverFoundation
 import RoverUI
 import os.log
 
-/// Route handler for Hub deep links and universal links.
+/// Route handler for Hub deep links.
 /// Handles URLs in the format:
-/// - Deep links: rv-myapp://posts/{id}
-/// - Universal links: https://yourdomain.com/posts/{id}
+/// - Deep links: rv-myapp://posts/{id}  rv-myapp://conversations/{uuid}
 @MainActor
 class HubRouteHandler: RouteHandler {
     private let coordinator: HubCoordinator
     private let presentPostActionProvider: (String?) -> Action?
     private let navigateToPostActionProvider: (String) -> Action?
+    private let presentConversationActionProvider: (UUID) -> Action?
+    private let navigateToConversationActionProvider: (UUID) -> Action?
+
+    private static let knownHubHosts: Set<String> = ["posts", "conversations"]
 
     /// Initializes the route handler with a Hub coordinator and action providers.
     /// - Parameters:
     ///   - coordinator: The Hub coordinator to use for navigation.
     ///   - presentPostActionProvider: Closure that provides modal post presentation action.
     ///   - navigateToPostActionProvider: Closure that provides navigation to post action.
+    ///   - presentConversationActionProvider: Closure that provides modal conversation presentation action.
+    ///   - navigateToConversationActionProvider: Closure that provides navigation to conversation action.
     init(
         coordinator: HubCoordinator,
         presentPostActionProvider: @escaping (String?) -> Action?,
-        navigateToPostActionProvider: @escaping (String) -> Action?
+        navigateToPostActionProvider: @escaping (String) -> Action?,
+        presentConversationActionProvider: @escaping (UUID) -> Action?,
+        navigateToConversationActionProvider: @escaping (UUID) -> Action?
     ) {
         self.coordinator = coordinator
         self.presentPostActionProvider = presentPostActionProvider
         self.navigateToPostActionProvider = navigateToPostActionProvider
+        self.presentConversationActionProvider = presentConversationActionProvider
+        self.navigateToConversationActionProvider = navigateToConversationActionProvider
     }
 
-    /// Handles deep link URLs for Hub navigation.
-    /// - Parameters:
-    ///   - url: The deep link URL to process.
-    ///   - domain: The domain associated with the URL (unused for this handler).
-    /// - Returns: An action to execute for the URL, or nil if the URL is not handled.
     func deepLinkAction(url: URL, domain: String?) -> Action? {
         return processURL(url)
     }
 
-    /// Handles universal link URLs for Hub navigation.
-    /// - Parameter url: The universal link URL to process.
-    /// - Returns: An action to execute for the URL, or nil if the URL is not handled.
     func universalLinkAction(url: URL) -> Action? {
-        return processURL(url)
+        return nil
     }
 
-    /// Processes a URL and returns the appropriate action.
-    /// - Parameter url: The URL to process.
-    /// - Returns: An action to execute for the URL, or nil if the URL is not handled.
     private func processURL(_ url: URL) -> Action? {
         guard let host = url.host else {
             return nil
         }
 
-        // Handle deep links with rover://... format
         let lowercasedHost = host.lowercased()
-        if lowercasedHost == "posts" {
-            return handleHubPath("/" + lowercasedHost + url.path)
-        }
 
-        // Handle universal links with /posts/ paths
-        if url.path.hasPrefix("/posts/") {
-            return handleHubPath(url.path)
+        if Self.knownHubHosts.contains(lowercasedHost) {
+            return handleHubPath("/" + lowercasedHost + url.path)
         }
 
         return nil
     }
 
-    /// Handles Hub specific paths and returns the appropriate action.
-    /// - Parameter path: The path component (e.g., /posts/{id})
-    /// - Returns: An action to execute for the path, or nil if the path is not handled.
     private func handleHubPath(_ path: String) -> Action? {
         let components = path.components(separatedBy: "/").filter { !$0.isEmpty }
 
@@ -91,23 +81,41 @@ class HubRouteHandler: RouteHandler {
             return nil
         }
 
-        let action = components[0]
-
-        switch action {
+        switch components[0] {
         case "posts":
             guard components.count >= 2 else {
                 return nil
             }
             let postID = components[1]
 
-            // If we have a deeplink URL and the Inbox is enabled, navigate within the Hub
             if coordinator.config.hub.deeplink != nil && coordinator.isInboxEnabled {
                 os_log("Navigating to Post Detail", log: .hub, type: .debug)
                 return navigateToPostActionProvider(postID)
             } else {
-                // Otherwise, present post modally outside Hub context
                 os_log("Presenting Post Detail", log: .hub, type: .debug)
                 return presentPostActionProvider(postID)
+            }
+
+        case "conversations":
+            guard components.count >= 2 else {
+                return nil
+            }
+            guard let uuid = UUID(uuidString: components[1]) else {
+                os_log(
+                    "HubRouteHandler: conversations path component is not a valid UUID: %{public}@",
+                    log: .hub,
+                    type: .error,
+                    components[1]
+                )
+                return nil
+            }
+
+            if coordinator.config.hub.deeplink != nil && coordinator.isInboxEnabled {
+                os_log("Navigating to Conversation Detail", log: .hub, type: .debug)
+                return navigateToConversationActionProvider(uuid)
+            } else {
+                os_log("Presenting Conversation Detail", log: .hub, type: .debug)
+                return presentConversationActionProvider(uuid)
             }
 
         default:

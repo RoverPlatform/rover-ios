@@ -46,6 +46,7 @@ public class Rover {
         }
         
         sharedInstance = Rover(assemblers: assemblers)
+        os_log("Started Rover iOS SDK v%@", log: .general, type: .info, Meta.SDKVersion)
     }
 
     public static func deinitialize() {

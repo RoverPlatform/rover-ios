@@ -14,17 +14,17 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 func matchDomainPattern(string: String, pattern: String) -> Bool {
-    guard string.split(separator: ".").count >= 2 else {
+    guard !string.isEmpty else {
         return false
     }
-    
+
     let wildcardAndRoot = pattern.components(separatedBy: "*.")
     guard let root = wildcardAndRoot.last, wildcardAndRoot.count <= 2 else {
         return false
     }
-    
+
     let hasWildcard = wildcardAndRoot.count > 1
-    
+
     return (!hasWildcard && string == pattern) || (hasWildcard && (string == root || string.hasSuffix(".\(root)")))
-    
+
 }

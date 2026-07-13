@@ -3,7 +3,7 @@
 // copy, modify, and distribute this software in source code or binary form for use
 // in connection with the web services and APIs provided by Rover.
 //
-// This copyright notice shall be included in all copies or substantial portions of 
+// This copyright notice shall be included in all copies or substantial portions of
 // the software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -18,6 +18,10 @@ import RoverFoundation
 public protocol UserInfoManager {
     func updateUserInfo(block: (inout Attributes) -> Void)
     func clearUserInfo()
-    
+
+    /// The current user attributes.
+    ///
+    /// Implementors must ensure this property is safe to access from any concurrency context
+    /// without additional synchronisation by the caller (e.g. backed by a lock or atomic storage).
     var currentUserInfo: [String: Any] { get }
 }

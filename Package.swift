@@ -59,10 +59,6 @@ let package = Package(
         .library(
             name: "RoverNHLLiveActivities",
             targets: ["RoverNHLLiveActivities"]),
-        .library(
-            name: "BenchAuthCore",
-            targets: ["BenchAuthCore"]
-        ),
     ],
     dependencies: [
         .package(url: "https://github.com/weichsel/ZIPFoundation", .upToNextMinor(from: "0.9.19")),
@@ -231,15 +227,5 @@ let package = Package(
             name: "RoverLiveActivitiesTests",
             dependencies: ["RoverLiveActivities", "RoverData"],
             path: "Tests/LiveActivitiesTests"),
-        .target(
-            name: "BenchAuthCore",
-            dependencies: [],
-            path: "Testbench/BenchAuthCore"
-        ),
-        .testTarget(
-            name: "BenchAuthCoreTests",
-            dependencies: ["BenchAuthCore"],
-            path: "Tests/BenchAuthCoreTests"
-        ),
     ]
 )

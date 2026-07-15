@@ -69,6 +69,76 @@ final class AppScreensTests: XCTestCase {
         XCTAssertNil(AppScreensNavigator.templatePath(from: url))
     }
 
+    // MARK: - Origin-qualified template key derivation
+
+    func testTemplateKeyComposesOriginAndPath() {
+        let url = URL(string: "https://testbench.rover.io/a/player-detail")!
+        XCTAssertEqual(
+            AppScreensNavigator.templateKey(from: url),
+            "https://testbench.rover.io/a/player-detail"
+        )
+    }
+
+    func testTemplateKeyDistinguishesAssociatedDomains() {
+        // The whole point of the key: the same bare path on two associated domains
+        // must produce two distinct identities so they never share a warm web view.
+        let a = URL(string: "https://a.example/a/detail")!
+        let b = URL(string: "https://b.example/a/detail")!
+        XCTAssertEqual(AppScreensNavigator.templateKey(from: a), "https://a.example/a/detail")
+        XCTAssertEqual(AppScreensNavigator.templateKey(from: b), "https://b.example/a/detail")
+        XCTAssertNotEqual(
+            AppScreensNavigator.templateKey(from: a),
+            AppScreensNavigator.templateKey(from: b)
+        )
+    }
+
+    func testTemplateKeyLowercasesSchemeAndHost() {
+        let url = URL(string: "HTTPS://TestBench.Rover.IO/a/home")!
+        XCTAssertEqual(
+            AppScreensNavigator.templateKey(from: url),
+            "https://testbench.rover.io/a/home"
+        )
+    }
+
+    func testTemplateKeyKeepsExplicitPort() {
+        let url = URL(string: "https://testbench.rover.io:8443/a/home")!
+        XCTAssertEqual(
+            AppScreensNavigator.templateKey(from: url),
+            "https://testbench.rover.io:8443/a/home"
+        )
+    }
+
+    func testTemplateKeyOmitsDefaultPort() {
+        // An explicit default port (:443 for https) is dropped by URL.port, so it is
+        // absent from the key — `https://host` and `https://host:443` are one origin.
+        let url = URL(string: "https://testbench.rover.io:443/a/home")!
+        XCTAssertEqual(
+            AppScreensNavigator.templateKey(from: url),
+            "https://testbench.rover.io/a/home"
+        )
+    }
+
+    func testTemplateKeyExcludesQueryAndFragment() {
+        let url = URL(string: "https://testbench.rover.io/a/player-detail?id=12#stats")!
+        XCTAssertEqual(
+            AppScreensNavigator.templateKey(from: url),
+            "https://testbench.rover.io/a/player-detail"
+        )
+    }
+
+    func testTemplateKeyMultiSegmentPath() {
+        let url = URL(string: "https://testbench.rover.io/a/x/y?z=1")!
+        XCTAssertEqual(
+            AppScreensNavigator.templateKey(from: url),
+            "https://testbench.rover.io/a/x/y"
+        )
+    }
+
+    func testTemplateKeyNonAppScreensURLIsNil() {
+        let url = URL(string: "https://testbench.rover.io/about")!
+        XCTAssertNil(AppScreensNavigator.templateKey(from: url))
+    }
+
     // MARK: - .json URL derivation
 
     func testJSONURLPreservesQuery() {
@@ -254,6 +324,197 @@ final class AppScreensTests: XCTestCase {
         XCTAssertNil(AppScreenMessage(body: ["no": "type"]))
     }
 
+    // MARK: - openURL decoding
+
+    func testMessageOpenURLDismissTrue() {
+        let message = AppScreenMessage(
+            body: ["type": "openURL", "href": "https://example.com/x", "dismiss": true]
+        )
+        XCTAssertEqual(message, .openURL(href: "https://example.com/x", dismiss: true))
+    }
+
+    func testMessageOpenURLDismissAbsentIsFalse() {
+        let message = AppScreenMessage(body: ["type": "openURL", "href": "https://example.com/x"])
+        XCTAssertEqual(message, .openURL(href: "https://example.com/x", dismiss: false))
+    }
+
+    func testMessageOpenURLDismissNonBoolIsFalse() {
+        // A non-`Bool` dismiss (e.g. the string "yes") decodes to a plain open.
+        let message = AppScreenMessage(
+            body: ["type": "openURL", "href": "https://example.com/x", "dismiss": "yes"]
+        )
+        XCTAssertEqual(message, .openURL(href: "https://example.com/x", dismiss: false))
+    }
+
+    func testMessageOpenURLDismissNumericOneIsFalse() {
+        // A `WKScriptMessage` body delivers JS numbers as `NSNumber`, and
+        // `NSNumber(value: 1) as? Bool` succeeds via Foundation bridging. Decoding
+        // must reject a numeric `1` (only a real JSON boolean sets `dismiss`),
+        // matching Android's `JSONObject.optBoolean`. An explicit `NSNumber` is
+        // required here: a plain Swift `1` literal in `[String: Any]` does not bridge
+        // to `Bool` via `as?`, so it would not reproduce the bug.
+        let message = AppScreenMessage(
+            body: ["type": "openURL", "href": "https://example.com/x", "dismiss": NSNumber(value: 1)]
+        )
+        XCTAssertEqual(message, .openURL(href: "https://example.com/x", dismiss: false))
+    }
+
+    func testMessageOpenURLDismissNumericZeroIsFalse() {
+        let message = AppScreenMessage(
+            body: ["type": "openURL", "href": "https://example.com/x", "dismiss": NSNumber(value: 0)]
+        )
+        XCTAssertEqual(message, .openURL(href: "https://example.com/x", dismiss: false))
+    }
+
+    func testMessageOpenURLMissingHrefIsNil() {
+        XCTAssertNil(AppScreenMessage(body: ["type": "openURL", "dismiss": true]))
+    }
+
+    func testMessageOpenURLNonStringHrefIsNil() {
+        XCTAssertNil(AppScreenMessage(body: ["type": "openURL", "href": 42]))
+    }
+
+    func testMessageOpenURLCustomSchemeHrefDecodes() {
+        // `openURL` targets arbitrary external URLs and custom-scheme deep links, so a
+        // non-http(s) href still decodes (authorization is not applied to openURL).
+        let message = AppScreenMessage(body: ["type": "openURL", "href": "myapp://profile/42"])
+        XCTAssertEqual(message, .openURL(href: "myapp://profile/42", dismiss: false))
+    }
+
+    // MARK: - presentWebsite decoding
+
+    func testMessagePresentWebsiteValid() {
+        let message = AppScreenMessage(body: ["type": "presentWebsite", "href": "https://example.com/x"])
+        XCTAssertEqual(message, .presentWebsite(href: "https://example.com/x"))
+    }
+
+    func testMessagePresentWebsiteMissingHrefIsNil() {
+        XCTAssertNil(AppScreenMessage(body: ["type": "presentWebsite"]))
+    }
+
+    func testMessagePresentWebsiteNonStringHrefIsNil() {
+        XCTAssertNil(AppScreenMessage(body: ["type": "presentWebsite", "href": 42]))
+    }
+
+    // MARK: - externalURL(from:against:)
+
+    private let externalBase = URL(string: "https://testbench.rover.io/a/home")!
+
+    func testExternalURLAbsoluteHTTPSPassesThrough() {
+        XCTAssertEqual(
+            AppScreensNavigator.externalURL(from: "https://example.com/x?id=3", against: externalBase),
+            URL(string: "https://example.com/x?id=3")
+        )
+    }
+
+    func testExternalURLPreservesCustomScheme() {
+        // Deep links are the point of `openURL` — a custom scheme survives untouched.
+        XCTAssertEqual(
+            AppScreensNavigator.externalURL(from: "myapp://profile/42", against: externalBase),
+            URL(string: "myapp://profile/42")
+        )
+    }
+
+    func testExternalURLPreservesOpaqueMailto() {
+        XCTAssertEqual(
+            AppScreensNavigator.externalURL(from: "mailto:x@y.com", against: externalBase),
+            URL(string: "mailto:x@y.com")
+        )
+    }
+
+    func testExternalURLTrimsWhitespace() {
+        // The WHATWG parser strips leading/trailing whitespace; Foundation's does not,
+        // so the decision function trims before parsing.
+        XCTAssertEqual(
+            AppScreensNavigator.externalURL(from: "  https://example.com  ", against: externalBase),
+            URL(string: "https://example.com")
+        )
+    }
+
+    func testExternalURLRootRelativePathResolves() {
+        // Browser `<a href>` semantics: a root-relative path lands on the document's
+        // domain — this is what lets openURL reach other experiences by path.
+        XCTAssertEqual(
+            AppScreensNavigator.externalURL(from: "/promo", against: externalBase),
+            URL(string: "https://testbench.rover.io/promo")
+        )
+    }
+
+    func testExternalURLProtocolRelativeInheritsScheme() {
+        XCTAssertEqual(
+            AppScreensNavigator.externalURL(from: "//example.com/path", against: externalBase),
+            URL(string: "https://example.com/path")
+        )
+    }
+
+    func testExternalURLBareHostnameResolvesAsRelativePath() {
+        // Per the URL standard a scheme-less `www.example.com` is a relative path,
+        // not a host — deliberately no address-bar-style host guessing.
+        XCTAssertEqual(
+            AppScreensNavigator.externalURL(from: "www.example.com", against: externalBase),
+            URL(string: "https://testbench.rover.io/a/www.example.com")
+        )
+    }
+
+    func testExternalURLBlankIsNil() {
+        XCTAssertNil(AppScreensNavigator.externalURL(from: "", against: externalBase))
+        XCTAssertNil(AppScreensNavigator.externalURL(from: "   ", against: externalBase))
+    }
+
+    // MARK: - safariPresentableURL
+
+    func testSafariPresentableURLHTTPPassesThrough() {
+        let url = URL(string: "http://example.com/x")!
+        XCTAssertEqual(AppScreensNavigator.safariPresentableURL(url), url)
+    }
+
+    func testSafariPresentableURLHTTPSPassesThrough() {
+        let url = URL(string: "https://example.com/x")!
+        XCTAssertEqual(AppScreensNavigator.safariPresentableURL(url), url)
+    }
+
+    func testSafariPresentableURLCustomSchemeCoercedToHTTPS() {
+        let url = URL(string: "myapp://example.com/x")!
+        XCTAssertEqual(
+            AppScreensNavigator.safariPresentableURL(url),
+            URL(string: "https://example.com/x")
+        )
+    }
+
+    func testSafariPresentableURLUppercaseSchemeTreatedAsHTTPS() {
+        // A case-insensitive https scheme is recognized as http(s) and passed through
+        // unchanged (not re-coerced).
+        let url = URL(string: "HTTPS://example.com/x")!
+        XCTAssertEqual(AppScreensNavigator.safariPresentableURL(url), url)
+    }
+
+    func testSafariPresentableURLMailtoIsNil() {
+        // A hostless URL is not presentable even after coercion.
+        let url = URL(string: "mailto:x@y.com")!
+        XCTAssertNil(AppScreensNavigator.safariPresentableURL(url))
+    }
+
+    func testSafariPresentableURLNoHostIsNil() {
+        let url = URL(string: "tel:+15551234567")!
+        XCTAssertNil(AppScreensNavigator.safariPresentableURL(url))
+    }
+
+    func testSafariPresentableURLRejectsJavascriptScheme() {
+        let url = URL(string: "javascript:alert(1)")!
+        XCTAssertNil(AppScreensNavigator.safariPresentableURL(url))
+    }
+
+    func testSafariPresentableURLRejectsFileScheme() {
+        // `file:///…` has an empty authority — coercion must not yield an https URL.
+        let url = URL(string: "file:///etc/passwd")!
+        XCTAssertNil(AppScreensNavigator.safariPresentableURL(url))
+    }
+
+    func testSafariPresentableURLRejectsDataScheme() {
+        let url = URL(string: "data:text/html,hello")!
+        XCTAssertNil(AppScreensNavigator.safariPresentableURL(url))
+    }
+
     // MARK: - show() arguments assembly
 
     func testShowArgumentsPassesNSNullForMissingOptimisticDataAndResponse() {
@@ -436,6 +697,64 @@ final class AppScreensTests: XCTestCase {
         )
     }
 
+    // MARK: - Eager-fetch reconcile decision
+
+    func testReconcileMatchingScopesDoNotRestart() {
+        // The eager guess matched the document's scope → consume the concurrent
+        // result, nothing to reconcile.
+        XCTAssertFalse(
+            AppScreensNavigator.shouldRestartEagerFetch(
+                eagerScope: .public,
+                effectiveScope: .public
+            )
+        )
+        XCTAssertFalse(
+            AppScreensNavigator.shouldRestartEagerFetch(
+                eagerScope: .personalized,
+                effectiveScope: .personalized
+            )
+        )
+    }
+
+    func testReconcilePersonalizedEagerPublicDocumentRestarts() {
+        // A stale personalized eager fetch sent identifiers to a now-public
+        // screen → discard and refetch bare.
+        XCTAssertTrue(
+            AppScreensNavigator.shouldRestartEagerFetch(
+                eagerScope: .personalized,
+                effectiveScope: .public
+            )
+        )
+    }
+
+    func testReconcilePublicEagerPersonalizedDocumentRestarts() {
+        // A stale public eager fetch against a now-personalized screen → discard
+        // and refetch with identifiers.
+        XCTAssertTrue(
+            AppScreensNavigator.shouldRestartEagerFetch(
+                eagerScope: .public,
+                effectiveScope: .personalized
+            )
+        )
+    }
+
+    func testReconcileNilEagerScopeNeverRestarts() {
+        // No concurrent fetch started (the fetch waited for the document) →
+        // nothing to reconcile, either document scope.
+        XCTAssertFalse(
+            AppScreensNavigator.shouldRestartEagerFetch(
+                eagerScope: nil,
+                effectiveScope: .public
+            )
+        )
+        XCTAssertFalse(
+            AppScreensNavigator.shouldRestartEagerFetch(
+                eagerScope: nil,
+                effectiveScope: .personalized
+            )
+        )
+    }
+
     // MARK: - templateHash peek
 
     func testPeekTemplateHashFromSampleJSON() {
@@ -482,10 +801,18 @@ final class AppScreensTests: XCTestCase {
                 "/a/player-detail"
             ],
             documentURL: document,
-            existingTemplatePaths: [],
-            inflightTemplatePaths: []
+            existingTemplateKeys: [],
+            inflightTemplateKeys: [],
+            allowedHosts: ["testbench.rover.io"]
         )
-        XCTAssertEqual(candidates.map(\.templatePath), ["player-detail", "standings"])
+        // Candidate identity is the origin-qualified key, not the bare path.
+        XCTAssertEqual(
+            candidates.map(\.templateKey),
+            [
+                "https://testbench.rover.io/a/player-detail",
+                "https://testbench.rover.io/a/standings"
+            ]
+        )
         // Prewarm URLs are param-free.
         XCTAssertEqual(
             candidates.map { $0.documentURL.absoluteString },
@@ -501,12 +828,13 @@ final class AppScreensTests: XCTestCase {
         let candidates = AppScreensNavigator.prewarmCandidates(
             linkHrefs: ["/a/player-detail?id=12", "/a/standings", "/a/schedule"],
             documentURL: document,
-            existingTemplatePaths: ["player-detail"],
-            inflightTemplatePaths: ["standings"]
+            existingTemplateKeys: ["https://testbench.rover.io/a/player-detail"],
+            inflightTemplateKeys: ["https://testbench.rover.io/a/standings"],
+            allowedHosts: ["testbench.rover.io"]
         )
         // player-detail is already live; standings already in flight; only the
         // genuinely-missing schedule survives.
-        XCTAssertEqual(candidates.map(\.templatePath), ["schedule"])
+        XCTAssertEqual(candidates.map(\.templateKey), ["https://testbench.rover.io/a/schedule"])
     }
 
     func testPrewarmCandidatesEmptyWhenNothingMissing() {
@@ -514,8 +842,12 @@ final class AppScreensTests: XCTestCase {
         let candidates = AppScreensNavigator.prewarmCandidates(
             linkHrefs: ["/a/player-detail?id=1", "/a/standings"],
             documentURL: document,
-            existingTemplatePaths: ["player-detail", "standings"],
-            inflightTemplatePaths: []
+            existingTemplateKeys: [
+                "https://testbench.rover.io/a/player-detail",
+                "https://testbench.rover.io/a/standings"
+            ],
+            inflightTemplateKeys: [],
+            allowedHosts: ["testbench.rover.io"]
         )
         XCTAssertTrue(candidates.isEmpty)
     }
@@ -527,10 +859,11 @@ final class AppScreensTests: XCTestCase {
         let candidates = AppScreensNavigator.prewarmCandidates(
             linkHrefs: ["/a/player-detail?id=9", "/a/standings"],
             documentURL: document,
-            existingTemplatePaths: ["player-detail"],
-            inflightTemplatePaths: []
+            existingTemplateKeys: ["https://testbench.rover.io/a/player-detail"],
+            inflightTemplateKeys: [],
+            allowedHosts: ["testbench.rover.io"]
         )
-        XCTAssertEqual(candidates.map(\.templatePath), ["standings"])
+        XCTAssertEqual(candidates.map(\.templateKey), ["https://testbench.rover.io/a/standings"])
         XCTAssertEqual(
             candidates.first?.documentURL.absoluteString,
             "https://testbench.rover.io/a/standings"
@@ -622,6 +955,304 @@ final class AppScreensTests: XCTestCase {
         XCTAssertEqual(
             AppScreensNavigator.recoveryAction(visibility: .offStack, didAttemptRecovery: true),
             .teardown
+        )
+    }
+
+    // MARK: - bridgeMessageAllowed
+
+    func testBridgeMessageMainFrameSameOriginAccepted() {
+        // The expected main frame at the session's own origin is honored.
+        let document = URL(string: "https://testbench.rover.io/a/home")!
+        XCTAssertTrue(
+            AppScreensNavigator.bridgeMessageAllowed(
+                isMainFrame: true,
+                originProtocol: "https",
+                originHost: "testbench.rover.io",
+                originPort: 0,
+                documentURL: document
+            )
+        )
+    }
+
+    func testBridgeMessageSubframeRejected() {
+        // No App Screens runtime posts from a subframe; a same-origin iframe is
+        // still rejected purely on the main-frame check.
+        let document = URL(string: "https://testbench.rover.io/a/home")!
+        XCTAssertFalse(
+            AppScreensNavigator.bridgeMessageAllowed(
+                isMainFrame: false,
+                originProtocol: "https",
+                originHost: "testbench.rover.io",
+                originPort: 0,
+                documentURL: document
+            )
+        )
+    }
+
+    func testBridgeMessageCrossHostRejected() {
+        // A main frame that has navigated to another host cannot post.
+        let document = URL(string: "https://testbench.rover.io/a/home")!
+        XCTAssertFalse(
+            AppScreensNavigator.bridgeMessageAllowed(
+                isMainFrame: true,
+                originProtocol: "https",
+                originHost: "evil.example.com",
+                originPort: 0,
+                documentURL: document
+            )
+        )
+    }
+
+    func testBridgeMessageCrossSchemeRejected() {
+        // A scheme downgrade (http vs the document's https) is a different origin.
+        let document = URL(string: "https://testbench.rover.io/a/home")!
+        XCTAssertFalse(
+            AppScreensNavigator.bridgeMessageAllowed(
+                isMainFrame: true,
+                originProtocol: "http",
+                originHost: "testbench.rover.io",
+                originPort: 0,
+                documentURL: document
+            )
+        )
+    }
+
+    func testBridgeMessageExplicitMatchingPortAccepted() {
+        // A matching explicit non-default port is accepted.
+        let document = URL(string: "https://testbench.rover.io:8443/a/home")!
+        XCTAssertTrue(
+            AppScreensNavigator.bridgeMessageAllowed(
+                isMainFrame: true,
+                originProtocol: "https",
+                originHost: "testbench.rover.io",
+                originPort: 8443,
+                documentURL: document
+            )
+        )
+    }
+
+    func testBridgeMessageMismatchedPortRejected() {
+        // A different explicit port is a different origin.
+        let document = URL(string: "https://testbench.rover.io:8443/a/home")!
+        XCTAssertFalse(
+            AppScreensNavigator.bridgeMessageAllowed(
+                isMainFrame: true,
+                originProtocol: "https",
+                originHost: "testbench.rover.io",
+                originPort: 9443,
+                documentURL: document
+            )
+        )
+    }
+
+    func testBridgeMessageDefaultPortEquivalence() {
+        // WKSecurityOrigin reports 0 for a default port and URL.port is nil for a
+        // default port; both normalize to the scheme default and compare equal.
+        let document = URL(string: "https://testbench.rover.io/a/home")!
+        XCTAssertTrue(
+            AppScreensNavigator.bridgeMessageAllowed(
+                isMainFrame: true,
+                originProtocol: "https",
+                originHost: "testbench.rover.io",
+                originPort: 0,
+                documentURL: document
+            )
+        )
+    }
+
+    func testBridgeMessageHttpsExplicit443MatchesDefault() {
+        // A document URL carrying an explicit `:443` is the same origin as an
+        // origin whose port normalizes to the https default (0 → 443).
+        let document = URL(string: "https://testbench.rover.io:443/a/home")!
+        XCTAssertTrue(
+            AppScreensNavigator.bridgeMessageAllowed(
+                isMainFrame: true,
+                originProtocol: "https",
+                originHost: "testbench.rover.io",
+                originPort: 0,
+                documentURL: document
+            )
+        )
+    }
+
+    func testBridgeMessageHostMatchIsCaseInsensitive() {
+        // Host comparison is case-insensitive, matching origin semantics.
+        let document = URL(string: "https://Testbench.Rover.IO/a/home")!
+        XCTAssertTrue(
+            AppScreensNavigator.bridgeMessageAllowed(
+                isMainFrame: true,
+                originProtocol: "https",
+                originHost: "testbench.rover.io",
+                originPort: 0,
+                documentURL: document
+            )
+        )
+    }
+
+    // MARK: - Navigation authorization
+
+    private static let navAllowedHosts: Set<String> = ["testbench.rover.io"]
+
+    func testAuthorizedTargetAcceptsAppScreenOnAssociatedDomain() {
+        // The happy path: an `/a/{template}` https URL on an associated domain is
+        // authorized, and its normalized URL + template path come back.
+        let resolved = URL(string: "https://testbench.rover.io/a/player-detail?id=3")!
+        let target = AppScreensNavigator.authorizedTarget(
+            resolvedURL: resolved,
+            allowedHosts: Self.navAllowedHosts
+        )
+        XCTAssertEqual(
+            target,
+            AppScreensNavigator.AuthorizedTarget(
+                url: URL(string: "https://testbench.rover.io/a/player-detail?id=3")!,
+                templatePath: "player-detail"
+            )
+        )
+    }
+
+    func testAuthorizedTargetRejectsForeignHost() {
+        // A screen navigating to an attacker host is rejected — this is the leak the
+        // fix closes (personalized `.json` would carry the account token + identifiers).
+        let resolved = URL(string: "https://attacker.example/a/x")!
+        XCTAssertNil(
+            AppScreensNavigator.authorizedTarget(
+                resolvedURL: resolved,
+                allowedHosts: Self.navAllowedHosts
+            )
+        )
+    }
+
+    func testAuthorizedTargetUpgradesHttpToHttps() {
+        // An http target on an associated domain is upgraded to https (mirroring the
+        // entry point) rather than rejected.
+        let resolved = URL(string: "http://testbench.rover.io/a/home")!
+        let target = AppScreensNavigator.authorizedTarget(
+            resolvedURL: resolved,
+            allowedHosts: Self.navAllowedHosts
+        )
+        XCTAssertEqual(target?.url.absoluteString, "https://testbench.rover.io/a/home")
+        XCTAssertEqual(target?.templatePath, "home")
+    }
+
+    func testAuthorizedTargetRejectsCustomScheme() {
+        // A non-http(s) scheme (e.g. a deep-link custom scheme reaching the bridge)
+        // is rejected outright.
+        let resolved = URL(string: "rv-testbench://testbench.rover.io/a/home")!
+        XCTAssertNil(
+            AppScreensNavigator.authorizedTarget(
+                resolvedURL: resolved,
+                allowedHosts: Self.navAllowedHosts
+            )
+        )
+    }
+
+    func testAuthorizedTargetRejectsNonAppScreenPath() {
+        // A URL on the associated domain that is not an `/a/{template}` document is
+        // rejected — no more `?? resolvedURL.path` fallback turning it into a template.
+        let resolved = URL(string: "https://testbench.rover.io/settings/account")!
+        XCTAssertNil(
+            AppScreensNavigator.authorizedTarget(
+                resolvedURL: resolved,
+                allowedHosts: Self.navAllowedHosts
+            )
+        )
+    }
+
+    func testAuthorizedTargetHostMatchIsCaseInsensitive() {
+        // Host comparison is case-insensitive against the (lowercased) allowed set.
+        let resolved = URL(string: "https://TestBench.Rover.IO/a/home")!
+        let target = AppScreensNavigator.authorizedTarget(
+            resolvedURL: resolved,
+            allowedHosts: Self.navAllowedHosts
+        )
+        XCTAssertEqual(target?.templatePath, "home")
+    }
+
+    // MARK: - Prewarm domain filtering
+
+    func testPrewarmCandidatesDropForeignHost() {
+        // A `links` hint carrying an absolute href to another host is not prewarmed,
+        // even though it is a well-formed `/a/{template}` URL.
+        let document = URL(string: "https://testbench.rover.io/a/home")!
+        let candidates = AppScreensNavigator.prewarmCandidates(
+            linkHrefs: ["https://attacker.example/a/evil", "/a/standings"],
+            documentURL: document,
+            existingTemplateKeys: [],
+            inflightTemplateKeys: [],
+            allowedHosts: ["testbench.rover.io"]
+        )
+        XCTAssertEqual(candidates.map(\.templateKey), ["https://testbench.rover.io/a/standings"])
+    }
+
+    // MARK: - Main-frame navigation policy
+
+    func testMainFrameNavigationAllowsNativeDocumentLoad() {
+        // The native `loadHTMLString(_:baseURL:)` arrives as a `.other` action whose
+        // request URL equals the session's documentURL — allowed.
+        let documentURL = URL(string: "https://testbench.rover.io/a/home")!
+        XCTAssertTrue(
+            AppScreensNavigator.mainFrameNavigationAllowed(
+                isMainFrame: true,
+                isOtherNavigationType: true,
+                requestURL: documentURL,
+                documentURL: documentURL
+            )
+        )
+    }
+
+    func testMainFrameNavigationDeniesLinkActivated() {
+        // A main-frame link tap (not `.other`) to the same document is still denied —
+        // main-frame navigation is only ever native.
+        let documentURL = URL(string: "https://testbench.rover.io/a/home")!
+        XCTAssertFalse(
+            AppScreensNavigator.mainFrameNavigationAllowed(
+                isMainFrame: true,
+                isOtherNavigationType: false,
+                requestURL: documentURL,
+                documentURL: documentURL
+            )
+        )
+    }
+
+    func testMainFrameNavigationDeniesForeignOtherNavigation() {
+        // A scripted `location.href` to a foreign URL arrives as `.other`, but its
+        // URL does not match the documentURL — denied.
+        let documentURL = URL(string: "https://testbench.rover.io/a/home")!
+        XCTAssertFalse(
+            AppScreensNavigator.mainFrameNavigationAllowed(
+                isMainFrame: true,
+                isOtherNavigationType: true,
+                requestURL: URL(string: "https://attacker.example/phish"),
+                documentURL: documentURL
+            )
+        )
+    }
+
+    func testMainFrameNavigationAllowsSubframe() {
+        // A non-main-frame action (an iframe loading its own content) is allowed,
+        // regardless of its URL.
+        let documentURL = URL(string: "https://testbench.rover.io/a/home")!
+        XCTAssertTrue(
+            AppScreensNavigator.mainFrameNavigationAllowed(
+                isMainFrame: false,
+                isOtherNavigationType: false,
+                requestURL: URL(string: "https://ads.example/frame"),
+                documentURL: documentURL
+            )
+        )
+    }
+
+    func testMainFrameNavigationAllowsAboutBlank() {
+        // `about:blank` (and a nil request URL) are native artifacts of the load and
+        // are allowed.
+        let documentURL = URL(string: "https://testbench.rover.io/a/home")!
+        XCTAssertTrue(
+            AppScreensNavigator.mainFrameNavigationAllowed(
+                isMainFrame: true,
+                isOtherNavigationType: true,
+                requestURL: URL(string: "about:blank"),
+                documentURL: documentURL
+            )
         )
     }
 

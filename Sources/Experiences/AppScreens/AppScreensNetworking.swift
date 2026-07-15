@@ -147,7 +147,7 @@ extension AppScreensNavigator {
             "json scope flipped to personalized [%{public}@] — refetching with identifiers",
             log: .appScreens,
             type: .default,
-            Self.templatePath(from: url) ?? url.path
+            Self.templateKey(from: url) ?? Self.fallbackTemplateKey(for: url)
         )
         return try await fetchScreenDataOnce(dataURL: dataURL, scope: .personalized, sourceURL: url)
     }
@@ -209,7 +209,7 @@ extension AppScreensNavigator {
             "json loaded [%{public}@] scope=%{public}@ status=%d templateHash=%{public}@ %{public}.1fms",
             log: .appScreens,
             type: .info,
-            Self.templatePath(from: sourceURL) ?? sourceURL.path,
+            Self.templateKey(from: sourceURL) ?? Self.fallbackTemplateKey(for: sourceURL),
             scope.rawValue,
             statusCode,
             templateHash ?? "(none)",
@@ -256,14 +256,14 @@ extension AppScreensNavigator {
                 "json carried no templateHash [%{public}@] — rendering without handshake",
                 log: .appScreens,
                 type: .default,
-                session.templatePath
+                session.templateKey
             )
         case .reloadFirst:
             os_log(
                 "hash mismatch [%{public}@] documentETag=%{public}@ templateHash=%{public}@ — refetching document",
                 log: .appScreens,
                 type: .default,
-                session.templatePath,
+                session.templateKey,
                 session.documentETag ?? "(none)",
                 templateHash ?? "(none)"
             )
@@ -273,7 +273,7 @@ extension AppScreensNavigator {
                     "hash still mismatched after refetch [%{public}@] documentETag=%{public}@ templateHash=%{public}@ — rendering anyway",
                     log: .appScreens,
                     type: .fault,
-                    session.templatePath,
+                    session.templateKey,
                     session.documentETag ?? "(none)",
                     templateHash ?? "(none)"
                 )
@@ -288,7 +288,7 @@ extension AppScreensNavigator {
             "show resolved [%{public}@] hydrateMs=%{public}.1f",
             log: .appScreens,
             type: .info,
-            session.templatePath,
+            session.templateKey,
             hydrateMs
         )
     }
@@ -305,7 +305,7 @@ extension AppScreensNavigator {
             "document refetched [%{public}@] etag=%{public}@",
             log: .appScreens,
             type: .info,
-            session.templatePath,
+            session.templateKey,
             etag ?? "(none)"
         )
 
@@ -326,6 +326,12 @@ extension AppScreensNavigator {
     /// `callShow(on:payload:)` so the timeout wrapper captures only `Sendable`
     /// values (never the web view).
     func performShow(session: AppScreenSession, payload: ShowPayload) async throws -> Double {
+        // The single staleness gate for every `show()`: if the driving pipeline was
+        // superseded (pop/reuse/teardown/recovery), abort before writing
+        // `lastShowPayload` or morphing so a late response can't render the wrong
+        // record into a web view now owned by a newer navigation. Callers treat the
+        // thrown `CancellationError` as a superseded pipeline and exit quietly.
+        try Task.checkCancellation()
         guard let webView = session.webView else {
             throw AppScreenDocumentError.webViewUnavailable
         }

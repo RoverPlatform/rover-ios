@@ -81,7 +81,7 @@ extension AppScreensNavigator {
                 "WebContent process terminated [%{public}@] (visible) — recovering",
                 log: .appScreens,
                 type: .error,
-                session.templatePath
+                session.templateKey
             )
             recover(session: session, reason: "WebContent process termination")
         case .defer_:
@@ -94,14 +94,14 @@ extension AppScreensNavigator {
                 "WebContent process terminated [%{public}@] (occluded) — deferring recovery until visible",
                 log: .appScreens,
                 type: .error,
-                session.templatePath
+                session.templateKey
             )
         case .teardown:
             os_log(
                 "WebContent process terminated [%{public}@] (idle, off stack) — tearing down dead idle session",
                 log: .appScreens,
                 type: .info,
-                session.templatePath
+                session.templateKey
             )
             teardownIdle(session)
         }
@@ -112,12 +112,12 @@ extension AppScreensNavigator {
     /// navigation to its template cold-creates a fresh session.
     private func teardownIdle(_ session: AppScreenSession) {
         teardown(session)
-        if sessions[session.templatePath] === session {
-            sessions.removeValue(forKey: session.templatePath)
+        if sessions[session.templateKey] === session {
+            sessions.removeValue(forKey: session.templateKey)
         }
         ephemeralSessions.removeAll { $0 === session }
         prewarmingSessions.removeAll { $0 === session }
-        inflightPrewarms.remove(session.templatePath)
+        inflightPrewarms.remove(session.templateKey)
     }
 
     /// Recover-and-replay for a session whose render is compromised (WebContent
@@ -141,7 +141,7 @@ extension AppScreensNavigator {
                 "recovery already in progress [%{public}@] — ignoring duplicate trigger (%{public}@)",
                 log: .appScreens,
                 type: .debug,
-                session.templatePath,
+                session.templateKey,
                 reason
             )
             return
@@ -152,7 +152,7 @@ extension AppScreensNavigator {
                 "cannot recover [%{public}@] — no host or document URL",
                 log: .appScreens,
                 type: .error,
-                session.templatePath
+                session.templateKey
             )
             return
         }
@@ -164,7 +164,7 @@ extension AppScreensNavigator {
                 "recovery budget spent [%{public}@] — surfacing retry error state",
                 log: .appScreens,
                 type: .error,
-                session.templatePath
+                session.templateKey
             )
             host.showLoadFailure { [weak self, weak session] in
                 guard let self, let session else {
@@ -182,14 +182,19 @@ extension AppScreensNavigator {
             "recovering [%{public}@] after %{public}@",
             log: .appScreens,
             type: .error,
-            session.templatePath,
+            session.templateKey,
             reason
         )
 
         let recoverSignpostID = appScreensSignposter.makeSignpostID()
         let recoverInterval = appScreensSignposter.beginInterval("recover", id: recoverSignpostID)
 
-        Task { [weak self, weak host, weak session] in
+        // Supersede the compromised load/navigation pipeline before replaying into
+        // the same web view: recovery re-fetches the document, re-boots the runtime,
+        // and re-runs `show`, so a stale pipeline still awaiting must not race it.
+        // The recovery itself becomes this session's single in-flight pipeline.
+        session.pipelineTask?.cancel()
+        session.pipelineTask = Task { [weak self, weak host, weak session] in
             guard let self, let host, let session else {
                 appScreensSignposter.endInterval("recover", recoverInterval)
                 return
@@ -233,7 +238,7 @@ extension AppScreensNavigator {
                         "recovery replay resolved [%{public}@] hydrateMs=%{public}.1f",
                         log: .appScreens,
                         type: .info,
-                        session.templatePath,
+                        session.templateKey,
                         hydrateMs
                     )
                 } else {
@@ -241,10 +246,17 @@ extension AppScreensNavigator {
                         "recovery [%{public}@] — no prior show payload, document reload only",
                         log: .appScreens,
                         type: .info,
-                        session.templatePath
+                        session.templateKey
                     )
                 }
 
+                // A newer navigation may have superseded this recovery while the
+                // replay `show` ran (`callAsyncJavaScript` need not observe
+                // cancellation mid-flight) — don't reveal the recovered record over it.
+                guard !Task.isCancelled else {
+                    session.isRecovering = false
+                    return
+                }
                 host.reveal()
                 session.isRecovering = false
                 // A clean recovery restores the per-navigation budget so an
@@ -254,15 +266,20 @@ extension AppScreensNavigator {
                     "recovered [%{public}@]",
                     log: .appScreens,
                     type: .info,
-                    session.templatePath
+                    session.templateKey
                 )
             } catch {
                 session.isRecovering = false
+                // A recovery superseded by a newer navigation (cancelled) unwinds
+                // here — never paint the retry error UI over the new record.
+                guard !Task.isCancelled else {
+                    return
+                }
                 os_log(
                     "recovery failed [%{public}@]: %{public}@ — surfacing retry error state",
                     log: .appScreens,
                     type: .error,
-                    session.templatePath,
+                    session.templateKey,
                     error.localizedDescription
                 )
                 host.showLoadFailure { [weak self, weak session] in
@@ -293,6 +310,44 @@ final class AppScreenNavigationDelegate: NSObject, WKNavigationDelegate {
     nonisolated func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
         MainActor.assumeIsolated {
             navigator?.handleWebContentProcessTermination(of: webView)
+        }
+    }
+
+    /// Locks the main frame to native document loads. WebKit adds the bridge handler
+    /// to the page content world and the whole native chrome is drawn around the web
+    /// view, so page JS that `location.href`s (or a link tap) must never be allowed
+    /// to swap the main frame to arbitrary web content. Every legitimate document
+    /// load is a native `loadHTMLString(_:baseURL:)` — a `.other` navigation whose
+    /// request URL equals the session's `documentURL` — so allow only those (plus
+    /// `about:blank`/nil and any subframe/iframe) and cancel everything else. A
+    /// cancelled main-frame navigation is a security signal, logged at `.error`.
+    /// `nonisolated` to satisfy the protocol requirement; it hops straight to the
+    /// main actor it is already running on.
+    nonisolated func webView(
+        _ webView: WKWebView,
+        decidePolicyFor navigationAction: WKNavigationAction,
+        decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
+    ) {
+        MainActor.assumeIsolated {
+            let documentURL = navigator?.liveSession(for: webView)?.documentURL
+            let allowed = AppScreensNavigator.mainFrameNavigationAllowed(
+                // A nil `targetFrame` is a new-window/target=_blank action, not an
+                // iframe — treat it as a main-frame action so it faces the strict gate.
+                isMainFrame: navigationAction.targetFrame?.isMainFrame ?? true,
+                isOtherNavigationType: navigationAction.navigationType == .other,
+                requestURL: navigationAction.request.url,
+                documentURL: documentURL
+            )
+            if !allowed {
+                os_log(
+                    "Cancelling unauthorized App Screens main-frame navigation to %{public}@ (type=%ld)",
+                    log: .appScreens,
+                    type: .error,
+                    navigationAction.request.url?.absoluteString ?? "(no url)",
+                    navigationAction.navigationType.rawValue
+                )
+            }
+            decisionHandler(allowed ? .allow : .cancel)
         }
     }
 }

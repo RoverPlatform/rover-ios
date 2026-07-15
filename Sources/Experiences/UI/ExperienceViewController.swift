@@ -53,6 +53,14 @@ open class ExperienceViewController: UIViewController {
     /// supplies either this handler or `appScreensRootBarItem`, never both.
     var onDismissButtonPressed: (() -> Void)?
 
+    /// An optional URL-opening override consulted only for the `openURL` bridge
+    /// message from a V3 App Screens experience (never for the in-app
+    /// `presentWebsite`, and not for V1/V2 experiences). Threaded to the navigator's
+    /// root session at load time; when `nil` the URL is handed to the OS via
+    /// `UIApplication.shared.open`. Set before `loadExperience`, mirroring
+    /// `onDismissButtonPressed`.
+    var onOpenURL: ((URL) -> Void)?
+
     /// An optional native item the embedding host (e.g. the Hub) wants installed on
     /// the App Screens ROOT host's `navigationItem.rightBarButtonItem` — the inbox
     /// affordance for a V3 home view. Set via `setAppScreensRootBarItem(_:)` before
@@ -62,6 +70,36 @@ open class ExperienceViewController: UIViewController {
     /// instead. The two never coexist: the modal entry supplies no root bar item and
     /// the Hub embed is never presented modally.
     private var appScreensRootBarItem: AppScreensRootBarItem?
+
+    deinit {
+        // This view controller owns the App Screens presentation. When it goes away
+        // (the modal is dismissed, or a Hub-owned controller is removed), release the
+        // navigator's root session so its web view is reclaimed — or demoted to the
+        // warm pool — rather than leaking on-stack in the navigator singleton forever.
+        // The navigator's `onPopped` teardown never fires for a root dismissed with
+        // its containing navigation controller, so this is the root's teardown seat.
+        // No-op / idempotent for a non-App-Screens experience (no root host) or after
+        // an earlier release. `resolve` is optional-guarded so a container torn down
+        // before this VC can never crash `deinit`.
+        //
+        // A `UIViewController` deallocates on the main thread, so the main-actor
+        // navigator is safe to touch here; `assumeIsolated` bridges the nonisolated
+        // `deinit` to it (mirroring the navigator's own main-thread WebKit callbacks).
+        MainActor.assumeIsolated {
+            if let rootHost = appScreensRootHost,
+                let navigator = Rover.shared.resolve(AppScreensNavigator.self)
+            {
+                navigator.releaseRootPresentation(rootHost)
+            }
+        }
+    }
+    
+    /// The App Screens navigation controller is nested inside this controller,
+    /// so a reset applied to the outer SwiftUI navigation stack cannot clear the
+    /// host application's `UINavigationBar.appearance()` values from it.
+    private var appScreensNavigationController: UINavigationController? {
+        appScreensRootHost?.navigationController
+    }
 
     /// Load a Rover experience into a newly instantiated ExperienceViewController.
     /// This URL can be:
@@ -164,9 +202,14 @@ open class ExperienceViewController: UIViewController {
         }
 
         let navigator = Rover.shared.resolve(AppScreensNavigator.self)!
-        let rootHost = navigator.makeRootViewController(for: normalizedURL)
+        let rootHost = navigator.makeRootViewController(
+            for: normalizedURL,
+            onDismissButtonPressed: onDismissButtonPressed,
+            onOpenURL: onOpenURL
+        )
 
         let navigationController = UINavigationController(rootViewController: rootHost)
+        resetAppScreensNavigationBar(navigationController.navigationBar)
 
         // Stash the root host so `popAppScreensNavigationToRoot` can pop the child
         // navigation stack back to it on a Hub-driven reset.
@@ -188,6 +231,13 @@ open class ExperienceViewController: UIViewController {
 
         setChildViewController(navigationController)
         setNeedsStatusBarAppearanceUpdate()
+    }
+
+    override open func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if let navigationController = appScreensNavigationController {
+            resetAppScreensNavigationBar(navigationController.navigationBar)
+        }
     }
 
     /// Sets (or clears/updates) the native root bar item for the App Screens flow.
@@ -429,5 +479,36 @@ open class ExperienceViewController: UIViewController {
                 authorizers: authorizers
             )
         }
+    }
+}
+
+/// Clears appearance-proxy state on the bar owned by the App Screens flow.
+/// These are instance assignments, matching `NavBarAppearanceReset`, so
+/// they take precedence over the host application's global appearance.
+package func resetAppScreensNavigationBar(_ bar: UINavigationBar) {
+    let appearance = UINavigationBarAppearance()
+    appearance.configureWithTransparentBackground()
+
+    bar.standardAppearance = appearance
+    bar.scrollEdgeAppearance = appearance
+    bar.compactAppearance = appearance
+    bar.compactScrollEdgeAppearance = appearance
+
+    bar.tintColor = nil
+    bar.isTranslucent = true
+    bar.backgroundColor = nil
+    bar.barStyle = .default
+    bar.prefersLargeTitles = false
+    bar.shadowImage = nil
+    bar.setBackgroundImage(nil, for: .default)
+    bar.setBackgroundImage(nil, for: .compact)
+    bar.setBackgroundImage(nil, for: .defaultPrompt)
+    bar.setBackgroundImage(nil, for: .compactPrompt)
+    bar.titleTextAttributes = nil
+    bar.largeTitleTextAttributes = nil
+    bar.backIndicatorImage = nil
+    bar.backIndicatorTransitionMaskImage = nil
+    for metrics in [UIBarMetrics.default, .compact, .defaultPrompt, .compactPrompt] {
+        bar.setTitleVerticalPositionAdjustment(0, for: metrics)
     }
 }

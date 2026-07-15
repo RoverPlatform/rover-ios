@@ -119,6 +119,25 @@ extension AppScreensNavigator {
         URL(string: href, relativeTo: documentURL)?.absoluteURL
     }
 
+    /// Interprets an external-link href (`openURL` / `presentWebsite`) the way a
+    /// browser interprets an `<a href>`: WHATWG-style resolution against the posting
+    /// document's URL. Absolute URLs — http(s), `mailto:`, `tel:`, custom deep-link
+    /// schemes — pass through as written (unlike `resolveHref`'s `navigate` targets,
+    /// opaque schemes are valid here — deep links are the point); relative,
+    /// protocol-relative, and query/fragment hrefs resolve against `documentURL`,
+    /// which is what lets `openURL` reach *other* experiences by path. Leading and
+    /// trailing whitespace is trimmed, as the WHATWG parser does. Deliberately NO
+    /// address-bar-style host guessing: a scheme-less `www.example.com` is a
+    /// relative path per the URL standard and resolves onto the document's domain.
+    /// A blank or unparseable href returns `nil` for the caller to log and drop.
+    static func externalURL(from href: String, against documentURL: URL) -> URL? {
+        let trimmed = href.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else {
+            return nil
+        }
+        return URL(string: trimmed, relativeTo: documentURL)?.absoluteURL
+    }
+
     /// Derives the template path from an App Screens URL: the path after the `a`
     /// component, query stripped, multi-segment joined with `/`.
     ///
@@ -137,6 +156,60 @@ extension AppScreensNavigator {
         }
 
         return tail.joined(separator: "/")
+    }
+
+    /// The normalized origin of a URL — `scheme://host[:port]` with scheme and host
+    /// lowercased and the port kept only when it is explicit *and* not the scheme's
+    /// default (an absent port, or an explicit default like `:443` for https, both
+    /// collapse to no port). `nil` when the URL has no scheme or host. The shared
+    /// basis for every origin-qualified identity, so `https://host` and an explicit
+    /// `https://host:443` resolve to one identity — matching the origin equivalence
+    /// ``bridgeMessageAllowed(isMainFrame:originProtocol:originHost:originPort:documentURL:)``
+    /// already enforces.
+    static func normalizedOrigin(of url: URL) -> String? {
+        guard
+            let scheme = url.scheme?.lowercased(),
+            let host = url.host?.lowercased()
+        else {
+            return nil
+        }
+        if let port = url.port, port != Self.defaultPort(forScheme: scheme) {
+            return "\(scheme)://\(host):\(port)"
+        }
+        return "\(scheme)://\(host)"
+    }
+
+    /// The origin-qualified identity for an App Screens URL:
+    /// `scheme://host[:port]/a/{templatePath}` with scheme + host lowercased, the
+    /// port included only when explicit, and query/fragment excluded. Returns `nil`
+    /// when the URL is not an `/a/{path}` URL (same rule as ``templatePath(from:)``)
+    /// or has no resolvable origin.
+    ///
+    /// This — not the bare template path — is the session/prewarm/in-flight identity.
+    /// Two associated domains that both serve `/a/detail`
+    /// (`https://a.example/a/detail` and `https://b.example/a/detail`) are distinct
+    /// screens and must never share a warm web view, so the origin keys every slot.
+    static func templateKey(from url: URL) -> String? {
+        guard
+            let templatePath = templatePath(from: url),
+            let origin = normalizedOrigin(of: url)
+        else {
+            return nil
+        }
+        return "\(origin)/a/\(templatePath)"
+    }
+
+    /// A defensive origin-qualified identity for an entry URL that is *not* an
+    /// `/a/{template}` URL: `scheme://host[:port]{path}` when the origin resolves,
+    /// else the full URL string. ``AppScreensNavigator/makeRootViewController(for:)``
+    /// is the only caller — the entry URL is pre-gated upstream — so this merely
+    /// guarantees that even a contract-violating entry can never collide across
+    /// domains the way a bare `url.path` would.
+    static func fallbackTemplateKey(for url: URL) -> String {
+        guard let origin = normalizedOrigin(of: url) else {
+            return url.absoluteString
+        }
+        return origin + url.path
     }
 
     /// Builds the data endpoint URL for an App Screens document URL by appending
@@ -172,19 +245,24 @@ extension AppScreensNavigator {
     }
 
     /// Computes the ordered, distinct prewarm candidates for a `links` hint: each
-    /// href resolved against the source document URL, reduced to its template path,
-    /// de-duplicated in DOM order, then filtered to templates that are neither
-    /// already live (`existingTemplatePaths`) nor already reserved
-    /// (`inflightTemplatePaths`). Pure — unit-tested in isolation.
+    /// href resolved against the source document URL, reduced to its origin-qualified
+    /// template key (dropping anything that is not an `/a/{template}` document on an
+    /// authorized `allowedHosts` http(s) origin), de-duplicated in DOM order, then
+    /// filtered to keys that are neither already live (`existingTemplateKeys`) nor
+    /// already reserved (`inflightTemplateKeys`). Pure — unit-tested in isolation.
     ///
+    /// De-duplication (and every filter) is keyed by the origin-qualified
+    /// ``templateKey(from:)``, so the same bare path on two associated domains is two
+    /// distinct candidates and never collapses into one warm web view.
     /// De-duplication happens *before* the live/in-flight filter, so DOM order is
-    /// preserved and each template appears at most once even if several links point
-    /// to it with different query params.
+    /// preserved and each key appears at most once even if several links point to it
+    /// with different query params.
     static func prewarmCandidates(
         linkHrefs: [String],
         documentURL: URL,
-        existingTemplatePaths: Set<String>,
-        inflightTemplatePaths: Set<String>
+        existingTemplateKeys: Set<String>,
+        inflightTemplateKeys: Set<String>,
+        allowedHosts: Set<String>
     ) -> [PrewarmCandidate] {
         var seen: Set<String> = []
         var candidates: [PrewarmCandidate] = []
@@ -192,21 +270,31 @@ extension AppScreensNavigator {
         for href in linkHrefs {
             guard
                 let resolved = resolveHref(href, against: documentURL),
-                let templatePath = templatePath(from: resolved)
+                let templatePath = templatePath(from: resolved),
+                let templateKey = templateKey(from: resolved),
+                // A `links` hint can carry an absolute href to any host; only prewarm
+                // App Screens documents on an authorized, http(s) origin so a hostile
+                // page can never be booted with the bridge attached.
+                let scheme = resolved.scheme?.lowercased(),
+                scheme == "https" || scheme == "http",
+                let host = resolved.host,
+                allowedHosts.contains(host.lowercased())
             else {
                 continue
             }
-            guard seen.insert(templatePath).inserted else {
+            guard seen.insert(templateKey).inserted else {
                 continue
             }
             guard
-                !existingTemplatePaths.contains(templatePath),
-                !inflightTemplatePaths.contains(templatePath),
+                !existingTemplateKeys.contains(templateKey),
+                !inflightTemplateKeys.contains(templateKey),
+                // The document URL still needs the *bare* template segment; the origin
+                // rides in `templateKey`, which the candidate carries as its identity.
                 let prewarmURL = prewarmURL(templatePath: templatePath, relativeTo: resolved)
             else {
                 continue
             }
-            candidates.append(PrewarmCandidate(templatePath: templatePath, documentURL: prewarmURL))
+            candidates.append(PrewarmCandidate(templateKey: templateKey, documentURL: prewarmURL))
         }
 
         return candidates
@@ -269,6 +357,34 @@ extension AppScreensNavigator {
         requestedScope == .public && responseScope == .personalized
     }
 
+    /// The eager-fetch reconcile decision (pure, unit-tested) for a cold load.
+    ///
+    /// A cold load may kick a `.json` fetch off concurrently under a scope
+    /// guessed from a warm/prewarmed session (`eagerScope`) before the fresh
+    /// document lands and advertises the screen's real scope (`effectiveScope`).
+    /// When those two disagree the eager result must be discarded and refetched,
+    /// and the mismatch bites in *both* directions:
+    ///
+    /// - A stale `personalized` eager fetch against a now-`public` screen sent
+    ///   the account token + identifiers to a public endpoint — a leak the
+    ///   response-side retry (``shouldRefetchWithIdentifiers(requestedScope:responseScope:)``)
+    ///   never corrects, since it only flips public→personalized.
+    /// - A stale `public` eager fetch against a now-`personalized` screen may
+    ///   fail (e.g. an unauthenticated `401`) before it can observe the
+    ///   personalized response header, stranding SSR-only content.
+    ///
+    /// A `nil` eager scope means no concurrent fetch was started (the fetch
+    /// waited for the document), so there is nothing to reconcile → `false`.
+    static func shouldRestartEagerFetch(
+        eagerScope: AppScreenDataScope?,
+        effectiveScope: AppScreenDataScope
+    ) -> Bool {
+        guard let eagerScope else {
+            return false
+        }
+        return eagerScope != effectiveScope
+    }
+
     /// The hash-handshake decision (pure, unit-tested): compares the normalized
     /// document `ETag` against the `.json` `templateHash`.
     ///
@@ -299,5 +415,172 @@ extension AppScreensNavigator {
         case .visible:
             return didAttemptRecovery ? .failure : .recover
         }
+    }
+
+    /// The bridge-message authentication decision (pure, unit-tested). A native
+    /// bridge message is honored only when it originates from the web view's **main
+    /// frame** AND that frame's security origin matches the owning session's
+    /// `documentURL` origin (scheme + host + port). Everything else — a cross-origin
+    /// iframe, an externally navigated page, a subframe — is rejected, so an
+    /// embedded frame can never mark a half-booted session ready or trigger native
+    /// navigation and authenticated data requests.
+    ///
+    /// Takes plain values rather than `WKFrameInfo`/`WKSecurityOrigin` so it is
+    /// testable without WebKit. `originProtocol`/`originHost` come from
+    /// `WKSecurityOrigin.protocol`/`.host`; `originPort` from `WKSecurityOrigin.port`,
+    /// which is `0` for a scheme's default port. `URL.port` is `nil` for a default
+    /// port, so both sides are normalized to the scheme's canonical default before
+    /// comparing — `https://host` and an explicit `https://host:443` are the same
+    /// origin.
+    static func bridgeMessageAllowed(
+        isMainFrame: Bool,
+        originProtocol: String,
+        originHost: String,
+        originPort: Int,
+        documentURL: URL
+    ) -> Bool {
+        guard isMainFrame else {
+            return false
+        }
+        guard
+            let expectedScheme = documentURL.scheme?.lowercased(),
+            let expectedHost = documentURL.host
+        else {
+            return false
+        }
+        guard originProtocol.lowercased() == expectedScheme else {
+            return false
+        }
+        guard originHost.caseInsensitiveCompare(expectedHost) == .orderedSame else {
+            return false
+        }
+        let defaultPort = Self.defaultPort(forScheme: expectedScheme)
+        let normalizedOriginPort = originPort == 0 ? defaultPort : originPort
+        let normalizedDocumentPort = documentURL.port ?? defaultPort
+        return normalizedOriginPort == normalizedDocumentPort
+    }
+
+    /// The canonical default port for a URL scheme, used to reconcile
+    /// `WKSecurityOrigin.port` (0 for default) with `URL.port` (nil for default)
+    /// when authenticating a bridge message's origin. Unknown schemes have no
+    /// default (`nil`), so their ports must match exactly.
+    static func defaultPort(forScheme scheme: String) -> Int? {
+        switch scheme.lowercased() {
+        case "https":
+            return 443
+        case "http":
+            return 80
+        default:
+            return nil
+        }
+    }
+
+    /// An authorized bridge navigation target: the normalized (https) URL and its
+    /// App Screens template path, produced by ``authorizedTarget(resolvedURL:allowedHosts:)``.
+    struct AuthorizedTarget: Equatable {
+        let url: URL
+        let templatePath: String
+    }
+
+    /// The bridge-navigation authorization decision (pure, unit-tested). A `navigate`
+    /// message's resolved target is honored only when it is (a) an `/a/{template}`
+    /// App Screens URL, (b) http or https — normalized to https, exactly as the entry
+    /// point does — and (c) hosted on one of the app's associated domains
+    /// (`allowedHosts`, compared case-insensitively). Any other target — a foreign
+    /// host, a custom scheme, or a non-App-Screen path — returns `nil` so the caller
+    /// rejects and logs it, closing the hole where a screen could steer the
+    /// personalized `.json` fetch (which carries the Rover account token and
+    /// device/user identifiers) or the bridge-bearing web view to an attacker origin.
+    ///
+    /// `allowedHosts` must already be lowercased. Returns the normalized URL and its
+    /// template path so the caller neither re-normalizes nor force-unwraps the path.
+    static func authorizedTarget(resolvedURL: URL, allowedHosts: Set<String>) -> AuthorizedTarget? {
+        guard
+            let scheme = resolvedURL.scheme?.lowercased(),
+            scheme == "https" || scheme == "http"
+        else {
+            return nil
+        }
+        guard var components = URLComponents(url: resolvedURL, resolvingAgainstBaseURL: false) else {
+            return nil
+        }
+        // Upgrade http → https before the host gate and any fetch/load, mirroring
+        // `ExperienceViewController.loadAppScreensExperience`.
+        components.scheme = "https"
+        guard
+            let normalizedURL = components.url,
+            let templatePath = templatePath(from: normalizedURL),
+            let host = normalizedURL.host,
+            allowedHosts.contains(host.lowercased())
+        else {
+            return nil
+        }
+        return AuthorizedTarget(url: normalizedURL, templatePath: templatePath)
+    }
+
+    /// Coerces a `presentWebsite` target into a URL `SFSafariViewController` will
+    /// accept, or `nil` when the link is not presentable in an in-app browser.
+    ///
+    /// `SFSafariViewController` requires an http/https URL and crashes when handed
+    /// anything else, so a non-http(s) scheme is rewritten to https via
+    /// `URLComponents` — coercion that mirrors the V2 action handler and the Android
+    /// SDK, so a link authored once behaves identically on both platforms. An http(s)
+    /// URL (scheme compared case-insensitively) passes through unchanged. The result
+    /// must have a non-`nil` host, so opaque or hostless URLs (`mailto:`, `tel:`) are
+    /// not presentable and return `nil`.
+    static func safariPresentableURL(_ url: URL) -> URL? {
+        let scheme = url.scheme?.lowercased()
+        if scheme == "https" || scheme == "http" {
+            return url.host == nil ? nil : url
+        }
+        guard var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
+            return nil
+        }
+        components.scheme = "https"
+        guard let coerced = components.url, coerced.host != nil else {
+            return nil
+        }
+        return coerced
+    }
+
+    /// The main-frame navigation policy decision (pure, unit-tested), mirroring the
+    /// shape of ``bridgeMessageAllowed(isMainFrame:originProtocol:originHost:originPort:documentURL:)``.
+    /// The App Screens runtime never navigates the main frame itself — every
+    /// legitimate document load is a native `loadHTMLString(_:baseURL:)`, which
+    /// arrives as a `.other` navigation whose request URL equals the base URL (the
+    /// session's `documentURL`). So allow:
+    ///
+    /// - any non-main-frame action (an iframe may load its own content);
+    /// - a main-frame `.other` action whose request URL is `about:blank` or nil, or
+    ///   matches the owning session's `documentURL` (the native load).
+    ///
+    /// Everything else — a `.linkActivated` main-frame tap, a scripted `location.href`,
+    /// or an `.other` action to any other URL — is denied, so page JS can never render
+    /// arbitrary web content inside the native-chrome App Screen.
+    ///
+    /// Takes plain values (`isOtherNavigationType` in place of `WKNavigationType`,
+    /// `isMainFrame` in place of `WKFrameInfo`) so it is testable without WebKit.
+    static func mainFrameNavigationAllowed(
+        isMainFrame: Bool,
+        isOtherNavigationType: Bool,
+        requestURL: URL?,
+        documentURL: URL?
+    ) -> Bool {
+        guard isMainFrame else {
+            return true
+        }
+        guard isOtherNavigationType else {
+            return false
+        }
+        guard let requestURL else {
+            return true
+        }
+        if requestURL.absoluteString == "about:blank" {
+            return true
+        }
+        guard let documentURL else {
+            return false
+        }
+        return requestURL.absoluteString == documentURL.absoluteString
     }
 }

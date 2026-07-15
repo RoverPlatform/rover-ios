@@ -42,6 +42,13 @@ public struct ExperienceView: View {
     /// Hub embed / document path.
     private let onDismissButtonPressed: (() -> Void)?
 
+    /// An optional URL-opening override, consulted only for the `openURL` bridge
+    /// message from a V3 App Screens experience (never for the in-app
+    /// `presentWebsite`, and not for V1/V2 experiences). Threaded to the wrapped
+    /// `ExperienceViewController`; when `nil` the URL is handed to the OS via
+    /// `UIApplication.shared.open`. `nil` for the deprecated and `package` inits.
+    private let onOpenURL: ((URL) -> Void)?
+
     /// An optional native item to install on the App Screens ROOT screen only (the
     /// Hub inbox affordance). Ignored by the document-experience path. Threaded to
     /// the wrapped `ExperienceViewController` and kept in sync on update so badge
@@ -66,16 +73,22 @@ public struct ExperienceView: View {
     ///     presenter, such as `@Environment(\.dismiss)`). When set, a full-screen
     ///     App Screens experience shows an xmark close item on its root screen whose
     ///     action invokes this closure. Leave unset when embedding.
+    ///   - onOpenURL: An optional URL-opening override, consulted only for the
+    ///     `openURL` bridge message from a V3 App Screens experience (never for the
+    ///     in-app `presentWebsite`, and not for V1/V2 experiences); when `nil` the URL
+    ///     is handed to the OS via `UIApplication.shared.open`.
     public init(
         url: URL,
         path: Binding<NavigationPath>,
-        onDismissButtonPressed: (() -> Void)? = nil
+        onDismissButtonPressed: (() -> Void)? = nil,
+        onOpenURL: ((URL) -> Void)? = nil
     ) {
         self.url = url
         self._state = StateObject(wrappedValue: ExperienceViewState())
         self._path = path
         self.isPresentedModally = false
         self.onDismissButtonPressed = onDismissButtonPressed
+        self.onOpenURL = onOpenURL
         self.appScreensRootBarItem = nil
         self.appScreensResetGeneration = 0
     }
@@ -104,6 +117,7 @@ public struct ExperienceView: View {
         self._path = path
         self.isPresentedModally = isPresentedModally
         self.onDismissButtonPressed = nil
+        self.onOpenURL = nil
         self.appScreensRootBarItem = nil
         self.appScreensResetGeneration = 0
     }
@@ -125,6 +139,7 @@ public struct ExperienceView: View {
         self._path = path
         self.isPresentedModally = isPresentedModally
         self.onDismissButtonPressed = nil
+        self.onOpenURL = nil
         self.appScreensRootBarItem = appScreensRootBarItem
         self.appScreensResetGeneration = appScreensResetGeneration
     }
@@ -138,7 +153,8 @@ public struct ExperienceView: View {
                 url: url,
                 rootBarItem: appScreensRootBarItem,
                 resetGeneration: appScreensResetGeneration,
-                onDismissButtonPressed: onDismissButtonPressed
+                onDismissButtonPressed: onDismissButtonPressed,
+                onOpenURL: onOpenURL
             )
             .ignoresSafeArea()
             .toolbar(.hidden, for: .navigationBar)
@@ -216,6 +232,9 @@ private struct AppScreensExperienceRepresentable: UIViewControllerRepresentable 
     /// xmark close item on the App Screens root host when non-`nil`. See
     /// `ExperienceView.onDismissButtonPressed`.
     let onDismissButtonPressed: (() -> Void)?
+    /// Forwarded to `ExperienceViewController.onOpenURL`; consulted only for the
+    /// `openURL` bridge message. See `ExperienceView.onOpenURL`.
+    let onOpenURL: ((URL) -> Void)?
 
     func makeCoordinator() -> Coordinator {
         // Seed with the current generation so the first render never fires a pop.
@@ -228,6 +247,7 @@ private struct AppScreensExperienceRepresentable: UIViewControllerRepresentable 
         // installed on the root host the moment `loadExperience` creates it.
         viewController.setAppScreensRootBarItem(rootBarItem)
         viewController.onDismissButtonPressed = onDismissButtonPressed
+        viewController.onOpenURL = onOpenURL
         viewController.loadExperience(with: url)
         return viewController
     }

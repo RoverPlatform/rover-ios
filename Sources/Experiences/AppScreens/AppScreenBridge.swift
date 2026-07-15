@@ -38,6 +38,14 @@ enum AppScreenMessage: Equatable {
     /// Distinct link targets discovered after hydration (prewarm hints), in DOM
     /// order.
     case links(hrefs: [String])
+    /// An external link handed to the OS (`UIApplication.shared.open`) or the
+    /// host's `onOpenURL` override — an external browser URL, a Rover deep link, or
+    /// a non-Rover deep link. `dismiss: true` additionally tears down the enclosing
+    /// Experience via the host-supplied dismiss.
+    case openURL(href: String, dismiss: Bool)
+    /// Present `href` in an in-app browser (`SFSafariViewController`); never
+    /// overridable by the embedding app.
+    case presentWebsite(href: String)
 
     /// Defensively decodes a message body. Returns `nil` for unknown or malformed
     /// payloads (which the caller logs and ignores).
@@ -65,6 +73,34 @@ enum AppScreenMessage: Equatable {
         case "links":
             let hrefs = (dict["hrefs"] as? [Any])?.compactMap { $0 as? String } ?? []
             self = .links(hrefs: hrefs)
+        case "openURL":
+            // Mirrors `navigate`: a missing or non-`String` href drops the message.
+            // (Parity note: Android additionally drops a blank href at parse; iOS
+            // `navigate` does not, so this matches the platform's existing behavior —
+            // a blank href still drops, later, at `externalURL(from:)`.)
+            guard let href = dict["href"] as? String else {
+                return nil
+            }
+            // An absent or non-`Bool` `dismiss` is a plain open (no teardown of the
+            // enclosing Experience). Decode strictly: only a real JSON boolean counts.
+            // The dict comes from a `WKScriptMessage` body, so JS numbers arrive as
+            // `NSNumber`, and `NSNumber(value: 1) as? Bool` succeeds via Foundation
+            // bridging — a numeric `1` would otherwise read as `true`. Requiring the
+            // underlying value to be a `CFBoolean` deliberately rejects numeric `1`,
+            // matching Android's `JSONObject.optBoolean`, which yields `false` for
+            // numeric values.
+            let dismiss: Bool
+            if let number = dict["dismiss"] as? NSNumber, CFGetTypeID(number) == CFBooleanGetTypeID() {
+                dismiss = number.boolValue
+            } else {
+                dismiss = false
+            }
+            self = .openURL(href: href, dismiss: dismiss)
+        case "presentWebsite":
+            guard let href = dict["href"] as? String else {
+                return nil
+            }
+            self = .presentWebsite(href: href)
         default:
             return nil
         }

@@ -47,10 +47,12 @@ public struct ExperiencesAssembler: Assembler {
         // MARK: AppScreensNavigator
 
         container.register(AppScreensNavigator.self, scope: .singleton) { resolver in
+            let associatedDomains = resolver.resolve([String].self, name: "associatedDomains")!
             return MainActor.assumeIsolatedOrFatalError {
                 AppScreensNavigator(
                     httpClient: resolver.resolve(HTTPClient.self)!,
-                    configManager: resolver.resolve(ConfigManager.self)!
+                    configManager: resolver.resolve(ConfigManager.self)!,
+                    associatedDomains: associatedDomains
                 )
             }
         }

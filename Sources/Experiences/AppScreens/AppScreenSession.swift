@@ -18,14 +18,17 @@ import WebKit
 
 /// A single template's web view and lifecycle state.
 ///
-/// The session model keeps one warm web view per template path. The master
-/// session drives the document fetch, runtime boot, and `show()` pipeline; prewarm
-/// and ephemeral detail sessions reuse the same machinery.
+/// The session model keeps one warm web view per origin-qualified template key. The
+/// master session drives the document fetch, runtime boot, and `show()` pipeline;
+/// prewarm and ephemeral detail sessions reuse the same machinery.
 @MainActor
 final class AppScreenSession {
-    /// The template path this session renders (e.g. `player-detail`), derived
-    /// from the `/a/{path}` URL.
-    let templatePath: String
+    /// The origin-qualified template key this session renders (e.g.
+    /// `https://a.example/a/player-detail`), derived from the `/a/{path}` URL by
+    /// ``AppScreensNavigator/templateKey(from:)``. Keys the navigator's session,
+    /// prewarm, and in-flight registries so the same bare path on two associated
+    /// domains never shares one warm web view.
+    let templateKey: String
 
     /// The template's web view.
     var webView: WKWebView?
@@ -91,6 +94,18 @@ final class AppScreenSession {
     /// `navigate` should push onto.
     weak var hostViewController: AppScreenHostViewController?
 
+    /// Host-supplied dismissal for the enclosing Experience presentation. Non-`nil`
+    /// only on a root session whose presenter opted in (by threading a dismissal
+    /// closure through the entry point); invoked for an `openURL` message carrying
+    /// `dismiss: true`. `nil` on every non-root session and on a root whose presenter
+    /// did not opt in.
+    var onDismissButtonPressed: (() -> Void)?
+
+    /// Host-supplied URL opener, consulted only for an `openURL` message (never for
+    /// `presentWebsite`). Non-`nil` only on a root session whose presenter supplied an
+    /// override; `nil` falls back to `UIApplication.shared.open`.
+    var onOpenURL: ((URL) -> Void)?
+
     /// The `ETag` captured from the anonymous document response, compared against
     /// the `.json` `templateHash` in the hash handshake.
     var documentETag: String?
@@ -117,6 +132,18 @@ final class AppScreenSession {
     /// double resume.
     var runtimeLoadedContinuation: CheckedContinuation<Void, Error>?
 
+    /// The single in-flight load/navigation pipeline for this session — the `Task`
+    /// created by ``AppScreensNavigator/runMasterPipeline(entryURL:session:host:)``,
+    /// ``AppScreensNavigator/runNavigatePipeline(resolvedURL:optimisticDataJSON:session:host:isColdLoad:tapTime:)``,
+    /// or an in-flight ``AppScreensNavigator/recover(session:reason:)``. A session
+    /// runs at most one legitimate pipeline at a time, so it is superseded and
+    /// cancelled on pop, reuse, teardown, and recovery: each entry point cancels
+    /// whatever is here before storing its own `Task`. Cancelling stops a
+    /// superseded pipeline from morphing, revealing, writing session state, or
+    /// painting the load-failure UI into a web view that has since been reused for
+    /// a different record.
+    var pipelineTask: Task<Void, Never>?
+
     enum State {
         case loadingDocument
         case awaitingRuntime
@@ -124,8 +151,8 @@ final class AppScreenSession {
         case dead
     }
 
-    init(templatePath: String, webView: WKWebView? = nil, state: State = .loadingDocument) {
-        self.templatePath = templatePath
+    init(templateKey: String, webView: WKWebView? = nil, state: State = .loadingDocument) {
+        self.templateKey = templateKey
         self.webView = webView
         self.state = state
     }

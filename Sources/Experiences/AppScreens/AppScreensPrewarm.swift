@@ -49,10 +49,13 @@ extension AppScreensNavigator {
     /// `.unattached` here to A/B the marginal first-tap timing.
     static let prewarmAttachStrategy: PrewarmAttachStrategy = .offscreenWindow
 
-    /// A resolved prewarm target: the template to warm and the anonymous,
-    /// param-free document URL to fetch for it.
+    /// A resolved prewarm target: the origin-qualified template key to warm (the
+    /// session/in-flight identity) and the anonymous, param-free document URL to
+    /// fetch for it. The bare template segment is not carried — it was consumed when
+    /// building `documentURL` (`/a/{segment}`); everything downstream keys by
+    /// `templateKey`.
     struct PrewarmCandidate: Equatable {
-        let templatePath: String
+        let templateKey: String
         let documentURL: URL
     }
 
@@ -76,11 +79,18 @@ extension AppScreensNavigator {
             return
         }
 
+        // Treat a live root's template as already-live so a `links` hint that points
+        // back at the root's own template (e.g. `/a/home` linking to `/a/home`) never
+        // spins up a redundant warm session in the keyed pool — the root is already
+        // rendering it. Roots live in `rootSessions`, not `sessions`, so they must be
+        // folded into the existing-keys set explicitly.
+        let liveTemplateKeys = Set(sessions.keys).union(rootSessions.map(\.templateKey))
         let candidates = Self.prewarmCandidates(
             linkHrefs: hrefs,
             documentURL: documentURL,
-            existingTemplatePaths: Set(sessions.keys),
-            inflightTemplatePaths: inflightPrewarms
+            existingTemplateKeys: liveTemplateKeys,
+            inflightTemplateKeys: inflightPrewarms,
+            allowedHosts: associatedDomains
         )
         guard !candidates.isEmpty else {
             return
@@ -89,7 +99,7 @@ extension AppScreensNavigator {
         // Reserve each slot immediately so a subsequent hint (or a concurrent one
         // from another session) coalesces against it.
         for candidate in candidates {
-            inflightPrewarms.insert(candidate.templatePath)
+            inflightPrewarms.insert(candidate.templateKey)
             pendingPrewarms.append(candidate)
         }
 
@@ -98,8 +108,8 @@ extension AppScreensNavigator {
             log: .appScreens,
             type: .info,
             candidates.count,
-            source.templatePath,
-            candidates.map(\.templatePath).joined(separator: ", ")
+            source.templateKey,
+            candidates.map(\.templateKey).joined(separator: ", ")
         )
 
         startPrewarmDrainIfIdle()
@@ -143,7 +153,7 @@ extension AppScreensNavigator {
                 guard let self else {
                     return
                 }
-                await self.prewarm(templatePath: candidate.templatePath, documentURL: candidate.documentURL)
+                await self.prewarm(templateKey: candidate.templateKey, documentURL: candidate.documentURL)
             }
             prewarmWorkerTasks.append(worker)
         }
@@ -151,7 +161,7 @@ extension AppScreensNavigator {
         // Release any reservations left unstarted by a cancellation so a future hint
         // can retry them.
         for leftover in pendingPrewarms {
-            inflightPrewarms.remove(leftover.templatePath)
+            inflightPrewarms.remove(leftover.templateKey)
         }
         pendingPrewarms.removeAll()
         prewarmSchedulerTask = nil
@@ -166,20 +176,20 @@ extension AppScreensNavigator {
     ///
     /// Failure is non-fatal: log + tear down. The cold navigation path fully covers
     /// correctness, so a failed prewarm only forfeits the speedup.
-    private func prewarm(templatePath: String, documentURL: URL) async {
+    private func prewarm(templateKey: String, documentURL: URL) async {
         // Release the reservation whenever this returns.
-        defer { inflightPrewarms.remove(templatePath) }
+        defer { inflightPrewarms.remove(templateKey) }
 
         // The slot may have filled (a real navigation cold-created the session)
         // between scheduling and now; if so, there is nothing to prewarm.
-        guard sessions[templatePath] == nil else {
+        guard sessions[templateKey] == nil else {
             return
         }
 
         let started = DispatchTime.now()
 
         let webView = makeWebView(screenBackground: Self.defaultScreenBackground)
-        let session = AppScreenSession(templatePath: templatePath, webView: webView, state: .loadingDocument)
+        let session = AppScreenSession(templateKey: templateKey, webView: webView, state: .loadingDocument)
         session.documentURL = documentURL
         prewarmingSessions.append(session)
 
@@ -218,22 +228,22 @@ extension AppScreensNavigator {
             // Promote only if the slot is still free. A navigation may have
             // cold-created the template's session while we booted — drop ours then
             // (the visible session wins; a duplicate warm view would leak).
-            guard sessions[templatePath] == nil else {
+            guard sessions[templateKey] == nil else {
                 teardown(session)
                 os_log(
                     "prewarm [%{public}@] discarded — slot taken during boot",
                     log: .appScreens,
                     type: .info,
-                    templatePath
+                    templateKey
                 )
                 return
             }
-            sessions[templatePath] = session
+            sessions[templateKey] = session
             os_log(
                 "prewarmed [%{public}@] %{public}.0fms",
                 log: .appScreens,
                 type: .info,
-                templatePath,
+                templateKey,
                 Self.elapsedMs(since: started)
             )
         } catch {
@@ -243,7 +253,7 @@ extension AppScreensNavigator {
                 "prewarm failed [%{public}@]: %{public}@ — cold path will cover",
                 log: .appScreens,
                 type: .error,
-                templatePath,
+                templateKey,
                 error.localizedDescription
             )
         }

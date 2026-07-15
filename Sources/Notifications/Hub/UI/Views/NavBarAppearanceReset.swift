@@ -21,6 +21,7 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import SwiftUI
+import RoverExperiences
 
 /// Resets the navigation bar `UIAppearance` for this subhierarchy, avoiding
 /// inheriting global app appearance settings.
@@ -34,31 +35,8 @@ struct NavBarAppearanceReset: UIViewControllerRepresentable {
             guard let bar = navigationController?.navigationBar else {
                 return
             }
-
-            let standard = UINavigationBarAppearance()
-            standard.configureWithTransparentBackground()
-
-            bar.standardAppearance = standard
-            bar.scrollEdgeAppearance = standard
-            bar.compactAppearance = standard
-            bar.compactScrollEdgeAppearance = standard
-
-            bar.tintColor = nil
-            bar.isTranslucent = true
-            bar.backgroundColor = nil
-            bar.barStyle = .default
-            bar.shadowImage = nil
-            bar.setBackgroundImage(nil, for: .default)
-            bar.setBackgroundImage(nil, for: .compact)
-            bar.setBackgroundImage(nil, for: .defaultPrompt)
-            bar.setBackgroundImage(nil, for: .compactPrompt)
-            bar.titleTextAttributes = nil
-            bar.largeTitleTextAttributes = nil
-            bar.backIndicatorImage = nil
-            bar.backIndicatorTransitionMaskImage = nil
-            for metrics in [UIBarMetrics.default, .compact, .defaultPrompt, .compactPrompt] {
-                bar.setTitleVerticalPositionAdjustment(0, for: metrics)
-            }
+            
+            resetAppScreensNavigationBar(bar)
         }
     }
 }

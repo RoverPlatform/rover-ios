@@ -33,6 +33,11 @@ final class AppScreenSession {
     /// The template's web view.
     var webView: WKWebView?
 
+    /// Retains the KVO observation that mirrors the web view's `themeColor` onto its
+    /// background surfaces. Held for the session's lifetime so every runtime re-sync
+    /// (boot, morph, dark-mode change) keeps firing; released when the session is.
+    private var themeColorObservation: NSKeyValueObservation?
+
     /// Where this session is in its lifecycle.
     var state: State
 
@@ -106,6 +111,15 @@ final class AppScreenSession {
     /// override; `nil` falls back to `UIApplication.shared.open`.
     var onOpenURL: ((URL) -> Void)?
 
+    /// Set the first time this session's runtime posts a `refresh` tick — the only
+    /// signal native ever gets that the current document is "live" (the refresh
+    /// timing logic is wholly internal to the App Screens JavaScript). Gates the
+    /// reappear/foreground refreshes that re-arm the runtime's one-shot poll loop
+    /// after it went unarmed while hidden. Reset on every document (re)load: a
+    /// document rebaked as non-live will simply never tick again, and the stale
+    /// flag would otherwise cost a spurious refetch per reappear/foreground.
+    var isLive = false
+
     /// The `ETag` captured from the anonymous document response, compared against
     /// the `.json` `templateHash` in the hash handshake.
     var documentETag: String?
@@ -155,6 +169,52 @@ final class AppScreenSession {
         self.templateKey = templateKey
         self.webView = webView
         self.state = state
+        observeScreenBackground()
+    }
+
+    deinit {
+        // `NSKeyValueObservation` auto-invalidates when released, but tear it down
+        // explicitly so the observation (and its strong reference to the web view) is
+        // never left dangling past the session's lifetime.
+        themeColorObservation?.invalidate()
+    }
+
+    /// Observes the web view's `themeColor` — published by the App Screens runtime
+    /// from the page's declared background (`<meta name="theme-color">`) — and mirrors
+    /// it onto the web view's background surfaces so the content backdrop and the
+    /// elastic overscroll match the page. `.initial` adopts an already-warm value on
+    /// registration; `.new` tracks every runtime re-sync.
+    private func observeScreenBackground() {
+        guard let webView else {
+            return
+        }
+        themeColorObservation = webView.observe(\.themeColor, options: [.initial, .new]) { webView, _ in
+            // WebKit delivers this KVO on the main thread, so on the expected path the
+            // color is applied synchronously (no flicker). The off-main branch is a
+            // defensive hop rather than `MainActor.assumeIsolated` alone: an unexpected
+            // off-main delivery must never trap in the SDK.
+            if Thread.isMainThread {
+                MainActor.assumeIsolated {
+                    AppScreenSession.applyScreenBackground(webView.themeColor, to: webView)
+                }
+            } else {
+                DispatchQueue.main.async {
+                    MainActor.assumeIsolated {
+                        AppScreenSession.applyScreenBackground(webView.themeColor, to: webView)
+                    }
+                }
+            }
+        }
+    }
+
+    /// Mirrors a runtime-published theme color onto a web view's background surfaces
+    /// (its own backdrop, the scroll view, and the elastic overscroll underpage),
+    /// falling back to the adaptive system background when the page declares none.
+    static func applyScreenBackground(_ themeColor: UIColor?, to webView: WKWebView) {
+        let color = themeColor ?? .systemBackground
+        webView.backgroundColor = color
+        webView.scrollView.backgroundColor = color
+        webView.underPageBackgroundColor = color
     }
 }
 

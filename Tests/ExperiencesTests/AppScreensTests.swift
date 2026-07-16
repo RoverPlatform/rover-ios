@@ -13,6 +13,8 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+import UIKit
+import WebKit
 import XCTest
 
 @testable import RoverExperiences
@@ -245,9 +247,24 @@ final class AppScreensTests: XCTestCase {
         XCTAssertEqual(AppScreenMessage(body: ["type": "loaded"]), .loaded)
     }
 
+    func testMessageRefresh() {
+        XCTAssertEqual(AppScreenMessage(body: ["type": "refresh"]), .refresh)
+    }
+
+    func testMessageRefreshIgnoresStrayFields() {
+        // A bare `refresh` carries no payload; any extra fields a runtime tacks on are
+        // ignored and the message still decodes to `.refresh`.
+        let message = AppScreenMessage(
+            body: ["type": "refresh", "href": "/a/live", "count": 3, "extra": NSNull()]
+        )
+        XCTAssertEqual(message, .refresh)
+    }
+
     func testMessageNavigateWithOptimisticDataRoundTrips() {
         let optimisticData: [String: Any] = ["id": 3, "name": "Ada"]
-        let message = AppScreenMessage(body: ["type": "navigate", "href": "/a/x?id=3", "optimisticData": optimisticData]
+        let message = AppScreenMessage(body: [
+            "type": "navigate", "href": "/a/x?id=3", "optimisticData": optimisticData
+        ]
         )
 
         guard case .navigate(let href, let optimisticDataJSON, let transition) = message else {
@@ -1276,4 +1293,64 @@ final class AppScreensTests: XCTestCase {
             XCTFail("expected AppScreenTimeoutError, got \(error)")
         }
     }
+
+    // MARK: - applyScreenBackground
+
+    /// Asserts two colors match by resolved RGBA components. The web view re-tags an
+    /// assigned color into its own color space (e.g. device RGB vs extended sRGB/gray),
+    /// so `UIColor ==` fails even when the components are identical; comparing
+    /// components resolved against the same traits is the reliable check.
+    private func assertSameColor(
+        _ actual: UIColor?,
+        _ expected: UIColor?,
+        traits: UITraitCollection,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        func components(_ color: UIColor?) -> [CGFloat]? {
+            guard let color else {
+                return nil
+            }
+            var red: CGFloat = 0
+            var green: CGFloat = 0
+            var blue: CGFloat = 0
+            var alpha: CGFloat = 0
+            color.resolvedColor(with: traits).getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+            return [red, green, blue, alpha]
+        }
+        guard let actualComponents = components(actual), let expectedComponents = components(expected) else {
+            XCTFail("expected both colors to be non-nil and RGBA-convertible", file: file, line: line)
+            return
+        }
+        for (actualComponent, expectedComponent) in zip(actualComponents, expectedComponents) {
+            XCTAssertEqual(actualComponent, expectedComponent, accuracy: 0.0001, file: file, line: line)
+        }
+    }
+
+    func testApplyScreenBackgroundUsesDeclaredColorOnEverySurface() {
+        let webView = WKWebView(frame: .zero)
+        let declared = UIColor(red: 0.2, green: 0.4, blue: 0.6, alpha: 1)
+
+        AppScreenSession.applyScreenBackground(declared, to: webView)
+
+        let traits = webView.traitCollection
+        assertSameColor(webView.backgroundColor, declared, traits: traits)
+        assertSameColor(webView.scrollView.backgroundColor, declared, traits: traits)
+        assertSameColor(webView.underPageBackgroundColor, declared, traits: traits)
+    }
+
+    func testApplyScreenBackgroundFallsBackToSystemBackgroundWhenUndeclared() {
+        let webView = WKWebView(frame: .zero)
+        webView.backgroundColor = UIColor(red: 0.2, green: 0.4, blue: 0.6, alpha: 1)
+        webView.scrollView.backgroundColor = UIColor(red: 0.2, green: 0.4, blue: 0.6, alpha: 1)
+        webView.underPageBackgroundColor = UIColor(red: 0.2, green: 0.4, blue: 0.6, alpha: 1)
+
+        AppScreenSession.applyScreenBackground(nil, to: webView)
+
+        let traits = webView.traitCollection
+        assertSameColor(webView.backgroundColor, .systemBackground, traits: traits)
+        assertSameColor(webView.scrollView.backgroundColor, .systemBackground, traits: traits)
+        assertSameColor(webView.underPageBackgroundColor, .systemBackground, traits: traits)
+    }
+
 }

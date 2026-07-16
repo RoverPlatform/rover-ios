@@ -24,6 +24,11 @@ struct HubContentView: View {
     @Environment(\.configSync) private var configSync
     @Environment(\.conversationSync) private var conversationSync
 
+    /// A dismissal closure threaded down from a modally-presented Hub; passed to the
+    /// App Screens home view so `openURL { dismiss: true }` and the close affordance
+    /// can dismiss the presentation. `nil` when the Hub is embedded in a tab.
+    var onDismissButtonPressed: (() -> Void)? = nil
+
     var body: some View {
         NavigationStack(path: $coordinator.navigationPath) {
             ZStack {
@@ -60,7 +65,8 @@ struct HubContentView: View {
                                     accessibilityIdentifier: "rover.hub.inbox",
                                     action: { coordinator.navigationPath.append(HubPath.messages) }
                                 )
-                                : nil
+                                : nil,
+                            onDismissButtonPressed: onDismissButtonPressed
                         )
                     } else {
                         ExperienceView(url: url, path: $coordinator.navigationPath)

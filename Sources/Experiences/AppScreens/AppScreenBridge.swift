@@ -46,6 +46,10 @@ enum AppScreenMessage: Equatable {
     /// Present `href` in an in-app browser (`SFSafariViewController`); never
     /// overridable by the embedding app.
     case presentWebsite(href: String)
+    /// Runtime-driven poll tick: refetch the screen the session already navigated
+    /// to and call `show()` again. Bare — the host owns the URL and credentials,
+    /// the runtime owns the cadence.
+    case refresh
 
     /// Defensively decodes a message body. Returns `nil` for unknown or malformed
     /// payloads (which the caller logs and ignores).
@@ -57,6 +61,8 @@ enum AppScreenMessage: Equatable {
         switch type {
         case "loaded":
             self = .loaded
+        case "refresh":
+            self = .refresh
         case "navigate":
             guard let href = dict["href"] as? String else {
                 return nil

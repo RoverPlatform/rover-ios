@@ -127,18 +127,26 @@ public struct ExperienceView: View {
     /// affordance restored natively after the outer SwiftUI toolbar was hidden to
     /// avoid a double nav bar — and a reset generation that pops the App Screens
     /// child stack to root on a coordinator-driven navigation. No public API change.
+    ///
+    /// - Parameter onDismissButtonPressed: An optional dismissal closure supplied
+    ///   only when the Hub is *presented modally* (via `HubHostingController`), never
+    ///   when embedded in a tab. When set, the App Screens home view honors an
+    ///   `openURL { dismiss: true }` bridge command and (unless the inbox affordance
+    ///   occupies the trailing slot) shows an xmark close item; the closure performs
+    ///   the dismissal.
     package init(
         url: URL,
         path: Binding<NavigationPath>,
         isPresentedModally: Bool = false,
         appScreensResetGeneration: Int = 0,
-        appScreensRootBarItem: AppScreensRootBarItem?
+        appScreensRootBarItem: AppScreensRootBarItem?,
+        onDismissButtonPressed: (() -> Void)? = nil
     ) {
         self.url = url
         self._state = StateObject(wrappedValue: ExperienceViewState())
         self._path = path
         self.isPresentedModally = isPresentedModally
-        self.onDismissButtonPressed = nil
+        self.onDismissButtonPressed = onDismissButtonPressed
         self.onOpenURL = nil
         self.appScreensRootBarItem = appScreensRootBarItem
         self.appScreensResetGeneration = appScreensResetGeneration
@@ -256,6 +264,13 @@ private struct AppScreensExperienceRepresentable: UIViewControllerRepresentable 
         // Propagate a changed root bar item (e.g. a live badge-count update) in
         // place; the setter no-ops when nothing visible changed.
         uiViewController.setAppScreensRootBarItem(rootBarItem)
+
+        // Propagate the dismissal handler live: a modally-presented Hub only flips it
+        // from `nil` to a real closure once `HubHostingController.viewWillAppear`
+        // confirms the presentation, which lands here as an update. The setter updates
+        // the live root session's openURL-dismiss and installs/withdraws the xmark; it
+        // no-ops when the handler's presence is unchanged.
+        uiViewController.setOnDismissButtonPressed(onDismissButtonPressed)
 
         // A bumped reset generation means the Hub performed a coordinator-driven
         // navigation reset: pop the App Screens child stack to root (and dismiss any

@@ -314,6 +314,10 @@ extension AppScreensNavigator {
         session.runtimeDidLoad = false
         session.runtimeLoadedContinuation = nil
         session.state = .awaitingRuntime
+        // This reload is also the "go quiet" path: a rebaked document that dropped its
+        // poll cadence won't tick again, so clear the stale liveness flag rather than
+        // let it trigger a spurious refetch on the next reappear/foreground.
+        session.isLive = false
         session.webView?.loadHTMLString(html, baseURL: entryURL)
 
         try await withTimeout(seconds: Self.loadedTimeout) {

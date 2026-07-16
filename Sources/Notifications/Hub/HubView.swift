@@ -19,19 +19,42 @@ import SwiftUI
 
 /// Embed this view within a tab to integrate the Rover Hub.
 public struct HubView: View {
-    public init() {}
+    /// Presentation state shared with the owning `HubHostingController`. Its
+    /// `onDismissButtonPressed` is `nil` while the Hub is embedded (a tab, or a bare
+    /// `HubView()`) and a real dismissal only once the controller confirms it is
+    /// presented modally; observing it here threads that live value into the App
+    /// Screens home view so the `openURL { dismiss: true }` teardown and the close
+    /// affordance appear exactly for a presented Hub.
+    @ObservedObject private var presentation: HubPresentationState
+
+    public init() {
+        // A bare `HubView()` (e.g. embedded directly in a tab) owns its own state,
+        // whose dismissal handler stays `nil` — non-dismissable, no close chrome.
+        self.presentation = HubPresentationState()
+    }
+
+    /// Internal initializer used by `HubHostingController` to share its presentation
+    /// state, so a modal presentation resolved at `viewWillAppear` threads the
+    /// dismissal handler into the App Screens home view without re-rooting the tree.
+    init(presentation: HubPresentationState) {
+        self.presentation = presentation
+    }
 
     public var body: some View {
-        HubContentView(coordinator: coordinator, badge: roverBadge)
-            .environmentObject(coordinator)
-            .environment(\.hubContainer, persistentContainer)
-            .environment(\.managedObjectContext, persistentContainer.viewContext)
-            .environment(\.refreshHub, { await refreshHub() })
-            .environment(\.postSync, postSync)
-            .environment(\.eventQueue, Rover.shared.eventQueue)
-            .environment(\.configSync, configSync)
-            .environment(\.conversationSync, conversationSync)
-            .environment(\.replySync, replySync)
+        HubContentView(
+            coordinator: coordinator,
+            badge: roverBadge,
+            onDismissButtonPressed: presentation.onDismissButtonPressed
+        )
+        .environmentObject(coordinator)
+        .environment(\.hubContainer, persistentContainer)
+        .environment(\.managedObjectContext, persistentContainer.viewContext)
+        .environment(\.refreshHub, { await refreshHub() })
+        .environment(\.postSync, postSync)
+        .environment(\.eventQueue, Rover.shared.eventQueue)
+        .environment(\.configSync, configSync)
+        .environment(\.conversationSync, conversationSync)
+        .environment(\.replySync, replySync)
     }
 
     var coordinator: HubCoordinator {

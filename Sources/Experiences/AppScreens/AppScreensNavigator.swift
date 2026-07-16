@@ -147,6 +147,12 @@ final class AppScreensNavigator: NSObject {
     /// recovery (visible → recover-and-replay; idle warm → tear down).
     private let navigationDelegate = AppScreenNavigationDelegate()
 
+    /// The `willEnterForegroundNotification` observer, registered once in `init`.
+    /// On foreground it refetches+shows the visible live session(s), restarting the
+    /// runtime poll loop the OS stalled while the app was backgrounded. Removed in
+    /// `deinit` for the singleton's tidy teardown.
+    private var willEnterForegroundObserver: NSObjectProtocol?
+
     /// The anonymous document channel's own `URLSession` + `URLCache`. Kept
     /// separate from `HTTPClient` and from the process's shared storages so the
     /// channel carries no identifying state: no account token, no
@@ -191,6 +197,20 @@ final class AppScreensNavigator: NSObject {
         super.init()
         messageProxy.delegate = self
         navigationDelegate.navigator = self
+
+        // Refresh-now on app foreground: both OSes throttle/suspend hidden-app timers,
+        // so a live screen's runtime poll loop stalls while backgrounded. Registered
+        // once (the navigator is a singleton). The block is delivered on `.main`, where
+        // it is already actor-isolated in practice.
+        willEnterForegroundObserver = NotificationCenter.default.addObserver(
+            forName: UIApplication.willEnterForegroundNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            MainActor.assumeIsolated {
+                self?.refreshVisibleLiveSessions()
+            }
+        }
     }
 
     deinit {
@@ -200,6 +220,9 @@ final class AppScreensNavigator: NSObject {
         prewarmSchedulerTask?.cancel()
         for worker in prewarmWorkerTasks {
             worker.cancel()
+        }
+        if let willEnterForegroundObserver {
+            NotificationCenter.default.removeObserver(willEnterForegroundObserver)
         }
     }
 
@@ -266,6 +289,21 @@ final class AppScreensNavigator: NSObject {
         return host
     }
 
+    /// Updates the live root session's `onDismissButtonPressed` in place, keyed by its
+    /// root host. A Hub only learns it is presented modally *after* its root loads
+    /// (the hosting relationship is established at `HubHostingController.viewWillAppear`),
+    /// so the handler that drives the `openURL { dismiss: true }` teardown flips from
+    /// `nil` to a real closure then; this lets that flip reach the already-created root
+    /// session without recreating the session or its web view. Idempotent / no-op when
+    /// `rootHost` owns no live root session (a non-App-Screens experience, or one
+    /// already released).
+    func setRootDismissHandler(for rootHost: UIViewController, onDismissButtonPressed: (() -> Void)?) {
+        guard let session = rootSessions.first(where: { $0.hostViewController === rootHost }) else {
+            return
+        }
+        session.onDismissButtonPressed = onDismissButtonPressed
+    }
+
     // MARK: - Master pipeline
 
     /// Cold-loads the master: fetch the anonymous document → `loadHTMLString` →
@@ -320,6 +358,9 @@ final class AppScreensNavigator: NSObject {
                 }
 
                 session.state = .awaitingRuntime
+                // The fresh document re-announces its own liveness by ticking again,
+                // so clear the flag the previous document may have set.
+                session.isLive = false
                 session.webView?.loadHTMLString(html, baseURL: entryURL)
 
                 try await withTimeout(seconds: Self.loadedTimeout) {
@@ -524,6 +565,8 @@ final class AppScreensNavigator: NSObject {
             openExternalURL(href: href, dismiss: dismiss, from: session)
         case .presentWebsite(let href):
             presentWebsite(href: href, from: session)
+        case .refresh:
+            refreshScreen(session: session)
         }
     }
 
@@ -843,6 +886,9 @@ final class AppScreensNavigator: NSObject {
                     }
 
                     session.state = .awaitingRuntime
+                    // A fresh document announces its own liveness by ticking, so clear
+                    // any liveness the reused/previous document had set.
+                    session.isLive = false
                     session.webView?.loadHTMLString(html, baseURL: resolvedURL)
                     try await withTimeout(seconds: Self.loadedTimeout) {
                         try await self.awaitRuntimeLoaded(session)
@@ -1016,6 +1062,138 @@ final class AppScreensNavigator: NSObject {
         }
     }
 
+    // MARK: - Refresh
+
+    /// Honors a `{type:"refresh"}` tick: a runtime-driven poll that refetches the
+    /// screen the session already navigated to and re-`show()`s it, which re-arms the
+    /// runtime's own one-shot poll loop. The refresh timing logic is wholly internal
+    /// to the App Screens JavaScript — the tick itself is the only liveness signal
+    /// native gets — so the first one latches `isLive`.
+    ///
+    /// Gates: drop unless the session is idle
+    /// (`state == .ready`; an in-flight pipeline's own `show()` re-arms the loop
+    /// anyway) and currently visible (a warm/occluded web view keeps running timers
+    /// and can post ticks, but its `show()` can never resolve off-screen — it would
+    /// only burn the show timeout). A dropped tick leaves the runtime's loop unarmed
+    /// by design; a later reappear/foreground/navigation re-arms it.
+    ///
+    /// The refetch rides the session's normal `pipelineTask` slot (cancel-replace), so
+    /// a navigate arriving mid-refresh supersedes it through the existing idiom, and
+    /// goes through the full handshake + morph so the go-quiet document reload comes
+    /// along for free. Error policy = web parity: a failed refetch logs and does NOT
+    /// re-`show()`, leaving the loop unarmed (no retries, no stale re-show).
+    private func refreshScreen(session: AppScreenSession) {
+        // Latch liveness before the visibility/busy early returns: even a tick that
+        // is then dropped tells native this document is live, so a later
+        // reappear/foreground can re-arm the loop this hidden tick leaves unarmed.
+        //
+        // Gate the latch on `runtimeDidLoad`. A genuine tick can only originate from
+        // a runtime that has loaded and completed a `show()` (which is what arms the
+        // one-shot timer), so `runtimeDidLoad` is necessarily true for any legitimate
+        // tick — gating never suppresses a real latch. But a tick arriving while the
+        // session is still loading a *new* document (`.loadingDocument` /
+        // `.awaitingRuntime`, where `runtimeDidLoad` was reset to false at the
+        // document-load choke point) can only be a stale, already-queued tick from
+        // the *previous* document. Latching from it would wrongly mark the
+        // replacement screen live and cost a spurious refetch on its next
+        // reappear/foreground if that screen is not itself live.
+        if session.runtimeDidLoad {
+            session.isLive = true
+        }
+
+        guard session.state == .ready else {
+            os_log(
+                "refresh dropped [%{public}@] — session busy (state=%{public}@)",
+                log: .appScreens,
+                type: .debug,
+                session.templateKey,
+                String(describing: session.state)
+            )
+            return
+        }
+        guard Self.visibility(of: session) == .visible else {
+            os_log(
+                "refresh dropped [%{public}@] — not visible (%{public}@); loop left unarmed",
+                log: .appScreens,
+                type: .info,
+                session.templateKey,
+                String(describing: Self.visibility(of: session))
+            )
+            return
+        }
+        guard let documentURL = session.documentURL else {
+            return
+        }
+
+        let href = Self.relativeHref(for: documentURL)
+        let scope = Self.effectiveScope(session.dataScope)
+        os_log(
+            "refresh [%{public}@] %{public}@ scope=%{public}@",
+            log: .appScreens,
+            type: .info,
+            session.templateKey,
+            href,
+            scope.rawValue
+        )
+
+        // Occupy the session's single pipeline slot so a navigate arriving mid-refresh
+        // cancels it via the standard cancel-replace idiom (reaching here implies no
+        // active pipeline: `state == .ready`).
+        session.pipelineTask?.cancel()
+        session.pipelineTask = Task { [weak self] in
+            guard let self else {
+                return
+            }
+            do {
+                let jsonResponse = try await withTimeout(seconds: Self.jsonTimeout) {
+                    try await self.fetchScreenData(for: documentURL, scope: scope)
+                }
+                // Freshen the session's scope from the `.json` response header when present.
+                if let responseScope = jsonResponse.responseScope {
+                    session.dataScope = responseScope
+                }
+                try await self.runHashHandshakeAndMorph(
+                    session: session,
+                    entryURL: documentURL,
+                    href: href,
+                    optimisticDataJSON: nil,
+                    rawJSON: jsonResponse.rawJSON,
+                    templateHash: jsonResponse.templateHash
+                )
+            } catch {
+                // A navigate/pop/teardown superseding this refresh cancels the task —
+                // exit quietly, never treating it as a refresh failure.
+                guard !Task.isCancelled else {
+                    return
+                }
+                // Web parity: a failed refresh logs and does NOT re-`show()`. The
+                // runtime's loop stays unarmed; the next reappear/foreground/navigation
+                // re-arms it. (A genuine WebContent death is handled independently by
+                // the navigation delegate's termination path.)
+                os_log(
+                    "refresh failed [%{public}@]: %{public}@ — loop left unarmed",
+                    log: .appScreens,
+                    type: .error,
+                    session.templateKey,
+                    error.localizedDescription
+                )
+            }
+        }
+    }
+
+    /// Refreshes every visible live session on app foreground. Only visible + live
+    /// sessions qualify (`refreshScreen` re-checks both); non-live screens are
+    /// deliberately left alone — the runtime never asked for refreshes there, and
+    /// refetching every screen on every foreground would be a behavior change with
+    /// real fetch cost. In practice only the topmost session of a stack is visible.
+    private func refreshVisibleLiveSessions() {
+        let onStackSessions = rootSessions + Array(sessions.values) + ephemeralSessions
+        for session in onStackSessions
+        where session.isLive && Self.visibility(of: session) == .visible {
+            refreshScreen(session: session)
+        }
+    }
+
     // MARK: - External links
 
     /// Finds the root session that ultimately owns `source`, walking out from a
@@ -1080,34 +1258,62 @@ final class AppScreensNavigator: NSObject {
             return
         }
 
-        if let handler = root.onOpenURL {
-            handler(url)
-        } else {
-            UIApplication.shared.open(url) { success in
-                if !success {
-                    os_log(
-                        "openURL failed to open %{private}@",
-                        log: .appScreens,
-                        type: .error,
-                        url.absoluteString
-                    )
+        // The URL hand-off (host override, or the OS as the default opener), factored
+        // out so it can run either immediately or deferred until the enclosing
+        // Experience has finished tearing down.
+        let openTarget = {
+            if let handler = root.onOpenURL {
+                handler(url)
+            } else {
+                UIApplication.shared.open(url) { success in
+                    if !success {
+                        os_log(
+                            "openURL failed to open %{private}@",
+                            log: .appScreens,
+                            type: .error,
+                            url.absoluteString
+                        )
+                    }
                 }
             }
         }
 
-        // Open-then-dismiss (deliberate order): the URL is handed off before the
-        // enclosing Experience is torn down.
-        guard dismiss else {
+        // Without a dismiss, or with no host dismiss registered (e.g. an embedded Hub),
+        // nothing tears down — open immediately.
+        guard dismiss, let onDismiss = root.onDismissButtonPressed else {
+            if dismiss {
+                os_log(
+                    "openURL requested dismiss but no host dismiss is registered; leaving presentation up",
+                    log: .appScreens,
+                    type: .info
+                )
+            }
+            openTarget()
             return
         }
-        if let onDismiss = root.onDismissButtonPressed {
-            onDismiss()
+
+        // Dismiss-THEN-open, sequenced on the dismissal transition (parity with the V2
+        // modern-experiences renderer — see `ExperienceAction.handle` / the
+        // `performDismissExperience` helper in `Action+handler.swift`, which opens the URL
+        // inside the dismissal completion when `dismissExperience` is set). Opening first
+        // races the OS re-delivering a Rover deep-link target back into the app:
+        // `PresentViewAction` resolves a presenter by walking to the top-most presented
+        // view controller — which is still this disappearing host — so UIKit drops the
+        // presentation ("view is not in the window hierarchy") and the target is silently
+        // lost. Waiting on the dismissal completion guarantees the presenter has settled
+        // on the revealed ancestor before we open. Reordering alone is not enough: both
+        // the dismissal and `PresentViewAction` are async, so an immediate open still
+        // lands mid-animation.
+        let dismissingHost = root.hostViewController
+        onDismiss()
+        if let coordinator = dismissingHost?.transitionCoordinator {
+            coordinator.animate(alongsideTransition: nil) { _ in
+                openTarget()
+            }
         } else {
-            os_log(
-                "openURL requested dismiss but no host dismiss is registered; leaving presentation up",
-                log: .appScreens,
-                type: .info
-            )
+            // No animated dismissal transition in flight (a non-animated teardown, or a
+            // host that resolved its dismissal synchronously) — nothing to wait on.
+            openTarget()
         }
     }
 
@@ -1170,6 +1376,12 @@ final class AppScreensNavigator: NSObject {
     /// where the runtime cannot boot). No-op on ordinary appearances.
     private func hostBecameVisible(_ session: AppScreenSession) {
         guard session.needsRecoveryOnAppear else {
+            // No deferred recovery pending. If a live session is reappearing (back-pop,
+            // sheet dismiss revealing it), refetch+show once — this freshens the stale
+            // screen and re-arms the runtime's poll loop that went unarmed while hidden.
+            if session.isLive {
+                refreshScreen(session: session)
+            }
             return
         }
         session.needsRecoveryOnAppear = false
@@ -1499,16 +1711,22 @@ final class AppScreensNavigator: NSObject {
 
     // MARK: - Web view factory
 
-    /// Builds a warm App Screens web view. Backgrounds are set before any load so
-    /// there is no white flash; the `roverAppScreens` handler is attached through
-    /// the weak proxy so the content controller never retains the navigator.
+    /// Builds a warm App Screens web view. The web view is opaque and paints its own
+    /// page background: the App Screens runtime mirrors the screen's declared color
+    /// (from the `{% screen %}` root Tailwind class) onto `html`/`body` and a
+    /// `<meta name="theme-color">`, so an opaque web view renders the right backdrop
+    /// and WebKit derives the elastic-scroll underpage color from it. The surfaces are
+    /// seeded here with the adaptive system background so there is never an unstyled
+    /// frame, then ``AppScreenSession`` keeps them aligned with `themeColor`. The
+    /// `roverAppScreens` handler is attached through the weak proxy so the content
+    /// controller never retains the navigator.
     func makeWebView(screenBackground: UIColor) -> WKWebView {
         let configuration = WKWebViewConfiguration()
         configuration.allowsInlineMediaPlayback = true
         configuration.userContentController.add(messageProxy, name: appScreensMessageHandlerName)
 
         let webView = WKWebView(frame: .zero, configuration: configuration)
-        webView.isOpaque = false
+        webView.isOpaque = true
         webView.backgroundColor = screenBackground
         webView.scrollView.backgroundColor = screenBackground
         webView.underPageBackgroundColor = screenBackground
@@ -1526,9 +1744,10 @@ final class AppScreensNavigator: NSObject {
         return webView
     }
 
-    /// The screen background applied before any content loads. May later be sourced
-    /// from remote config / the document. Uses the system background so the
-    /// no-flash behavior holds in light and dark.
+    /// The fallback screen background: applied before any content loads, and the
+    /// resting value whenever a page declares no background of its own (no
+    /// `theme-color`). Uses the adaptive system background so the no-flash behavior
+    /// and the unset-screen appearance both hold in light and dark.
     static var defaultScreenBackground: UIColor {
         .systemBackground
     }

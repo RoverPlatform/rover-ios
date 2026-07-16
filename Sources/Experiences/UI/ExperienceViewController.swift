@@ -47,10 +47,14 @@ open class ExperienceViewController: UIViewController {
     /// close item is installed on the App Screens ROOT host at load time and its
     /// action invokes this closure — the closure body performs the dismissal
     /// (e.g. `dismiss(animated:)` from the actual presenter). Leave `nil` when
-    /// embedding the experience (e.g. inside a developer's own sheet or the Hub), so
-    /// no close chrome is added. Set before `loadExperience`, mirroring the
-    /// `setAppScreensRootBarItem(_:)` host-configuration pattern. By convention a host
-    /// supplies either this handler or `appScreensRootBarItem`, never both.
+    /// embedding the experience (e.g. inside a developer's own sheet or an embedded
+    /// Hub), so no close chrome is added. Set before `loadExperience`, mirroring the
+    /// `setAppScreensRootBarItem(_:)` host-configuration pattern.
+    ///
+    /// This and `appScreensRootBarItem` can coexist (a *presented* Hub whose home view
+    /// enables the inbox). When both are set, `installAppScreensRootBarButtons(on:)`
+    /// places the close item on the LEADING edge and the inbox on the TRAILING edge so
+    /// neither is lost; a standalone close item (no inbox) stays on the trailing edge.
     var onDismissButtonPressed: (() -> Void)?
 
     /// An optional URL-opening override consulted only for the `openURL` bridge
@@ -66,9 +70,8 @@ open class ExperienceViewController: UIViewController {
     /// affordance for a V3 home view. Set via `setAppScreensRootBarItem(_:)` before
     /// (or after) load; installed on the root host as soon as it exists, and
     /// reinstalled in place when the item changes (e.g. a live badge-count update).
-    /// `nil` for the modal/UIKit entry point, which uses the xmark close item
-    /// instead. The two never coexist: the modal entry supplies no root bar item and
-    /// the Hub embed is never presented modally.
+    /// Takes the trailing slot; when a close item is also present it moves to the
+    /// leading edge so both coexist (see `onDismissButtonPressed`).
     private var appScreensRootBarItem: AppScreensRootBarItem?
 
     deinit {
@@ -93,7 +96,7 @@ open class ExperienceViewController: UIViewController {
             }
         }
     }
-    
+
     /// The App Screens navigation controller is nested inside this controller,
     /// so a reset applied to the outer SwiftUI navigation stack cannot clear the
     /// host application's `UINavigationBar.appearance()` values from it.
@@ -215,19 +218,12 @@ open class ExperienceViewController: UIViewController {
         // navigation stack back to it on a Hub-driven reset.
         appScreensRootHost = rootHost
 
-        // Install the host-supplied root bar item (the Hub inbox affordance) on the
-        // root host only, so pushing a detail hides it and popping restores it. Runs
-        // before the close-button install so, in the (by-convention-impossible) event
-        // both were supplied, the root bar item's `nil`-clear can't clobber the close
-        // button.
-        installAppScreensRootBarItem(on: rootHost)
-
-        // A presenter that declared this experience dismissable (by supplying
-        // `onDismissButtonPressed`) gets an xmark close affordance on the ROOT host
-        // only — pushed pages show the child nav's back button, and App Screens sheets
-        // keep their own close chrome. Embedded experiences leave the handler `nil`
-        // and get no close chrome.
-        installAppScreensCloseButton(on: rootHost)
+        // Install the App Screens ROOT host's bar buttons — the Hub inbox affordance
+        // and/or the modal xmark close item, placed on opposite edges when both are
+        // present (see `installAppScreensRootBarButtons`). Root host only, so pushing a
+        // detail hides them and popping restores them. Embedded experiences supply
+        // neither and get a clean bar.
+        installAppScreensRootBarButtons(on: rootHost)
 
         setChildViewController(navigationController)
         setNeedsStatusBarAppearanceUpdate()
@@ -238,6 +234,35 @@ open class ExperienceViewController: UIViewController {
         if let navigationController = appScreensNavigationController {
             resetAppScreensNavigationBar(navigationController.navigationBar)
         }
+    }
+
+    /// Updates the App Screens dismissal handler in place. The handler is the single
+    /// gate for BOTH the `openURL { dismiss: true }` teardown AND the root host's xmark
+    /// close item (installed iff non-`nil`). A modally-presented Hub only learns it is
+    /// presented after load (at `HubHostingController.viewWillAppear`), so the handler
+    /// flips from its embedded default (`nil`) to the real dismissal then, arriving
+    /// here via the same live `updateUIViewController` path the inbox badge rides — no
+    /// session or web-view recreation. Propagates the new handler to the live root
+    /// session (so `openURL` dismiss honors it) and, when the handler's presence
+    /// changed, re-runs the root bar install (so the xmark appears/disappears). No-op
+    /// before the root host exists — the initial value is read straight from the
+    /// property when `loadAppScreensExperience` creates the root.
+    func setOnDismissButtonPressed(_ handler: (() -> Void)?) {
+        let presenceChanged = (onDismissButtonPressed != nil) != (handler != nil)
+        onDismissButtonPressed = handler
+
+        guard let rootHost = appScreensRootHost else {
+            return
+        }
+        // Keep the live root session's openURL-dismiss in sync with the button.
+        let navigator = Rover.shared.resolve(AppScreensNavigator.self)!
+        navigator.setRootDismissHandler(for: rootHost, onDismissButtonPressed: handler)
+
+        // Only the button's presence (not the closure identity) changes the bar.
+        guard presenceChanged else {
+            return
+        }
+        installAppScreensRootBarButtons(on: rootHost)
     }
 
     /// Sets (or clears/updates) the native root bar item for the App Screens flow.
@@ -257,21 +282,45 @@ open class ExperienceViewController: UIViewController {
         guard let rootHost = appScreensRootHost, !unchanged else {
             return
         }
-        installAppScreensRootBarItem(on: rootHost)
+        installAppScreensRootBarButtons(on: rootHost)
+    }
+
+    /// Installs the App Screens ROOT host's bar buttons — the host's inbox affordance
+    /// (`appScreensRootBarItem`) and/or the modal xmark close item (when
+    /// `onDismissButtonPressed` is set) — resolving their placement:
+    ///
+    /// - both present (a *presented* Hub whose home view enables the inbox) → close on
+    ///   the LEADING edge, inbox on the TRAILING edge, so neither is lost;
+    /// - exactly one present → it takes the trailing slot, leading stays clear;
+    /// - neither → both slots cleared.
+    ///
+    /// So a standalone dismissable experience keeps its close item on the trailing
+    /// edge (where it ships), and the close item only moves to the leading edge when
+    /// the inbox would otherwise collide with it. Called at load and on every
+    /// root-bar-item update (badge change or a config-driven inbox toggle); because it
+    /// recomputes BOTH slots every call, a dynamic inbox appearing/disappearing slides
+    /// the close item between edges and never strands a stale button. Root host only,
+    /// whose leading slot is free (the root has no system back button). `internal` so
+    /// the target/action close wiring is exercisable in a headless unit test.
+    func installAppScreensRootBarButtons(on rootHost: UIViewController) {
+        let inbox = appScreensRootBarItem.map(makeInboxBarButtonItem)
+        let close = onDismissButtonPressed != nil ? makeCloseBarButtonItem() : nil
+
+        if inbox != nil, close != nil {
+            rootHost.navigationItem.leftBarButtonItem = close
+            rootHost.navigationItem.rightBarButtonItem = inbox
+        } else {
+            rootHost.navigationItem.leftBarButtonItem = nil
+            rootHost.navigationItem.rightBarButtonItem = inbox ?? close
+        }
     }
 
     /// Builds a standard image `UIBarButtonItem` (rendered as liquid glass by the
-    /// iOS 26 navigation bar) from the stored root bar item and installs it on the
-    /// root host. A custom-view bar item would NOT receive the automatic shared
-    /// glass background, so this uses a plain image item plus the native
-    /// `UIBarButtonItem.badge` (iOS 26+) for the unread count. No-op-safe: clears the
-    /// item when none is set.
-    private func installAppScreensRootBarItem(on rootHost: UIViewController) {
-        guard let item = appScreensRootBarItem else {
-            rootHost.navigationItem.rightBarButtonItem = nil
-            return
-        }
-
+    /// iOS 26 navigation bar) for the host's inbox affordance. A custom-view bar item
+    /// would NOT receive the automatic shared glass background, so this uses a plain
+    /// image item plus the native `UIBarButtonItem.badge` (iOS 26+) for the unread
+    /// count.
+    private func makeInboxBarButtonItem(_ item: AppScreensRootBarItem) -> UIBarButtonItem {
         let barButtonItem = UIBarButtonItem(
             image: UIImage(systemName: item.systemImageName),
             primaryAction: UIAction { _ in item.action() }
@@ -283,7 +332,7 @@ open class ExperienceViewController: UIViewController {
             barButtonItem.badge = Self.makeBadge(from: item.badgeText)
         }
 
-        rootHost.navigationItem.rightBarButtonItem = barButtonItem
+        return barButtonItem
     }
 
     /// Maps the host's badge string to a native `UIBarButtonItem.Badge`: a numeric
@@ -318,18 +367,11 @@ open class ExperienceViewController: UIViewController {
         navigator.popToRoot(in: navigationController)
     }
 
-    /// Installs the xmark close item on the App Screens root host when a presenter
-    /// supplied `onDismissButtonPressed`; the item's action invokes that handler,
-    /// whose body performs the dismissal. No-op when the handler is `nil` (the
-    /// embedded case), leaving the root host's bar untouched. Uses target/action
-    /// (rather than a `UIAction` closure) so the wiring is exercisable in a headless
-    /// unit test. `internal` for that test seam.
-    func installAppScreensCloseButton(on rootHost: UIViewController) {
-        guard onDismissButtonPressed != nil else {
-            return
-        }
-
-        rootHost.navigationItem.rightBarButtonItem = UIBarButtonItem(
+    /// Builds the xmark close item whose action invokes `onDismissButtonPressed`
+    /// (the closure body performs the dismissal). Uses target/action (rather than a
+    /// `UIAction` closure) so the wiring is exercisable in a headless unit test.
+    private func makeCloseBarButtonItem() -> UIBarButtonItem {
+        UIBarButtonItem(
             image: UIImage(systemName: "xmark"),
             style: .plain,
             target: self,

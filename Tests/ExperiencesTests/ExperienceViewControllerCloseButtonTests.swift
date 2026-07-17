@@ -54,6 +54,7 @@ final class ExperienceViewControllerCloseButtonTests: XCTestCase {
     /// firing its action invokes the handler (the closure body performs dismissal).
     func testCloseButtonInstalledAndInvokesHandlerWhenSet() {
         let viewController = ExperienceViewController()
+        viewController.appScreensUsesCompatibilityChrome = false  // Native-chrome path (see gate-ON cases below).
         var dismissed = false
         viewController.onDismissButtonPressed = { dismissed = true }
 
@@ -79,6 +80,7 @@ final class ExperienceViewControllerCloseButtonTests: XCTestCase {
     /// developer's own sheet, which must not gain an unwanted xmark.
     func testNoCloseButtonWhenHandlerNil() {
         let viewController = ExperienceViewController()
+        viewController.appScreensUsesCompatibilityChrome = false  // Native-chrome path (see gate-ON cases below).
         XCTAssertNil(viewController.onDismissButtonPressed)
 
         let rootHost = UIViewController()
@@ -95,6 +97,7 @@ final class ExperienceViewControllerCloseButtonTests: XCTestCase {
     /// a clean bar.
     func testCloseButtonInstalledOnlyOnGivenHost() {
         let viewController = ExperienceViewController()
+        viewController.appScreensUsesCompatibilityChrome = false  // Native-chrome path (see gate-ON cases below).
         viewController.onDismissButtonPressed = {}
 
         let rootHost = UIViewController()
@@ -113,6 +116,7 @@ final class ExperienceViewControllerCloseButtonTests: XCTestCase {
     /// to the leading slot, so neither is lost.
     func testInboxAndCloseCoexistOnOppositeEdgesWhenBothSet() {
         let viewController = ExperienceViewController()
+        viewController.appScreensUsesCompatibilityChrome = false  // Native-chrome path (see gate-ON cases below).
         viewController.onDismissButtonPressed = {}
         viewController.setAppScreensRootBarItem(
             AppScreensRootBarItem(
@@ -145,6 +149,7 @@ final class ExperienceViewControllerCloseButtonTests: XCTestCase {
     /// two occupants clobbering each other across a dynamic change.
     func testInboxTogglingOnAfterCloseInstalledMovesCloseToLeadingEdge() {
         let viewController = ExperienceViewController()
+        viewController.appScreensUsesCompatibilityChrome = false  // Native-chrome path (see gate-ON cases below).
         viewController.onDismissButtonPressed = {}
 
         let rootHost = UIViewController()
@@ -183,6 +188,7 @@ final class ExperienceViewControllerCloseButtonTests: XCTestCase {
     /// trailing slot and clear the leading slot — no stale leading button.
     func testInboxTogglingOffMovesCloseBackToTrailingEdge() {
         let viewController = ExperienceViewController()
+        viewController.appScreensUsesCompatibilityChrome = false  // Native-chrome path (see gate-ON cases below).
         viewController.onDismissButtonPressed = {}
         viewController.setAppScreensRootBarItem(
             AppScreensRootBarItem(
@@ -217,6 +223,7 @@ final class ExperienceViewControllerCloseButtonTests: XCTestCase {
     /// the leading edge once the inbox took the trailing slot.
     func testEmbeddedHubWithInboxShowsInboxOnlyAndNoLeadingCloseItem() {
         let viewController = ExperienceViewController()
+        viewController.appScreensUsesCompatibilityChrome = false  // Native-chrome path (see gate-ON cases below).
         // Embedded: no dismissal handler is supplied.
         XCTAssertNil(viewController.onDismissButtonPressed)
         viewController.setAppScreensRootBarItem(
@@ -249,6 +256,7 @@ final class ExperienceViewControllerCloseButtonTests: XCTestCase {
     /// handler and the install is driven directly, mirroring the headless seam.)
     func testDismissHandlerGatesCloseItemThroughLiveSetter() {
         let viewController = ExperienceViewController()
+        viewController.appScreensUsesCompatibilityChrome = false  // Native-chrome path (see gate-ON cases below).
 
         // Embedded default: no handler → no close item.
         let rootHost = UIViewController()
@@ -273,6 +281,106 @@ final class ExperienceViewControllerCloseButtonTests: XCTestCase {
             rootHost.navigationItem.rightBarButtonItem,
             "Clearing the dismissal handler withdraws the close item."
         )
+    }
+
+    // MARK: - Compatibility chrome (gate ON)
+
+    /// With the compatibility seam ON, the close item is a custom-view button (no
+    /// plain bar-item image) wrapped in the shared 40×40 `.thinMaterial` circle, and
+    /// it carries the "Close" accessibility label on both the bar item and the inner
+    /// button so `app.buttons["Close"]` (E2E) and VoiceOver keep matching.
+    func testCloseButtonCompatibilityChromeProducesCustomViewWithCircle() {
+        let viewController = ExperienceViewController()
+        viewController.appScreensUsesCompatibilityChrome = true
+        viewController.onDismissButtonPressed = {}
+
+        let rootHost = UIViewController()
+        viewController.installAppScreensRootBarButtons(on: rootHost)
+
+        let item = rootHost.navigationItem.rightBarButtonItem
+        XCTAssertNotNil(item, "A close item should be installed when a handler is set.")
+        XCTAssertNil(item?.image, "The compatibility close item is a custom view, not a plain image item.")
+        XCTAssertEqual(item?.accessibilityLabel, "Close", "The bar item must expose the Close label.")
+
+        guard let customView = item?.customView else {
+            return XCTFail("The compatibility close item must carry a custom view.")
+        }
+        customView.setNeedsLayout()
+        customView.layoutIfNeeded()
+
+        let effectView = Self.firstEffectView(in: customView)
+        XCTAssertNotNil(effectView, "The close custom view must contain a UIVisualEffectView circle.")
+        XCTAssertEqual(effectView?.bounds.size, CGSize(width: 40, height: 40), "The circle must be 40×40.")
+        XCTAssertEqual(effectView?.layer.cornerRadius, 20, "The circle's cornerRadius must be 20.")
+
+        let button = Self.firstButton(in: customView)
+        XCTAssertNotNil(button, "The close custom view must contain a UIButton.")
+        XCTAssertEqual(button?.accessibilityLabel, "Close", "The inner button must expose the Close label.")
+        XCTAssertEqual(button?.tintColor, .label, "The glyph must be tinted .label.")
+    }
+
+    /// With the compatibility seam ON, the custom-view close button's inner UIButton
+    /// is still wired to the `appScreensCloseButtonTapped` target/action seam, so
+    /// tapping it fires `onDismissButtonPressed`. Invoked via `perform` rather than
+    /// `sendActions` because a headless test host has no `UIApplication` to dispatch
+    /// a `UIControl`'s target/action (mirroring the native close test's approach).
+    func testCloseButtonCompatibilityChromeStillFiresDismiss() {
+        let viewController = ExperienceViewController()
+        viewController.appScreensUsesCompatibilityChrome = true
+        var dismissed = false
+        viewController.onDismissButtonPressed = { dismissed = true }
+
+        let rootHost = UIViewController()
+        viewController.installAppScreensRootBarButtons(on: rootHost)
+
+        withExtendedLifetime(viewController) {
+            guard
+                let customView = rootHost.navigationItem.rightBarButtonItem?.customView,
+                let button = Self.firstButton(in: customView)
+            else {
+                return XCTFail("The compatibility close item must carry a custom view with a button.")
+            }
+
+            guard
+                let target = button.allTargets.first,
+                let actionName = button.actions(forTarget: target, forControlEvent: .touchUpInside)?.first
+            else {
+                return XCTFail("The inner close button must be wired to a target/action.")
+            }
+
+            XCTAssertFalse(dismissed)
+            _ = (target as AnyObject).perform(Selector(actionName))
+            XCTAssertTrue(dismissed, "Tapping the compatibility close button should invoke onDismissButtonPressed.")
+        }
+    }
+
+    // MARK: - Helpers
+
+    /// Depth-first search for the first `UIVisualEffectView` — the compatibility
+    /// material circle.
+    private static func firstEffectView(in view: UIView) -> UIVisualEffectView? {
+        if let effectView = view as? UIVisualEffectView {
+            return effectView
+        }
+        for subview in view.subviews {
+            if let effectView = firstEffectView(in: subview) {
+                return effectView
+            }
+        }
+        return nil
+    }
+
+    /// Depth-first search for the first `UIButton` in a view hierarchy.
+    private static func firstButton(in view: UIView) -> UIButton? {
+        if let button = view as? UIButton {
+            return button
+        }
+        for subview in view.subviews {
+            if let button = firstButton(in: subview) {
+                return button
+            }
+        }
+        return nil
     }
 }
 

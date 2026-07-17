@@ -74,6 +74,16 @@ open class ExperienceViewController: UIViewController {
     /// leading edge so both coexist (see `onDismissButtonPressed`).
     private var appScreensRootBarItem: AppScreensRootBarItem?
 
+    /// Whether the App Screens root bar buttons (inbox and modal close) render the
+    /// V2 "compatibility" chrome — a `.thinMaterial` circle behind the glyph,
+    /// matching the SwiftUI Hub's `CompatibleInboxToolbarButton` — instead of relying on
+    /// the iOS 26 navigation bar's native liquid-glass bar items. Seeded from the
+    /// process gate `toolbarItemsRequireCompatibilityChrome` (the plist flag
+    /// or a pre-iOS-26 OS) but stored so unit tests can force either branch
+    /// deterministically on any simulator — the gate itself is OS/plist-dependent
+    /// and the suite runs on both iOS 18 and iOS 26. `internal`, not public.
+    var appScreensUsesCompatibilityChrome: Bool = toolbarItemsRequireCompatibilityChrome
+
     deinit {
         // This view controller owns the App Screens presentation. When it goes away
         // (the modal is dismissed, or a Hub-owned controller is removed), release the
@@ -315,24 +325,141 @@ open class ExperienceViewController: UIViewController {
         }
     }
 
-    /// Builds a standard image `UIBarButtonItem` (rendered as liquid glass by the
-    /// iOS 26 navigation bar) for the host's inbox affordance. A custom-view bar item
-    /// would NOT receive the automatic shared glass background, so this uses a plain
-    /// image item plus the native `UIBarButtonItem.badge` (iOS 26+) for the unread
-    /// count.
+    /// Builds the host's inbox affordance bar button. The path splits on the
+    /// compatibility seam (`appScreensUsesCompatibilityChrome`), not the OS, so an
+    /// iOS 26 app with `UIDesignRequiresCompatibility` also gets the custom chrome
+    /// (matching the SwiftUI Hub's `CompatibleInboxToolbarButton`):
+    ///
+    /// - **Gate OFF** (iOS 26 native chrome): a plain image `UIBarButtonItem` plus
+    ///   the native `UIBarButtonItem.badge`. A custom-view bar item would NOT receive
+    ///   the automatic shared glass background, so the item must stay a
+    ///   NON-custom-view image item here to keep the liquid-glass rendering. The
+    ///   badge API is iOS 26-only; the `#available` guard keeps it compiling and
+    ///   applies it only where it exists (gate-off implies iOS 26 in practice).
+    /// - **Gate ON** (compatibility chrome): a `UIBarButtonItem(customView:)`
+    ///   wrapping a `UIButton` inside a `.thinMaterial` circle with a hand-drawn
+    ///   unread badge overlay (see `makeLegacyInboxView`).
     private func makeInboxBarButtonItem(_ item: AppScreensRootBarItem) -> UIBarButtonItem {
-        let barButtonItem = UIBarButtonItem(
-            image: UIImage(systemName: item.systemImageName),
-            primaryAction: UIAction { _ in item.action() }
-        )
-        barButtonItem.accessibilityLabel = item.accessibilityLabel
-        barButtonItem.accessibilityIdentifier = item.accessibilityIdentifier
-
-        if #available(iOS 26.0, *) {
-            barButtonItem.badge = Self.makeBadge(from: item.badgeText)
+        guard appScreensUsesCompatibilityChrome else {
+            let barButtonItem = UIBarButtonItem(
+                image: UIImage(systemName: item.systemImageName),
+                primaryAction: UIAction { _ in item.action() }
+            )
+            barButtonItem.accessibilityLabel = item.accessibilityLabel
+            barButtonItem.accessibilityIdentifier = item.accessibilityIdentifier
+            if #available(iOS 26.0, *) {
+                barButtonItem.badge = Self.makeBadge(from: item.badgeText)
+            }
+            return barButtonItem
         }
 
+        let barButtonItem = UIBarButtonItem(customView: Self.makeLegacyInboxView(item))
+        // The inner button carries these too (so the accessible `.button` element the
+        // E2E matches on has them); mirroring them on the bar item keeps the install
+        // logic identifiable by tests and tools inspecting the bar item directly.
+        barButtonItem.accessibilityLabel = item.accessibilityLabel
+        barButtonItem.accessibilityIdentifier = item.accessibilityIdentifier
         return barButtonItem
+    }
+
+    /// Builds the compatibility-chrome inbox custom view: a `UIButton` glyph inside a
+    /// 40×40 `.thinMaterial` circle (matching the SwiftUI Hub's
+    /// `CompatibleInboxToolbarButton`) with a hand-drawn unread badge overlaid on the
+    /// circle's top-trailing rim (parity with the native `UIBarButtonItem.badge` the
+    /// iOS 26 path gets for free). Extracted as an `internal static` seam — with no
+    /// runtime `#available` gate — so a headless unit test can exercise the
+    /// compatibility branch even when the test suite runs on an iOS 26 simulator.
+    ///
+    /// The circle is unconditional here: this helper is only reached when the
+    /// compatibility seam is on. The button carries the item's
+    /// `accessibilityLabel`/`accessibilityIdentifier` (so `app.buttons["rover.hub.inbox"]`
+    /// in the E2E tests keeps matching) and, when a badge is shown, its
+    /// `accessibilityValue` mirrors the badge text (VoiceOver parity with the native
+    /// badge). `nil`/empty `badgeText` renders no badge label.
+    static func makeLegacyInboxView(_ item: AppScreensRootBarItem) -> UIView {
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(systemName: item.systemImageName), for: .normal)
+        button.addAction(UIAction { _ in item.action() }, for: .touchUpInside)
+        button.accessibilityLabel = item.accessibilityLabel
+        button.accessibilityIdentifier = item.accessibilityIdentifier
+
+        let container = makeCompatibilityCircleContainer(around: button)
+
+        guard let badgeText = item.badgeText, !badgeText.isEmpty else {
+            return container
+        }
+
+        button.accessibilityValue = badgeText
+
+        // The badge is added last so it stays top-most in z-order, above the circle
+        // and glyph, and is placed on the circle's top-trailing rim so it reads like
+        // the system badge on the iOS 26 glass capsule. No vertical offset on the
+        // circle itself — everything fits the 44pt bar.
+        let badge = InboxBadgeLabel(text: badgeText)
+        container.addSubview(badge)
+        NSLayoutConstraint.activate([
+            badge.centerXAnchor.constraint(equalTo: container.centerXAnchor, constant: 14),
+            badge.centerYAnchor.constraint(equalTo: container.centerYAnchor, constant: -14)
+        ])
+        return container
+    }
+
+    /// Wraps `button` in the shared V2 compatibility chrome: a 40×40 circular
+    /// `.thinMaterial` background with a drop shadow behind the glyph, tinted
+    /// `.label` — the UIKit equivalent of `CompatibleInboxToolbarButton`'s
+    /// `Circle().fill(.thinMaterial).shadow(radius: 5)` + `.tint(.primary)`. Returns
+    /// the outer container to use as a bar item's `customView`.
+    ///
+    /// The shadow lives on its own non-clipping wrapper because a layer that clips
+    /// (the material circle must, to round its corners) cannot also cast a shadow.
+    /// The effect view and shadow wrapper are non-interactive so taps reach the
+    /// button; the button is centered above them with a ≥40pt tap target. Dark mode
+    /// adapts automatically via `.systemThinMaterial` + `.label`.
+    private static func makeCompatibilityCircleContainer(around button: UIButton) -> UIView {
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.tintColor = .label
+
+        let container = UIView()
+
+        let shadowWrapper = UIView()
+        shadowWrapper.translatesAutoresizingMaskIntoConstraints = false
+        shadowWrapper.isUserInteractionEnabled = false
+        shadowWrapper.layer.shadowColor = UIColor.black.cgColor
+        shadowWrapper.layer.shadowOpacity = 0.33
+        shadowWrapper.layer.shadowRadius = 5
+        shadowWrapper.layer.shadowOffset = .zero
+
+        let effectView = UIVisualEffectView(effect: UIBlurEffect(style: .systemThinMaterial))
+        effectView.translatesAutoresizingMaskIntoConstraints = false
+        effectView.isUserInteractionEnabled = false
+        effectView.layer.cornerRadius = 20
+        effectView.clipsToBounds = true
+
+        shadowWrapper.addSubview(effectView)
+        container.addSubview(shadowWrapper)
+        container.addSubview(button)
+
+        NSLayoutConstraint.activate([
+            container.widthAnchor.constraint(greaterThanOrEqualToConstant: 40),
+            container.heightAnchor.constraint(greaterThanOrEqualToConstant: 40),
+
+            shadowWrapper.widthAnchor.constraint(equalToConstant: 40),
+            shadowWrapper.heightAnchor.constraint(equalToConstant: 40),
+            shadowWrapper.centerXAnchor.constraint(equalTo: container.centerXAnchor),
+            shadowWrapper.centerYAnchor.constraint(equalTo: container.centerYAnchor),
+
+            effectView.leadingAnchor.constraint(equalTo: shadowWrapper.leadingAnchor),
+            effectView.trailingAnchor.constraint(equalTo: shadowWrapper.trailingAnchor),
+            effectView.topAnchor.constraint(equalTo: shadowWrapper.topAnchor),
+            effectView.bottomAnchor.constraint(equalTo: shadowWrapper.bottomAnchor),
+
+            button.centerXAnchor.constraint(equalTo: container.centerXAnchor),
+            button.centerYAnchor.constraint(equalTo: container.centerYAnchor),
+            button.widthAnchor.constraint(greaterThanOrEqualToConstant: 40),
+            button.heightAnchor.constraint(greaterThanOrEqualToConstant: 40)
+        ])
+
+        return container
     }
 
     /// Maps the host's badge string to a native `UIBarButtonItem.Badge`: a numeric
@@ -370,14 +497,52 @@ open class ExperienceViewController: UIViewController {
     /// Builds the xmark close item whose action invokes `onDismissButtonPressed`
     /// (the closure body performs the dismissal). Uses target/action (rather than a
     /// `UIAction` closure) so the wiring is exercisable in a headless unit test.
+    ///
+    /// The path splits on the compatibility seam:
+    ///
+    /// - **Gate OFF** (iOS 26 native chrome): a plain image `UIBarButtonItem`, drawn
+    ///   as liquid glass by the navigation bar. The system exposes its accessibility
+    ///   label ("Close") for free.
+    /// - **Gate ON** (compatibility chrome): a `UIBarButtonItem(customView:)`
+    ///   wrapping a `UIButton` inside the same 40×40 `.thinMaterial` circle used by
+    ///   the inbox glyph. The inner button is wired to the same
+    ///   `appScreensCloseButtonTapped` target/action seam so the close still fires
+    ///   `onDismissButtonPressed`, and the "Close" accessibility label (which the
+    ///   native item provides automatically) is set explicitly on both the button
+    ///   and the bar item so `app.buttons["Close"]` and VoiceOver keep matching.
     private func makeCloseBarButtonItem() -> UIBarButtonItem {
-        UIBarButtonItem(
-            image: UIImage(systemName: "xmark"),
-            style: .plain,
-            target: self,
-            action: #selector(appScreensCloseButtonTapped)
-        )
+        guard appScreensUsesCompatibilityChrome else {
+            return UIBarButtonItem(
+                image: UIImage(systemName: "xmark"),
+                style: .plain,
+                target: self,
+                action: #selector(appScreensCloseButtonTapped)
+            )
+        }
+
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(systemName: "xmark"), for: .normal)
+        button.addTarget(self, action: #selector(appScreensCloseButtonTapped), for: .touchUpInside)
+        button.accessibilityLabel = Self.closeButtonAccessibilityLabel
+
+        let barButtonItem = UIBarButtonItem(customView: Self.makeCompatibilityCircleContainer(around: button))
+        barButtonItem.accessibilityLabel = Self.closeButtonAccessibilityLabel
+        return barButtonItem
     }
+
+    /// The accessibility label for the compatibility custom-view close button, where
+    /// the system does not supply one automatically (the native `UIBarButtonItem(image:)`
+    /// path gets an OS-localized "Close" from the SF Symbol for free). Routed through
+    /// `NSLocalizedString` with the same `"Close"` key and `"Rover Close"` comment the
+    /// Classic experiences close button uses (`ClassicScreenViewController`) and matching
+    /// the sibling inbox label's `NSLocalizedString("Inbox", ...)` convention, so this is
+    /// a real localization extraction point rather than hard-coded English. Resolves to
+    /// "Close" in English, so the E2E `app.buttons["Close"]` matcher and VoiceOver keep
+    /// matching on both the native and compatibility paths.
+    private static let closeButtonAccessibilityLabel = NSLocalizedString(
+        "Close",
+        comment: "Rover Close"
+    )
 
     @objc private func appScreensCloseButtonTapped() {
         onDismissButtonPressed?()
@@ -521,6 +686,47 @@ open class ExperienceViewController: UIViewController {
                 authorizers: authorizers
             )
         }
+    }
+}
+
+/// A pill-shaped unread badge for the pre-iOS-26 inbox bar button: white bold
+/// ~11pt text on a `.systemRed` capsule. Circular for a single character (min
+/// 16pt), widening to a capsule with ~4pt horizontal padding for longer text
+/// (numeric counts or text badges like `"99+"`). `isUserInteractionEnabled` is
+/// off so it never eats taps meant for the underlying button.
+private final class InboxBadgeLabel: UILabel {
+    private let horizontalPadding: CGFloat = 4
+    private let minimumSize: CGFloat = 16
+
+    init(text: String) {
+        super.init(frame: .zero)
+        self.text = text
+        font = .systemFont(ofSize: 11, weight: .bold)
+        textColor = .white
+        textAlignment = .center
+        numberOfLines = 1
+        backgroundColor = .systemRed
+        clipsToBounds = true
+        isUserInteractionEnabled = false
+        translatesAutoresizingMaskIntoConstraints = false
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override var intrinsicContentSize: CGSize {
+        let base = super.intrinsicContentSize
+        let height = max(minimumSize, base.height)
+        // Circular for a single digit (width == height); capsule once the padded
+        // text is wider than that.
+        let width = max(height, base.width + horizontalPadding * 2)
+        return CGSize(width: width, height: height)
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        layer.cornerRadius = bounds.height / 2
     }
 }
 

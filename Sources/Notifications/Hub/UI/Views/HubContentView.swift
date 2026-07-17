@@ -86,7 +86,7 @@ struct HubContentView: View {
                             .toolbar {
                                 if coordinator.isInboxEnabled {
                                     ToolbarItem(placement: .topBarTrailing) {
-                                        InboxToolbarButton(badge: badge.newBadge) {
+                                        CompatibleInboxToolbarButton(badge: badge.newBadge) {
                                             coordinator.navigationPath.append(HubPath.messages)
                                         }
                                     }
@@ -141,19 +141,4 @@ struct HubContentView: View {
 
 }
 
-private struct InboxToolbarButton: View {
-    let badge: String?
-    let action: () -> Void
 
-    var body: some View {
-        CompatibleToolbarButton(action: action) {
-            Image(systemName: "envelope")
-                .badge(badge)
-        }
-        // SwiftUI's toolbar preference system does not reliably propagate badge
-        // value updates to the navigation bar. Assigning a new identity via .id()
-        // each time the badge changes forces SwiftUI to recreate the view, which
-        // re-sends the toolbar preference and causes the navigation bar to update.
-        .id(badge)
-    }
-}

@@ -22,8 +22,13 @@ struct MessagesView: View {
     @Environment(\.hubContainer) private var container
     @Environment(\.refreshHub) var refreshHub
     @Environment(\.conversationSync) private var conversationSync
+    @Environment(\.inboxSeenWatermark) private var inboxSeenWatermark
+    @Environment(\.scenePhase) private var scenePhase
 
     @State private var searchText: String = ""
+    // Tracks whether the inbox is the view on screen, so the backgrounding hook below only fires
+    // while it actually is — scenePhase changes are delivered to every live view.
+    @State private var isVisible = false
     @State private var pollingTask: Task<Void, Never>?
     @State private var backfillTask: Task<Void, Never>?
     // Stored as @State rather than a computed var to avoid re-sorting on every render.
@@ -62,16 +67,67 @@ struct MessagesView: View {
         .searchable(text: $searchText)
         .onAppear {
             startSync()
+            isVisible = true
+            // This view is the inbox body for both entry paths — the pushed `HubPath.messages`
+            // route and the inbox-as-root case when home is disabled — so hooking the watermark
+            // here covers both.
+            markInboxSeen()
         }
         .onDisappear {
             stopSync()
+            isVisible = false
+            // Mark again on the way out: items that arrived while the list was open were also
+            // seen, and the `onAppear` watermark predates them.
+            markInboxSeen()
         }
-        .onChange(of: posts.map(\.objectID)) { rebuildSortedItems() }
+        .onChange(of: scenePhase) { _, newPhase in
+            // Neither `onAppear` nor `onDisappear` fires across a background/foreground round trip
+            // while this view stays in the hierarchy, so both directions need marking here:
+            // `.background` because an item that lands while the inbox is on screen would otherwise
+            // leave a stale icon badge behind, and `.active` because an item that arrives *while
+            // backgrounded* would otherwise badge over the open list until the user navigates
+            // away. `.inactive` is deliberately not handled — it also fires for Notification
+            // Center pulls, the app switcher, and Control Center, none of which take the inbox off
+            // screen, and the return to `.active` marks seen anyway.
+            guard isVisible, newPhase == .background || newPhase == .active else { return }
+            markInboxSeen()
+        }
+        .onChange(of: posts.map(\.objectID)) {
+            rebuildSortedItems()
+            // Absorb posts that sync in while the user is looking at the list. A device-time
+            // watermark used to cover this for free — a mark taken at reveal was already ahead of
+            // the `receivedAt` of anything that landed later — but a watermark written only from
+            // observed item timestamps moves only when it is told to, so without this a post
+            // arriving mid-view badges over the very list the user is reading until they navigate
+            // away.
+            guard isVisible else { return }
+            markInboxSeen()
+        }
         .onChange(of: conversations.map(\.objectID)) { rebuildSortedItems() }
+        .onChange(of: conversations.compactMap(\.badgeActivityAt).max()) {
+            // Absorb incoming conversation replies that sync in while the user is looking at the
+            // list — the same mid-view case the posts handler above covers. Keyed on the incoming
+            // activity max rather than the objectID set because a reply usually lands as an
+            // in-place timestamp bump on an existing row, which changes no objectIDs. Outgoing
+            // optimistic replies update `lastReplyAt` only and must not advance the seen watermark.
+            guard isVisible else { return }
+            markInboxSeen()
+        }
         .task {
             // Required to populate the sorted items when the view launches
             rebuildSortedItems()
         }
+    }
+
+    /// Advances the seen watermark to the newest item in the store — post `receivedAt` or
+    /// conversation incoming-reply activity — because everything the list is showing has been
+    /// seen. The newest timestamp *is* the mark rather than a floor under some device-clock value,
+    /// so the watermark carries only timestamps the badge actually compares against; see
+    /// `InboxSeenWatermark`. Outgoing replies are deliberately excluded from both sides.
+    private func markInboxSeen() {
+        let newestActivity =
+            (posts.compactMap(\.receivedAt) + conversations.compactMap(\.badgeActivityAt)).max()
+        inboxSeenWatermark?.markSeen(upTo: newestActivity)
     }
 
     private func rebuildSortedItems() {

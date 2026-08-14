@@ -245,6 +245,12 @@ public struct NotificationsAssembler: Assembler {
             InboxPersistentContainer(storage: .persistent)
         }
 
+        // Registered unconditionally, unlike `RoverBadge` below: the inbox has to advance the
+        // watermark whenever it is viewed even for hosts that opt out of app-icon badging.
+        container.register(InboxSeenWatermark.self, scope: .singleton) { resolver in
+            InboxSeenWatermark()
+        }
+
         container.register(PostSync.self, scope: .singleton) { resolver in
             MainActor.assumeIsolatedOrFatalError {
                 PostSync(
@@ -258,7 +264,8 @@ public struct NotificationsAssembler: Assembler {
             MainActor.assumeIsolatedOrFatalError {
                 HubSyncCoordinator(
                     httpClient: resolver.resolve(HTTPClient.self)!,
-                    persistentContainer: resolver.resolve(InboxPersistentContainer.self)!
+                    persistentContainer: resolver.resolve(InboxPersistentContainer.self)!,
+                    seenWatermark: resolver.resolve(InboxSeenWatermark.self)!
                 )
             }
         }
@@ -306,6 +313,8 @@ public struct NotificationsAssembler: Assembler {
                 return MainActor.assumeIsolatedOrFatalError {
                     RoverBadge(
                         persistentContainer: resolver.resolve(InboxPersistentContainer.self)!,
+                        seenWatermark: resolver.resolve(InboxSeenWatermark.self)!,
+                        configManager: resolver.resolve(ConfigManager.self)!,
                         updateAppBadge: updateAppBadge
                     )
                 }
@@ -423,6 +432,11 @@ public struct NotificationsAssembler: Assembler {
 
         let syncParticipant = resolver.resolve(SyncParticipant.self, name: "notifications")!
         syncCoordinator.participants.append(syncParticipant)
+
+        // Resolve the watermark eagerly so a fresh install (or an app updating into this build)
+        // seeds it at SDK initialization — before the first posts sync lands — rather than
+        // whenever the inbox happens to first be opened.
+        _ = resolver.resolve(InboxSeenWatermark.self)
 
         if updateAppBadge {
             _ = resolver.resolve(RoverBadge.self)

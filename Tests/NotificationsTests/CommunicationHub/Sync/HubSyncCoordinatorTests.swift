@@ -16,6 +16,7 @@ final class HubSyncCoordinatorTests: HubSyncTestBase {
             HubSyncCoordinator(
                 httpClient: httpClient,
                 persistentContainer: testContainer,
+                seenWatermark: seenWatermark,
                 notificationCenter: spyNotificationCenter.asDeliveredNotificationCenter()
             )
         }
@@ -184,6 +185,39 @@ final class HubSyncCoordinatorTests: HubSyncTestBase {
 
         let cancelCount = await cancellable.cancelCallCount
         XCTAssertEqual(cancelCount, 1, "cancelAllTasks() should be called once on 410")
+    }
+
+    // MARK: - Reset advances the inbox seen watermark
+
+    func testPosts410AdvancesTheInboxSeenWatermark() async throws {
+        let seeded = await MainActor.run { seenWatermark.lastSeenAt }
+        // UserDefaults dates round-trip through JSON, so ensure a measurable gap.
+        Thread.sleep(forTimeInterval: 0.01)
+
+        try await seedPost()
+        URLProtocolMock.stubPosts410()
+
+        _ = await coordinator.getPosts(from: nil)
+        await coordinator.awaitCurrentReset()
+
+        let advanced = await MainActor.run { seenWatermark.lastSeenAt }
+        XCTAssertGreaterThan(
+            advanced,
+            seeded,
+            "A 410 reset must advance the watermark so refetched history does not re-badge"
+        )
+    }
+
+    func testNon410ErrorDoesNotAdvanceTheInboxSeenWatermark() async throws {
+        let seeded = await MainActor.run { seenWatermark.lastSeenAt }
+        Thread.sleep(forTimeInterval: 0.01)
+
+        URLProtocolMock.stubPostsError(URLError(.badServerResponse))
+
+        _ = await coordinator.getPosts(from: nil)
+
+        let unchanged = await MainActor.run { seenWatermark.lastSeenAt }
+        XCTAssertEqual(unchanged.timeIntervalSince1970, seeded.timeIntervalSince1970, accuracy: 0.002)
     }
 
     // MARK: - Non-410 errors do NOT trigger invalidation

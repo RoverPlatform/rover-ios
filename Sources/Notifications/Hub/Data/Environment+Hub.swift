@@ -34,6 +34,11 @@ struct HubPersistentContainerKey: EnvironmentKey {
     static let defaultValue: InboxPersistentContainer? = nil
 }
 
+// Environment key for accessing the inbox seen watermark throughout the app
+struct InboxSeenWatermarkKey: EnvironmentKey {
+    static let defaultValue: InboxSeenWatermark? = nil
+}
+
 // Environment key for accessing the PostSync service throughout the app
 struct PostSyncKey: EnvironmentKey {
     static let defaultValue: PostSync? = nil
@@ -64,6 +69,12 @@ extension EnvironmentValues {
     var hubContainer: InboxPersistentContainer? {
         get { self[HubPersistentContainerKey.self] }
         set { self[HubPersistentContainerKey.self] = newValue }
+    }
+
+    /// Timestamp of the user's last inbox visit, which the Hub badge counts posts against.
+    var inboxSeenWatermark: InboxSeenWatermark? {
+        get { self[InboxSeenWatermarkKey.self] }
+        set { self[InboxSeenWatermarkKey.self] = newValue }
     }
 
     /// Rover Hub sync service

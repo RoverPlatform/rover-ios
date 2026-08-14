@@ -22,9 +22,13 @@ import XCTest
 /// Base class for all Hub sync tests providing container, HTTP client, and URL mock setup.
 class HubSyncTestBase: XCTestCase {
 
+    /// Suite name for the seen-watermark defaults, so tests never touch the shared standard domain.
+    private static let watermarkSuiteName = "io.rover.test.hubSync.seenWatermark"
+
     var testContainer: InboxPersistentContainer!
     var httpClient: HTTPClient!
     var hubSyncCoordinator: HubSyncCoordinator!
+    var seenWatermark: InboxSeenWatermark!
     var mockUserInfoManager: MockUserInfoManager!
 
     override func setUp() async throws {
@@ -32,6 +36,9 @@ class HubSyncTestBase: XCTestCase {
         URLProtocolMock.reset()
         URLProtocol.registerClass(URLProtocolMock.self)
         testContainer = InboxPersistentContainer(storage: .inMemory)
+        UserDefaults(suiteName: Self.watermarkSuiteName)?
+            .removePersistentDomain(forName: Self.watermarkSuiteName)
+        seenWatermark = InboxSeenWatermark(userDefaults: UserDefaults(suiteName: Self.watermarkSuiteName)!)
         mockUserInfoManager = MockUserInfoManager()
         let session = MockURLSession.createConfiguredSession()
         let authContext = AuthenticationContext(userDefaults: UserDefaults())
@@ -47,6 +54,7 @@ class HubSyncTestBase: XCTestCase {
             HubSyncCoordinator(
                 httpClient: httpClient,
                 persistentContainer: testContainer,
+                seenWatermark: seenWatermark,
                 // Avoid touching UNUserNotificationCenter.current() from the test bundle: the
                 // reset always queries delivered notifications now, and .live is unavailable
                 // without a host app. Selection logic is covered by hubNotificationIdentifiers tests.
@@ -62,6 +70,9 @@ class HubSyncTestBase: XCTestCase {
         httpClient = nil
         mockUserInfoManager = nil
         hubSyncCoordinator = nil
+        seenWatermark = nil
+        UserDefaults(suiteName: Self.watermarkSuiteName)?
+            .removePersistentDomain(forName: Self.watermarkSuiteName)
         try await super.tearDown()
     }
 

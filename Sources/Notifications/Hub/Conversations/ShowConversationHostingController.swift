@@ -37,6 +37,10 @@ private struct ShowConversationView: View {
         NavigationView {
             ConversationDetailView(conversationID: conversationID)
                 .navigationBarTitleDisplayMode(.inline)
+                // This standalone presentation never passes through HubContentView,
+                // so it needs its own appearance reset to shield the bar from the
+                // host app's global appearance proxy.
+                .resetNavBarAppearance(.systemScrolledBackground)
                 .toolbar {
                     if isPresented {
                         ToolbarItem(placement: .confirmationAction) {

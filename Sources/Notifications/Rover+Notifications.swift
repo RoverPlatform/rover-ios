@@ -28,6 +28,9 @@ public extension Rover {
     }
 
     /// Use this object to obtain the badge state for the Inbox/Comunication Hub.
+    ///
+    /// The badge counts the unread posts and unread conversations with activity since the user
+    /// last viewed the inbox. Counts above 9 are reported as `"9+"`.
     var roverBadge: RoverBadge {
         resolve(RoverBadge.self)!
     }
@@ -139,6 +142,9 @@ public extension Rover {
     func resetHub() {
         let container = self.resolve(InboxPersistentContainer.self)
         container?.reset()
+
+        // Reset the watermark so a future value cannot suppress newly restored Hub history.
+        self.resolve(InboxSeenWatermark.self)?.reset()
     }
 
     func resetCommunicationHub() {

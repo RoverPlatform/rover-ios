@@ -68,6 +68,7 @@ struct HubContentView: View {
                                 : nil,
                             onDismissButtonPressed: onDismissButtonPressed
                         )
+                        .resetNavBarAppearance()
                     } else {
                         ExperienceView(url: url, path: $coordinator.navigationPath)
                             // The experience rendered by ExperienceView may
@@ -92,12 +93,18 @@ struct HubContentView: View {
                                     }
                                 }
                             }
+                            .resetNavBarAppearance()
                     }
                 } else {
                     inboxOrEmpty
                 }
             }
-            .resetNavBarAppearance()
+            // The stack root's content decides its bar style: home experiences own
+            // their chrome and stay fully transparent, while a root-level messages
+            // list (inbox-only Hubs, or while the home view URL is still loading) is
+            // a content screen and needs the scrolled background like the pushed
+            // destinations below. Applied per-branch inside the ZStack rather than
+            // here, so exactly one reset is active for whichever branch is showing.
             .onAppear {
                 Task {
                     await configSync?.sync()
@@ -114,6 +121,13 @@ struct HubContentView: View {
                 case .messages:
                     MessagesView(navigationPath: $coordinator.navigationPath)
                         .environment(\.conversationSync, conversationSync)
+                        // Pushed destinations are separate screens with their own
+                        // navigation items; the reset on the stack root above doesn't
+                        // reach them, so each destination pins its own appearance.
+                        // Content screens show the system background once content
+                        // scrolls under the bar so the title and back button stay
+                        // legible; only the home experience stays fully transparent.
+                        .resetNavBarAppearance(.systemScrolledBackground)
                 }
             }
             .navigationDestination(for: PostDestination.self) { postDestination in
@@ -122,9 +136,11 @@ struct HubContentView: View {
                     accentColor: coordinator.accentColor,
                     showAlert: $coordinator.showPostAlert
                 )
+                .resetNavBarAppearance(.systemScrolledBackground)
             }
             .navigationDestination(for: ConversationDestination.self) { destination in
                 ConversationDetailView(conversationID: destination.conversationID)
+                    .resetNavBarAppearance(.systemScrolledBackground)
             }
         }
         .tint(coordinator.accentColor)
@@ -136,9 +152,8 @@ struct HubContentView: View {
         if coordinator.isInboxEnabled {
             MessagesView(navigationPath: $coordinator.navigationPath)
                 .environment(\.conversationSync, conversationSync)
+                .resetNavBarAppearance(.systemScrolledBackground)
         }
     }
 
 }
-
-

@@ -59,6 +59,7 @@ struct HubSyncResponse<T> {
 final class HubSyncCoordinator: @unchecked Sendable {
     private let httpClient: HTTPClient
     private let persistentContainer: InboxPersistentContainer
+    private let seenWatermark: InboxSeenWatermark
     private let notificationCenter: DeliveredNotificationCenter
     private var cancellables: [HubSyncCancellable] = []
 
@@ -72,10 +73,12 @@ final class HubSyncCoordinator: @unchecked Sendable {
     init(
         httpClient: HTTPClient,
         persistentContainer: InboxPersistentContainer,
+        seenWatermark: InboxSeenWatermark,
         notificationCenter: DeliveredNotificationCenter = .live
     ) {
         self.httpClient = httpClient
         self.persistentContainer = persistentContainer
+        self.seenWatermark = seenWatermark
         self.notificationCenter = notificationCenter
     }
 
@@ -228,6 +231,11 @@ final class HubSyncCoordinator: @unchecked Sendable {
         persistentContainer.dropAllConversations()
         persistentContainer.dropAllPosts()
         persistentContainer.dropAllSubscriptions()
+
+        // Reset the watermark so a future value from the previous identity cannot suppress
+        // genuinely new posts fetched by the post-reset resync.
+        seenWatermark.reset()
+
         await clearNotifications
     }
 

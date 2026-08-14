@@ -51,6 +51,7 @@ public struct HubView: View {
         .environment(\.managedObjectContext, persistentContainer.viewContext)
         .environment(\.refreshHub, { await refreshHub() })
         .environment(\.postSync, postSync)
+        .environment(\.inboxSeenWatermark, inboxSeenWatermark)
         .environment(\.eventQueue, Rover.shared.eventQueue)
         .environment(\.configSync, configSync)
         .environment(\.conversationSync, conversationSync)
@@ -67,6 +68,10 @@ public struct HubView: View {
 
     var postSync: PostSync {
         Rover.shared.resolve(PostSync.self)!
+    }
+
+    var inboxSeenWatermark: InboxSeenWatermark {
+        Rover.shared.resolve(InboxSeenWatermark.self)!
     }
 
     var configSync: ConfigSync {

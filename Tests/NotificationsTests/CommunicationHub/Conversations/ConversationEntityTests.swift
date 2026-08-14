@@ -173,45 +173,56 @@ final class ConversationEntityTests: InboxPersistentContainerTestCase {
 
     // MARK: - Badge Count Predicate Tests
 
-    func testBadgeCountIncludesConversationWithOnlyLastReplyAt() async {
-        // A conversation with only lastReplyAt (no lastIncomingReplyAt) and no lastReadAt
-        // should be counted as unread in getBadgeCount(), matching Conversation.isRead.
+    // These cover the conversation half of `getBadgeCount(seenAfter:)` only — no posts are seeded.
+    // Fixtures are pinned relative to a fixed watermark so no test depends on wall clock; see
+    // `RoverBadgeCountTests` for the posts side and the watermark-position cases.
+
+    /// Fixed reference watermark for the badge predicate tests.
+    private var badgeWatermark: Date { Date(timeIntervalSince1970: 1_700_000_000) }
+
+    func testBadgeCountExcludesConversationWithOnlyLastReplyAt() async {
+        // lastReplyAt includes outbound activity. Without a direction-specific incoming timestamp,
+        // the conversation must not contribute to the badge even though its general read-state
+        // fallback treats it as unread.
+        let replyAt = badgeWatermark.addingTimeInterval(3600)
         await MainActor.run {
             let conv = Conversation(context: container.viewContext)
             conv.id = UUID()
-            conv.createdAt = Date()
-            conv.updatedAt = Date()
-            conv.lastReplyAt = Date()
+            conv.createdAt = replyAt
+            conv.updatedAt = replyAt
+            conv.lastReplyAt = replyAt
             conv.lastIncomingReplyAt = nil
             conv.lastReadAt = nil
             assertViewContextSave("Failed to save conversation with lastReplyAt only")
         }
 
-        let count = await MainActor.run { container.getBadgeCount() }
-        XCTAssertEqual(count, 1, "getBadgeCount() should count a conversation that has only lastReplyAt as unread")
+        let count = await MainActor.run { container.getBadgeCount(seenAfter: badgeWatermark) }
+        XCTAssertEqual(count, 0, "Outgoing or direction-unknown reply activity must not badge")
     }
 
     func testBadgeCountExcludesConversationWithNoReplies() async {
         // A conversation with neither lastReplyAt nor lastIncomingReplyAt has no activity to be
         // unread. Conversation.isRead returns true for this state; getBadgeCount() should agree.
+        let createdAt = badgeWatermark.addingTimeInterval(3600)
         await MainActor.run {
             let conv = Conversation(context: container.viewContext)
             conv.id = UUID()
-            conv.createdAt = Date()
-            conv.updatedAt = Date()
+            conv.createdAt = createdAt
+            conv.updatedAt = createdAt
             conv.lastReplyAt = nil
             conv.lastIncomingReplyAt = nil
             conv.lastReadAt = nil
             assertViewContextSave("Failed to save reply-less conversation")
         }
 
-        let count = await MainActor.run { container.getBadgeCount() }
+        let count = await MainActor.run { container.getBadgeCount(seenAfter: badgeWatermark) }
         XCTAssertEqual(count, 0, "getBadgeCount() should not count a conversation with no replies")
     }
 
     func testBadgeCountExcludesConversationReadViaLastReplyAt() async {
-        // A conversation with lastReplyAt <= lastReadAt (no lastIncomingReplyAt) should NOT be counted.
-        let replyAt = Date()
+        // A conversation with lastReplyAt <= lastReadAt (no lastIncomingReplyAt) should NOT be
+        // counted, even with activity past the watermark.
+        let replyAt = badgeWatermark.addingTimeInterval(3600)
         let readAt = replyAt.addingTimeInterval(30)
 
         await MainActor.run {
@@ -225,7 +236,7 @@ final class ConversationEntityTests: InboxPersistentContainerTestCase {
             assertViewContextSave("Failed to save read conversation")
         }
 
-        let count = await MainActor.run { container.getBadgeCount() }
+        let count = await MainActor.run { container.getBadgeCount(seenAfter: badgeWatermark) }
         XCTAssertEqual(count, 0, "getBadgeCount() should not count a conversation whose lastReplyAt <= lastReadAt")
     }
 

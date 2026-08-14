@@ -13,6 +13,7 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+import Combine
 import CoreData
 import Foundation
 import RoverData
@@ -24,22 +25,48 @@ import os.log
 @MainActor
 public class RoverBadge: ObservableObject {
     private let persistentContainer: InboxPersistentContainer
+    private let seenWatermark: InboxSeenWatermark
+    private let configManager: ConfigManager
     private let updateAppBadge: Bool
 
-    /// Whether the Hub tab has unread items and should display a badge.
+    /// Counts above this are displayed as `"9+"` instead of the number itself, and the numeric
+    /// app-icon badge is clamped to it.
+    static let maximumDisplayedCount = 9
+
+    /// Whether the Hub tab has new items and should display a badge, as display-ready text.
+    ///
+    /// Counts the unread posts and unread conversations with activity since the user last viewed
+    /// the inbox. Counts of 1 through 9 are the number itself; anything higher is `"9+"`.
     ///
     /// If nil, then the count is 0 and the badge is not displayed.
     @Published public private(set) var newBadge: String? = nil
 
-    init(persistentContainer: InboxPersistentContainer, updateAppBadge: Bool) {
+    init(
+        persistentContainer: InboxPersistentContainer,
+        seenWatermark: InboxSeenWatermark,
+        configManager: ConfigManager,
+        updateAppBadge: Bool
+    ) {
         self.persistentContainer = persistentContainer
+        self.seenWatermark = seenWatermark
+        self.configManager = configManager
         self.updateAppBadge = updateAppBadge
 
-        // Observe changes to unread hub items in Core Data
-        observeUnreadHubItemChanges()
+        // Observe changes to badgeable hub items in Core Data
+        observeHubItemChanges()
+
+        // ...and to the inbox seen watermark, which lives in UserDefaults and so produces no
+        // Core Data save of its own.
+        observeSeenWatermarkChanges()
+
+        // Config changes likewise produce no Core Data save. Recompute immediately so disabling
+        // the inbox clears every badge surface and re-enabling it restores any unseen backlog.
+        observeConfigChanges()
     }
 
     private var observerToken: NSObjectProtocol?
+    private var watermarkCancellable: AnyCancellable?
+    private var configCancellable: AnyCancellable?
 
     deinit {
         if let token = observerToken {
@@ -47,7 +74,25 @@ public class RoverBadge: ObservableObject {
         }
     }
 
-    private func observeUnreadHubItemChanges() {
+    /// Display text for a badge count: nil when there is nothing to show, the number itself up to
+    /// ``maximumDisplayedCount``, and `"9+"` beyond it.
+    nonisolated static func badgeText(for count: Int) -> String? {
+        guard count > 0 else {
+            return nil
+        }
+        guard count <= maximumDisplayedCount else {
+            return "\(maximumDisplayedCount)+"
+        }
+        return String(count)
+    }
+
+    /// The numeric app-icon badge value for a badge count. The app icon badge cannot render "9+",
+    /// so it is clamped to ``maximumDisplayedCount`` to stay consistent with the in-app badges.
+    nonisolated static func appBadgeCount(for count: Int) -> Int {
+        min(max(count, 0), maximumDisplayedCount)
+    }
+
+    private func observeHubItemChanges() {
         // Set up a NotificationCenter observer for Core Data changes
         observerToken = NotificationCenter.default.addObserver(
             forName: .NSManagedObjectContextDidSave,
@@ -63,16 +108,46 @@ public class RoverBadge: ObservableObject {
         updateBadgeCount()
     }
 
+    private func observeSeenWatermarkChanges() {
+        watermarkCancellable = seenWatermark.publisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                Task { @MainActor in
+                    self?.updateBadgeCount()
+                }
+            }
+    }
+
+    private func observeConfigChanges() {
+        configCancellable = configManager.$config
+            .map(\.hub.isInboxEnabled)
+            .removeDuplicates()
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                Task { @MainActor in
+                    self?.updateBadgeCount()
+                }
+            }
+    }
+
     private func updateBadgeCount() {
         Task { @MainActor in
-            let unreadCount = persistentContainer.getBadgeCount()
+            let count = currentBadgeCount()
 
-            self.newBadge = unreadCount > 0 ? String(unreadCount) : nil
+            self.newBadge = Self.badgeText(for: count)
 
             if self.updateAppBadge {
-                os_log("Updating app badge number to %d", log: .hub, type: .info, unreadCount)
-                try? await UNUserNotificationCenter.current().setBadgeCount(unreadCount)
+                let appBadgeCount = Self.appBadgeCount(for: count)
+                os_log("Updating app badge number to %d", log: .hub, type: .info, appBadgeCount)
+                try? await UNUserNotificationCenter.current().setBadgeCount(appBadgeCount)
             }
         }
+    }
+
+    private func currentBadgeCount() -> Int {
+        guard configManager.config.hub.isInboxEnabled else {
+            return 0
+        }
+        return persistentContainer.getBadgeCount(seenAfter: seenWatermark.lastSeenAt)
     }
 }

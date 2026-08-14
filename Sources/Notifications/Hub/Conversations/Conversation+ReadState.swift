@@ -38,4 +38,24 @@ extension Conversation {
             OR (lastIncomingReplyAt == nil AND lastReplyAt != nil AND (lastReadAt == nil OR lastReplyAt > lastReadAt))
             """
     )
+
+    /// The newest activity that can contribute to the badge — `nil` when the conversation has no
+    /// known incoming reply.
+    ///
+    /// `lastReplyAt` includes the fan's own outgoing replies and is advanced by the optimistic send
+    /// path, so it cannot be used for badging or for the seen watermark. `lastIncomingReplyAt` is
+    /// the direction-specific signal shared by server sync and incoming push handling.
+    var badgeActivityAt: Date? {
+        lastIncomingReplyAt
+    }
+
+    /// SQL equivalent of `badgeActivityAt > instant` for use in Core Data fetch/count requests:
+    /// `nil` timestamps compare false, so a conversation with no known incoming reply never
+    /// matches.
+    static func badgeActivityAfterPredicate(_ instant: Date) -> NSPredicate {
+        NSPredicate(
+            format: "lastIncomingReplyAt > %@",
+            instant as NSDate
+        )
+    }
 }

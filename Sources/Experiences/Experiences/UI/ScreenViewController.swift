@@ -3,7 +3,7 @@
 // copy, modify, and distribute this software in source code or binary form for use
 // in connection with the web services and APIs provided by Rover.
 //
-// This copyright notice shall be included in all copies or substantial portions of 
+// This copyright notice shall be included in all copies or substantial portions of
 // the software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -13,10 +13,9 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
-import SwiftUI
 import Combine
 import RoverFoundation
+import SwiftUI
 
 class ScreenViewController: UIViewController, UIScrollViewDelegate {
     let experience: ExperienceModel
@@ -29,7 +28,14 @@ class ScreenViewController: UIViewController, UIScrollViewDelegate {
     let carouselState: CarouselState
     let experienceManager: ExperienceManager
 
-    init(experience: ExperienceModel, screen: Screen, data: Any? = nil, urlParameters: [String: String], userInfo: [String: Any], authorizers: Authorizers) {
+    init(
+        experience: ExperienceModel,
+        screen: Screen,
+        data: Any? = nil,
+        urlParameters: [String: String],
+        userInfo: [String: Any],
+        authorizers: Authorizers
+    ) {
         self.experience = experience
         self.screen = screen
         self.data = data
@@ -56,8 +62,8 @@ class ScreenViewController: UIViewController, UIScrollViewDelegate {
             return .darkContent
         case .inverted:
             return traitCollection.userInterfaceStyle == .dark
-            ? .darkContent
-            : .lightContent
+                ? .darkContent
+                : .lightContent
         }
     }
 
@@ -85,7 +91,12 @@ class ScreenViewController: UIViewController, UIScrollViewDelegate {
         showOrHideNavBarIfNeeded()
 
         self.configureNavBar()
-        NotificationCenter.default.addObserver(self, selector: #selector(self.configureNavBar), name: ExperienceManager.didRegisterCustomFontNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(self.configureNavBar),
+            name: ExperienceManager.didRegisterCustomFontNotification,
+            object: nil
+        )
         addChildren()
     }
 
@@ -137,11 +148,11 @@ class ScreenViewController: UIViewController, UIScrollViewDelegate {
             guard let viewController = viewController else {
                 return nil
             }
-            return viewController.parent as? RenderExperienceViewController ??
-                viewController.parent?.parent as? RenderExperienceViewController ?? // get through NavBarController to the containing ExperienceViewController
-                viewController.presentingViewController as? RenderExperienceViewController ??
-                viewController.presentingViewController?.children.compactMap { $0 as? RenderExperienceViewController }.first ??
-                findExperienceViewController(from: viewController.presentingViewController)
+            return viewController.parent as? RenderExperienceViewController ?? viewController.parent?.parent
+                as? RenderExperienceViewController  // get through NavBarController to the containing ExperienceViewController
+                ?? viewController.presentingViewController as? RenderExperienceViewController ?? viewController
+                .presentingViewController?.children.compactMap { $0 as? RenderExperienceViewController }.first
+                ?? findExperienceViewController(from: viewController.presentingViewController)
         }
 
         guard let experienceViewController = findExperienceViewController(from: self) else {
@@ -152,17 +163,24 @@ class ScreenViewController: UIViewController, UIScrollViewDelegate {
     }
 
     private var experienceViewControllerHolder: ExperienceViewControllerHolder {
-        get { return ExperienceViewControllerHolder(experienceViewController) }
+        return ExperienceViewControllerHolder(experienceViewController)
     }
 
     private var screenViewControllerHolder: ScreenViewControllerHolder {
-        get { return ScreenViewControllerHolder(self) }
+        return ScreenViewControllerHolder(self)
     }
 
     // MARK: - Nav Bar
 
     var navBar: NavBar? {
         screen.children.first { $0 is NavBar } as? NavBar
+    }
+
+    /// The scroll view delegate exists solely to drive the inline nav bar's
+    /// alternate appearance from `scrollViewDidScroll`, so the introspection
+    /// machinery is only installed when that feature is in play.
+    static func shouldInstallScrollDelegate(titleDisplayMode: NavBar.TitleDisplayMode?) -> Bool {
+        titleDisplayMode == .inline
     }
 
     private func showOrHideNavBarIfNeeded() {
@@ -199,18 +217,18 @@ class ScreenViewController: UIViewController, UIScrollViewDelegate {
         }
 
         let isScrolling = scrollView.contentOffset.y + scrollView.adjustedContentInset.top > 0
-            navigationItem.configureInlineAppearance(
-                navBar: navBar,
-                traits: traitCollection,
-                isScrolling: isScrolling,
-                experience: experience
-            )
+        navigationItem.configureInlineAppearance(
+            navBar: navBar,
+            traits: traitCollection,
+            isScrolling: isScrolling,
+            experience: experience
+        )
 
-            navigationController?.navigationBar.adjustTintColor(
-                navBar: navBar,
-                traits: traitCollection,
-                isScrolling: isScrolling
-            )
+        navigationController?.navigationBar.adjustTintColor(
+            navBar: navBar,
+            traits: traitCollection,
+            isScrolling: isScrolling
+        )
     }
 
     // MARK: - Children
@@ -268,9 +286,20 @@ class ScreenViewController: UIViewController, UIScrollViewDelegate {
 
     @ViewBuilder
     private func viewForLayer(_ layer: Layer) -> some View {
-        if isRootScrollContainer(layer) {
+        if isRootScrollContainer(layer),
+            Self.shouldInstallScrollDelegate(titleDisplayMode: navBar?.titleDisplayMode)
+        {
             _viewForLayer(layer)
                 .introspectScrollView { [weak self] scrollView in
+                    // Never assign the delegate to a scroll view outside the
+                    // experience screen's own view tree, whatever the search
+                    // returned — an embedded host's scroll view must stay untouched.
+                    guard let self = self,
+                        self.isViewLoaded,
+                        scrollView.isDescendant(of: self.view)
+                    else {
+                        return
+                    }
                     scrollView.delegate = self
                 }
         } else {
@@ -278,17 +307,16 @@ class ScreenViewController: UIViewController, UIScrollViewDelegate {
         }
     }
 
-
     private func _viewForLayer(_ layer: Layer) -> some View {
         SwiftUI.ZStack {
             LayerView(layer: layer)
                 .environmentObject(carouselState)
-                .environment(\.presentAction, { [weak self] viewController in
+                .environment(\.presentAction) { [weak self] viewController in
                     self?.present(viewController, animated: true)
-                })
-                .environment(\.showAction, { [weak self] viewController in
+                }
+                .environment(\.showAction) { [weak self] viewController in
                     self?.show(viewController, sender: self)
-                })
+                }
                 .environment(\.screenViewController, screenViewControllerHolder)
                 .environment(\.experienceViewController, experienceViewControllerHolder)
                 .environment(\.experienceManager, experienceManager)

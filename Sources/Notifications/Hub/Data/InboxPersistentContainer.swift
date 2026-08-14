@@ -363,18 +363,38 @@ extension InboxPersistentContainer {
 
 // MARK: - Badge Count Extension
 extension InboxPersistentContainer {
-    private static let unreadPostPredicate = NSPredicate(format: "isRead == %@", NSNumber(value: false))
     private static let unreadConversationPredicate = Conversation.unreadPredicate
-    /// Computes the current badge count based on unread posts and conversations.
+
+    /// Computes the current badge count: posts and conversations that are unread *and* have
+    /// activity after `seenAfter` — `receivedAt` for posts, incoming reply activity for
+    /// conversations. Outgoing replies never contribute to the badge.
+    ///
+    /// An item has to satisfy both conditions to badge, and each condition clears it by a different
+    /// route. Visiting the inbox moves the seen watermark (see `InboxSeenWatermark`) past everything
+    /// currently stored, so the badge drops to zero in one gesture no matter how many items went
+    /// untapped — the reason the badge is not driven by read state alone. Reading an individual
+    /// item anywhere clears it on its own: from the message list, or from the detail screen
+    /// presented for a push tap or deep link, which never shows the inbox and so never moves the
+    /// watermark. Without the read half, a user who only ever opens items from notifications would
+    /// accumulate a badge nothing they do could clear.
     ///
     /// Note: must be used on the main thread.
-    func getBadgeCount() -> Int {
-        let unreadPosts = countUnreadItems(Post.self, predicate: Self.unreadPostPredicate)
-        let unreadConversations = countUnreadItems(Conversation.self, predicate: Self.unreadConversationPredicate)
-        return unreadPosts + unreadConversations
+    func getBadgeCount(seenAfter: Date) -> Int {
+        let newPosts = countItems(
+            Post.self,
+            predicate: NSPredicate(format: "receivedAt > %@ AND isRead == NO", seenAfter as NSDate)
+        )
+        let newConversations = countItems(
+            Conversation.self,
+            predicate: NSCompoundPredicate(andPredicateWithSubpredicates: [
+                Self.unreadConversationPredicate,
+                Conversation.badgeActivityAfterPredicate(seenAfter)
+            ])
+        )
+        return newPosts + newConversations
     }
 
-    private func countUnreadItems<T: NSManagedObject>(_ type: T.Type, predicate: NSPredicate) -> Int {
+    private func countItems<T: NSManagedObject>(_ type: T.Type, predicate: NSPredicate) -> Int {
         let entityName = T.entity().name ?? String(describing: T.self)
         let request = NSFetchRequest<T>(entityName: entityName)
         request.predicate = predicate
@@ -382,7 +402,7 @@ extension InboxPersistentContainer {
             return try viewContext.count(for: request)
         } catch {
             os_log(
-                "Failed to count unread %{private}@: %{private}@",
+                "Failed to count badgeable %{private}@: %{private}@",
                 log: .hub,
                 type: .error,
                 entityName,

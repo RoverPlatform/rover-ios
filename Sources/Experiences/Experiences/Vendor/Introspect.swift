@@ -22,7 +22,14 @@ import SwiftUI
 
 extension View {
     func introspectScrollView(customize: @escaping (UIScrollView) -> ()) -> some View {
-        introspect(selector: TargetViewSelector.ancestorOrSiblingOfType, customize: customize)
+        // ROVER: Rover-maintained patch to the vendored swiftui-introspect
+        // library (SDK-351). `siblingContaining` searches the probe's previous
+        // siblings' subtrees within its own hosting view and can never reach an
+        // ancestor, so an embedded experience cannot capture the host app's
+        // scroll view. Upstream's ancestor-first selector did exactly that, and
+        // its non-recursive sibling fallback never found the experience's own
+        // scroll view either.
+        introspect(selector: TargetViewSelector.siblingContaining, customize: customize)
     }
 }
 
@@ -88,7 +95,7 @@ private struct UIKitIntrospectionView<TargetViewType: UIView>: UIViewRepresentab
     }
 }
 
-private enum Introspect {
+enum Introspect {
     static func findChild<AnyViewType: UIView>(ofType type: AnyViewType.Type, in root: UIView) -> AnyViewType? {
         for subview in root.subviews {
             if let typed = subview as? AnyViewType {
@@ -160,7 +167,7 @@ private enum Introspect {
     }
 }
 
-private enum TargetViewSelector {
+enum TargetViewSelector {
     static func siblingContaining<TargetView: UIView>(from entry: UIView) -> TargetView? {
         guard let viewHost = Introspect.findViewHost(from: entry) else {
             return nil

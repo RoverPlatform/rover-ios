@@ -64,6 +64,11 @@ struct ReplySyncKey: EnvironmentKey {
     static let defaultValue: ReplySync? = nil
 }
 
+/// Environment key for the surface's dismiss-then-open handler (see `HubLinkOpenDecision`).
+struct HubDismissThenOpenKey: EnvironmentKey {
+    static let defaultValue: ((URL) -> Void)? = nil
+}
+
 extension EnvironmentValues {
     /// Rover Hub Core Data persistent container.
     var hubContainer: InboxPersistentContainer? {
@@ -114,6 +119,25 @@ extension EnvironmentValues {
     var replySync: ReplySync? {
         get { self[ReplySyncKey.self] }
         set { self[ReplySyncKey.self] = newValue }
+    }
+
+    /// Dismisses the modal presentation the Post or Conversation is showing in, then
+    /// opens the URL once that dismissal has completed. `nil` when the surface is not
+    /// presented modally in its own right (embedded in a tab, or pushed), in which
+    /// case links open in place. Supplied by `HubContentView` for a Hub, and by the
+    /// standalone `ShowPostHostingController` / `ShowConversationHostingController`.
+    ///
+    /// What ships, stated plainly: the UIKit-hosted surfaces (`HubHostingController`,
+    /// `CommunicationHubHostingController`, the two standalone detail controllers) open
+    /// from the dismissal's completion and are fixed. A Hub the integrator presents as
+    /// `HubView(onDismissButtonPressed:)` in a SwiftUI `.sheet` is NOT: that closure has
+    /// no completion, so `HubView` dismisses and opens back to back, and a host that
+    /// presents the destination with UIKit can still lose the race. Closing that needs
+    /// a completion-capable dismiss on the public `HubView` initializer, a separate
+    /// change.
+    var hubDismissThenOpen: ((URL) -> Void)? {
+        get { self[HubDismissThenOpenKey.self] }
+        set { self[HubDismissThenOpenKey.self] = newValue }
     }
 }
 

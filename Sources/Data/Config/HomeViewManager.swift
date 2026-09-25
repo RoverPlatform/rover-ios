@@ -33,8 +33,32 @@ public class HomeViewManager: ObservableObject {
     /// The currently available home view experience URL.
     ///
     /// Returns the most recent successful fetch result or the cached value loaded from
-    /// UserDefaults during initialization. A `nil` value indicates no home view.
+    /// UserDefaults during initialization, with any Bench override applied on top. A
+    /// `nil` value indicates no home view.
     @Published public private(set) var experienceURL: URL?
+
+    /// The URL exactly as the backend provided it, before the override.
+    ///
+    /// This — never the overridden value — is what gets cached.
+    private var fetchedExperienceURL: URL?
+
+    /// In-memory override layered over `fetchedExperienceURL` on every publish.
+    ///
+    /// Held here rather than in the Bench app so that a `/home` re-fetch cannot wash
+    /// it away. Setting it re-publishes immediately.
+    @_spi(BenchSupport)
+    public var experienceURLOverride: Override<URL> = .noOverride {
+        didSet {
+            guard experienceURLOverride != oldValue else { return }
+            experienceURL = experienceURLOverride.resolved(from: fetchedExperienceURL)
+        }
+    }
+
+    /// The `/home` request currently in flight, if any.
+    ///
+    /// Overlapping callers — the Hub's `onAppear` and an override enabling the home
+    /// view, say — join the request already running instead of starting a second.
+    private var inFlightFetch: Task<Void, Never>?
 
     private let httpClient: HTTPClient
     private let userDefaults: UserDefaults
@@ -56,7 +80,8 @@ public class HomeViewManager: ObservableObject {
         self.httpClient = httpClient
         self.userDefaults = userDefaults
         self.userInfoManager = userInfoManager
-        self.experienceURL = loadCachedResponse()?.experienceURL
+        self.fetchedExperienceURL = loadCachedResponse()?.experienceURL
+        self.experienceURL = self.fetchedExperienceURL
     }
 
     /// Fetches the home view URL from the `/home` endpoint.
@@ -64,11 +89,35 @@ public class HomeViewManager: ObservableObject {
     /// On success, the response is cached and `experienceURL` is updated if the value
     /// changed. On failure, the cached value is preserved.
     public func fetch() async {
+        await fetchTask().value
+    }
+
+    /// Starts a fetch without waiting for it, joining one already in flight.
+    func refresh() {
+        _ = fetchTask()
+    }
+
+    private func fetchTask() -> Task<Void, Never> {
+        if let inFlightFetch {
+            return inFlightFetch
+        }
+
+        let task = Task { [weak self] in
+            await self?.performFetch()
+            self?.inFlightFetch = nil
+        }
+        inFlightFetch = task
+        return task
+    }
+
+    private func performFetch() async {
         let result = await httpClient.getHomeView()
         switch result {
         case .success(let response):
-            if experienceURL != response.experienceURL {
-                experienceURL = response.experienceURL
+            fetchedExperienceURL = response.experienceURL
+            let resolved = experienceURLOverride.resolved(from: response.experienceURL)
+            if experienceURL != resolved {
+                experienceURL = resolved
             }
             saveToCache(response)
             os_log(.debug, log: .homeView, "Home view URL fetched successfully")

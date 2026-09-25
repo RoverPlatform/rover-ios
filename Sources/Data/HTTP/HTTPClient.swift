@@ -24,6 +24,7 @@ public final class HTTPClient {
     public let session: URLSession
     public let authContext: AuthenticationContext
     package let userInfoManager: UserInfoManager
+    package let privacyService: PrivacyService
 
     public init(
         accountToken: String,
@@ -38,6 +39,8 @@ public final class HTTPClient {
         self.session = session
         self.authContext = authContext
         self.userInfoManager = NullUserInfoManager()
+        // The tracking mode lives in user defaults, so a freshly made service reports the same mode as any other.
+        self.privacyService = PrivacyService()
     }
 
     package init(
@@ -46,7 +49,8 @@ public final class HTTPClient {
         engageEndpoint: URL,
         session: URLSession,
         authContext: AuthenticationContext,
-        userInfoManager: UserInfoManager
+        userInfoManager: UserInfoManager,
+        privacyService: PrivacyService = PrivacyService()
     ) {
         self.accountToken = accountToken
         self.endpoint = endpoint
@@ -54,6 +58,7 @@ public final class HTTPClient {
         self.session = session
         self.authContext = authContext
         self.userInfoManager = userInfoManager
+        self.privacyService = privacyService
     }
 }
 
@@ -132,7 +137,10 @@ extension HTTPClient {
     }
 
     private func resolveAuthenticatedURL(url: URL, queryItems: [URLQueryItem]) async throws -> (URL, String?) {
-        let identifiers = await resolveIdentifiers(userInfoManager: userInfoManager)
+        let identifiers = await resolveIdentifiers(
+            userInfoManager: userInfoManager,
+            trackingMode: privacyService.trackingMode
+        )
 
         guard var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
             throw HTTPError.invalidURL

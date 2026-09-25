@@ -24,50 +24,63 @@ struct HubContentView: View {
     @Environment(\.configSync) private var configSync
     @Environment(\.conversationSync) private var conversationSync
 
-    /// A dismissal closure threaded down from a modally-presented Hub; passed to the
-    /// App Screens home view so `openURL { dismiss: true }` and the close affordance
+    /// A dismissal closure threaded down from a modally-presented Hub; drives the
+    /// leading close item on both home view branches, and is passed to the App
+    /// Screens home view so `openURL { dismiss: true }` and the close affordance
     /// can dismiss the presentation. `nil` when the Hub is embedded in a tab.
     var onDismissButtonPressed: (() -> Void)? = nil
+
+    /// The Hub's completion-capable dismiss-then-open handler, threaded down from
+    /// `HubHostingController` via `HubView`; passed to the App Screens home view so an
+    /// `openURL { dismiss }` bridge message dismisses the presentation THEN opens (or
+    /// opens immediately without dismissing). `nil` when the Hub is embedded in a tab.
+    var onOpenExternalURL: ((URL, Bool) -> Void)? = nil
 
     var body: some View {
         NavigationStack(path: $coordinator.navigationPath) {
             ZStack {
                 if coordinator.isHomeEnabled, let url = coordinator.homeViewExperienceURL {
                     if ExperienceURLClassifier.classify(url) == .appScreens {
-                        // V3 App Screens owns its chrome: the child navigation
-                        // controller renders liquid-glass buttons over the
-                        // full-bleed webview and the page pads itself with
-                        // env(safe-area-inset-*). Forcing the outer SwiftUI bar
-                        // visible (as the document path below does) would stack a
-                        // second bar's safe area on top of the page's own insets, so
-                        // let the .toolbar(.hidden) inside ExperienceView win here.
-                        //
-                        // The inbox affordance is therefore surfaced NOT through the
-                        // outer SwiftUI toolbar but as a native root bar item handed
-                        // to the App Screens flow: it installs an envelope
-                        // (liquid-glass, with the live unread badge) on the ROOT host
-                        // only, so it shows on home and disappears when a detail is
-                        // pushed. Tapping it appends HubPath.messages, matching the
-                        // document path's InboxToolbarButton. It re-renders (and the
-                        // badge updates) because this view observes RoverBadge.
-                        ExperienceView(
+                        // V3 App Screens is hosted directly on this NavigationStack
+                        // (RoverExperiences' `AppScreensHostView`), so it renders
+                        // like any other Hub destination: the standard SwiftUI
+                        // navigation bar is visible and the inbox affordance is the
+                        // same `CompatibleInboxToolbarButton` the document path below
+                        // uses, rather than a bespoke native root bar item. Keying the
+                        // view `.id(url)` means a home-URL change deterministically
+                        // tears down the old flow (releasing its sessions) and builds
+                        // a fresh one for the new URL; there is no `.onDisappear`
+                        // release, since that would also fire when the inbox is
+                        // merely pushed over the App Screens root.
+                        AppScreensHostView(
                             url: url,
                             path: $coordinator.navigationPath,
-                            appScreensResetGeneration: coordinator.appScreensResetGeneration,
-                            appScreensRootBarItem: coordinator.isInboxEnabled
-                                ? AppScreensRootBarItem(
-                                    systemImageName: "envelope",
-                                    badgeText: badge.newBadge,
-                                    accessibilityLabel: NSLocalizedString(
-                                        "Inbox",
-                                        comment: "Rover Hub inbox button accessibility label"
-                                    ),
-                                    accessibilityIdentifier: "rover.hub.inbox",
-                                    action: { coordinator.navigationPath.append(HubPath.messages) }
-                                )
-                                : nil,
-                            onDismissButtonPressed: onDismissButtonPressed
+                            onDismiss: onDismissButtonPressed,
+                            onOpenURL: nil,
+                            onOpenExternalURL: onOpenExternalURL
                         )
+                        .id(url)
+                        .toolbar(.visible, for: .navigationBar)
+                        .toolbar {
+                            // A dismissable Hub (`onDismissButtonPressed != nil`,
+                            // injected by `HubHostingController` when presented modally,
+                            // or supplied by the integrator via
+                            // `HubView(onDismissButtonPressed:)` for a SwiftUI `.sheet`)
+                            // installs the xmark close item. Embedded/tabbed and pushed
+                            // Hubs leave it `nil`: no close chrome.
+                            if onDismissButtonPressed != nil {
+                                ToolbarItem(placement: .topBarLeading) {
+                                    AppScreensCloseButton { onDismissButtonPressed?() }
+                                }
+                            }
+                            if coordinator.isInboxEnabled {
+                                ToolbarItem(placement: .topBarTrailing) {
+                                    CompatibleInboxToolbarButton(badge: badge.newBadge) {
+                                        coordinator.navigationPath.append(HubPath.messages)
+                                    }
+                                }
+                            }
+                        }
                         .resetNavBarAppearance()
                     } else {
                         ExperienceView(url: url, path: $coordinator.navigationPath)
@@ -85,6 +98,17 @@ struct HubContentView: View {
                             // precedence over the child ScreenView's hidden setting.
                             .toolbar(.visible, for: .navigationBar)
                             .toolbar {
+                                // Same close-affordance contract as the App Screens
+                                // branch above: a modally-presented Hub installs the
+                                // SDK's leading xmark item, regardless of which home
+                                // view type it renders. Any close button authored in
+                                // the experience file itself renders separately as
+                                // screen content, wherever its author placed it.
+                                if onDismissButtonPressed != nil {
+                                    ToolbarItem(placement: .topBarLeading) {
+                                        AppScreensCloseButton { onDismissButtonPressed?() }
+                                    }
+                                }
                                 if coordinator.isInboxEnabled {
                                     ToolbarItem(placement: .topBarTrailing) {
                                         CompatibleInboxToolbarButton(badge: badge.newBadge) {
@@ -145,14 +169,56 @@ struct HubContentView: View {
         }
         .tint(coordinator.accentColor)
         .optionalColorScheme(coordinator.colorScheme)
+        // Set on the stack (not per destination) so the messages list, and every Post
+        // or Conversation pushed from it or reached by deep link, inherit it.
+        .environment(\.hubDismissThenOpen, dismissThenOpen)
     }
 
+    /// The Post/Conversation dismiss-then-open handler (see `HubLinkOpenDecision`),
+    /// derived from the same owner handler the App Screens home uses for
+    /// `openURL { dismiss: true }`, and gated on the same signal as the close
+    /// affordance: `onDismissButtonPressed` is non-`nil` exactly when the Hub is
+    /// declared dismissable (injected by a hosting controller once it confirms a
+    /// modal presentation, or supplied by the integrator for a SwiftUI `.sheet`). A
+    /// Hub that has nothing to dismiss (embedded, pushed) yields `nil` and links open
+    /// in place. `HubView`'s fallback opener alone is not enough for that: it is
+    /// derived from `\.isPresented`, which is also `true` for a pushed `HubView()`,
+    /// and would pop the host's navigation stack. On the `HubHostingController` path
+    /// the open fires in the dismissal's completion. On the SwiftUI-sheet path
+    /// (`HubView(onDismissButtonPressed:)`) the integrator's handler has no
+    /// completion, so `HubView` dismisses and opens back to back; a host that
+    /// presents the deep link's destination with UIKit may see that race.
+    private var dismissThenOpen: ((URL) -> Void)? {
+        guard onDismissButtonPressed != nil, let onOpenExternalURL else {
+            return nil
+        }
+        return { url in onOpenExternalURL(url, true) }
+    }
+
+    /// The stack root when there is no home view to show (messages-only Hubs, or while
+    /// the home view URL is still loading). It carries the same gated leading close
+    /// item as the home view branches, so a modally presented messages-only Hub can
+    /// be closed. Applied here rather than inside `MessagesView`, which is also the
+    /// `HubPath.messages` destination pushed over a home view, where only the back
+    /// button belongs. A dismissable Hub also drops the list's `.inlineLarge` title
+    /// to `.inline`, which is what keeps the close item in the leading slot on iOS 26
+    /// rather than folded into an overflow menu.
     @ViewBuilder
     private var inboxOrEmpty: some View {
         if coordinator.isInboxEnabled {
-            MessagesView(navigationPath: $coordinator.navigationPath)
-                .environment(\.conversationSync, conversationSync)
-                .resetNavBarAppearance(.systemScrolledBackground)
+            MessagesView(
+                navigationPath: $coordinator.navigationPath,
+                titleDisplayMode: onDismissButtonPressed != nil ? .inline : .inlineLarge
+            )
+            .environment(\.conversationSync, conversationSync)
+            .toolbar {
+                if onDismissButtonPressed != nil {
+                    ToolbarItem(placement: .topBarLeading) {
+                        AppScreensCloseButton { onDismissButtonPressed?() }
+                    }
+                }
+            }
+            .resetNavBarAppearance(.systemScrolledBackground)
         }
     }
 

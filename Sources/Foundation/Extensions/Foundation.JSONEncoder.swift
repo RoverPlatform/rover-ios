@@ -3,7 +3,7 @@
 // copy, modify, and distribute this software in source code or binary form for use
 // in connection with the web services and APIs provided by Rover.
 //
-// This copyright notice shall be included in all copies or substantial portions of 
+// This copyright notice shall be included in all copies or substantial portions of
 // the software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -20,10 +20,10 @@ import Foundation
 // Foundation.JSONEncoder.swift file as well.
 
 extension JSONEncoder {
-    public static let `default`: JSONEncoder = {
+    nonisolated public static let `default`: JSONEncoder = {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .formatted(DateFormatter.rfc3339)
-            // Stable ordering of the keys is very helpful with GraphQL caching on the cloud API side.
+        // Stable ordering of the keys is very helpful with GraphQL caching on the cloud API side.
         encoder.outputFormatting = [.sortedKeys]
         return encoder
     }()

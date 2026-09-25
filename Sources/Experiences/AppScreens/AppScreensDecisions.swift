@@ -36,7 +36,7 @@ enum AppScreenDataScope: String {
     /// Parses a scope from a raw header value: whitespace-trimmed and
     /// case-insensitive, so `Public`, `PERSONALIZED`, and ` public ` all parse.
     /// An unknown or absent value yields `nil` — the caller applies the
-    /// fail-safe default (see ``AppScreensNavigator/effectiveScope(_:)``).
+    /// fail-safe default (see ``AppScreensDriver/effectiveScope(_:)``).
     init?(headerValue: String?) {
         guard let headerValue else {
             return nil
@@ -62,7 +62,7 @@ enum HandshakeOutcome: Equatable {
     case failOpen
 }
 
-extension AppScreensNavigator {
+extension AppScreensDriver {
 
     /// The session-selection decision for a navigation. Pure function of the two
     /// facts that matter, so it is unit-tested in isolation.
@@ -201,8 +201,9 @@ extension AppScreensNavigator {
 
     /// A defensive origin-qualified identity for an entry URL that is *not* an
     /// `/a/{template}` URL: `scheme://host[:port]{path}` when the origin resolves,
-    /// else the full URL string. ``AppScreensNavigator/makeRootViewController(for:)``
-    /// is the only caller — the entry URL is pre-gated upstream — so this merely
+    /// else the full URL string. ``AppScreensDriver/buildRootSession(for:onDismissButtonPressed:onOpenURL:)``
+    /// is the only caller (via ``AppScreensDriver/makeRootHost(token:url:navigating:onDismiss:onOpenURL:onOpenExternalURL:)``)
+    /// — the entry URL is pre-gated upstream — so this merely
     /// guarantees that even a contract-violating entry can never collide across
     /// domains the way a bare `url.path` would.
     static func fallbackTemplateKey(for url: URL) -> String {

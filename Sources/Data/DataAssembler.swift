@@ -110,7 +110,8 @@ public struct DataAssembler: Assembler {
                 engageEndpoint: engageEndpoint,
                 session: URLSession(configuration: URLSessionConfiguration.default),
                 authContext: authContext,
-                userInfoManager: resolver.resolve(UserInfoManager.self)!
+                userInfoManager: resolver.resolve(UserInfoManager.self)!,
+                privacyService: resolver.resolve(PrivacyService.self)!
             )
         }
 
@@ -267,6 +268,11 @@ public struct DataAssembler: Assembler {
 
         // Set the context provider on the event queue after assembly to allow circular dependency injection
         eventQueue.contextProvider = resolver.resolve(ContextProvider.self)!
+
+        // A tracking mode change alters the user info the SDK reports without touching the stored value.
+        resolver.resolve(PrivacyService.self)?.registerTrackingEnabledListener(
+            resolver.resolve(ContextManager.self)!
+        )
 
         let conversionsManager = resolver.resolve(ConversionsManager.self)!
         // Migrate any conversion tags from previous versions of Rover

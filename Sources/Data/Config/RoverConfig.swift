@@ -20,7 +20,7 @@ import Foundation
 /// This struct defines the configuration options available for the Hub, including
 /// feature flags, UI customization, and navigation settings.
 ///
-/// - SeeAlso: `ConfigManager` for managing configuration sources and override mode
+/// - SeeAlso: `ConfigManager` for managing configuration sources
 /// - SeeAlso: `HubCoordinator` for SwiftUI type conversions (hex -> Color, colorScheme -> ColorScheme)
 public struct RoverConfig: Codable, Equatable {
     public struct Hub: Codable, Equatable {

@@ -18,9 +18,8 @@ import os.log
 import RoverFoundation
 import RoverData
 
-class AXSManager: AXSAuthorizer, PrivacyListener {
+class AXSManager: AXSAuthorizer {
     private let userInfoManager: UserInfoManager
-    private let privacyService: PrivacyService
     
     private var userID = PersistedValue<String>(storageKey: "io.rover.axs")
     private var flashMemberID = PersistedValue<String>(storageKey: "io.rover.axs.flashMemberID")
@@ -44,9 +43,8 @@ class AXSManager: AXSAuthorizer, PrivacyListener {
         return dictionary
     }
 
-    init(userInfoManager: UserInfoManager, privacyService: PrivacyService) {
+    init(userInfoManager: UserInfoManager) {
         self.userInfoManager = userInfoManager
-        self.privacyService = privacyService
     }
 
 // MARK: AxsAuthorizer
@@ -56,11 +54,6 @@ class AXSManager: AXSAuthorizer, PrivacyListener {
     }
     
     func setUserID(_ userID: String?, flashMemberID: String?, flashMobileID: String?) {
-        guard privacyService.trackingMode == .default else {
-            os_log("AXS user ID (with flash IDs) set while privacy is in anonymous/anonymized mode, ignored", log: .axs, type: .info)
-            return
-        }
-        
         guard let userID else {
             clearCredentials()
             return
@@ -91,15 +84,6 @@ class AXSManager: AXSAuthorizer, PrivacyListener {
         self.flashMobileID.value = nil
         self.userInfoManager.updateUserInfo { attributes in
             attributes.rawValue["axs"] = nil
-        }
-    }
-    
-    // MARK: Privacy
-    
-    func trackingModeDidChange(_ trackingMode: PrivacyService.TrackingMode) {
-        if(trackingMode != .default) {
-            os_log("Tracking disabled, AXS data cleared", log: .axs)
-            clearCredentials()
         }
     }
 }

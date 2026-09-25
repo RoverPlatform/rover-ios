@@ -17,7 +17,7 @@ import UIKit
 import WebKit
 import os.log
 
-extension AppScreensNavigator {
+extension AppScreensDriver {
 
     /// Where a session's web view sits in the navigation stack when its WebContent
     /// process dies — the fact that decides *when* (and whether) to recover.
@@ -33,7 +33,7 @@ extension AppScreensNavigator {
 
     /// Computes a session's current stack visibility from its host view controller:
     /// off-stack when not pushed, visible when its host is loaded, in a window, and
-    /// the navigation controller's `topViewController`, otherwise occluded.
+    /// flagged `isVisible`, otherwise occluded.
     static func visibility(of session: AppScreenSession) -> SessionVisibility {
         guard session.isOnStack else {
             return .offStack
@@ -41,7 +41,7 @@ extension AppScreensNavigator {
         guard
             let host = session.hostViewController,
             host.viewIfLoaded?.window != nil,
-            host.navigationController?.topViewController === host,
+            host.isVisible,
             // A session covered by a presented sheet is off-screen just like an
             // occluded push: `presentedViewController` is non-nil when this host (or
             // an ancestor) is presenting, so the sheet root reads as visible while
@@ -301,7 +301,7 @@ extension AppScreensNavigator {
 /// delegate and every session's web view retains it.
 @MainActor
 final class AppScreenNavigationDelegate: NSObject, WKNavigationDelegate {
-    weak var navigator: AppScreensNavigator?
+    weak var navigator: AppScreensDriver?
 
     /// Delivered on the main thread by WebKit when a web view's content process
     /// terminates (e.g. a jetsam kill under memory pressure, or a `kill -9` from a
@@ -330,7 +330,7 @@ final class AppScreenNavigationDelegate: NSObject, WKNavigationDelegate {
     ) {
         MainActor.assumeIsolated {
             let documentURL = navigator?.liveSession(for: webView)?.documentURL
-            let allowed = AppScreensNavigator.mainFrameNavigationAllowed(
+            let allowed = AppScreensDriver.mainFrameNavigationAllowed(
                 // A nil `targetFrame` is a new-window/target=_blank action, not an
                 // iframe — treat it as a main-frame action so it faces the strict gate.
                 isMainFrame: navigationAction.targetFrame?.isMainFrame ?? true,

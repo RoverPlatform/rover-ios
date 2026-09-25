@@ -21,7 +21,7 @@ import TicketmasterTickets
 import TicketmasterPurchase
 import TicketmasterDiscoveryAPI
 
-class TicketmasterManager: PrivacyListener {
+class TicketmasterManager {
     private let userInfoManager: UserInfoManager
     private let privacyService: PrivacyService
     
@@ -68,11 +68,6 @@ class TicketmasterManager: PrivacyListener {
 
 extension TicketmasterManager: TicketmasterAuthorizer {
     func setTicketmasterID(_ id: String) {
-        guard self.privacyService.trackingMode == .default else {
-            os_log("Ticketmaster ID set while privacy is in anonymous/anonymized mode, ignored", log: .ticketmaster, type: .info)
-            return
-        }
-        
         let newMember = Member(id: id, email: nil, firstName: nil)
         self.member.value = newMember
         
@@ -93,15 +88,6 @@ extension TicketmasterManager: TicketmasterAuthorizer {
         self.member.value = nil
         self.userInfoManager.updateUserInfo { attributes in
             attributes.rawValue["ticketmaster"] = nil
-        }
-    }
-    
-    // MARK: Privacy
-    
-    func trackingModeDidChange(_ trackingMode: PrivacyService.TrackingMode) {
-        if(trackingMode != .default) {
-            os_log("Tracking disabled, Ticketmaster data cleared.", log: .ticketmaster)
-            clearCredentials()
         }
     }
 }

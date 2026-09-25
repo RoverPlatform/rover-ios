@@ -21,6 +21,9 @@ import UIKit
 import UserNotifications
 import os.log
 
+// One assembler per module, and this module is the largest: the Hub's data layer, its
+// navigation, the legacy notification store, and the badge all register here.
+// swiftlint:disable:next type_body_length
 public struct NotificationsAssembler: Assembler {
     public var appGroup: String?
     public var influenceTime: Int
@@ -42,7 +45,8 @@ public struct NotificationsAssembler: Assembler {
         self.updateAppBadge = updateAppBadge
     }
 
-    // swiftlint:disable:next function_body_length // Assemblers are fairly declarative.
+    // Assemblers are fairly declarative.
+    // swiftlint:disable:next function_body_length
     public func assemble(container: Container) {
         // MARK: Action (openNotification)
 
@@ -66,20 +70,6 @@ public struct NotificationsAssembler: Assembler {
         container.register(Action.self, name: "presentNotificationCenter", scope: .transient) { resolver in
             let viewControllerToPresent = resolver.resolve(UIViewController.self, name: "inbox")!
             return resolver.resolve(Action.self, name: "presentView", arguments: viewControllerToPresent)!
-        }
-
-        // MARK: Action (presentHub)
-
-        container.register(Action.self, name: "presentHub", scope: .transient) { (resolver) in
-            let viewControllerToPresent = HubHostingController()
-
-            os_log("Presenting Hub", log: .hub, type: .debug)
-
-            return resolver.resolve(
-                Action.self,
-                name: "presentView",
-                arguments: viewControllerToPresent as UIViewController
-            )!
         }
 
         // MARK: Action (presentPost)
@@ -241,7 +231,7 @@ public struct NotificationsAssembler: Assembler {
 
         // MARK: Hub
 
-        container.register(InboxPersistentContainer.self, scope: .singleton) { resolver in
+        container.register(InboxPersistentContainer.self, scope: .singleton) { _ in
             InboxPersistentContainer(storage: .persistent)
         }
 

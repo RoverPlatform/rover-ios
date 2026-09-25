@@ -27,14 +27,7 @@ public class AXSAssembler: Assembler {
         
         container.register(AXSManager.self) { resolver in
             let userInfoManager = resolver.resolve(UserInfoManager.self)!
-            let privacyService = resolver.resolve(PrivacyService.self)!
-            return AXSManager(userInfoManager: userInfoManager, privacyService: privacyService)
+            return AXSManager(userInfoManager: userInfoManager)
         }
-    }
-    
-    public func containerDidAssemble(resolver: Resolver) {
-        resolver.resolve(PrivacyService.self)?.registerTrackingEnabledListener(
-            resolver.resolve(AXSManager.self)!
-        )
     }
 }

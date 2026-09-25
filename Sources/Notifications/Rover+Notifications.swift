@@ -138,13 +138,38 @@ public extension Rover {
 
     /// Reset all data in the Rover Hub.
     ///
-    /// Note that this will leave the store in a dropped state, and the app (and Rover SDK) should be restarted afterward.
+    /// Every locally stored Hub row is dropped, so the Hub is usable immediately: it shows an
+    /// empty inbox and refetches from the server on its next appearance. No restart is required.
+    ///
+    /// This is the same coordinated reset the SDK runs when the server declares the local Hub
+    /// stale (HTTP 410): the sync epoch moves first, so a response already in flight cannot
+    /// repopulate what is about to be dropped, and the Hub's in-flight sync work is cancelled.
+    ///
+    /// Call from any thread. The rows are gone by the time this returns — which is what lets a
+    /// caller reset and then exit the process. Off the main thread, the drop is bridged
+    /// synchronously onto it, so don't call this from a worker the main thread is itself
+    /// blocked waiting on.
     func resetHub() {
-        let container = self.resolve(InboxPersistentContainer.self)
-        container?.reset()
+        guard let coordinator = self.resolve(HubSyncCoordinator.self) else {
+            os_log(
+                "Rover.resetHub: called before Rover is initialized (or RoverNotifications module missing)",
+                log: .hub,
+                type: .error
+            )
+            return
+        }
 
-        // Reset the watermark so a future value cannot suppress newly restored Hub history.
-        self.resolve(InboxSeenWatermark.self)?.reset()
+        if Thread.isMainThread {
+            MainActor.assumeIsolated {
+                coordinator.resetHubDataOnDemand()
+            }
+        } else {
+            DispatchQueue.main.sync {
+                MainActor.assumeIsolated {
+                    coordinator.resetHubDataOnDemand()
+                }
+            }
+        }
     }
 
     func resetCommunicationHub() {

@@ -286,6 +286,16 @@ final class HubSyncCoordinatorTests: HubSyncTestBase {
 
     func testConcurrent410sCoalesceIntoSingleInvalidation() async throws {
         let cancellable = MockHubSyncCancellable()
+        // Holds the reset the first 410 starts open until this test says otherwise, so the second
+        // 410 cannot possibly find `invalidationTask` back at nil and start a reset of its own.
+        // Coalescing is only promised for the lifetime of that handle, and with nothing registered
+        // that does real work in cancellation, that lifetime was measured in the tens of
+        // microseconds. The barrier below releases the two 410s together, but they are still
+        // resumed on independent threads, so without this gate the assertions would be a bet on
+        // the two being *processed* closer together than that — which they are not under load.
+        // Releasing together is not arriving together. A second reset here is not a coordinator
+        // bug, it is the documented behaviour `testSequential410sEachTriggerReset` pins down.
+        let resetGate = GatedMockHubSyncCancellable()
         let postSync = await MainActor.run {
             PostSync(persistentContainer: testContainer, hubSyncCoordinator: coordinator)
         }
@@ -293,22 +303,41 @@ final class HubSyncCoordinatorTests: HubSyncTestBase {
         let subscriptionSync = SubscriptionSync(persistentContainer: testContainer, hubSyncCoordinator: coordinator)
         let subscriptionSyncSpy = SpySubscriptionSyncCancellable(subscriptionSync: subscriptionSync)
         await coordinator.register(cancellable)
+        await coordinator.register(resetGate)
         await coordinator.register(postSyncSpy)
         await coordinator.register(subscriptionSyncSpy)
 
         try await seedConversation()
-        // Use a small delay so both async let tasks are in-flight before either returns 410.
-        // Without a delay the URLProtocol mock can respond synchronously, letting the first
-        // task's reset complete before the second task fires its request.
-        URLProtocolMock.stubConversations410(delay: 0.05)
+        // Neither 410 is answered until both requests have arrived. That is what makes this a test
+        // of `startResetIfNeeded`'s in-flight guard: both calls are past `call()`'s prologue guard
+        // before either reset exists, so the second 410 can only be turned away by the guard under
+        // test. A response delay would merely have made that likely — a request cannot be answered
+        // early here, however the machine is loaded, because the answer is gated on its sibling's
+        // arrival rather than on a clock.
+        URLProtocolMock.requireSimultaneousRequests(2)
+        URLProtocolMock.stubConversations410()
 
         // Fire two concurrent 410-bound calls
         async let r1 = coordinator.getConversationsPage()
         async let r2 = coordinator.getConversationsPage()
         _ = await (r1, r2)
-        // Both calls return immediately with StaleGenerationError (the reset is detached — see
-        // HubSyncCoordinator.startResetIfNeeded); await the in-flight reset before asserting.
+
+        // Both calls have returned, so each has either had its 410 handled or been turned away in
+        // the prologue, and exactly one reset was started — `resetGate` is still holding it, since
+        // no reset can get past `cancelRegisteredSyncWork()` until this test says so. Only now is
+        // it safe to let it finish. Both calls return StaleGenerationError immediately because the
+        // reset runs independently of them (see HubSyncCoordinator.startResetIfNeeded), so awaiting
+        // it is what puts the drops behind us before the store is inspected.
+        await resetGate.release()
         await coordinator.awaitCurrentReset()
+
+        // If the barrier gave up, its quota was not met in time, so everything below was observed
+        // under conditions this test does not describe — whatever the two requests went on to do.
+        XCTAssertFalse(
+            URLProtocolMock.didTimeOutWaitingForSimultaneousRequests,
+            "both conversation requests must have been in flight before either 410 was answered; "
+                + "the barrier timed out waiting for the second one instead"
+        )
 
         // Store is empty
         let convCount = await MainActor.run {
@@ -499,10 +528,10 @@ final class HubSyncCoordinatorTests: HubSyncTestBase {
     /// `saveIfGenerationUnchanged`, repopulating the store from stale pre-reset state instead of
     /// forcing a clean post-reset resync.
     func testCallDuringInFlightResetIsRejected() async throws {
-        // A slow cancellable keeps the reset in flight long enough that a call fired immediately
-        // afterward is guaranteed to land mid-reset, deterministically.
-        let slowCancellable = SlowMockHubSyncCancellable(delay: 0.1)
-        await coordinator.register(slowCancellable)
+        // A gated cancellable keeps the reset in flight until this test releases it, so the call
+        // fired below lands inside the reset's lifetime however the machine is loaded.
+        let resetGate = GatedMockHubSyncCancellable()
+        await coordinator.register(resetGate)
 
         try await seedConversation()
         URLProtocolMock.stubConversations410()
@@ -510,14 +539,133 @@ final class HubSyncCoordinatorTests: HubSyncTestBase {
 
         _ = await coordinator.getConversationsPage()  // triggers the reset; returns immediately
 
-        // Fired while the reset's cancellation phase is still sleeping — must not be allowed to
-        // succeed against pre-drop state.
+        // Fired while `invalidationTask` is non-nil and `resetGate` is keeping it that way — which
+        // is the whole lifetime the rejection is promised for, whether or not the reset task body
+        // has reached cancellation yet. Must not be allowed to succeed against pre-drop state.
         let duringReset = await coordinator.getParticipants()
 
+        await resetGate.release()
         await coordinator.awaitCurrentReset()
 
         guard case .failure(let error) = duringReset.result else {
             XCTFail("Expected a call issued during an in-flight reset to fail fast, but it succeeded")
+            return
+        }
+        XCTAssertTrue(
+            error is StaleGenerationError,
+            "Expected StaleGenerationError for a call rejected mid-reset, got \(error)"
+        )
+    }
+
+    // MARK: - Reset on request, with no 410 behind it
+
+    /// Everything the Debug tab's "Reset Hub Data" row promises: every domain dropped, in one
+    /// pass, through the store the Hub is holding open.
+    ///
+    /// `testContainer` is in-memory, which is also where a device lands when the SQLite store
+    /// fails to load and `InboxPersistentContainer` falls back. A reset expressed as "destroy
+    /// the store at its URL" only reaches such a container by way of the `file:///dev/null`
+    /// placeholder Core Data happens to hand an in-memory store, which is not a promise
+    /// documented anywhere; dropping rows through the context is storage-mode-agnostic and
+    /// needs no such luck.
+    func testResetOnDemandDropsEveryDomain() async throws {
+        let cancellable = MockHubSyncCancellable()
+        await coordinator.register(cancellable)
+
+        try await seedConversation()
+        try await seedPost()
+        try await seedSubscription()
+        try await seedSyncCursors()
+
+        await MainActor.run { coordinator.resetHubDataOnDemand() }
+        await coordinator.awaitCurrentReset()
+
+        let counts = await MainActor.run {
+            (
+                conversations: (try? testContainer.viewContext.count(for: Conversation.fetchRequest())) ?? -1,
+                posts: (try? testContainer.viewContext.count(for: Post.fetchRequest())) ?? -1,
+                subscriptions: (try? testContainer.viewContext.count(for: Subscription.fetchRequest())) ?? -1,
+                syncStatuses: (try? testContainer.viewContext.count(for: SyncStatus.fetchRequest())) ?? -1
+            )
+        }
+        XCTAssertEqual(counts.conversations, 0, "an on-demand reset should drop all conversations")
+        XCTAssertEqual(counts.posts, 0, "an on-demand reset should drop all posts")
+        XCTAssertEqual(counts.subscriptions, 0, "an on-demand reset should drop all subscriptions")
+        XCTAssertEqual(
+            counts.syncStatuses,
+            0,
+            "the cursors go with the rows, or the next sync resumes mid-stream instead of refetching"
+        )
+
+        let cancelCount = await cancellable.cancelCallCount
+        XCTAssertEqual(cancelCount, 1, "an on-demand reset should cancel in-flight sync, exactly as a 410 does")
+    }
+
+    /// The half of the reset a bare drop would miss: a sync that was already awaiting HTTP when
+    /// the reset ran.
+    ///
+    /// `call()` captures the store generation before the network await, and the response is
+    /// persisted under that captured value. A reset that drops rows without moving the epoch
+    /// leaves that captured value still current, so the response — fetched from a pre-reset
+    /// cursor, and possibly from the endpoint being left behind — passes
+    /// `saveIfGenerationUnchanged` and repopulates the store that was just emptied.
+    func testResetOnDemandRefusesASaveCapturedBeforeIt() async throws {
+        let cancellable = MockHubSyncCancellable()
+        await coordinator.register(cancellable)
+        try await seedConversation()
+
+        // What `call()` hands to a sync that is still awaiting HTTP when the reset arrives.
+        let capturedGeneration = await MainActor.run { testContainer.conversationStoreGeneration }
+
+        await MainActor.run { coordinator.resetHubDataOnDemand() }
+        await coordinator.awaitCurrentReset()
+
+        let generationAfter = await MainActor.run { testContainer.conversationStoreGeneration }
+        XCTAssertEqual(
+            generationAfter,
+            capturedGeneration + 1,
+            "an on-demand reset must move the epoch, or nothing invalidates the responses already in flight"
+        )
+
+        try await MainActor.run {
+            // The late response landing: it writes its page, then asks to save under the
+            // generation it captured before the reset.
+            let stale = Conversation(context: testContainer.viewContext)
+            stale.id = UUID()
+            stale.createdAt = Date()
+            stale.updatedAt = Date()
+
+            XCTAssertThrowsError(try testContainer.saveIfGenerationUnchanged(capturedGeneration)) { error in
+                XCTAssertTrue(
+                    error is StaleGenerationError,
+                    "expected StaleGenerationError for a response captured before the reset, got \(error)"
+                )
+            }
+            XCTAssertEqual(
+                (try? testContainer.viewContext.count(for: Conversation.fetchRequest())) ?? -1,
+                0,
+                "a response captured before the reset must not repopulate the store behind it"
+            )
+        }
+    }
+
+    /// A call that starts while the reset is still unwinding is held off the same way one that
+    /// starts during a 410 reset is: it would otherwise capture the epoch the reset just moved
+    /// to, read a cursor the drops had not reached, and persist behind them.
+    func testCallDuringOnDemandResetIsRejected() async throws {
+        let resetGate = GatedMockHubSyncCancellable()
+        await coordinator.register(resetGate)
+
+        try await seedConversation()
+        URLProtocolMock.stubParticipants([])
+
+        await MainActor.run { coordinator.resetHubDataOnDemand() }
+        let duringReset = await coordinator.getParticipants()
+        await resetGate.release()
+        await coordinator.awaitCurrentReset()
+
+        guard case .failure(let error) = duringReset.result else {
+            XCTFail("Expected a call issued during an in-flight on-demand reset to fail fast, but it succeeded")
             return
         }
         XCTAssertTrue(
@@ -618,6 +766,18 @@ final class HubSyncCoordinatorTests: HubSyncTestBase {
         return id
     }
 
+    /// A cursor for each paginated domain, so a reset can be asked whether it took them with it.
+    private func seedSyncCursors() async throws {
+        try await MainActor.run {
+            for entity in [InboxPersistentContainer.SyncEntity.posts, .conversations] {
+                let status = SyncStatus(context: testContainer.viewContext)
+                status.roverEntity = entity.rawValue
+                status.cursor = "cursor-\(entity.rawValue)"
+            }
+            try testContainer.viewContext.save()
+        }
+    }
+
     @discardableResult
     private func seedSubscription() async throws -> String {
         let id = "subscription-\(UUID().uuidString)"
@@ -657,17 +817,49 @@ actor MockHubSyncCancellable: HubSyncCancellable {
     }
 }
 
-/// A cancellable whose `cancelAllTasks()` sleeps before returning, used to deterministically
-/// widen the window during which a `HubSyncCoordinator` reset is in flight.
-actor SlowMockHubSyncCancellable: HubSyncCancellable {
-    private let delay: TimeInterval
-
-    init(delay: TimeInterval) {
-        self.delay = delay
-    }
+/// A cancellable whose `cancelAllTasks()` suspends until the test calls `release()`, holding any
+/// `HubSyncCoordinator` reset that reaches it open until then.
+///
+/// Everything a test can assert about a reset — that a concurrent 410 was coalesced into it, that
+/// a call issued during it is rejected — holds only while `invalidationTask` is non-nil, and
+/// `runReset()` is short enough (an epoch bump, one task group, one drop) that a sleep long enough
+/// on an idle machine is a race under load. Suspending here instead makes the window a signal the
+/// test owns rather than a duration it hopes for.
+///
+/// `cancelRegisteredSyncWork()` awaits every registered cancellable, so the reset cannot finish
+/// while this one is suspended; because the suspension is on this actor rather than the
+/// coordinator's, the main actor stays free to serve the calls the test makes meanwhile.
+actor GatedMockHubSyncCancellable: HubSyncCancellable {
+    private(set) var cancelCallCount: Int = 0
+    /// Every waiter, not one slot: the regression `testConcurrent410sCoalesceIntoSingleInvalidation`
+    /// exists to catch is precisely the one that starts a *second* reset, and both resets reach
+    /// this gate. A single slot would overwrite the first reset's continuation and strand its task
+    /// forever, turning the clean assertion failure that test is trying to produce into a leaked
+    /// continuation. The gate's other two users only ever produce one reset.
+    private var continuations: [CheckedContinuation<Void, Never>] = []
+    private var isReleased = false
 
     func cancelAllTasks() async {
-        try? await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
+        cancelCallCount += 1
+        guard !isReleased else { return }
+        await withCheckedContinuation { continuation in
+            continuations.append(continuation)
+        }
+    }
+
+    /// Lets every held reset finish, and keeps later ones from being held at all. Safe in either
+    /// order: releasing before `cancelAllTasks()` is ever reached records the release rather than
+    /// dropping a wake-up, so a test that no longer needs the window never hangs waiting for one —
+    /// at the cost that the gate never actually suspended. No assertion here rests on it having
+    /// suspended, given a coordinator that coalesces correctly: what the assertions rest on is
+    /// `invalidationTask` staying non-nil, which holds from the moment the 410 is seen.
+    func release() {
+        isReleased = true
+        let held = continuations
+        continuations = []
+        for continuation in held {
+            continuation.resume()
+        }
     }
 }
 

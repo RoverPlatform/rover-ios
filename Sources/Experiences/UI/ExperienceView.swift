@@ -33,145 +33,43 @@ public struct ExperienceView: View {
     @Binding var path: NavigationPath
     let isPresentedModally: Bool
 
-    /// An optional dismissal closure for a full-screen, dismissable App Screens
-    /// presentation. Pass when presenting the experience full-screen and dismissable;
-    /// the closure performs the dismissal (e.g. `dismiss(animated:)` from the actual
-    /// presenter, such as `@Environment(\.dismiss)`). Leave unset when embedding.
-    /// Threaded to the wrapped `ExperienceViewController`, which installs an xmark
-    /// close item on the App Screens root host when it is non-`nil`. `nil` for the
-    /// Hub embed / document path.
-    private let onDismissButtonPressed: (() -> Void)?
-
-    /// An optional URL-opening override, consulted only for the `openURL` bridge
-    /// message from a V3 App Screens experience (never for the in-app
-    /// `presentWebsite`, and not for V1/V2 experiences). Threaded to the wrapped
-    /// `ExperienceViewController`; when `nil` the URL is handed to the OS via
-    /// `UIApplication.shared.open`. `nil` for the deprecated and `package` inits.
-    private let onOpenURL: ((URL) -> Void)?
-
-    /// An optional native item to install on the App Screens ROOT screen only (the
-    /// Hub inbox affordance). Ignored by the document-experience path. Threaded to
-    /// the wrapped `ExperienceViewController` and kept in sync on update so badge
-    /// changes propagate. `nil` for the public init.
-    private let appScreensRootBarItem: AppScreensRootBarItem?
-
-    /// The Hub's `HubCoordinator.appScreensResetGeneration`. Each increment signals
-    /// the embedded App Screens flow to pop its child navigation stack to root (and
-    /// dismiss any App Screens sheets), so a coordinator-driven navigation never
-    /// reveals a stale pushed detail on back-out. `0` for the public init, whose
-    /// callers do not embed the Hub-driven App Screens home view.
-    private let appScreensResetGeneration: Int
-
     /// Creates an experience view for the given URL.
     ///
     /// - Parameters:
     ///   - url: The experience URL to load.
     ///   - path: The external navigation path the experience drives.
-    ///   - onDismissButtonPressed: An optional dismissal closure. Pass when
-    ///     presenting the experience full-screen and dismissable; the closure
-    ///     performs the dismissal (e.g. `dismiss(animated:)` from the actual
-    ///     presenter, such as `@Environment(\.dismiss)`). When set, a full-screen
-    ///     App Screens experience shows an xmark close item on its root screen whose
-    ///     action invokes this closure. Leave unset when embedding.
-    ///   - onOpenURL: An optional URL-opening override, consulted only for the
-    ///     `openURL` bridge message from a V3 App Screens experience (never for the
-    ///     in-app `presentWebsite`, and not for V1/V2 experiences); when `nil` the URL
-    ///     is handed to the OS via `UIApplication.shared.open`.
+    ///   - isPresentedModally: Toggles whether a failed *document* experience surfaces
+    ///     its error via an alert (modal) or an inline error view.
+    public init(
+        url: URL,
+        path: Binding<NavigationPath>,
+        isPresentedModally: Bool = false
+    ) {
+        self.url = url
+        self._state = StateObject(wrappedValue: ExperienceViewState())
+        self._path = path
+        self.isPresentedModally = isPresentedModally
+    }
+
+    /// Deprecated. `ExperienceView` no longer renders App Screens, so
+    /// `onDismissButtonPressed` and `onOpenURL` are ignored. Use
+    /// ``init(url:path:isPresentedModally:)``.
+    @available(
+        *,
+        deprecated,
+        message:
+            "ExperienceView no longer renders App Screens; onDismissButtonPressed and onOpenURL are ignored. Use init(url:path:isPresentedModally:)."
+    )
     public init(
         url: URL,
         path: Binding<NavigationPath>,
         onDismissButtonPressed: (() -> Void)? = nil,
         onOpenURL: ((URL) -> Void)? = nil
     ) {
-        self.url = url
-        self._state = StateObject(wrappedValue: ExperienceViewState())
-        self._path = path
-        self.isPresentedModally = false
-        self.onDismissButtonPressed = onDismissButtonPressed
-        self.onOpenURL = onOpenURL
-        self.appScreensRootBarItem = nil
-        self.appScreensResetGeneration = 0
-    }
-
-    /// Creates an experience view, opting into the v2 document-experience modal
-    /// error-alert style.
-    ///
-    /// - Note: `isPresentedModally` only toggles whether a failed *document*
-    ///   experience surfaces its error via an alert (modal) or an inline error view;
-    ///   despite the name it does not control close chrome. Prefer
-    ///   ``init(url:path:onDismissButtonPressed:)`` and supply a dismissal closure to
-    ///   present a dismissable full-screen experience.
-    @available(
-        *,
-        deprecated,
-        message:
-            "isPresentedModally only gates the v2 document error-alert style, not close chrome. Use init(url:path:onDismissButtonPressed:)."
-    )
-    public init(
-        url: URL,
-        path: Binding<NavigationPath>,
-        isPresentedModally: Bool
-    ) {
-        self.url = url
-        self._state = StateObject(wrappedValue: ExperienceViewState())
-        self._path = path
-        self.isPresentedModally = isPresentedModally
-        self.onDismissButtonPressed = nil
-        self.onOpenURL = nil
-        self.appScreensRootBarItem = nil
-        self.appScreensResetGeneration = 0
-    }
-
-    /// Additive `package` initializer (the public init is untouched) that lets the
-    /// Hub supply a native root bar item for a V3 App Screens home view — the inbox
-    /// affordance restored natively after the outer SwiftUI toolbar was hidden to
-    /// avoid a double nav bar — and a reset generation that pops the App Screens
-    /// child stack to root on a coordinator-driven navigation. No public API change.
-    ///
-    /// - Parameter onDismissButtonPressed: An optional dismissal closure supplied
-    ///   only when the Hub is *presented modally* (via `HubHostingController`), never
-    ///   when embedded in a tab. When set, the App Screens home view honors an
-    ///   `openURL { dismiss: true }` bridge command and (unless the inbox affordance
-    ///   occupies the trailing slot) shows an xmark close item; the closure performs
-    ///   the dismissal.
-    package init(
-        url: URL,
-        path: Binding<NavigationPath>,
-        isPresentedModally: Bool = false,
-        appScreensResetGeneration: Int = 0,
-        appScreensRootBarItem: AppScreensRootBarItem?,
-        onDismissButtonPressed: (() -> Void)? = nil
-    ) {
-        self.url = url
-        self._state = StateObject(wrappedValue: ExperienceViewState())
-        self._path = path
-        self.isPresentedModally = isPresentedModally
-        self.onDismissButtonPressed = onDismissButtonPressed
-        self.onOpenURL = nil
-        self.appScreensRootBarItem = appScreensRootBarItem
-        self.appScreensResetGeneration = appScreensResetGeneration
+        self.init(url: url, path: path)
     }
 
     public var body: some View {
-        if ExperienceURLClassifier.classify(url) == .appScreens {
-            // V3 App Screens gets one construction path: wrap the UIKit
-            // ExperienceViewController (which owns the child nav + skeleton) and
-            // hide the outer SwiftUI toolbar so there is no double nav bar.
-            AppScreensExperienceRepresentable(
-                url: url,
-                rootBarItem: appScreensRootBarItem,
-                resetGeneration: appScreensResetGeneration,
-                onDismissButtonPressed: onDismissButtonPressed,
-                onOpenURL: onOpenURL
-            )
-            .ignoresSafeArea()
-            .toolbar(.hidden, for: .navigationBar)
-        } else {
-            documentExperienceBody
-        }
-    }
-
-    private var documentExperienceBody: some View {
         SwiftUI.ZStack {
             switch state.loadingState {
             case .loading:
@@ -222,81 +120,6 @@ public struct ExperienceView: View {
             }
         } message: { config in
             SwiftUI.Text(config.message)
-        }
-    }
-}
-
-/// Wraps the UIKit `ExperienceViewController` so V3 App Screens can render inside
-/// `ExperienceView` (SwiftUI). The controller owns the child navigation controller,
-/// skeleton, and reveal; this representable only bridges the URL in and reloads
-/// when it changes.
-private struct AppScreensExperienceRepresentable: UIViewControllerRepresentable {
-    let url: URL
-    let rootBarItem: AppScreensRootBarItem?
-    /// The Hub's reset generation. Each new value pops the App Screens child stack
-    /// to root; see `ExperienceView.appScreensResetGeneration`.
-    let resetGeneration: Int
-    /// Forwarded to `ExperienceViewController.onDismissButtonPressed`; installs the
-    /// xmark close item on the App Screens root host when non-`nil`. See
-    /// `ExperienceView.onDismissButtonPressed`.
-    let onDismissButtonPressed: (() -> Void)?
-    /// Forwarded to `ExperienceViewController.onOpenURL`; consulted only for the
-    /// `openURL` bridge message. See `ExperienceView.onOpenURL`.
-    let onOpenURL: ((URL) -> Void)?
-
-    func makeCoordinator() -> Coordinator {
-        // Seed with the current generation so the first render never fires a pop.
-        Coordinator(url: url, lastResetGeneration: resetGeneration)
-    }
-
-    func makeUIViewController(context: Context) -> ExperienceViewController {
-        let viewController = ExperienceViewController()
-        // Set the root bar item and dismissal handler before loading so both are
-        // installed on the root host the moment `loadExperience` creates it.
-        viewController.setAppScreensRootBarItem(rootBarItem)
-        viewController.onDismissButtonPressed = onDismissButtonPressed
-        viewController.onOpenURL = onOpenURL
-        viewController.loadExperience(with: url)
-        return viewController
-    }
-
-    func updateUIViewController(_ uiViewController: ExperienceViewController, context: Context) {
-        // Propagate a changed root bar item (e.g. a live badge-count update) in
-        // place; the setter no-ops when nothing visible changed.
-        uiViewController.setAppScreensRootBarItem(rootBarItem)
-
-        // Propagate the dismissal handler live: a modally-presented Hub only flips it
-        // from `nil` to a real closure once `HubHostingController.viewWillAppear`
-        // confirms the presentation, which lands here as an update. The setter updates
-        // the live root session's openURL-dismiss and installs/withdraws the xmark; it
-        // no-ops when the handler's presence is unchanged.
-        uiViewController.setOnDismissButtonPressed(onDismissButtonPressed)
-
-        // A bumped reset generation means the Hub performed a coordinator-driven
-        // navigation reset: pop the App Screens child stack to root (and dismiss any
-        // App Screens sheets) so backing out never reveals a stale pushed detail.
-        // Runs before the URL-change reload so a reset that coincides with a URL
-        // change still releases the old stack's sessions.
-        if context.coordinator.lastResetGeneration != resetGeneration {
-            context.coordinator.lastResetGeneration = resetGeneration
-            uiViewController.popAppScreensNavigationToRoot()
-        }
-
-        // Only reload when the URL actually changed.
-        guard context.coordinator.url != url else {
-            return
-        }
-        context.coordinator.url = url
-        uiViewController.loadExperience(with: url)
-    }
-
-    final class Coordinator {
-        var url: URL
-        var lastResetGeneration: Int
-
-        init(url: URL, lastResetGeneration: Int) {
-            self.url = url
-            self.lastResetGeneration = lastResetGeneration
         }
     }
 }

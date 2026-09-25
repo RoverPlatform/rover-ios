@@ -21,9 +21,8 @@ import XCTest
 @testable import RoverData
 @testable import RoverNotifications
 
-/// Verifies the coordinator-driven navigation reset: `appScreensResetGeneration`
-/// increments on each reset (so the embedded App Screens flow pops to root), and
-/// the navigation path contents stay as they are today.
+/// Verifies the coordinator-driven navigation reset: the navigation path contents
+/// stay as they are today.
 @MainActor
 final class HubCoordinatorTests: XCTestCase {
 
@@ -76,36 +75,6 @@ final class HubCoordinatorTests: XCTestCase {
             homeViewManager: homeViewManager,
             notificationHandler: FakeNotificationHandler()
         )
-    }
-
-    // MARK: - Reset generation
-
-    func testResetGenerationIncrementsOnConversationNavigation() {
-        let coordinator = makeCoordinator(hub: RoverConfig.Hub(), homeViewURL: nil)
-        let base = coordinator.appScreensResetGeneration
-
-        coordinator.navigateToConversation(id: UUID())
-
-        XCTAssertEqual(coordinator.appScreensResetGeneration, base + 1)
-    }
-
-    func testResetGenerationIncrementsOnPostNavigation() {
-        let coordinator = makeCoordinator(hub: RoverConfig.Hub(), homeViewURL: nil)
-        let base = coordinator.appScreensResetGeneration
-
-        coordinator.navigateToPost(id: "post-1")
-
-        XCTAssertEqual(coordinator.appScreensResetGeneration, base + 1)
-    }
-
-    func testResetGenerationIncrementsOnEachNavigation() {
-        let coordinator = makeCoordinator(hub: RoverConfig.Hub(), homeViewURL: nil)
-        let base = coordinator.appScreensResetGeneration
-
-        coordinator.navigateToConversation(id: UUID())
-        coordinator.navigateToPost(id: "post-1")
-
-        XCTAssertEqual(coordinator.appScreensResetGeneration, base + 2)
     }
 
     // MARK: - Navigation path contents (locking in current behavior)

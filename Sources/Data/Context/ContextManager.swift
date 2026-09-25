@@ -19,14 +19,35 @@ import os.log
 
 class ContextManager {
     let persistedPushToken = PersistedValue<Context.PushToken>(storageKey: "io.rover.RoverData.pushToken")
-    let persistedUserInfo = PersistedValue<Attributes>(storageKey: "io.rover.RoverData.userInfo")
-    let persistedDeviceName = PersistedValue<String>(storageKey: "io.rover.RoverData.deviceName")
-    let persistedAppLastSeenTimestamp = PersistedValue<Date>(storageKey: "io.rover.RoverData.appLastSeenTimestamp")
+    let persistedUserInfo: PersistedValue<Attributes>
+    let persistedDeviceName: PersistedValue<String>
+    let persistedAppLastSeenTimestamp: PersistedValue<Date>
     let reachability = Reachability(hostname: "google.com")!
     let privacyService: PrivacyService
 
-    init(privacyService: PrivacyService) {
+    /// The mode the last privacy notification carried, so a transition can be told from a repeat notification.
+    private var lastKnownTrackingMode: PrivacyService.TrackingMode?
+
+    init(privacyService: PrivacyService, userDefaults: UserDefaults = UserDefaults.standard) {
         self.privacyService = privacyService
+        self.persistedUserInfo = PersistedValue<Attributes>(
+            storageKey: "io.rover.RoverData.userInfo",
+            userDefaults: userDefaults
+        )
+        self.persistedDeviceName = PersistedValue<String>(
+            storageKey: "io.rover.RoverData.deviceName",
+            userDefaults: userDefaults
+        )
+        self.persistedAppLastSeenTimestamp = PersistedValue<Date>(
+            storageKey: "io.rover.RoverData.appLastSeenTimestamp",
+            userDefaults: userDefaults
+        )
+    }
+
+    /// Called when the user info the SDK reports has changed although the stored value has not, which is what a
+    /// tracking mode transition amounts to. Turning that into an outbound event is another ticket's job, so this
+    /// is the seam it will fill; overridable so tests can observe it.
+    func reportedUserInfoDidChange() {
     }
 }
 
@@ -239,11 +260,38 @@ extension ContextManager: TokenManager {
     }
 }
 
-// MARK: UserInfoManager
+// MARK: UserInfoContextProvider
 
 extension ContextManager: UserInfoContextProvider {
     var userInfo: Attributes? {
-        return self.persistedUserInfo.value
+        return self.reportedUserInfo
+    }
+}
+
+extension ContextManager {
+    /// The stored user info as the SDK is allowed to report it, i.e. with the privacy-sensitive keys withheld
+    /// while tracking mode is not `.default`. The stored value itself is never altered by tracking mode.
+    var reportedUserInfo: Attributes? {
+        return UserInfoPrivacy.reportedUserInfo(
+            self.persistedUserInfo.value,
+            trackingMode: self.privacyService.trackingMode
+        )
+    }
+}
+
+// MARK: PrivacyListener
+
+extension ContextManager: PrivacyListener {
+    func trackingModeDidChange(_ trackingMode: PrivacyService.TrackingMode) {
+        // PrivacyService primes a listener as it registers and re-notifies on every set, even when the value is
+        // unchanged, so only a genuine transition counts.
+        defer { self.lastKnownTrackingMode = trackingMode }
+
+        guard let previousTrackingMode = self.lastKnownTrackingMode, previousTrackingMode != trackingMode else {
+            return
+        }
+
+        self.reportedUserInfoDidChange()
     }
 }
 

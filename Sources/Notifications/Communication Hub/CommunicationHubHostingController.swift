@@ -76,15 +76,43 @@ public class CommunicationHubHostingController: UIHostingController<Communicatio
         }
         presentation.onDismissButtonPressed =
             shouldBeDismissable ? { [weak self] in self?.dismissIfPresentedModally() } : nil
+
+        // The completion-capable dismiss-then-open handler, mirrored from
+        // `HubHostingController`: flips alongside `onDismissButtonPressed` above (same
+        // `shouldBeDismissable` gate, so both are always in sync). It serves the App
+        // Screens `openURL { dismiss }` bridge and, via `\.hubDismissThenOpen`, a
+        // host-app deep link tapped in a Post or Conversation reply (SDK-425). `[weak
+        // self]` is MANDATORY: this closure lives in the process-wide
+        // `AppScreensDriver`'s `openHandlersByToken` registry, cleared only when the
+        // owning flow box's `deinit` calls `release`; a strong `self` would keep this
+        // controller alive past that point and deadlock teardown.
+        presentation.onOpenExternalURL =
+            shouldBeDismissable
+            ? { [weak self] url, dismiss in
+                guard let self else { return }
+                guard dismiss else {
+                    UIApplication.shared.openLoggingHubFailure(url)
+                    return
+                }
+                // Dismiss the whole Hub (and its entire presented sheet chain) via the
+                // presenter, then open. `self.dismiss` alone would, with stacked sheets,
+                // dismiss only the innermost sheet and leave the Hub up.
+                guard let presenter = self.presentingViewController else {
+                    // Hub already gone / hosting relationship changed — never lose the URL.
+                    os_log("openURL dismiss: no presentingViewController; opening in place", log: .hub, type: .info)
+                    UIApplication.shared.openLoggingHubFailure(url)
+                    return
+                }
+                presenter.dismiss(animated: true) { UIApplication.shared.openLoggingHubFailure(url) }
+            } : nil
     }
 
     /// `true` only when this controller is actually presented modally in its own right —
-    /// not when it is embedded (in a tab, or pushed). The `tabBarController == nil` guard
-    /// rejects an embedded-in-a-tab Hub (even one inside a presented tab bar), and
-    /// `presentedViewController === self` confirms this controller is itself the
-    /// modally-presented one.
+    /// not when it is embedded (in a tab, or pushed). The rule itself lives in
+    /// `HubDetailPresentationState.isPresentedModally(_:)`, shared with `HubHostingController`
+    /// and the standalone detail controllers.
     private var isPresentedModally: Bool {
-        tabBarController == nil && presentingViewController?.presentedViewController === self
+        HubDetailPresentationState.isPresentedModally(self)
     }
 
     /// Dismisses this controller. Wired as the App Screens home's dismissal handler only

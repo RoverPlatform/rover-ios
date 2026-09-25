@@ -22,10 +22,10 @@ import WebKit
 /// master session drives the document fetch, runtime boot, and `show()` pipeline;
 /// prewarm and ephemeral detail sessions reuse the same machinery.
 @MainActor
-final class AppScreenSession {
+package final class AppScreenSession {
     /// The origin-qualified template key this session renders (e.g.
     /// `https://a.example/a/player-detail`), derived from the `/a/{path}` URL by
-    /// ``AppScreensNavigator/templateKey(from:)``. Keys the navigator's session,
+    /// ``AppScreensDriver/templateKey(from:)``. Keys the navigator's session,
     /// prewarm, and in-flight registries so the same bare path on two associated
     /// domains never shares one warm web view.
     let templateKey: String
@@ -80,7 +80,7 @@ final class AppScreenSession {
     var latestLinkHrefs: [String] = []
 
     /// The real-but-off-screen `UIWindow` hosting this session's web view while it
-    /// prewarms (see ``AppScreensNavigator/PrewarmAttachStrategy/offscreenWindow``).
+    /// prewarms (see ``AppScreensDriver/PrewarmAttachStrategy/offscreenWindow``).
     /// A web view booting its runtime inside a live window keeps its accessibility
     /// tree in sync with the Idiomorph-morphed DOM, unlike a window-less one. Held
     /// only until the session is claimed for a navigation (the web view reparents
@@ -97,7 +97,7 @@ final class AppScreenSession {
     /// The host view controller currently presenting this session's web view.
     /// Weak so a popped host deallocates; used to find the navigation controller a
     /// `navigate` should push onto.
-    weak var hostViewController: AppScreenHostViewController?
+    weak var hostViewController: AppScreensPageViewController?
 
     /// Host-supplied dismissal for the enclosing Experience presentation. Non-`nil`
     /// only on a root session whose presenter opted in (by threading a dismissal
@@ -130,7 +130,7 @@ final class AppScreenSession {
     /// present** (a `nil` never overwrites a known scope). Drives whether the
     /// `.json` request attaches identifiers + a JWT (`.personalized`) or is sent
     /// completely bare (`.public`). `nil` until the first document lands, at which
-    /// point ``AppScreensNavigator/effectiveScope(_:)`` supplies the fail-safe
+    /// point ``AppScreensDriver/effectiveScope(_:)`` supplies the fail-safe
     /// `.personalized` default for an older server that advertises no scope.
     var dataScope: AppScreenDataScope?
 
@@ -146,10 +146,22 @@ final class AppScreenSession {
     /// double resume.
     var runtimeLoadedContinuation: CheckedContinuation<Void, Error>?
 
+    /// The per-screen navigator this session pushes/presents subsequent navigations
+    /// through. Set at render-time host creation (``AppScreensDriver/makeHost(token:address:targetRequest:navigating:)``);
+    /// weak because the SwiftUI coordinator that implements ``AppScreensNavigating``
+    /// owns this session's host, not the other way around.
+    package weak var navigating: AppScreensNavigating?
+
+    /// The navigation flow that owns this session, set at render-time host creation.
+    /// Read by `navigate` to scope its pending-store enqueue to the same flow the
+    /// eventual render will claim from. Optional only defensively (a session created
+    /// outside the render-time path, or before its host is ever built, has none).
+    package var token: AppScreensToken?
+
     /// The single in-flight load/navigation pipeline for this session — the `Task`
-    /// created by ``AppScreensNavigator/runMasterPipeline(entryURL:session:host:)``,
-    /// ``AppScreensNavigator/runNavigatePipeline(resolvedURL:optimisticDataJSON:session:host:isColdLoad:tapTime:)``,
-    /// or an in-flight ``AppScreensNavigator/recover(session:reason:)``. A session
+    /// created by ``AppScreensDriver/runMasterPipeline(entryURL:session:host:)``,
+    /// ``AppScreensDriver/runNavigatePipeline(resolvedURL:optimisticDataJSON:session:host:isColdLoad:tapTime:)``,
+    /// or an in-flight ``AppScreensDriver/recover(session:reason:)``. A session
     /// runs at most one legitimate pipeline at a time, so it is superseded and
     /// cancelled on pop, reuse, teardown, and recovery: each entry point cancels
     /// whatever is here before storing its own `Task`. Cancelling stops a
@@ -158,14 +170,14 @@ final class AppScreenSession {
     /// a different record.
     var pipelineTask: Task<Void, Never>?
 
-    enum State {
+    package enum State {
         case loadingDocument
         case awaitingRuntime
         case ready
         case dead
     }
 
-    init(templateKey: String, webView: WKWebView? = nil, state: State = .loadingDocument) {
+    package init(templateKey: String, webView: WKWebView? = nil, state: State = .loadingDocument) {
         self.templateKey = templateKey
         self.webView = webView
         self.state = state

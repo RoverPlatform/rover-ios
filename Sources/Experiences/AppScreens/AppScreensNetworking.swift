@@ -60,7 +60,7 @@ enum AppScreenDataError: LocalizedError {
     }
 }
 
-extension AppScreensNavigator {
+extension AppScreensDriver {
 
     /// Fetches the anonymous document. A bare `URLRequest` — no account token, no
     /// `Authorization`, no identifier query items — so credentials never touch the

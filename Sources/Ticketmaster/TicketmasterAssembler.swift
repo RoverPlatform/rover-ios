@@ -36,10 +36,4 @@ public class TicketmasterAssembler: Assembler {
             return TicketmasterManager(userInfoManager: userInfoManager, eventQueue: eventQueue, privacyService: privacyService)
         }
     }
-    
-    public func containerDidAssemble(resolver: Resolver) {
-        resolver.resolve(PrivacyService.self)?.registerTrackingEnabledListener(
-            resolver.resolve(TicketmasterManager.self)!
-        )
-    }
 }

@@ -44,15 +44,16 @@ public struct ExperiencesAssembler: Assembler {
             return resolver.resolve(HTTPClient.self)!
         }
 
-        // MARK: AppScreensNavigator
+        // MARK: AppScreensDriver
 
-        container.register(AppScreensNavigator.self, scope: .singleton) { resolver in
+        container.register(AppScreensDriver.self, scope: .singleton) { resolver in
             let associatedDomains = resolver.resolve([String].self, name: "associatedDomains")!
             return MainActor.assumeIsolatedOrFatalError {
-                AppScreensNavigator(
+                AppScreensDriver(
                     httpClient: resolver.resolve(HTTPClient.self)!,
                     configManager: resolver.resolve(ConfigManager.self)!,
-                    associatedDomains: associatedDomains
+                    associatedDomains: associatedDomains,
+                    eventQueue: resolver.resolve(EventQueue.self)!
                 )
             }
         }

@@ -56,9 +56,8 @@ public class HubHostingController: UIHostingController<HubView> {
         // honors an `openURL { dismiss: true }` teardown iff it is non-`nil`, so an
         // embedded (tabbed/pushed) Hub gets neither a dead xmark nor a stray dismiss.
         //
-        // Publishing rides `presentation` → the existing
-        // `AppScreensExperienceRepresentable.updateUIViewController` live path (the
-        // same one an inbox-badge update takes), so the flip never re-roots the
+        // Publishing rides `presentation` → `HubView`/`HubContentView` → the App
+        // Screens home view (`AppScreensHostView`), so the flip never re-roots the
         // SwiftUI tree or reloads the App Screens web view. Only publish on an actual
         // change (a fresh closure would otherwise re-fire on every re-appearance).
         let shouldBeDismissable = isPresentedModally
@@ -67,15 +66,40 @@ public class HubHostingController: UIHostingController<HubView> {
         }
         presentation.onDismissButtonPressed =
             shouldBeDismissable ? { [weak self] in self?.dismissIfPresentedModally() } : nil
+
+        // The completion-capable dismiss-then-open handler: flips alongside
+        // `onDismissButtonPressed` above (same `shouldBeDismissable` gate, so both are
+        // always in sync). `[weak self]` is MANDATORY here — this closure lives in the
+        // process-wide `AppScreensDriver`'s `openHandlersByToken` registry, cleared only
+        // when the owning flow box's `deinit` calls `release`; a strong `self` would
+        // keep this controller alive past that point and deadlock teardown.
+        presentation.onOpenExternalURL =
+            shouldBeDismissable
+            ? { [weak self] url, dismiss in
+                guard let self else { return }
+                guard dismiss else {
+                    UIApplication.shared.openLoggingHubFailure(url)
+                    return
+                }
+                // Dismiss the whole Hub (and its entire presented sheet chain) via the
+                // presenter, then open. `self.dismiss` alone would, with stacked sheets,
+                // dismiss only the innermost sheet and leave the Hub up.
+                guard let presenter = self.presentingViewController else {
+                    // Hub already gone / hosting relationship changed — never lose the URL.
+                    os_log("openURL dismiss: no presentingViewController; opening in place", log: .hub, type: .info)
+                    UIApplication.shared.openLoggingHubFailure(url)
+                    return
+                }
+                presenter.dismiss(animated: true) { UIApplication.shared.openLoggingHubFailure(url) }
+            } : nil
     }
 
     /// `true` only when this controller is actually presented modally in its own
-    /// right — not when it is embedded (in a tab, or pushed). The `tabBarController ==
-    /// nil` guard rejects an embedded-in-a-tab Hub (even one inside a presented tab
-    /// bar), and `presentedViewController === self` confirms this controller is itself
-    /// the modally-presented one.
+    /// right — not when it is embedded (in a tab, or pushed). The rule itself lives in
+    /// `HubDetailPresentationState.isPresentedModally(_:)`, shared with the standalone
+    /// detail controllers and the compatibility shim.
     private var isPresentedModally: Bool {
-        tabBarController == nil && presentingViewController?.presentedViewController === self
+        HubDetailPresentationState.isPresentedModally(self)
     }
 
     /// Dismisses this controller. Wired as the App Screens home's dismissal handler
@@ -94,14 +118,19 @@ public class HubHostingController: UIHostingController<HubView> {
 /// Live presentation state a `HubHostingController` shares with its `HubView`.
 /// `HubHostingController.viewWillAppear` publishes the dismissal handler here once
 /// the hosting relationship is established; `HubView`/`HubContentView` observe it and
-/// thread it into the App Screens home view. Publishing rides SwiftUI's normal diff
-/// into `AppScreensExperienceRepresentable.updateUIViewController` — the same
-/// non-disruptive path an inbox-badge update takes — so it never re-roots the tree or
-/// reloads the web view.
+/// thread it into the App Screens home view (`AppScreensHostView`). Publishing rides
+/// SwiftUI's normal diff, so it never re-roots the tree or reloads the web view.
 final class HubPresentationState: ObservableObject {
     /// The Hub's dismissal handler: a real closure ONLY when the Hub is genuinely
     /// presented modally (drives the `openURL { dismiss: true }` teardown and the App
     /// Screens xmark, which installs iff this is non-`nil`), `nil` when embedded in a
     /// tab (no teardown, no close chrome).
     @Published var onDismissButtonPressed: (() -> Void)?
+
+    /// The Hub's completion-capable dismiss-then-open handler: a real closure ONLY when
+    /// the Hub is genuinely presented modally (dismisses this presentation, THEN opens
+    /// the URL, when `dismiss` is set; opens immediately otherwise), `nil` when embedded
+    /// in a tab (no teardown — the injected handler is absent and `openExternalURL`
+    /// falls back to opening in place).
+    @Published var onOpenExternalURL: ((_ url: URL, _ dismiss: Bool) -> Void)?
 }

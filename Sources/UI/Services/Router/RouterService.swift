@@ -17,7 +17,7 @@ import Foundation
 
 import RoverFoundation
 
-class RouterService: Router {
+class RouterService: Router, RouterLinkClassifying {
     let associatedDomains: [String]
     let urlSchemes: [String]
     let dispatcher: Dispatcher

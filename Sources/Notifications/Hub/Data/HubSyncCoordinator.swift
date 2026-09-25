@@ -146,6 +146,52 @@ final class HubSyncCoordinator: @unchecked Sendable {
         await call { await self.httpClient.getSubscriptions() }
     }
 
+    // MARK: - Reset on request
+
+    /// Drops every locally stored Hub row on request, with no 410 behind it.
+    ///
+    /// The same coordinated reset `runReset()` performs — the epoch first, every domain
+    /// dropped, the registered sync actors cancelled, the tray swept — minus
+    /// `startResetIfNeeded()`'s gate, which is the only part of that path that is about the 410.
+    /// Nothing in the reset itself depends on *why* it was asked for, so the two entry points
+    /// differ only in what they check on the way in.
+    ///
+    /// Asked for by `Rover.resetHub()`, whose callers keep running afterwards. That is why the
+    /// rows go through the store the Hub is holding open rather than the store being deleted
+    /// from under it: a container whose store has been destroyed serves the next
+    /// generation-guarded save an Objective-C exception no Swift `catch` can absorb, and it is
+    /// a reset expressed in a file path, which the in-memory fallback store does not really
+    /// have. Dropping through the context is neither.
+    ///
+    /// The epoch bump and the drops run synchronously, before this returns, because one caller
+    /// (the Bench's endpoint change) calls `exit(0)` on the next main-queue turn and the rows
+    /// have to be gone by then. Only cancellation and the tray sweep are left to the task —
+    /// they are `async` because every registered sync actor is an actor. Running them after the
+    /// drops rather than before, as `runReset()` does, changes nothing that matters:
+    /// correctness comes from the epoch, not from cancellation timing, and the bump and the
+    /// drops are one synchronous main-actor block that no in-flight save can interleave with.
+    ///
+    /// `invalidationTask` is held across that tail so `call()` goes on failing fast until the
+    /// reset has fully unwound — a sync starting mid-reset would otherwise capture the epoch
+    /// the reset has already moved to, read a cursor from before it, and persist behind it.
+    func resetHubDataOnDemand() {
+        os_log(.info, log: .hub, "Resetting Hub data on request — invalidating all Hub sync state")
+        persistentContainer.bumpConversationStoreGeneration()
+        dropAllDomains()
+
+        // A reset already in flight covers the rest of this one: it cancels the same registered
+        // actors and sweeps the same tray, and it holds the gate while it does.
+        guard invalidationTask == nil else {
+            os_log(.debug, log: .hub, "Reset already in progress — its cancellation covers this request")
+            return
+        }
+        invalidationTask = Task { @MainActor [weak self] in
+            await self?.cancelRegisteredSyncWork()
+            await self?.clearDeliveredHubNotifications()
+            self?.invalidationTask = nil
+        }
+    }
+
     // MARK: - Test hook
 
     #if DEBUG
@@ -219,15 +265,27 @@ final class HubSyncCoordinator: @unchecked Sendable {
     /// `StaleGenerationError` regardless of whether its task was ever actually cancelled.
     private func runReset() async {
         persistentContainer.bumpConversationStoreGeneration()
+        await cancelRegisteredSyncWork()
 
+        async let clearNotifications: Void = clearDeliveredHubNotifications()
+        dropAllDomains()
+        await clearNotifications
+    }
+
+    /// Cancels every registered sync actor, in parallel. Shared by both reset entry points.
+    private func cancelRegisteredSyncWork() async {
         let toCancel = cancellables
         await withTaskGroup(of: Void.self) { group in
             for cancellable in toCancel {
                 group.addTask { await cancellable.cancelAllTasks() }
             }
         }
+    }
 
-        async let clearNotifications: Void = clearDeliveredHubNotifications()
+    /// Drops all three Hub domains — and with them every cursor, so the next sync refetches
+    /// rather than resuming mid-stream — and resets the inbox seen watermark. Shared by both
+    /// reset entry points.
+    private func dropAllDomains() {
         persistentContainer.dropAllConversations()
         persistentContainer.dropAllPosts()
         persistentContainer.dropAllSubscriptions()
@@ -235,8 +293,6 @@ final class HubSyncCoordinator: @unchecked Sendable {
         // Reset the watermark so a future value from the previous identity cannot suppress
         // genuinely new posts fetched by the post-reset resync.
         seenWatermark.reset()
-
-        await clearNotifications
     }
 
     /// Removes every delivered notification carrying a Hub push payload (post or conversation).

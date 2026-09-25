@@ -29,14 +29,20 @@ public class PrivacyService: PrivacyContextProvider {
         public var id: Self { self }
     }
     
+    private let userDefaults: UserDefaults
+
+    init(userDefaults: UserDefaults = UserDefaults.standard) {
+        self.userDefaults = userDefaults
+    }
+
     public var trackingMode: TrackingMode {
         get {
-            let value = UserDefaults.standard.string(forKey: "io.rover.TrackingMode") ?? "default"
+            let value = userDefaults.string(forKey: "io.rover.TrackingMode") ?? "default"
             return TrackingMode(rawValue: value) ?? .default
         }
         set {
             let oldValue = trackingMode
-            UserDefaults.standard.set(newValue.rawValue, forKey: "io.rover.TrackingMode")
+            userDefaults.set(newValue.rawValue, forKey: "io.rover.TrackingMode")
             
             os_log("Privacy tracking mode changed from %s to %s", log: .general, type: .info, oldValue.rawValue, newValue.rawValue)
             

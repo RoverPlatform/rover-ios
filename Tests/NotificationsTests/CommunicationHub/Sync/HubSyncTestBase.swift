@@ -31,11 +31,16 @@ class HubSyncTestBase: XCTestCase {
     var seenWatermark: InboxSeenWatermark!
     var mockUserInfoManager: MockUserInfoManager!
 
+    /// Storage mode for `testContainer`. In-memory by default — it needs no files and no
+    /// cleanup — but overridable, so a subclass can put the same fixtures on the SQLite store
+    /// the SDK actually ships with.
+    class var containerStorage: InboxPersistentContainer.Storage { .inMemory }
+
     override func setUp() async throws {
         try await super.setUp()
         URLProtocolMock.reset()
         URLProtocol.registerClass(URLProtocolMock.self)
-        testContainer = InboxPersistentContainer(storage: .inMemory)
+        testContainer = InboxPersistentContainer(storage: Self.containerStorage)
         UserDefaults(suiteName: Self.watermarkSuiteName)?
             .removePersistentDomain(forName: Self.watermarkSuiteName)
         seenWatermark = InboxSeenWatermark(userDefaults: UserDefaults(suiteName: Self.watermarkSuiteName)!)

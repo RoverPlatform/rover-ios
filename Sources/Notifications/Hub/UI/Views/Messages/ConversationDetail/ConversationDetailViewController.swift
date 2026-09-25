@@ -58,6 +58,9 @@ struct ConversationCollectionViewRepresentable: UIViewControllerRepresentable {
     /// The SwiftUI parent provides this closure from its `@Environment(\.replySync)`.
     let onLoadOlderMessages: @Sendable () async -> Void
     let onSend: (String) -> Void
+    /// The screen's policy for a tapped reply link; installed on every bubble cell,
+    /// since `UIHostingConfiguration` content does not inherit this view's environment.
+    let onOpenURL: (URL) -> OpenURLAction.Result
 
     func makeCoordinator() -> ConversationScrollCoordinator {
         scrollCoordinator
@@ -69,7 +72,8 @@ struct ConversationCollectionViewRepresentable: UIViewControllerRepresentable {
             container: container,
             conversationScrollCoordinator: scrollCoordinator,
             onLoadOlderMessages: onLoadOlderMessages,
-            onSend: onSend
+            onSend: onSend,
+            onOpenURL: onOpenURL
         )
         context.coordinator.viewController = vc
 
@@ -92,7 +96,11 @@ struct ConversationCollectionViewRepresentable: UIViewControllerRepresentable {
     }
 
     func updateUIViewController(_ uiViewController: ConversationCollectionViewController, context: Context) {
-        // No dynamic updates needed — the FRC drives all content changes.
+        // The FRC drives all content changes. The link policy is the one input that
+        // can change after creation: the surface's `\.hubDismissThenOpen` is published
+        // in the hosting controller's `viewWillAppear`, which may run after
+        // `makeUIViewController` captured a policy that still saw nothing to dismiss.
+        uiViewController.onOpenURL = onOpenURL
     }
 }
 
@@ -114,6 +122,16 @@ final class ConversationCollectionViewController: UIViewController {
     private let onLoadOlderMessages: @Sendable () async -> Void
     /// Called when the user submits a message. Provided by the SwiftUI parent.
     private let onSend: (String) -> Void
+    /// Called when the user taps a link in a reply. Provided by the SwiftUI parent;
+    /// `nil` (tests) leaves the system behaviour. Settable because the parent's
+    /// policy changes after this controller exists: a standalone
+    /// `ShowConversationHostingController` publishes its dismiss-then-open handler in
+    /// `viewWillAppear`, after `makeUIViewController` has already run, so
+    /// `updateUIViewController` re-threads the closure and the cells (which read the
+    /// manager's copy at tap time) pick it up.
+    var onOpenURL: ((URL) -> OpenURLAction.Result)? {
+        didSet { collectionViewManager.onOpenURL = onOpenURL }
+    }
 
     // Hosted ComposerView — pinned to keyboardLayoutGuide.topAnchor.
     private var composerHostingController: UIHostingController<ComposerView>?
@@ -168,6 +186,7 @@ final class ConversationCollectionViewController: UIViewController {
         conversationScrollCoordinator: ConversationScrollCoordinator,
         onLoadOlderMessages: @escaping @Sendable () async -> Void,
         onSend: @escaping (String) -> Void,
+        onOpenURL: ((URL) -> OpenURLAction.Result)? = nil,
         collectionViewManager: ReplyCollectionViewManaging? = nil
     ) {
         self.conversationID = conversationID
@@ -175,6 +194,7 @@ final class ConversationCollectionViewController: UIViewController {
         self.conversationScrollCoordinator = conversationScrollCoordinator
         self.onLoadOlderMessages = onLoadOlderMessages
         self.onSend = onSend
+        self.onOpenURL = onOpenURL
         let manager = collectionViewManager ?? ReplyCollectionViewManager()
         self.collectionViewManager = manager
         self.scrollCoordinator = ScrollCoordinator(
@@ -239,6 +259,7 @@ final class ConversationCollectionViewController: UIViewController {
         collectionViewManager.onImageTap = { [weak self] url, sourceView in
             self?.presentFullScreenImage(url: url, sourceView: sourceView)
         }
+        collectionViewManager.onOpenURL = onOpenURL
 
         // Perform the initial FRC fetch synchronously so data is ready before viewDidLayoutSubviews.
         frc.delegate = self

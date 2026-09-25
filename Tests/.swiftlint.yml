@@ -5,4 +5,9 @@ disabled_rules:
    - function_body_length
    - file_length
    - closure_body_length
-   
+   # Implicitly unwrapped optionals are the standard XCTest fixture pattern (`var sut: Thing!`).
+   - implicitly_unwrapped_optional
+   # Test fixtures convert known-good Data to String; the failable-initializer dance adds nothing.
+   - non_optional_string_data_conversion
+   # XCUIElementQuery has `count` but no `isEmpty`, so UI tests cannot satisfy this rule.
+   - empty_count

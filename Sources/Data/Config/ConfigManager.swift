@@ -24,8 +24,27 @@ import os.log
 public class ConfigManager: ObservableObject {
     /// The currently active configuration.
     ///
-    /// Returns the backend configuration if available, otherwise returns default values.
+    /// Returns the backend configuration if available, otherwise returns default values,
+    /// with any Bench overrides applied on top.
     @Published public private(set) var config: RoverConfig
+
+    /// The configuration exactly as the backend provided it, before overrides.
+    ///
+    /// This — never the overridden value — is what gets persisted.
+    private var backendConfig: RoverConfig
+
+    /// In-memory overrides layered over `backendConfig` on every publish.
+    ///
+    /// Held here rather than in the Bench app so that a backend re-sync cannot wash
+    /// them away. Setting them re-publishes immediately.
+    @_spi(BenchSupport)
+    public var overrides = RoverConfigOverrides() {
+        didSet {
+            guard overrides != oldValue else { return }
+            config = overrides.applied(to: backendConfig)
+            os_log("Config overrides applied", log: .config, type: .debug)
+        }
+    }
 
     private let userDefaults: UserDefaults
 
@@ -38,17 +57,20 @@ public class ConfigManager: ObservableObject {
     /// - Parameter userDefaults: The UserDefaults instance to use for persistence.
     public init(userDefaults: UserDefaults) {
         self.userDefaults = userDefaults
-        self.config = Self.loadBackendConfig(from: userDefaults) ?? RoverConfig()
+        self.backendConfig = Self.loadBackendConfig(from: userDefaults) ?? RoverConfig()
+        self.config = self.backendConfig
     }
 
     /// Updates the configuration from the backend.
     ///
-    /// Saves the provided configuration and activates it immediately.
+    /// Saves the provided configuration and activates it immediately, with any
+    /// overrides applied over top.
     ///
     /// - Parameter newConfig: The configuration received from the backend.
     public func updateFromBackend(_ newConfig: RoverConfig) {
         saveBackendConfig(newConfig)
-        config = newConfig
+        backendConfig = newConfig
+        config = overrides.applied(to: newConfig)
         os_log("Backend config saved and activated", log: .config, type: .debug)
     }
 

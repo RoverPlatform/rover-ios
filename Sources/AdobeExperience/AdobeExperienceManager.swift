@@ -18,25 +18,18 @@ import os.log
 import RoverFoundation
 import RoverData
 
-class AdobeExperienceManager: AdobeExperienceAuthorizer, PrivacyListener {
+class AdobeExperienceManager: AdobeExperienceAuthorizer {
     private let userInfoManager: UserInfoManager
-    private let privacyService: PrivacyService
     
     private var ecid = PersistedValue<String>(storageKey: "io.rover.AdobeExperience")
     
-    init(userInfoManager: UserInfoManager, privacyService: PrivacyService) {
+    init(userInfoManager: UserInfoManager) {
         self.userInfoManager = userInfoManager
-        self.privacyService = privacyService
     }
 
 // MARK: AdobeMobileAuthorizer
     
     func setECID(_ ecid: String) {
-        guard privacyService.trackingMode == .default else {
-            os_log("Adobe Experience ECID set while privacy is in anonymous/anonymized mode, ignored", log: .AdobeExperience, type: .info)
-            return
-        }
-        
         self.ecid.value = ecid
         
         self.userInfoManager.updateUserInfo { userInfo in
@@ -50,15 +43,6 @@ class AdobeExperienceManager: AdobeExperienceAuthorizer, PrivacyListener {
         self.ecid.value = nil
         self.userInfoManager.updateUserInfo { userInfo in
             userInfo.rawValue["ecid"] = nil
-        }
-    }
-    
-    // MARK: Privacy
-    
-    func trackingModeDidChange(_ trackingMode: PrivacyService.TrackingMode) {
-        if(trackingMode != .default) {
-            os_log("Tracking disabled, Adobe Experience Platform data cleared", log: .AdobeExperience)
-            clearCredentials()
         }
     }
 }

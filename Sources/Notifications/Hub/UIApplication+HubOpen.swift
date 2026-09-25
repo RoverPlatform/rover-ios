@@ -14,23 +14,22 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import UIKit
+import os.log
 
-/// Delegate for `interactivePopGestureRecognizer` that begins the edge swipe
-/// whenever the stack has something to pop and no transition is already running.
-/// Owning the delegate (rather than relying on the system's) is the plan's
-/// mitigation for the gesture going inert in hybrid stacks with per-item bar
-/// appearances, so both conditions are re-checked here.
-@MainActor
-final class PopGestureAssist: NSObject, UIGestureRecognizerDelegate {
-    weak var navigationController: UINavigationController?
-
-    nonisolated func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        MainActor.assumeIsolated {
-            guard let navigationController else {
-                return false
+extension UIApplication {
+    /// Opens `url` and logs a failure to the Hub OSLog category — the single
+    /// logging-open path shared by the Hub's dismiss-then-open handlers, so a
+    /// genuinely-failed open is never silent.
+    func openLoggingHubFailure(_ url: URL) {
+        open(url) { success in
+            if !success {
+                os_log(
+                    "openURL failed to open %{private}@",
+                    log: .hub,
+                    type: .error,
+                    url.absoluteString
+                )
             }
-            return navigationController.viewControllers.count > 1
-                && navigationController.transitionCoordinator == nil
         }
     }
 }

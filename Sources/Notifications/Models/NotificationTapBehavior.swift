@@ -14,6 +14,7 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import Foundation
+import os.log
 
 public enum NotificationTapBehavior: Equatable {
     case openApp
@@ -44,11 +45,27 @@ extension NotificationTapBehavior: Codable {
             self = .openApp
         case "OpenURLNotificationTapBehavior":
             let container = try decoder.container(keyedBy: OpenURLKeys.self)
-            let url = try container.decode(URL.self, forKey: .url)
+            guard let url = Self.lenientURL(from: container, forKey: .url) else {
+                os_log(
+                    "OpenURLNotificationTapBehavior has a missing or invalid URL; falling back to opening the app.",
+                    log: .notifications,
+                    type: .error
+                )
+                self = .openApp
+                return
+            }
             self = .openURL(url: url)
         case "PresentWebsiteNotificationTapBehavior":
             let container = try decoder.container(keyedBy: PresentWebsiteKeys.self)
-            let url = try container.decode(URL.self, forKey: .url)
+            guard let url = Self.lenientURL(from: container, forKey: .url) else {
+                os_log(
+                    "PresentWebsiteNotificationTapBehavior has a missing or invalid URL; falling back to opening the app.",
+                    log: .notifications,
+                    type: .error
+                )
+                self = .openApp
+                return
+            }
             self = .presentWebsite(url: url)
         default:
             throw DecodingError.dataCorruptedError(
@@ -58,6 +75,23 @@ extension NotificationTapBehavior: Codable {
                     "Expected one of OpenAppNotificationTapBehavior, OpenURLNotificationTapBehavior or PresentWebsiteNotificationTapBehavior – found \(typeName)"
             )
         }
+    }
+
+    /// Leniently decodes the tap behavior's URL, returning nil when the value is missing, null,
+    /// blank, or not a parseable URL — instead of failing the whole ``Notification`` decode.
+    /// Callers fall back to ``openApp`` so the notification is still displayed, opens the app
+    /// when tapped, and sends its "Notification Opened" event (SDK-344).
+    private static func lenientURL<Keys: CodingKey>(
+        from container: KeyedDecodingContainer<Keys>,
+        forKey key: Keys
+    ) -> URL? {
+        guard
+            let urlString = try? container.decodeIfPresent(String.self, forKey: key),
+            let url = URL(string: urlString.trimmingCharacters(in: .whitespacesAndNewlines))
+        else {
+            return nil
+        }
+        return url
     }
 
     public func encode(to encoder: Encoder) throws {

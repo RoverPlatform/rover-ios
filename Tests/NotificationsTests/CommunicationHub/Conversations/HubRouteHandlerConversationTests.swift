@@ -170,6 +170,9 @@ final class HubRouteHandlerConversationTests: XCTestCase {
         let coordinator = makeCoordinator(inboxEnabled: inboxEnabled, deeplink: deeplink)
         return HubRouteHandler(
             coordinator: coordinator,
+            // The test host has no URL schemes registered, so the real canOpenURL default
+            // would veto every configured deep link.
+            deepLinkOpenabilityCheck: { _ in true },
             presentPostActionProvider: { _ in nil },
             navigateToPostActionProvider: { _ in nil },
             presentConversationActionProvider: { [weak self] uuid in

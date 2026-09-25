@@ -10,59 +10,76 @@ let package = Package(
     products: [
         .library(
             name: "RoverFoundation",
-            targets: ["RoverFoundation"]),
+            targets: ["RoverFoundation"]
+        ),
         .library(
             name: "RoverData",
-            targets: ["RoverData"]),
+            targets: ["RoverData"]
+        ),
         .library(
             name: "RoverUI",
-            targets: ["RoverUI"]),
+            targets: ["RoverUI"]
+        ),
         .library(
             name: "RoverExperiences",
-            targets: ["RoverExperiences"]),
+            targets: ["RoverExperiences"]
+        ),
         .library(
             name: "RoverNotifications",
-            targets: ["RoverNotifications"]),
+            targets: ["RoverNotifications"]
+        ),
         .library(
             name: "RoverLocation",
-            targets: ["RoverLocation"]),
+            targets: ["RoverLocation"]
+        ),
         .library(
             name: "RoverDebug",
-            targets: ["RoverDebug"]),
+            targets: ["RoverDebug"]
+        ),
         .library(
             name: "RoverTelephony",
-            targets: ["RoverTelephony"]),
+            targets: ["RoverTelephony"]
+        ),
         .library(
             name: "RoverTicketmaster",
-            targets: ["RoverTicketmaster"]),
+            targets: ["RoverTicketmaster"]
+        ),
         .library(
             name: "RoverSeatGeek",
-            targets: ["RoverSeatGeek"]),
+            targets: ["RoverSeatGeek"]
+        ),
         .library(
             name: "RoverAxs",
-            targets: ["RoverAxs"]),
+            targets: ["RoverAxs"]
+        ),
         .library(
             name: "RoverAdobeExperience",
-            targets: ["RoverAdobeExperience"]),
+            targets: ["RoverAdobeExperience"]
+        ),
         .library(
             name: "RoverAppExtensions",
-            targets: ["RoverAppExtensions"]),
+            targets: ["RoverAppExtensions"]
+        ),
         .library(
             name: "RoverLiveActivities",
-            targets: ["RoverLiveActivities"]),
+            targets: ["RoverLiveActivities"]
+        ),
         .library(
             name: "RoverNBALiveActivities",
-            targets: ["RoverNBALiveActivities"]),
+            targets: ["RoverNBALiveActivities"]
+        ),
         .library(
             name: "RoverNFLLiveActivities",
-            targets: ["RoverNFLLiveActivities"]),
+            targets: ["RoverNFLLiveActivities"]
+        ),
         .library(
             name: "RoverNHLLiveActivities",
-            targets: ["RoverNHLLiveActivities"]),
+            targets: ["RoverNHLLiveActivities"]
+        )
     ],
     dependencies: [
         .package(url: "https://github.com/weichsel/ZIPFoundation", .upToNextMinor(from: "0.9.19")),
-        .package(url: "https://github.com/ticketmaster/iOS-TicketmasterSDK.git", .upToNextMajor(from: "1.7.0")),
+        .package(url: "https://github.com/ticketmaster/iOS-TicketmasterSDK.git", .upToNextMajor(from: "1.7.0"))
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -71,161 +88,197 @@ let package = Package(
             name: "RoverFoundation",
             dependencies: [],
             path: "Sources/Foundation",
-            resources: [.copy("Resources/PrivacyInfo.xcprivacy")]),
+            resources: [.copy("Resources/PrivacyInfo.xcprivacy")]
+        ),
         .target(
             name: "RoverData",
             dependencies: ["RoverFoundation"],
             path: "Sources/Data",
-            resources: [.copy("Resources/PrivacyInfo.xcprivacy")]),
+            resources: [.copy("Resources/PrivacyInfo.xcprivacy")]
+        ),
         .target(
             name: "RoverUI",
             dependencies: ["RoverData"],
             path: "Sources/UI",
-            resources: [.copy("Resources/PrivacyInfo.xcprivacy")]),
+            resources: [.copy("Resources/PrivacyInfo.xcprivacy")]
+        ),
         .target(
             name: "RoverAppExtensions",
             dependencies: ["RoverFoundation"],
-            path: "Sources/AppExtensions"),
+            path: "Sources/AppExtensions"
+        ),
         .target(
             name: "RoverDebug",
             dependencies: ["RoverUI"],
-            path: "Sources/Debug"),
+            path: "Sources/Debug"
+        ),
         .target(
             name: "RoverExperiences",
             dependencies: ["RoverUI", "RoverFoundation", "RoverData", "ZIPFoundation"],
             path: "Sources/Experiences",
-            resources: [.copy("Resources/PrivacyInfo.xcprivacy")]),
+            resources: [.copy("Resources/PrivacyInfo.xcprivacy")]
+        ),
         .target(
             name: "RoverLocation",
             dependencies: ["RoverData"],
             path: "Sources/Location",
-            resources: [.copy("Resources/PrivacyInfo.xcprivacy")]),
+            resources: [.copy("Resources/PrivacyInfo.xcprivacy")]
+        ),
         .target(
             name: "RoverNotifications",
             dependencies: ["RoverData", "RoverUI", "RoverExperiences"],
             path: "Sources/Notifications",
-            resources: [.copy("Resources/PrivacyInfo.xcprivacy")]),
+            resources: [.copy("Resources/PrivacyInfo.xcprivacy")]
+        ),
         .target(
             name: "RoverTelephony",
             dependencies: ["RoverData"],
             path: "Sources/Telephony",
-            resources: [.copy("Resources/PrivacyInfo.xcprivacy")]),
+            resources: [.copy("Resources/PrivacyInfo.xcprivacy")]
+        ),
         .target(
             name: "RoverTicketmaster",
             dependencies: [
                 "RoverData",
                 .product(
                     name: "TicketmasterFoundation",
-                    package: "iOS-TicketmasterSDK"),
+                    package: "iOS-TicketmasterSDK"
+                ),
                 .product(
                     name: "TicketmasterAuthentication",
-                    package: "iOS-TicketmasterSDK"),
+                    package: "iOS-TicketmasterSDK"
+                ),
                 .product(
                     name: "TicketmasterSecureEntry",
-                    package: "iOS-TicketmasterSDK"),
+                    package: "iOS-TicketmasterSDK"
+                ),
                 .product(
                     name: "TicketmasterTickets",
-                    package: "iOS-TicketmasterSDK"),
+                    package: "iOS-TicketmasterSDK"
+                ),
                 .product(
                     name: "TicketmasterDiscoveryAPI",
-                    package: "iOS-TicketmasterSDK"),
+                    package: "iOS-TicketmasterSDK"
+                ),
                 .product(
                     name: "TicketmasterPurchase",
-                    package: "iOS-TicketmasterSDK"),
+                    package: "iOS-TicketmasterSDK"
+                ),
                 .product(
                     name: "TicketmasterSwiftProtobuf",
-                    package: "iOS-TicketmasterSDK"),
+                    package: "iOS-TicketmasterSDK"
+                )
             ],
             path: "Sources/Ticketmaster",
-            resources: [.copy("Resources/PrivacyInfo.xcprivacy")]),
+            resources: [.copy("Resources/PrivacyInfo.xcprivacy")]
+        ),
         .target(
             name: "RoverSeatGeek",
             dependencies: ["RoverData"],
             path: "Sources/SeatGeek",
-            resources: [.copy("Resources/PrivacyInfo.xcprivacy")]),
+            resources: [.copy("Resources/PrivacyInfo.xcprivacy")]
+        ),
         .target(
             name: "RoverAxs",
             dependencies: ["RoverData"],
             path: "Sources/AXS",
-            resources: [.copy("Resources/PrivacyInfo.xcprivacy")]),
+            resources: [.copy("Resources/PrivacyInfo.xcprivacy")]
+        ),
         .target(
             name: "RoverAdobeExperience",
             dependencies: ["RoverData"],
             path: "Sources/AdobeExperience",
-            resources: [.copy("Resources/PrivacyInfo.xcprivacy")]),
+            resources: [.copy("Resources/PrivacyInfo.xcprivacy")]
+        ),
         .target(
             name: "RoverLiveActivities",
             dependencies: ["RoverData"],
             path: "Sources/LiveActivities",
-            resources: [.copy("Resources/PrivacyInfo.xcprivacy")]),
+            resources: [.copy("Resources/PrivacyInfo.xcprivacy")]
+        ),
         .target(
             name: "RoverNBALiveActivities",
             path: "Sources/NBALiveActivities",
             resources: [
                 .process("Resources/Assets.xcassets"),
-                .copy("Resources/PrivacyInfo.xcprivacy"),
+                .copy("Resources/PrivacyInfo.xcprivacy")
 
-            ]),
+            ]
+        ),
         .target(
             name: "RoverNFLLiveActivities",
             path: "Sources/NFLLiveActivities",
             resources: [
                 .process("Resources/Assets.xcassets"),
-                .copy("Resources/PrivacyInfo.xcprivacy"),
+                .copy("Resources/PrivacyInfo.xcprivacy")
 
-            ]),
+            ]
+        ),
         .target(
             name: "RoverNHLLiveActivities",
             path: "Sources/NHLLiveActivities",
             resources: [
                 .process("Resources/Assets.xcassets"),
-                .copy("Resources/PrivacyInfo.xcprivacy"),
-            ]),
+                .copy("Resources/PrivacyInfo.xcprivacy")
+            ]
+        ),
         // Test targets
         .testTarget(
             name: "RoverFoundationTests",
             dependencies: ["RoverFoundation"],
-            path: "Tests/FoundationTests"),
+            path: "Tests/FoundationTests"
+        ),
         .testTarget(
             name: "RoverDataTests",
             dependencies: ["RoverData"],
-            path: "Tests/DataTests"),
+            path: "Tests/DataTests"
+        ),
         .testTarget(
             name: "RoverUITests",
             dependencies: ["RoverUI"],
-            path: "Tests/UITests"),
+            path: "Tests/UITests"
+        ),
         .testTarget(
             name: "RoverAppExtensionsTests",
             dependencies: ["RoverAppExtensions"],
-            path: "Tests/AppExtensionsTests"),
+            path: "Tests/AppExtensionsTests"
+        ),
         .testTarget(
             name: "RoverDebugTests",
             dependencies: ["RoverDebug"],
-            path: "Tests/DebugTests"),
+            path: "Tests/DebugTests"
+        ),
         .testTarget(
             name: "RoverExperiencesTests",
             dependencies: ["RoverExperiences", "RoverData"],
-            path: "Tests/ExperiencesTests"),
+            path: "Tests/ExperiencesTests",
+            resources: [.copy("Fixtures/Roboto-Regular.ttf")]
+        ),
         .testTarget(
             name: "RoverLocationTests",
             dependencies: ["RoverLocation"],
             path: "Tests/LocationTests",
-            sources: ["RoverLocationConcurrencyTests.swift"]),
+            sources: ["RoverLocationConcurrencyTests.swift"]
+        ),
         .testTarget(
             name: "RoverNotificationsTests",
             dependencies: ["RoverNotifications", "RoverData"],
-            path: "Tests/NotificationsTests"),
+            path: "Tests/NotificationsTests"
+        ),
         .testTarget(
             name: "RoverTelephonyTests",
             dependencies: ["RoverTelephony"],
-            path: "Tests/TelephonyTests"),
+            path: "Tests/TelephonyTests"
+        ),
         .testTarget(
             name: "RoverTicketmasterTests",
             dependencies: ["RoverTicketmaster"],
-            path: "Tests/TicketmasterTests"),
+            path: "Tests/TicketmasterTests"
+        ),
         .testTarget(
             name: "RoverLiveActivitiesTests",
             dependencies: ["RoverLiveActivities", "RoverData"],
-            path: "Tests/LiveActivitiesTests"),
+            path: "Tests/LiveActivitiesTests"
+        )
     ]
 )

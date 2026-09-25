@@ -29,6 +29,7 @@ struct MessagesView: View {
     // Tracks whether the inbox is the view on screen, so the backgrounding hook below only fires
     // while it actually is — scenePhase changes are delivered to every live view.
     @State private var isVisible = false
+    @State private var searchTokens: [HubSearchToken] = []
     @State private var pollingTask: Task<Void, Never>?
     @State private var backfillTask: Task<Void, Never>?
     // Stored as @State rather than a computed var to avoid re-sorting on every render.
@@ -41,30 +42,70 @@ struct MessagesView: View {
     @FetchRequest private var conversations: FetchedResults<Conversation>
 
     private let title: String
+    // `.inlineLarge` puts the title in the bar's leading slot, and iOS 26 folds any
+    // leading toolbar item into a trailing overflow menu to make room. A caller that
+    // installs a leading item (the modal Hub's close button) passes `.inline` instead.
+    private let titleDisplayMode: ToolbarTitleDisplayMode
 
-    init(navigationPath: Binding<NavigationPath>, title: String? = nil) {
+    init(
+        navigationPath: Binding<NavigationPath>,
+        title: String? = nil,
+        titleDisplayMode: ToolbarTitleDisplayMode = .inlineLarge
+    ) {
         _posts = FetchRequest(fetchRequest: InboxPersistentContainer.fetchPosts())
         _conversations = FetchRequest(fetchRequest: InboxPersistentContainer.fetchConversations())
         _navigationPath = navigationPath
         self.title = title ?? "Messages"
+        self.titleDisplayMode = titleDisplayMode
     }
 
     var body: some View {
+        let suggestions = suggestedTokens
         List {
-            ForEach(filteredItems) { item in
-                switch item {
-                case .post(let post):
-                    PostRowView(post: post, navigationPath: $navigationPath)
-                case .conversation(let conversation):
-                    ConversationRowView(conversation: conversation, navigationPath: $navigationPath)
+            // Suggestions render inside the list (rather than via
+            // .searchSuggestions) so token suggestions and matching results
+            // stay visible together, the way Mail presents Top Hits
+            // alongside Suggestions.
+            if !suggestions.isEmpty {
+                Section("Suggestions") {
+                    ForEach(suggestions) { token in
+                        Button {
+                            searchTokens = [token]
+                            searchText = ""
+                        } label: {
+                            HStack(spacing: 12) {
+                                suggestionImage(for: token)
+                                Text(token.name)
+                            }
+                        }
+                    }
+                }
+            }
+            Section {
+                ForEach(filteredItems) { item in
+                    switch item {
+                    case .post(let post):
+                        PostRowView(post: post, navigationPath: $navigationPath)
+                    case .conversation(let conversation):
+                        ConversationRowView(conversation: conversation, navigationPath: $navigationPath)
+                    }
+                }
+            } header: {
+                // A results header only when the suggestions section is
+                // visible, so hub items don't read as belonging to the last
+                // suggested contact or subscription.
+                if !suggestions.isEmpty {
+                    Text("Results")
                 }
             }
         }
         .refreshable { await refreshHub() }
         .listStyle(.plain)
         .navigationTitle(title)
-        .toolbarTitleDisplayMode(.inlineLarge)
-        .searchable(text: $searchText)
+        .toolbarTitleDisplayMode(titleDisplayMode)
+        .modifier(
+            SearchTokenModifier(searchText: $searchText, searchTokens: $searchTokens)
+        )
         .onAppear {
             startSync()
             isVisible = true
@@ -137,16 +178,27 @@ struct MessagesView: View {
     }
 
     var filteredItems: [HubItem] {
-        guard !searchText.isEmpty else { return sortedItems }
-        return sortedItems.filter { item in
-            switch item {
-            case .post(let p):
-                return p.subject?.localizedCaseInsensitiveContains(searchText) == true
-                    || p.previewText?.localizedCaseInsensitiveContains(searchText) == true
-            case .conversation(let c):
-                return c.subject?.localizedCaseInsensitiveContains(searchText) == true
-                    || c.lastReplyPreview?.localizedCaseInsensitiveContains(searchText) == true
-            }
+        HubSearchFilter.filter(
+            items: sortedItems,
+            searchText: searchText,
+            token: searchTokens.first
+        )
+    }
+
+    private var suggestedTokens: [HubSearchToken] {
+        guard searchTokens.isEmpty else { return [] }
+        return HubSearchFilter.suggestions(items: sortedItems, searchText: searchText)
+    }
+
+    /// The same imagery the message rows use, so a suggestion previews
+    /// exactly what its results will look like.
+    @ViewBuilder
+    private func suggestionImage(for token: HubSearchToken) -> some View {
+        switch token {
+        case .subscription:
+            LogoView(url: token.imageURL, size: 32)
+        case .sender:
+            AvatarView(url: token.imageURL, name: token.name, size: 32)
         }
     }
 

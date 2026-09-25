@@ -18,6 +18,7 @@
 		4FBB82EC28FF56F90052F3D9 /* RoverUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4FBB82EB28FF56F90052F3D9 /* RoverUI */; };
 		4FBB82EE28FF5E8B0052F3D9 /* RoverAppExtensions in Frameworks */ = {isa = PBXBuildFile; productRef = 4FBB82ED28FF5E8B0052F3D9 /* RoverAppExtensions */; };
 		DB637A3E2278F93C00F0E791 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB637A3D2278F93C00F0E791 /* AppDelegate.swift */; };
+		5C4D426A0000000000000002 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C4D426A0000000000000001 /* SceneDelegate.swift */; };
 		DB637A402278F93C00F0E791 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB637A3F2278F93C00F0E791 /* ViewController.swift */; };
 		DB637A432278F93C00F0E791 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DB637A412278F93C00F0E791 /* Main.storyboard */; };
 		DB637A452278F93E00F0E791 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DB637A442278F93E00F0E791 /* Assets.xcassets */; };
@@ -54,6 +55,7 @@
 		4FA8431429727F5E00FCD2FE /* rover-ios-develop */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "rover-ios-develop"; path = ..; sourceTree = "<group>"; };
 		DB637A3A2278F93C00F0E791 /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB637A3D2278F93C00F0E791 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		5C4D426A0000000000000001 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		DB637A3F2278F93C00F0E791 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		DB637A422278F93C00F0E791 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		DB637A442278F93E00F0E791 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -127,6 +129,7 @@
 			children = (
 				DB637A6E2279018B00F0E791 /* Example.entitlements */,
 				DB637A3D2278F93C00F0E791 /* AppDelegate.swift */,
+				5C4D426A0000000000000001 /* SceneDelegate.swift */,
 				DB637A3F2278F93C00F0E791 /* ViewController.swift */,
 				DB637A412278F93C00F0E791 /* Main.storyboard */,
 				DB637A442278F93E00F0E791 /* Assets.xcassets */,
@@ -286,6 +289,7 @@
 			files = (
 				DB637A402278F93C00F0E791 /* ViewController.swift in Sources */,
 				DB637A3E2278F93C00F0E791 /* AppDelegate.swift in Sources */,
+				5C4D426A0000000000000002 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

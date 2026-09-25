@@ -27,6 +27,7 @@ struct PostDetailView: View {
     @Environment(\.postSync) private var postSync
     @Environment(\.dismiss) private var dismiss
     @Environment(\.isPresented) private var isPresented
+    @Environment(\.hubDismissThenOpen) private var dismissThenOpen
     @State private var post: Post?
     @State private var presentingURL: ModalLinkURL?
     @State private var isLoadingOverlay: Bool = false
@@ -177,12 +178,17 @@ struct PostDetailView: View {
 
         trackPostLinkClicked(url: url)
 
-        if scheme == "http" || scheme == "https" {
+        switch HubLinkOpenClassifier.live.decide(url, canDismiss: dismissThenOpen != nil) {
+        case .presentInAppBrowser:
             // Use ModalBrowser (SFSafariViewController) for HTTP/HTTPS URLs
             presentingURL = ModalLinkURL(url: url)
-        } else {
-            // Use system's URL opening for safe schemes (mailto:, tel:, sms:, etc.)
-            UIApplication.shared.open(url)
+        case .dismissThenOpen:
+            // A deep link into this app from a modally presented surface: the
+            // destination would otherwise land behind the modal (SDK-425).
+            dismissThenOpen?(url)
+        case .openInPlace:
+            // Rover links, mailto:, tel:, sms:, other apps, or nothing to dismiss.
+            UIApplication.shared.openLoggingHubFailure(url)
         }
     }
 

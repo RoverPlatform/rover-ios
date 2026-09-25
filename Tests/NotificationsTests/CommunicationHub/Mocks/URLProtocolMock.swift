@@ -27,6 +27,44 @@ class URLProtocolMock: URLProtocol {
     private static var handlers: [(URLRequest) -> MockResponse?] = []
     private static var callLog: [URLRequest] = []
     private static var networkLatency: TimeInterval = 0
+    private static var arrivalBarrier: ArrivalBarrier?
+
+    /// Withholds stubbed responses until a quota of requests has arrived, so a test about
+    /// concurrent requests can state "both are in flight" as a fact rather than infer it from a
+    /// delay. Its mutable counters are only ever touched inside `queue`; the semaphore is what
+    /// callers wait on, and it is waited on off that queue.
+    private final class ArrivalBarrier {
+        let required: Int
+        private let semaphore = DispatchSemaphore(value: 0)
+        var arrived = 0
+        var isOpen = false
+        /// Set when a waiter gave up, so a test whose premise never held fails loudly instead of
+        /// quietly degrading to the delay-shaped behaviour this barrier replaced.
+        var didTimeOut = false
+
+        init(required: Int) {
+            self.required = required
+        }
+
+        /// Releases every waiter the quota accounts for. Called under `queue`, and idempotent, so
+        /// that opening a barrier that has already met its quota — which `reset()` does on the way
+        /// out of every test that used one — adds no surplus credits to the semaphore.
+        func open() {
+            guard !isOpen else { return }
+            isOpen = true
+            for _ in 0..<required {
+                semaphore.signal()
+            }
+        }
+
+        /// Blocks the calling thread — never a `queue` thread — until the quota is met.
+        func waitUntilOpen() {
+            guard semaphore.wait(timeout: .now() + 5) == .success else {
+                URLProtocolMock.queue.sync(flags: .barrier) { didTimeOut = true }
+                return
+            }
+        }
+    }
 
     // MARK: - Response Configuration
 
@@ -44,6 +82,54 @@ class URLProtocolMock: URLProtocol {
             handlers.removeAll()
             callLog.removeAll()
             networkLatency = 0
+            // Release anything still waiting before dropping the barrier, so a test that ended
+            // before its quota arrived hands its parked workers their response now rather than
+            // leaving them to sit out the full timeout on a barrier no test can see any more.
+            arrivalBarrier?.open()
+            arrivalBarrier = nil
+        }
+    }
+
+    /// Withholds every stubbed response until `count` requests have matched a stub, then releases
+    /// them together. Use it where a test needs several requests genuinely in flight at once: a
+    /// response delay only makes that likely, whereas this makes it a precondition of any response
+    /// being sent at all. Requests arriving after the quota is met are not held.
+    ///
+    /// Waiters give up after 5 seconds and let their response through, so a quota that never
+    /// arrives surfaces as `didTimeOutWaitingForSimultaneousRequests` — assert on it — rather than
+    /// as a hung test. Cleared by `reset()`.
+    ///
+    /// A quota below 1 would hold the first arrival against a barrier nothing can open, so it is
+    /// rejected outright rather than spent as a five-second timeout.
+    static func requireSimultaneousRequests(_ count: Int) {
+        precondition(count >= 1, "requireSimultaneousRequests needs a quota of at least 1, got \(count)")
+        queue.sync(flags: .barrier) {
+            // Replacing a barrier that never met its quota would strand its waiters on an object
+            // no longer reachable from `didTimeOutWaitingForSimultaneousRequests`, so their
+            // timeouts would go unreported. Let them through first.
+            arrivalBarrier?.open()
+            arrivalBarrier = ArrivalBarrier(required: count)
+        }
+    }
+
+    /// True if a request gave up waiting for `requireSimultaneousRequests(_:)`'s quota. A test that
+    /// set a barrier should assert this is false; otherwise its concurrency premise did not hold
+    /// and whatever it went on to observe was observed under different conditions.
+    static var didTimeOutWaitingForSimultaneousRequests: Bool {
+        queue.sync { arrivalBarrier?.didTimeOut ?? false }
+    }
+
+    /// Counts this request against the barrier and hands back the barrier it must wait on, or nil
+    /// if there is nothing to wait for. Called synchronously from `startLoading` so the count
+    /// reflects requests that have actually started; the waiting deliberately happens elsewhere.
+    private static func noteArrivalAgainstBarrier() -> ArrivalBarrier? {
+        queue.sync(flags: .barrier) {
+            guard let barrier = arrivalBarrier, !barrier.isOpen else { return nil }
+            barrier.arrived += 1
+            if barrier.arrived >= barrier.required {
+                barrier.open()
+            }
+            return barrier
         }
     }
 
@@ -102,10 +188,17 @@ class URLProtocolMock: URLProtocol {
 
         // Process the response
         if let mockResponse = response {
+            // Count this request against any simultaneity barrier, and get back what to wait on.
+            // Noted here, synchronously, so the count reflects requests that have really started —
+            // but never waited on here: `startLoading` may share a queue with other requests, and
+            // blocking it could stop the very request the barrier is waiting for from arriving.
+            let barrier = URLProtocolMock.noteArrivalAgainstBarrier()
+
             // Simulate network latency if configured
             let totalDelay = delay + mockResponse.delay
-            if totalDelay > 0 {
+            if totalDelay > 0 || barrier != nil {
                 DispatchQueue.global().asyncAfter(deadline: .now() + totalDelay) {
+                    barrier?.waitUntilOpen()
                     self.sendResponse(mockResponse)
                 }
             } else {

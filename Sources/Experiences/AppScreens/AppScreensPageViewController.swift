@@ -28,7 +28,7 @@ import WebKit
 /// (used before a session's web view is attached); a host with a web view drives
 /// `reveal()` once the runtime reports content has painted.
 @MainActor
-final class AppScreenHostViewController: UIViewController {
+final class AppScreensPageViewController: UIViewController {
     /// How long a screen may show plain background before the skeleton shimmer
     /// appears. Warm pushes hydrate in tens of milliseconds and never reach it;
     /// only genuinely slow (cold / first-ever) loads do.
@@ -46,18 +46,22 @@ final class AppScreenHostViewController: UIViewController {
     private var didReveal = false
     private var failureView: UIView?
 
-    /// Invoked when this screen is popped off its navigation stack (not on
-    /// dismissal of the whole stack). The navigator uses it to free or repurpose
-    /// the session's web view.
-    var onPopped: (() -> Void)?
-
     /// Invoked every time this screen becomes visible (its `viewDidAppear`). The
-    /// navigator uses it to fire a *deferred* recovery: when an occluded (on-stack
+    /// navigator uses it to emit the screen's "App Screen Viewed" analytics event —
+    /// so a pop back to an already-loaded screen counts as a view, and a prewarmed
+    /// session (which has no view controller at all) never counts as one — and to
+    /// fire a *deferred* recovery: when an occluded (on-stack
     /// but not top) session's WebContent process dies, its runtime cannot boot
     /// off-screen, so recovery is postponed and run here, once the screen is on top
-    /// again. Fires on the initial appear too; the navigator no-ops unless the
-    /// session is flagged for recovery.
+    /// again. Fires on the initial appear too; the recovery half no-ops unless the
+    /// session is flagged for it.
     var onBecameVisible: (() -> Void)?
+
+    /// Whether this host is currently on-screen: set `true` in `viewDidAppear`
+    /// and `false` in `viewDidDisappear`. Path-independent — unlike checking
+    /// `navigationController?.topViewController`, it stays correct even without
+    /// an owning `UINavigationController` in the hierarchy.
+    package var isVisible = false
 
     init(
         webView: WKWebView?,
@@ -122,6 +126,7 @@ final class AppScreenHostViewController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        isVisible = true
         // Fires on the initial push and on every re-appear (e.g. popping back to
         // this screen). The navigator only acts on it when this session was flagged
         // for a deferred recovery while occluded.
@@ -130,9 +135,7 @@ final class AppScreenHostViewController: UIViewController {
 
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        if isMovingFromParent {
-            onPopped?()
-        }
+        isVisible = false
     }
 
     /// Fades the skeleton shimmer in after the grace period, unless content

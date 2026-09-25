@@ -15,7 +15,7 @@
 
 import XCTest
 
-@testable import RoverData
+@_spi(BenchSupport) @testable import RoverData
 
 final class HomeViewManagerTests: XCTestCase {
 
@@ -477,6 +477,110 @@ final class HomeViewManagerTests: XCTestCase {
         XCTAssertNotNil(components.queryItems?.first?.value)
     }
 
+    func testConcurrentFetchesShareOneRequest() async {
+        let fetchCount = Counter()
+        let json = """
+            { "experienceURL": "https://new.rover.io/experience" }
+            """.data(using: .utf8)!
+
+        URLProtocolStub.requestHandler = { request in
+            fetchCount.increment()
+            // Hold the request open long enough for the second caller to arrive.
+            Thread.sleep(forTimeInterval: 0.1)
+            let response = HTTPURLResponse(
+                url: request.url!,
+                statusCode: 200,
+                httpVersion: nil,
+                headerFields: nil
+            )!
+            return (response, json)
+        }
+
+        let manager = await MainActor.run {
+            HomeViewManager(httpClient: httpClient, userDefaults: userDefaults, userInfoManager: mockUserInfoManager)
+        }
+
+        async let first: Void = manager.fetch()
+        async let second: Void = manager.fetch()
+        _ = await (first, second)
+
+        XCTAssertEqual(fetchCount.value, 1, "The second caller joins the request already in flight")
+
+        // The next fetch is a fresh request, not the finished one.
+        await manager.fetch()
+        XCTAssertEqual(fetchCount.value, 2)
+    }
+
+    // MARK: - Override Tests
+
+    func testOverrideAppliesImmediatelyAndSurvivesFetch() async {
+        let overrideURL = URL(string: "https://override.rover.io/experience")!
+        seedCache(experienceURL: URL(string: "https://cached.rover.io/experience"))
+
+        let json = """
+            { "experienceURL": "https://fetched.rover.io/experience" }
+            """.data(using: .utf8)!
+
+        URLProtocolStub.requestHandler = { request in
+            let response = HTTPURLResponse(
+                url: request.url!,
+                statusCode: 200,
+                httpVersion: nil,
+                headerFields: nil
+            )!
+            return (response, json)
+        }
+
+        let manager = await MainActor.run {
+            let manager = HomeViewManager(
+                httpClient: httpClient,
+                userDefaults: userDefaults,
+                userInfoManager: mockUserInfoManager
+            )
+            manager.experienceURLOverride = .value(overrideURL)
+            XCTAssertEqual(manager.experienceURL, overrideURL)
+            return manager
+        }
+
+        await manager.fetch()
+
+        let url = await MainActor.run { manager.experienceURL }
+        XCTAssertEqual(url, overrideURL)
+
+        // The backend value is what gets cached, never the override.
+        XCTAssertEqual(loadCachedResponse()?.experienceURL, URL(string: "https://fetched.rover.io/experience"))
+    }
+
+    func testUnsetOverrideClearsExperienceURL() async {
+        seedCache(experienceURL: URL(string: "https://cached.rover.io/experience"))
+
+        let manager = await MainActor.run {
+            HomeViewManager(httpClient: httpClient, userDefaults: userDefaults, userInfoManager: mockUserInfoManager)
+        }
+
+        await MainActor.run { manager.experienceURLOverride = .unset }
+
+        let url = await MainActor.run { manager.experienceURL }
+        XCTAssertNil(url)
+    }
+
+    func testClearingOverrideRestoresFetchedURL() async {
+        let cachedURL = URL(string: "https://cached.rover.io/experience")!
+        seedCache(experienceURL: cachedURL)
+
+        let manager = await MainActor.run {
+            HomeViewManager(httpClient: httpClient, userDefaults: userDefaults, userInfoManager: mockUserInfoManager)
+        }
+
+        await MainActor.run {
+            manager.experienceURLOverride = .value(URL(string: "https://override.rover.io/experience")!)
+            manager.experienceURLOverride = .noOverride
+        }
+
+        let url = await MainActor.run { manager.experienceURL }
+        XCTAssertEqual(url, cachedURL)
+    }
+
     // MARK: - Helpers
 
     /// Encodes a HomeViewResponse and stores it in the test UserDefaults using the production cache key.
@@ -490,5 +594,19 @@ final class HomeViewManagerTests: XCTestCase {
     private func loadCachedResponse() -> HomeViewResponse? {
         guard let data = userDefaults.data(forKey: "io.rover.homeView.response") else { return nil }
         return try? JSONDecoder().decode(HomeViewResponse.self, from: data)
+    }
+}
+
+/// A counter safe to bump from the URLSession worker thread the stub answers on.
+private final class Counter: @unchecked Sendable {
+    private let lock = NSLock()
+    private var count = 0
+
+    var value: Int {
+        lock.withLock { count }
+    }
+
+    func increment() {
+        lock.withLock { count += 1 }
     }
 }

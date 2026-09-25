@@ -32,12 +32,26 @@ public struct CommunicationHubView: View {
     /// `UIHostingController<CommunicationHubView>` specialization must be preserved —
     /// customers may name that exact type — so the wiring is copied here on purpose. See
     /// [[HubView]] for the canonical implementation this mirrors.
-    @ObservedObject private var presentation: HubPresentationState
+    @ObservedObject private(set) var presentation: HubPresentationState
 
     public init() {
         // A bare `CommunicationHubView()` owns its own state, whose dismissal handler
         // stays `nil` — non-dismissable, no close chrome, exactly like `HubView()`.
         self.presentation = HubPresentationState()
+    }
+
+    /// Creates the Rover Hub view for modal presentation, such as in a SwiftUI sheet.
+    /// Use this overload (`onDismissButtonPressed` provided) when presenting the Hub
+    /// modally. The Hub will include a close button that will call back to
+    /// `onDismissButtonPressed`.
+    ///
+    /// - Parameter onDismissButtonPressed: Supply a closure that will be called when
+    ///   the button is pressed. If this closure is not provided, then no close button
+    ///   will appear.
+    public init(onDismissButtonPressed: (() -> Void)?) {
+        let presentation = HubPresentationState()
+        presentation.onDismissButtonPressed = onDismissButtonPressed
+        self.presentation = presentation
     }
 
     public init(

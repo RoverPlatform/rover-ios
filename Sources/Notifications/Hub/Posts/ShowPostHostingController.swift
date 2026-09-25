@@ -18,20 +18,37 @@ import SwiftUI
 import UIKit
 
 public class ShowPostHostingController: UIHostingController<AnyView> {
+    /// Whether a link in the post may dismiss this presentation before opening;
+    /// resolved in `viewWillAppear`, once it is known if this controller is presented.
+    private let presentation: HubDetailPresentationState
+
     public init(postID: String?) {
-        super.init(rootView: AnyView(ShowPostView(postID: postID)))
+        let presentation = HubDetailPresentationState()
+        self.presentation = presentation
+        super.init(rootView: AnyView(ShowPostView(postID: postID, presentation: presentation)))
     }
 
     @MainActor required dynamic init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    override public func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        presentation.update(for: self)
     }
 }
 
 private struct ShowPostView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.isPresented) private var isPresented
+    @ObservedObject var presentation: HubDetailPresentationState
     @State private var showAlert: Bool = false
     let postID: String?
+
+    init(postID: String?, presentation: HubDetailPresentationState) {
+        self.postID = postID
+        self.presentation = presentation
+    }
 
     var body: some View {
         NavigationView {
@@ -55,6 +72,7 @@ private struct ShowPostView: View {
         .environment(\.hubContainer, Rover.shared.resolve(InboxPersistentContainer.self)!)
         .environment(\.eventQueue, Rover.shared.eventQueue)
         .environment(\.postSync, Rover.shared.resolve(PostSync.self)!)
+        .environment(\.hubDismissThenOpen, presentation.dismissThenOpen)
         .optionalColorScheme(colorScheme)
     }
 

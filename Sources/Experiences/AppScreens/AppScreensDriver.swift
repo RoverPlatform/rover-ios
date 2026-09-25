@@ -14,7 +14,6 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import RoverData
-import SafariServices
 import UIKit
 import WebKit
 import os.log
@@ -33,9 +32,15 @@ import os.log
 /// `show()` payload for a visible session; tear down an idle warm one) build on
 /// the same machinery.
 @MainActor
-final class AppScreensNavigator: NSObject {
+final class AppScreensDriver: NSObject {
     let httpClient: HTTPClient
     private let configManager: ConfigManager
+
+    /// The SDK event queue that "App Screen Viewed" / "App Screen Link Clicked"
+    /// analytics events are posted to. Optional so the many tests that exercise only
+    /// navigation and hosting can build a navigator without standing one up; the
+    /// assembler always injects the real queue.
+    private let eventQueue: EventQueue?
 
     /// The app's associated domains, lowercased for case-insensitive host
     /// comparison. Every bridge-driven navigation target and prewarm candidate must
@@ -52,7 +57,7 @@ final class AppScreensNavigator: NSObject {
     /// stored here — they are tracked separately in ``rootSessions`` so two
     /// concurrent presentations of the same template never evict one another from
     /// this shared, single-slot pool. A root demoted at presentation end
-    /// (``releaseRootPresentation(_:)``) may be moved *into* this pool as an
+    /// (``releaseRootSession(_:)``) may be moved *into* this pool as an
     /// off-stack reusable session when its slot is free.
     var sessions: [String: AppScreenSession] = [:]
 
@@ -62,7 +67,7 @@ final class AppScreensNavigator: NSObject {
     /// single warm session per template: two scenes (or two presentations) showing
     /// the same `/a/home` must each keep their own live root, and neither may evict
     /// the other from ``liveSession(for:)``. A root leaves this list only when its
-    /// owning presentation ends (``releaseRootPresentation(_:)``), which either
+    /// owning presentation ends (``releaseRootSession(_:)``), which either
     /// demotes it into ``sessions`` as an off-stack reusable session or tears it
     /// down. Mirrors ``ephemeralSessions`` in shape.
     var rootSessions: [AppScreenSession] = []
@@ -104,6 +109,79 @@ final class AppScreensNavigator: NSObject {
     /// this holds at most one entry per distinct template over the session.
     var prewarmWorkerTasks: [Task<Void, Never>] = []
 
+    /// Holds ``PendingNavigation`` records between `navigate`'s resolve (which
+    /// enqueues) and ``makeHost(flow:address:targetRequest:navigating:)``'s render-time
+    /// claim. The navigator owns the single instance both sides share; `package` (not
+    /// `private`) only so `AppScreenMakeHostTests` can enqueue directly without a
+    /// bespoke test-only seam.
+    package let pendingNavigations = AppScreenPendingNavigationStore()
+
+    /// Live sessions grouped by the ``AppScreensToken`` that owns them, populated by
+    /// ``makeRootHost(flow:url:navigating:onDismiss:onOpenURL:)`` and
+    /// ``makeHost(flow:address:targetRequest:navigating:)`` as each screen in a flow
+    /// renders. Keyed secondarily by ``ObjectIdentifier`` so the same session is never
+    /// double-registered under its flow. Consumed by ``release(_:)``. `private(set)`:
+    /// all mutation stays inside this file; the internal getter only exists so
+    /// `AppScreenRootFlowTests` can assert the registry is purged after release
+    /// (via `@testable import`), without a bespoke test-only seam.
+    private(set) var sessionsByToken: [AppScreensToken: [ObjectIdentifier: AppScreenSession]] = [:]
+
+    /// Per-flow injected external-URL open handlers (the completion-capable
+    /// dismiss-then-open the owner controls). Keyed by flow token: the Hub root flow and
+    /// every sheet flow of that experience register the SAME owner handler, so an
+    /// `openURL` posted by any of them resolves by the posting session's `token`
+    /// without walking UIKit ancestry. Cleared by `release`. `private(set)`: mutation
+    /// stays in this file (via `registerOpenHandler`/`release`); the internal getter
+    /// only exists so `AppScreenFlowHostTests` can assert teardown (via `@testable import`).
+    private(set) var openHandlersByToken: [AppScreensToken: (URL, Bool) -> Void] = [:]
+
+    /// Opens an external/deep-link URL through the OS. Injectable so tests can assert
+    /// the never-silently-drop fallback without invoking UIKit. The default preserves the
+    /// prior completion-based failure logging.
+    var systemURLOpener: (URL) -> Void = { url in
+        UIApplication.shared.open(url) { success in
+            if !success {
+                os_log(
+                    "openURL failed to open %{private}@",
+                    log: .appScreens,
+                    type: .error,
+                    url.absoluteString
+                )
+            }
+        }
+    }
+
+    /// Schedules the reset of `openInFlight`. Injectable for deterministic tests.
+    var scheduleInFlightReset: (@escaping () -> Void) -> Void = { work in
+        Task { @MainActor in work() }
+    }
+
+    /// The session most recently reported as an "App Screen Viewed", **per flow**, so
+    /// the sheet-dismissal reveal never re-reports a screen the appearance path
+    /// already counted. Keyed by flow because ``rootSessions`` explicitly supports
+    /// concurrent presentations (two scenes on iPad, or a standalone presentation over
+    /// an embedded Hub home): a view in one flow must not suppress the reveal in
+    /// another. Identity only — no session is retained.
+    private var lastViewedSessionIdentityByFlow: [AppScreensToken: ObjectIdentifier] = [:]
+
+    /// The flow that presented each sheet flow, recorded when `navigate` mints the
+    /// sheet's token. On dismissal this is what scopes the reveal accounting to the
+    /// stack the sheet was covering, rather than searching process-wide and finding
+    /// another flow's visible screen. Nested sheets chain through it. Cleared with the
+    /// sheet flow in ``release(_:)``.
+    private var presentingFlowBySheetFlow: [AppScreensToken: AppScreensToken] = [:]
+
+    /// The deferred reveal check ``release(_:)`` schedules when a sheet flow is torn
+    /// down without an `onDismiss` behind it, keyed by the sheet flow it speaks for.
+    /// Held so it can be awaited (``drainPendingDismissalFallbacks()``) rather than
+    /// waited *at*; each task clears its own entry as it runs.
+    private var pendingDismissalFallbacks: [AppScreensToken: Task<Void, Never>] = [:]
+
+    /// Guards against a single bridge burst dispatching `openURL {dismiss:true}` twice
+    /// near-simultaneously (double `open`). Not a completion-accurate mutex — a genuinely
+    /// later deep link (after reset) proceeds.
+    private var openInFlight = false
+
     #if DEBUG
         /// TEST HOOK (DEBUG only): when the host process is launched with
         /// `-appScreensDisablePrewarm`, `links`-hint prewarming is skipped. Lets a
@@ -113,30 +191,6 @@ final class AppScreensNavigator: NSObject {
         let prewarmDisabledForTesting =
             ProcessInfo.processInfo.arguments.contains("-appScreensDisablePrewarm")
     #endif
-
-    /// Owns the `interactivePopGestureRecognizer` delegate for the App Screens
-    /// navigation controller so the edge-swipe-to-pop begins whenever the stack has
-    /// something to pop and no transition is in flight — the system delegate has
-    /// been observed leaving the gesture inert in hybrid (web content + per-item
-    /// bar appearance) stacks. Installed once per navigation controller.
-    private let popGestureAssist = PopGestureAssist()
-
-    /// The App Screens sheets the navigator has presented, tracked so a navigation
-    /// reset can find and dismiss the ones a given child navigation controller
-    /// opened. A sheet presents `.pageSheet` from the window's presentation context,
-    /// so the child nav's `presentedViewController` is `nil` while a sheet is up —
-    /// there is no other way to reach them. Both references are weak, so a sheet
-    /// dismissed through the normal swipe/xmark path deallocates and its record
-    /// compacts away. `origin` is the navigation controller the sheet was presented
-    /// from — the child nav for a top-level sheet, or the outer sheet's own nav for a
-    /// sheet-from-sheet, which gives `popToRoot` transitive reach across nesting.
-    private var presentedSheets: [PresentedSheetRecord] = []
-
-    /// A weak (sheet, origin) pair retained in `presentedSheets`.
-    private struct PresentedSheetRecord {
-        weak var sheet: UINavigationController?
-        weak var origin: UINavigationController?
-    }
 
     /// Forwards `WKScriptMessageHandler` callbacks weakly so a web view's content
     /// controller never retains the navigator.
@@ -168,10 +222,16 @@ final class AppScreensNavigator: NSObject {
     static let showTimeout: Double = 12
     private static let jsonTimeout: Double = 12
 
-    init(httpClient: HTTPClient, configManager: ConfigManager, associatedDomains: [String]) {
+    init(
+        httpClient: HTTPClient,
+        configManager: ConfigManager,
+        associatedDomains: [String],
+        eventQueue: EventQueue?
+    ) {
         self.httpClient = httpClient
         self.configManager = configManager
         self.associatedDomains = Set(associatedDomains.map { $0.lowercased() })
+        self.eventQueue = eventQueue
 
         let cacheDirectory = FileManager.default
             .urls(for: .cachesDirectory, in: .userDomainMask)
@@ -226,22 +286,16 @@ final class AppScreensNavigator: NSObject {
         }
     }
 
-    /// Vends the root host view controller for an App Screens entry URL. The
-    /// caller (`ExperienceViewController`) wraps it in a child
-    /// `UINavigationController`; this navigator pushes subsequent screens onto
-    /// `rootHost.navigationController`.
-    func makeRootViewController(
+    /// Builds the session + host for the App Screens root-hosting entry point,
+    /// marks the session on-stack, applies the dismiss/open-URL overrides, and wires
+    /// host callbacks. Stops short of starting the master pipeline and of the
+    /// flow-token bookkeeping ``makeRootHost(flow:url:navigating:onDismiss:onOpenURL:)``
+    /// does after calling this.
+    private func buildRootSession(
         for url: URL,
-        onDismissButtonPressed: (() -> Void)? = nil,
-        onOpenURL: ((URL) -> Void)? = nil
-    ) -> UIViewController {
-        os_log(
-            "Creating App Screens root host for %{public}@",
-            log: .appScreens,
-            type: .info,
-            url.absoluteString
-        )
-
+        onDismissButtonPressed: (() -> Void)?,
+        onOpenURL: ((URL) -> Void)?
+    ) -> (session: AppScreenSession, host: AppScreensPageViewController) {
         // The entry URL is pre-gated upstream (ExperienceViewController normalizes +
         // domain-checks), so `templateKey` succeeds in practice; the fallback stays
         // origin-qualified so even a contract-violating non-`/a/` entry can never
@@ -259,7 +313,7 @@ final class AppScreensNavigator: NSObject {
         // whole presentation. It is tracked in `rootSessions`, NOT the keyed
         // `sessions` pool: a second concurrent presentation of the same template
         // must not evict this one from `liveSession(for:)`. Its owning
-        // presentation releases it via `releaseRootPresentation(_:)`.
+        // presentation releases it via `releaseRootSession(_:)`.
         session.documentURL = url
         session.isOnStack = true
         // Host overrides for external links, set only on the root session: the
@@ -271,7 +325,7 @@ final class AppScreensNavigator: NSObject {
         session.onOpenURL = onOpenURL
         rootSessions.append(session)
 
-        let host = AppScreenHostViewController(
+        let host = AppScreensPageViewController(
             webView: webView,
             screenBackground: screenBackground,
             showsSkeleton: true
@@ -279,29 +333,54 @@ final class AppScreensNavigator: NSObject {
         session.hostViewController = host
         // The root can be occluded by a pushed detail; wire its visibility callback
         // so a recovery deferred while occluded fires when the user pops back to it.
-        // `onPopped` never fires for the root under normal dismissal (it is dismissed
-        // with its containing navigation controller, which removes no view controller
-        // from a stack) — its teardown is driven by `releaseRootPresentation(_:)`,
-        // invoked by the owning `ExperienceViewController` when the presentation ends.
+        // The root's teardown is driven by ``release(_:)``.
         wireHostCallbacks(to: host, for: session)
+
+        return (session, host)
+    }
+
+    /// Vends the flow-scoped root host view controller for an App Screens entry URL,
+    /// for SwiftUI hosting: builds the root session/host via
+    /// ``buildRootSession(for:onDismissButtonPressed:onOpenURL:)``, additionally
+    /// stamping the owning ``AppScreensToken`` and ``AppScreensNavigating``
+    /// coordinator on the session and registering it in ``sessionsByToken`` so
+    /// ``release(_:)`` can find and release it later without any UIKit
+    /// navigation controller to walk. Called by the view for the `.root` role —
+    /// never inferred from record absence the way pushed screens are.
+    package func makeRootHost(
+        token: AppScreensToken,
+        url: URL,
+        navigating: AppScreensNavigating,
+        onDismiss: (() -> Void)?,
+        onOpenURL: ((URL) -> Void)?,
+        onOpenExternalURL: ((URL, Bool) -> Void)? = nil
+    ) -> UIViewController {
+        os_log(
+            "Creating flow-scoped App Screens root host for %{public}@",
+            log: .appScreens,
+            type: .info,
+            url.absoluteString
+        )
+
+        let (session, host) = buildRootSession(
+            for: url,
+            onDismissButtonPressed: onDismiss,
+            onOpenURL: onOpenURL
+        )
+        session.token = token
+        session.navigating = navigating
+        sessionsByToken[token, default: [:]][ObjectIdentifier(session)] = session
+        registerOpenHandler(onOpenExternalURL, for: token)
 
         runMasterPipeline(entryURL: url, session: session, host: host)
         return host
     }
 
-    /// Updates the live root session's `onDismissButtonPressed` in place, keyed by its
-    /// root host. A Hub only learns it is presented modally *after* its root loads
-    /// (the hosting relationship is established at `HubHostingController.viewWillAppear`),
-    /// so the handler that drives the `openURL { dismiss: true }` teardown flips from
-    /// `nil` to a real closure then; this lets that flip reach the already-created root
-    /// session without recreating the session or its web view. Idempotent / no-op when
-    /// `rootHost` owns no live root session (a non-App-Screens experience, or one
-    /// already released).
-    func setRootDismissHandler(for rootHost: UIViewController, onDismissButtonPressed: (() -> Void)?) {
-        guard let session = rootSessions.first(where: { $0.hostViewController === rootHost }) else {
-            return
-        }
-        session.onDismissButtonPressed = onDismissButtonPressed
+    /// Registers (or, with `nil`, clears) the owner's dismiss-then-open handler for a
+    /// flow. Called by `makeRootHost` for the root flow and by `AppScreensSheetHostView`
+    /// for each sheet flow.
+    package func registerOpenHandler(_ handler: ((URL, Bool) -> Void)?, for token: AppScreensToken) {
+        openHandlersByToken[token] = handler
     }
 
     // MARK: - Master pipeline
@@ -313,7 +392,7 @@ final class AppScreensNavigator: NSObject {
     private func runMasterPipeline(
         entryURL: URL,
         session: AppScreenSession,
-        host: AppScreenHostViewController
+        host: AppScreensPageViewController
     ) {
         session.state = .loadingDocument
         session.runtimeDidLoad = false
@@ -497,6 +576,96 @@ final class AppScreensNavigator: NSObject {
         }
     }
 
+    // MARK: - Analytics
+
+    /// Posts an App Screens analytics event to the SDK event queue. A navigator
+    /// built without a queue (tests) silently records nothing.
+    private func track(_ event: EventInfo) {
+        guard let eventQueue else {
+            return
+        }
+        os_log(
+            "tracking %{public}@",
+            log: .appScreens,
+            type: .debug,
+            event.name
+        )
+        eventQueue.addEvent(event)
+    }
+
+    /// Emits "App Screen Link Clicked" for a tap that resolved to `linkURL` on
+    /// `source`'s screen. The event does not record which bridge message carried the
+    /// tap — a click is a click, whether it navigated, opened externally, or
+    /// presented a website. No-ops when the posting session has no document URL (it
+    /// has no screen identity to report), which the callers' own resolution guards
+    /// already rule out in practice.
+    ///
+    /// An off-stack source records nothing. A popped-but-warm or prewarming session
+    /// keeps its bridge alive and can post a late message, and a tap on a screen the
+    /// user is no longer looking at is not a click.
+    ///
+    /// For `navigate` the message itself is dropped upstream of this, so the gate here
+    /// is redundant for that path. For `openExternalURL` and `presentWebsite` it is
+    /// analytics-only: an off-stack source still opens the link or presents the site,
+    /// and only the event is withheld. That is a known divergence from Android, whose
+    /// `AppScreenNavigator.handlerForActivePresentation` drops all three messages
+    /// before the action — tracked as SDK-462
+    /// (https://linear.app/rover/issue/SDK-462), not left open here.
+    private func trackLinkClicked(from source: AppScreenSession, linkURL: URL) {
+        guard let screenURL = source.documentURL, Self.visibility(of: source) != .offStack else {
+            return
+        }
+        track(.appScreenLinkClicked(screenURL: screenURL, linkURL: linkURL))
+    }
+
+    /// Emits "App Screen Viewed" for `session` and remembers it as the last screen
+    /// reported **in its own flow**, so the sheet-dismissal reveal below cannot report
+    /// it twice.
+    private func trackViewed(of session: AppScreenSession) {
+        guard let screenURL = session.documentURL else {
+            return
+        }
+        if let token = session.token {
+            lastViewedSessionIdentityByFlow[token] = ObjectIdentifier(session)
+        }
+        track(.appScreenViewed(screenURL: screenURL))
+    }
+
+    /// Emits "App Screen Viewed" for the screen a dismissed sheet just exposed, within
+    /// `presentingFlow` — the flow the sheet was presented over.
+    ///
+    /// A page sheet never made the stack underneath it disappear, so revealing it
+    /// delivers no `viewDidAppear` and the appearance path above cannot see it. This
+    /// is the reveal's only signal (the analogue of Android's `onSheetDismissed`),
+    /// called from ``release(_:)`` once the sheet flow is torn down.
+    ///
+    /// Scoped to one flow on purpose. ``rootSessions`` supports concurrent
+    /// presentations, so a process-wide search would find two visible screens whenever
+    /// two flows are on screen (iPad multi-scene, or a standalone presentation over an
+    /// embedded Hub home) and the fail-closed rule would then silently drop every
+    /// reveal. Within the flow, exactly one screen is visible.
+    ///
+    /// Fail-closed within that flow: it reports the single session that reads
+    /// `.visible`, and if the dismissal has not settled — nothing visible yet, or
+    /// more than one candidate — it reports nothing rather than guessing. A missing
+    /// view is a better failure than a wrong one. The identity check covers the
+    /// other direction: if a presentation style *did* deliver `viewDidAppear` to the
+    /// revealed screen, that path already reported it and this one stays quiet. The
+    /// flow's entry is cleared when the sheet is presented, so the check only ever
+    /// speaks to the reveal, never to a view from before the sheet covered it.
+    func trackScreenExposedByDismissal(inFlowOf presentingFlow: AppScreensToken) {
+        let flowSessions = sessionsByToken[presentingFlow].map { Array($0.values) } ?? []
+        let exposed = flowSessions.filter { Self.visibility(of: $0) == .visible }
+        guard
+            exposed.count == 1,
+            let session = exposed.first,
+            ObjectIdentifier(session) != lastViewedSessionIdentityByFlow[presentingFlow]
+        else {
+            return
+        }
+        trackViewed(of: session)
+    }
+
     // MARK: - Message routing
 
     /// Routes a decoded bridge message to its owning session (matched by web view
@@ -589,18 +758,181 @@ final class AppScreensNavigator: NSObject {
         return prewarmingSessions.first(where: { $0.webView === webView })
     }
 
+    // MARK: - Render-time host creation
+
+    /// Claims the ``PendingNavigation`` `navigate` queued for `(flow, address)`, builds
+    /// its ``AppScreensPageViewController``, and starts the load pipeline. This is the
+    /// render-time half of the SwiftUI cutover: `navigate` resolves a tap into a
+    /// session + URL and enqueues that resolution well before `NavigationStack`
+    /// materializes the destination view; this is that materialization, called only
+    /// for `.pushed` screens (`.root` routes to `makeRootHost` instead, so there is no
+    /// record-absence inference here).
+    ///
+    /// A claim miss is defensive-only (it should never happen on the `.pushed` path,
+    /// since a destination only renders after `navigate` enqueued its record) — it
+    /// logs and returns a minimal placeholder host rather than silently mis-rendering
+    /// or crashing.
+    package func makeHost(
+        token: AppScreensToken,
+        address: AppScreenAddress,
+        targetRequest: URLRequest?,
+        navigating: AppScreensNavigating
+    ) -> UIViewController {
+        guard let record = pendingNavigations.claim(for: address, in: token) else {
+            // No pending record: SwiftUI is materializing a `navigationDestination`
+            // that was NOT reached through `navigate` in this flow — a `.pushed`
+            // destination restored from a shared `NavigationPath` into a freshly
+            // created flow (e.g. presenting the Hub while its tab already pushed a
+            // detail, so the presented flow inherits the tab's path). `navigate`
+            // (which enqueues the pending record) never ran for it, so cold-load the
+            // address into a fresh ephemeral session rather than returning a blank
+            // placeholder host.
+            os_log(
+                "makeHost found no pending navigation for %{public}@ — cold-loading restored destination",
+                log: .appScreens,
+                type: .info,
+                address.url.absoluteString
+            )
+            return makeColdFallbackHost(
+                token: token,
+                address: address,
+                targetRequest: targetRequest,
+                navigating: navigating
+            )
+        }
+
+        // A claimed prewarmed session's web view is currently parented in its
+        // off-screen boot window; release it so the render can reparent the view into
+        // the host. No-op for master/cold/ephemeral sessions.
+        detachFromOffscreenWindow(record.session)
+
+        return attachHost(
+            to: record.session,
+            resolvedURL: record.resolvedURL,
+            optimisticDataJSON: record.optimisticDataJSON,
+            isColdLoad: record.isColdLoad,
+            tapTime: record.tapTime,
+            token: token,
+            navigating: navigating
+        )
+    }
+
+    /// Builds the host for `session`, wires its callbacks, stamps its flow identity,
+    /// registers it in ``sessionsByToken`` so ``release(_:)`` can tear it down, and
+    /// starts the load pipeline. Shared by ``makeHost(flow:address:targetRequest:navigating:)``'s
+    /// claimed-record path and its cold-load fallback.
+    private func attachHost(
+        to session: AppScreenSession,
+        resolvedURL: URL,
+        optimisticDataJSON: String?,
+        isColdLoad: Bool,
+        tapTime: DispatchTime,
+        token: AppScreensToken,
+        navigating: AppScreensNavigating
+    ) -> AppScreensPageViewController {
+        // A reused web view already shows real (previous) content that the next
+        // hydrate morphs in place, so it skips the skeleton; a cold/ephemeral load
+        // shows the skeleton behind its 300 ms grace.
+        let host = AppScreensPageViewController(
+            webView: session.webView,
+            screenBackground: Self.defaultScreenBackground,
+            showsSkeleton: isColdLoad
+        )
+        session.hostViewController = host
+        wireHostCallbacks(to: host, for: session)
+
+        session.navigating = navigating
+        session.token = token
+        sessionsByToken[token, default: [:]][ObjectIdentifier(session)] = session
+
+        runNavigatePipeline(
+            resolvedURL: resolvedURL,
+            optimisticDataJSON: optimisticDataJSON,
+            session: session,
+            host: host,
+            isColdLoad: isColdLoad,
+            tapTime: tapTime
+        )
+
+        return host
+    }
+
+    /// Cold-loads `address` into a fresh **ephemeral** session when ``makeHost`` finds
+    /// no pending record (a destination restored from a shared `NavigationPath` into a
+    /// new flow). An ephemeral session is deliberate: it is isolated from the shared
+    /// warm pool (so it never clobbers a template session the originating flow still
+    /// owns) and is torn down on pop / ``release(_:)``, matching the one-off nature
+    /// of a restored screen. Returns the inert placeholder only if the address cannot
+    /// be keyed (never expected for a valid App Screen address).
+    private func makeColdFallbackHost(
+        token: AppScreensToken,
+        address: AppScreenAddress,
+        targetRequest: URLRequest?,
+        navigating: AppScreensNavigating
+    ) -> UIViewController {
+        let resolvedURL = targetRequest?.url ?? address.url
+        guard let templateKey = Self.templateKey(from: resolvedURL) else {
+            return AppScreensPageViewController(
+                webView: nil,
+                screenBackground: Self.defaultScreenBackground,
+                showsSkeleton: false
+            )
+        }
+
+        let webView = makeWebView(screenBackground: Self.defaultScreenBackground)
+        let session = AppScreenSession(templateKey: templateKey, webView: webView, state: .loadingDocument)
+        session.isEphemeral = true
+        session.documentURL = resolvedURL
+        // On the stack for its whole presentation, mirroring the `.push`/`.sheet`
+        // navigate branches that set this at resolve time.
+        session.isOnStack = true
+        ephemeralSessions.append(session)
+
+        return attachHost(
+            to: session,
+            resolvedURL: resolvedURL,
+            optimisticDataJSON: nil,
+            isColdLoad: true,
+            tapTime: .now(),
+            token: token,
+            navigating: navigating
+        )
+    }
+
     // MARK: - Navigation
 
     /// Handles a `navigate` bridge message: resolves the target, selects/creates a
     /// session, pushes a host immediately (the transition covers the load), arms
     /// the edge-swipe assist, and runs the bounded pipeline.
-    private func navigate(
+    ///
+    /// `package` (not `private`) so `AppScreenNavigatePushTests` can drive it directly
+    /// via `@testable import`, without going through the bridge message handler.
+    package func navigate(
         href: String,
         optimisticDataJSON: String?,
         transition: AppScreenTransition?,
         from source: AppScreenSession
     ) {
         let tapTime = DispatchTime.now()
+
+        // The posting screen must still be on a navigation stack. A popped template
+        // session is kept warm with its web view — and therefore its bridge — alive
+        // (``handlePop(of:)``), and a prewarming session boots a whole runtime
+        // off-screen, so either can post a late `navigate` long after the user left
+        // it. Acting on one would push into whatever presentation is on screen now
+        // and report a tap the user never made on a screen they are no longer
+        // looking at. An `.occluded` source (on the stack, covered by a detail or a
+        // sheet) is deliberately still allowed: it is a live screen the user can
+        // return to, and its runtime may legitimately navigate on their behalf.
+        guard Self.visibility(of: source) != .offStack else {
+            os_log(
+                "Dropping navigate from off-stack session [%{public}@] — its screen is no longer on a navigation stack",
+                log: .appScreens,
+                type: .info,
+                source.templateKey
+            )
+            return
+        }
 
         guard
             let sourceDocumentURL = source.documentURL,
@@ -634,6 +966,9 @@ final class AppScreensNavigator: NSObject {
             return
         }
         let resolvedURL = target.url
+        // Analytics: the tap is a click only now that the target passed the
+        // associated-domain gate above — a rejected navigation is not a click.
+        trackLinkClicked(from: source, linkURL: resolvedURL)
         // The authorized target is a normalized `/a/{template}` https URL, so
         // `templateKey` always resolves; guard defensively rather than force-unwrap.
         // The origin-qualified key (not the bare template path) is the session slot,
@@ -682,67 +1017,75 @@ final class AppScreensNavigator: NSObject {
         }
         session.documentURL = resolvedURL
 
-        guard let webView = session.webView else {
+        guard session.webView != nil else {
             return
         }
-
-        // A claimed prewarmed session's web view is currently parented in its
-        // off-screen boot window; release it so the push can reparent the view into
-        // the host. No-op for master/cold/ephemeral sessions.
-        detachFromOffscreenWindow(session)
-
-        // A reused web view already shows real (previous) content that the next
-        // hydrate morphs in place, so it skips the skeleton; a cold/ephemeral load
-        // shows the skeleton behind its 300 ms grace.
-        let host = AppScreenHostViewController(
-            webView: webView,
-            screenBackground: Self.defaultScreenBackground,
-            showsSkeleton: isColdLoad
-        )
-        session.hostViewController = host
-        wireHostCallbacks(to: host, for: session)
 
         // An absent transition (or an unrecognized value the bridge already mapped
         // to `nil`) defaults to push; only an explicit "sheet" presents modally.
         switch transition ?? .push {
         case .push:
-            guard let navigationController = source.hostViewController?.navigationController else {
-                os_log(
-                    "navigate has no navigation controller to push onto [%{public}@]",
-                    log: .appScreens,
-                    type: .error,
-                    templateKey
-                )
+            guard let address = AppScreenAddress(rawURL: resolvedURL) else {
                 return
             }
-            // Push immediately: the push transition covers the async load underneath.
-            session.isOnStack = true
-            navigationController.pushViewController(host, animated: true)
-            armPopGesture(on: navigationController)
+            if let token = source.token {
+                // New SwiftUI path: defer host creation to `makeHost` via the pending
+                // record. `isOnStack` is set here (not at render time) so a rapid
+                // second `navigate` to the same template sees it and selects
+                // `.ephemeral` rather than reusing the not-yet-rendered session.
+                session.isOnStack = true
+                pendingNavigations.enqueue(
+                    PendingNavigation(
+                        session: session,
+                        resolvedURL: resolvedURL,
+                        optimisticDataJSON: optimisticDataJSON,
+                        isColdLoad: isColdLoad,
+                        tapTime: tapTime
+                    ),
+                    for: address,
+                    in: token
+                )
+                source.navigating?.pushScreen(address: address, targetRequest: URLRequest(url: resolvedURL))
+            }
         case .sheet:
-            guard let sourceHost = source.hostViewController else {
-                os_log(
-                    "navigate has no source host to present a sheet from [%{public}@]",
-                    log: .appScreens,
-                    type: .error,
-                    templateKey
-                )
+            guard let address = AppScreenAddress(rawURL: resolvedURL) else {
                 return
             }
-            // On the stack for its whole presentation, wrapped in its own nav
-            // controller so in-sheet link taps push within the sheet.
-            session.isOnStack = true
-            presentSheet(host: host, from: sourceHost)
+            if let sourceToken = source.token {
+                // A sheet opens a NEW flow, so mint a fresh token for it — but remember
+                // which flow it was presented over, so the dismissal's view accounting
+                // can be scoped to the stack this sheet is covering.
+                let sheetToken = AppScreensToken()
+                presentingFlowBySheetFlow[sheetToken] = sourceToken
+                // The presenting flow's last-reported screen is about to be covered, so
+                // it stops standing for "already counted": when this sheet is dismissed
+                // and that screen is exposed again, it is a new view. Clearing here keeps
+                // the identity check meaning what it says — "the reveal itself was
+                // already reported by an appearance callback" — instead of suppressing
+                // every reveal over a screen that had been seen before the sheet opened.
+                lastViewedSessionIdentityByFlow[sourceToken] = nil
+                // `isOnStack` is set here (not at render time) so a rapid second navigate to
+                // the same template sees it and selects `.ephemeral` rather than reusing the
+                // not-yet-rendered session.
+                session.isOnStack = true
+                pendingNavigations.enqueue(
+                    PendingNavigation(
+                        session: session,
+                        resolvedURL: resolvedURL,
+                        optimisticDataJSON: optimisticDataJSON,
+                        isColdLoad: isColdLoad,
+                        tapTime: tapTime
+                    ),
+                    for: address,
+                    in: sheetToken
+                )
+                source.navigating?.presentSheet(
+                    address: address,
+                    targetRequest: URLRequest(url: resolvedURL),
+                    sheetToken: sheetToken
+                )
+            }
         }
-
-        runNavigatePipeline(
-            resolvedURL: resolvedURL,
-            optimisticDataJSON: optimisticDataJSON,
-            session: session,
-            host: host,
-            isColdLoad: isColdLoad,
-            tapTime: tapTime
-        )
     }
 
     /// The per-navigate async pipeline. Mirrors the master pipeline but adds
@@ -757,7 +1100,7 @@ final class AppScreensNavigator: NSObject {
         resolvedURL: URL,
         optimisticDataJSON: String?,
         session: AppScreenSession,
-        host: AppScreenHostViewController,
+        host: AppScreensPageViewController,
         isColdLoad: Bool,
         tapTime: DispatchTime
     ) {
@@ -1196,37 +1539,19 @@ final class AppScreensNavigator: NSObject {
 
     // MARK: - External links
 
-    /// Finds the root session that ultimately owns `source`, walking out from a
-    /// pushed detail or a sheet-hosted session back to the root of its presentation.
+    /// Finds the root session that ultimately owns `source`.
     ///
-    /// A root session matches directly. A pushed detail shares its root's navigation
-    /// controller, so its root is the session hosting that nav controller's first
-    /// view controller. A sheet-hosted session's nav controller is not the root's, so
-    /// the walk follows each sheet record's `origin` back through however many nested
-    /// sheets until it lands on a nav controller no sheet was presented from — the
-    /// root's — then resolves the root by that nav controller's first view controller.
-    /// Returns `nil` when no root can be reached (e.g. a torn-down host).
+    /// A root session matches directly against `rootSessions`. Returns `nil` when
+    /// `source` is not itself a root (e.g. a torn-down host).
     private func rootSession(owning source: AppScreenSession) -> AppScreenSession? {
-        if rootSessions.contains(where: { $0 === source }) {
-            return source
-        }
-        guard var nav = source.hostViewController?.navigationController else {
-            return nil
-        }
-        // Climb out of any sheet nesting: each sheet's nav controller was presented
-        // from its `origin`, so follow origins until the current nav controller is one
-        // no sheet record was presented from — the root's own navigation controller.
-        while let origin = presentedSheets.first(where: { $0.sheet === nav })?.origin {
-            nav = origin
-        }
-        return rootSessions.first { $0.hostViewController === nav.viewControllers.first }
+        rootSessions.first { $0 === source }
     }
 
     /// Handles an `openURL` bridge message: interprets the href with browser
     /// `<a href>` semantics (WHATWG resolution against the posting document's URL),
     /// hands it to the root's host opener (or the OS), and — when `dismiss` is set —
     /// tears down the enclosing Experience presentation via the host dismissal.
-    private func openExternalURL(href: String, dismiss: Bool, from source: AppScreenSession) {
+    package func openExternalURL(href: String, dismiss: Bool, from source: AppScreenSession) {
         guard
             let documentURL = source.documentURL,
             let url = Self.externalURL(from: href, against: documentURL)
@@ -1247,82 +1572,85 @@ final class AppScreensNavigator: NSObject {
         // pre-dispatch main-frame/origin guard in `handle` already authenticated the
         // sender, so the target is handed on as-is.
 
-        guard let root = rootSession(owning: source) else {
-            os_log(
-                "openURL found no root session for [%{public}@] — dropping %{private}@",
-                log: .appScreens,
-                type: .error,
-                source.templateKey,
-                url.absoluteString
-            )
-            return
-        }
-
-        // The URL hand-off (host override, or the OS as the default opener), factored
-        // out so it can run either immediately or deferred until the enclosing
-        // Experience has finished tearing down.
-        let openTarget = {
-            if let handler = root.onOpenURL {
-                handler(url)
-            } else {
-                UIApplication.shared.open(url) { success in
-                    if !success {
-                        os_log(
-                            "openURL failed to open %{private}@",
-                            log: .appScreens,
-                            type: .error,
-                            url.absoluteString
-                        )
-                    }
-                }
-            }
-        }
-
-        // Without a dismiss, or with no host dismiss registered (e.g. an embedded Hub),
-        // nothing tears down — open immediately.
-        guard dismiss, let onDismiss = root.onDismissButtonPressed else {
-            if dismiss {
+        // Synchronous double-dispatch guard (dismiss:true only). Navigator-wide, not
+        // per-flow: two near-simultaneous DISTINCT dismiss:true deep links in the same
+        // runloop tick collapse to first-wins by design (multi-flow is out of scope).
+        if dismiss {
+            guard !openInFlight else {
                 os_log(
-                    "openURL requested dismiss but no host dismiss is registered; leaving presentation up",
+                    "openURL ignored: a dismiss open is already in flight",
                     log: .appScreens,
                     type: .info
                 )
+                return
             }
-            openTarget()
+            openInFlight = true
+            scheduleInFlightReset { [weak self] in self?.openInFlight = false }
+        }
+
+        // Analytics: emitted after the double-dispatch guard, so a duplicate
+        // `dismiss: true` burst collapsed above is counted once, like the open itself.
+        trackLinkClicked(from: source, linkURL: url)
+
+        // 2b: the owner controls dismiss-then-open. Resolve the injected handler by the
+        // posting session's flow token (works for the root flow and every sheet flow,
+        // none of which share a UIKit navigation controller). When present it fully owns
+        // sequencing; the old transitionCoordinator wait is gone.
+        if let token = source.token, let handler = openHandlersByToken[token] {
+            handler(url, dismiss)
             return
         }
 
-        // Dismiss-THEN-open, sequenced on the dismissal transition (parity with the V2
-        // modern-experiences renderer — see `ExperienceAction.handle` / the
-        // `performDismissExperience` helper in `Action+handler.swift`, which opens the URL
-        // inside the dismissal completion when `dismissExperience` is set). Opening first
-        // races the OS re-delivering a Rover deep-link target back into the app:
-        // `PresentViewAction` resolves a presenter by walking to the top-most presented
-        // view controller — which is still this disappearing host — so UIKit drops the
-        // presentation ("view is not in the window hierarchy") and the target is silently
-        // lost. Waiting on the dismissal completion guarantees the presenter has settled
-        // on the revealed ancestor before we open. Reordering alone is not enough: both
-        // the dismissal and `PresentViewAction` are async, so an immediate open still
-        // lands mid-animation.
-        let dismissingHost = root.hostViewController
-        onDismiss()
-        if let coordinator = dismissingHost?.transitionCoordinator {
-            coordinator.animate(alongsideTransition: nil) { _ in
-                openTarget()
+        // No injected handler (embedded Hub that opted out of onOpenExternalURL): open
+        // in place, no dismiss (today's fallback, minus the transitionCoordinator
+        // sequencing).
+        guard let root = rootSession(owning: source) else {
+            guard dismiss else {
+                // dismiss:false with no handler/root session — preserve prior behavior (drop).
+                os_log(
+                    "openURL found no root session for [%{public}@] — dropping %{private}@",
+                    log: .appScreens,
+                    type: .error,
+                    source.templateKey,
+                    url.absoluteString
+                )
+                return
             }
+            // Never silently drop a deep link (dismiss:true): no handler resolved and no
+            // root session (e.g. an unregistered/sheet source). Open best-effort instead.
+            os_log(
+                "openURL: no handler/root session for [%{public}@] — opening best-effort %{private}@",
+                log: .appScreens,
+                type: .info,
+                source.templateKey,
+                url.absoluteString
+            )
+            systemURLOpener(url)
+            return
+        }
+
+        if dismiss {
+            os_log(
+                "openURL requested dismiss but no injected open handler; opening in place",
+                log: .appScreens,
+                type: .info
+            )
+        }
+
+        if let onOpenURL = root.onOpenURL {
+            onOpenURL(url)
         } else {
-            // No animated dismissal transition in flight (a non-animated teardown, or a
-            // host that resolved its dismissal synchronously) — nothing to wait on.
-            openTarget()
+            systemURLOpener(url)
         }
     }
 
     /// Handles a `presentWebsite` bridge message: interprets the href with browser
-    /// `<a href>` semantics (WHATWG resolution against the posting document's URL),
-    /// coerces it to a Safari-presentable http(s) URL, and presents it in an in-app
-    /// `SFSafariViewController` from the topmost controller above the source host.
-    /// Never overridable by the embedding app.
-    private func presentWebsite(href: String, from source: AppScreenSession) {
+    /// `<a href>` semantics (WHATWG resolution against the posting document's URL) and
+    /// coerces it to a Safari-presentable http(s) URL. The flow-tokened (SwiftUI-hosted)
+    /// source hands the resolved URL up through its `AppScreensNavigating` seam, so the
+    /// presenting screen shows it via `.fullScreenCover` + `SafariView` (parity with
+    /// `ScreenView`). Never overridable by the embedding app.
+    package func presentWebsite(href: String, from source: AppScreenSession) {
         guard
             let documentURL = source.documentURL,
             let url = Self.externalURL(from: href, against: documentURL),
@@ -1337,32 +1665,24 @@ final class AppScreensNavigator: NSObject {
             return
         }
 
-        guard let sourceHost = source.hostViewController else {
-            os_log(
-                "presentWebsite has no source host to present from [%{public}@]",
-                log: .appScreens,
-                type: .error,
-                source.templateKey
-            )
+        // Analytics: the href resolved to a presentable http(s) URL, so the tap is a
+        // click whatever the presentation seam does with it.
+        trackLinkClicked(from: source, linkURL: presentableURL)
+
+        if source.token != nil {
+            // Migrated (SwiftUI-hosted) source: hand the resolved URL up so the presenting
+            // screen shows it via .fullScreenCover + SafariView (parity with ScreenView).
+            source.navigating?.presentWebsite(url: presentableURL)
             return
         }
-
-        let safari = SFSafariViewController(url: presentableURL)
-        Self.topmostPresentedViewController(from: sourceHost).present(safari, animated: true)
     }
 
     // MARK: - Pop semantics
 
-    /// Wires a host's lifecycle callbacks to the navigator: `onPopped` for pop
-    /// teardown, and `onBecameVisible` for firing a deferred recovery once an
-    /// occluded session's screen is on top again.
-    private func wireHostCallbacks(to host: AppScreenHostViewController, for session: AppScreenSession) {
-        host.onPopped = { [weak self, weak session] in
-            guard let self, let session else {
-                return
-            }
-            self.handlePop(of: session)
-        }
+    /// Wires a host's lifecycle callbacks to the navigator: `onBecameVisible` for
+    /// emitting the "App Screen Viewed" analytics event and for firing a deferred
+    /// recovery once an occluded session's screen is on top again.
+    private func wireHostCallbacks(to host: AppScreensPageViewController, for session: AppScreenSession) {
         host.onBecameVisible = { [weak self, weak session] in
             guard let self, let session else {
                 return
@@ -1371,10 +1691,28 @@ final class AppScreensNavigator: NSObject {
         }
     }
 
-    /// Called from the host's `viewDidAppear`. Fires a recovery that was deferred
+    /// Called from the host's `viewDidAppear`. Emits the screen's
+    /// "App Screen Viewed" analytics event, then fires a recovery that was deferred
     /// while the session was occluded (its WebContent process had died off-screen,
-    /// where the runtime cannot boot). No-op on ordinary appearances.
+    /// where the runtime cannot boot). The recovery half is a no-op on ordinary
+    /// appearances; the analytics half runs on every one.
     private func hostBecameVisible(_ session: AppScreenSession) {
+        // Analytics: one "App Screen Viewed" per appearance of the screen the user is
+        // actually looking at. Driven by the host's `viewDidAppear` rather than the
+        // runtime's `loaded` message, so it can never fire for a prewarmed session
+        // (which boots in an off-screen window with no view controller at all), and
+        // an optimistic push reports the href it is already showing.
+        //
+        // `.visible` — not merely "appeared" — is the bar, because a page sheet is a
+        // non-fullscreen presentation: the stack underneath it is never told it
+        // disappeared, so a `navigate` posted by a covered root pushes a destination
+        // that receives `viewDidAppear` while the user is still looking at the sheet.
+        // ``visibility(of:)`` reads that case as `.occluded` (its
+        // `presentedViewController` clause), and an occluded screen has not been seen.
+        if Self.visibility(of: session) == .visible {
+            trackViewed(of: session)
+        }
+
         guard session.needsRecoveryOnAppear else {
             // No deferred recovery pending. If a live session is reappearing (back-pop,
             // sheet dismiss revealing it), refetch+show once — this freshens the stale
@@ -1424,88 +1762,37 @@ final class AppScreensNavigator: NSObject {
         }
     }
 
-    /// Resets an App Screens child navigation stack back to its root host, releasing
-    /// every pushed session (and dismissing any sheets the stack presented) exactly
-    /// as a pop would. Used when the Hub performs a coordinator-driven navigation
-    /// while a detail — and possibly a sheet — is up, so backing out never reveals a
-    /// stale pushed detail.
-    ///
-    /// `popToRootViewController` alone is not enough: ``AppScreenHostViewController``
-    /// fires `onPopped` from `viewDidDisappear` + `isMovingFromParent`, which never
-    /// runs for the *intermediate* hosts a bulk pop-to-root removes (only the
-    /// formerly-visible top disappears). Those sessions would leak stuck
-    /// `isOnStack = true`, which corrupts ``selectSession(hasWarmReady:isOnStack:)``
-    /// — every future navigation to their template would be forced ephemeral. So the
-    /// reset walks the popped hosts explicitly and releases each via `handlePop`. The
-    /// top host may still fire its own `onPopped`; `handlePop` is idempotent per
-    /// session, so the double-fire is harmless.
-    func popToRoot(in navigationController: UINavigationController) {
-        // Dismiss any sheets this stack presented first. A sheet's child nav has no
-        // `presentedViewController` of its own here (it was presented from the
-        // window), so the tracked set is the only handle. Dismiss the outermost
-        // (first-presented) so UIKit tears down everything stacked above it, then
-        // release each set member's sessions (idempotent) and purge them.
-        let sheets = trackedSheets(originatingFrom: navigationController)
-        if let outermost = sheets.first {
-            outermost.dismiss(animated: false)
+    /// The production dismantle-driven pop for `.pushed` screens (see
+    /// ``AppScreensPageRepresentable/dismantleUIViewController(_:coordinator:)``): resolves
+    /// the session hosted by `host`, runs the existing keep-warm-vs-teardown decision via
+    /// ``handlePop(of:)``, and de-registers the session from ``sessionsByToken`` so a
+    /// popped-but-kept-warm session is no longer considered owned by the flow that pushed it.
+    /// A resolution miss (host not found among root/warm/ephemeral sessions) is a no-op —
+    /// this can happen for a plain (non-App-Screen) placeholder host.
+    package func handlePop(forHostedBy host: UIViewController) {
+        guard let appScreenHost = host as? AppScreensPageViewController,
+            let session = liveSession(hostedBy: appScreenHost)
+        else {
+            return
         }
-        for sheet in sheets {
-            handleSheetDismissed(sheet)
+        handlePop(of: session)
+        if let token = session.token {
+            sessionsByToken[token]?[ObjectIdentifier(session)] = nil
         }
-        presentedSheets.removeAll { record in
-            record.sheet == nil || sheets.contains { $0 === record.sheet }
-        }
-
-        let popped = navigationController.popToRootViewController(animated: false) ?? []
-        for case let host as AppScreenHostViewController in popped {
-            guard let session = liveSession(hostedBy: host) else {
-                continue
-            }
-            handlePop(of: session)
-        }
-
-        os_log(
-            "navigation reset — popped %d screen(s), dismissed %d sheet(s)",
-            log: .appScreens,
-            type: .info,
-            popped.count,
-            sheets.count
-        )
     }
 
     /// Tears down a root (entry-point) session whose owning presentation has ended.
-    /// The owning ``ExperienceViewController`` calls this from its `deinit` because
-    /// a root is dismissed *with* its containing navigation controller — no view
-    /// controller is popped off a stack, so ``AppScreenHostViewController/onPopped``
-    /// never fires for it. Without this hook the root would remain falsely on-stack
-    /// in the navigator forever, retaining its `WKWebView` and continuing to accept
-    /// bridge/prewarm activity with no host.
+    /// The sole root-release path (used by ``release(_:)``): cancels the root's
+    /// in-flight pipeline, drops it from ``rootSessions``, and either demotes it to
+    /// an off-stack **reusable** warm session — mirroring Android's warm master pool
+    /// — when its keyed slot is free and the runtime is healthy (`state == .ready`),
+    /// so the next presentation of the template takes the warm-reuse path; or tears
+    /// it down (releasing the web view) otherwise.
     ///
-    /// The release: (1) runs the ``popToRoot(in:)`` cleanup for the root's
-    /// navigation controller so any pushed details + presented sheets release exactly
-    /// as a pop would (that bulk removal fires no `onPopped` either); (2) cancels the
-    /// root's in-flight pipeline and drops it from ``rootSessions``; then (3) either
-    /// demotes it to an off-stack **reusable** warm session — mirroring Android's warm
-    /// master pool — when its keyed slot is free and the runtime is healthy
-    /// (`state == .ready`), so the next presentation of the template takes the
-    /// warm-reuse path; or tears it down (releasing the web view) otherwise.
-    ///
-    /// Idempotent: a second call (or a call for a non-root host) finds nothing in
-    /// ``rootSessions`` and no-ops.
-    func releaseRootPresentation(_ rootHost: UIViewController) {
-        guard let session = rootSessions.first(where: { $0.hostViewController === rootHost }) else {
-            // Already released, or this host never owned a root session.
-            return
-        }
-
-        // Reset the child navigation stack: release every pushed detail and dismiss
-        // any sheets it presented, exactly as a pop would (idempotent per session).
-        // The root host sits at the stack's root, so `popToRoot` never touches the
-        // root session itself — that is handled below.
-        if let navigationController = rootHost.navigationController {
-            popToRoot(in: navigationController)
-        }
-
+    /// Idempotent: a second call (or a call for an already-released session) finds
+    /// nothing in ``rootSessions`` to remove and simply re-runs the demote/teardown
+    /// decision harmlessly.
+    private func releaseRootSession(_ session: AppScreenSession) {
         // Cancel the root's in-flight pipeline and drop it from root tracking so no
         // late await acts on it and a second release is a no-op.
         session.pipelineTask?.cancel()
@@ -1535,120 +1822,120 @@ final class AppScreensNavigator: NSObject {
         }
     }
 
-    /// The transitive set of tracked live sheets originating from
-    /// `navigationController`: sheets presented directly from it, plus sheets
-    /// presented from within one of those (whose `origin` is a sheet already in the
-    /// set). Records are appended in presentation order, so a single forward pass
-    /// reaches every descendant, and the result is ordered first-presented →
-    /// last so the caller can dismiss the outermost. Compacts dead weak entries.
-    private func trackedSheets(
-        originatingFrom navigationController: UINavigationController
-    )
-        -> [UINavigationController]
-    {
-        presentedSheets.removeAll { $0.sheet == nil }
+    /// Tears down every live session a flow owns. There is no UIKit navigation
+    /// controller to walk, so ``sessionsByToken`` and ``pendingNavigations`` are the
+    /// only source of truth for what the flow still owns. Called from
+    /// `AppScreensTokenBox`'s deinit-driven teardown on Hub home disappear/URL-change
+    /// or standalone dismissal.
+    ///
+    /// The ordering is load-bearing: releasing the root first (its
+    /// `releaseRootSession` may demote it into — or otherwise mutate — the shared
+    /// `sessions`/`rootSessions` pools) before the flow's pushed details and
+    /// unclaimed pending sessions are safely down would let a premature root release
+    /// interleave with, and corrupt, state those two cohorts still depend on. So the
+    /// root always goes last:
+    /// 1. Snapshot the flow's owned sessions and identify which one (if any) is the
+    ///    root — the owned session currently present in ``rootSessions``.
+    /// 2. Tear down every non-root (`.pushed`) owned session first, via
+    ///    ``handlePop(of:)`` (mirrors what popping each one individually would do).
+    /// 3. Tear down sessions still sitting in the flow's unclaimed
+    ///    ``AppScreenPendingNavigationStore`` records — enqueued but never rendered —
+    ///    via ``teardown(_:)``.
+    /// 4. Release the root last, via ``releaseRootSession(_:)``.
+    /// 5. Purge ``sessionsByToken[flow]`` (the pending records are already drained by
+    ///    step 3).
+    ///
+    /// Idempotent: a second call for the same flow finds no owned sessions and no
+    /// unclaimed pending records, and no-ops.
+    package func release(_ token: AppScreensToken) {
+        let owned: [AppScreenSession] = sessionsByToken[token].map { Array($0.values) } ?? []
+        let root = owned.first { session in rootSessions.contains { $0 === session } }
+        let pushedDetails = owned.filter { $0 !== root }
 
-        var origins: Set<ObjectIdentifier> = [ObjectIdentifier(navigationController)]
-        var result: [UINavigationController] = []
-        for record in presentedSheets {
-            guard
-                let sheet = record.sheet,
-                let origin = record.origin,
-                origins.contains(ObjectIdentifier(origin))
-            else {
-                continue
-            }
-            result.append(sheet)
-            origins.insert(ObjectIdentifier(sheet))
+        for session in pushedDetails {
+            handlePop(of: session)
         }
-        return result
+
+        for record in pendingNavigations.drain(in: token) {
+            teardown(record.session)
+        }
+
+        if let root {
+            releaseRootSession(root)
+        }
+
+        sessionsByToken[token] = nil
+        openHandlersByToken[token] = nil
+        lastViewedSessionIdentityByFlow[token] = nil
+
+        // Analytics: the reveal a dismissed sheet causes is reported from the sheet's own
+        // `onDismiss` — ``sheetFlowDidDismiss(_:)``, which UIKit runs after the dismissal
+        // transition has finished. This is the fallback for a sheet flow torn down
+        // WITHOUT one (the presenting screen itself going away, say), where the ticket is
+        // still unredeemed. Deferred a turn because teardown can land while the
+        // presentation is still unwinding; the reveal check reads the settled hierarchy
+        // and reports nothing if it is not, so this path can only miss a view, never
+        // invent one.
+        guard presentingFlowBySheetFlow[token] != nil else {
+            return
+        }
+        // Retained rather than fire-and-forget, so the hop is something a caller can
+        // await: ``drainPendingDismissalFallbacks()`` is what the tests synchronise on,
+        // instead of spinning the run loop and hoping the main-actor continuation was
+        // drained inside the window. Nothing in production awaits it.
+        let fallback = Task { @MainActor [weak self] in
+            guard let self else {
+                return
+            }
+            self.pendingDismissalFallbacks[token] = nil
+            self.sheetFlowDidDismiss(token)
+        }
+        // Safe against the task clearing its own entry first: this method and the task
+        // body are both main-actor isolated and nothing suspends in between, so the
+        // assignment always lands before the body runs.
+        pendingDismissalFallbacks[token] = fallback
+    }
+
+    /// Awaits every deferred ``release(_:)`` dismissal fallback currently in flight.
+    ///
+    /// A test seam, and the only reason the fallback task is retained: the hop is a
+    /// main-actor continuation, which a run-loop spin can only *probably* drain — as a
+    /// flaky `testReleaseWithoutTheDismissalHookStillReportsTheReveal` demonstrated.
+    /// Awaiting the task itself is the guarantee. Production never calls this; there
+    /// the fallback is fire-and-forget by design.
+    package func drainPendingDismissalFallbacks() async {
+        // Snapshot: each task clears its own entry as it runs.
+        for task in Array(pendingDismissalFallbacks.values) {
+            await task.value
+        }
+    }
+
+    /// The sheet-dismissal reveal hook, called from the presenting screen's
+    /// `.sheet(item:onDismiss:)`. That callback is the one moment guaranteed to be
+    /// *after* the dismissal transition completed, so the presenting host's
+    /// `presentedViewController` is already nil and the exposed screen reads `.visible`
+    /// rather than `.occluded` — which the flow's own teardown, the only previous
+    /// signal, could not promise: it is driven by SwiftUI releasing the sheet's
+    /// `AppScreensTokenBox`, and a `Task { @MainActor }` hop from there buys one
+    /// main-actor turn, not the length of an animation.
+    ///
+    /// ``presentingFlowBySheetFlow`` is a one-shot ticket: whichever arrives first —
+    /// this hook or ``release(_:)``'s fallback — redeems it and the other no-ops. That,
+    /// with ``trackScreenExposedByDismissal(inFlowOf:)``'s own last-viewed identity
+    /// check, is what keeps one dismissal worth exactly one "App Screen Viewed".
+    func sheetFlowDidDismiss(_ sheetFlow: AppScreensToken) {
+        guard let presentingFlow = presentingFlowBySheetFlow.removeValue(forKey: sheetFlow) else {
+            return
+        }
+        trackScreenExposedByDismissal(inFlowOf: presentingFlow)
     }
 
     // MARK: - Sheet presentation
 
-    /// Presents a `navigate` target as a page sheet: the new host wrapped in a
-    /// fresh `UINavigationController` so in-sheet link taps push within the sheet
-    /// (their source session resolves `navigationController` to this one). The sheet
-    /// root carries an xmark close item mirroring the modal entry point. Both a
-    /// swipe-down (via `UIAdaptivePresentationControllerDelegate`) and the xmark
-    /// release the sheet's sessions exactly like a pop.
-    private func presentSheet(host: AppScreenHostViewController, from sourceHost: AppScreenHostViewController) {
-        let sheetNavigationController = UINavigationController(rootViewController: host)
-        sheetNavigationController.modalPresentationStyle = .pageSheet
-
-        // A modal presentation hangs off the window's presentation context, outside the
-        // presenting screen's hierarchy, so the config colorScheme override the Hub
-        // applies via `.colorScheme()` (HubContentView) never reaches it — the sheet's
-        // WKWebView would resolve `prefers-color-scheme` from the device appearance
-        // instead. Inherit the PRESENTER's resolved appearance rather than reading the
-        // config directly: the override is a Hub-only policy, and the source host's
-        // traits already encode it — a hub-embedded host carries the override, while a
-        // standalone full-screen host (which deliberately does not follow the override)
-        // carries the device appearance. The trait registration keeps the sheet in
-        // lockstep with the presenter while it is up: a device flip under AUTO, or a
-        // live config flip re-theming the Hub, propagates instead of leaving the sheet
-        // pinned to its present-time appearance.
-        sheetNavigationController.overrideUserInterfaceStyle =
-            sourceHost.traitCollection.userInterfaceStyle
-        sourceHost.registerForTraitChanges([UITraitUserInterfaceStyle.self]) {
-            [weak sheetNavigationController] (host: AppScreenHostViewController, _) in
-            sheetNavigationController?.overrideUserInterfaceStyle =
-                host.traitCollection.userInterfaceStyle
-        }
-
-        // Track the sheet against its origin so a navigation reset can dismiss it.
-        // For a sheet-from-sheet, the source host's navigation controller IS the
-        // outer sheet's nav, which chains the reset transitively across nesting.
-        recordPresentedSheet(sheetNavigationController, origin: sourceHost.navigationController)
-
-        // Programmatic `dismiss()` does not fire `presentationControllerDidDismiss`,
-        // so the xmark path releases the sheet's sessions itself.
-        host.navigationItem.rightBarButtonItem = UIBarButtonItem(
-            image: UIImage(systemName: "xmark"),
-            primaryAction: UIAction { [weak self, weak sheetNavigationController] _ in
-                guard let sheetNavigationController else {
-                    return
-                }
-                sheetNavigationController.dismiss(animated: true)
-                self?.handleSheetDismissed(sheetNavigationController)
-            }
-        )
-
-        // A user swipe-down dismissal routes through the adaptive presentation
-        // delegate; wire it so those sessions release the same way.
-        sheetNavigationController.presentationController?.delegate = self
-
-        // Present from the frontmost presented controller so a sheet opened from
-        // within an existing sheet stacks correctly.
-        Self.topmostPresentedViewController(from: sourceHost)
-            .present(sheetNavigationController, animated: true)
-    }
-
-    /// Releases every App Screens session hosted in a dismissed sheet's navigation
-    /// stack, exactly as a pop would: ephemeral (detail→detail) sessions are torn
-    /// down; warm template sessions leave the stack but stay warm for reuse. Safe to
-    /// call more than once — `handlePop` is idempotent per session.
-    private func handleSheetDismissed(_ sheetNavigationController: UINavigationController) {
-        for case let host as AppScreenHostViewController in sheetNavigationController.viewControllers {
-            guard let session = liveSession(hostedBy: host) else {
-                continue
-            }
-            handlePop(of: session)
-        }
-        // Purge this sheet's tracking record (and any dead weak entries).
-        presentedSheets.removeAll { $0.sheet == nil || $0.sheet === sheetNavigationController }
-    }
-
-    /// Records a presented sheet against the navigation controller it was presented
-    /// from, compacting any dead weak entries first.
-    private func recordPresentedSheet(_ sheet: UINavigationController, origin: UINavigationController?) {
-        presentedSheets.removeAll { $0.sheet == nil }
-        presentedSheets.append(PresentedSheetRecord(sheet: sheet, origin: origin))
-    }
-
-    /// Finds the live root/warm/ephemeral session whose host is `host` (sheet
-    /// dismissal walks the sheet's view controllers back to their sessions).
-    private func liveSession(hostedBy host: AppScreenHostViewController) -> AppScreenSession? {
+    /// Finds the live root/warm/ephemeral session whose host is `host`, used by
+    /// ``handlePop(forHostedBy:)`` to resolve the SwiftUI dismantle-driven pop back
+    /// to its owning session.
+    private func liveSession(hostedBy host: AppScreensPageViewController) -> AppScreenSession? {
         if let root = rootSessions.first(where: { $0.hostViewController === host }) {
             return root
         }
@@ -1656,16 +1943,6 @@ final class AppScreensNavigator: NSObject {
             return warm
         }
         return ephemeralSessions.first(where: { $0.hostViewController === host })
-    }
-
-    /// Walks the modal presentation chain to the frontmost controller not currently
-    /// being dismissed, so a new sheet presents above any sheet already on screen.
-    private static func topmostPresentedViewController(from viewController: UIViewController) -> UIViewController {
-        var top = viewController
-        while let presented = top.presentedViewController, !presented.isBeingDismissed {
-            top = presented
-        }
-        return top
     }
 
     /// Fully releases a session's web view: removes the message handler (so the
@@ -1689,19 +1966,6 @@ final class AppScreensNavigator: NSObject {
         }
         session.webView = nil
         session.hostViewController = nil
-    }
-
-    /// Installs the edge-swipe-to-pop assist on a navigation controller (idempotent
-    /// per controller).
-    private func armPopGesture(on navigationController: UINavigationController) {
-        guard let popGesture = navigationController.interactivePopGestureRecognizer else {
-            os_log("interactive pop unavailable on this navigation controller", log: .appScreens, type: .error)
-            return
-        }
-        popGestureAssist.navigationController = navigationController
-        if popGesture.delegate !== popGestureAssist {
-            popGesture.delegate = popGestureAssist
-        }
     }
 
     /// Milliseconds elapsed since `start`, for the tap→reveal telemetry.
@@ -1754,26 +2018,9 @@ final class AppScreensNavigator: NSObject {
 
 }
 
-// MARK: - UIAdaptivePresentationControllerDelegate
-
-extension AppScreensNavigator: UIAdaptivePresentationControllerDelegate {
-    /// Fired when the user swipe-dismisses a presented sheet. Releases the sheet's
-    /// sessions like a pop (the xmark path handles the programmatic-dismiss case,
-    /// which does not call this).
-    func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
-        guard
-            let sheetNavigationController = presentationController.presentedViewController
-                as? UINavigationController
-        else {
-            return
-        }
-        handleSheetDismissed(sheetNavigationController)
-    }
-}
-
 // MARK: - WKScriptMessageHandler
 
-extension AppScreensNavigator: WKScriptMessageHandler {
+extension AppScreensDriver: WKScriptMessageHandler {
     /// Delivered on the main thread by WebKit. Decodes defensively and routes to
     /// the owning session. `nonisolated` so it satisfies the non-isolated protocol
     /// requirement; it immediately hops to the main actor it is already running on.

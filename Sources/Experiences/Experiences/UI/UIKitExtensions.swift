@@ -13,11 +13,9 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
 import SwiftUI
 
 // MARK: - UIHostingController
-
 
 extension UIHostingController {
     convenience init(rootView: Content, ignoreSafeArea: Bool) {
@@ -51,7 +49,12 @@ extension UIHostingController {
                     return .zero
                 }
 
-                class_addMethod(viewSubclass, #selector(getter: UIView.safeAreaInsets), imp_implementationWithBlock(safeAreaInsets), method_getTypeEncoding(method))
+                class_addMethod(
+                    viewSubclass,
+                    #selector(getter: UIView.safeAreaInsets),
+                    imp_implementationWithBlock(safeAreaInsets),
+                    method_getTypeEncoding(method)
+                )
             }
 
             objc_registerClassPair(viewSubclass)
@@ -61,7 +64,6 @@ extension UIHostingController {
 }
 
 // MARK: - UINavigationBar
-
 
 extension UINavigationBar {
     func adjustTintColor(navBar: NavBar, traits: UITraitCollection, isScrolling: Bool = false) {
@@ -81,7 +83,6 @@ extension UINavigationBar {
 
 // MARK: - UINavigationItem
 
-
 extension UINavigationItem {
     func configure(
         navBar: NavBar,
@@ -95,7 +96,7 @@ extension UINavigationItem {
     ) {
         title = experience.localization.resolve(key: navBar.title)
             .evaluatingExpressions(
-                data: data, 
+                data: data,
                 urlParameters: urlParameters,
                 userInfo: userInfo,
                 deviceContext: deviceContext
@@ -116,23 +117,28 @@ extension UINavigationItem {
             )
         }
 
-        leftBarButtonItems = navBar.children
-            .compactMap { $0 as? NavBarButton }
-            .filter { $0.placement == .leading }
-            .map { navBarButton in
-                UIBarButtonItem(navBarButton: navBarButton, stringTable: experience.localization, data: data, urlParameters: urlParameters, userInfo: userInfo, deviceContext: deviceContext) {
-                    buttonHandler(navBarButton)
-                }
+        let makeBarButtonItem: (NavBarButton) -> UIBarButtonItem = { navBarButton in
+            UIBarButtonItem(
+                navBarButton: navBarButton,
+                stringTable: experience.localization,
+                data: data,
+                urlParameters: urlParameters,
+                userInfo: userInfo,
+                deviceContext: deviceContext
+            ) {
+                buttonHandler(navBarButton)
             }
+        }
 
-        rightBarButtonItems = navBar.children
-            .compactMap { $0 as? NavBarButton }
+        let navBarButtons = navBar.children.compactMap { $0 as? NavBarButton }
+        leftBarButtonItems =
+            navBarButtons
+            .filter { $0.placement == .leading }
+            .map(makeBarButtonItem)
+        rightBarButtonItems =
+            navBarButtons
             .filter { $0.placement == .trailing }
-            .map { navBarButton in
-                UIBarButtonItem(navBarButton: navBarButton, stringTable: experience.localization, data: data, urlParameters: urlParameters, userInfo: userInfo, deviceContext: deviceContext) {
-                    buttonHandler(navBarButton)
-                }
-            }
+            .map(makeBarButtonItem)
             .reversed()
     }
 
@@ -202,7 +208,6 @@ extension UINavigationItem {
     }
 }
 
-
 private extension UINavigationBarAppearance {
     func configureFonts(
         navBar: NavBar,
@@ -214,7 +219,8 @@ private extension UINavigationBarAppearance {
     }
 
     func configureBackground(background: NavBar.Background, traits: UITraitCollection) {
-        backgroundEffect = background.blurEffect
+        backgroundEffect =
+            background.blurEffect
             ? UIBlurEffect(style: .systemChromeMaterial)
             : nil
 
@@ -243,7 +249,7 @@ private extension UINavigationBarAppearance {
         )
     }
 
-    func configureLargeTitleColor(appearance: NavBar.Appearance, traits: UITraitCollection  ) {
+    func configureLargeTitleColor(appearance: NavBar.Appearance, traits: UITraitCollection) {
         largeTitleTextAttributes[.foregroundColor] = appearance.titleColor.uikitUIColor(
             colorScheme: traits.colorScheme,
             colorSchemeContrast: traits.colorSchemeContrast
@@ -251,67 +257,49 @@ private extension UINavigationBarAppearance {
     }
 }
 
-
-private extension UIBarButtonItem {
-    private struct AssociatedObject {
-        static var key = "io.rover.UIBarButtonItem.onTap"
-    }
-
-    private var onTap: () -> Void {
-        get {
-            objc_getAssociatedObject(self, &AssociatedObject.key) as! () -> Void
-        }
-
-        set {
-            objc_setAssociatedObject(self, &AssociatedObject.key, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        }
-    }
-
-    convenience init(navBarButton: NavBarButton, stringTable: StringTable, data: Any?, urlParameters: [String: String], userInfo: [String: Any], deviceContext: [String: Any], onTap: @escaping () -> Void) {
+extension UIBarButtonItem {
+    /// Builds the bar button item for a v2 experience `NavBarButton`.
+    ///
+    /// The tap handler is the item's own `primaryAction`, so there is no side storage
+    /// that can be missing when UIKit delivers the tap.
+    convenience init(
+        navBarButton: NavBarButton,
+        stringTable: StringTable,
+        data: Any?,
+        urlParameters: [String: String],
+        userInfo: [String: Any],
+        deviceContext: [String: Any],
+        onTap: @escaping () -> Void
+    ) {
         switch navBarButton.style {
         case .close:
-            self.init(
-                barButtonSystemItem: .close,
-                target: nil,
-                action: nil
-            )
+            self.init(systemItem: .close, primaryAction: UIAction { _ in onTap() })
         case .done:
-            self.init(
-                barButtonSystemItem: .done,
-                target: nil,
-                action: nil
-            )
+            self.init(systemItem: .done, primaryAction: UIAction { _ in onTap() })
         case .custom:
+            // `primaryAction` overrides the initializer's own title and image, so a custom
+            // item must carry them on the UIAction. System items ignore the action's title
+            // and image, which is why the cases above pass a bare UIAction. UIAction needs a
+            // non-optional title, hence the empty-string fallback.
             if let icon = navBarButton.icon {
-                self.init(
-                    image: UIImage(systemName: icon.symbolName),
-                    style: .plain,
-                    target: nil,
-                    action: nil
-                )
+                self.init(primaryAction: UIAction(image: UIImage(systemName: icon.symbolName)) { _ in onTap() })
             } else {
-                self.init(
-                    title: navBarButton.title.flatMap { stringTable.resolve(key: $0).evaluatingExpressions(data: data, urlParameters: urlParameters, userInfo: userInfo, deviceContext: deviceContext) },
-                    style: .plain,
-                    target: nil,
-                    action: nil
-                )
+                let title =
+                    navBarButton.title.flatMap {
+                        stringTable.resolve(key: $0).evaluatingExpressions(
+                            data: data,
+                            urlParameters: urlParameters,
+                            userInfo: userInfo,
+                            deviceContext: deviceContext
+                        )
+                    } ?? ""
+                self.init(primaryAction: UIAction(title: title) { _ in onTap() })
             }
         }
-
-        target = self
-        action = #selector(buttonPressed)
-
-        self.onTap = onTap
-    }
-
-    @objc private func buttonPressed(_ sender: Any) {
-        onTap()
     }
 }
 
 // MARK: - UITraitCollection
-
 
 extension UITraitCollection {
     var colorScheme: ColorScheme {

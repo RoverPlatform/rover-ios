@@ -36,23 +36,25 @@ package func syncDeviceIdentifier() -> String? {
 
 @MainActor
 package func resolveIdentifiers(
-    userInfoManager: UserInfoManager
+    userInfoManager: UserInfoManager,
+    trackingMode: PrivacyService.TrackingMode
 ) -> ResolvedIdentifiers {
-    let userInfo = userInfoManager.currentUserInfo
+    // The stored user info keeps the ticketing identities in every mode; they are withheld on the way out.
+    let userInfo = UserInfoPrivacy.reportedUserInfo(userInfoManager.currentUserInfo, trackingMode: trackingMode)
 
     let userID: String? = {
-        if let id = userInfo["userID"] as? String, !id.isEmpty {
+        if let id = userInfo[UserInfoKey.userID] as? String, !id.isEmpty {
             return id
         }
-        let ticketmaster = userInfo["ticketmaster"] as? [String: Any]
-        if let id = ticketmaster?["ticketmasterID"] as? String, !id.isEmpty {
+        let ticketmaster = userInfo[UserInfoKey.ticketmaster] as? [String: Any]
+        if let id = ticketmaster?[UserInfoKey.ticketmasterID] as? String, !id.isEmpty {
             return id
         }
-        let seatGeek = userInfo["seatGeek"] as? [String: Any]
-        if let id = seatGeek?["seatGeekClientID"] as? String, !id.isEmpty {
+        let seatGeek = userInfo[UserInfoKey.seatGeek] as? [String: Any]
+        if let id = seatGeek?[UserInfoKey.seatGeekClientID] as? String, !id.isEmpty {
             return id
         }
-        if let id = seatGeek?["seatGeekID"] as? String, !id.isEmpty {
+        if let id = seatGeek?[UserInfoKey.seatGeekID] as? String, !id.isEmpty {
             return id
         }
         return nil

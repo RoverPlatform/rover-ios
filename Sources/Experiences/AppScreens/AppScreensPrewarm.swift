@@ -17,7 +17,7 @@ import UIKit
 import WebKit
 import os.log
 
-extension AppScreensNavigator {
+extension AppScreensDriver {
 
     /// How a prewarmed web view is hosted while its runtime boots. The default is
     /// `.offscreenWindow`; `.unattached` remains available behind the flag.

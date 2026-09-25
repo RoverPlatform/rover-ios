@@ -28,6 +28,11 @@ protocol ReplyCollectionViewManaging: AnyObject {
     /// Reference to the scroll coordinator for anchoring and new-reply notifications.
     var scrollCoordinator: ScrollCoordinatorProtocol? { get set }
     var onImageTap: ((URL, UIView) -> Void)? { get set }
+    /// Handles a tapped link in a reply bubble. Cells are `UIHostingConfiguration`
+    /// content, which does not inherit the SwiftUI environment of the screen above
+    /// the collection view, so the screen's `openURL` policy is threaded in here and
+    /// installed on each cell instead. `nil` leaves the system behaviour.
+    var onOpenURL: ((URL) -> OpenURLAction.Result)? { get set }
     func applyInitialSnapshot(_ groups: [MessageGroup])
     func applyForwardSnapshot(_ groups: [MessageGroup])
     func applyPrependSnapshot(_ groups: [MessageGroup])
@@ -80,6 +85,7 @@ final class ReplyCollectionViewManager: ReplyCollectionViewManaging {
     /// Internal — used only by unit tests to verify reconfigure activity without UIKit inspection.
     var lastReconfiguredGroupIDs: [UUID] = []
     var onImageTap: ((URL, UIView) -> Void)?
+    var onOpenURL: ((URL) -> OpenURLAction.Result)?
 
     /// Cached empty state label, reused across updateEmptyState calls.
     private lazy var emptyStateLabel: UILabel = {
@@ -158,6 +164,15 @@ final class ReplyCollectionViewManager: ReplyCollectionViewManaging {
                     group: group,
                     isMostRecent: group.id == self?.cachedNewestGroupID,
                     onImageTap: self?.onImageTap
+                )
+                // Link taps in the bubble's attributed `Text` resolve through this
+                // action. Read `onOpenURL` at tap time (not registration time) so the
+                // controller's wiring in `viewDidLoad` is honoured whenever it lands.
+                .environment(
+                    \.openURL,
+                    OpenURLAction { url in
+                        self?.onOpenURL?(url) ?? .systemAction
+                    }
                 )
             }
             .margins(.all, 0)

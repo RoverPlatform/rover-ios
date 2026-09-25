@@ -13,11 +13,96 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+import RoverFoundation
 import XCTest
 
 @testable import RoverData
 
 final class ContextManagerTests: XCTestCase {
+    private var userDefaults: UserDefaults!
+    private var suiteName: String!
+    private var privacyService: PrivacyService!
+    private var contextManager: ContextManager!
+
+    override func setUp() {
+        super.setUp()
+        suiteName = "io.rover.ContextManagerTests.\(UUID().uuidString)"
+        userDefaults = UserDefaults(suiteName: suiteName)
+        privacyService = PrivacyService(userDefaults: userDefaults)
+        contextManager = ContextManager(privacyService: privacyService, userDefaults: userDefaults)
+    }
+
+    override func tearDown() {
+        contextManager = nil
+        privacyService = nil
+        userDefaults.removePersistentDomain(forName: suiteName)
+        userDefaults = nil
+        suiteName = nil
+        super.tearDown()
+    }
+
+    // MARK: - Reported user info
+
+    func testReportedUserInfoIncludesSensitiveKeysInDefaultMode() {
+        privacyService.trackingMode = .default
+        contextManager.updateUserInfo { $0.rawValue["ticketmaster"] = Attributes(rawValue: ["ticketmasterID": "tm-1"]) }
+
+        let ticketmaster = contextManager.userInfo?.rawValue["ticketmaster"] as? Attributes
+
+        XCTAssertEqual(ticketmaster?.rawValue["ticketmasterID"] as? String, "tm-1")
+    }
+
+    func testReportedUserInfoWithholdsSensitiveKeysWhileAnonymized() {
+        contextManager.updateUserInfo {
+            $0.rawValue["ticketmaster"] = Attributes(rawValue: ["ticketmasterID": "tm-1"])
+            $0.rawValue["seatGeek"] = Attributes(rawValue: ["seatGeekClientID": "sg-1"])
+            $0.rawValue["axs"] = Attributes(rawValue: ["userID": "axs-1"])
+            $0.rawValue["ecid"] = "ecid-1"
+            $0.rawValue["favouriteTeam"] = "Leafs"
+        }
+
+        privacyService.trackingMode = .anonymized
+
+        XCTAssertEqual(Set(contextManager.userInfo?.rawValue.keys ?? [:].keys), ["favouriteTeam"])
+    }
+
+    func testStoredUserInfoSurvivesAnonymizedModeAndComesBack() {
+        privacyService.trackingMode = .anonymized
+        contextManager.updateUserInfo { $0.rawValue["ticketmaster"] = Attributes(rawValue: ["ticketmasterID": "tm-1"]) }
+
+        // Set while anonymized: stored and visible to the host, but withheld from anything leaving the SDK.
+        let storedTicketmaster = contextManager.currentUserInfo["ticketmaster"] as? [String: Any]
+        XCTAssertEqual(storedTicketmaster?["ticketmasterID"] as? String, "tm-1")
+        XCTAssertNil(contextManager.userInfo?.rawValue["ticketmaster"])
+
+        privacyService.trackingMode = .default
+
+        let reportedTicketmaster = contextManager.userInfo?.rawValue["ticketmaster"] as? Attributes
+        XCTAssertEqual(reportedTicketmaster?.rawValue["ticketmasterID"] as? String, "tm-1")
+    }
+
+    // MARK: - Privacy listener
+
+    func testOnlyAGenuineTrackingModeTransitionReportsAUserInfoChange() {
+        let spy = SpyContextManager(privacyService: privacyService, userDefaults: userDefaults)
+
+        // Registration primes the listener with the current mode, which is not a change.
+        privacyService.registerTrackingEnabledListener(spy)
+        XCTAssertEqual(spy.reportedUserInfoDidChangeCount, 0)
+
+        privacyService.trackingMode = .anonymized
+        XCTAssertEqual(spy.reportedUserInfoDidChangeCount, 1)
+
+        // The setter re-notifies listeners even when the value is unchanged.
+        privacyService.trackingMode = .anonymized
+        XCTAssertEqual(spy.reportedUserInfoDidChangeCount, 1)
+
+        privacyService.trackingMode = .default
+        XCTAssertEqual(spy.reportedUserInfoDidChangeCount, 2)
+    }
+
+    // MARK: - Provisioning profile
+
     func testProvisioningProfileEnvironmentReturnsDevelopment() {
         let data = makeProvisioningProfileData(apsEnvironment: "development")
 
@@ -83,5 +168,13 @@ final class ContextManagerTests: XCTestCase {
             """
 
         return Data(xml.utf8)
+    }
+}
+
+private final class SpyContextManager: ContextManager {
+    private(set) var reportedUserInfoDidChangeCount = 0
+
+    override func reportedUserInfoDidChange() {
+        reportedUserInfoDidChangeCount += 1
     }
 }

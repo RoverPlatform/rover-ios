@@ -65,7 +65,7 @@ final class ResolvedIdentifiersTests: XCTestCase {
             "ticketmaster": ["ticketmasterID": "tm-456"],
             "seatGeek": ["seatGeekClientID": "sg-client-789", "seatGeekID": "sg-crm-000"]
         ]
-        let identifiers = await resolveIdentifiers(userInfoManager: mockUserInfoManager)
+        let identifiers = await resolveIdentifiers(userInfoManager: mockUserInfoManager, trackingMode: .default)
         XCTAssertEqual(identifiers.userID, "user-123")
     }
 
@@ -74,7 +74,7 @@ final class ResolvedIdentifiersTests: XCTestCase {
             "ticketmaster": ["ticketmasterID": "tm-456"],
             "seatGeek": ["seatGeekClientID": "sg-client-789", "seatGeekID": "sg-crm-000"]
         ]
-        let identifiers = await resolveIdentifiers(userInfoManager: mockUserInfoManager)
+        let identifiers = await resolveIdentifiers(userInfoManager: mockUserInfoManager, trackingMode: .default)
         XCTAssertEqual(identifiers.userID, "tm-456")
     }
 
@@ -82,7 +82,7 @@ final class ResolvedIdentifiersTests: XCTestCase {
         mockUserInfoManager.userInfo = [
             "seatGeek": ["seatGeekClientID": "sg-client-789", "seatGeekID": "sg-crm-000"]
         ]
-        let identifiers = await resolveIdentifiers(userInfoManager: mockUserInfoManager)
+        let identifiers = await resolveIdentifiers(userInfoManager: mockUserInfoManager, trackingMode: .default)
         XCTAssertEqual(identifiers.userID, "sg-client-789")
     }
 
@@ -90,13 +90,13 @@ final class ResolvedIdentifiersTests: XCTestCase {
         mockUserInfoManager.userInfo = [
             "seatGeek": ["seatGeekID": "sg-crm-000"]
         ]
-        let identifiers = await resolveIdentifiers(userInfoManager: mockUserInfoManager)
+        let identifiers = await resolveIdentifiers(userInfoManager: mockUserInfoManager, trackingMode: .default)
         XCTAssertEqual(identifiers.userID, "sg-crm-000")
     }
 
     func testFallsBackToDeviceIdentifierWhenNoUserIdentifiers() async {
         mockUserInfoManager.userInfo = [:]
-        let identifiers = await resolveIdentifiers(userInfoManager: mockUserInfoManager)
+        let identifiers = await resolveIdentifiers(userInfoManager: mockUserInfoManager, trackingMode: .default)
         XCTAssertNil(identifiers.userID)
         XCTAssertFalse(identifiers.deviceIdentifier.isEmpty)
     }
@@ -106,7 +106,7 @@ final class ResolvedIdentifiersTests: XCTestCase {
             "userID": "",
             "ticketmaster": ["ticketmasterID": "tm-456"]
         ]
-        let identifiers = await resolveIdentifiers(userInfoManager: mockUserInfoManager)
+        let identifiers = await resolveIdentifiers(userInfoManager: mockUserInfoManager, trackingMode: .default)
         XCTAssertEqual(identifiers.userID, "tm-456")
     }
 
@@ -115,8 +115,38 @@ final class ResolvedIdentifiersTests: XCTestCase {
             "ticketmaster": ["ticketmasterID": ""],
             "seatGeek": ["seatGeekClientID": "sg-client-789"]
         ]
-        let identifiers = await resolveIdentifiers(userInfoManager: mockUserInfoManager)
+        let identifiers = await resolveIdentifiers(userInfoManager: mockUserInfoManager, trackingMode: .default)
         XCTAssertEqual(identifiers.userID, "sg-client-789")
+    }
+
+    func testTicketingIdentifiersAreWithheldWhileAnonymized() async {
+        mockUserInfoManager.userInfo = [
+            "ticketmaster": ["ticketmasterID": "tm-456"],
+            "seatGeek": ["seatGeekClientID": "sg-client-789"]
+        ]
+        let identifiers = await resolveIdentifiers(userInfoManager: mockUserInfoManager, trackingMode: .anonymized)
+        XCTAssertNil(identifiers.userID)
+        XCTAssertFalse(identifiers.deviceIdentifier.isEmpty)
+    }
+
+    func testHostSetUserIDSurvivesAnonymizedMode() async {
+        mockUserInfoManager.userInfo = [
+            "userID": "user-123",
+            "ticketmaster": ["ticketmasterID": "tm-456"]
+        ]
+        let identifiers = await resolveIdentifiers(userInfoManager: mockUserInfoManager, trackingMode: .anonymized)
+        XCTAssertEqual(identifiers.userID, "user-123")
+    }
+
+    func testTicketingIdentifiersReturnWhenTrackingIsDefaultAgain() async {
+        mockUserInfoManager.userInfo = [
+            "ticketmaster": ["ticketmasterID": "tm-456"]
+        ]
+        let withheld = await resolveIdentifiers(userInfoManager: mockUserInfoManager, trackingMode: .anonymized)
+        XCTAssertNil(withheld.userID)
+
+        let restored = await resolveIdentifiers(userInfoManager: mockUserInfoManager, trackingMode: .default)
+        XCTAssertEqual(restored.userID, "tm-456")
     }
 
     func testAllEmptyStringsFallBackToDeviceIdentifier() async {
@@ -125,7 +155,7 @@ final class ResolvedIdentifiersTests: XCTestCase {
             "ticketmaster": ["ticketmasterID": ""],
             "seatGeek": ["seatGeekClientID": "", "seatGeekID": ""]
         ]
-        let identifiers = await resolveIdentifiers(userInfoManager: mockUserInfoManager)
+        let identifiers = await resolveIdentifiers(userInfoManager: mockUserInfoManager, trackingMode: .default)
         XCTAssertNil(identifiers.userID)
         XCTAssertFalse(identifiers.deviceIdentifier.isEmpty)
     }

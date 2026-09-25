@@ -110,68 +110,6 @@ private class FontLoader: ObservableObject {
     init(experience: ExperienceModel) {
         let experienceManager = Rover.shared.resolve(ExperienceManager.self)!
         // Register experience fonts
-        experience.fontURLs.forEach { url in
-            if url.isFileURL {
-                do {
-                    let fontData = try Data(contentsOf: url)
-                    try Self.registerFontIfNeeded(data: fontData)
-                } catch {
-                    rover_log(
-                        .error,
-                        "Failed to decode presumably corrupted cached font data. Font will not be loaded.  Error: %s",
-                        error.debugDescription)
-                }
-            } else {
-                experienceManager.downloader.download(url: url) { result in
-                    do {
-                        try Self.registerFontIfNeeded(data: result.get())
-                    } catch {
-                        rover_log(
-                            .error,
-                            "Failed to decode presumably corrupted cached font data. Removing it to allow for re-fetch. Error: %s",
-                            error.debugDescription)
-                        experienceManager.assetsURLCache.removeCachedResponse(for: URLRequest(url: url))
-                    }
-                }
-            }
-        }
-    }
-
-    private static func registerFontIfNeeded(data: Data) throws {
-        struct FontRegistrationError: Swift.Error, LocalizedError {
-            let message: String
-
-            var errorDescription: String? {
-                message
-            }
-        }
-
-        guard let fontProvider = CGDataProvider(data: data as CFData),
-            let cgFont = CGFont(fontProvider),
-            let fontName = cgFont.postScriptName as String?
-        else {
-            throw FontRegistrationError(message: "Unable to register font from provided data.")
-        }
-
-        let queryCollection = CTFontCollectionCreateWithFontDescriptors(
-            [
-                CTFontDescriptorCreateWithAttributes(
-                    [kCTFontNameAttribute: fontName] as CFDictionary
-                )
-            ] as CFArray, nil
-        )
-
-        let fontExists =
-            (CTFontCollectionCreateMatchingFontDescriptors(queryCollection) as? [CTFontDescriptor])?.isEmpty == false
-        if !fontExists {
-            if !CTFontManagerRegisterGraphicsFont(cgFont, nil) {
-                throw FontRegistrationError(message: "Unable to register font: \(fontName)")
-            }
-
-            DispatchQueue.main.async {
-                NotificationCenter.default.post(
-                    name: ExperienceManager.didRegisterCustomFontNotification, object: fontName)
-            }
-        }
+        ExperienceFontLoader.loadFonts(for: experience, experienceManager: experienceManager)
     }
 }

@@ -20,20 +20,60 @@ import Foundation
 /// navigation bar's native liquid-glass background. Applies to both the Hub's V2
 /// SwiftUI toolbar and the V3 App Screens UIKit chrome.
 ///
-/// Evaluated once per process: both inputs (the `UIDesignRequiresCompatibility`
-/// Info.plist flag and the OS version) are immutable after launch. `true` when the
-/// app opts into compatibility rendering via the plist key, OR when running below
-/// iOS 26 (where the native glass background does not exist).
+/// Mirrors what UIKit and SwiftUI actually do, in their order of precedence:
+///
+/// 1. Below iOS 26 there is no native glass background, so compatibility chrome.
+/// 2. Otherwise the app opts out of the redesign with the
+///    `UIDesignRequiresCompatibility` Info.plist flag — unless the hidden
+///    `com.apple.SwiftUI.IgnoreSolariumOptOut` default is set, which makes the
+///    frameworks ignore that opt-out and render the redesign anyway.
+/// 3. Otherwise, native.
+///
+/// Evaluated once per process, as the frameworks themselves resolve this at launch:
+/// the OS version and the Info.plist flag are immutable, and writing the defaults key
+/// takes effect on the next launch, not this one.
 ///
 /// `package` (not public): the single source of truth shared with
 /// `RoverNotifications`, whose SwiftUI `CompatibleInboxToolbarButton` (the Hub path)
-/// applies the same gate, following the `AppScreensRootBarItem` cross-module
-/// precedent. Keeps the UIKit App Screens bar buttons and the SwiftUI Hub toolbar
-/// in lockstep.
+/// applies the same gate. Keeps the UIKit App Screens close button and the SwiftUI
+/// Hub toolbar in lockstep. Rover Bench reads it through
+/// `@_spi(BenchSupport) Rover.toolbarItemsRequireCompatibilityChrome` so its settings
+/// row reports this value rather than a second copy of the rule.
+///
+/// The hidden key's name says SwiftUI, but it is not SwiftUI-only. Confirmed on iOS 26
+/// (iPhone 17 Pro simulator, Xcode 26.5) with the opt-out plist shipped: writing it
+/// flips UIKit's chrome too — `UITabBar` becomes the floating capsule, and a bare
+/// `UINavigationBar` changes both its background material and its height. So this one
+/// resolution is the honest answer for UIKit and SwiftUI surfaces alike. Re-confirm on
+/// each iOS major: the key is private, and if a release ever splits the two, toolbar
+/// *items* (SwiftUI-drawn in both the Hub and App Screens) are what this value must
+/// keep tracking.
 package let toolbarItemsRequireCompatibilityChrome: Bool = {
+    let isRedesignAvailable: Bool
+    if #available(iOS 26, *) {
+        isRedesignAvailable = true
+    } else {
+        isRedesignAvailable = false
+    }
+
     let requiresCompatibility =
         Bundle.main.object(forInfoDictionaryKey: "UIDesignRequiresCompatibility") as? Bool ?? false
-    if requiresCompatibility { return true }
-    if #available(iOS 26, *) { return false }
-    return true
+    let ignoresOptOut = UserDefaults.standard.bool(forKey: "com.apple.SwiftUI.IgnoreSolariumOptOut")
+
+    return resolveToolbarItemsRequireCompatibilityChrome(
+        isRedesignAvailable: isRedesignAvailable,
+        requiresCompatibility: requiresCompatibility,
+        ignoresOptOut: ignoresOptOut
+    )
 }()
+
+/// The resolution above, separated from where its inputs come from so the precedence
+/// can be tested.
+package func resolveToolbarItemsRequireCompatibilityChrome(
+    isRedesignAvailable: Bool,
+    requiresCompatibility: Bool,
+    ignoresOptOut: Bool
+) -> Bool {
+    guard isRedesignAvailable else { return true }
+    return requiresCompatibility && !ignoresOptOut
+}

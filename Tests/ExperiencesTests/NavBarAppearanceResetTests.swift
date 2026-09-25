@@ -16,7 +16,7 @@
 import UIKit
 import XCTest
 
-@testable import RoverNotifications
+@testable import RoverExperiences
 
 /// When a host app themes `UINavigationBar.appearance()` globally, every
 /// Hub screen must still render with the SDK's own (transparent) styling. Bar-instance
@@ -27,23 +27,25 @@ import XCTest
 @MainActor
 final class NavBarAppearanceResetTests: XCTestCase {
 
+    private struct Stack {
+        let navigationController: UINavigationController
+        let screen: UIViewController
+        let reset: NavBarAppearanceReset.Controller
+    }
+
     /// Builds nav stack: UINavigationController → screen VC → (child) reset controller,
     /// mirroring how the `.resetNavBarAppearance()` background representable is parented
     /// beneath a SwiftUI destination's hosting controller.
     private func makeStack(
         style: NavBarAppearanceReset.Style = .transparent
-    ) -> (
-        navigationController: UINavigationController,
-        screen: UIViewController,
-        reset: NavBarAppearanceReset.Controller
-    ) {
+    ) -> Stack {
         let screen = UIViewController()
         let reset = NavBarAppearanceReset.Controller(style: style)
         screen.addChild(reset)
         screen.view.addSubview(reset.view)
         reset.didMove(toParent: screen)
         let navigationController = UINavigationController(rootViewController: screen)
-        return (navigationController, screen, reset)
+        return Stack(navigationController: navigationController, screen: screen, reset: reset)
     }
 
     private func triggerAppearance(of controller: UIViewController) {
@@ -52,11 +54,12 @@ final class NavBarAppearanceResetTests: XCTestCase {
     }
 
     func testPinsTransparentAppearanceOnEnclosingNavigationItem() {
-        let (_, screen, reset) = makeStack()
+        let stack = makeStack()
+        let screen = stack.screen
 
         XCTAssertNil(screen.navigationItem.standardAppearance)
 
-        triggerAppearance(of: reset)
+        triggerAppearance(of: stack.reset)
 
         for (name, appearance) in [
             ("standardAppearance", screen.navigationItem.standardAppearance),
@@ -69,9 +72,8 @@ final class NavBarAppearanceResetTests: XCTestCase {
                 continue
             }
             XCTAssertNil(appearance.backgroundColor, "\(name) should be transparent")
-            XCTAssertEqual(
+            XCTAssertNil(
                 appearance.backgroundEffect,
-                nil,
                 "\(name) should have no background effect (transparent configuration)"
             )
         }
@@ -81,17 +83,17 @@ final class NavBarAppearanceResetTests: XCTestCase {
         // The reset controller is a grandchild of the screen: its own navigationItem
         // is irrelevant; the item that drives the bar belongs to the ancestor that is
         // the navigation controller's direct child.
-        let (_, screen, reset) = makeStack()
+        let stack = makeStack()
 
-        triggerAppearance(of: reset)
+        triggerAppearance(of: stack.reset)
 
-        XCTAssertNotNil(screen.navigationItem.standardAppearance)
-        XCTAssertNil(reset.navigationItem.standardAppearance)
+        XCTAssertNotNil(stack.screen.navigationItem.standardAppearance)
+        XCTAssertNil(stack.reset.navigationItem.standardAppearance)
     }
 
     func testResetsBarInstanceStateSetByHostProxyValues() {
-        let (navigationController, _, reset) = makeStack()
-        let bar = navigationController.navigationBar
+        let stack = makeStack()
+        let bar = stack.navigationController.navigationBar
 
         // Simulate a host app's global-proxy styling landing on the bar instance.
         let hostile = UINavigationBarAppearance()
@@ -104,7 +106,7 @@ final class NavBarAppearanceResetTests: XCTestCase {
         bar.prefersLargeTitles = true
         bar.titleTextAttributes = [.foregroundColor: UIColor.red]
 
-        triggerAppearance(of: reset)
+        triggerAppearance(of: stack.reset)
 
         XCTAssertNil(bar.standardAppearance.backgroundColor)
         XCTAssertNil(bar.scrollEdgeAppearance?.backgroundColor)
@@ -128,9 +130,10 @@ final class NavBarAppearanceResetTests: XCTestCase {
         // Content screens (Messages, post and conversation detail) keep the bar
         // invisible while the content is at rest at the top, but show the system
         // background once content scrolls underneath, so bar text stays legible.
-        let (_, screen, reset) = makeStack(style: .systemScrolledBackground)
+        let stack = makeStack(style: .systemScrolledBackground)
+        let screen = stack.screen
 
-        triggerAppearance(of: reset)
+        triggerAppearance(of: stack.reset)
 
         XCTAssertNotNil(screen.navigationItem.standardAppearance)
         XCTAssertNotNil(screen.navigationItem.scrollEdgeAppearance)
@@ -158,7 +161,7 @@ final class NavBarAppearanceResetTests: XCTestCase {
     func testSystemScrolledBackgroundStyleBuildsDistinctScrolledAndAtRestConfigurations() {
         let (scrolled, atRest) = NavBarAppearanceReset.Style.systemScrolledBackground.makeAppearances()
 
-        XCTAssertTrue(scrolled !== atRest, "scrolled state should hold its own configuration")
+        XCTAssertNotIdentical(scrolled, atRest, "scrolled state should hold its own configuration")
         XCTAssertNil(atRest.backgroundColor)
         XCTAssertNil(atRest.backgroundEffect)
     }
@@ -166,7 +169,7 @@ final class NavBarAppearanceResetTests: XCTestCase {
     func testTransparentStyleBuildsTheSameConfigurationForBothStates() {
         let (scrolled, atRest) = NavBarAppearanceReset.Style.transparent.makeAppearances()
 
-        XCTAssertTrue(scrolled === atRest, "both states should share the transparent configuration")
+        XCTAssertIdentical(scrolled, atRest, "both states should share the transparent configuration")
         XCTAssertNil(atRest.backgroundColor)
         XCTAssertNil(atRest.backgroundEffect)
     }

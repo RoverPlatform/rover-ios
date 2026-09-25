@@ -18,20 +18,39 @@ import SwiftUI
 import UIKit
 
 final class ShowConversationHostingController: UIHostingController<AnyView> {
+    /// Whether a link in a reply may dismiss this presentation before opening;
+    /// resolved in `viewWillAppear`, once it is known if this controller is presented.
+    private let presentation: HubDetailPresentationState
+
     init(conversationID: UUID) {
-        super.init(rootView: AnyView(ShowConversationView(conversationID: conversationID)))
+        let presentation = HubDetailPresentationState()
+        self.presentation = presentation
+        super.init(
+            rootView: AnyView(ShowConversationView(conversationID: conversationID, presentation: presentation))
+        )
     }
 
     @MainActor required dynamic init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        presentation.update(for: self)
     }
 }
 
 private struct ShowConversationView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.isPresented) private var isPresented
+    @ObservedObject var presentation: HubDetailPresentationState
 
     let conversationID: UUID
+
+    init(conversationID: UUID, presentation: HubDetailPresentationState) {
+        self.conversationID = conversationID
+        self.presentation = presentation
+    }
 
     var body: some View {
         NavigationView {
@@ -53,6 +72,9 @@ private struct ShowConversationView: View {
         .environment(\.hubContainer, persistentContainer)
         .environment(\.managedObjectContext, persistentContainer.viewContext)
         .environment(\.replySync, Rover.shared.resolve(ReplySync.self)!)
+        .environment(\.conversationSync, Rover.shared.resolve(ConversationSync.self)!)
+        .environment(\.eventQueue, Rover.shared.eventQueue)
+        .environment(\.hubDismissThenOpen, presentation.dismissThenOpen)
         .tint(accentColor)
         .optionalColorScheme(colorScheme)
     }

@@ -16,21 +16,41 @@
 import RoverData
 import RoverFoundation
 import SwiftUI
+import UIKit
 
 /// Embed this view within a tab to integrate the Rover Hub.
 public struct HubView: View {
-    /// Presentation state shared with the owning `HubHostingController`. Its
-    /// `onDismissButtonPressed` is `nil` while the Hub is embedded (a tab, or a bare
-    /// `HubView()`) and a real dismissal only once the controller confirms it is
-    /// presented modally; observing it here threads that live value into the App
-    /// Screens home view so the `openURL { dismiss: true }` teardown and the close
-    /// affordance appear exactly for a presented Hub.
-    @ObservedObject private var presentation: HubPresentationState
+    /// Presentation state carrying the Hub's dismissal handler. It is populated from
+    /// exactly two places, and the close affordance appears exactly when it is non-`nil`:
+    /// an owning `HubHostingController` injects a handler once it confirms it is
+    /// presented modally, and an integrator supplies one through
+    /// `init(onDismissButtonPressed:)` when presenting a bare `HubView` themselves
+    /// (e.g. inside a `.sheet`). The SDK never infers dismissability from the SwiftUI
+    /// environment: `\.isPresented` is `true` for pushed views too, so an environment
+    /// fallback would show a close button that pops the host's navigation stack.
+    @ObservedObject private(set) var presentation: HubPresentationState
 
+    @Environment(\.isPresented) private var isPresented
+    @Environment(\.dismiss) private var dismiss
+
+    /// Creates the Hub view for an embedded placement — a tab or other persistent
+    /// placement. No close chrome is added.
     public init() {
-        // A bare `HubView()` (e.g. embedded directly in a tab) owns its own state,
-        // whose dismissal handler stays `nil` — non-dismissable, no close chrome.
         self.presentation = HubPresentationState()
+    }
+
+    /// Creates the Rover Hub view for modal presentation, such as in a SwiftUI sheet.
+    /// Use this overload (`onDismissButtonPressed` provided) when presenting the Hub
+    /// modally. The Hub will include a close button that will call back to
+    /// `onDismissButtonPressed`.
+    ///
+    /// - Parameter onDismissButtonPressed: Supply a closure that will be called when
+    ///   the button is pressed. If this closure is not provided, then no close button
+    ///   will appear.
+    public init(onDismissButtonPressed: (() -> Void)?) {
+        let presentation = HubPresentationState()
+        presentation.onDismissButtonPressed = onDismissButtonPressed
+        self.presentation = presentation
     }
 
     /// Internal initializer used by `HubHostingController` to share its presentation
@@ -44,7 +64,8 @@ public struct HubView: View {
         HubContentView(
             coordinator: coordinator,
             badge: roverBadge,
-            onDismissButtonPressed: presentation.onDismissButtonPressed
+            onDismissButtonPressed: presentation.onDismissButtonPressed,
+            onOpenExternalURL: effectiveOpenExternalURL
         )
         .environmentObject(coordinator)
         .environment(\.hubContainer, persistentContainer)
@@ -56,6 +77,28 @@ public struct HubView: View {
         .environment(\.configSync, configSync)
         .environment(\.conversationSync, conversationSync)
         .environment(\.replySync, replySync)
+    }
+
+    /// UIKit-hosted Hubs supply `presentation.onOpenExternalURL` (see `HubHostingController`).
+    /// A bare SwiftUI-presented `HubView` supplies its own: when this view is itself
+    /// presented (`isPresented`), a `dismiss:true` deep link dismisses this presentation
+    /// (cascading its App Screens sheets away) then opens. When embedded (not presented),
+    /// no owner handler — the App Screens layer collapses only its sheets.
+    private var effectiveOpenExternalURL: ((URL, Bool) -> Void)? {
+        if let injected = presentation.onOpenExternalURL {
+            return injected
+        }
+        guard isPresented else {
+            return nil
+        }
+        return { url, shouldDismiss in
+            guard shouldDismiss else {
+                UIApplication.shared.openLoggingHubFailure(url)
+                return
+            }
+            dismiss()
+            UIApplication.shared.openLoggingHubFailure(url)
+        }
     }
 
     var coordinator: HubCoordinator {

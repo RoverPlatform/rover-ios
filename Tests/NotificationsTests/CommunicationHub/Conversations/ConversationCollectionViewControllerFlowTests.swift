@@ -13,6 +13,7 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+import SwiftUI
 import UIKit
 import XCTest
 
@@ -457,6 +458,34 @@ final class ConversationCollectionViewControllerFlowTests: XCTestCase {
 
 }
 
+// MARK: - Reply link policy
+
+extension ConversationCollectionViewControllerFlowTests {
+    /// The SwiftUI parent's link policy can change after the controller exists (a
+    /// standalone detail publishes its dismiss-then-open handler in `viewWillAppear`,
+    /// after `makeUIViewController`), so a later assignment must reach the cell
+    /// manager, whose cells read it at tap time.
+    func testOnOpenURLAssignedAfterLoadReachesTheCellManager() {
+        let managerSpy = ReplyCollectionViewManagerSpy()
+        let vc = makeController(managerSpy: managerSpy)
+        XCTAssertNil(managerSpy.onOpenURL, "no policy is installed until the parent supplies one")
+
+        var opened: [URL] = []
+        vc.onOpenURL = { url in
+            opened.append(url)
+            return .handled
+        }
+
+        let url = URL(string: "testbench-deep-link://customInApp")!
+        XCTAssertNotNil(managerSpy.onOpenURL, "the assignment reaches the cell manager")
+        _ = managerSpy.onOpenURL?(url)
+        XCTAssertEqual(opened, [url], "the manager's copy is the parent's policy")
+
+        vc.onOpenURL = nil
+        XCTAssertNil(managerSpy.onOpenURL, "clearing the policy restores the system behaviour")
+    }
+}
+
 // MARK: - Test Spy
 
 /// Spy implementation of `ReplyCollectionViewManaging` for controller-flow tests.
@@ -473,6 +502,7 @@ private final class ReplyCollectionViewManagerSpy: ReplyCollectionViewManaging {
     var stubbedOldestGroupTimestamp: Date? = nil
     var operationLog: [String] = []
     var onImageTap: ((URL, UIView) -> Void)?
+    var onOpenURL: ((URL) -> OpenURLAction.Result)?
 
     var applyInitialSnapshotCalled = false
     var applyForwardSnapshotCalled = false

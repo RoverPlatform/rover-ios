@@ -26,15 +26,6 @@ class HubCoordinator: ObservableObject {
     /// The most recent home view experience URL from the cache or the latest fetch.
     @Published private(set) var homeViewExperienceURL: URL?
 
-    /// Monotonic counter bumped every time the coordinator resets its navigation
-    /// path (a push-notification tap to a post/conversation, or a config change).
-    /// An embedded V3 App Screens home view observes this through the
-    /// `ExperienceView` package channel and, on each increment, pops its own child
-    /// navigation stack to root — dismissing any App Screens sheets it presented —
-    /// so a coordinator-driven navigation never leaves a stale pushed detail behind
-    /// the home root to be revealed on back-out.
-    @Published private(set) var appScreensResetGeneration = 0
-
     private(set) var configManager: ConfigManager
     private let homeViewManager: HomeViewManager
     private let notificationHandler: NotificationHandler
@@ -57,10 +48,8 @@ class HubCoordinator: ObservableObject {
             .sink { [weak self] newConfig in
                 guard let self = self else { return }
                 self.config = newConfig
+                // A config change tears the navigation path down to root.
                 self.navigationPath = NavigationPath()
-                // A config change tears the path down to root; signal the embedded
-                // App Screens flow to pop its child stack to root too.
-                self.appScreensResetGeneration += 1
             }
             .store(in: &cancellables)
 
@@ -112,11 +101,10 @@ class HubCoordinator: ObservableObject {
     }
 
     private func resetNavigationPath() {
+        // Reset the shared navigation path to root: a coordinator-driven navigation
+        // (e.g. a conversation push tap) must not leave a stale detail (including
+        // any embedded App Screens push) behind the home root.
         navigationPath = NavigationPath()
-        // Signal the embedded App Screens flow to pop its child navigation stack to
-        // root: a coordinator-driven navigation (e.g. a conversation push tap) must
-        // not leave a stale App Screens detail behind the home root.
-        appScreensResetGeneration += 1
         if isHomeEnabled && homeViewExperienceURL != nil && isInboxEnabled {
             navigationPath.append(HubPath.messages)
         }

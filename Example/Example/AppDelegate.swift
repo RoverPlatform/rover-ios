@@ -29,7 +29,6 @@ import os.log
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
   var locationManager = CLLocationManager()
-  var window: UIWindow?
 
   func application(
     _ application: UIApplication,
@@ -164,33 +163,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   ) {
     // The device successfully registered for push notifications. Pass the token to Rover.
     Rover.shared.tokenManager.setToken(deviceToken)
-  }
-
-  func application(
-    _ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]
-  ) -> Bool {
-    // Handle our example:// deep links first
-    if url.scheme == "example" {
-      if let viewController = window?.rootViewController as? ViewController {
-        return viewController.handleDeepLink(url: url)
-      }
-    }
-
-    // Let the Router handle Rover deep links such as:
-    //   - rv-example://presentExperience?experienceID=XXX&campaignID=XXX
-    //   - rv-example://presentNotificationCenter
-    //   - rv-example://presentSettings.
-    return Rover.shared.router.handle(url)
-  }
-
-  func application(
-    _ application: UIApplication, continue userActivity: NSUserActivity,
-    restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void
-  ) -> Bool {
-    // Let the Router handle Rover universal links such as:
-    //  - https://example.rover.io/XXX
-    //  - https://example.rover.io/XXX?campaignID=XXX
-    return Rover.shared.router.handle(userActivity)
   }
 }
 

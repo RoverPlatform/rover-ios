@@ -215,24 +215,6 @@ final class InboxPersistentContainer: NSPersistentContainer, @unchecked Sendable
         }
     }
 
-    /// Drop the database and reset the persistent container. Note that will leave the store in a dropped state, and the app (and Rover SDK) should be restarted afterward.
-    func reset() {
-        guard let store = persistentStoreCoordinator.persistentStores.first,
-            let url = store.url
-        else {
-            os_log("No persistent store found to reset", log: .hub, type: .debug)
-            return
-        }
-
-        do {
-            try persistentStoreCoordinator.remove(store)
-            try persistentStoreCoordinator.destroyPersistentStore(at: url, ofType: store.type, options: nil)
-            os_log("Successfully reset persistent store at: %{private}@", log: .hub, type: .info, url.path)
-        } catch {
-            os_log("Failed to reset persistent store: %{private}@", log: .hub, type: .error, error.localizedDescription)
-        }
-    }
-
     enum Storage: String {
         /// Using Sqlite, normal operation.
         case persistent

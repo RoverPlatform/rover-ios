@@ -27,14 +27,7 @@ public class AdobeExperienceAssembler: Assembler {
         
         container.register(AdobeExperienceManager.self) { resolver in
             let userInfoManager = resolver.resolve(UserInfoManager.self)!
-            let privacyService = resolver.resolve(PrivacyService.self)!
-            return AdobeExperienceManager(userInfoManager: userInfoManager, privacyService: privacyService)
+            return AdobeExperienceManager(userInfoManager: userInfoManager)
         }
-    }
-    
-    public func containerDidAssemble(resolver: Resolver) {
-        resolver.resolve(PrivacyService.self)?.registerTrackingEnabledListener(
-            resolver.resolve(AdobeExperienceManager.self)!
-        )
     }
 }

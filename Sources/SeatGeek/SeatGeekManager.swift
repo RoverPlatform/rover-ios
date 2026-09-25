@@ -18,9 +18,8 @@ import RoverData
 import RoverFoundation
 import os.log
 
-class SeatGeekManager: SeatGeekAuthorizer, PrivacyListener {
+class SeatGeekManager: SeatGeekAuthorizer {
     private let userInfoManager: UserInfoManager
-    private let privacyService: PrivacyService
 
     // NOTE: seatGeekID is actually the CRM ID ("crmID"). The variable name is maintained for backward compatibility.
     private var seatGeekID = PersistedValue<String>(storageKey: "io.rover.SeatGeek")
@@ -40,38 +39,19 @@ class SeatGeekManager: SeatGeekAuthorizer, PrivacyListener {
         return dictionary.isEmpty ? nil : dictionary
     }
 
-    init(userInfoManager: UserInfoManager, privacyService: PrivacyService) {
+    init(userInfoManager: UserInfoManager) {
         self.userInfoManager = userInfoManager
-        self.privacyService = privacyService
     }
 
     // MARK: SeatGeekAuthorizer
 
     func setSeatGeekID(_ id: String) {
-        guard privacyService.trackingMode == .default else {
-            os_log(
-                "SeatGeek IDs set while privacy is in anonymous/anonymized mode, ignored",
-                log: .seatgeek,
-                type: .info
-            )
-            return
-        }
-
         self.seatGeekID.value = id
         self.seatGeekClientID.value = nil
         updateUserInfo()
     }
 
     func setSeatGeekIDs(clientID: String, crmID: String) {
-        guard privacyService.trackingMode == .default else {
-            os_log(
-                "SeatGeek IDs set while privacy is in anonymous/anonymized mode, ignored",
-                log: .seatgeek,
-                type: .info
-            )
-            return
-        }
-
         self.seatGeekID.value = crmID
         self.seatGeekClientID.value = clientID
 
@@ -83,17 +63,6 @@ class SeatGeekManager: SeatGeekAuthorizer, PrivacyListener {
         self.seatGeekClientID.value = nil
         self.userInfoManager.updateUserInfo { attributes in
             attributes.rawValue["seatGeek"] = nil
-        }
-    }
-
-    // MARK: Privacy
-
-    func trackingModeDidChange(_ trackingMode: PrivacyService.TrackingMode) {
-        if trackingMode != .default {
-            os_log(
-                "Tracking disabled, seatgeek data cleared", log: .seatgeek
-            )
-            clearCredentials()
         }
     }
 

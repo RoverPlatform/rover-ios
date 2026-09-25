@@ -1,34 +1,47 @@
-//
-//  NavBarAppearanceReset.swift
-//  Rover
-//
-//  Created by Andrew Marmion on 26/05/2026.
-//
-
-// Copyright (c) 2020-present, Rover Labs, Inc. All rights reserved.
-// You are hereby granted a non-exclusive, worldwide, royalty-free license to use,
-// copy, modify, and distribute this software in source code or binary form for use
-// in connection with the web services and APIs provided by Rover.
-//
-// This copyright notice shall be included in all copies or substantial portions of
-// the software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-// FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-// COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-// CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-import RoverExperiences
 import SwiftUI
+import UIKit
+
+/// Clears appearance-proxy state on the bar owned by the App Screens flow.
+/// These are instance assignments, matching `NavBarAppearanceReset`, so
+/// they take precedence over the host application's global appearance.
+///
+/// `private`: this is the file-local scrub used by `NavBarAppearanceReset`
+/// below. Lives in its own file so trimming the legacy App Screens code out
+/// of `ExperienceViewController` cannot orphan this shared helper.
+private func resetAppScreensNavigationBar(_ bar: UINavigationBar) {
+    let appearance = UINavigationBarAppearance()
+    appearance.configureWithTransparentBackground()
+
+    bar.standardAppearance = appearance
+    bar.scrollEdgeAppearance = appearance
+    bar.compactAppearance = appearance
+    bar.compactScrollEdgeAppearance = appearance
+
+    bar.tintColor = nil
+    bar.isTranslucent = true
+    bar.backgroundColor = nil
+    bar.barStyle = .default
+    bar.prefersLargeTitles = false
+    bar.shadowImage = nil
+    bar.setBackgroundImage(nil, for: .default)
+    bar.setBackgroundImage(nil, for: .compact)
+    bar.setBackgroundImage(nil, for: .defaultPrompt)
+    bar.setBackgroundImage(nil, for: .compactPrompt)
+    bar.titleTextAttributes = nil
+    bar.largeTitleTextAttributes = nil
+    bar.backIndicatorImage = nil
+    bar.backIndicatorTransitionMaskImage = nil
+    for metrics in [UIBarMetrics.default, .compact, .defaultPrompt, .compactPrompt] {
+        bar.setTitleVerticalPositionAdjustment(0, for: metrics)
+    }
+}
 
 /// Resets the navigation bar `UIAppearance` for this subhierarchy, avoiding
 /// inheriting global app appearance settings.
-struct NavBarAppearanceReset: UIViewControllerRepresentable {
+package struct NavBarAppearanceReset: UIViewControllerRepresentable {
     /// How the enclosing screen's navigation bar should render once shielded from
     /// the host app's global appearance settings.
-    enum Style {
+    package enum Style {
         /// The bar is fully transparent in every state. Used by surfaces that own
         /// their chrome, like the App Screens home view.
         case transparent
@@ -60,10 +73,10 @@ struct NavBarAppearanceReset: UIViewControllerRepresentable {
 
     let style: Style
 
-    func makeUIViewController(context: Context) -> Controller { Controller(style: style) }
-    func updateUIViewController(_ uiViewController: Controller, context: Context) {}
+    package func makeUIViewController(context: Context) -> Controller { Controller(style: style) }
+    package func updateUIViewController(_ uiViewController: Controller, context: Context) {}
 
-    final class Controller: UIViewController {
+    package final class Controller: UIViewController {
         private let style: Style
 
         init(style: Style) {
@@ -71,13 +84,14 @@ struct NavBarAppearanceReset: UIViewControllerRepresentable {
             super.init(nibName: nil, bundle: nil)
         }
 
+        @available(*, unavailable)
         required init?(coder: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
 
-        override func viewWillAppear(_ animated: Bool) {
+        package override func viewWillAppear(_ animated: Bool) {
             super.viewWillAppear(animated)
-            guard let navigationController = navigationController else {
+            guard let navigationController else {
                 return
             }
 
@@ -113,7 +127,7 @@ struct NavBarAppearanceReset: UIViewControllerRepresentable {
 extension View {
     /// Applies `NavBarAppearanceReset` to this view, resetting the navigation bar
     /// `UIAppearance` for the subhierarchy to avoid inheriting global app settings.
-    func resetNavBarAppearance(_ style: NavBarAppearanceReset.Style = .transparent) -> some View {
+    package func resetNavBarAppearance(_ style: NavBarAppearanceReset.Style = .transparent) -> some View {
         background(NavBarAppearanceReset(style: style).frame(width: 0, height: 0))
     }
 }

@@ -81,6 +81,20 @@ final class ContextManagerTests: XCTestCase {
         XCTAssertEqual(reportedTicketmaster?.rawValue["ticketmasterID"] as? String, "tm-1")
     }
 
+    // An update starts from the stored value, so a decimal that failed to read back used to wipe every other key.
+    func testDecimalUserInfoKeepsEveryKeyAcrossUpdates() {
+        contextManager.updateUserInfo { $0.rawValue["ticketmaster"] = Attributes(rawValue: ["ticketmasterID": "tm-1"]) }
+        contextManager.updateUserInfo { $0.rawValue["spend"] = 12.5 }
+        contextManager.updateUserInfo { $0.rawValue["favouriteTeam"] = "Leafs" }
+
+        let stored = contextManager.currentUserInfo
+        let storedTicketmaster = stored["ticketmaster"] as? [String: Any]
+
+        XCTAssertEqual(storedTicketmaster?["ticketmasterID"] as? String, "tm-1")
+        XCTAssertEqual(stored["spend"] as? Double, 12.5)
+        XCTAssertEqual(stored["favouriteTeam"] as? String, "Leafs")
+    }
+
     // MARK: - Privacy listener
 
     func testOnlyAGenuineTrackingModeTransitionReportsAUserInfoChange() {

@@ -242,6 +242,11 @@ public class Attributes: NSObject, NSCoding, Codable, RawRepresentable, Expressi
                     assembledHash[keyString] = value
                     return
                 }
+                // After Int, so a whole number still reads back as an Int.
+                if let value = try? container.decode(Double.self, forKey: key) {
+                    assembledHash[keyString] = value
+                    return
+                }
                 if let value = try? container.decode(String.self, forKey: key) {
                     assembledHash[keyString] = value
                     return

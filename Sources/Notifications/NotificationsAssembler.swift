@@ -235,8 +235,8 @@ public struct NotificationsAssembler: Assembler {
             InboxPersistentContainer(storage: .persistent)
         }
 
-        // Registered unconditionally, unlike `RoverBadge` below: the inbox has to advance the
-        // watermark whenever it is viewed even for hosts that opt out of app-icon badging.
+        // Registered unconditionally: the inbox has to advance the watermark whenever it is
+        // viewed even for hosts that opt out of app-icon badging.
         container.register(InboxSeenWatermark.self, scope: .singleton) { resolver in
             InboxSeenWatermark()
         }
@@ -298,16 +298,16 @@ public struct NotificationsAssembler: Assembler {
             }
         }
 
-        if updateAppBadge {
-            container.register(RoverBadge.self, scope: .singleton) { resolver in
-                return MainActor.assumeIsolatedOrFatalError {
-                    RoverBadge(
-                        persistentContainer: resolver.resolve(InboxPersistentContainer.self)!,
-                        seenWatermark: resolver.resolve(InboxSeenWatermark.self)!,
-                        configManager: resolver.resolve(ConfigManager.self)!,
-                        updateAppBadge: updateAppBadge
-                    )
-                }
+        // Registered unconditionally: the Hub force-resolves it for its tab badge, and
+        // `updateAppBadge` only gates the app icon write inside `RoverBadge`.
+        container.register(RoverBadge.self, scope: .singleton) { resolver in
+            return MainActor.assumeIsolatedOrFatalError {
+                RoverBadge(
+                    persistentContainer: resolver.resolve(InboxPersistentContainer.self)!,
+                    seenWatermark: resolver.resolve(InboxSeenWatermark.self)!,
+                    configManager: resolver.resolve(ConfigManager.self)!,
+                    updateAppBadge: updateAppBadge
+                )
             }
         }
 
@@ -428,9 +428,8 @@ public struct NotificationsAssembler: Assembler {
         // whenever the inbox happens to first be opened.
         _ = resolver.resolve(InboxSeenWatermark.self)
 
-        if updateAppBadge {
-            _ = resolver.resolve(RoverBadge.self)
-        }
+        // Eager so the badge starts observing at SDK initialization, not when the Hub first opens.
+        _ = resolver.resolve(RoverBadge.self)
     }
 }
 

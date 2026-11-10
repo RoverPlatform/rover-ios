@@ -27,7 +27,7 @@ public class RoverBadge: ObservableObject {
     private let persistentContainer: InboxPersistentContainer
     private let seenWatermark: InboxSeenWatermark
     private let configManager: ConfigManager
-    private let updateAppBadge: Bool
+    let updateAppBadge: Bool
 
     /// Counts above this are displayed as `"9+"` instead of the number itself, and the numeric
     /// app-icon badge is clamped to it.
